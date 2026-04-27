@@ -7,11 +7,11 @@ import io
 # =========================
 st.set_page_config(
     page_title="Phonics Concept",
-    page_icon="🌈",
+    page_icon="🔤",
     layout="wide"
 )
 
-st.title("🌈 Phonics Concept")
+st.title("🔤 Phonics Concept")
 st.caption("자음 소리, 모음 규칙, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
 
 # =========================
@@ -33,9 +33,6 @@ def audio_button(label, text, key):
 
 
 def repeat_sound(sound_text):
-    """
-    실제 소리를 두 번 들려주되, 두 소리 사이에 간격을 둠.
-    """
     return f"{sound_text}.   {sound_text}."
 
 
@@ -81,9 +78,10 @@ st.markdown(
         color: #444444;
     }
     .sound-box {
-        font-size: 18px;
+        font-size: 17px;
         font-weight: 800;
         color: #222222;
+        line-height: 1.5;
     }
     .word-box {
         font-size: 24px;
@@ -109,323 +107,115 @@ def show_rule(title, lines):
 # =========================
 
 consonant_sounds = [
-    {
-        "pattern": "B b",
-        "letter_name": "bee",
-        "concept": "Consonant sound",
-        "sound_name": "/b/",
-        "sound_audio": repeat_sound("buh"),
-        "word": "bat",
-        "word_audio": "bat"
-    },
-    {
-        "pattern": "C c",
-        "letter_name": "see",
-        "concept": "Consonant sound",
-        "sound_name": "/k/",
-        "sound_audio": repeat_sound("kuh"),
-        "word": "cat",
-        "word_audio": "cat"
-    },
-    {
-        "pattern": "D d",
-        "letter_name": "dee",
-        "concept": "Consonant sound",
-        "sound_name": "/d/",
-        "sound_audio": repeat_sound("duh"),
-        "word": "dog",
-        "word_audio": "dog"
-    },
-    {
-        "pattern": "F f",
-        "letter_name": "eff",
-        "concept": "Consonant sound",
-        "sound_name": "/f/",
-        "sound_audio": repeat_sound("fff"),
-        "word": "fish",
-        "word_audio": "fish"
-    },
-    {
-        "pattern": "G g",
-        "letter_name": "gee",
-        "concept": "Consonant sound",
-        "sound_name": "/g/",
-        "sound_audio": repeat_sound("guh"),
-        "word": "goat",
-        "word_audio": "goat"
-    },
-    {
-        "pattern": "H h",
-        "letter_name": "aitch",
-        "concept": "Consonant sound",
-        "sound_name": "/h/",
-        "sound_audio": repeat_sound("huh"),
-        "word": "hat",
-        "word_audio": "hat"
-    },
-    {
-        "pattern": "J j",
-        "letter_name": "jay",
-        "concept": "Consonant sound",
-        "sound_name": "/dʒ/",
-        "sound_audio": repeat_sound("juh"),
-        "word": "jam",
-        "word_audio": "jam"
-    },
-    {
-        "pattern": "K k",
-        "letter_name": "kay",
-        "concept": "Consonant sound",
-        "sound_name": "/k/",
-        "sound_audio": repeat_sound("kuh"),
-        "word": "kite",
-        "word_audio": "kite"
-    },
-    {
-        "pattern": "L l",
-        "letter_name": "el",
-        "concept": "Consonant sound",
-        "sound_name": "/l/",
-        "sound_audio": repeat_sound("lll"),
-        "word": "lion",
-        "word_audio": "lion"
-    },
-    {
-        "pattern": "M m",
-        "letter_name": "em",
-        "concept": "Consonant sound",
-        "sound_name": "/m/",
-        "sound_audio": repeat_sound("mmm"),
-        "word": "moon",
-        "word_audio": "moon"
-    },
-    {
-        "pattern": "N n",
-        "letter_name": "en",
-        "concept": "Consonant sound",
-        "sound_name": "/n/",
-        "sound_audio": repeat_sound("nnn"),
-        "word": "nest",
-        "word_audio": "nest"
-    },
-    {
-        "pattern": "P p",
-        "letter_name": "pee",
-        "concept": "Consonant sound",
-        "sound_name": "/p/",
-        "sound_audio": repeat_sound("puh"),
-        "word": "pig",
-        "word_audio": "pig"
-    },
-    {
-        "pattern": "Q q",
-        "letter_name": "cue",
-        "concept": "Usually /kw/",
-        "sound_name": "/kw/",
-        "sound_audio": repeat_sound("kwuh"),
-        "word": "queen",
-        "word_audio": "queen"
-    },
-    {
-        "pattern": "R r",
-        "letter_name": "ar",
-        "concept": "Consonant sound",
-        "sound_name": "/r/",
-        "sound_audio": repeat_sound("ruh"),
-        "word": "red",
-        "word_audio": "red"
-    },
-    {
-        "pattern": "S s",
-        "letter_name": "ess",
-        "concept": "Consonant sound",
-        "sound_name": "/s/",
-        "sound_audio": repeat_sound("sss"),
-        "word": "sun",
-        "word_audio": "sun"
-    },
-    {
-        "pattern": "T t",
-        "letter_name": "tee",
-        "concept": "Consonant sound",
-        "sound_name": "/t/",
-        "sound_audio": repeat_sound("tuh"),
-        "word": "top",
-        "word_audio": "top"
-    },
-    {
-        "pattern": "V v",
-        "letter_name": "vee",
-        "concept": "Consonant sound",
-        "sound_name": "/v/",
-        "sound_audio": repeat_sound("vvv"),
-        "word": "van",
-        "word_audio": "van"
-    },
-    {
-        "pattern": "W w",
-        "letter_name": "double you",
-        "concept": "Consonant sound",
-        "sound_name": "/w/",
-        "sound_audio": repeat_sound("wuh"),
-        "word": "window",
-        "word_audio": "window"
-    },
-    {
-        "pattern": "X x",
-        "letter_name": "ex",
-        "concept": "Often /ks/",
-        "sound_name": "/ks/",
-        "sound_audio": repeat_sound("ks"),
-        "word": "fox",
-        "word_audio": "fox"
-    },
-    {
-        "pattern": "Y y",
-        "letter_name": "why",
-        "concept": "Consonant sound",
-        "sound_name": "/y/",
-        "sound_audio": repeat_sound("yuh"),
-        "word": "yes",
-        "word_audio": "yes"
-    },
-    {
-        "pattern": "Z z",
-        "letter_name": "zee",
-        "concept": "Consonant sound",
-        "sound_name": "/z/",
-        "sound_audio": repeat_sound("zzz"),
-        "word": "zebra",
-        "word_audio": "zebra"
-    },
+    {"pattern": "B b", "letter_name": "bee", "concept": "Consonant sound", "sound_name": "/b/ (브에 가까운 소리)", "sound_audio": repeat_sound("buh"), "word": "bat", "word_audio": "bat"},
+    {"pattern": "C c", "letter_name": "see", "concept": "Consonant sound", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "cat", "word_audio": "cat"},
+    {"pattern": "D d", "letter_name": "dee", "concept": "Consonant sound", "sound_name": "/d/ (드에 가까운 소리)", "sound_audio": repeat_sound("duh"), "word": "dog", "word_audio": "dog"},
+    {"pattern": "F f", "letter_name": "eff", "concept": "Consonant sound", "sound_name": "/f/ (입술을 가볍게 물고 내는 프 소리)", "sound_audio": repeat_sound("fff"), "word": "fish", "word_audio": "fish"},
+    {"pattern": "G g", "letter_name": "gee", "concept": "Consonant sound", "sound_name": "/g/ (그에 가까운 소리)", "sound_audio": repeat_sound("guh"), "word": "goat", "word_audio": "goat"},
+    {"pattern": "H h", "letter_name": "aitch", "concept": "Consonant sound", "sound_name": "/h/ (ㅎ에 가까운 숨소리)", "sound_audio": repeat_sound("huh"), "word": "hat", "word_audio": "hat"},
+    {"pattern": "J j", "letter_name": "jay", "concept": "Consonant sound", "sound_name": "/dʒ/ (즈와 쥬 사이 소리)", "sound_audio": repeat_sound("juh"), "word": "jam", "word_audio": "jam"},
+    {"pattern": "K k", "letter_name": "kay", "concept": "Consonant sound", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "kite", "word_audio": "kite"},
+    {"pattern": "L l", "letter_name": "el", "concept": "Consonant sound", "sound_name": "/l/ (혀끝을 윗잇몸에 대는 ㄹ 소리)", "sound_audio": repeat_sound("lll"), "word": "lion", "word_audio": "lion"},
+    {"pattern": "M m", "letter_name": "em", "concept": "Consonant sound", "sound_name": "/m/ (음에 가까운 소리)", "sound_audio": repeat_sound("mmm"), "word": "moon", "word_audio": "moon"},
+    {"pattern": "N n", "letter_name": "en", "concept": "Consonant sound", "sound_name": "/n/ (느에 가까운 소리)", "sound_audio": repeat_sound("nnn"), "word": "nest", "word_audio": "nest"},
+    {"pattern": "P p", "letter_name": "pee", "concept": "Consonant sound", "sound_name": "/p/ (프에 가까운 소리)", "sound_audio": repeat_sound("puh"), "word": "pig", "word_audio": "pig"},
+    {"pattern": "Q q", "letter_name": "cue", "concept": "Usually /kw/", "sound_name": "/kw/ (크우에 가까운 소리)", "sound_audio": repeat_sound("kwuh"), "word": "queen", "word_audio": "queen"},
+    {"pattern": "R r", "letter_name": "ar", "concept": "Consonant sound", "sound_name": "/r/ (혀를 말아 내는 r 소리)", "sound_audio": repeat_sound("ruh"), "word": "red", "word_audio": "red"},
+    {"pattern": "S s", "letter_name": "ess", "concept": "Consonant sound", "sound_name": "/s/ (스에 가까운 소리)", "sound_audio": repeat_sound("sss"), "word": "sun", "word_audio": "sun"},
+    {"pattern": "T t", "letter_name": "tee", "concept": "Consonant sound", "sound_name": "/t/ (트에 가까운 소리)", "sound_audio": repeat_sound("tuh"), "word": "top", "word_audio": "top"},
+    {"pattern": "V v", "letter_name": "vee", "concept": "Consonant sound", "sound_name": "/v/ (입술을 가볍게 물고 내는 브 소리)", "sound_audio": repeat_sound("vvv"), "word": "van", "word_audio": "van"},
+    {"pattern": "W w", "letter_name": "double you", "concept": "Consonant sound", "sound_name": "/w/ (우에서 시작하는 w 소리)", "sound_audio": repeat_sound("wuh"), "word": "window", "word_audio": "window"},
+    {"pattern": "X x", "letter_name": "ex", "concept": "Often /ks/", "sound_name": "/ks/ (크스에 가까운 소리)", "sound_audio": repeat_sound("ks"), "word": "fox", "word_audio": "fox"},
+    {"pattern": "Y y", "letter_name": "why", "concept": "Consonant sound", "sound_name": "/y/ (이에서 시작하는 y 소리)", "sound_audio": repeat_sound("yuh"), "word": "yes", "word_audio": "yes"},
+    {"pattern": "Z z", "letter_name": "zee", "concept": "Consonant sound", "sound_name": "/z/ (즈에 가까운 소리)", "sound_audio": repeat_sound("zzz"), "word": "zebra", "word_audio": "zebra"},
 ]
 
 short_vowels = [
-    {
-        "pattern": "A a",
-        "letter_name": "ay",
-        "concept": "Short vowel",
-        "sound_name": "Short a /æ/",
-        "sound_audio": repeat_sound("a"),
-        "word": "apple",
-        "word_audio": "apple"
-    },
-    {
-        "pattern": "E e",
-        "letter_name": "ee",
-        "concept": "Short vowel",
-        "sound_name": "Short e /e/",
-        "sound_audio": repeat_sound("eh"),
-        "word": "egg",
-        "word_audio": "egg"
-    },
-    {
-        "pattern": "I i",
-        "letter_name": "eye",
-        "concept": "Short vowel",
-        "sound_name": "Short i /ɪ/",
-        "sound_audio": repeat_sound("ih"),
-        "word": "igloo",
-        "word_audio": "igloo"
-    },
-    {
-        "pattern": "O o",
-        "letter_name": "oh",
-        "concept": "Short vowel",
-        "sound_name": "Short o /ɑ/",
-        "sound_audio": repeat_sound("ah"),
-        "word": "octopus",
-        "word_audio": "octopus"
-    },
-    {
-        "pattern": "U u",
-        "letter_name": "you",
-        "concept": "Short vowel",
-        "sound_name": "Short u /ʌ/",
-        "sound_audio": repeat_sound("uh"),
-        "word": "umbrella",
-        "word_audio": "umbrella"
-    },
+    {"pattern": "A a", "letter_name": "ay", "concept": "Short vowel", "sound_name": "Short a /æ/ (애에 가까운 소리)", "sound_audio": repeat_sound("a"), "word": "apple", "word_audio": "apple"},
+    {"pattern": "E e", "letter_name": "ee", "concept": "Short vowel", "sound_name": "Short e /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "egg", "word_audio": "egg"},
+    {"pattern": "I i", "letter_name": "eye", "concept": "Short vowel", "sound_name": "Short i /ɪ/ (이와 에 사이의 짧은 소리)", "sound_audio": repeat_sound("ih"), "word": "igloo", "word_audio": "igloo"},
+    {"pattern": "O o", "letter_name": "oh", "concept": "Short vowel", "sound_name": "Short o /ɑ/ (아에 가까운 소리)", "sound_audio": repeat_sound("ah"), "word": "octopus", "word_audio": "octopus"},
+    {"pattern": "U u", "letter_name": "you", "concept": "Short vowel", "sound_name": "Short u /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "umbrella", "word_audio": "umbrella"},
 ]
 
 long_vowels = [
-    {"pattern": "A a", "concept": "Long vowel", "sound_name": "Long a /eɪ/", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
-    {"pattern": "E e", "concept": "Long vowel", "sound_name": "Long e /iː/", "sound_audio": repeat_sound("ee"), "word": "tree", "word_audio": "tree"},
-    {"pattern": "I i", "concept": "Long vowel", "sound_name": "Long i /aɪ/", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
-    {"pattern": "O o", "concept": "Long vowel", "sound_name": "Long o /oʊ/", "sound_audio": repeat_sound("oh"), "word": "rope", "word_audio": "rope"},
-    {"pattern": "U u", "concept": "Long vowel", "sound_name": "Long u /juː/", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
+    {"pattern": "A a", "concept": "Long vowel", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
+    {"pattern": "E e", "concept": "Long vowel", "sound_name": "Long e /iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "tree", "word_audio": "tree"},
+    {"pattern": "I i", "concept": "Long vowel", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
+    {"pattern": "O o", "concept": "Long vowel", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "rope", "word_audio": "rope"},
+    {"pattern": "U u", "concept": "Long vowel", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
 ]
 
 vowel_exceptions = [
-    {"pattern": "A a", "concept": "A before l", "sound_name": "A as /ɔː/", "sound_audio": repeat_sound("aw"), "word": "ball", "word_audio": "ball"},
-    {"pattern": "A a", "concept": "A before r", "sound_name": "A as /ɑːr/", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
-    {"pattern": "A a", "concept": "A in father", "sound_name": "A as /ɑː/", "sound_audio": repeat_sound("ah"), "word": "father", "word_audio": "father"},
-    {"pattern": "A a", "concept": "Unstressed a", "sound_name": "A as /ə/", "sound_audio": repeat_sound("uh"), "word": "about", "word_audio": "about"},
-    {"pattern": "O o", "concept": "O before v / m / n sometimes", "sound_name": "O as /ʌ/", "sound_audio": repeat_sound("uh"), "word": "love", "word_audio": "love"},
-    {"pattern": "O o", "concept": "O in do / to", "sound_name": "O as /uː/", "sound_audio": repeat_sound("oo"), "word": "do", "word_audio": "do"},
-    {"pattern": "OO", "concept": "Short oo", "sound_name": "OO as /ʊ/", "sound_audio": repeat_sound("u"), "word": "book", "word_audio": "book"},
-    {"pattern": "OO", "concept": "Long oo", "sound_name": "OO as /uː/", "sound_audio": repeat_sound("oo"), "word": "moon", "word_audio": "moon"},
-    {"pattern": "EA", "concept": "EA exception", "sound_name": "EA as /e/", "sound_audio": repeat_sound("eh"), "word": "bread", "word_audio": "bread"},
-    {"pattern": "OU", "concept": "OU exception", "sound_name": "OU as /ʌ/", "sound_audio": repeat_sound("uh"), "word": "country", "word_audio": "country"},
+    {"pattern": "A a", "concept": "A before l", "sound_name": "A as /ɔː/ (오와 어 사이의 긴 소리)", "sound_audio": repeat_sound("aw"), "word": "ball", "word_audio": "ball"},
+    {"pattern": "A a", "concept": "A before r", "sound_name": "A as /ɑːr/ (아르에 가까운 소리)", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
+    {"pattern": "A a", "concept": "A in father", "sound_name": "A as /ɑː/ (긴 아 소리)", "sound_audio": repeat_sound("ah"), "word": "father", "word_audio": "father"},
+    {"pattern": "A a", "concept": "Unstressed a", "sound_name": "A as /ə/ (약한 어 소리)", "sound_audio": repeat_sound("uh"), "word": "about", "word_audio": "about"},
+    {"pattern": "O o", "concept": "O before v / m / n sometimes", "sound_name": "O as /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "love", "word_audio": "love"},
+    {"pattern": "O o", "concept": "O in do / to", "sound_name": "O as /uː/ (긴 우 소리)", "sound_audio": repeat_sound("oo"), "word": "do", "word_audio": "do"},
+    {"pattern": "OO", "concept": "Short oo", "sound_name": "OO as /ʊ/ (짧은 우 소리)", "sound_audio": repeat_sound("u"), "word": "book", "word_audio": "book"},
+    {"pattern": "OO", "concept": "Long oo", "sound_name": "OO as /uː/ (긴 우 소리)", "sound_audio": repeat_sound("oo"), "word": "moon", "word_audio": "moon"},
+    {"pattern": "EA", "concept": "EA exception", "sound_name": "EA as /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "bread", "word_audio": "bread"},
+    {"pattern": "OU", "concept": "OU exception", "sound_name": "OU as /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "country", "word_audio": "country"},
 ]
 
 blends = [
-    {"pattern": "bl", "concept": "Consonant blend", "sound_name": "bl", "sound_audio": repeat_sound("bl"), "word": "black", "word_audio": "black"},
-    {"pattern": "br", "concept": "Consonant blend", "sound_name": "br", "sound_audio": repeat_sound("br"), "word": "brown", "word_audio": "brown"},
-    {"pattern": "cl", "concept": "Consonant blend", "sound_name": "cl", "sound_audio": repeat_sound("cl"), "word": "clock", "word_audio": "clock"},
-    {"pattern": "cr", "concept": "Consonant blend", "sound_name": "cr", "sound_audio": repeat_sound("cr"), "word": "crab", "word_audio": "crab"},
-    {"pattern": "dr", "concept": "Consonant blend", "sound_name": "dr", "sound_audio": repeat_sound("dr"), "word": "drum", "word_audio": "drum"},
-    {"pattern": "fl", "concept": "Consonant blend", "sound_name": "fl", "sound_audio": repeat_sound("fl"), "word": "flag", "word_audio": "flag"},
-    {"pattern": "fr", "concept": "Consonant blend", "sound_name": "fr", "sound_audio": repeat_sound("fr"), "word": "frog", "word_audio": "frog"},
-    {"pattern": "gl", "concept": "Consonant blend", "sound_name": "gl", "sound_audio": repeat_sound("gl"), "word": "glass", "word_audio": "glass"},
-    {"pattern": "gr", "concept": "Consonant blend", "sound_name": "gr", "sound_audio": repeat_sound("gr"), "word": "green", "word_audio": "green"},
-    {"pattern": "pl", "concept": "Consonant blend", "sound_name": "pl", "sound_audio": repeat_sound("pl"), "word": "plane", "word_audio": "plane"},
-    {"pattern": "pr", "concept": "Consonant blend", "sound_name": "pr", "sound_audio": repeat_sound("pr"), "word": "present", "word_audio": "present"},
-    {"pattern": "sk", "concept": "Consonant blend", "sound_name": "sk", "sound_audio": repeat_sound("sk"), "word": "skate", "word_audio": "skate"},
-    {"pattern": "sl", "concept": "Consonant blend", "sound_name": "sl", "sound_audio": repeat_sound("sl"), "word": "sleep", "word_audio": "sleep"},
-    {"pattern": "sm", "concept": "Consonant blend", "sound_name": "sm", "sound_audio": repeat_sound("sm"), "word": "smile", "word_audio": "smile"},
-    {"pattern": "sn", "concept": "Consonant blend", "sound_name": "sn", "sound_audio": repeat_sound("sn"), "word": "snake", "word_audio": "snake"},
-    {"pattern": "sp", "concept": "Consonant blend", "sound_name": "sp", "sound_audio": repeat_sound("sp"), "word": "spoon", "word_audio": "spoon"},
-    {"pattern": "st", "concept": "Consonant blend", "sound_name": "st", "sound_audio": repeat_sound("st"), "word": "star", "word_audio": "star"},
-    {"pattern": "tr", "concept": "Consonant blend", "sound_name": "tr", "sound_audio": repeat_sound("tr"), "word": "tree", "word_audio": "tree"},
+    {"pattern": "bl", "concept": "Consonant blend", "sound_name": "bl (블에 가까운 연결 소리)", "sound_audio": repeat_sound("bl"), "word": "black", "word_audio": "black"},
+    {"pattern": "br", "concept": "Consonant blend", "sound_name": "br (브르에 가까운 연결 소리)", "sound_audio": repeat_sound("br"), "word": "brown", "word_audio": "brown"},
+    {"pattern": "cl", "concept": "Consonant blend", "sound_name": "cl (클에 가까운 연결 소리)", "sound_audio": repeat_sound("cl"), "word": "clock", "word_audio": "clock"},
+    {"pattern": "cr", "concept": "Consonant blend", "sound_name": "cr (크르에 가까운 연결 소리)", "sound_audio": repeat_sound("cr"), "word": "crab", "word_audio": "crab"},
+    {"pattern": "dr", "concept": "Consonant blend", "sound_name": "dr (드르에 가까운 연결 소리)", "sound_audio": repeat_sound("dr"), "word": "drum", "word_audio": "drum"},
+    {"pattern": "fl", "concept": "Consonant blend", "sound_name": "fl (플에 가까운 연결 소리)", "sound_audio": repeat_sound("fl"), "word": "flag", "word_audio": "flag"},
+    {"pattern": "fr", "concept": "Consonant blend", "sound_name": "fr (프르에 가까운 연결 소리)", "sound_audio": repeat_sound("fr"), "word": "frog", "word_audio": "frog"},
+    {"pattern": "gl", "concept": "Consonant blend", "sound_name": "gl (글에 가까운 연결 소리)", "sound_audio": repeat_sound("gl"), "word": "glass", "word_audio": "glass"},
+    {"pattern": "gr", "concept": "Consonant blend", "sound_name": "gr (그르에 가까운 연결 소리)", "sound_audio": repeat_sound("gr"), "word": "green", "word_audio": "green"},
+    {"pattern": "pl", "concept": "Consonant blend", "sound_name": "pl (플에 가까운 연결 소리)", "sound_audio": repeat_sound("pl"), "word": "plane", "word_audio": "plane"},
+    {"pattern": "pr", "concept": "Consonant blend", "sound_name": "pr (프르에 가까운 연결 소리)", "sound_audio": repeat_sound("pr"), "word": "present", "word_audio": "present"},
+    {"pattern": "sk", "concept": "Consonant blend", "sound_name": "sk (스크에 가까운 연결 소리)", "sound_audio": repeat_sound("sk"), "word": "skate", "word_audio": "skate"},
+    {"pattern": "sl", "concept": "Consonant blend", "sound_name": "sl (슬에 가까운 연결 소리)", "sound_audio": repeat_sound("sl"), "word": "sleep", "word_audio": "sleep"},
+    {"pattern": "sm", "concept": "Consonant blend", "sound_name": "sm (슴에 가까운 연결 소리)", "sound_audio": repeat_sound("sm"), "word": "smile", "word_audio": "smile"},
+    {"pattern": "sn", "concept": "Consonant blend", "sound_name": "sn (슨에 가까운 연결 소리)", "sound_audio": repeat_sound("sn"), "word": "snake", "word_audio": "snake"},
+    {"pattern": "sp", "concept": "Consonant blend", "sound_name": "sp (스프에 가까운 연결 소리)", "sound_audio": repeat_sound("sp"), "word": "spoon", "word_audio": "spoon"},
+    {"pattern": "st", "concept": "Consonant blend", "sound_name": "st (스트에 가까운 연결 소리)", "sound_audio": repeat_sound("st"), "word": "star", "word_audio": "star"},
+    {"pattern": "tr", "concept": "Consonant blend", "sound_name": "tr (트르에 가까운 연결 소리)", "sound_audio": repeat_sound("tr"), "word": "tree", "word_audio": "tree"},
 ]
 
 digraphs = [
-    {"pattern": "ch", "concept": "Consonant digraph", "sound_name": "/tʃ/", "sound_audio": repeat_sound("ch"), "word": "chair", "word_audio": "chair"},
-    {"pattern": "sh", "concept": "Consonant digraph", "sound_name": "/ʃ/", "sound_audio": repeat_sound("sh"), "word": "ship", "word_audio": "ship"},
-    {"pattern": "th", "concept": "Voiceless th", "sound_name": "/θ/", "sound_audio": repeat_sound("th"), "word": "three", "word_audio": "three"},
-    {"pattern": "th", "concept": "Voiced th", "sound_name": "/ð/", "sound_audio": repeat_sound("th"), "word": "this", "word_audio": "this"},
-    {"pattern": "wh", "concept": "Consonant digraph", "sound_name": "/w/", "sound_audio": repeat_sound("wuh"), "word": "whale", "word_audio": "whale"},
-    {"pattern": "ph", "concept": "Consonant digraph", "sound_name": "/f/", "sound_audio": repeat_sound("fff"), "word": "phone", "word_audio": "phone"},
-    {"pattern": "ck", "concept": "Consonant digraph", "sound_name": "/k/", "sound_audio": repeat_sound("kuh"), "word": "duck", "word_audio": "duck"},
+    {"pattern": "ch", "concept": "Consonant digraph", "sound_name": "/tʃ/ (치에 가까운 소리)", "sound_audio": repeat_sound("ch"), "word": "chair", "word_audio": "chair"},
+    {"pattern": "sh", "concept": "Consonant digraph", "sound_name": "/ʃ/ (쉬에 가까운 소리)", "sound_audio": repeat_sound("sh"), "word": "ship", "word_audio": "ship"},
+    {"pattern": "th", "concept": "Voiceless th", "sound_name": "/θ/ (혀를 살짝 내밀고 내는 스 소리)", "sound_audio": repeat_sound("th"), "word": "three", "word_audio": "three"},
+    {"pattern": "th", "concept": "Voiced th", "sound_name": "/ð/ (혀를 살짝 내밀고 내는 드 소리)", "sound_audio": repeat_sound("th"), "word": "this", "word_audio": "this"},
+    {"pattern": "wh", "concept": "Consonant digraph", "sound_name": "/w/ (우에서 시작하는 w 소리)", "sound_audio": repeat_sound("wuh"), "word": "whale", "word_audio": "whale"},
+    {"pattern": "ph", "concept": "Consonant digraph", "sound_name": "/f/ (입술을 가볍게 물고 내는 프 소리)", "sound_audio": repeat_sound("fff"), "word": "phone", "word_audio": "phone"},
+    {"pattern": "ck", "concept": "Consonant digraph", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "duck", "word_audio": "duck"},
 ]
 
 vowel_teams = [
-    {"pattern": "ai", "concept": "Usually middle", "sound_name": "/eɪ/", "sound_audio": repeat_sound("ay"), "word": "rain", "word_audio": "rain"},
-    {"pattern": "ay", "concept": "Usually end", "sound_name": "/eɪ/", "sound_audio": repeat_sound("ay"), "word": "day", "word_audio": "day"},
-    {"pattern": "ee", "concept": "Long e", "sound_name": "/iː/", "sound_audio": repeat_sound("ee"), "word": "see", "word_audio": "see"},
-    {"pattern": "ea", "concept": "Usually long e", "sound_name": "/iː/", "sound_audio": repeat_sound("ee"), "word": "eat", "word_audio": "eat"},
-    {"pattern": "oa", "concept": "Usually middle", "sound_name": "/oʊ/", "sound_audio": repeat_sound("oh"), "word": "boat", "word_audio": "boat"},
-    {"pattern": "ow", "concept": "Often end", "sound_name": "/oʊ/", "sound_audio": repeat_sound("oh"), "word": "snow", "word_audio": "snow"},
-    {"pattern": "ow", "concept": "Another sound", "sound_name": "/aʊ/", "sound_audio": repeat_sound("ow"), "word": "cow", "word_audio": "cow"},
-    {"pattern": "ou", "concept": "Often /aʊ/", "sound_name": "/aʊ/", "sound_audio": repeat_sound("ow"), "word": "house", "word_audio": "house"},
-    {"pattern": "oi", "concept": "Usually middle", "sound_name": "/ɔɪ/", "sound_audio": repeat_sound("oy"), "word": "coin", "word_audio": "coin"},
-    {"pattern": "oy", "concept": "Usually end", "sound_name": "/ɔɪ/", "sound_audio": repeat_sound("oy"), "word": "boy", "word_audio": "boy"},
+    {"pattern": "ai", "concept": "Usually middle", "sound_name": "/eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "rain", "word_audio": "rain"},
+    {"pattern": "ay", "concept": "Usually end", "sound_name": "/eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "day", "word_audio": "day"},
+    {"pattern": "ee", "concept": "Long e", "sound_name": "/iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "see", "word_audio": "see"},
+    {"pattern": "ea", "concept": "Usually long e", "sound_name": "/iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "eat", "word_audio": "eat"},
+    {"pattern": "oa", "concept": "Usually middle", "sound_name": "/oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "boat", "word_audio": "boat"},
+    {"pattern": "ow", "concept": "Often end", "sound_name": "/oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "snow", "word_audio": "snow"},
+    {"pattern": "ow", "concept": "Another sound", "sound_name": "/aʊ/ (아우에 가까운 소리)", "sound_audio": repeat_sound("ow"), "word": "cow", "word_audio": "cow"},
+    {"pattern": "ou", "concept": "Often /aʊ/", "sound_name": "/aʊ/ (아우에 가까운 소리)", "sound_audio": repeat_sound("ow"), "word": "house", "word_audio": "house"},
+    {"pattern": "oi", "concept": "Usually middle", "sound_name": "/ɔɪ/ (오이에 가까운 소리)", "sound_audio": repeat_sound("oy"), "word": "coin", "word_audio": "coin"},
+    {"pattern": "oy", "concept": "Usually end", "sound_name": "/ɔɪ/ (오이에 가까운 소리)", "sound_audio": repeat_sound("oy"), "word": "boy", "word_audio": "boy"},
 ]
 
 r_controlled = [
-    {"pattern": "ar", "concept": "R-controlled vowel", "sound_name": "/ɑːr/", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
-    {"pattern": "er", "concept": "R-controlled vowel", "sound_name": "/ɜːr/", "sound_audio": repeat_sound("er"), "word": "her", "word_audio": "her"},
-    {"pattern": "ir", "concept": "R-controlled vowel", "sound_name": "/ɜːr/", "sound_audio": repeat_sound("er"), "word": "bird", "word_audio": "bird"},
-    {"pattern": "or", "concept": "R-controlled vowel", "sound_name": "/ɔːr/", "sound_audio": repeat_sound("or"), "word": "corn", "word_audio": "corn"},
-    {"pattern": "ur", "concept": "R-controlled vowel", "sound_name": "/ɜːr/", "sound_audio": repeat_sound("er"), "word": "turn", "word_audio": "turn"},
+    {"pattern": "ar", "concept": "R-controlled vowel", "sound_name": "/ɑːr/ (아르에 가까운 소리)", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
+    {"pattern": "er", "concept": "R-controlled vowel", "sound_name": "/ɜːr/ (얼에 가까운 소리)", "sound_audio": repeat_sound("er"), "word": "her", "word_audio": "her"},
+    {"pattern": "ir", "concept": "R-controlled vowel", "sound_name": "/ɜːr/ (얼에 가까운 소리)", "sound_audio": repeat_sound("er"), "word": "bird", "word_audio": "bird"},
+    {"pattern": "or", "concept": "R-controlled vowel", "sound_name": "/ɔːr/ (오르에 가까운 소리)", "sound_audio": repeat_sound("or"), "word": "corn", "word_audio": "corn"},
+    {"pattern": "ur", "concept": "R-controlled vowel", "sound_name": "/ɜːr/ (얼에 가까운 소리)", "sound_audio": repeat_sound("er"), "word": "turn", "word_audio": "turn"},
 ]
 
 silent_e = [
-    {"pattern": "a_e", "concept": "Silent e", "sound_name": "Long a /eɪ/", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
-    {"pattern": "i_e", "concept": "Silent e", "sound_name": "Long i /aɪ/", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
-    {"pattern": "o_e", "concept": "Silent e", "sound_name": "Long o /oʊ/", "sound_audio": repeat_sound("oh"), "word": "home", "word_audio": "home"},
-    {"pattern": "u_e", "concept": "Silent e", "sound_name": "Long u /juː/", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
+    {"pattern": "a_e", "concept": "Silent e", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
+    {"pattern": "i_e", "concept": "Silent e", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
+    {"pattern": "o_e", "concept": "Silent e", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "home", "word_audio": "home"},
+    {"pattern": "u_e", "concept": "Silent e", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
 ]
 
 
@@ -439,9 +229,9 @@ def show_cards(data, title, show_letter_name=False):
         st.markdown('<div class="phonics-card">', unsafe_allow_html=True)
 
         if show_letter_name:
-            col1, col2, col3, col4, col5 = st.columns([1.1, 1.3, 1.5, 1.7, 1.7])
+            col1, col2, col3, col4, col5 = st.columns([1.1, 1.3, 1.5, 1.9, 1.7])
         else:
-            col1, col2, col3, col4 = st.columns([1.1, 1.6, 1.7, 1.7])
+            col1, col2, col3, col4 = st.columns([1.1, 1.6, 2.1, 1.7])
 
         with col1:
             st.markdown("<div class='label-small'>글자 / 패턴</div>", unsafe_allow_html=True)
@@ -526,8 +316,8 @@ with tabs[0]:
         [
             "알파벳 이름과 실제 자음 소리는 다릅니다.",
             "예를 들어 B의 이름은 bee이지만, 실제 소리는 /b/입니다.",
-            "학생들은 먼저 알파벳 이름을 듣고, 그다음 실제 소리, 마지막으로 예시 단어를 들을 수 있습니다.",
-            "실제 소리 버튼은 알파벳 이름을 읽지 않고, 자음 소리만 두 번 들려줍니다."
+            "발음기호 옆의 한글 설명은 정확한 발음값이 아니라 소리를 떠올리기 위한 힌트입니다.",
+            "정확한 발음은 반드시 실제 소리 듣기 버튼으로 확인하도록 지도하면 좋습니다."
         ]
     )
     show_cards(consonant_sounds, "① 자음 소리", show_letter_name=True)
@@ -539,7 +329,7 @@ with tabs[1]:
             "단모음은 짧게 나는 모음 소리입니다.",
             "보통 모음이 자음 사이에 끼어 있는 CVC 단어에서 많이 나타납니다.",
             "예: cat, bed, sit, hot, cup",
-            "학생들은 알파벳 이름을 먼저 듣고, 실제 단모음 소리, 예시 단어 순서로 들을 수 있습니다.",
+            "발음기호와 한글 힌트를 함께 보되, 실제 소리는 버튼으로 듣고 익힙니다.",
             "실제 소리 버튼은 short a라고 읽지 않고, 실제 영어 소리만 두 번 들려줍니다."
         ]
     )
