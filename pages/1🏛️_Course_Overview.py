@@ -1,6 +1,10 @@
 import streamlit as st
 
-st.set_page_config(page_title="Alex's Fun English", page_icon="🌈", layout="wide")
+st.set_page_config(
+    page_title="Alex's Fun English",
+    page_icon="🌈",
+    layout="wide"
+)
 
 # ---------------------------
 # CSS
@@ -9,61 +13,18 @@ st.markdown(
     """
     <style>
     .top-card {
-        background: linear-gradient(135deg, #ffffff 0%, #eef6ff 45%, #fff7ed 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #eef6ff 50%, #fff7ed 100%);
         border: 1.5px solid #d9e7ff;
         border-radius: 34px;
-        padding: 46px 34px;
+        padding: 42px 34px;
         text-align: center;
         box-shadow: 0 12px 32px rgba(31,78,121,0.13);
-        margin-bottom: 32px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .abc-strip {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
-    }
-
-    .abc-badge {
-        width: 46px;
-        height: 46px;
-        border-radius: 15px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 23px;
-        font-weight: 900;
-        color: #1f4e79;
-        background: #ffffff;
-        border: 1.5px solid #d9e7ff;
-        box-shadow: 0 4px 10px rgba(31,78,121,0.08);
-    }
-
-    .abc-badge:nth-child(2n) {
-        background: #fff3d9;
-        color: #8a5a00;
-        border-color: #ffe7b8;
-    }
-
-    .abc-badge:nth-child(3n) {
-        background: #eafaf0;
-        color: #2f7d46;
-        border-color: #ccefd8;
-    }
-
-    .abc-badge:nth-child(4n) {
-        background: #fce7f3;
-        color: #be185d;
-        border-color: #fbcfe8;
+        margin-bottom: 30px;
     }
 
     .course-pill {
         display: inline-block;
-        background: linear-gradient(135deg, #eaf3ff, #ffffff);
+        background-color: #eaf3ff;
         color: #1f4e79;
         font-size: 16px;
         font-weight: 800;
@@ -75,25 +36,24 @@ st.markdown(
 
     .main-title {
         color:#1f4e79;
-        font-size: 50px;
-        font-weight: 950;
-        margin: 12px 0 8px 0;
-        letter-spacing: -1px;
+        font-size: 48px;
+        font-weight: 900;
+        margin: 12px 0 10px 0;
     }
 
     .main-subtitle {
         color:#2f6f9f;
-        font-size: 29px;
-        font-weight: 850;
+        font-size: 28px;
+        font-weight: 800;
         margin: 0 0 22px 0;
     }
 
     .main-desc {
         font-size: 22px;
-        line-height: 1.78;
+        line-height: 1.75;
         color: #34495e;
         margin: 0 auto;
-        max-width: 920px;
+        max-width: 900px;
     }
 
     .highlight {
@@ -102,74 +62,55 @@ st.markdown(
         color: #1f4e79;
     }
 
+    .abc-box {
+        background: #ffffff;
+        border: 1.5px solid #d9e7ff;
+        border-radius: 16px;
+        padding: 12px 0;
+        text-align: center;
+        font-size: 24px;
+        font-weight: 900;
+        color: #1f4e79;
+        box-shadow: 0 4px 10px rgba(31,78,121,0.08);
+        margin-bottom: 8px;
+    }
+
     .section-title {
         color:#1f4e79;
-        font-size:31px;
+        font-size:32px;
         font-weight:900;
-        margin: 30px 0 16px 0;
-    }
-
-    .activity-card {
-        background:#ffffff;
-        border: 1.5px solid #e4ebff;
-        border-radius: 24px;
-        padding: 24px 26px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        min-height: 185px;
-        transition: transform 0.2s ease;
-    }
-
-    .activity-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 24px rgba(0,0,0,0.08);
-    }
-
-    .activity-icon {
-        font-size: 42px;
-        margin-bottom: 8px;
-    }
-
-    .activity-title {
-        font-size: 23px;
-        font-weight: 900;
-        color:#1f4e79;
-        margin-bottom: 8px;
-    }
-
-    .activity-text {
-        font-size: 18px;
-        line-height: 1.65;
-        color:#34495e;
+        margin: 28px 0 18px 0;
+        text-align: center;
     }
 
     .path-card-blue {
         background: linear-gradient(135deg, #f7fbff, #eaf3ff);
         border: 1.5px solid #d9e7ff;
-        border-radius: 25px;
-        padding: 26px;
+        border-radius: 28px;
+        padding: 30px 24px;
         text-align:center;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        min-height: 225px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+        min-height: 250px;
     }
 
     .path-card-yellow {
         background: linear-gradient(135deg, #fffdf7, #fff3d9);
         border: 1.5px solid #ffe7b8;
-        border-radius: 25px;
-        padding: 26px;
+        border-radius: 28px;
+        padding: 30px 24px;
         text-align:center;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        min-height: 225px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+        min-height: 250px;
     }
 
     .path-card-green {
         background: linear-gradient(135deg, #f7fff9, #e7f8ed);
         border: 1.5px solid #ccefd8;
-        border-radius: 25px;
-        padding: 26px;
+        border-radius: 28px;
+        padding: 30px 24px;
         text-align:center;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-        min-height: 225px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+        min-height: 250px;
     }
 
     .path-step {
@@ -179,24 +120,24 @@ st.markdown(
         background: white;
         font-size: 15px;
         font-weight: 900;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
         border: 1px solid rgba(0,0,0,0.06);
     }
 
     .path-icon {
-        font-size: 46px;
-        margin-bottom: 6px;
+        font-size: 50px;
+        margin-bottom: 8px;
     }
 
     .path-title {
-        font-size: 25px;
+        font-size: 26px;
         font-weight: 900;
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
 
     .path-text {
         font-size: 20px;
-        line-height: 1.6;
+        line-height: 1.65;
         color:#34495e;
     }
 
@@ -207,7 +148,7 @@ st.markdown(
         padding: 30px 28px;
         text-align: center;
         box-shadow: 0 8px 22px rgba(0,0,0,0.07);
-        margin-top: 8px;
+        margin-top: 26px;
     }
 
     .message-main {
@@ -230,27 +171,27 @@ st.markdown(
 )
 
 # ---------------------------
+# Alphabet Decoration
+# ---------------------------
+letters1 = ["A", "B", "C", "D", "E", "F", "G"]
+letters2 = ["H", "I", "J", "K", "L", "M", "N"]
+
+cols = st.columns(len(letters1))
+for col, letter in zip(cols, letters1):
+    with col:
+        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
+
+cols = st.columns(len(letters2))
+for col, letter in zip(cols, letters2):
+    with col:
+        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
+
+# ---------------------------
 # Top Card
 # ---------------------------
 st.markdown(
     """
     <div class="top-card">
-        <div class="abc-strip">
-            <div class="abc-badge">A</div>
-            <div class="abc-badge">B</div>
-            <div class="abc-badge">C</div>
-            <div class="abc-badge">D</div>
-            <div class="abc-badge">E</div>
-            <div class="abc-badge">F</div>
-            <div class="abc-badge">G</div>
-            <div class="abc-badge">H</div>
-            <div class="abc-badge">I</div>
-            <div class="abc-badge">J</div>
-            <div class="abc-badge">K</div>
-            <div class="abc-badge">L</div>
-            <div class="abc-badge">M</div>
-        </div>
-
         <div style="font-size: 58px; margin-bottom: 10px;">
             🌱 🔤 🌈 ✨
         </div>
@@ -273,121 +214,23 @@ st.markdown(
             알파벳 소리, 쉬운 단어, 기초 영어 듣기, 그리고 문장 구조를 
             <span class="highlight">차근차근 재미있게</span> 배울 수 있습니다.
         </p>
-
-        <div class="abc-strip" style="margin-top: 28px;">
-            <div class="abc-badge">N</div>
-            <div class="abc-badge">O</div>
-            <div class="abc-badge">P</div>
-            <div class="abc-badge">Q</div>
-            <div class="abc-badge">R</div>
-            <div class="abc-badge">S</div>
-            <div class="abc-badge">T</div>
-            <div class="abc-badge">U</div>
-            <div class="abc-badge">V</div>
-            <div class="abc-badge">W</div>
-            <div class="abc-badge">X</div>
-            <div class="abc-badge">Y</div>
-            <div class="abc-badge">Z</div>
-        </div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# ---------------------------
-# Course Activities
-# ---------------------------
-st.markdown("<div class='section-title'>🧭 Course Activities</div>", unsafe_allow_html=True)
+letters3 = ["O", "P", "Q", "R", "S", "T"]
+letters4 = ["U", "V", "W", "X", "Y", "Z"]
 
-col1, col2, col3 = st.columns(3)
+cols = st.columns(len(letters3))
+for col, letter in zip(cols, letters3):
+    with col:
+        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
 
-with col1:
-    st.markdown(
-        """
-        <div class="activity-card">
-            <div class="activity-icon">🔤</div>
-            <div class="activity-title">Alphabet & Phonics</div>
-            <div class="activity-text">
-                알파벳 이름과 실제 소리를 듣고, 영어 읽기의 첫걸음을 익혀요.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with col2:
-    st.markdown(
-        """
-        <div class="activity-card">
-            <div class="activity-icon">🌱</div>
-            <div class="activity-title">Word Practice</div>
-            <div class="activity-text">
-                자주 쓰는 쉬운 단어를 테마별로 배우고 반복해서 복습해요.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with col3:
-    st.markdown(
-        """
-        <div class="activity-card">
-            <div class="activity-icon">🔊</div>
-            <div class="activity-title">Listening Practice</div>
-            <div class="activity-text">
-                단어와 문장을 듣고, 소리와 의미를 자연스럽게 연결해요.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-st.write("")
-
-col4, col5, col6 = st.columns(3)
-
-with col4:
-    st.markdown(
-        """
-        <div class="activity-card">
-            <div class="activity-icon">🧩</div>
-            <div class="activity-title">Sentence Structure</div>
-            <div class="activity-text">
-                be동사, 일반동사, 시제, 부정문을 쉬운 문제로 연습해요.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with col5:
-    st.markdown(
-        """
-        <div class="activity-card">
-            <div class="activity-icon">🗣️</div>
-            <div class="activity-title">Speaking Practice</div>
-            <div class="activity-text">
-                쉬운 단어와 문장을 따라 말하며 영어 말하기 자신감을 길러요.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with col6:
-    st.markdown(
-        """
-        <div class="activity-card">
-            <div class="activity-icon">🎮</div>
-            <div class="activity-title">Fun Review</div>
-            <div class="activity-text">
-                퀴즈와 반복 연습으로 영어를 게임처럼 즐겁게 복습해요.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+cols = st.columns(len(letters4))
+for col, letter in zip(cols, letters4):
+    with col:
+        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
 
 # ---------------------------
 # Learning Path
@@ -402,10 +245,12 @@ with p1:
         <div class="path-card-blue">
             <div class="path-step">STEP 1</div>
             <div class="path-icon">🔤</div>
-            <div class="path-title" style="color:#1f4e79;">Alphabet</div>
+            <div class="path-title" style="color:#1f4e79;">Alphabet & Phonics</div>
             <div class="path-text">
                 A B C부터 시작해<br>
-                <b>글자와 소리</b>를 익혀요.
+                <b>글자와 소리</b>를 익혀요.<br><br>
+                알파벳 이름과 실제 소리를<br>
+                구분하며 읽기 기초를 배웁니다.
             </div>
         </div>
         """,
@@ -421,7 +266,9 @@ with p2:
             <div class="path-title" style="color:#8a5a00;">Words & Listening</div>
             <div class="path-text">
                 쉬운 단어를 듣고<br>
-                <b>뜻과 발음</b>을 연결해요.
+                <b>뜻과 발음</b>을 연결해요.<br><br>
+                자주 쓰는 단어를<br>
+                테마별로 반복 학습합니다.
             </div>
         </div>
         """,
@@ -434,10 +281,12 @@ with p3:
         <div class="path-card-green">
             <div class="path-step">STEP 3</div>
             <div class="path-icon">🧩</div>
-            <div class="path-title" style="color:#2f7d46;">Sentences</div>
+            <div class="path-title" style="color:#2f7d46;">Sentence Structure</div>
             <div class="path-text">
                 단어를 문장으로 연결해<br>
-                <b>기초 문장 구조</b>를 배워요.
+                <b>기초 문장 구조</b>를 배워요.<br><br>
+                be동사, 일반동사, 시제,<br>
+                부정문을 쉽게 연습합니다.
             </div>
         </div>
         """,
@@ -447,8 +296,6 @@ with p3:
 # ---------------------------
 # Class Message
 # ---------------------------
-st.markdown("<div class='section-title'>🎯 Class Message</div>", unsafe_allow_html=True)
-
 st.markdown(
     """
     <div class="message-card">
