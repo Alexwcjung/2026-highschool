@@ -15,6 +15,32 @@ st.title("🔤 Phonics Concept")
 st.caption("자음 소리, 모음 규칙, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
 
 # =========================
+# 상단 공통 안내 박스
+# =========================
+st.markdown(
+    """
+    <div style="
+        border-left: 6px solid #ffb703;
+        background-color: #fff8e6;
+        padding: 16px 18px;
+        border-radius: 12px;
+        margin-bottom: 22px;
+        line-height: 1.7;
+    ">
+        <div style="font-size:20px; font-weight:900; margin-bottom:8px;">
+            📌 발음기호와 한글 소리 힌트 안내
+        </div>
+        <div>• 표에 나오는 발음기호는 영어의 실제 소리를 나타냅니다.</div>
+        <div>• 학생들이 발음기호를 읽기 어려울 수 있어, 옆에 한글식 소리 힌트를 함께 적었습니다.</div>
+        <div>• 단, 한글 힌트는 정확한 영어 발음이 아니라 소리를 떠올리기 위한 참고용입니다.</div>
+        <div>• 정확한 발음은 반드시 <b>🔊 실제 소리 듣기</b> 버튼을 눌러 확인하도록 지도하면 좋습니다.</div>
+        <div>• 실제 소리 버튼은 <b>short a</b>, <b>long a</b>처럼 설명을 읽지 않고, 실제 영어 소리만 두 번 들려줍니다.</div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================
 # TTS 함수
 # =========================
 @st.cache_data
@@ -316,7 +342,7 @@ with tabs[0]:
         [
             "알파벳 이름과 실제 자음 소리는 다릅니다.",
             "예를 들어 B의 이름은 bee이지만, 실제 소리는 /b/입니다.",
-            "발음기호 옆의 한글 설명은 정확한 발음값이 아니라 소리를 떠올리기 위한 힌트입니다.",
+            "표의 한글 소리 힌트는 정확한 발음값이 아니라 학생들이 소리를 떠올리기 위한 참고용입니다.",
             "정확한 발음은 반드시 실제 소리 듣기 버튼으로 확인하도록 지도하면 좋습니다."
         ]
     )
@@ -329,7 +355,7 @@ with tabs[1]:
             "단모음은 짧게 나는 모음 소리입니다.",
             "보통 모음이 자음 사이에 끼어 있는 CVC 단어에서 많이 나타납니다.",
             "예: cat, bed, sit, hot, cup",
-            "발음기호와 한글 힌트를 함께 보되, 실제 소리는 버튼으로 듣고 익힙니다.",
+            "발음기호 옆의 한글 소리 힌트는 정확한 발음값이 아니라 소리를 떠올리기 위한 참고용입니다.",
             "실제 소리 버튼은 short a라고 읽지 않고, 실제 영어 소리만 두 번 들려줍니다."
         ]
     )
@@ -343,7 +369,8 @@ with tabs[2]:
             "모음 뒤에 자음이 오고, 단어 끝에 e가 붙으면 앞의 모음이 장모음이 되는 경우가 많습니다.",
             "예: cap → cape, kit → kite, hop → hope",
             "두 모음이 함께 나올 때 첫 번째 모음이 장모음으로 나는 경우도 많습니다.",
-            "예: rain, boat, see"
+            "예: rain, boat, see",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(long_vowels, "③ 장모음 Long Vowels")
@@ -358,7 +385,8 @@ with tabs[3]:
             "강세가 약한 a는 /ə/처럼 약하게 나는 경우가 많습니다. 예: about, ago",
             "o는 love, come, son처럼 /ʌ/로 나는 경우가 있습니다.",
             "oo는 book처럼 짧은 /ʊ/ 소리도 나고, moon처럼 긴 /uː/ 소리도 납니다.",
-            "ea는 보통 eat처럼 /iː/로 나지만, bread처럼 /e/로 나는 예외도 있습니다."
+            "ea는 보통 eat처럼 /iː/로 나지만, bread처럼 /e/로 나는 예외도 있습니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(vowel_exceptions, "④ 모음 예외 소리")
@@ -369,7 +397,8 @@ with tabs[4]:
         [
             "Blends는 두 자음이 이어져 나지만, 각각의 소리가 어느 정도 살아 있습니다.",
             "예: bl은 /b/와 /l/ 소리가 이어집니다.",
-            "black, brown, frog, star처럼 단어의 앞부분에서 자주 나옵니다."
+            "black, brown, frog, star처럼 단어의 앞부분에서 자주 나옵니다.",
+            "한글 소리 힌트는 참고용이며, 실제 연결 소리는 버튼으로 확인합니다."
         ]
     )
     show_cards(blends, "⑤ Consonant Blends")
@@ -381,7 +410,8 @@ with tabs[5]:
             "Digraphs는 두 글자가 만나 하나의 새로운 소리를 만드는 경우입니다.",
             "ch, sh, th, ph, ck 등이 대표적입니다.",
             "예: ch는 chair, sh는 ship, ph는 phone에서 하나의 소리처럼 납니다.",
-            "th는 three의 /θ/ 소리와 this의 /ð/ 소리가 다를 수 있습니다."
+            "th는 three의 /θ/ 소리와 this의 /ð/ 소리가 다를 수 있습니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(digraphs, "⑥ Consonant Digraphs")
@@ -396,7 +426,8 @@ with tabs[6]:
             "oa와 ow는 보통 /oʊ/ 소리가 납니다. 예: boat, snow",
             "ow와 ou는 /aʊ/ 소리도 납니다. 예: cow, house",
             "oi와 oy는 /ɔɪ/ 소리가 납니다. oi는 단어 중간, oy는 단어 끝에 많이 옵니다.",
-            "예: coin, boy"
+            "예: coin, boy",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(vowel_teams, "⑦ Vowel Teams")
@@ -408,7 +439,8 @@ with tabs[7]:
             "모음 뒤에 r이 오면 r의 영향을 받아 모음 소리가 바뀝니다.",
             "ar은 car처럼 /ɑːr/ 소리가 납니다.",
             "er, ir, ur은 her, bird, turn처럼 비슷한 /ɜːr/ 소리로 나는 경우가 많습니다.",
-            "or은 corn처럼 /ɔːr/ 소리가 납니다."
+            "or은 corn처럼 /ɔːr/ 소리가 납니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(r_controlled, "⑧ R-Controlled Vowels")
@@ -421,7 +453,8 @@ with tabs[8]:
             "하지만 앞의 모음을 장모음으로 바꾸는 역할을 합니다.",
             "예: cap은 짧은 a, cape는 긴 a입니다.",
             "kit → kite, hop → hope, cub → cube처럼 소리가 달라집니다.",
-            "그래서 silent e는 magic e라고도 부릅니다."
+            "그래서 silent e는 magic e라고도 부릅니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(silent_e, "⑨ Silent e")
