@@ -10,7 +10,7 @@ st.set_page_config(
 # Top Section
 # ---------------------------
 st.markdown("# 🌈 Alex의 영어교실")
-st.markdown("### 🌱 영어가 낯설고 자신 없는 학습자를 위한 첫걸음")
+st.markdown("### ✨ 영어가 낯설고 자신 없는 학습자를 위한 첫걸음")
 
 st.info(
     """
@@ -26,7 +26,6 @@ st.info(
     """
 )
 
-st.markdown("### ✨ Fun English · Spring 2026")
 st.divider()
 
 # ---------------------------
