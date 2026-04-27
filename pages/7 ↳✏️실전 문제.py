@@ -3,7 +3,7 @@ import random
 
 st.set_page_config(page_title="After School English", layout="centered")
 
-st.title("Alex선생님과 함께하는 영어 복습 퀴즈")
+st.title("💫Alex선생님과 함께하는 영어 복습 퀴즈")
 
 tabs = st.tabs([
     "⏰ 시제 맞추기",
