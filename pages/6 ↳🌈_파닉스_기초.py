@@ -7,12 +7,12 @@ import io
 # =========================
 st.set_page_config(
     page_title="Phonics Concept",
-    page_icon="🌈",
+    page_icon="🔤",
     layout="wide"
 )
 
-st.title("🌈 Phonics Concept")
-st.caption("알파벳 소리, 모음 규칙, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
+st.title("🔤 Phonics Concept")
+st.caption("자음 소리, 모음 규칙, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
 
 # =========================
 # TTS 함수
@@ -108,36 +108,244 @@ def show_rule(title, lines):
 # 데이터
 # =========================
 
-alphabet_sounds = [
-    {"pattern": "B b", "concept": "Consonant sound", "sound_name": "/b/", "sound_audio": repeat_sound("buh"), "word": "bat", "word_audio": "bat"},
-    {"pattern": "C c", "concept": "Consonant sound", "sound_name": "/k/", "sound_audio": repeat_sound("kuh"), "word": "cat", "word_audio": "cat"},
-    {"pattern": "D d", "concept": "Consonant sound", "sound_name": "/d/", "sound_audio": repeat_sound("duh"), "word": "dog", "word_audio": "dog"},
-    {"pattern": "F f", "concept": "Consonant sound", "sound_name": "/f/", "sound_audio": repeat_sound("fff"), "word": "fish", "word_audio": "fish"},
-    {"pattern": "G g", "concept": "Consonant sound", "sound_name": "/g/", "sound_audio": repeat_sound("guh"), "word": "goat", "word_audio": "goat"},
-    {"pattern": "H h", "concept": "Consonant sound", "sound_name": "/h/", "sound_audio": repeat_sound("huh"), "word": "hat", "word_audio": "hat"},
-    {"pattern": "J j", "concept": "Consonant sound", "sound_name": "/j/", "sound_audio": repeat_sound("juh"), "word": "jam", "word_audio": "jam"},
-    {"pattern": "K k", "concept": "Consonant sound", "sound_name": "/k/", "sound_audio": repeat_sound("kuh"), "word": "kite", "word_audio": "kite"},
-    {"pattern": "L l", "concept": "Consonant sound", "sound_name": "/l/", "sound_audio": repeat_sound("lll"), "word": "lion", "word_audio": "lion"},
-    {"pattern": "M m", "concept": "Consonant sound", "sound_name": "/m/", "sound_audio": repeat_sound("mmm"), "word": "moon", "word_audio": "moon"},
-    {"pattern": "N n", "concept": "Consonant sound", "sound_name": "/n/", "sound_audio": repeat_sound("nnn"), "word": "nest", "word_audio": "nest"},
-    {"pattern": "P p", "concept": "Consonant sound", "sound_name": "/p/", "sound_audio": repeat_sound("puh"), "word": "pig", "word_audio": "pig"},
-    {"pattern": "Q q", "concept": "Usually /kw/", "sound_name": "/kw/", "sound_audio": repeat_sound("kwuh"), "word": "queen", "word_audio": "queen"},
-    {"pattern": "R r", "concept": "Consonant sound", "sound_name": "/r/", "sound_audio": repeat_sound("ruh"), "word": "red", "word_audio": "red"},
-    {"pattern": "S s", "concept": "Consonant sound", "sound_name": "/s/", "sound_audio": repeat_sound("sss"), "word": "sun", "word_audio": "sun"},
-    {"pattern": "T t", "concept": "Consonant sound", "sound_name": "/t/", "sound_audio": repeat_sound("tuh"), "word": "top", "word_audio": "top"},
-    {"pattern": "V v", "concept": "Consonant sound", "sound_name": "/v/", "sound_audio": repeat_sound("vvv"), "word": "van", "word_audio": "van"},
-    {"pattern": "W w", "concept": "Consonant sound", "sound_name": "/w/", "sound_audio": repeat_sound("wuh"), "word": "window", "word_audio": "window"},
-    {"pattern": "X x", "concept": "Often /ks/", "sound_name": "/ks/", "sound_audio": repeat_sound("ks"), "word": "fox", "word_audio": "fox"},
-    {"pattern": "Y y", "concept": "Consonant sound", "sound_name": "/y/", "sound_audio": repeat_sound("yuh"), "word": "yes", "word_audio": "yes"},
-    {"pattern": "Z z", "concept": "Consonant sound", "sound_name": "/z/", "sound_audio": repeat_sound("zzz"), "word": "zebra", "word_audio": "zebra"},
+consonant_sounds = [
+    {
+        "pattern": "B b",
+        "letter_name": "bee",
+        "concept": "Consonant sound",
+        "sound_name": "/b/",
+        "sound_audio": repeat_sound("buh"),
+        "word": "bat",
+        "word_audio": "bat"
+    },
+    {
+        "pattern": "C c",
+        "letter_name": "see",
+        "concept": "Consonant sound",
+        "sound_name": "/k/",
+        "sound_audio": repeat_sound("kuh"),
+        "word": "cat",
+        "word_audio": "cat"
+    },
+    {
+        "pattern": "D d",
+        "letter_name": "dee",
+        "concept": "Consonant sound",
+        "sound_name": "/d/",
+        "sound_audio": repeat_sound("duh"),
+        "word": "dog",
+        "word_audio": "dog"
+    },
+    {
+        "pattern": "F f",
+        "letter_name": "eff",
+        "concept": "Consonant sound",
+        "sound_name": "/f/",
+        "sound_audio": repeat_sound("fff"),
+        "word": "fish",
+        "word_audio": "fish"
+    },
+    {
+        "pattern": "G g",
+        "letter_name": "gee",
+        "concept": "Consonant sound",
+        "sound_name": "/g/",
+        "sound_audio": repeat_sound("guh"),
+        "word": "goat",
+        "word_audio": "goat"
+    },
+    {
+        "pattern": "H h",
+        "letter_name": "aitch",
+        "concept": "Consonant sound",
+        "sound_name": "/h/",
+        "sound_audio": repeat_sound("huh"),
+        "word": "hat",
+        "word_audio": "hat"
+    },
+    {
+        "pattern": "J j",
+        "letter_name": "jay",
+        "concept": "Consonant sound",
+        "sound_name": "/dʒ/",
+        "sound_audio": repeat_sound("juh"),
+        "word": "jam",
+        "word_audio": "jam"
+    },
+    {
+        "pattern": "K k",
+        "letter_name": "kay",
+        "concept": "Consonant sound",
+        "sound_name": "/k/",
+        "sound_audio": repeat_sound("kuh"),
+        "word": "kite",
+        "word_audio": "kite"
+    },
+    {
+        "pattern": "L l",
+        "letter_name": "el",
+        "concept": "Consonant sound",
+        "sound_name": "/l/",
+        "sound_audio": repeat_sound("lll"),
+        "word": "lion",
+        "word_audio": "lion"
+    },
+    {
+        "pattern": "M m",
+        "letter_name": "em",
+        "concept": "Consonant sound",
+        "sound_name": "/m/",
+        "sound_audio": repeat_sound("mmm"),
+        "word": "moon",
+        "word_audio": "moon"
+    },
+    {
+        "pattern": "N n",
+        "letter_name": "en",
+        "concept": "Consonant sound",
+        "sound_name": "/n/",
+        "sound_audio": repeat_sound("nnn"),
+        "word": "nest",
+        "word_audio": "nest"
+    },
+    {
+        "pattern": "P p",
+        "letter_name": "pee",
+        "concept": "Consonant sound",
+        "sound_name": "/p/",
+        "sound_audio": repeat_sound("puh"),
+        "word": "pig",
+        "word_audio": "pig"
+    },
+    {
+        "pattern": "Q q",
+        "letter_name": "cue",
+        "concept": "Usually /kw/",
+        "sound_name": "/kw/",
+        "sound_audio": repeat_sound("kwuh"),
+        "word": "queen",
+        "word_audio": "queen"
+    },
+    {
+        "pattern": "R r",
+        "letter_name": "ar",
+        "concept": "Consonant sound",
+        "sound_name": "/r/",
+        "sound_audio": repeat_sound("ruh"),
+        "word": "red",
+        "word_audio": "red"
+    },
+    {
+        "pattern": "S s",
+        "letter_name": "ess",
+        "concept": "Consonant sound",
+        "sound_name": "/s/",
+        "sound_audio": repeat_sound("sss"),
+        "word": "sun",
+        "word_audio": "sun"
+    },
+    {
+        "pattern": "T t",
+        "letter_name": "tee",
+        "concept": "Consonant sound",
+        "sound_name": "/t/",
+        "sound_audio": repeat_sound("tuh"),
+        "word": "top",
+        "word_audio": "top"
+    },
+    {
+        "pattern": "V v",
+        "letter_name": "vee",
+        "concept": "Consonant sound",
+        "sound_name": "/v/",
+        "sound_audio": repeat_sound("vvv"),
+        "word": "van",
+        "word_audio": "van"
+    },
+    {
+        "pattern": "W w",
+        "letter_name": "double you",
+        "concept": "Consonant sound",
+        "sound_name": "/w/",
+        "sound_audio": repeat_sound("wuh"),
+        "word": "window",
+        "word_audio": "window"
+    },
+    {
+        "pattern": "X x",
+        "letter_name": "ex",
+        "concept": "Often /ks/",
+        "sound_name": "/ks/",
+        "sound_audio": repeat_sound("ks"),
+        "word": "fox",
+        "word_audio": "fox"
+    },
+    {
+        "pattern": "Y y",
+        "letter_name": "why",
+        "concept": "Consonant sound",
+        "sound_name": "/y/",
+        "sound_audio": repeat_sound("yuh"),
+        "word": "yes",
+        "word_audio": "yes"
+    },
+    {
+        "pattern": "Z z",
+        "letter_name": "zee",
+        "concept": "Consonant sound",
+        "sound_name": "/z/",
+        "sound_audio": repeat_sound("zzz"),
+        "word": "zebra",
+        "word_audio": "zebra"
+    },
 ]
 
 short_vowels = [
-    {"pattern": "A a", "concept": "Short vowel", "sound_name": "Short a /æ/", "sound_audio": repeat_sound("a"), "word": "apple", "word_audio": "apple"},
-    {"pattern": "E e", "concept": "Short vowel", "sound_name": "Short e /e/", "sound_audio": repeat_sound("eh"), "word": "egg", "word_audio": "egg"},
-    {"pattern": "I i", "concept": "Short vowel", "sound_name": "Short i /ɪ/", "sound_audio": repeat_sound("ih"), "word": "igloo", "word_audio": "igloo"},
-    {"pattern": "O o", "concept": "Short vowel", "sound_name": "Short o /ɑ/", "sound_audio": repeat_sound("ah"), "word": "octopus", "word_audio": "octopus"},
-    {"pattern": "U u", "concept": "Short vowel", "sound_name": "Short u /ʌ/", "sound_audio": repeat_sound("uh"), "word": "umbrella", "word_audio": "umbrella"},
+    {
+        "pattern": "A a",
+        "letter_name": "ay",
+        "concept": "Short vowel",
+        "sound_name": "Short a /æ/",
+        "sound_audio": repeat_sound("a"),
+        "word": "apple",
+        "word_audio": "apple"
+    },
+    {
+        "pattern": "E e",
+        "letter_name": "ee",
+        "concept": "Short vowel",
+        "sound_name": "Short e /e/",
+        "sound_audio": repeat_sound("eh"),
+        "word": "egg",
+        "word_audio": "egg"
+    },
+    {
+        "pattern": "I i",
+        "letter_name": "eye",
+        "concept": "Short vowel",
+        "sound_name": "Short i /ɪ/",
+        "sound_audio": repeat_sound("ih"),
+        "word": "igloo",
+        "word_audio": "igloo"
+    },
+    {
+        "pattern": "O o",
+        "letter_name": "oh",
+        "concept": "Short vowel",
+        "sound_name": "Short o /ɑ/",
+        "sound_audio": repeat_sound("ah"),
+        "word": "octopus",
+        "word_audio": "octopus"
+    },
+    {
+        "pattern": "U u",
+        "letter_name": "you",
+        "concept": "Short vowel",
+        "sound_name": "Short u /ʌ/",
+        "sound_audio": repeat_sound("uh"),
+        "word": "umbrella",
+        "word_audio": "umbrella"
+    },
 ]
 
 long_vowels = [
@@ -224,39 +432,75 @@ silent_e = [
 # =========================
 # 카드 출력 함수
 # =========================
-def show_cards(data, title):
+def show_cards(data, title, show_letter_name=False):
     st.subheader(title)
 
     for idx, item in enumerate(data):
         st.markdown('<div class="phonics-card">', unsafe_allow_html=True)
 
-        col1, col2, col3, col4 = st.columns([1.1, 1.6, 1.7, 1.7])
+        if show_letter_name:
+            col1, col2, col3, col4, col5 = st.columns([1.1, 1.3, 1.5, 1.7, 1.7])
+        else:
+            col1, col2, col3, col4 = st.columns([1.1, 1.6, 1.7, 1.7])
 
         with col1:
             st.markdown("<div class='label-small'>글자 / 패턴</div>", unsafe_allow_html=True)
             st.markdown(f"<div class='pattern-box'>{item['pattern']}</div>", unsafe_allow_html=True)
 
-        with col2:
-            st.markdown("<div class='label-small'>조건 / 개념</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='concept-box'>{item['concept']}</div>", unsafe_allow_html=True)
+        if show_letter_name:
+            with col2:
+                st.markdown("<div class='label-small'>알파벳 이름</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='concept-box'>{item['letter_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 이름 듣기",
+                    item["letter_name"],
+                    key=f"name_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
 
-        with col3:
-            st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
-            audio_button(
-                "🔊 실제 소리 듣기",
-                item["sound_audio"],
-                key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
-            )
+            with col3:
+                st.markdown("<div class='label-small'>조건 / 개념</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='concept-box'>{item['concept']}</div>", unsafe_allow_html=True)
 
-        with col4:
-            st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
-            audio_button(
-                "🔊 단어 듣기",
-                item["word_audio"],
-                key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
-            )
+            with col4:
+                st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 실제 소리 듣기",
+                    item["sound_audio"],
+                    key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
+
+            with col5:
+                st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 단어 듣기",
+                    item["word_audio"],
+                    key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
+
+        else:
+            with col2:
+                st.markdown("<div class='label-small'>조건 / 개념</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='concept-box'>{item['concept']}</div>", unsafe_allow_html=True)
+
+            with col3:
+                st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 실제 소리 듣기",
+                    item["sound_audio"],
+                    key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
+
+            with col4:
+                st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 단어 듣기",
+                    item["word_audio"],
+                    key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -265,7 +509,7 @@ def show_cards(data, title):
 # 탭 구성
 # =========================
 tabs = st.tabs([
-    "① 알파벳 기본 소리",
+    "① 자음 소리",
     "② 단모음",
     "③ 장모음",
     "④ 모음 예외",
@@ -278,14 +522,15 @@ tabs = st.tabs([
 
 with tabs[0]:
     show_rule(
-        "알파벳 기본 소리",
+        "자음 소리 Consonant Sounds",
         [
-            "알파벳 이름과 실제 소리는 다릅니다.",
+            "알파벳 이름과 실제 자음 소리는 다릅니다.",
             "예를 들어 B의 이름은 bee이지만, 실제 소리는 /b/입니다.",
-            "단어를 읽을 때는 알파벳 이름보다 실제 소리를 먼저 익히는 것이 중요합니다."
+            "학생들은 먼저 알파벳 이름을 듣고, 그다음 실제 소리, 마지막으로 예시 단어를 들을 수 있습니다.",
+            "실제 소리 버튼은 알파벳 이름을 읽지 않고, 자음 소리만 두 번 들려줍니다."
         ]
     )
-    show_cards(alphabet_sounds, "① 알파벳 기본 소리")
+    show_cards(consonant_sounds, "① 자음 소리", show_letter_name=True)
 
 with tabs[1]:
     show_rule(
@@ -294,10 +539,11 @@ with tabs[1]:
             "단모음은 짧게 나는 모음 소리입니다.",
             "보통 모음이 자음 사이에 끼어 있는 CVC 단어에서 많이 나타납니다.",
             "예: cat, bed, sit, hot, cup",
-            "이 탭의 실제 소리 버튼은 short a라고 읽지 않고, 실제 영어 소리만 두 번 들려줍니다."
+            "학생들은 알파벳 이름을 먼저 듣고, 실제 단모음 소리, 예시 단어 순서로 들을 수 있습니다.",
+            "실제 소리 버튼은 short a라고 읽지 않고, 실제 영어 소리만 두 번 들려줍니다."
         ]
     )
-    show_cards(short_vowels, "② 단모음 Short Vowels")
+    show_cards(short_vowels, "② 단모음 Short Vowels", show_letter_name=True)
 
 with tabs[2]:
     show_rule(
