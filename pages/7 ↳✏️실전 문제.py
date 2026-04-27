@@ -1,6 +1,7 @@
 import streamlit as st
 import random
-
+import io
+from gtts import gTTS
 st.set_page_config(page_title="After School English", layout="centered")
 
 st.title("💫Alex선생님과 함께하는 영어 복습 퀴즈")
@@ -8,7 +9,8 @@ st.title("💫Alex선생님과 함께하는 영어 복습 퀴즈")
 tabs = st.tabs([
     "⏰ 시제 맞추기",
     "❌ 부정문 만들기",
-    "❓ 의문문 만들기"
+    "❓ 의문문 만들기",
+    "🎮 불규칙동사"
 ])
 
 
@@ -403,3 +405,239 @@ with tabs[2]:
         """,
         question_data=question_question_data
     )
+    # =========================================================
+# 영어 발음 오디오 생성 함수
+# =========================================================
+@st.cache_data
+def make_tts_audio(text):
+    fp = io.BytesIO()
+    tts = gTTS(text=text, lang="en")
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    return fp.read()
+
+
+# =========================================================
+# 불규칙동사 2지선다 퀴즈 함수
+# =========================================================
+def run_irregular_quiz():
+    st.subheader("🎮 불규칙동사 2지선다 퀴즈")
+    st.caption("현재형을 보고 알맞은 과거형을 고르세요.")
+    st.info("불규칙동사는 -ed를 붙이지 않고 모양이 다르게 바뀌는 동사입니다. 예: go → went")
+
+    irregular_verbs = [
+        {"base": "be", "past": "was / were", "meaning": "~이다 / 있다"},
+        {"base": "become", "past": "became", "meaning": "~이 되다"},
+        {"base": "begin", "past": "began", "meaning": "시작하다"},
+        {"base": "break", "past": "broke", "meaning": "깨다 / 부수다"},
+        {"base": "bring", "past": "brought", "meaning": "가져오다"},
+        {"base": "build", "past": "built", "meaning": "짓다 / 만들다"},
+        {"base": "buy", "past": "bought", "meaning": "사다"},
+        {"base": "catch", "past": "caught", "meaning": "잡다"},
+        {"base": "choose", "past": "chose", "meaning": "고르다"},
+        {"base": "come", "past": "came", "meaning": "오다"},
+
+        {"base": "cut", "past": "cut", "meaning": "자르다"},
+        {"base": "do", "past": "did", "meaning": "하다"},
+        {"base": "draw", "past": "drew", "meaning": "그리다"},
+        {"base": "drink", "past": "drank", "meaning": "마시다"},
+        {"base": "drive", "past": "drove", "meaning": "운전하다"},
+        {"base": "eat", "past": "ate", "meaning": "먹다"},
+        {"base": "fall", "past": "fell", "meaning": "떨어지다 / 넘어지다"},
+        {"base": "feel", "past": "felt", "meaning": "느끼다"},
+        {"base": "find", "past": "found", "meaning": "찾다 / 발견하다"},
+        {"base": "fly", "past": "flew", "meaning": "날다"},
+
+        {"base": "forget", "past": "forgot", "meaning": "잊다"},
+        {"base": "get", "past": "got", "meaning": "얻다 / 받다 / 되다"},
+        {"base": "give", "past": "gave", "meaning": "주다"},
+        {"base": "go", "past": "went", "meaning": "가다"},
+        {"base": "grow", "past": "grew", "meaning": "자라다 / 기르다"},
+        {"base": "have", "past": "had", "meaning": "가지다 / 먹다"},
+        {"base": "hear", "past": "heard", "meaning": "듣다"},
+        {"base": "hold", "past": "held", "meaning": "잡다 / 열다"},
+        {"base": "keep", "past": "kept", "meaning": "유지하다 / 보관하다"},
+        {"base": "know", "past": "knew", "meaning": "알다"},
+
+        {"base": "leave", "past": "left", "meaning": "떠나다 / 남기다"},
+        {"base": "lose", "past": "lost", "meaning": "잃다 / 지다"},
+        {"base": "make", "past": "made", "meaning": "만들다"},
+        {"base": "meet", "past": "met", "meaning": "만나다"},
+        {"base": "pay", "past": "paid", "meaning": "지불하다"},
+        {"base": "put", "past": "put", "meaning": "놓다 / 두다"},
+        {"base": "read", "past": "read", "meaning": "읽다"},
+        {"base": "ride", "past": "rode", "meaning": "타다"},
+        {"base": "run", "past": "ran", "meaning": "달리다"},
+        {"base": "say", "past": "said", "meaning": "말하다"},
+
+        {"base": "see", "past": "saw", "meaning": "보다"},
+        {"base": "sell", "past": "sold", "meaning": "팔다"},
+        {"base": "send", "past": "sent", "meaning": "보내다"},
+        {"base": "sing", "past": "sang", "meaning": "노래하다"},
+        {"base": "sit", "past": "sat", "meaning": "앉다"},
+        {"base": "sleep", "past": "slept", "meaning": "자다"},
+        {"base": "speak", "past": "spoke", "meaning": "말하다"},
+        {"base": "spend", "past": "spent", "meaning": "쓰다 / 보내다"},
+        {"base": "stand", "past": "stood", "meaning": "서다"},
+        {"base": "swim", "past": "swam", "meaning": "수영하다"},
+    ]
+
+    if "irregular_stage" not in st.session_state:
+        st.session_state.irregular_stage = 1
+
+    if "irregular_quiz_data" not in st.session_state:
+        quiz_data = irregular_verbs.copy()
+        random.shuffle(quiz_data)
+
+        question_data = []
+
+        for item in quiz_data:
+            wrong_pool = [
+                verb["past"] for verb in irregular_verbs
+                if verb["past"] != item["past"]
+            ]
+
+            wrong_answer = random.choice(wrong_pool)
+            choices = [item["past"], wrong_answer]
+            random.shuffle(choices)
+
+            question_data.append({
+                "base": item["base"],
+                "past": item["past"],
+                "meaning": item["meaning"],
+                "choices": choices
+            })
+
+        st.session_state.irregular_quiz_data = question_data
+
+    if "irregular_score" not in st.session_state:
+        st.session_state.irregular_score = 0
+
+    if "irregular_wrong_indices" not in st.session_state:
+        st.session_state.irregular_wrong_indices = []
+
+    if st.button("처음부터 다시 시작", key="reset_irregular"):
+        for key in list(st.session_state.keys()):
+            if key.startswith("irregular") or key.startswith("ir_q_"):
+                del st.session_state[key]
+        st.rerun()
+
+    st.markdown("---")
+
+    quiz_data = st.session_state.irregular_quiz_data
+    total = len(quiz_data)
+
+    # ---------------------------
+    # 1단계: 문제 풀기
+    # ---------------------------
+    if st.session_state.irregular_stage == 1:
+        st.subheader("1차 풀이")
+        st.caption("현재형을 보고 알맞은 과거형을 고르세요.")
+
+        for i, item in enumerate(quiz_data):
+            st.markdown(
+                f"""
+                <div style="
+                    background:#ffffff;
+                    border-radius:18px;
+                    padding:18px;
+                    margin:14px 0;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+                    border:1px solid #eeeeee;
+                ">
+                    <h3>{i+1}. {item['base']} → ?</h3>
+                    <p style="font-size:18px;">뜻: <b>{item['meaning']}</b></p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            st.radio(
+                "알맞은 과거형을 고르세요.",
+                item["choices"],
+                key=f"ir_q_{i}",
+                index=None
+            )
+
+            st.markdown("---")
+
+        if st.button("제출하기", key="submit_irregular"):
+            score = 0
+            wrong_indices = []
+
+            for i, item in enumerate(quiz_data):
+                user_answer = st.session_state.get(f"ir_q_{i}")
+
+                if user_answer == item["past"]:
+                    score += 1
+                else:
+                    wrong_indices.append(i)
+
+            st.session_state.irregular_score = score
+            st.session_state.irregular_wrong_indices = wrong_indices
+            st.session_state.irregular_stage = 2
+            st.rerun()
+
+    # ---------------------------
+    # 2단계: 결과 + 발음 듣기
+    # ---------------------------
+    elif st.session_state.irregular_stage == 2:
+        score = st.session_state.irregular_score
+        wrong_indices = st.session_state.irregular_wrong_indices
+
+        st.subheader("🎉 결과 확인")
+        st.write(f"점수: **{score} / {total}**")
+        st.progress(score / total)
+
+        if score == total:
+            st.success("만점입니다! 불규칙동사를 아주 잘 익혔습니다! 🎉")
+            st.balloons()
+        elif score >= total * 0.8:
+            st.success("아주 잘했습니다! 조금만 더 복습하면 완벽합니다.")
+        elif score >= total * 0.6:
+            st.info("좋습니다. 헷갈린 동사만 다시 확인해 봅시다.")
+        else:
+            st.warning("괜찮습니다. 불규칙동사는 반복해서 보면 익숙해집니다.")
+
+        st.markdown("---")
+        st.subheader("📌 정답 확인")
+
+        for i, item in enumerate(quiz_data):
+            user_answer = st.session_state.get(f"ir_q_{i}", "미응답")
+
+            st.markdown(
+                f"""
+                <div style="
+                    background:#ffffff;
+                    border-radius:18px;
+                    padding:18px;
+                    margin:14px 0;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.05);
+                    border:1px solid #eeeeee;
+                ">
+                    <h3>{i+1}. {item['base']} → {item['past']}</h3>
+                    <p>뜻: <b>{item['meaning']}</b></p>
+                    <p>내 선택: <b>{user_answer}</b></p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            if i in wrong_indices:
+                st.error("오답")
+            else:
+                st.success("정답")
+
+        st.markdown("---")
+        st.subheader("🔊 불규칙동사 발음 듣기")
+
+        st.caption("현재형과 과거형을 함께 들어 보세요.")
+
+        for i, item in enumerate(quiz_data):
+            text_for_audio = f"{item['base']}. {item['past']}."
+
+            with st.expander(f"{i+1}. {item['base']} → {item['past']}"):
+                st.write(f"뜻: **{item['meaning']}**")
+                st.audio(make_tts_audio(text_for_audio), format="audio/mp3")
+with tabs[3]:
+    run_irregular_quiz()
