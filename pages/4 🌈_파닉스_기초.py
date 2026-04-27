@@ -11,35 +11,6 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🌈 Phonics Concept")
-st.caption("자음 소리, 짧은 모음, 긴 모음, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
-
-# =========================
-# 상단 공통 안내 박스
-# =========================
-st.markdown(
-    """
-    <div style="
-        border-left: 6px solid #ffb703;
-        background-color: #fff8e6;
-        padding: 16px 18px;
-        border-radius: 12px;
-        margin-bottom: 22px;
-        line-height: 1.7;
-    ">
-        <div style="font-size:20px; font-weight:900; margin-bottom:8px;">
-            📌 발음기호와 한글 소리 힌트 안내
-        </div>
-        <div>• 표에 나오는 발음기호는 영어의 실제 소리를 나타냅니다.</div>
-        <div>• 학생들이 발음기호를 읽기 어려울 수 있어, 옆에 한글식 소리 힌트를 함께 적었습니다.</div>
-        <div>• 단, 한글 힌트는 정확한 영어 발음이 아니라 소리를 떠올리기 위한 참고용입니다.</div>
-        <div>• 정확한 발음은 반드시 <b>🔊 실제 소리 듣기</b> 버튼을 눌러 확인하도록 지도하면 좋습니다.</div>
-        <div>• 실제 소리 버튼은 <b>short a</b>, <b>long a</b>처럼 설명을 읽지 않고, 실제 영어 소리만 두 번 들려줍니다.</div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 # =========================
 # TTS 함수
 # =========================
@@ -63,68 +34,211 @@ def repeat_sound(sound_text):
 
 
 # =========================
-# CSS
+# CSS 디자인
 # =========================
 st.markdown(
     """
     <style>
-    .rule-box {
-        border-left: 6px solid #4f8df7;
-        background-color: #f4f8ff;
-        padding: 16px 18px;
-        border-radius: 12px;
-        margin-bottom: 18px;
-        line-height: 1.7;
+    .main {
+        background-color: #fffdfb;
     }
-    .rule-title {
-        font-size: 20px;
+
+    .hero-box {
+        background: linear-gradient(135deg, #ffeef8 0%, #eef7ff 50%, #fff7df 100%);
+        border-radius: 30px;
+        padding: 32px 30px;
+        margin-bottom: 26px;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+        border: 1px solid #f3e8ff;
+        text-align: center;
+    }
+
+    .hero-title {
+        font-size: 42px;
         font-weight: 900;
+        color: #334155;
+        margin-bottom: 10px;
+    }
+
+    .hero-sub {
+        font-size: 18px;
+        color: #64748b;
+        line-height: 1.8;
+        margin-bottom: 0;
+    }
+
+    .top-guide-box {
+        background: linear-gradient(135deg, #fff9db 0%, #fff3c4 100%);
+        border-radius: 22px;
+        padding: 22px 24px;
+        margin-bottom: 24px;
+        border: 1px solid #fde68a;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .top-guide-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #92400e;
+        margin-bottom: 10px;
+    }
+
+    .top-guide-text {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #7c5a10;
+    }
+
+    .rule-box {
+        background: linear-gradient(135deg, #f3f8ff 0%, #ffffff 100%);
+        border-radius: 24px;
+        padding: 22px 24px;
+        margin-bottom: 22px;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .rule-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #1d4ed8;
+        margin-bottom: 10px;
+    }
+
+    .rule-text {
+        font-size: 16px;
+        color: #334155;
+        line-height: 1.8;
+    }
+
+    .phonics-card {
+        background: linear-gradient(135deg, #ffffff 0%, #fcfcff 100%);
+        border-radius: 22px;
+        padding: 18px 18px 14px 18px;
+        margin-bottom: 16px;
+        border: 1px solid #ede9fe;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .label-small {
+        display: inline-block;
+        background: #fce7f3;
+        color: #be185d;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 5px 10px;
+        border-radius: 999px;
         margin-bottom: 8px;
     }
-    .phonics-card {
-        border: 1px solid #e8e8e8;
-        border-radius: 16px;
-        padding: 16px;
-        margin-bottom: 14px;
-        background: #fafafa;
-    }
+
     .pattern-box {
         font-size: 34px;
         font-weight: 900;
-        color: #222222;
-    }
-    .label-small {
-        font-size: 13px;
-        color: #777777;
+        color: #111827;
         margin-bottom: 4px;
     }
+
     .concept-box {
         font-size: 16px;
         font-weight: 700;
-        color: #444444;
+        color: #475569;
+        line-height: 1.6;
     }
+
     .sound-box {
-        font-size: 17px;
+        font-size: 16px;
         font-weight: 800;
-        color: #222222;
-        line-height: 1.5;
+        color: #1f2937;
+        line-height: 1.7;
     }
+
     .word-box {
         font-size: 24px;
         font-weight: 900;
-        color: #222222;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #334155;
+        margin-bottom: 4px;
+    }
+
+    .section-caption {
+        font-size: 15px;
+        color: #64748b;
+        margin-bottom: 14px;
+    }
+
+    button[data-baseweb="tab"] {
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .stButton > button {
+        border-radius: 999px;
+        font-weight: 800;
+        border: 1px solid #d1d5db;
+        padding: 0.42rem 0.95rem;
+    }
+
+    .stButton > button:hover {
+        border-color: #8b5cf6;
+        color: #8b5cf6;
+    }
+
+    div[data-testid="stAudio"] {
+        margin-top: 4px;
+        margin-bottom: 8px;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
+# =========================
+# 상단 제목
+# =========================
+st.markdown(
+    """
+    <div class="hero-box">
+        <div class="hero-title">🌈🐰 Alex의 Phonics Garden 🧸✨</div>
+        <div class="hero-sub">
+            자음 소리, 짧은 모음, 긴 모음, blends, digraphs, vowel teams를<br>
+            귀엽고 쉽게 듣고 익혀 보는 파닉스 기초 학습 공간입니다.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================
+# 상단 공통 안내 박스
+# =========================
+st.markdown(
+    """
+    <div class="top-guide-box">
+        <div class="top-guide-title">📌 발음기호와 한글 소리 힌트 안내</div>
+        <div class="top-guide-text">
+            • 표에 나오는 발음기호는 영어의 실제 소리를 나타냅니다.<br>
+            • 학생들이 발음기호를 읽기 어려울 수 있어, 옆에 한글식 소리 힌트를 함께 적었습니다.<br>
+            • 단, 한글 힌트는 정확한 영어 발음이 아니라 소리를 떠올리기 위한 참고용입니다.<br>
+            • 정확한 발음은 반드시 <b>🔊 실제 소리 듣기</b> 버튼을 눌러 확인하도록 지도하면 좋습니다.<br>
+            • 실제 소리 버튼은 <b>short a</b>, <b>long a</b>처럼 설명을 읽지 않고, 실제 영어 소리만 두 번 들려줍니다.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 
 def show_rule(title, lines):
-    html = f"<div class='rule-box'><div class='rule-title'>{title}</div>"
+    html = f"<div class='rule-box'><div class='rule-title'>{title}</div><div class='rule-text'>"
     for line in lines:
-        html += f"<div>• {line}</div>"
-    html += "</div>"
+        html += f"• {line}<br>"
+    html += "</div></div>"
     st.markdown(html, unsafe_allow_html=True)
 
 
@@ -249,7 +363,8 @@ silent_e = [
 # 카드 출력 함수
 # =========================
 def show_cards(data, title, show_letter_name=False):
-    st.subheader(title)
+    st.markdown(f"<div class='section-title'>{title}</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-caption'>버튼을 눌러 이름, 실제 소리, 예시 단어를 들어 보세요.</div>", unsafe_allow_html=True)
 
     for idx, item in enumerate(data):
         st.markdown('<div class="phonics-card">', unsafe_allow_html=True)
