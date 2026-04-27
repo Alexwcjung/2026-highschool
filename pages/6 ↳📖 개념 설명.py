@@ -124,6 +124,7 @@ tabs = st.tabs([
     "🏃 현재진행형",
     "🚀 미래형",
     "🕰️ 과거형",
+    "🎮 불규칙동사 게임",
     "❌ 부정문",
     "❓ 의문문"
 ])
@@ -382,184 +383,13 @@ with tabs[3]:
         """
     )
 
-    st.info("Tip: 불규칙동사는 자주 보고, 읽고, 써 보면서 익히는 것이 좋습니다.")
+    st.info("Tip: 불규칙동사는 바로 옆의 🎮 불규칙동사 게임 탭에서 재미있게 연습할 수 있습니다.")
 
 
 # =========================================================
-# Tab 5: 부정문
+# Tab 5: 불규칙동사 게임
 # =========================================================
 with tabs[4]:
-    st.subheader("❌ 부정문 만들기")
-
-    st.markdown(
-        """
-        <div class="grammar-card" style="background:linear-gradient(135deg,#fff3f3,#ffffff);">
-            <h3 style="color:#b23a3a;">📌 부정문이란?</h3>
-            <p>
-                <b>부정문</b>은 <b>‘~이 아니다’, ‘~하지 않는다’</b>라는 뜻을 나타내는 문장입니다.
-            </p>
-            <div class="formula-box" style="color:#b23a3a;">
-                not을 넣어서 부정의 뜻을 만듭니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("### ✅ 1. Be동사의 부정문")
-
-    st.markdown(
-        """
-        <div class="mini-card">
-            <p><b>Be동사 + not</b></p>
-            <p>am, are, is 뒤에 <b>not</b>을 붙입니다.</p>
-        </div>
-
-        <div class="example-box">
-            I <b>am not</b> a student.<br>
-            → 나는 학생이 아니다.
-        </div>
-
-        <div class="example-box">
-            She <b>is not</b> happy.<br>
-            → 그녀는 행복하지 않다.
-        </div>
-
-        <div class="example-box">
-            They <b>are not</b> busy.<br>
-            → 그들은 바쁘지 않다.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("---")
-
-    st.markdown("### ✅ 2. 일반동사의 부정문")
-
-    st.markdown(
-        """
-        <div class="mini-card">
-            <p><b>do not / does not / did not + 동사원형</b></p>
-            <p>일반동사는 바로 not을 붙이지 않고 <b>do, does, did</b>의 도움을 받습니다.</p>
-        </div>
-
-        <div class="example-box">
-            I <b>do not like</b> coffee.<br>
-            → 나는 커피를 좋아하지 않는다.
-        </div>
-
-        <div class="example-box">
-            He <b>does not play</b> soccer.<br>
-            → 그는 축구를 하지 않는다.
-        </div>
-
-        <div class="example-box">
-            They <b>did not go</b> to school yesterday.<br>
-            → 그들은 어제 학교에 가지 않았다.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.info("Tip: does not, did not 뒤에는 동사의 기본 모양을 씁니다. 예: does not plays ❌ / does not play ✅")
-
-
-# =========================================================
-# Tab 6: 의문문
-# =========================================================
-with tabs[5]:
-    st.subheader("❓ 의문문 만들기")
-
-    st.markdown(
-        """
-        <div class="grammar-card" style="background:linear-gradient(135deg,#f3f0ff,#ffffff);">
-            <h3 style="color:#5b3aa4;">📌 의문문이란?</h3>
-            <p>
-                <b>의문문</b>은 <b>질문하는 문장</b>입니다.
-            </p>
-            <div class="formula-box" style="color:#5b3aa4;">
-                앞에 오는 단어가 중요합니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("### ✅ 1. Be동사의 의문문")
-
-    st.markdown(
-        """
-        <div class="mini-card">
-            <p><b>Be동사 + 주어 ~ ?</b></p>
-            <p>am, are, is를 문장 앞으로 보냅니다.</p>
-        </div>
-
-        <div class="example-box">
-            You are a student.<br>
-            ↓<br>
-            <b>Are you</b> a student?<br>
-            → 너는 학생이니?
-        </div>
-
-        <div class="example-box">
-            She is happy.<br>
-            ↓<br>
-            <b>Is she</b> happy?<br>
-            → 그녀는 행복하니?
-        </div>
-
-        <div class="example-box">
-            They are in the classroom.<br>
-            ↓<br>
-            <b>Are they</b> in the classroom?<br>
-            → 그들은 교실에 있니?
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("---")
-
-    st.markdown("### ✅ 2. 일반동사의 의문문")
-
-    st.markdown(
-        """
-        <div class="mini-card">
-            <p><b>Do / Does / Did + 주어 + 동사원형 ~ ?</b></p>
-            <p>일반동사 의문문은 <b>Do, Does, Did</b>를 문장 앞에 씁니다.</p>
-        </div>
-
-        <div class="example-box">
-            You like coffee.<br>
-            ↓<br>
-            <b>Do you like</b> coffee?<br>
-            → 너는 커피를 좋아하니?
-        </div>
-
-        <div class="example-box">
-            He plays soccer.<br>
-            ↓<br>
-            <b>Does he play</b> soccer?<br>
-            → 그는 축구를 하니?
-        </div>
-
-        <div class="example-box">
-            They went to school yesterday.<br>
-            ↓<br>
-            <b>Did they go</b> to school yesterday?<br>
-            → 그들은 어제 학교에 갔니?
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.info("Tip: Does, Did가 앞에 오면 뒤의 동사는 기본 모양을 씁니다. 예: Does he plays? ❌ / Does he play? ✅")
-
-# =========================================================
-# Tab 7: 불규칙동사 게임
-# =========================================================
-with tabs[6]:
     st.subheader("🎮 불규칙동사 미니게임")
 
     st.markdown(
@@ -578,7 +408,7 @@ with tabs[6]:
         unsafe_allow_html=True
     )
 
-    st.info("아래 버튼을 눌러 불규칙동사를 하나씩 확인하고, 직접 맞혀 봅시다!")
+    st.info("먼저 카드로 외우고, 그다음 직접 맞혀 보세요!")
 
     irregular_verbs = [
         {"base": "go", "past": "went", "meaning": "가다"},
@@ -649,15 +479,19 @@ with tabs[6]:
         with col1:
             if st.button("⬅️ 이전 카드"):
                 st.session_state.verb_card_index -= 1
+
                 if st.session_state.verb_card_index < 0:
                     st.session_state.verb_card_index = len(irregular_verbs) - 1
+
                 st.rerun()
 
         with col2:
             if st.button("다음 카드 ➡️"):
                 st.session_state.verb_card_index += 1
+
                 if st.session_state.verb_card_index >= len(irregular_verbs):
                     st.session_state.verb_card_index = 0
+
                 st.rerun()
 
     # -----------------------------------------------------
@@ -767,3 +601,175 @@ with tabs[6]:
         )
 
         st.info("먼저 카드로 외우고, 그다음 직접 맞히기를 하면 훨씬 잘 기억납니다.")
+
+
+# =========================================================
+# Tab 6: 부정문
+# =========================================================
+with tabs[5]:
+    st.subheader("❌ 부정문 만들기")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#fff3f3,#ffffff);">
+            <h3 style="color:#b23a3a;">📌 부정문이란?</h3>
+            <p>
+                <b>부정문</b>은 <b>‘~이 아니다’, ‘~하지 않는다’</b>라는 뜻을 나타내는 문장입니다.
+            </p>
+            <div class="formula-box" style="color:#b23a3a;">
+                not을 넣어서 부정의 뜻을 만듭니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 1. Be동사의 부정문")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>Be동사 + not</b></p>
+            <p>am, are, is 뒤에 <b>not</b>을 붙입니다.</p>
+        </div>
+
+        <div class="example-box">
+            I <b>am not</b> a student.<br>
+            → 나는 학생이 아니다.
+        </div>
+
+        <div class="example-box">
+            She <b>is not</b> happy.<br>
+            → 그녀는 행복하지 않다.
+        </div>
+
+        <div class="example-box">
+            They <b>are not</b> busy.<br>
+            → 그들은 바쁘지 않다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 2. 일반동사의 부정문")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>do not / does not / did not + 동사원형</b></p>
+            <p>일반동사는 바로 not을 붙이지 않고 <b>do, does, did</b>의 도움을 받습니다.</p>
+        </div>
+
+        <div class="example-box">
+            I <b>do not like</b> coffee.<br>
+            → 나는 커피를 좋아하지 않는다.
+        </div>
+
+        <div class="example-box">
+            He <b>does not play</b> soccer.<br>
+            → 그는 축구를 하지 않는다.
+        </div>
+
+        <div class="example-box">
+            They <b>did not go</b> to school yesterday.<br>
+            → 그들은 어제 학교에 가지 않았다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: does not, did not 뒤에는 동사의 기본 모양을 씁니다. 예: does not plays ❌ / does not play ✅")
+
+
+# =========================================================
+# Tab 7: 의문문
+# =========================================================
+with tabs[6]:
+    st.subheader("❓ 의문문 만들기")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#f3f0ff,#ffffff);">
+            <h3 style="color:#5b3aa4;">📌 의문문이란?</h3>
+            <p>
+                <b>의문문</b>은 <b>질문하는 문장</b>입니다.
+            </p>
+            <div class="formula-box" style="color:#5b3aa4;">
+                앞에 오는 단어가 중요합니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 1. Be동사의 의문문")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>Be동사 + 주어 ~ ?</b></p>
+            <p>am, are, is를 문장 앞으로 보냅니다.</p>
+        </div>
+
+        <div class="example-box">
+            You are a student.<br>
+            ↓<br>
+            <b>Are you</b> a student?<br>
+            → 너는 학생이니?
+        </div>
+
+        <div class="example-box">
+            She is happy.<br>
+            ↓<br>
+            <b>Is she</b> happy?<br>
+            → 그녀는 행복하니?
+        </div>
+
+        <div class="example-box">
+            They are in the classroom.<br>
+            ↓<br>
+            <b>Are they</b> in the classroom?<br>
+            → 그들은 교실에 있니?
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 2. 일반동사의 의문문")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>Do / Does / Did + 주어 + 동사원형 ~ ?</b></p>
+            <p>일반동사 의문문은 <b>Do, Does, Did</b>를 문장 앞에 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            You like coffee.<br>
+            ↓<br>
+            <b>Do you like</b> coffee?<br>
+            → 너는 커피를 좋아하니?
+        </div>
+
+        <div class="example-box">
+            He plays soccer.<br>
+            ↓<br>
+            <b>Does he play</b> soccer?<br>
+            → 그는 축구를 하니?
+        </div>
+
+        <div class="example-box">
+            They went to school yesterday.<br>
+            ↓<br>
+            <b>Did they go</b> to school yesterday?<br>
+            → 그들은 어제 학교에 갔니?
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: Does, Did가 앞에 오면 뒤의 동사는 기본 모양을 씁니다. 예: Does he plays? ❌ / Does he play? ✅")
