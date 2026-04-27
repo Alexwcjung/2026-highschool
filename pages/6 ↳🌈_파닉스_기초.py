@@ -1,687 +1,505 @@
 import streamlit as st
-import io
 from gtts import gTTS
+import io
 
-st.set_page_config(page_title="Phonics Guide", layout="centered")
+# =========================
+# 기본 설정
+# =========================
+st.set_page_config(
+    page_title="Phonics Concept",
+    page_icon="🔤",
+    layout="wide"
+)
 
+st.title("🔤 Phonics Concept")
+st.caption("알파벳 이름, 실제 소리, 예시 단어 발음을 듣고 익혀 봅시다.")
 
-# =========================================================
-# 영어 발음 오디오 생성 함수
-# =========================================================
+# =========================
+# TTS 함수
+# =========================
 @st.cache_data
-def make_tts_audio(text):
+def make_tts_audio(text, lang="en", tld="com"):
+    """
+    text를 영어 음성 mp3로 변환
+    tld='com'은 미국식 영어에 가까움
+    """
     fp = io.BytesIO()
-    tts = gTTS(text=text, lang="en")
+    tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
     tts.write_to_fp(fp)
     fp.seek(0)
     return fp.read()
 
 
-def play_audio(text):
-    st.audio(make_tts_audio(text), format="audio/mp3")
-
-
-def render_sound_table(data, headers=("글자", "알파벳 이름", "실제 소리", "예시 단어")):
-    h1, h2, h3, h4 = st.columns([1, 1.5, 1.5, 2.5])
-    h1.markdown(f"**{headers[0]}**")
-    h2.markdown(f"**{headers[1]}**")
-    h3.markdown(f"**{headers[2]}**")
-    h4.markdown(f"**{headers[3]}**")
-    st.markdown("---")
-
-    for item in data:
-        c1, c2, c3, c4 = st.columns([1, 1.5, 1.5, 2.5])
-
-        with c1:
-            st.markdown(f"### {item['symbol']}")
-
-        with c2:
-            st.write(item["name_label"])
-            play_audio(item["name_audio"])
-
-        with c3:
-            st.write(item["sound_label"])
-            play_audio(item["sound_audio"])
-
-        with c4:
-            st.write(item["word_label"])
-            play_audio(item["word_audio"])
-
-        st.markdown("---")
-
-
-def render_simple_audio_list(data, title="🔊 발음 듣기"):
-    st.markdown(f"### {title}")
-
-    for label, audio_text in data:
-        with st.expander(f"🔊 {label} 듣기"):
-            st.write(f"**{audio_text}**")
-            play_audio(audio_text)
-
-
-# =========================================================
-# CSS 디자인
-# =========================================================
-st.markdown(
+def audio_button(label, text, key):
     """
-    <style>
-    .title-box {
-        background: linear-gradient(135deg, #e8f3ff, #fff4e6);
-        padding: 28px;
-        border-radius: 24px;
-        margin-bottom: 24px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-        text-align: center;
-    }
+    버튼을 누르면 해당 text를 영어 음성으로 재생
+    """
+    if st.button(label, key=key):
+        audio_bytes = make_tts_audio(text)
+        st.audio(audio_bytes, format="audio/mp3")
 
-    .title-box h1 {
-        color: #1f3b57;
-        margin-bottom: 8px;
-        font-size: 34px;
-    }
 
-    .title-box p {
-        color: #555;
-        font-size: 18px;
-        margin: 0;
-    }
+# =========================
+# 데이터
+# =========================
 
-    .phonics-card {
-        background: #ffffff;
-        border-radius: 22px;
-        padding: 24px;
-        margin: 18px 0;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.07);
-        border: 1px solid #eeeeee;
-    }
+consonants = [
+    {
+        "letter": "B b",
+        "name": "bee",
+        "sound_name": "/b/",
+        "sound_audio": "buh buh",
+        "word": "bat",
+        "word_audio": "bat"
+    },
+    {
+        "letter": "C c",
+        "name": "see",
+        "sound_name": "/k/",
+        "sound_audio": "kuh kuh",
+        "word": "cat",
+        "word_audio": "cat"
+    },
+    {
+        "letter": "D d",
+        "name": "dee",
+        "sound_name": "/d/",
+        "sound_audio": "duh duh",
+        "word": "dog",
+        "word_audio": "dog"
+    },
+    {
+        "letter": "F f",
+        "name": "eff",
+        "sound_name": "/f/",
+        "sound_audio": "fff fff",
+        "word": "fish",
+        "word_audio": "fish"
+    },
+    {
+        "letter": "G g",
+        "name": "gee",
+        "sound_name": "/g/",
+        "sound_audio": "guh guh",
+        "word": "goat",
+        "word_audio": "goat"
+    },
+    {
+        "letter": "H h",
+        "name": "aitch",
+        "sound_name": "/h/",
+        "sound_audio": "huh huh",
+        "word": "hat",
+        "word_audio": "hat"
+    },
+    {
+        "letter": "J j",
+        "name": "jay",
+        "sound_name": "/dʒ/",
+        "sound_audio": "juh juh",
+        "word": "jam",
+        "word_audio": "jam"
+    },
+    {
+        "letter": "K k",
+        "name": "kay",
+        "sound_name": "/k/",
+        "sound_audio": "kuh kuh",
+        "word": "kite",
+        "word_audio": "kite"
+    },
+    {
+        "letter": "L l",
+        "name": "el",
+        "sound_name": "/l/",
+        "sound_audio": "lll lll",
+        "word": "lion",
+        "word_audio": "lion"
+    },
+    {
+        "letter": "M m",
+        "name": "em",
+        "sound_name": "/m/",
+        "sound_audio": "mmm mmm",
+        "word": "moon",
+        "word_audio": "moon"
+    },
+    {
+        "letter": "N n",
+        "name": "en",
+        "sound_name": "/n/",
+        "sound_audio": "nnn nnn",
+        "word": "nose",
+        "word_audio": "nose"
+    },
+    {
+        "letter": "P p",
+        "name": "pee",
+        "sound_name": "/p/",
+        "sound_audio": "puh puh",
+        "word": "pig",
+        "word_audio": "pig"
+    },
+    {
+        "letter": "Q q",
+        "name": "cue",
+        "sound_name": "/kw/",
+        "sound_audio": "kwuh kwuh",
+        "word": "queen",
+        "word_audio": "queen"
+    },
+    {
+        "letter": "R r",
+        "name": "ar",
+        "sound_name": "/r/",
+        "sound_audio": "ruh ruh",
+        "word": "red",
+        "word_audio": "red"
+    },
+    {
+        "letter": "S s",
+        "name": "ess",
+        "sound_name": "/s/",
+        "sound_audio": "sss sss",
+        "word": "sun",
+        "word_audio": "sun"
+    },
+    {
+        "letter": "T t",
+        "name": "tee",
+        "sound_name": "/t/",
+        "sound_audio": "tuh tuh",
+        "word": "top",
+        "word_audio": "top"
+    },
+    {
+        "letter": "V v",
+        "name": "vee",
+        "sound_name": "/v/",
+        "sound_audio": "vvv vvv",
+        "word": "van",
+        "word_audio": "van"
+    },
+    {
+        "letter": "W w",
+        "name": "double you",
+        "sound_name": "/w/",
+        "sound_audio": "wuh wuh",
+        "word": "window",
+        "word_audio": "window"
+    },
+    {
+        "letter": "X x",
+        "name": "ex",
+        "sound_name": "/ks/",
+        "sound_audio": "ks ks",
+        "word": "fox",
+        "word_audio": "fox"
+    },
+    {
+        "letter": "Y y",
+        "name": "why",
+        "sound_name": "/j/",
+        "sound_audio": "yuh yuh",
+        "word": "yes",
+        "word_audio": "yes"
+    },
+    {
+        "letter": "Z z",
+        "name": "zee",
+        "sound_name": "/z/",
+        "sound_audio": "zzz zzz",
+        "word": "zebra",
+        "word_audio": "zebra"
+    },
+]
 
-    .phonics-card h3 {
-        margin-top: 0;
-        color: #1f4e79;
-    }
+short_vowels = [
+    {
+        "letter": "A a",
+        "name": "ay",
+        "sound_name": "Short a /æ/",
+        "sound_audio": "ă ă",
+        "word": "apple",
+        "word_audio": "apple"
+    },
+    {
+        "letter": "E e",
+        "name": "ee",
+        "sound_name": "Short e /e/",
+        "sound_audio": "eh eh",
+        "word": "egg",
+        "word_audio": "egg"
+    },
+    {
+        "letter": "I i",
+        "name": "eye",
+        "sound_name": "Short i /ɪ/",
+        "sound_audio": "ih ih",
+        "word": "igloo",
+        "word_audio": "igloo"
+    },
+    {
+        "letter": "O o",
+        "name": "oh",
+        "sound_name": "Short o /ɑ/",
+        "sound_audio": "ŏ ŏ",
+        "word": "octopus",
+        "word_audio": "octopus"
+    },
+    {
+        "letter": "U u",
+        "name": "you",
+        "sound_name": "Short u /ʌ/",
+        "sound_audio": "uh uh",
+        "word": "umbrella",
+        "word_audio": "umbrella"
+    },
+]
 
-    .phonics-card p {
-        font-size: 20px;
-        line-height: 1.8;
-    }
+long_vowels = [
+    {
+        "letter": "A a",
+        "name": "ay",
+        "sound_name": "Long a /eɪ/",
+        "sound_audio": "ay ay",
+        "word": "cake",
+        "word_audio": "cake"
+    },
+    {
+        "letter": "E e",
+        "name": "ee",
+        "sound_name": "Long e /iː/",
+        "sound_audio": "ee ee",
+        "word": "tree",
+        "word_audio": "tree"
+    },
+    {
+        "letter": "I i",
+        "name": "eye",
+        "sound_name": "Long i /aɪ/",
+        "sound_audio": "eye eye",
+        "word": "bike",
+        "word_audio": "bike"
+    },
+    {
+        "letter": "O o",
+        "name": "oh",
+        "sound_name": "Long o /oʊ/",
+        "sound_audio": "oh oh",
+        "word": "rope",
+        "word_audio": "rope"
+    },
+    {
+        "letter": "U u",
+        "name": "you",
+        "sound_name": "Long u /juː/",
+        "sound_audio": "you you",
+        "word": "cube",
+        "word_audio": "cube"
+    },
+]
 
-    .rule-box {
-        background: #fff9e8;
-        border: 1.5px solid #ffe2a8;
-        border-radius: 18px;
-        padding: 18px;
-        margin: 16px 0;
-        font-size: 20px;
-        line-height: 1.8;
-    }
+vowel_exceptions = [
+    {
+        "letter": "A a",
+        "name": "ay",
+        "sound_name": "A as /ɑː/",
+        "sound_audio": "ah ah",
+        "word": "father",
+        "word_audio": "father"
+    },
+    {
+        "letter": "A a",
+        "name": "ay",
+        "sound_name": "A as /ɔː/",
+        "sound_audio": "aw aw",
+        "word": "ball",
+        "word_audio": "ball"
+    },
+    {
+        "letter": "A a",
+        "name": "ay",
+        "sound_name": "A as /ə/",
+        "sound_audio": "uh uh",
+        "word": "about",
+        "word_audio": "about"
+    },
+    {
+        "letter": "E e",
+        "name": "ee",
+        "sound_name": "E as silent",
+        "sound_audio": "make",
+        "word": "make",
+        "word_audio": "make"
+    },
+    {
+        "letter": "O o",
+        "name": "oh",
+        "sound_name": "O as /ʌ/",
+        "sound_audio": "uh uh",
+        "word": "love",
+        "word_audio": "love"
+    },
+    {
+        "letter": "O o",
+        "name": "oh",
+        "sound_name": "O as /uː/",
+        "sound_audio": "oo oo",
+        "word": "do",
+        "word_audio": "do"
+    },
+    {
+        "letter": "OO",
+        "name": "double o",
+        "sound_name": "OO as /ʊ/",
+        "sound_audio": "oo oo",
+        "word": "book",
+        "word_audio": "book"
+    },
+    {
+        "letter": "OO",
+        "name": "double o",
+        "sound_name": "OO as /uː/",
+        "sound_audio": "oo oo",
+        "word": "moon",
+        "word_audio": "moon"
+    },
+    {
+        "letter": "EA",
+        "name": "e a",
+        "sound_name": "EA as /iː/",
+        "sound_audio": "ee ee",
+        "word": "eat",
+        "word_audio": "eat"
+    },
+    {
+        "letter": "EA",
+        "name": "e a",
+        "sound_name": "EA as /e/",
+        "sound_audio": "eh eh",
+        "word": "bread",
+        "word_audio": "bread"
+    },
+    {
+        "letter": "OW",
+        "name": "o w",
+        "sound_name": "OW as /aʊ/",
+        "sound_audio": "ow ow",
+        "word": "cow",
+        "word_audio": "cow"
+    },
+    {
+        "letter": "OW",
+        "name": "o w",
+        "sound_name": "OW as /oʊ/",
+        "sound_audio": "oh oh",
+        "word": "snow",
+        "word_audio": "snow"
+    },
+]
 
-    table {
-        font-size: 18px !important;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
+# =========================
+# 표 출력 함수
+# =========================
+def show_phonics_table(data, title):
+    st.subheader(title)
+
+    st.markdown(
+        """
+        <style>
+        .phonics-card {
+            border: 1px solid #e6e6e6;
+            border-radius: 14px;
+            padding: 16px;
+            margin-bottom: 12px;
+            background-color: #fafafa;
+        }
+        .letter-box {
+            font-size: 30px;
+            font-weight: 800;
+        }
+        .small-label {
+            color: #666666;
+            font-size: 14px;
+        }
+        .sound-name {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        .word-box {
+            font-size: 22px;
+            font-weight: 700;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
+    for idx, item in enumerate(data):
+        with st.container():
+            st.markdown('<div class="phonics-card">', unsafe_allow_html=True)
+
+            col1, col2, col3, col4 = st.columns([1.1, 1.4, 1.6, 1.6])
+
+            with col1:
+                st.markdown(f"<div class='small-label'>글자</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='letter-box'>{item['letter']}</div>", unsafe_allow_html=True)
+
+            with col2:
+                st.markdown(f"<div class='small-label'>알파벳 이름</div>", unsafe_allow_html=True)
+                st.markdown(f"**{item['name']}**")
+                audio_button(
+                    "🔊 이름 듣기",
+                    item["name"],
+                    key=f"name_{title}_{idx}_{item['letter']}_{item['word']}"
+                )
+
+            with col3:
+                st.markdown(f"<div class='small-label'>실제 소리</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='sound-name'>{item['sound_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 실제 소리 듣기",
+                    item["sound_audio"],
+                    key=f"sound_{title}_{idx}_{item['letter']}_{item['word']}"
+                )
+
+            with col4:
+                st.markdown(f"<div class='small-label'>예시 단어</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 단어 듣기",
+                    item["word_audio"],
+                    key=f"word_{title}_{idx}_{item['letter']}_{item['word']}"
+                )
+
+            st.markdown('</div>', unsafe_allow_html=True)
+
+
+# =========================
+# 탭 구성
+# =========================
+tab1, tab2, tab3, tab4 = st.tabs(
+    [
+        "① 자음 소리",
+        "② 단모음 Short Vowels",
+        "③ 장모음 Long Vowels",
+        "④ 모음 예외 소리"
+    ]
 )
 
-
-# =========================================================
-# 제목
-# =========================================================
-st.markdown(
-    """
-    <div class="title-box">
-        <h1>🌈 Phonics Adventure</h1>
-        <p>알파벳 이름, 실제 소리, 단어 발음을 함께 들어 보며 파닉스를 배워 봅시다.</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
-tabs = st.tabs([
-    "🌈 파닉스란?",
-    "🧩 자음 소리",
-    "🍎 단모음",
-    "🌟 장모음",
-    "🧭 모음 예외",
-    "🪄 Magic E",
-    "🤝 Blends",
-    "👯 Digraphs",
-    "🌊 Vowel Teams",
-    "🚗 R-Controlled",
-    "🏠 Word Families"
-])
-
-
-# =========================================================
-# Tab 1: 파닉스란?
-# =========================================================
-with tabs[0]:
-    st.subheader("🌈 파닉스란?")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Phonics</h3>
-            <p>
-                <b>Phonics</b>는 영어 글자와 소리의 관계를 배우는 방법입니다.
-            </p>
-            <p>
-                즉, 영어 단어를 볼 때 <b>글자를 소리로 바꾸어 읽는 힘</b>을 기르는 공부입니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.info("파닉스를 배우면 처음 보는 단어도 어느 정도 읽을 수 있게 됩니다.")
-
-    st.markdown(
-        """
-        ### ✅ 중요한 차이
-
-        영어에서는 **알파벳 이름**과 **단어 안에서 나는 실제 소리**가 다릅니다.
-
-        예를 들어,
-
-        - 글자 **B**의 이름은 “비”처럼 들립니다.
-        - 하지만 단어 안에서는 보통 **/b/**, 즉 “브”에 가까운 소리가 납니다.
-        - 그래서 **bat**은 “비-에이-티”가 아니라 **/b/ + /a/ + /t/**로 읽습니다.
-        """
-    )
-
-    intro_data = [
-        {
-            "symbol": "B",
-            "name_label": "이름: B",
-            "name_audio": "letter B",
-            "sound_label": "소리: /b/",
-            "sound_audio": "buh, buh",
-            "word_label": "bat, bag, boy",
-            "word_audio": "bat, bag, boy",
-        },
-        {
-            "symbol": "C",
-            "name_label": "이름: C",
-            "name_audio": "letter C",
-            "sound_label": "소리: /k/",
-            "sound_audio": "kuh, kuh",
-            "word_label": "cat, cup, car",
-            "word_audio": "cat, cup, car",
-        },
-        {
-            "symbol": "M",
-            "name_label": "이름: M",
-            "name_audio": "letter M",
-            "sound_label": "소리: /m/",
-            "sound_audio": "mmm, mmm",
-            "word_label": "man, milk, mom",
-            "word_audio": "man, milk, mom",
-        },
-    ]
-
-    st.markdown("### 🔊 알파벳 이름 / 실제 소리 / 단어 비교")
-    render_sound_table(intro_data)
-
-
-# =========================================================
-# Tab 2: 자음 소리
-# =========================================================
-with tabs[1]:
-    st.subheader("🧩 자음 소리")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Consonants</h3>
-            <p>
-                <b>자음</b>은 모음 a, e, i, o, u를 제외한 대부분의 글자입니다.
-            </p>
-            <p>
-                자음은 단어의 처음과 끝에서 많이 쓰이며, 단어의 뼈대를 만들어 줍니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    consonant_data = [
-        {"symbol": "b", "name_label": "B / 비", "name_audio": "letter B", "sound_label": "/b/ 브", "sound_audio": "buh, buh", "word_label": "bat, bag, boy", "word_audio": "bat, bag, boy"},
-        {"symbol": "c", "name_label": "C / 씨", "name_audio": "letter C", "sound_label": "/k/ 크", "sound_audio": "kuh, kuh", "word_label": "cat, cup, car", "word_audio": "cat, cup, car"},
-        {"symbol": "d", "name_label": "D / 디", "name_audio": "letter D", "sound_label": "/d/ 드", "sound_audio": "duh, duh", "word_label": "dog, desk, dad", "word_audio": "dog, desk, dad"},
-        {"symbol": "f", "name_label": "F / 에프", "name_audio": "letter F", "sound_label": "/f/ 프", "sound_audio": "fff, fff", "word_label": "fish, fan, fox", "word_audio": "fish, fan, fox"},
-        {"symbol": "g", "name_label": "G / 지", "name_audio": "letter G", "sound_label": "/g/ 그", "sound_audio": "guh, guh", "word_label": "gum, goat, game", "word_audio": "gum, goat, game"},
-        {"symbol": "h", "name_label": "H / 에이치", "name_audio": "letter H", "sound_label": "/h/ 흐", "sound_audio": "huh, huh", "word_label": "hat, hen, hot", "word_audio": "hat, hen, hot"},
-        {"symbol": "j", "name_label": "J / 제이", "name_audio": "letter J", "sound_label": "/j/ 즈", "sound_audio": "juh, juh", "word_label": "jam, jet, job", "word_audio": "jam, jet, job"},
-        {"symbol": "k", "name_label": "K / 케이", "name_audio": "letter K", "sound_label": "/k/ 크", "sound_audio": "kuh, kuh", "word_label": "kid, kite, king", "word_audio": "kid, kite, king"},
-        {"symbol": "l", "name_label": "L / 엘", "name_audio": "letter L", "sound_label": "/l/ 을", "sound_audio": "lll, lll", "word_label": "leg, lion, log", "word_audio": "leg, lion, log"},
-        {"symbol": "m", "name_label": "M / 엠", "name_audio": "letter M", "sound_label": "/m/ 음", "sound_audio": "mmm, mmm", "word_label": "man, milk, mom", "word_audio": "man, milk, mom"},
-        {"symbol": "n", "name_label": "N / 엔", "name_audio": "letter N", "sound_label": "/n/ 은", "sound_audio": "nnn, nnn", "word_label": "net, nose, nine", "word_audio": "net, nose, nine"},
-        {"symbol": "p", "name_label": "P / 피", "name_audio": "letter P", "sound_label": "/p/ 프", "sound_audio": "puh, puh", "word_label": "pig, pen, pop", "word_audio": "pig, pen, pop"},
-        {"symbol": "r", "name_label": "R / 알", "name_audio": "letter R", "sound_label": "/r/ 르", "sound_audio": "ruh, ruh", "word_label": "red, run, rain", "word_audio": "red, run, rain"},
-        {"symbol": "s", "name_label": "S / 에스", "name_audio": "letter S", "sound_label": "/s/ 스", "sound_audio": "sss, sss", "word_label": "sun, sit, sad", "word_audio": "sun, sit, sad"},
-        {"symbol": "t", "name_label": "T / 티", "name_audio": "letter T", "sound_label": "/t/ 트", "sound_audio": "tuh, tuh", "word_label": "top, ten, tiger", "word_audio": "top, ten, tiger"},
-        {"symbol": "v", "name_label": "V / 브이", "name_audio": "letter V", "sound_label": "/v/ 브", "sound_audio": "vvv, vvv", "word_label": "van, vet, vest", "word_audio": "van, vet, vest"},
-        {"symbol": "w", "name_label": "W / 더블유", "name_audio": "letter W", "sound_label": "/w/ 우", "sound_audio": "wuh, wuh", "word_label": "web, win, water", "word_audio": "web, win, water"},
-        {"symbol": "y", "name_label": "Y / 와이", "name_audio": "letter Y", "sound_label": "/y/ 여", "sound_audio": "yuh, yuh", "word_label": "yes, yellow, yogurt", "word_audio": "yes, yellow, yogurt"},
-        {"symbol": "z", "name_label": "Z / 지", "name_audio": "letter Z", "sound_label": "/z/ 즈", "sound_audio": "zzz, zzz", "word_label": "zoo, zebra, zip", "word_audio": "zoo, zebra, zip"},
-    ]
-
-    st.markdown("### ✅ 자주 나오는 자음 소리")
-    render_sound_table(consonant_data)
-
-    st.warning("c와 g는 단어에 따라 소리가 달라질 수 있습니다. 예: cat / city, goat / giant")
-
-
-# =========================================================
-# Tab 3: 단모음
-# =========================================================
-with tabs[2]:
-    st.subheader("🍎 단모음 Short Vowels")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Short Vowels</h3>
-            <p>
-                <b>단모음</b>은 짧게 나는 모음 소리입니다.
-            </p>
-            <p>
-                보통 <b>자음 + 모음 + 자음</b> 구조의 짧은 단어에서 많이 나옵니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    short_vowel_data = [
-        {"symbol": "a", "name_label": "A / 에이", "name_audio": "letter A", "sound_label": "short a / 애", "sound_audio": "short a, short a", "word_label": "cat, bag, man", "word_audio": "cat, bag, man"},
-        {"symbol": "e", "name_label": "E / 이", "name_audio": "letter E", "sound_label": "short e / 에", "sound_audio": "short e, short e", "word_label": "bed, pen, ten", "word_audio": "bed, pen, ten"},
-        {"symbol": "i", "name_label": "I / 아이", "name_audio": "letter I", "sound_label": "short i / 짧은 이", "sound_audio": "short i, short i", "word_label": "sit, big, fish", "word_audio": "sit, big, fish"},
-        {"symbol": "o", "name_label": "O / 오우", "name_audio": "letter O", "sound_label": "short o / 아·오", "sound_audio": "short o, short o", "word_label": "hot, dog, box", "word_audio": "hot, dog, box"},
-        {"symbol": "u", "name_label": "U / 유", "name_audio": "letter U", "sound_label": "short u / 어", "sound_audio": "short u, short u", "word_label": "cup, sun, bus", "word_audio": "cup, sun, bus"},
-    ]
-
-    st.markdown("### ✅ 단모음: 이름 / 실제 소리 / 예시 단어")
-    render_sound_table(short_vowel_data, headers=("모음", "알파벳 이름", "단모음 소리", "예시 단어"))
-
-    st.markdown(
-        """
-        <div class="rule-box">
-            <b>CVC 단어</b><br>
-            C = consonant 자음<br>
-            V = vowel 모음<br><br>
-            <b>cat</b> = c + a + t<br>
-            <b>bed</b> = b + e + d<br>
-            <b>sit</b> = s + i + t
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-# =========================================================
-# Tab 4: 장모음
-# =========================================================
-with tabs[3]:
-    st.subheader("🌟 장모음 Long Vowels")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Long Vowels</h3>
-            <p>
-                <b>장모음</b>은 모음 글자의 이름과 비슷하게 나는 소리입니다.
-            </p>
-            <p>
-                a, e, i, o, u가 자기 이름처럼 소리나는 경우입니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    long_vowel_data = [
-        {"symbol": "a", "name_label": "A / 에이", "name_audio": "letter A", "sound_label": "long a / 에이", "sound_audio": "long a, long a", "word_label": "cake, name, rain", "word_audio": "cake, name, rain"},
-        {"symbol": "e", "name_label": "E / 이", "name_audio": "letter E", "sound_label": "long e / 이", "sound_audio": "long e, long e", "word_label": "he, we, tree", "word_audio": "he, we, tree"},
-        {"symbol": "i", "name_label": "I / 아이", "name_audio": "letter I", "sound_label": "long i / 아이", "sound_audio": "long i, long i", "word_label": "bike, time, five", "word_audio": "bike, time, five"},
-        {"symbol": "o", "name_label": "O / 오우", "name_audio": "letter O", "sound_label": "long o / 오우", "sound_audio": "long o, long o", "word_label": "home, note, boat", "word_audio": "home, note, boat"},
-        {"symbol": "u", "name_label": "U / 유", "name_audio": "letter U", "sound_label": "long u / 유·우", "sound_audio": "long u, long u", "word_label": "cute, use, blue", "word_audio": "cute, use, blue"},
-    ]
-
-    st.markdown("### ✅ 장모음: 이름 / 실제 소리 / 예시 단어")
-    render_sound_table(long_vowel_data, headers=("모음", "알파벳 이름", "장모음 소리", "예시 단어"))
-
-    st.info("장모음은 Magic E나 vowel team에서 자주 나옵니다.")
-
-
-# =========================================================
-# Tab 5: 모음 예외
-# =========================================================
-with tabs[4]:
-    st.subheader("🧭 모음 예외 Vowel Exceptions")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 모음 예외란?</h3>
-            <p>
-                영어 모음은 항상 단모음이나 장모음으로만 읽히지 않습니다.
-            </p>
-            <p>
-                같은 글자라도 단어에 따라 소리가 달라질 수 있습니다.
-                그래서 자주 나오는 예외를 따로 익히는 것이 좋습니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.info("특히 a, o, ea, oo는 소리가 여러 가지로 바뀌는 경우가 많습니다.")
-
-    vowel_exception_data = [
-        {"symbol": "a", "name_label": "A / 에이", "name_audio": "letter A", "sound_label": "short a / 애", "sound_audio": "short a, short a", "word_label": "cat, bag, man", "word_audio": "cat, bag, man"},
-        {"symbol": "a", "name_label": "A / 에이", "name_audio": "letter A", "sound_label": "long a / 에이", "sound_audio": "long a, long a", "word_label": "cake, name, rain", "word_audio": "cake, name, rain"},
-        {"symbol": "a", "name_label": "A / 에이", "name_audio": "letter A", "sound_label": "a / 아", "sound_audio": "ah, ah", "word_label": "father, car, star", "word_audio": "father, car, star"},
-        {"symbol": "a", "name_label": "A / 에이", "name_audio": "letter A", "sound_label": "a / 어", "sound_audio": "uh, uh", "word_label": "about, again, sofa", "word_audio": "about, again, sofa"},
-
-        {"symbol": "e", "name_label": "E / 이", "name_audio": "letter E", "sound_label": "short e / 에", "sound_audio": "short e, short e", "word_label": "bed, pen, ten", "word_audio": "bed, pen, ten"},
-        {"symbol": "e", "name_label": "E / 이", "name_audio": "letter E", "sound_label": "long e / 이", "sound_audio": "long e, long e", "word_label": "he, we, these", "word_audio": "he, we, these"},
-
-        {"symbol": "ea", "name_label": "e + a", "name_audio": "e a", "sound_label": "ea / 이", "sound_audio": "long e, long e", "word_label": "eat, meat, sea", "word_audio": "eat, meat, sea"},
-        {"symbol": "ea", "name_label": "e + a", "name_audio": "e a", "sound_label": "ea / 에", "sound_audio": "short e, short e", "word_label": "bread, head, ready", "word_audio": "bread, head, ready"},
-
-        {"symbol": "i", "name_label": "I / 아이", "name_audio": "letter I", "sound_label": "short i / 짧은 이", "sound_audio": "short i, short i", "word_label": "sit, big, fish", "word_audio": "sit, big, fish"},
-        {"symbol": "i", "name_label": "I / 아이", "name_audio": "letter I", "sound_label": "long i / 아이", "sound_audio": "long i, long i", "word_label": "bike, time, five", "word_audio": "bike, time, five"},
-        {"symbol": "i + r", "name_label": "i + r", "name_audio": "i r", "sound_label": "ir / 어r", "sound_audio": "ir, ir", "word_label": "bird, girl, shirt", "word_audio": "bird, girl, shirt"},
-
-        {"symbol": "o", "name_label": "O / 오우", "name_audio": "letter O", "sound_label": "short o / 아·오", "sound_audio": "short o, short o", "word_label": "hot, dog, box", "word_audio": "hot, dog, box"},
-        {"symbol": "o", "name_label": "O / 오우", "name_audio": "letter O", "sound_label": "long o / 오우", "sound_audio": "long o, long o", "word_label": "home, note, hope", "word_audio": "home, note, hope"},
-        {"symbol": "o", "name_label": "O / 오우", "name_audio": "letter O", "sound_label": "o / 우", "sound_audio": "oo, oo", "word_label": "do, to, who", "word_audio": "do, to, who"},
-        {"symbol": "o", "name_label": "O / 오우", "name_audio": "letter O", "sound_label": "o / 어", "sound_audio": "uh, uh", "word_label": "son, love, come", "word_audio": "son, love, come"},
-
-        {"symbol": "u", "name_label": "U / 유", "name_audio": "letter U", "sound_label": "short u / 어", "sound_audio": "short u, short u", "word_label": "cup, sun, bus", "word_audio": "cup, sun, bus"},
-        {"symbol": "u", "name_label": "U / 유", "name_audio": "letter U", "sound_label": "long u / 유", "sound_audio": "long u, long u", "word_label": "cute, use, music", "word_audio": "cute, use, music"},
-        {"symbol": "u", "name_label": "U / 유", "name_audio": "letter U", "sound_label": "u / 우", "sound_audio": "oo, oo", "word_label": "blue, true, rule", "word_audio": "blue, true, rule"},
-
-        {"symbol": "oo", "name_label": "o + o", "name_audio": "o o", "sound_label": "oo / 우", "sound_audio": "oo, oo", "word_label": "moon, food, school", "word_audio": "moon, food, school"},
-        {"symbol": "oo", "name_label": "o + o", "name_audio": "o o", "sound_label": "oo / 짧은 우", "sound_audio": "short oo, short oo", "word_label": "book, look, good", "word_audio": "book, look, good"},
-    ]
-
-    st.markdown("### ✅ 모음 예외 소리 정리")
-    render_sound_table(
-        vowel_exception_data,
-        headers=("모음", "글자 이름 / 조합", "실제 소리", "예시 단어")
-    )
-
-    st.markdown(
-        """
-        <div class="rule-box">
-            <b>정리</b><br><br>
-            1. 모음은 단모음, 장모음만 있는 것이 아닙니다.<br>
-            2. 같은 글자라도 단어에 따라 소리가 달라집니다.<br>
-            3. 특히 <b>a, o, ea, oo</b>는 여러 소리가 나므로 자주 보고 들어야 합니다.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-
-# =========================================================
-# Tab 6: Magic E
-# =========================================================
-with tabs[5]:
-    st.subheader("🪄 Magic E")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Magic E란?</h3>
-            <p>
-                단어 끝에 <b>e</b>가 붙으면, 앞의 모음이 <b>장모음</b>으로 바뀌는 경우가 많습니다.
-            </p>
-            <p>
-                이때 끝의 <b>e</b>는 보통 소리내어 읽지 않습니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    magic_e_data = [
-        ("cap → cape", "cap, cape"),
-        ("tap → tape", "tap, tape"),
-        ("kit → kite", "kit, kite"),
-        ("bit → bite", "bit, bite"),
-        ("hop → hope", "hop, hope"),
-        ("cut → cute", "cut, cute"),
-    ]
-
-    st.markdown(
-        """
-        | 짧은 소리 | Magic E | 변화 |
-        |---|---|---|
-        | cap | cape | a: 애 → 에이 |
-        | tap | tape | a: 애 → 에이 |
-        | kit | kite | i: 짧은 이 → 아이 |
-        | bit | bite | i: 짧은 이 → 아이 |
-        | hop | hope | o: 짧은 오 → 오우 |
-        | cut | cute | u: 어 → 유 |
-        """
-    )
-
-    st.success("예: cap은 짧게, cape는 길게 읽습니다.")
-    render_simple_audio_list(magic_e_data, "🔊 Magic E 비교 듣기")
-
-
-# =========================================================
-# Tab 7: Consonant Blends
-# =========================================================
-with tabs[6]:
-    st.subheader("🤝 Consonant Blends")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Consonant Blends란?</h3>
-            <p>
-                <b>Consonant blends</b>는 자음 두 개 또는 세 개가 함께 나오지만,
-                각각의 소리가 어느 정도 살아 있는 경우입니다.
-            </p>
-            <p>
-                예: <b>bl</b>은 /b/와 /l/ 소리가 함께 납니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    blend_data = [
-        {"symbol": "bl", "name_label": "b + l", "name_audio": "b l", "sound_label": "/bl/", "sound_audio": "bl, bl", "word_label": "black, blue, block", "word_audio": "black, blue, block"},
-        {"symbol": "br", "name_label": "b + r", "name_audio": "b r", "sound_label": "/br/", "sound_audio": "br, br", "word_label": "brown, bread, brush", "word_audio": "brown, bread, brush"},
-        {"symbol": "cl", "name_label": "c + l", "name_audio": "c l", "sound_label": "/cl/", "sound_audio": "cl, cl", "word_label": "clap, clock, class", "word_audio": "clap, clock, class"},
-        {"symbol": "cr", "name_label": "c + r", "name_audio": "c r", "sound_label": "/cr/", "sound_audio": "cr, cr", "word_label": "crab, cry, cross", "word_audio": "crab, cry, cross"},
-        {"symbol": "dr", "name_label": "d + r", "name_audio": "d r", "sound_label": "/dr/", "sound_audio": "dr, dr", "word_label": "drum, dress, drive", "word_audio": "drum, dress, drive"},
-        {"symbol": "fl", "name_label": "f + l", "name_audio": "f l", "sound_label": "/fl/", "sound_audio": "fl, fl", "word_label": "flag, flower, fly", "word_audio": "flag, flower, fly"},
-        {"symbol": "fr", "name_label": "f + r", "name_audio": "f r", "sound_label": "/fr/", "sound_audio": "fr, fr", "word_label": "frog, friend, fruit", "word_audio": "frog, friend, fruit"},
-        {"symbol": "gl", "name_label": "g + l", "name_audio": "g l", "sound_label": "/gl/", "sound_audio": "gl, gl", "word_label": "glass, glad, glue", "word_audio": "glass, glad, glue"},
-        {"symbol": "gr", "name_label": "g + r", "name_audio": "g r", "sound_label": "/gr/", "sound_audio": "gr, gr", "word_label": "green, grass, grape", "word_audio": "green, grass, grape"},
-        {"symbol": "pl", "name_label": "p + l", "name_audio": "p l", "sound_label": "/pl/", "sound_audio": "pl, pl", "word_label": "plane, play, plant", "word_audio": "plane, play, plant"},
-        {"symbol": "pr", "name_label": "p + r", "name_audio": "p r", "sound_label": "/pr/", "sound_audio": "pr, pr", "word_label": "print, pray, price", "word_audio": "print, pray, price"},
-        {"symbol": "sk", "name_label": "s + k", "name_audio": "s k", "sound_label": "/sk/", "sound_audio": "sk, sk", "word_label": "sky, skate, skip", "word_audio": "sky, skate, skip"},
-        {"symbol": "sl", "name_label": "s + l", "name_audio": "s l", "sound_label": "/sl/", "sound_audio": "sl, sl", "word_label": "sleep, slide, slow", "word_audio": "sleep, slide, slow"},
-        {"symbol": "sm", "name_label": "s + m", "name_audio": "s m", "sound_label": "/sm/", "sound_audio": "sm, sm", "word_label": "smile, small, smell", "word_audio": "smile, small, smell"},
-        {"symbol": "sn", "name_label": "s + n", "name_audio": "s n", "sound_label": "/sn/", "sound_audio": "sn, sn", "word_label": "snake, snow, snack", "word_audio": "snake, snow, snack"},
-        {"symbol": "sp", "name_label": "s + p", "name_audio": "s p", "sound_label": "/sp/", "sound_audio": "sp, sp", "word_label": "spoon, speak, sport", "word_audio": "spoon, speak, sport"},
-        {"symbol": "st", "name_label": "s + t", "name_audio": "s t", "sound_label": "/st/", "sound_audio": "st, st", "word_label": "star, stop, student", "word_audio": "star, stop, student"},
-        {"symbol": "sw", "name_label": "s + w", "name_audio": "s w", "sound_label": "/sw/", "sound_audio": "sw, sw", "word_label": "swim, sweet, swing", "word_audio": "swim, sweet, swing"},
-        {"symbol": "tr", "name_label": "t + r", "name_audio": "t r", "sound_label": "/tr/", "sound_audio": "tr, tr", "word_label": "tree, train, truck", "word_audio": "tree, train, truck"},
-    ]
-
-    st.markdown("### ✅ Blend 소리 / 예시 단어")
-    render_sound_table(blend_data, headers=("Blend", "글자 조합", "실제 소리", "예시 단어"))
-
-    st.info("blend는 두 소리가 합쳐지지만 완전히 새로운 소리가 되는 것은 아닙니다.")
-
-
-# =========================================================
-# Tab 8: Digraphs
-# =========================================================
-with tabs[7]:
-    st.subheader("👯 Digraphs")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Digraph란?</h3>
-            <p>
-                <b>Digraph</b>는 두 글자가 만나 하나의 새로운 소리를 내는 경우입니다.
-            </p>
-            <p>
-                blend와 다르게, 각각의 소리보다 <b>새로운 하나의 소리</b>로 읽습니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    digraph_data = [
-        {"symbol": "sh", "name_label": "s + h", "name_audio": "s h", "sound_label": "/sh/ 쉬", "sound_audio": "sh, sh", "word_label": "ship, fish, shop", "word_audio": "ship, fish, shop"},
-        {"symbol": "ch", "name_label": "c + h", "name_audio": "c h", "sound_label": "/ch/ 치", "sound_audio": "ch, ch", "word_label": "chair, lunch, cheese", "word_audio": "chair, lunch, cheese"},
-        {"symbol": "th", "name_label": "t + h", "name_audio": "t h", "sound_label": "/th/", "sound_audio": "th, th", "word_label": "thin, this, bath", "word_audio": "thin, this, bath"},
-        {"symbol": "wh", "name_label": "w + h", "name_audio": "w h", "sound_label": "/wh/", "sound_audio": "wh, wh", "word_label": "what, when, white", "word_audio": "what, when, white"},
-        {"symbol": "ph", "name_label": "p + h", "name_audio": "p h", "sound_label": "/f/ 프", "sound_audio": "f, f", "word_label": "phone, photo, graph", "word_audio": "phone, photo, graph"},
-        {"symbol": "ck", "name_label": "c + k", "name_audio": "c k", "sound_label": "/k/ 크", "sound_audio": "k, k", "word_label": "duck, sock, black", "word_audio": "duck, sock, black"},
-    ]
-
-    st.markdown("### ✅ Digraph 소리 / 예시 단어")
-    render_sound_table(digraph_data, headers=("Digraph", "글자 조합", "실제 소리", "예시 단어"))
-
-    st.warning("th는 한국어에 정확히 같은 소리가 없어 학생들이 특히 어려워합니다.")
-
-
-# =========================================================
-# Tab 9: Vowel Teams
-# =========================================================
-with tabs[8]:
-    st.subheader("🌊 Vowel Teams")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Vowel Teams란?</h3>
-            <p>
-                <b>Vowel teams</b>는 모음 두 개가 함께 나와 하나의 모음 소리를 만드는 경우입니다.
-            </p>
-            <p>
-                영어에는 같은 소리를 여러 철자로 쓰는 경우가 많기 때문에 자주 보는 것이 중요합니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    vowel_team_data = [
-        {"symbol": "ai", "name_label": "a + i", "name_audio": "a i", "sound_label": "long a / 에이", "sound_audio": "long a, long a", "word_label": "rain, train, paint", "word_audio": "rain, train, paint"},
-        {"symbol": "ay", "name_label": "a + y", "name_audio": "a y", "sound_label": "long a / 에이", "sound_audio": "long a, long a", "word_label": "day, play, say", "word_audio": "day, play, say"},
-        {"symbol": "ee", "name_label": "e + e", "name_audio": "e e", "sound_label": "long e / 이", "sound_audio": "long e, long e", "word_label": "see, tree, green", "word_audio": "see, tree, green"},
-        {"symbol": "ea", "name_label": "e + a", "name_audio": "e a", "sound_label": "long e / 이", "sound_audio": "long e, long e", "word_label": "eat, meat, bread", "word_audio": "eat, meat, bread"},
-        {"symbol": "oa", "name_label": "o + a", "name_audio": "o a", "sound_label": "long o / 오우", "sound_audio": "long o, long o", "word_label": "boat, coat, road", "word_audio": "boat, coat, road"},
-        {"symbol": "ow", "name_label": "o + w", "name_audio": "o w", "sound_label": "오우 / 아우", "sound_audio": "ow, ow", "word_label": "snow, window, cow, now", "word_audio": "snow, window, cow, now"},
-        {"symbol": "oi", "name_label": "o + i", "name_audio": "o i", "sound_label": "오이", "sound_audio": "oi, oi", "word_label": "coin, oil, point", "word_audio": "coin, oil, point"},
-        {"symbol": "oy", "name_label": "o + y", "name_audio": "o y", "sound_label": "오이", "sound_audio": "oy, oy", "word_label": "boy, toy, enjoy", "word_audio": "boy, toy, enjoy"},
-        {"symbol": "ou", "name_label": "o + u", "name_audio": "o u", "sound_label": "아우 / 어", "sound_audio": "ou, ou", "word_label": "out, house, touch", "word_audio": "out, house, touch"},
-        {"symbol": "oo", "name_label": "o + o", "name_audio": "o o", "sound_label": "우 / 으", "sound_audio": "oo, oo", "word_label": "moon, food, book, look", "word_audio": "moon, food, book, look"},
-    ]
-
-    st.markdown("### ✅ Vowel Team 소리 / 예시 단어")
-    render_sound_table(vowel_team_data, headers=("Vowel Team", "글자 조합", "실제 소리", "예시 단어"))
-
-    st.info("vowel team은 예외가 많아서 ‘규칙 + 자주 보기’가 함께 필요합니다.")
-
-
-# =========================================================
-# Tab 10: R-Controlled Vowels
-# =========================================================
-with tabs[9]:
-    st.subheader("🚗 R-Controlled Vowels")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 R-Controlled Vowels란?</h3>
-            <p>
-                모음 뒤에 <b>r</b>이 오면, 모음 소리가 r의 영향을 받아 달라집니다.
-            </p>
-            <p>
-                그래서 <b>ar, er, ir, or, ur</b>은 따로 연습하는 것이 좋습니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    r_controlled_data = [
-        {"symbol": "ar", "name_label": "a + r", "name_audio": "a r", "sound_label": "아r", "sound_audio": "ar, ar", "word_label": "car, star, park", "word_audio": "car, star, park"},
-        {"symbol": "er", "name_label": "e + r", "name_audio": "e r", "sound_label": "어r", "sound_audio": "er, er", "word_label": "her, teacher, sister", "word_audio": "her, teacher, sister"},
-        {"symbol": "ir", "name_label": "i + r", "name_audio": "i r", "sound_label": "어r", "sound_audio": "ir, ir", "word_label": "bird, girl, shirt", "word_audio": "bird, girl, shirt"},
-        {"symbol": "or", "name_label": "o + r", "name_audio": "o r", "sound_label": "오r", "sound_audio": "or, or", "word_label": "corn, horse, sport", "word_audio": "corn, horse, sport"},
-        {"symbol": "ur", "name_label": "u + r", "name_audio": "u r", "sound_label": "어r", "sound_audio": "ur, ur", "word_label": "turn, nurse, purple", "word_audio": "turn, nurse, purple"},
-    ]
-
-    st.markdown("### ✅ R-Controlled 소리 / 예시 단어")
-    render_sound_table(r_controlled_data, headers=("철자", "글자 조합", "실제 소리", "예시 단어"))
-
-    st.success("er, ir, ur은 비슷하게 나는 경우가 많습니다. her, bird, turn을 비교해 보세요.")
-
-
-# =========================================================
-# Tab 11: Word Families
-# =========================================================
-with tabs[10]:
-    st.subheader("🏠 Word Families")
-
-    st.markdown(
-        """
-        <div class="phonics-card">
-            <h3>📌 Word Family란?</h3>
-            <p>
-                <b>Word family</b>는 끝소리나 철자 패턴이 같은 단어 묶음입니다.
-            </p>
-            <p>
-                하나의 패턴을 익히면 여러 단어를 쉽게 읽을 수 있습니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    word_family_data = [
-        {"symbol": "-at", "name_label": "a + t", "name_audio": "a t", "sound_label": "at", "sound_audio": "at, at", "word_label": "cat, bat, hat, mat, sat", "word_audio": "cat, bat, hat, mat, sat"},
-        {"symbol": "-an", "name_label": "a + n", "name_audio": "a n", "sound_label": "an", "sound_audio": "an, an", "word_label": "can, man, fan, pan, ran", "word_audio": "can, man, fan, pan, ran"},
-        {"symbol": "-ap", "name_label": "a + p", "name_audio": "a p", "sound_label": "ap", "sound_audio": "ap, ap", "word_label": "cap, map, tap, nap, gap", "word_audio": "cap, map, tap, nap, gap"},
-        {"symbol": "-en", "name_label": "e + n", "name_audio": "e n", "sound_label": "en", "sound_audio": "en, en", "word_label": "pen, hen, ten, men", "word_audio": "pen, hen, ten, men"},
-        {"symbol": "-et", "name_label": "e + t", "name_audio": "e t", "sound_label": "et", "sound_audio": "et, et", "word_label": "net, wet, pet, set", "word_audio": "net, wet, pet, set"},
-        {"symbol": "-ig", "name_label": "i + g", "name_audio": "i g", "sound_label": "ig", "sound_audio": "ig, ig", "word_label": "big, pig, dig, wig", "word_audio": "big, pig, dig, wig"},
-        {"symbol": "-it", "name_label": "i + t", "name_audio": "i t", "sound_label": "it", "sound_audio": "it, it", "word_label": "sit, hit, fit, bit", "word_audio": "sit, hit, fit, bit"},
-        {"symbol": "-og", "name_label": "o + g", "name_audio": "o g", "sound_label": "og", "sound_audio": "og, og", "word_label": "dog, log, fog, hog", "word_audio": "dog, log, fog, hog"},
-        {"symbol": "-op", "name_label": "o + p", "name_audio": "o p", "sound_label": "op", "sound_audio": "op, op", "word_label": "hop, top, pop, mop", "word_audio": "hop, top, pop, mop"},
-        {"symbol": "-ug", "name_label": "u + g", "name_audio": "u g", "sound_label": "ug", "sound_audio": "ug, ug", "word_label": "bug, rug, mug, hug", "word_audio": "bug, rug, mug, hug"},
-    ]
-
-    st.markdown("### ✅ Word Family 소리 / 예시 단어")
-    render_sound_table(word_family_data, headers=("패턴", "글자 조합", "패턴 소리", "예시 단어"))
-
-    st.markdown(
-        """
-        <div class="rule-box">
-            <b>연습 방법</b><br><br>
-            1. 먼저 공통 패턴을 읽습니다. 예: <b>-at</b><br>
-            2. 앞에 자음을 붙여 읽습니다. c + at = <b>cat</b><br>
-            3. 같은 패턴의 단어를 여러 개 읽습니다. cat, bat, hat, mat
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.info("word family는 읽기 부진 학생들에게 특히 효과적인 기초 읽기 연습이 될 수 있습니다.")
+with tab1:
+    st.info("알파벳 이름과 실제 자음 소리는 다릅니다. 예: B의 이름은 bee, 실제 소리는 /b/입니다.")
+    show_phonics_table(consonants, "자음 소리")
+
+with tab2:
+    st.info("단모음은 짧게 나는 모음 소리입니다. 버튼을 누르면 'short a'라고 읽지 않고 실제 소리를 들려줍니다.")
+    show_phonics_table(short_vowels, "단모음 Short Vowels")
+
+with tab3:
+    st.info("장모음은 보통 알파벳 이름과 비슷하게 나는 소리입니다.")
+    show_phonics_table(long_vowels, "장모음 Long Vowels")
+
+with tab4:
+    st.info("모음은 단모음, 장모음 외에도 예외적인 소리가 있습니다. 설명은 화면에만 보이고, 오디오는 실제 소리 중심으로 재생됩니다.")
+    show_phonics_table(vowel_exceptions, "모음 예외 소리")
