@@ -1,6 +1,27 @@
 import streamlit as st
+import io
+from gtts import gTTS
 
 st.set_page_config(page_title="Phonics Guide", layout="centered")
+
+
+# =========================================================
+# 영어 발음 오디오 생성 함수
+# =========================================================
+@st.cache_data
+def make_tts_audio(text):
+    fp = io.BytesIO()
+    tts = gTTS(text=text, lang="en")
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    return fp.read()
+
+
+def audio_button(label, text):
+    with st.expander(label):
+        st.write(f"🔊 **{text}**")
+        st.audio(make_tts_audio(text), format="audio/mp3")
+
 
 # =========================================================
 # CSS 디자인
@@ -94,7 +115,7 @@ st.markdown(
 st.markdown(
     """
     <div class="title-box">
-        <h1>🔤 Phonics Guide</h1>
+        <h1>🌈 Phonics Adventure</h1>
         <p>영어 단어를 읽기 위한 소리 규칙을 기초부터 배워 봅시다.</p>
     </div>
     """,
@@ -102,14 +123,14 @@ st.markdown(
 )
 
 tabs = st.tabs([
-    "🔤 파닉스란?",
-    "🔊 자음 소리",
+    "🌈 파닉스란?",
+    "🧩 자음 소리",
     "🍎 단모음",
     "🌟 장모음",
-    "✨ Magic E",
-    "🤝 Consonant Blends",
+    "🪄 Magic E",
+    "🤝 Blends",
     "👯 Digraphs",
-    "🌈 Vowel Teams",
+    "🌊 Vowel Teams",
     "🚗 R-Controlled",
     "🏠 Word Families"
 ])
@@ -119,7 +140,7 @@ tabs = st.tabs([
 # Tab 1: 파닉스란?
 # =========================================================
 with tabs[0]:
-    st.subheader("🔤 파닉스란?")
+    st.subheader("🌈 파닉스란?")
 
     st.markdown(
         """
@@ -162,12 +183,17 @@ with tabs[0]:
         unsafe_allow_html=True
     )
 
+    st.markdown("### 🔊 기본 예시 듣기")
+    audio_button("🔊 B sound + bat 듣기", "b, b, bat")
+    audio_button("🔊 C sound + cat 듣기", "c, c, cat")
+    audio_button("🔊 M sound + man 듣기", "m, m, man")
+
 
 # =========================================================
 # Tab 2: 자음 소리
 # =========================================================
 with tabs[1]:
-    st.subheader("🔊 자음 소리")
+    st.subheader("🧩 자음 소리")
 
     st.markdown(
         """
@@ -184,33 +210,40 @@ with tabs[1]:
         unsafe_allow_html=True
     )
 
+    consonants = [
+        ("b", "bat, bag, boy"),
+        ("c", "cat, cup, car"),
+        ("d", "dog, desk, dad"),
+        ("f", "fish, fan, fox"),
+        ("g", "gum, goat, game"),
+        ("h", "hat, hen, hot"),
+        ("j", "jam, jet, job"),
+        ("k", "kid, kite, king"),
+        ("l", "leg, lion, log"),
+        ("m", "man, milk, mom"),
+        ("n", "net, nose, nine"),
+        ("p", "pig, pen, pop"),
+        ("r", "red, run, rain"),
+        ("s", "sun, sit, sad"),
+        ("t", "top, ten, tiger"),
+        ("v", "van, vet, vest"),
+        ("w", "web, win, water"),
+        ("y", "yes, yellow, yogurt"),
+        ("z", "zoo, zebra, zip"),
+    ]
+
     st.markdown("### ✅ 자주 나오는 자음 소리")
 
-    st.markdown(
-        """
-        | 글자 | 소리 느낌 | 예시 |
-        |---|---|---|
-        | b | /b/ | bat, bag, boy |
-        | c | /k/ | cat, cup, car |
-        | d | /d/ | dog, desk, dad |
-        | f | /f/ | fish, fan, fox |
-        | g | /g/ | gum, goat, game |
-        | h | /h/ | hat, hen, hot |
-        | j | /j/ | jam, jet, job |
-        | k | /k/ | kid, kite, king |
-        | l | /l/ | leg, lion, log |
-        | m | /m/ | man, milk, mom |
-        | n | /n/ | net, nose, nine |
-        | p | /p/ | pig, pen, pop |
-        | r | /r/ | red, run, rain |
-        | s | /s/ | sun, sit, sad |
-        | t | /t/ | top, ten, tiger |
-        | v | /v/ | van, vet, vest |
-        | w | /w/ | web, win, water |
-        | y | /y/ | yes, yellow, yogurt |
-        | z | /z/ | zoo, zebra, zip |
-        """
-    )
+    table_text = "| 글자 | 예시 |\n|---|---|\n"
+    for letter, words in consonants:
+        table_text += f"| {letter} | {words} |\n"
+    st.markdown(table_text)
+
+    st.markdown("### 🔊 자음 소리 듣기")
+
+    for letter, words in consonants:
+        first_word = words.split(",")[0]
+        audio_button(f"🔊 {letter} 소리 듣기", f"{letter}, {letter}, {first_word}")
 
     st.warning("c와 g는 단어에 따라 소리가 달라질 수 있습니다. 예: cat / city, goat / giant")
 
@@ -236,14 +269,22 @@ with tabs[2]:
         unsafe_allow_html=True
     )
 
+    short_vowels = [
+        ("a", "cat, bag, man"),
+        ("e", "bed, pen, ten"),
+        ("i", "sit, big, fish"),
+        ("o", "hot, dog, box"),
+        ("u", "cup, sun, bus"),
+    ]
+
     st.markdown(
         """
         | 모음 | 소리 느낌 | 예시 |
         |---|---|---|
         | a | 애 | cat, bag, man |
         | e | 에 | bed, pen, ten |
-        | i | 이와 에 사이 짧은 소리 | sit, big, fish |
-        | o | 아/오 사이 짧은 소리 | hot, dog, box |
+        | i | 짧은 이 | sit, big, fish |
+        | o | 짧은 오/아 | hot, dog, box |
         | u | 어 | cup, sun, bus |
         """
     )
@@ -261,6 +302,11 @@ with tabs[2]:
         """,
         unsafe_allow_html=True
     )
+
+    st.markdown("### 🔊 단모음 단어 듣기")
+
+    for vowel, words in short_vowels:
+        audio_button(f"🔊 short {vowel} 듣기", words)
 
 
 # =========================================================
@@ -284,6 +330,14 @@ with tabs[3]:
         unsafe_allow_html=True
     )
 
+    long_vowels = [
+        ("long a", "cake, name, rain"),
+        ("long e", "he, we, tree"),
+        ("long i", "bike, time, five"),
+        ("long o", "home, note, boat"),
+        ("long u", "cute, use, blue"),
+    ]
+
     st.markdown(
         """
         | 모음 | 장모음 소리 | 예시 |
@@ -298,12 +352,17 @@ with tabs[3]:
 
     st.info("장모음은 Magic E나 vowel team에서 자주 나옵니다.")
 
+    st.markdown("### 🔊 장모음 단어 듣기")
+
+    for label, words in long_vowels:
+        audio_button(f"🔊 {label} 듣기", words)
+
 
 # =========================================================
 # Tab 5: Magic E
 # =========================================================
 with tabs[4]:
-    st.subheader("✨ Magic E")
+    st.subheader("🪄 Magic E")
 
     st.markdown(
         """
@@ -331,6 +390,15 @@ with tabs[4]:
         unsafe_allow_html=True
     )
 
+    magic_e_words = [
+        ("cap → cape", "cap, cape"),
+        ("tap → tape", "tap, tape"),
+        ("kit → kite", "kit, kite"),
+        ("bit → bite", "bit, bite"),
+        ("hop → hope", "hop, hope"),
+        ("cut → cute", "cut, cute"),
+    ]
+
     st.markdown(
         """
         | 짧은 소리 | Magic E | 변화 |
@@ -344,7 +412,12 @@ with tabs[4]:
         """
     )
 
-    st.success("예: cap은 ‘캡’처럼 짧게, cape는 ‘케이프’처럼 길게 읽습니다.")
+    st.success("예: cap은 짧게, cape는 길게 읽습니다.")
+
+    st.markdown("### 🔊 Magic E 비교 듣기")
+
+    for label, words in magic_e_words:
+        audio_button(f"🔊 {label} 듣기", words)
 
 
 # =========================================================
@@ -369,49 +442,39 @@ with tabs[5]:
         unsafe_allow_html=True
     )
 
+    blends = [
+        ("bl", "black, blue, block"),
+        ("br", "brown, bread, brush"),
+        ("cl", "clap, clock, class"),
+        ("cr", "crab, cry, cross"),
+        ("dr", "drum, dress, drive"),
+        ("fl", "flag, flower, fly"),
+        ("fr", "frog, friend, fruit"),
+        ("gl", "glass, glad, glue"),
+        ("gr", "green, grass, grape"),
+        ("pl", "plane, play, plant"),
+        ("pr", "print, pray, price"),
+        ("sk", "sky, skate, skip"),
+        ("sl", "sleep, slide, slow"),
+        ("sm", "smile, small, smell"),
+        ("sn", "snake, snow, snack"),
+        ("sp", "spoon, speak, sport"),
+        ("st", "star, stop, student"),
+        ("sw", "swim, sweet, swing"),
+        ("tr", "tree, train, truck"),
+    ]
+
     st.markdown("### ✅ Beginning Blends")
 
-    st.markdown(
-        """
-        | Blend | 예시 |
-        |---|---|
-        | bl | black, blue, block |
-        | br | brown, bread, brush |
-        | cl | clap, clock, class |
-        | cr | crab, cry, cross |
-        | dr | drum, dress, drive |
-        | fl | flag, flower, fly |
-        | fr | frog, friend, fruit |
-        | gl | glass, glad, glue |
-        | gr | green, grass, grape |
-        | pl | plane, play, plant |
-        | pr | print, pray, price |
-        | sk | sky, skate, skip |
-        | sl | sleep, slide, slow |
-        | sm | smile, small, smell |
-        | sn | snake, snow, snack |
-        | sp | spoon, speak, sport |
-        | st | star, stop, student |
-        | sw | swim, sweet, swing |
-        | tr | tree, train, truck |
-        """
-    )
+    table_text = "| Blend | 예시 |\n|---|---|\n"
+    for blend, words in blends:
+        table_text += f"| {blend} | {words} |\n"
+    st.markdown(table_text)
 
-    st.markdown("### ✅ Ending Blends")
+    st.markdown("### 🔊 Blend 단어 듣기")
 
-    st.markdown(
-        """
-        | Blend | 예시 |
-        |---|---|
-        | -nd | hand, sand, wind |
-        | -nt | tent, went, plant |
-        | -mp | lamp, jump, camp |
-        | -st | fast, best, last |
-        | -sk | desk, mask, task |
-        | -ft | left, gift, soft |
-        | -lk | milk, walk, talk |
-        """
-    )
+    for blend, words in blends:
+        audio_button(f"🔊 {blend} 듣기", words)
 
     st.info("blend는 두 소리가 합쳐지지만 완전히 새로운 소리가 되는 것은 아닙니다.")
 
@@ -437,6 +500,15 @@ with tabs[6]:
         unsafe_allow_html=True
     )
 
+    digraphs = [
+        ("sh", "ship, fish, shop"),
+        ("ch", "chair, lunch, cheese"),
+        ("th", "thin, this, bath"),
+        ("wh", "what, when, white"),
+        ("ph", "phone, photo, graph"),
+        ("ck", "duck, sock, black"),
+    ]
+
     st.markdown(
         """
         | Digraph | 소리 | 예시 |
@@ -450,6 +522,11 @@ with tabs[6]:
         """
     )
 
+    st.markdown("### 🔊 Digraph 단어 듣기")
+
+    for dg, words in digraphs:
+        audio_button(f"🔊 {dg} 듣기", words)
+
     st.warning("th는 한국어에 정확히 같은 소리가 없어 학생들이 특히 어려워합니다.")
 
 
@@ -457,7 +534,7 @@ with tabs[6]:
 # Tab 8: Vowel Teams
 # =========================================================
 with tabs[7]:
-    st.subheader("🌈 Vowel Teams")
+    st.subheader("🌊 Vowel Teams")
 
     st.markdown(
         """
@@ -473,6 +550,19 @@ with tabs[7]:
         """,
         unsafe_allow_html=True
     )
+
+    vowel_teams = [
+        ("ai", "rain, train, paint"),
+        ("ay", "day, play, say"),
+        ("ee", "see, tree, green"),
+        ("ea", "eat, meat, bread"),
+        ("oa", "boat, coat, road"),
+        ("ow", "snow, window, cow, now"),
+        ("oi", "coin, oil, point"),
+        ("oy", "boy, toy, enjoy"),
+        ("ou", "out, house, touch"),
+        ("oo", "moon, food, book, look"),
+    ]
 
     st.markdown(
         """
@@ -490,6 +580,11 @@ with tabs[7]:
         | oo | 우 / 으 | moon, food / book, look |
         """
     )
+
+    st.markdown("### 🔊 Vowel Team 단어 듣기")
+
+    for team, words in vowel_teams:
+        audio_button(f"🔊 {team} 듣기", words)
 
     st.info("vowel team은 예외가 많아서 ‘규칙 + 자주 보기’가 함께 필요합니다.")
 
@@ -515,6 +610,14 @@ with tabs[8]:
         unsafe_allow_html=True
     )
 
+    r_controlled = [
+        ("ar", "car, star, park"),
+        ("er", "her, teacher, sister"),
+        ("ir", "bird, girl, shirt"),
+        ("or", "corn, horse, sport"),
+        ("ur", "turn, nurse, purple"),
+    ]
+
     st.markdown(
         """
         | 철자 | 소리 느낌 | 예시 |
@@ -526,6 +629,11 @@ with tabs[8]:
         | ur | 어r | turn, nurse, purple |
         """
     )
+
+    st.markdown("### 🔊 R-Controlled 단어 듣기")
+
+    for pattern, words in r_controlled:
+        audio_button(f"🔊 {pattern} 듣기", words)
 
     st.success("er, ir, ur은 비슷하게 나는 경우가 많습니다. her, bird, turn을 비교해 보세요.")
 
@@ -551,24 +659,30 @@ with tabs[9]:
         unsafe_allow_html=True
     )
 
+    word_families = [
+        ("-at", "cat, bat, hat, mat, sat"),
+        ("-an", "can, man, fan, pan, ran"),
+        ("-ap", "cap, map, tap, nap, gap"),
+        ("-en", "pen, hen, ten, men"),
+        ("-et", "net, wet, pet, set"),
+        ("-ig", "big, pig, dig, wig"),
+        ("-it", "sit, hit, fit, bit"),
+        ("-og", "dog, log, fog, hog"),
+        ("-op", "hop, top, pop, mop"),
+        ("-ug", "bug, rug, mug, hug"),
+    ]
+
     st.markdown("### ✅ 자주 나오는 Word Families")
 
-    st.markdown(
-        """
-        | 패턴 | 단어 |
-        |---|---|
-        | -at | cat, bat, hat, mat, sat |
-        | -an | can, man, fan, pan, ran |
-        | -ap | cap, map, tap, nap, gap |
-        | -en | pen, hen, ten, men |
-        | -et | net, wet, pet, set |
-        | -ig | big, pig, dig, wig |
-        | -it | sit, hit, fit, bit |
-        | -og | dog, log, fog, hog |
-        | -op | hop, top, pop, mop |
-        | -ug | bug, rug, mug, hug |
-        """
-    )
+    table_text = "| 패턴 | 단어 |\n|---|---|\n"
+    for pattern, words in word_families:
+        table_text += f"| {pattern} | {words} |\n"
+    st.markdown(table_text)
+
+    st.markdown("### 🔊 Word Family 듣기")
+
+    for pattern, words in word_families:
+        audio_button(f"🔊 {pattern} 듣기", words)
 
     st.markdown(
         """
