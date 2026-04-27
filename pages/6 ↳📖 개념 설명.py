@@ -410,62 +410,63 @@ with tabs[4]:
 
     st.info("먼저 카드로 외우고, 그다음 직접 맞혀 보세요!")
 
-   irregular_verbs = [
-    {"base": "be", "past": "was/were", "meaning": "~이다 / 있다"},
-    {"base": "become", "past": "became", "meaning": "~이 되다"},
-    {"base": "begin", "past": "began", "meaning": "시작하다"},
-    {"base": "break", "past": "broke", "meaning": "깨다 / 부수다"},
-    {"base": "bring", "past": "brought", "meaning": "가져오다"},
-    {"base": "build", "past": "built", "meaning": "짓다 / 만들다"},
-    {"base": "buy", "past": "bought", "meaning": "사다"},
-    {"base": "catch", "past": "caught", "meaning": "잡다"},
-    {"base": "choose", "past": "chose", "meaning": "고르다"},
-    {"base": "come", "past": "came", "meaning": "오다"},
+    irregular_verbs = [
+        {"base": "be", "past": "was / were", "meaning": "~이다 / 있다"},
+        {"base": "become", "past": "became", "meaning": "~이 되다"},
+        {"base": "begin", "past": "began", "meaning": "시작하다"},
+        {"base": "break", "past": "broke", "meaning": "깨다 / 부수다"},
+        {"base": "bring", "past": "brought", "meaning": "가져오다"},
+        {"base": "build", "past": "built", "meaning": "짓다 / 만들다"},
+        {"base": "buy", "past": "bought", "meaning": "사다"},
+        {"base": "catch", "past": "caught", "meaning": "잡다"},
+        {"base": "choose", "past": "chose", "meaning": "고르다"},
+        {"base": "come", "past": "came", "meaning": "오다"},
 
-    {"base": "cut", "past": "cut", "meaning": "자르다"},
-    {"base": "do", "past": "did", "meaning": "하다"},
-    {"base": "draw", "past": "drew", "meaning": "그리다"},
-    {"base": "drink", "past": "drank", "meaning": "마시다"},
-    {"base": "drive", "past": "drove", "meaning": "운전하다"},
-    {"base": "eat", "past": "ate", "meaning": "먹다"},
-    {"base": "fall", "past": "fell", "meaning": "떨어지다 / 넘어지다"},
-    {"base": "feel", "past": "felt", "meaning": "느끼다"},
-    {"base": "find", "past": "found", "meaning": "찾다 / 발견하다"},
-    {"base": "fly", "past": "flew", "meaning": "날다"},
+        {"base": "cut", "past": "cut", "meaning": "자르다"},
+        {"base": "do", "past": "did", "meaning": "하다"},
+        {"base": "draw", "past": "drew", "meaning": "그리다"},
+        {"base": "drink", "past": "drank", "meaning": "마시다"},
+        {"base": "drive", "past": "drove", "meaning": "운전하다"},
+        {"base": "eat", "past": "ate", "meaning": "먹다"},
+        {"base": "fall", "past": "fell", "meaning": "떨어지다 / 넘어지다"},
+        {"base": "feel", "past": "felt", "meaning": "느끼다"},
+        {"base": "find", "past": "found", "meaning": "찾다 / 발견하다"},
+        {"base": "fly", "past": "flew", "meaning": "날다"},
 
-    {"base": "forget", "past": "forgot", "meaning": "잊다"},
-    {"base": "get", "past": "got", "meaning": "얻다 / 받다 / 되다"},
-    {"base": "give", "past": "gave", "meaning": "주다"},
-    {"base": "go", "past": "went", "meaning": "가다"},
-    {"base": "grow", "past": "grew", "meaning": "자라다 / 기르다"},
-    {"base": "have", "past": "had", "meaning": "가지다 / 먹다"},
-    {"base": "hear", "past": "heard", "meaning": "듣다"},
-    {"base": "hold", "past": "held", "meaning": "잡다 / 열다"},
-    {"base": "keep", "past": "kept", "meaning": "유지하다 / 보관하다"},
-    {"base": "know", "past": "knew", "meaning": "알다"},
+        {"base": "forget", "past": "forgot", "meaning": "잊다"},
+        {"base": "get", "past": "got", "meaning": "얻다 / 받다 / 되다"},
+        {"base": "give", "past": "gave", "meaning": "주다"},
+        {"base": "go", "past": "went", "meaning": "가다"},
+        {"base": "grow", "past": "grew", "meaning": "자라다 / 기르다"},
+        {"base": "have", "past": "had", "meaning": "가지다 / 먹다"},
+        {"base": "hear", "past": "heard", "meaning": "듣다"},
+        {"base": "hold", "past": "held", "meaning": "잡다 / 열다"},
+        {"base": "keep", "past": "kept", "meaning": "유지하다 / 보관하다"},
+        {"base": "know", "past": "knew", "meaning": "알다"},
 
-    {"base": "leave", "past": "left", "meaning": "떠나다 / 남기다"},
-    {"base": "lose", "past": "lost", "meaning": "잃다 / 지다"},
-    {"base": "make", "past": "made", "meaning": "만들다"},
-    {"base": "meet", "past": "met", "meaning": "만나다"},
-    {"base": "pay", "past": "paid", "meaning": "지불하다"},
-    {"base": "put", "past": "put", "meaning": "놓다 / 두다"},
-    {"base": "read", "past": "read", "meaning": "읽다"},
-    {"base": "ride", "past": "rode", "meaning": "타다"},
-    {"base": "run", "past": "ran", "meaning": "달리다"},
-    {"base": "say", "past": "said", "meaning": "말하다"},
+        {"base": "leave", "past": "left", "meaning": "떠나다 / 남기다"},
+        {"base": "lose", "past": "lost", "meaning": "잃다 / 지다"},
+        {"base": "make", "past": "made", "meaning": "만들다"},
+        {"base": "meet", "past": "met", "meaning": "만나다"},
+        {"base": "pay", "past": "paid", "meaning": "지불하다"},
+        {"base": "put", "past": "put", "meaning": "놓다 / 두다"},
+        {"base": "read", "past": "read", "meaning": "읽다"},
+        {"base": "ride", "past": "rode", "meaning": "타다"},
+        {"base": "run", "past": "ran", "meaning": "달리다"},
+        {"base": "say", "past": "said", "meaning": "말하다"},
 
-    {"base": "see", "past": "saw", "meaning": "보다"},
-    {"base": "sell", "past": "sold", "meaning": "팔다"},
-    {"base": "send", "past": "sent", "meaning": "보내다"},
-    {"base": "sing", "past": "sang", "meaning": "노래하다"},
-    {"base": "sit", "past": "sat", "meaning": "앉다"},
-    {"base": "sleep", "past": "slept", "meaning": "자다"},
-    {"base": "speak", "past": "spoke", "meaning": "말하다"},
-    {"base": "spend", "past": "spent", "meaning": "쓰다 / 보내다"},
-    {"base": "stand", "past": "stood", "meaning": "서다"},
-    {"base": "swim", "past": "swam", "meaning": "수영하다"},
-]
+        {"base": "see", "past": "saw", "meaning": "보다"},
+        {"base": "sell", "past": "sold", "meaning": "팔다"},
+        {"base": "send", "past": "sent", "meaning": "보내다"},
+        {"base": "sing", "past": "sang", "meaning": "노래하다"},
+        {"base": "sit", "past": "sat", "meaning": "앉다"},
+        {"base": "sleep", "past": "slept", "meaning": "자다"},
+        {"base": "speak", "past": "spoke", "meaning": "말하다"},
+        {"base": "spend", "past": "spent", "meaning": "쓰다 / 보내다"},
+        {"base": "stand", "past": "stood", "meaning": "서다"},
+        {"base": "swim", "past": "swam", "meaning": "수영하다"},
+    ]
+
     game_tabs = st.tabs([
         "🃏 카드로 외우기",
         "✏️ 직접 맞히기",
@@ -505,6 +506,10 @@ with tabs[4]:
             </div>
             """,
             unsafe_allow_html=True
+        )
+
+        st.write(
+            f"현재 카드: **{st.session_state.verb_card_index + 1} / {len(irregular_verbs)}**"
         )
 
         col1, col2 = st.columns(2)
@@ -572,7 +577,10 @@ with tabs[4]:
         if st.button("정답 확인"):
             st.session_state.verb_answer_checked = True
 
-            if user_answer.strip().lower() == quiz_item["past"].lower():
+            correct_answer = quiz_item["past"].replace(" ", "").lower()
+            user_clean = user_answer.strip().replace(" ", "").lower()
+
+            if user_clean == correct_answer:
                 st.success("정답입니다! 아주 좋아요 🎉")
                 st.balloons()
                 st.session_state.verb_score += 1
@@ -592,6 +600,7 @@ with tabs[4]:
                 st.rerun()
 
         st.markdown("---")
+        st.write(f"현재 문제: **{st.session_state.verb_quiz_index + 1} / {len(irregular_verbs)}**")
         st.write(f"현재 점수: **{st.session_state.verb_score}점**")
 
         if st.button("점수 초기화"):
@@ -604,34 +613,18 @@ with tabs[4]:
     # 3. 전체 리스트
     # -----------------------------------------------------
     with game_tabs[2]:
-        st.markdown("### 📋 자주 나오는 불규칙동사 리스트")
+        st.markdown("### 📋 자주 나오는 불규칙동사 50개")
+        st.caption("10개씩 나누어 보면서 익혀 봅시다.")
 
-        st.markdown(
-            """
-            | 현재형 | 과거형 | 뜻 |
-            |---|---|---|
-            | go | went | 가다 |
-            | eat | ate | 먹다 |
-            | see | saw | 보다 |
-            | have | had | 가지다 / 먹다 |
-            | make | made | 만들다 |
-            | come | came | 오다 |
-            | do | did | 하다 |
-            | take | took | 가져가다 / 타다 |
-            | write | wrote | 쓰다 |
-            | read | read | 읽다 |
-            | buy | bought | 사다 |
-            | bring | brought | 가져오다 |
-            | think | thought | 생각하다 |
-            | teach | taught | 가르치다 |
-            | catch | caught | 잡다 |
-            | speak | spoke | 말하다 |
-            | drink | drank | 마시다 |
-            | run | ran | 달리다 |
-            | swim | swam | 수영하다 |
-            | sing | sang | 노래하다 |
-            """
-        )
+        for i in range(0, len(irregular_verbs), 10):
+            st.markdown(f"#### {i + 1}번 ~ {min(i + 10, len(irregular_verbs))}번")
+
+            table_text = "| 현재형 | 과거형 | 뜻 |\n|---|---|---|\n"
+
+            for verb in irregular_verbs[i:i + 10]:
+                table_text += f"| {verb['base']} | {verb['past']} | {verb['meaning']} |\n"
+
+            st.markdown(table_text)
 
         st.info("먼저 카드로 외우고, 그다음 직접 맞히기를 하면 훨씬 잘 기억납니다.")
 
