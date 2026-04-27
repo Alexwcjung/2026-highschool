@@ -7,35 +7,210 @@ import random
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Theme Vocabulary Practice",
-    page_icon="📚",
+    page_title="Fun Word Garden",
+    page_icon="🌈",
     layout="wide"
 )
 
-st.title("📚 테마별 영어 단어 학습")
-st.caption("중요한 기초 단어를 테마별로 익히고 퀴즈로 복습해 봅시다.")
-
 # =========================
-# 안내 박스
+# CSS 디자인
 # =========================
 st.markdown(
     """
-    <div style="
-        border-left: 6px solid #4f8df7;
-        background-color: #f4f8ff;
-        padding: 16px 18px;
-        border-radius: 12px;
+    <style>
+    .main-title {
+        font-size: 44px;
+        font-weight: 900;
+        color: #1f2937;
+        margin-bottom: 4px;
+    }
+
+    .sub-title {
+        font-size: 17px;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    .hero-box {
+        background: linear-gradient(135deg, #fce7f3 0%, #e0f2fe 50%, #fef3c7 100%);
+        border-radius: 26px;
+        padding: 28px 30px;
+        margin-bottom: 28px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.8);
+    }
+
+    .hero-title {
+        font-size: 27px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 10px;
+    }
+
+    .hero-text {
+        font-size: 16px;
+        color: #374151;
+        line-height: 1.8;
+    }
+
+    .theme-header {
+        background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+        color: white;
+        padding: 22px 26px;
+        border-radius: 24px;
         margin-bottom: 22px;
-        line-height: 1.7;
-    ">
-        <div style="font-size:20px; font-weight:900; margin-bottom:8px;">
-            📌 학습 방법
+        box-shadow: 0 8px 20px rgba(139,92,246,0.25);
+    }
+
+    .theme-title {
+        font-size: 27px;
+        font-weight: 900;
+        margin-bottom: 6px;
+    }
+
+    .theme-desc {
+        font-size: 15px;
+        opacity: 0.95;
+    }
+
+    .word-card {
+        background: white;
+        border-radius: 22px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        border: 1px solid #f3e8ff;
+        box-shadow: 0 5px 16px rgba(0,0,0,0.05);
+    }
+
+    .word-badge {
+        display: inline-block;
+        background: #fce7f3;
+        color: #be185d;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .word-text {
+        font-size: 31px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+
+    .meaning-text {
+        font-size: 20px;
+        font-weight: 700;
+        color: #374151;
+    }
+
+    .quiz-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+        border: 1px solid #e9d5ff;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.06);
+    }
+
+    .quiz-number {
+        display: inline-block;
+        background: #dcfce7;
+        color: #166534;
+        padding: 6px 12px;
+        border-radius: 999px;
+        font-weight: 900;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .quiz-word {
+        font-size: 34px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .score-box {
+        background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 50%, #fce7f3 100%);
+        border-radius: 24px;
+        padding: 24px 26px;
+        margin: 20px 0;
+        border: 1px solid #bbf7d0;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    .score-title {
+        font-size: 27px;
+        font-weight: 900;
+        color: #14532d;
+    }
+
+    .wrong-box {
+        background: #fff7ed;
+        border-left: 6px solid #fb923c;
+        border-radius: 18px;
+        padding: 16px 18px;
+        margin: 18px 0;
+        color: #7c2d12;
+        font-weight: 700;
+    }
+
+    .answer-box {
+        background: #f8fafc;
+        border-radius: 20px;
+        padding: 18px 20px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 16px;
+    }
+
+    .small-muted {
+        font-size: 14px;
+        color: #6b7280;
+    }
+
+    div[data-testid="stRadio"] > label {
+        font-weight: 800;
+        color: #374151;
+    }
+
+    .stButton > button {
+        border-radius: 999px;
+        font-weight: 800;
+        border: 1px solid #d1d5db;
+        padding: 0.45rem 1rem;
+    }
+
+    .stButton > button:hover {
+        border-color: #ec4899;
+        color: #ec4899;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================
+# 상단 제목
+# =========================
+st.markdown("<div class='main-title'>🌟 Fun Word Garden 🌟</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='sub-title'>귀여운 단어 정원에서 테마별 영어 단어를 듣고, 보고, 퀴즈로 익혀 봅시다.</div>",
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    """
+    <div class="hero-box">
+        <div class="hero-title">🌱 오늘의 단어 학습 루틴</div>
+        <div class="hero-text">
+            • 단어를 <b>테마별</b>로 묶어 기억합니다.<br>
+            • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
+            • 다음으로 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.<br>
+            • 1차 제출 후 틀린 단어만 다시 풀고, 2차 제출 후 정답을 확인합니다.
         </div>
-        <div>• 단어를 테마별로 묶어서 학습합니다.</div>
-        <div>• 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.</div>
-        <div>• 그다음 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.</div>
-        <div>• 1차 제출 후 틀린 문제만 다시 풀 수 있습니다.</div>
-        <div>• 2차 제출 후 정답을 확인할 수 있습니다.</div>
     </div>
     """,
     unsafe_allow_html=True
@@ -63,7 +238,7 @@ def audio_button(label, text, key):
 # 테마별 단어 데이터
 # =========================
 word_themes = {
-    "① 사람·관계": [
+    "🧑‍🤝‍🧑 사람·관계": [
         {"word": "person", "meaning": "사람"},
         {"word": "man", "meaning": "남자"},
         {"word": "woman", "meaning": "여자"},
@@ -96,7 +271,7 @@ word_themes = {
         {"word": "member", "meaning": "구성원"},
     ],
 
-    "② 학교·교실": [
+    "🏫 학교·교실": [
         {"word": "school", "meaning": "학교"},
         {"word": "class", "meaning": "수업, 학급"},
         {"word": "classroom", "meaning": "교실"},
@@ -129,7 +304,7 @@ word_themes = {
         {"word": "study", "meaning": "공부하다"},
     ],
 
-    "③ 기본 동작 동사": [
+    "🏃 기본 동작 동사": [
         {"word": "go", "meaning": "가다"},
         {"word": "come", "meaning": "오다"},
         {"word": "walk", "meaning": "걷다"},
@@ -162,7 +337,7 @@ word_themes = {
         {"word": "like", "meaning": "좋아하다"},
     ],
 
-    "④ 감정·성격": [
+    "💖 감정·성격": [
         {"word": "happy", "meaning": "행복한"},
         {"word": "sad", "meaning": "슬픈"},
         {"word": "angry", "meaning": "화난"},
@@ -195,7 +370,7 @@ word_themes = {
         {"word": "calm", "meaning": "차분한"},
     ],
 
-    "⑤ 음식·건강": [
+    "🍎 음식·건강": [
         {"word": "food", "meaning": "음식"},
         {"word": "rice", "meaning": "밥, 쌀"},
         {"word": "bread", "meaning": "빵"},
@@ -228,7 +403,7 @@ word_themes = {
         {"word": "wash", "meaning": "씻다"},
     ],
 
-    "⑥ 장소·이동": [
+    "🚗 장소·이동": [
         {"word": "home", "meaning": "집"},
         {"word": "house", "meaning": "집"},
         {"word": "room", "meaning": "방"},
@@ -340,18 +515,21 @@ def reset_theme(theme_name):
 # 단어 익히기
 # =========================
 def show_word_cards(theme_words, theme_name):
-    st.markdown("### 📖 단어 익히기")
+    st.markdown("### 🌼 단어 익히기")
     st.write("단어, 뜻, 발음을 먼저 확인하세요.")
 
     for idx, item in enumerate(theme_words):
-        st.markdown("---")
-        col1, col2, col3 = st.columns([1.2, 2, 1.2])
+        st.markdown('<div class="word-card">', unsafe_allow_html=True)
+
+        col1, col2, col3 = st.columns([1.3, 2.1, 1.2])
 
         with col1:
-            st.markdown(f"### {idx + 1}. {item['word']}")
+            st.markdown(f"<div class='word-badge'>🌱 Word {idx + 1}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='word-text'>{item['word']}</div>", unsafe_allow_html=True)
 
         with col2:
-            st.markdown(f"**뜻:** {item['meaning']}")
+            st.markdown("<div class='small-muted'>뜻</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='meaning-text'>{item['meaning']}</div>", unsafe_allow_html=True)
 
         with col3:
             audio_button(
@@ -359,6 +537,8 @@ def show_word_cards(theme_words, theme_name):
                 item["word"],
                 key=f"{theme_name}_learn_audio_{idx}"
             )
+
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
 # =========================
@@ -374,12 +554,14 @@ def show_quiz(theme_words, theme_name):
     wrong_key = f"{theme_name}_wrong"
 
     if not st.session_state[submitted1_key]:
-        st.markdown("### 📝 1차 퀴즈")
+        st.markdown("### 🧸 1차 퀴즈")
         st.write("영어 단어를 보고 알맞은 뜻을 고르세요.")
 
         for i, q in enumerate(quiz_items):
-            st.markdown("---")
-            st.markdown(f"### {i + 1}. {q['word']}")
+            st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
+
+            st.markdown(f"<div class='quiz-number'>🌟 Question {i + 1}</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
 
             audio_button(
                 "🔊 발음 듣기",
@@ -394,6 +576,8 @@ def show_quiz(theme_words, theme_name):
                 options,
                 key=f"{theme_name}_q1_{i}"
             )
+
+            st.markdown('</div>', unsafe_allow_html=True)
 
         if st.button("✅ 1차 제출하기", key=f"{theme_name}_submit1"):
             wrong = []
@@ -412,25 +596,42 @@ def show_quiz(theme_words, theme_name):
         wrong = st.session_state[wrong_key]
         score = len(quiz_items) - len(wrong)
 
-        st.success(f"🎉 1차 결과: {score} / {len(quiz_items)}점")
+        st.markdown(
+            f"""
+            <div class="score-box">
+                <div class="score-title">🎉 1차 결과: {score} / {len(quiz_items)}점</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         if len(wrong) == 0:
             st.balloons()
-            st.success("완벽합니다! 이 테마의 단어를 모두 잘 기억하고 있습니다.")
+            st.success("🌈 완벽합니다! 이 테마의 단어를 모두 잘 기억하고 있습니다.")
 
             if st.button("🔄 다시 풀기", key=f"{theme_name}_reset_all_correct"):
                 reset_theme(theme_name)
                 st.rerun()
 
         else:
-            st.warning(f"틀린 단어 {len(wrong)}개를 다시 풀어 봅시다.")
+            st.markdown(
+                f"""
+                <div class="wrong-box">
+                    🍊 틀린 단어 {len(wrong)}개를 다시 풀어 봅시다.
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
             st.markdown("### 🔁 2차 퀴즈: 틀린 단어만 다시 풀기")
 
             for i in wrong:
                 q = quiz_items[i]
 
-                st.markdown("---")
-                st.markdown(f"### {i + 1}. {q['word']}")
+                st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
+
+                st.markdown(f"<div class='quiz-number'>🌟 Retry {i + 1}</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
 
                 audio_button(
                     "🔊 발음 다시 듣기",
@@ -445,6 +646,8 @@ def show_quiz(theme_words, theme_name):
                     options,
                     key=f"{theme_name}_q2_{i}"
                 )
+
+                st.markdown('</div>', unsafe_allow_html=True)
 
             if st.button("✅ 2차 제출하기", key=f"{theme_name}_submit2"):
                 st.session_state[submitted2_key] = True
@@ -463,13 +666,20 @@ def show_quiz(theme_words, theme_name):
 
         final_score = len(quiz_items) - len(second_wrong)
 
-        st.success(f"🎉 최종 결과: {final_score} / {len(quiz_items)}점")
+        st.markdown(
+            f"""
+            <div class="score-box">
+                <div class="score-title">🏆 최종 결과: {final_score} / {len(quiz_items)}점</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         if len(second_wrong) == 0:
             st.balloons()
-            st.success("좋습니다! 틀렸던 단어까지 모두 다시 확인했습니다.")
+            st.success("💖 좋습니다! 틀렸던 단어까지 모두 다시 확인했습니다.")
         else:
-            st.warning("아래 단어들은 다시 복습하면 좋습니다.")
+            st.warning("🍊 아래 단어들은 다시 복습하면 좋습니다.")
 
         st.markdown("### ✅ 정답 확인")
 
@@ -481,8 +691,8 @@ def show_quiz(theme_words, theme_name):
                 user1 = st.session_state.get(f"{theme_name}_q1_{i}")
                 user2 = st.session_state.get(f"{theme_name}_q2_{i}")
 
-                st.markdown("---")
-                st.markdown(f"### {q['word']}")
+                st.markdown('<div class="answer-box">', unsafe_allow_html=True)
+                st.markdown(f"### 🌱 {q['word']}")
 
                 audio_button(
                     "🔊 발음 다시 듣기",
@@ -493,6 +703,7 @@ def show_quiz(theme_words, theme_name):
                 st.write(f"1차 선택: {user1}")
                 st.write(f"2차 선택: {user2}")
                 st.success(f"정답: {q['answer']}")
+                st.markdown('</div>', unsafe_allow_html=True)
 
         if st.button("🔄 다시 풀기", key=f"{theme_name}_reset"):
             reset_theme(theme_name)
@@ -508,17 +719,24 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
     with tab:
         theme_words = word_themes[theme_name]
 
-        st.subheader(theme_name)
-        st.write(f"이 테마에는 **{len(theme_words)}개 단어**가 있습니다.")
+        st.markdown(
+            f"""
+            <div class="theme-header">
+                <div class="theme-title">{theme_name}</div>
+                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 단어가 있습니다. 먼저 익히고, 퀴즈로 확인해 봅시다.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         mode = st.radio(
             "학습 모드를 선택하세요.",
-            ["📖 단어 익히기", "📝 퀴즈 풀기"],
+            ["🌼 단어 익히기", "🧸 퀴즈 풀기"],
             key=f"{theme_name}_mode",
             horizontal=True
         )
 
-        if mode == "📖 단어 익히기":
+        if mode == "🌼 단어 익히기":
             show_word_cards(theme_words, theme_name)
         else:
             show_quiz(theme_words, theme_name)
