@@ -234,13 +234,13 @@ with tabs[0]:
 
 
 # ---------------------------
-# Tab 2: Negative Quiz
+# Tab 2: 일반동사
 # ---------------------------
 with tabs[1]:
-    st.subheader("❌ Negative Quiz")
+    st.subheader("❌ 일반동사와 be동사의 부정문")
 import streamlit as st
 
-st.set_page_config(page_title="영어 부정문 퀴즈", layout="centered")
+st.set_page_config(page_title="영어 일반동사 퀴즈", layout="centered")
 
 st.title("🚀 Alex선생님과 함께하는 영어 부정문 퀴즈")
 st.caption("일반동사와 be동사의 부정문 · 10문제 · 2지선다")
