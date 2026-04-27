@@ -555,3 +555,215 @@ with tabs[5]:
     )
 
     st.info("Tip: Does, Did가 앞에 오면 뒤의 동사는 기본 모양을 씁니다. 예: Does he plays? ❌ / Does he play? ✅")
+
+# =========================================================
+# Tab 7: 불규칙동사 게임
+# =========================================================
+with tabs[6]:
+    st.subheader("🎮 불규칙동사 미니게임")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#fffbe6,#ffffff);">
+            <h3 style="color:#8a6d00;">📌 불규칙동사란?</h3>
+            <p>
+                <b>불규칙동사</b>는 과거형을 만들 때 <b>-ed를 붙이지 않고</b>
+                모양이 다르게 바뀌는 동사입니다.
+            </p>
+            <div class="formula-box" style="color:#8a6d00;">
+                go → went / eat → ate / see → saw
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("아래 버튼을 눌러 불규칙동사를 하나씩 확인하고, 직접 맞혀 봅시다!")
+
+    irregular_verbs = [
+        {"base": "go", "past": "went", "meaning": "가다"},
+        {"base": "eat", "past": "ate", "meaning": "먹다"},
+        {"base": "see", "past": "saw", "meaning": "보다"},
+        {"base": "have", "past": "had", "meaning": "가지다 / 먹다"},
+        {"base": "make", "past": "made", "meaning": "만들다"},
+        {"base": "come", "past": "came", "meaning": "오다"},
+        {"base": "do", "past": "did", "meaning": "하다"},
+        {"base": "take", "past": "took", "meaning": "가져가다 / 타다"},
+        {"base": "write", "past": "wrote", "meaning": "쓰다"},
+        {"base": "read", "past": "read", "meaning": "읽다"},
+        {"base": "buy", "past": "bought", "meaning": "사다"},
+        {"base": "bring", "past": "brought", "meaning": "가져오다"},
+        {"base": "think", "past": "thought", "meaning": "생각하다"},
+        {"base": "teach", "past": "taught", "meaning": "가르치다"},
+        {"base": "catch", "past": "caught", "meaning": "잡다"},
+        {"base": "speak", "past": "spoke", "meaning": "말하다"},
+        {"base": "drink", "past": "drank", "meaning": "마시다"},
+        {"base": "run", "past": "ran", "meaning": "달리다"},
+        {"base": "swim", "past": "swam", "meaning": "수영하다"},
+        {"base": "sing", "past": "sang", "meaning": "노래하다"},
+    ]
+
+    game_tabs = st.tabs([
+        "🃏 카드로 외우기",
+        "✏️ 직접 맞히기",
+        "📋 전체 리스트"
+    ])
+
+    # -----------------------------------------------------
+    # 1. 카드로 외우기
+    # -----------------------------------------------------
+    with game_tabs[0]:
+        st.markdown("### 🃏 카드로 외우기")
+        st.caption("버튼을 누르면 불규칙동사가 하나씩 나옵니다.")
+
+        if "verb_card_index" not in st.session_state:
+            st.session_state.verb_card_index = 0
+
+        current = irregular_verbs[st.session_state.verb_card_index]
+
+        st.markdown(
+            f"""
+            <div style="
+                background:linear-gradient(135deg,#eef5ff,#ffffff);
+                border-radius:28px;
+                padding:30px;
+                margin:20px 0;
+                text-align:center;
+                box-shadow:0 6px 18px rgba(0,0,0,0.08);
+                border:1.5px solid #d7e8ff;
+            ">
+                <p style="font-size:20px; color:#666; margin-bottom:8px;">현재형</p>
+                <h1 style="font-size:48px; color:#1f4e79; margin:8px 0;">{current["base"]}</h1>
+                <p style="font-size:20px; color:#666; margin-bottom:8px;">과거형</p>
+                <h1 style="font-size:48px; color:#d46b08; margin:8px 0;">{current["past"]}</h1>
+                <p style="font-size:23px; color:#333; margin-top:18px;">
+                    뜻: <b>{current["meaning"]}</b>
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("⬅️ 이전 카드"):
+                st.session_state.verb_card_index -= 1
+                if st.session_state.verb_card_index < 0:
+                    st.session_state.verb_card_index = len(irregular_verbs) - 1
+                st.rerun()
+
+        with col2:
+            if st.button("다음 카드 ➡️"):
+                st.session_state.verb_card_index += 1
+                if st.session_state.verb_card_index >= len(irregular_verbs):
+                    st.session_state.verb_card_index = 0
+                st.rerun()
+
+    # -----------------------------------------------------
+    # 2. 직접 맞히기
+    # -----------------------------------------------------
+    with game_tabs[1]:
+        st.markdown("### ✏️ 직접 맞히기")
+        st.caption("현재형을 보고 과거형을 직접 입력해 봅시다.")
+
+        if "verb_quiz_index" not in st.session_state:
+            st.session_state.verb_quiz_index = 0
+
+        if "verb_score" not in st.session_state:
+            st.session_state.verb_score = 0
+
+        if "verb_answer_checked" not in st.session_state:
+            st.session_state.verb_answer_checked = False
+
+        quiz_item = irregular_verbs[st.session_state.verb_quiz_index]
+
+        st.markdown(
+            f"""
+            <div style="
+                background:#ffffff;
+                border-radius:24px;
+                padding:24px;
+                margin:18px 0;
+                text-align:center;
+                box-shadow:0 5px 14px rgba(0,0,0,0.07);
+                border:1px solid #eeeeee;
+            ">
+                <p style="font-size:20px; color:#666;">다음 동사의 과거형은?</p>
+                <h1 style="font-size:46px; color:#1f4e79;">{quiz_item["base"]}</h1>
+                <p style="font-size:20px;">뜻: <b>{quiz_item["meaning"]}</b></p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        user_answer = st.text_input(
+            "과거형을 입력하세요.",
+            key=f"verb_input_{st.session_state.verb_quiz_index}"
+        )
+
+        if st.button("정답 확인"):
+            st.session_state.verb_answer_checked = True
+
+            if user_answer.strip().lower() == quiz_item["past"].lower():
+                st.success("정답입니다! 아주 좋아요 🎉")
+                st.balloons()
+                st.session_state.verb_score += 1
+            else:
+                st.error("아쉽습니다. 다시 확인해 봅시다.")
+                st.write(f"정답은 **{quiz_item['past']}** 입니다.")
+
+        if st.session_state.verb_answer_checked:
+            if st.button("다음 문제"):
+                st.session_state.verb_quiz_index += 1
+                st.session_state.verb_answer_checked = False
+
+                if st.session_state.verb_quiz_index >= len(irregular_verbs):
+                    st.session_state.verb_quiz_index = 0
+                    st.success("한 바퀴를 모두 끝냈습니다! 다시 처음부터 연습합니다.")
+
+                st.rerun()
+
+        st.markdown("---")
+        st.write(f"현재 점수: **{st.session_state.verb_score}점**")
+
+        if st.button("점수 초기화"):
+            st.session_state.verb_score = 0
+            st.session_state.verb_quiz_index = 0
+            st.session_state.verb_answer_checked = False
+            st.rerun()
+
+    # -----------------------------------------------------
+    # 3. 전체 리스트
+    # -----------------------------------------------------
+    with game_tabs[2]:
+        st.markdown("### 📋 자주 나오는 불규칙동사 리스트")
+
+        st.markdown(
+            """
+            | 현재형 | 과거형 | 뜻 |
+            |---|---|---|
+            | go | went | 가다 |
+            | eat | ate | 먹다 |
+            | see | saw | 보다 |
+            | have | had | 가지다 / 먹다 |
+            | make | made | 만들다 |
+            | come | came | 오다 |
+            | do | did | 하다 |
+            | take | took | 가져가다 / 타다 |
+            | write | wrote | 쓰다 |
+            | read | read | 읽다 |
+            | buy | bought | 사다 |
+            | bring | brought | 가져오다 |
+            | think | thought | 생각하다 |
+            | teach | taught | 가르치다 |
+            | catch | caught | 잡다 |
+            | speak | spoke | 말하다 |
+            | drink | drank | 마시다 |
+            | run | ran | 달리다 |
+            | swim | swam | 수영하다 |
+            | sing | sang | 노래하다 |
+            """
+        )
+
+        st.info("먼저 카드로 외우고, 그다음 직접 맞히기를 하면 훨씬 잘 기억납니다.")
