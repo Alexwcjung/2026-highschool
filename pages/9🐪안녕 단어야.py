@@ -1,219 +1,14 @@
 import streamlit as st
 from gtts import gTTS
 import io
-import random
 
 # =========================
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Fun Word Garden",
+    page_title="Phonics Concept",
     page_icon="🌈",
     layout="wide"
-)
-
-# =========================
-# CSS 디자인
-# =========================
-st.markdown(
-    """
-    <style>
-    .main-title {
-        font-size: 44px;
-        font-weight: 900;
-        color: #1f2937;
-        margin-bottom: 4px;
-    }
-
-    .sub-title {
-        font-size: 17px;
-        color: #6b7280;
-        margin-bottom: 24px;
-    }
-
-    .hero-box {
-        background: linear-gradient(135deg, #fce7f3 0%, #e0f2fe 50%, #fef3c7 100%);
-        border-radius: 26px;
-        padding: 28px 30px;
-        margin-bottom: 28px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.8);
-    }
-
-    .hero-title {
-        font-size: 27px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 10px;
-    }
-
-    .hero-text {
-        font-size: 16px;
-        color: #374151;
-        line-height: 1.8;
-    }
-
-    .theme-header {
-        background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
-        color: white;
-        padding: 22px 26px;
-        border-radius: 24px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 20px rgba(139,92,246,0.25);
-    }
-
-    .theme-title {
-        font-size: 27px;
-        font-weight: 900;
-        margin-bottom: 6px;
-    }
-
-    .theme-desc {
-        font-size: 15px;
-        opacity: 0.95;
-    }
-
-    .word-card {
-        background: white;
-        border-radius: 22px;
-        padding: 18px 20px;
-        margin-bottom: 14px;
-        border: 1px solid #f3e8ff;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.05);
-    }
-
-    .word-badge {
-        display: inline-block;
-        background: #fce7f3;
-        color: #be185d;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-size: 13px;
-        font-weight: 800;
-        margin-bottom: 8px;
-    }
-
-    .word-text {
-        font-size: 31px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 4px;
-    }
-
-    .meaning-text {
-        font-size: 20px;
-        font-weight: 700;
-        color: #374151;
-    }
-
-    .quiz-card {
-        background: #ffffff;
-        border-radius: 24px;
-        padding: 22px 24px;
-        margin-bottom: 18px;
-        border: 1px solid #e9d5ff;
-        box-shadow: 0 5px 18px rgba(0,0,0,0.06);
-    }
-
-    .quiz-number {
-        display: inline-block;
-        background: #dcfce7;
-        color: #166534;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-weight: 900;
-        font-size: 13px;
-        margin-bottom: 10px;
-    }
-
-    .quiz-word {
-        font-size: 34px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
-    .score-box {
-        background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 50%, #fce7f3 100%);
-        border-radius: 24px;
-        padding: 24px 26px;
-        margin: 20px 0;
-        border: 1px solid #bbf7d0;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    }
-
-    .score-title {
-        font-size: 27px;
-        font-weight: 900;
-        color: #14532d;
-    }
-
-    .wrong-box {
-        background: #fff7ed;
-        border-left: 6px solid #fb923c;
-        border-radius: 18px;
-        padding: 16px 18px;
-        margin: 18px 0;
-        color: #7c2d12;
-        font-weight: 700;
-    }
-
-    .answer-box {
-        background: #f8fafc;
-        border-radius: 20px;
-        padding: 18px 20px;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 16px;
-    }
-
-    .small-muted {
-        font-size: 14px;
-        color: #6b7280;
-    }
-
-    div[data-testid="stRadio"] > label {
-        font-weight: 800;
-        color: #374151;
-    }
-
-    .stButton > button {
-        border-radius: 999px;
-        font-weight: 800;
-        border: 1px solid #d1d5db;
-        padding: 0.45rem 1rem;
-    }
-
-    .stButton > button:hover {
-        border-color: #ec4899;
-        color: #ec4899;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
-# 상단 제목
-# =========================
-st.markdown("<div class='main-title'>🌟 Fun Word Garden 🌟</div>", unsafe_allow_html=True)
-st.markdown(
-    "<div class='sub-title'>귀여운 단어 정원에서 테마별 영어 단어를 듣고, 보고, 퀴즈로 익혀 봅시다.</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div class="hero-box">
-        <div class="hero-title">🌱 오늘의 단어 학습 루틴</div>
-        <div class="hero-text">
-            • 단어를 <b>테마별</b>로 묶어 기억합니다.<br>
-            • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
-            • 다음으로 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.<br>
-            • 1차 제출 후 틀린 단어만 다시 풀고, 2차 제출 후 정답을 확인합니다.
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
 )
 
 # =========================
@@ -234,706 +29,547 @@ def audio_button(label, text, key):
         st.audio(audio_bytes, format="audio/mp3")
 
 
-# =========================
-# 테마별 단어 데이터
-# =========================
-word_themes = {
-    "🧑‍🤝‍🧑 사람·관계": [
-        {"word": "person", "meaning": "사람"},
-        {"word": "man", "meaning": "남자"},
-        {"word": "woman", "meaning": "여자"},
-        {"word": "child", "meaning": "아이"},
-        {"word": "baby", "meaning": "아기"},
-        {"word": "boy", "meaning": "소년"},
-        {"word": "girl", "meaning": "소녀"},
-        {"word": "friend", "meaning": "친구"},
-        {"word": "family", "meaning": "가족"},
-        {"word": "parent", "meaning": "부모"},
-        {"word": "father", "meaning": "아버지"},
-        {"word": "mother", "meaning": "어머니"},
-        {"word": "brother", "meaning": "형제, 남자 형제"},
-        {"word": "sister", "meaning": "자매, 여자 형제"},
-        {"word": "son", "meaning": "아들"},
-        {"word": "daughter", "meaning": "딸"},
-        {"word": "teacher", "meaning": "선생님"},
-        {"word": "student", "meaning": "학생"},
-        {"word": "classmate", "meaning": "반 친구"},
-        {"word": "neighbor", "meaning": "이웃"},
-        {"word": "customer", "meaning": "손님, 고객"},
-        {"word": "worker", "meaning": "노동자, 직원"},
-        {"word": "driver", "meaning": "운전자"},
-        {"word": "doctor", "meaning": "의사"},
-        {"word": "nurse", "meaning": "간호사"},
-        {"word": "police officer", "meaning": "경찰관"},
-        {"word": "owner", "meaning": "주인"},
-        {"word": "guest", "meaning": "손님"},
-        {"word": "team", "meaning": "팀, 무리"},
-        {"word": "member", "meaning": "구성원"},
-    ],
-
-    "🏫 학교·교실": [
-        {"word": "school", "meaning": "학교"},
-        {"word": "class", "meaning": "수업, 학급"},
-        {"word": "classroom", "meaning": "교실"},
-        {"word": "lesson", "meaning": "수업, 과"},
-        {"word": "homework", "meaning": "숙제"},
-        {"word": "test", "meaning": "시험"},
-        {"word": "exam", "meaning": "시험"},
-        {"word": "quiz", "meaning": "퀴즈, 간단한 시험"},
-        {"word": "question", "meaning": "질문, 문제"},
-        {"word": "answer", "meaning": "대답, 정답"},
-        {"word": "book", "meaning": "책"},
-        {"word": "notebook", "meaning": "공책"},
-        {"word": "paper", "meaning": "종이, 보고서"},
-        {"word": "pen", "meaning": "펜"},
-        {"word": "pencil", "meaning": "연필"},
-        {"word": "desk", "meaning": "책상"},
-        {"word": "chair", "meaning": "의자"},
-        {"word": "board", "meaning": "칠판, 게시판"},
-        {"word": "page", "meaning": "쪽, 페이지"},
-        {"word": "word", "meaning": "단어, 말"},
-        {"word": "sentence", "meaning": "문장"},
-        {"word": "story", "meaning": "이야기"},
-        {"word": "language", "meaning": "언어"},
-        {"word": "English", "meaning": "영어"},
-        {"word": "Korean", "meaning": "한국어"},
-        {"word": "grade", "meaning": "성적, 학년"},
-        {"word": "score", "meaning": "점수"},
-        {"word": "rule", "meaning": "규칙"},
-        {"word": "practice", "meaning": "연습하다, 연습"},
-        {"word": "study", "meaning": "공부하다"},
-    ],
-
-    "🏃 기본 동작 동사": [
-        {"word": "go", "meaning": "가다"},
-        {"word": "come", "meaning": "오다"},
-        {"word": "walk", "meaning": "걷다"},
-        {"word": "run", "meaning": "달리다"},
-        {"word": "sit", "meaning": "앉다"},
-        {"word": "stand", "meaning": "서다"},
-        {"word": "stop", "meaning": "멈추다"},
-        {"word": "start", "meaning": "시작하다"},
-        {"word": "open", "meaning": "열다"},
-        {"word": "close", "meaning": "닫다"},
-        {"word": "make", "meaning": "만들다"},
-        {"word": "do", "meaning": "하다"},
-        {"word": "have", "meaning": "가지다, 먹다"},
-        {"word": "get", "meaning": "얻다, 받다, 되다"},
-        {"word": "take", "meaning": "가져가다, 타다"},
-        {"word": "give", "meaning": "주다"},
-        {"word": "put", "meaning": "놓다, 두다"},
-        {"word": "bring", "meaning": "가져오다"},
-        {"word": "use", "meaning": "사용하다"},
-        {"word": "find", "meaning": "찾다"},
-        {"word": "keep", "meaning": "유지하다, 보관하다"},
-        {"word": "leave", "meaning": "떠나다, 남기다"},
-        {"word": "move", "meaning": "움직이다, 이사하다"},
-        {"word": "turn", "meaning": "돌다, 돌리다"},
-        {"word": "wait", "meaning": "기다리다"},
-        {"word": "help", "meaning": "돕다"},
-        {"word": "try", "meaning": "시도하다"},
-        {"word": "need", "meaning": "필요하다"},
-        {"word": "want", "meaning": "원하다"},
-        {"word": "like", "meaning": "좋아하다"},
-    ],
-
-    "💖 감정·성격": [
-        {"word": "happy", "meaning": "행복한"},
-        {"word": "sad", "meaning": "슬픈"},
-        {"word": "angry", "meaning": "화난"},
-        {"word": "tired", "meaning": "피곤한"},
-        {"word": "hungry", "meaning": "배고픈"},
-        {"word": "thirsty", "meaning": "목마른"},
-        {"word": "excited", "meaning": "신난"},
-        {"word": "bored", "meaning": "지루한"},
-        {"word": "afraid", "meaning": "두려워하는"},
-        {"word": "worried", "meaning": "걱정하는"},
-        {"word": "proud", "meaning": "자랑스러워하는"},
-        {"word": "kind", "meaning": "친절한"},
-        {"word": "nice", "meaning": "좋은, 친절한"},
-        {"word": "brave", "meaning": "용감한"},
-        {"word": "honest", "meaning": "정직한"},
-        {"word": "friendly", "meaning": "친근한"},
-        {"word": "quiet", "meaning": "조용한"},
-        {"word": "shy", "meaning": "수줍은"},
-        {"word": "smart", "meaning": "똑똑한"},
-        {"word": "strong", "meaning": "강한"},
-        {"word": "weak", "meaning": "약한"},
-        {"word": "careful", "meaning": "조심하는"},
-        {"word": "lazy", "meaning": "게으른"},
-        {"word": "busy", "meaning": "바쁜"},
-        {"word": "ready", "meaning": "준비된"},
-        {"word": "sorry", "meaning": "미안한"},
-        {"word": "thankful", "meaning": "감사하는"},
-        {"word": "lonely", "meaning": "외로운"},
-        {"word": "nervous", "meaning": "긴장한"},
-        {"word": "calm", "meaning": "차분한"},
-    ],
-
-    "🍎 음식·건강": [
-        {"word": "food", "meaning": "음식"},
-        {"word": "rice", "meaning": "밥, 쌀"},
-        {"word": "bread", "meaning": "빵"},
-        {"word": "water", "meaning": "물"},
-        {"word": "milk", "meaning": "우유"},
-        {"word": "juice", "meaning": "주스"},
-        {"word": "coffee", "meaning": "커피"},
-        {"word": "tea", "meaning": "차"},
-        {"word": "apple", "meaning": "사과"},
-        {"word": "banana", "meaning": "바나나"},
-        {"word": "egg", "meaning": "달걀"},
-        {"word": "meat", "meaning": "고기"},
-        {"word": "fish", "meaning": "생선, 물고기"},
-        {"word": "chicken", "meaning": "닭고기, 닭"},
-        {"word": "vegetable", "meaning": "채소"},
-        {"word": "fruit", "meaning": "과일"},
-        {"word": "breakfast", "meaning": "아침 식사"},
-        {"word": "lunch", "meaning": "점심 식사"},
-        {"word": "dinner", "meaning": "저녁 식사"},
-        {"word": "snack", "meaning": "간식"},
-        {"word": "healthy", "meaning": "건강한"},
-        {"word": "sick", "meaning": "아픈"},
-        {"word": "pain", "meaning": "통증"},
-        {"word": "headache", "meaning": "두통"},
-        {"word": "medicine", "meaning": "약"},
-        {"word": "hospital", "meaning": "병원"},
-        {"word": "exercise", "meaning": "운동하다, 운동"},
-        {"word": "sleep", "meaning": "자다, 잠"},
-        {"word": "rest", "meaning": "쉬다, 휴식"},
-        {"word": "wash", "meaning": "씻다"},
-    ],
-
-    "🚗 장소·이동": [
-        {"word": "home", "meaning": "집"},
-        {"word": "house", "meaning": "집"},
-        {"word": "room", "meaning": "방"},
-        {"word": "kitchen", "meaning": "부엌"},
-        {"word": "bathroom", "meaning": "화장실, 욕실"},
-        {"word": "door", "meaning": "문"},
-        {"word": "window", "meaning": "창문"},
-        {"word": "city", "meaning": "도시"},
-        {"word": "town", "meaning": "마을"},
-        {"word": "country", "meaning": "나라, 시골"},
-        {"word": "street", "meaning": "거리"},
-        {"word": "road", "meaning": "도로"},
-        {"word": "park", "meaning": "공원"},
-        {"word": "store", "meaning": "가게"},
-        {"word": "market", "meaning": "시장"},
-        {"word": "station", "meaning": "역"},
-        {"word": "bus", "meaning": "버스"},
-        {"word": "car", "meaning": "자동차"},
-        {"word": "bike", "meaning": "자전거"},
-        {"word": "train", "meaning": "기차"},
-        {"word": "plane", "meaning": "비행기"},
-        {"word": "ship", "meaning": "배"},
-        {"word": "map", "meaning": "지도"},
-        {"word": "place", "meaning": "장소"},
-        {"word": "here", "meaning": "여기"},
-        {"word": "there", "meaning": "거기"},
-        {"word": "left", "meaning": "왼쪽"},
-        {"word": "right", "meaning": "오른쪽, 맞는"},
-        {"word": "near", "meaning": "가까운"},
-        {"word": "far", "meaning": "먼"},
-    ],
-        "🌤️ 자연·날씨": [
-        {"word": "sun", "meaning": "태양"},
-        {"word": "moon", "meaning": "달"},
-        {"word": "star", "meaning": "별"},
-        {"word": "sky", "meaning": "하늘"},
-        {"word": "cloud", "meaning": "구름"},
-        {"word": "rain", "meaning": "비"},
-        {"word": "snow", "meaning": "눈"},
-        {"word": "wind", "meaning": "바람"},
-        {"word": "weather", "meaning": "날씨"},
-        {"word": "air", "meaning": "공기"},
-        {"word": "water", "meaning": "물"},
-        {"word": "fire", "meaning": "불"},
-        {"word": "tree", "meaning": "나무"},
-        {"word": "flower", "meaning": "꽃"},
-        {"word": "grass", "meaning": "풀, 잔디"},
-        {"word": "mountain", "meaning": "산"},
-        {"word": "river", "meaning": "강"},
-        {"word": "sea", "meaning": "바다"},
-        {"word": "beach", "meaning": "해변"},
-        {"word": "forest", "meaning": "숲"},
-        {"word": "earth", "meaning": "지구, 땅"},
-        {"word": "ground", "meaning": "땅, 지면"},
-        {"word": "rock", "meaning": "바위"},
-        {"word": "hill", "meaning": "언덕"},
-        {"word": "lake", "meaning": "호수"},
-        {"word": "island", "meaning": "섬"},
-        {"word": "cold", "meaning": "추운, 차가운"},
-        {"word": "hot", "meaning": "뜨거운, 더운"},
-        {"word": "warm", "meaning": "따뜻한"},
-        {"word": "cool", "meaning": "시원한, 멋진"},
-    ],
-
-    "🐶 동물 이름": [
-        {"word": "dog", "meaning": "개"},
-        {"word": "cat", "meaning": "고양이"},
-        {"word": "bird", "meaning": "새"},
-        {"word": "fish", "meaning": "물고기"},
-        {"word": "horse", "meaning": "말"},
-        {"word": "cow", "meaning": "소"},
-        {"word": "pig", "meaning": "돼지"},
-        {"word": "sheep", "meaning": "양"},
-        {"word": "goat", "meaning": "염소"},
-        {"word": "chicken", "meaning": "닭"},
-        {"word": "duck", "meaning": "오리"},
-        {"word": "rabbit", "meaning": "토끼"},
-        {"word": "mouse", "meaning": "쥐"},
-        {"word": "monkey", "meaning": "원숭이"},
-        {"word": "lion", "meaning": "사자"},
-        {"word": "tiger", "meaning": "호랑이"},
-        {"word": "bear", "meaning": "곰"},
-        {"word": "wolf", "meaning": "늑대"},
-        {"word": "fox", "meaning": "여우"},
-        {"word": "deer", "meaning": "사슴"},
-        {"word": "elephant", "meaning": "코끼리"},
-        {"word": "giraffe", "meaning": "기린"},
-        {"word": "zebra", "meaning": "얼룩말"},
-        {"word": "snake", "meaning": "뱀"},
-        {"word": "frog", "meaning": "개구리"},
-        {"word": "turtle", "meaning": "거북이"},
-        {"word": "whale", "meaning": "고래"},
-        {"word": "dolphin", "meaning": "돌고래"},
-        {"word": "shark", "meaning": "상어"},
-        {"word": "penguin", "meaning": "펭귄"},
-    ],
-
-    "⏰ 시간·숫자": [
-        {"word": "time", "meaning": "시간"},
-        {"word": "day", "meaning": "날, 하루"},
-        {"word": "week", "meaning": "주"},
-        {"word": "month", "meaning": "달, 월"},
-        {"word": "year", "meaning": "해, 년"},
-        {"word": "today", "meaning": "오늘"},
-        {"word": "tomorrow", "meaning": "내일"},
-        {"word": "yesterday", "meaning": "어제"},
-        {"word": "morning", "meaning": "아침"},
-        {"word": "afternoon", "meaning": "오후"},
-        {"word": "evening", "meaning": "저녁"},
-        {"word": "night", "meaning": "밤"},
-        {"word": "hour", "meaning": "시간"},
-        {"word": "minute", "meaning": "분"},
-        {"word": "second", "meaning": "초"},
-        {"word": "early", "meaning": "이른"},
-        {"word": "late", "meaning": "늦은"},
-        {"word": "now", "meaning": "지금"},
-        {"word": "before", "meaning": "~전에"},
-        {"word": "after", "meaning": "~후에"},
-        {"word": "first", "meaning": "첫 번째"},
-        {"word": "last", "meaning": "마지막의, 지난"},
-        {"word": "one", "meaning": "하나"},
-        {"word": "two", "meaning": "둘"},
-        {"word": "three", "meaning": "셋"},
-        {"word": "four", "meaning": "넷"},
-        {"word": "five", "meaning": "다섯"},
-        {"word": "many", "meaning": "많은"},
-        {"word": "much", "meaning": "많은"},
-        {"word": "few", "meaning": "거의 없는, 몇몇의"},
-    ],
-
-    "🧸 물건·도구": [
-        {"word": "thing", "meaning": "것, 물건"},
-        {"word": "bag", "meaning": "가방"},
-        {"word": "box", "meaning": "상자"},
-        {"word": "cup", "meaning": "컵"},
-        {"word": "bottle", "meaning": "병"},
-        {"word": "phone", "meaning": "전화기"},
-        {"word": "computer", "meaning": "컴퓨터"},
-        {"word": "camera", "meaning": "카메라"},
-        {"word": "key", "meaning": "열쇠"},
-        {"word": "money", "meaning": "돈"},
-        {"word": "card", "meaning": "카드"},
-        {"word": "ticket", "meaning": "표, 티켓"},
-        {"word": "clothes", "meaning": "옷"},
-        {"word": "shirt", "meaning": "셔츠"},
-        {"word": "pants", "meaning": "바지"},
-        {"word": "shoes", "meaning": "신발"},
-        {"word": "hat", "meaning": "모자"},
-        {"word": "watch", "meaning": "시계"},
-        {"word": "table", "meaning": "탁자"},
-        {"word": "bed", "meaning": "침대"},
-        {"word": "light", "meaning": "빛, 전등"},
-        {"word": "picture", "meaning": "그림, 사진"},
-        {"word": "music", "meaning": "음악"},
-        {"word": "game", "meaning": "게임, 경기"},
-        {"word": "ball", "meaning": "공"},
-        {"word": "tool", "meaning": "도구"},
-        {"word": "knife", "meaning": "칼"},
-        {"word": "spoon", "meaning": "숟가락"},
-        {"word": "fork", "meaning": "포크"},
-        {"word": "plate", "meaning": "접시"},
-    ],
-
-    "💬 생각·말하기": [
-        {"word": "think", "meaning": "생각하다"},
-        {"word": "know", "meaning": "알다"},
-        {"word": "understand", "meaning": "이해하다"},
-        {"word": "remember", "meaning": "기억하다"},
-        {"word": "forget", "meaning": "잊다"},
-        {"word": "say", "meaning": "말하다"},
-        {"word": "tell", "meaning": "말하다, 알려주다"},
-        {"word": "speak", "meaning": "말하다"},
-        {"word": "talk", "meaning": "이야기하다"},
-        {"word": "ask", "meaning": "묻다"},
-        {"word": "answer", "meaning": "대답하다, 답"},
-        {"word": "call", "meaning": "부르다, 전화하다"},
-        {"word": "listen", "meaning": "듣다"},
-        {"word": "hear", "meaning": "듣다, 들리다"},
-        {"word": "read", "meaning": "읽다"},
-        {"word": "write", "meaning": "쓰다"},
-        {"word": "learn", "meaning": "배우다"},
-        {"word": "teach", "meaning": "가르치다"},
-        {"word": "mean", "meaning": "의미하다"},
-        {"word": "feel", "meaning": "느끼다"},
-        {"word": "believe", "meaning": "믿다"},
-        {"word": "hope", "meaning": "바라다, 희망하다"},
-        {"word": "choose", "meaning": "선택하다"},
-        {"word": "decide", "meaning": "결정하다"},
-        {"word": "explain", "meaning": "설명하다"},
-        {"word": "show", "meaning": "보여주다"},
-        {"word": "share", "meaning": "나누다, 공유하다"},
-        {"word": "agree", "meaning": "동의하다"},
-        {"word": "worry", "meaning": "걱정하다"},
-        {"word": "thank", "meaning": "감사하다"},
-    ],
-
-    "🎨 상태·형용사": [
-        {"word": "good", "meaning": "좋은"},
-        {"word": "bad", "meaning": "나쁜"},
-        {"word": "big", "meaning": "큰"},
-        {"word": "small", "meaning": "작은"},
-        {"word": "long", "meaning": "긴"},
-        {"word": "short", "meaning": "짧은"},
-        {"word": "new", "meaning": "새로운"},
-        {"word": "old", "meaning": "오래된, 나이 든"},
-        {"word": "young", "meaning": "어린, 젊은"},
-        {"word": "high", "meaning": "높은"},
-        {"word": "low", "meaning": "낮은"},
-        {"word": "fast", "meaning": "빠른"},
-        {"word": "slow", "meaning": "느린"},
-        {"word": "easy", "meaning": "쉬운"},
-        {"word": "hard", "meaning": "어려운, 딱딱한"},
-        {"word": "right", "meaning": "맞는, 오른쪽의"},
-        {"word": "wrong", "meaning": "틀린"},
-        {"word": "same", "meaning": "같은"},
-        {"word": "different", "meaning": "다른"},
-        {"word": "important", "meaning": "중요한"},
-        {"word": "beautiful", "meaning": "아름다운"},
-        {"word": "clean", "meaning": "깨끗한"},
-        {"word": "dirty", "meaning": "더러운"},
-        {"word": "full", "meaning": "가득 찬"},
-        {"word": "empty", "meaning": "빈"},
-        {"word": "free", "meaning": "자유로운, 무료의"},
-        {"word": "safe", "meaning": "안전한"},
-        {"word": "dangerous", "meaning": "위험한"},
-        {"word": "true", "meaning": "진짜의, 사실인"},
-        {"word": "false", "meaning": "거짓의"},
-    ],
-}
-
-# =========================
-# 전체 뜻 목록 만들기
-# =========================
-all_words = []
-for theme_words in word_themes.values():
-    all_words.extend(theme_words)
-
-all_meanings = [item["meaning"] for item in all_words]
+def repeat_sound(sound_text):
+    return f"{sound_text}.   {sound_text}."
 
 
 # =========================
-# 보기 고정 랜덤 섞기
+# CSS 디자인
 # =========================
-def get_shuffled_options(theme_name, index, options):
-    key = f"{theme_name}_options_{index}"
+st.markdown(
+    """
+    <style>
+    .main {
+        background-color: #fffdfb;
+    }
 
-    if key not in st.session_state:
-        shuffled = options[:]
-        random.seed(f"{theme_name}_{index}")
-        random.shuffle(shuffled)
-        st.session_state[key] = shuffled
+    .hero-box {
+        background: linear-gradient(135deg, #ffeef8 0%, #eef7ff 50%, #fff7df 100%);
+        border-radius: 30px;
+        padding: 32px 30px;
+        margin-bottom: 26px;
+        box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+        border: 1px solid #f3e8ff;
+        text-align: center;
+    }
 
-    return st.session_state[key]
+    .hero-title {
+        font-size: 42px;
+        font-weight: 900;
+        color: #334155;
+        margin-bottom: 10px;
+    }
+
+    .hero-sub {
+        font-size: 18px;
+        color: #64748b;
+        line-height: 1.8;
+        margin-bottom: 0;
+    }
+
+    .top-guide-box {
+        background: linear-gradient(135deg, #fff9db 0%, #fff3c4 100%);
+        border-radius: 22px;
+        padding: 22px 24px;
+        margin-bottom: 24px;
+        border: 1px solid #fde68a;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .top-guide-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #92400e;
+        margin-bottom: 10px;
+    }
+
+    .top-guide-text {
+        font-size: 16px;
+        line-height: 1.8;
+        color: #7c5a10;
+    }
+
+    .rule-box {
+        background: linear-gradient(135deg, #f3f8ff 0%, #ffffff 100%);
+        border-radius: 24px;
+        padding: 22px 24px;
+        margin-bottom: 22px;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .rule-title {
+        font-size: 22px;
+        font-weight: 900;
+        color: #1d4ed8;
+        margin-bottom: 10px;
+    }
+
+    .rule-text {
+        font-size: 16px;
+        color: #334155;
+        line-height: 1.8;
+    }
+
+    .phonics-card {
+        background: linear-gradient(135deg, #ffffff 0%, #fcfcff 100%);
+        border-radius: 22px;
+        padding: 18px 18px 14px 18px;
+        margin-bottom: 16px;
+        border: 1px solid #ede9fe;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+    }
+
+    .label-small {
+        display: inline-block;
+        background: #fce7f3;
+        color: #be185d;
+        font-size: 12px;
+        font-weight: 800;
+        padding: 5px 10px;
+        border-radius: 999px;
+        margin-bottom: 8px;
+    }
+
+    .pattern-box {
+        font-size: 34px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 4px;
+    }
+
+    .concept-box {
+        font-size: 16px;
+        font-weight: 700;
+        color: #475569;
+        line-height: 1.6;
+    }
+
+    .sound-box {
+        font-size: 16px;
+        font-weight: 800;
+        color: #1f2937;
+        line-height: 1.7;
+    }
+
+    .word-box {
+        font-size: 24px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 6px;
+    }
+
+    .section-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #334155;
+        margin-bottom: 4px;
+    }
+
+    .section-caption {
+        font-size: 15px;
+        color: #64748b;
+        margin-bottom: 14px;
+    }
+
+    button[data-baseweb="tab"] {
+        font-size: 15px;
+        font-weight: 800;
+    }
+
+    .stButton > button {
+        border-radius: 999px;
+        font-weight: 800;
+        border: 1px solid #d1d5db;
+        padding: 0.42rem 0.95rem;
+    }
+
+    .stButton > button:hover {
+        border-color: #8b5cf6;
+        color: #8b5cf6;
+    }
+
+    div[data-testid="stAudio"] {
+        margin-top: 4px;
+        margin-bottom: 8px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================
+# 상단 제목
+# =========================
+st.markdown(
+    """
+    <div class="hero-box">
+        <div class="hero-title">🌈🐰 Alex의 Phonics Garden 🧸✨</div>
+        <div class="hero-sub">
+            자음 소리, 짧은 모음, 긴 모음, blends, digraphs, vowel teams를<br>
+            귀엽고 쉽게 듣고 익혀 보는 파닉스 기초 학습 공간입니다.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================
+# 상단 공통 안내 박스
+# =========================
+st.markdown(
+    """
+    <div class="top-guide-box">
+        <div class="top-guide-title">📌 발음기호와 한글 소리 힌트 안내</div>
+        <div class="top-guide-text">
+            • 표에 나오는 발음기호는 영어의 실제 소리를 나타냅니다.<br>
+            • 학생들이 발음기호를 읽기 어려울 수 있어, 옆에 한글식 소리 힌트를 함께 적었습니다.<br>
+            • 단, 한글 힌트는 정확한 영어 발음이 아니라 소리를 떠올리기 위한 참고용입니다.<br>
+            • 정확한 발음은 반드시 <b>🔊 실제 소리 듣기</b> 버튼을 눌러 확인하도록 지도하면 좋습니다.<br>
+            • 실제 소리 버튼은 <b>short a</b>, <b>long a</b>처럼 설명을 읽지 않고, 실제 영어 소리만 두 번 들려줍니다.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+def show_rule(title, lines):
+    html = f"<div class='rule-box'><div class='rule-title'>{title}</div><div class='rule-text'>"
+    for line in lines:
+        html += f"• {line}<br>"
+    html += "</div></div>"
+    st.markdown(html, unsafe_allow_html=True)
 
 
 # =========================
-# 퀴즈 문항 만들기
+# 데이터
 # =========================
-def make_quiz_items(theme_words, theme_name):
-    quiz_items = []
 
-    for idx, item in enumerate(theme_words):
-        correct = item["meaning"]
+consonant_sounds = [
+    {"pattern": "B b", "letter_name": "bee", "concept": "Consonant sound", "sound_name": "/b/ (브에 가까운 소리)", "sound_audio": repeat_sound("buh"), "word": "bat", "word_audio": "bat"},
+    {"pattern": "C c", "letter_name": "see", "concept": "Consonant sound", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "cat", "word_audio": "cat"},
+    {"pattern": "D d", "letter_name": "dee", "concept": "Consonant sound", "sound_name": "/d/ (드에 가까운 소리)", "sound_audio": repeat_sound("duh"), "word": "dog", "word_audio": "dog"},
+    {"pattern": "F f", "letter_name": "eff", "concept": "Consonant sound", "sound_name": "/f/ (입술을 가볍게 물고 내는 프 소리)", "sound_audio": repeat_sound("fff"), "word": "fish", "word_audio": "fish"},
+    {"pattern": "G g", "letter_name": "gee", "concept": "Consonant sound", "sound_name": "/g/ (그에 가까운 소리)", "sound_audio": repeat_sound("guh"), "word": "goat", "word_audio": "goat"},
+    {"pattern": "H h", "letter_name": "aitch", "concept": "Consonant sound", "sound_name": "/h/ (ㅎ에 가까운 숨소리)", "sound_audio": repeat_sound("huh"), "word": "hat", "word_audio": "hat"},
+    {"pattern": "J j", "letter_name": "jay", "concept": "Consonant sound", "sound_name": "/dʒ/ (즈와 쥬 사이 소리)", "sound_audio": repeat_sound("juh"), "word": "jam", "word_audio": "jam"},
+    {"pattern": "K k", "letter_name": "kay", "concept": "Consonant sound", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "kite", "word_audio": "kite"},
+    {"pattern": "L l", "letter_name": "el", "concept": "Consonant sound", "sound_name": "/l/ (혀끝을 윗잇몸에 대는 ㄹ 소리)", "sound_audio": repeat_sound("lll"), "word": "lion", "word_audio": "lion"},
+    {"pattern": "M m", "letter_name": "em", "concept": "Consonant sound", "sound_name": "/m/ (음에 가까운 소리)", "sound_audio": repeat_sound("mmm"), "word": "moon", "word_audio": "moon"},
+    {"pattern": "N n", "letter_name": "en", "concept": "Consonant sound", "sound_name": "/n/ (느에 가까운 소리)", "sound_audio": repeat_sound("nnn"), "word": "nest", "word_audio": "nest"},
+    {"pattern": "P p", "letter_name": "pee", "concept": "Consonant sound", "sound_name": "/p/ (프에 가까운 소리)", "sound_audio": repeat_sound("puh"), "word": "pig", "word_audio": "pig"},
+    {"pattern": "Q q", "letter_name": "cue", "concept": "Usually /kw/", "sound_name": "/kw/ (크우에 가까운 소리)", "sound_audio": repeat_sound("kwuh"), "word": "queen", "word_audio": "queen"},
+    {"pattern": "R r", "letter_name": "ar", "concept": "Consonant sound", "sound_name": "/r/ (혀를 말아 내는 r 소리)", "sound_audio": repeat_sound("ruh"), "word": "red", "word_audio": "red"},
+    {"pattern": "S s", "letter_name": "ess", "concept": "Consonant sound", "sound_name": "/s/ (스에 가까운 소리)", "sound_audio": repeat_sound("sss"), "word": "sun", "word_audio": "sun"},
+    {"pattern": "T t", "letter_name": "tee", "concept": "Consonant sound", "sound_name": "/t/ (트에 가까운 소리)", "sound_audio": repeat_sound("tuh"), "word": "top", "word_audio": "top"},
+    {"pattern": "V v", "letter_name": "vee", "concept": "Consonant sound", "sound_name": "/v/ (입술을 가볍게 물고 내는 브 소리)", "sound_audio": repeat_sound("vvv"), "word": "van", "word_audio": "van"},
+    {"pattern": "W w", "letter_name": "double you", "concept": "Consonant sound", "sound_name": "/w/ (우에서 시작하는 w 소리)", "sound_audio": repeat_sound("wuh"), "word": "window", "word_audio": "window"},
+    {"pattern": "X x", "letter_name": "ex", "concept": "Often /ks/", "sound_name": "/ks/ (크스에 가까운 소리)", "sound_audio": repeat_sound("ks"), "word": "fox", "word_audio": "fox"},
+    {"pattern": "Y y", "letter_name": "why", "concept": "Consonant sound", "sound_name": "/y/ (이에서 시작하는 y 소리)", "sound_audio": repeat_sound("yuh"), "word": "yes", "word_audio": "yes"},
+    {"pattern": "Z z", "letter_name": "zee", "concept": "Consonant sound", "sound_name": "/z/ (즈에 가까운 소리)", "sound_audio": repeat_sound("zzz"), "word": "zebra", "word_audio": "zebra"},
+]
 
-        distractors = [m for m in all_meanings if m != correct]
-        random.seed(f"{theme_name}_{item['word']}_{idx}")
-        wrong_options = random.sample(distractors, 3)
+short_vowels = [
+    {"pattern": "A a", "letter_name": "ay", "concept": "짧은 모음", "sound_name": "Short a /æ/ (애에 가까운 소리)", "sound_audio": repeat_sound("a"), "word": "apple", "word_audio": "apple"},
+    {"pattern": "E e", "letter_name": "ee", "concept": "짧은 모음", "sound_name": "Short e /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "egg", "word_audio": "egg"},
+    {"pattern": "I i", "letter_name": "eye", "concept": "짧은 모음", "sound_name": "Short i /ɪ/ (이와 에 사이의 짧은 소리)", "sound_audio": repeat_sound("ih"), "word": "igloo", "word_audio": "igloo"},
+    {"pattern": "O o", "letter_name": "oh", "concept": "짧은 모음", "sound_name": "Short o /ɑ/ (아에 가까운 소리)", "sound_audio": repeat_sound("ah"), "word": "octopus", "word_audio": "octopus"},
+    {"pattern": "U u", "letter_name": "you", "concept": "짧은 모음", "sound_name": "Short u /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "umbrella", "word_audio": "umbrella"},
+]
 
-        options = [correct] + wrong_options
+long_vowels = [
+    {"pattern": "A a", "concept": "긴 모음", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
+    {"pattern": "E e", "concept": "긴 모음", "sound_name": "Long e /iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "tree", "word_audio": "tree"},
+    {"pattern": "I i", "concept": "긴 모음", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
+    {"pattern": "O o", "concept": "긴 모음", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "rope", "word_audio": "rope"},
+    {"pattern": "U u", "concept": "긴 모음", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
+]
 
-        quiz_items.append({
-            "word": item["word"],
-            "answer": correct,
-            "options": options
-        })
+vowel_exceptions = [
+    {"pattern": "A a", "concept": "A before l", "sound_name": "A as /ɔː/ (오와 어 사이의 긴 소리)", "sound_audio": repeat_sound("aw"), "word": "ball", "word_audio": "ball"},
+    {"pattern": "A a", "concept": "A before r", "sound_name": "A as /ɑːr/ (아르에 가까운 소리)", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
+    {"pattern": "A a", "concept": "A in father", "sound_name": "A as /ɑː/ (긴 아 소리)", "sound_audio": repeat_sound("ah"), "word": "father", "word_audio": "father"},
+    {"pattern": "A a", "concept": "Unstressed a", "sound_name": "A as /ə/ (약한 어 소리)", "sound_audio": repeat_sound("uh"), "word": "about", "word_audio": "about"},
+    {"pattern": "O o", "concept": "O before v / m / n sometimes", "sound_name": "O as /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "love", "word_audio": "love"},
+    {"pattern": "O o", "concept": "O in do / to", "sound_name": "O as /uː/ (긴 우 소리)", "sound_audio": repeat_sound("oo"), "word": "do", "word_audio": "do"},
+    {"pattern": "OO", "concept": "Short oo", "sound_name": "OO as /ʊ/ (짧은 우 소리)", "sound_audio": repeat_sound("u"), "word": "book", "word_audio": "book"},
+    {"pattern": "OO", "concept": "Long oo", "sound_name": "OO as /uː/ (긴 우 소리)", "sound_audio": repeat_sound("oo"), "word": "moon", "word_audio": "moon"},
+    {"pattern": "EA", "concept": "EA exception", "sound_name": "EA as /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "bread", "word_audio": "bread"},
+    {"pattern": "OU", "concept": "OU exception", "sound_name": "OU as /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "country", "word_audio": "country"},
+]
 
-    return quiz_items
+blends = [
+    {"pattern": "bl", "concept": "Consonant blend", "sound_name": "bl (블에 가까운 연결 소리)", "sound_audio": repeat_sound("bl"), "word": "black", "word_audio": "black"},
+    {"pattern": "br", "concept": "Consonant blend", "sound_name": "br (브르에 가까운 연결 소리)", "sound_audio": repeat_sound("br"), "word": "brown", "word_audio": "brown"},
+    {"pattern": "cl", "concept": "Consonant blend", "sound_name": "cl (클에 가까운 연결 소리)", "sound_audio": repeat_sound("cl"), "word": "clock", "word_audio": "clock"},
+    {"pattern": "cr", "concept": "Consonant blend", "sound_name": "cr (크르에 가까운 연결 소리)", "sound_audio": repeat_sound("cr"), "word": "crab", "word_audio": "crab"},
+    {"pattern": "dr", "concept": "Consonant blend", "sound_name": "dr (드르에 가까운 연결 소리)", "sound_audio": repeat_sound("dr"), "word": "drum", "word_audio": "drum"},
+    {"pattern": "fl", "concept": "Consonant blend", "sound_name": "fl (플에 가까운 연결 소리)", "sound_audio": repeat_sound("fl"), "word": "flag", "word_audio": "flag"},
+    {"pattern": "fr", "concept": "Consonant blend", "sound_name": "fr (프르에 가까운 연결 소리)", "sound_audio": repeat_sound("fr"), "word": "frog", "word_audio": "frog"},
+    {"pattern": "gl", "concept": "Consonant blend", "sound_name": "gl (글에 가까운 연결 소리)", "sound_audio": repeat_sound("gl"), "word": "glass", "word_audio": "glass"},
+    {"pattern": "gr", "concept": "Consonant blend", "sound_name": "gr (그르에 가까운 연결 소리)", "sound_audio": repeat_sound("gr"), "word": "green", "word_audio": "green"},
+    {"pattern": "pl", "concept": "Consonant blend", "sound_name": "pl (플에 가까운 연결 소리)", "sound_audio": repeat_sound("pl"), "word": "plane", "word_audio": "plane"},
+    {"pattern": "pr", "concept": "Consonant blend", "sound_name": "pr (프르에 가까운 연결 소리)", "sound_audio": repeat_sound("pr"), "word": "present", "word_audio": "present"},
+    {"pattern": "sk", "concept": "Consonant blend", "sound_name": "sk (스크에 가까운 연결 소리)", "sound_audio": repeat_sound("sk"), "word": "skate", "word_audio": "skate"},
+    {"pattern": "sl", "concept": "Consonant blend", "sound_name": "sl (슬에 가까운 연결 소리)", "sound_audio": repeat_sound("sl"), "word": "sleep", "word_audio": "sleep"},
+    {"pattern": "sm", "concept": "Consonant blend", "sound_name": "sm (슴에 가까운 연결 소리)", "sound_audio": repeat_sound("sm"), "word": "smile", "word_audio": "smile"},
+    {"pattern": "sn", "concept": "Consonant blend", "sound_name": "sn (슨에 가까운 연결 소리)", "sound_audio": repeat_sound("sn"), "word": "snake", "word_audio": "snake"},
+    {"pattern": "sp", "concept": "Consonant blend", "sound_name": "sp (스프에 가까운 연결 소리)", "sound_audio": repeat_sound("sp"), "word": "spoon", "word_audio": "spoon"},
+    {"pattern": "st", "concept": "Consonant blend", "sound_name": "st (스트에 가까운 연결 소리)", "sound_audio": repeat_sound("st"), "word": "star", "word_audio": "star"},
+    {"pattern": "tr", "concept": "Consonant blend", "sound_name": "tr (트르에 가까운 연결 소리)", "sound_audio": repeat_sound("tr"), "word": "tree", "word_audio": "tree"},
+]
+
+digraphs = [
+    {"pattern": "ch", "concept": "Consonant digraph", "sound_name": "/tʃ/ (치에 가까운 소리)", "sound_audio": repeat_sound("ch"), "word": "chair", "word_audio": "chair"},
+    {"pattern": "sh", "concept": "Consonant digraph", "sound_name": "/ʃ/ (쉬에 가까운 소리)", "sound_audio": repeat_sound("sh"), "word": "ship", "word_audio": "ship"},
+    {"pattern": "th", "concept": "Voiceless th", "sound_name": "/θ/ (혀를 살짝 내밀고 내는 스 소리)", "sound_audio": repeat_sound("th"), "word": "three", "word_audio": "three"},
+    {"pattern": "th", "concept": "Voiced th", "sound_name": "/ð/ (혀를 살짝 내밀고 내는 드 소리)", "sound_audio": repeat_sound("th"), "word": "this", "word_audio": "this"},
+    {"pattern": "wh", "concept": "Consonant digraph", "sound_name": "/w/ (우에서 시작하는 w 소리)", "sound_audio": repeat_sound("wuh"), "word": "whale", "word_audio": "whale"},
+    {"pattern": "ph", "concept": "Consonant digraph", "sound_name": "/f/ (입술을 가볍게 물고 내는 프 소리)", "sound_audio": repeat_sound("fff"), "word": "phone", "word_audio": "phone"},
+    {"pattern": "ck", "concept": "Consonant digraph", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "duck", "word_audio": "duck"},
+]
+
+vowel_teams = [
+    {"pattern": "ai", "concept": "Usually middle", "sound_name": "/eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "rain", "word_audio": "rain"},
+    {"pattern": "ay", "concept": "Usually end", "sound_name": "/eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "day", "word_audio": "day"},
+    {"pattern": "ee", "concept": "Long e", "sound_name": "/iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "see", "word_audio": "see"},
+    {"pattern": "ea", "concept": "Usually long e", "sound_name": "/iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "eat", "word_audio": "eat"},
+    {"pattern": "oa", "concept": "Usually middle", "sound_name": "/oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "boat", "word_audio": "boat"},
+    {"pattern": "ow", "concept": "Often end", "sound_name": "/oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "snow", "word_audio": "snow"},
+    {"pattern": "ow", "concept": "Another sound", "sound_name": "/aʊ/ (아우에 가까운 소리)", "sound_audio": repeat_sound("ow"), "word": "cow", "word_audio": "cow"},
+    {"pattern": "ou", "concept": "Often /aʊ/", "sound_name": "/aʊ/ (아우에 가까운 소리)", "sound_audio": repeat_sound("ow"), "word": "house", "word_audio": "house"},
+    {"pattern": "oi", "concept": "Usually middle", "sound_name": "/ɔɪ/ (오이에 가까운 소리)", "sound_audio": repeat_sound("oy"), "word": "coin", "word_audio": "coin"},
+    {"pattern": "oy", "concept": "Usually end", "sound_name": "/ɔɪ/ (오이에 가까운 소리)", "sound_audio": repeat_sound("oy"), "word": "boy", "word_audio": "boy"},
+]
+
+r_controlled = [
+    {"pattern": "ar", "concept": "R-controlled vowel", "sound_name": "/ɑːr/ (아르에 가까운 소리)", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
+    {"pattern": "er", "concept": "R-controlled vowel", "sound_name": "/ɜːr/ (얼에 가까운 소리)", "sound_audio": repeat_sound("er"), "word": "her", "word_audio": "her"},
+    {"pattern": "ir", "concept": "R-controlled vowel", "sound_name": "/ɜːr/ (얼에 가까운 소리)", "sound_audio": repeat_sound("er"), "word": "bird", "word_audio": "bird"},
+    {"pattern": "or", "concept": "R-controlled vowel", "sound_name": "/ɔːr/ (오르에 가까운 소리)", "sound_audio": repeat_sound("or"), "word": "corn", "word_audio": "corn"},
+    {"pattern": "ur", "concept": "R-controlled vowel", "sound_name": "/ɜːr/ (얼에 가까운 소리)", "sound_audio": repeat_sound("er"), "word": "turn", "word_audio": "turn"},
+]
+
+silent_e = [
+    {"pattern": "a_e", "concept": "Silent e", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
+    {"pattern": "i_e", "concept": "Silent e", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
+    {"pattern": "o_e", "concept": "Silent e", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "home", "word_audio": "home"},
+    {"pattern": "u_e", "concept": "Silent e", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
+]
 
 
 # =========================
-# 상태 초기화
+# 카드 출력 함수
 # =========================
-def init_state(theme_name):
-    if f"{theme_name}_submitted1" not in st.session_state:
-        st.session_state[f"{theme_name}_submitted1"] = False
+def show_cards(data, title, show_letter_name=False):
+    st.markdown(f"<div class='section-title'>{title}</div>", unsafe_allow_html=True)
+    st.markdown("<div class='section-caption'>버튼을 눌러 이름, 실제 소리, 예시 단어를 들어 보세요.</div>", unsafe_allow_html=True)
 
-    if f"{theme_name}_submitted2" not in st.session_state:
-        st.session_state[f"{theme_name}_submitted2"] = False
+    for idx, item in enumerate(data):
+        st.markdown('<div class="phonics-card">', unsafe_allow_html=True)
 
-    if f"{theme_name}_wrong" not in st.session_state:
-        st.session_state[f"{theme_name}_wrong"] = []
-
-
-def reset_theme(theme_name):
-    keys_to_delete = []
-
-    for key in st.session_state.keys():
-        if key.startswith(theme_name):
-            keys_to_delete.append(key)
-
-    for key in keys_to_delete:
-        del st.session_state[key]
-
-
-# =========================
-# 단어 익히기
-# =========================
-def show_word_cards(theme_words, theme_name):
-    st.markdown("### 🌼 단어 익히기")
-    st.write("단어, 뜻, 발음을 먼저 확인하세요.")
-
-    for idx, item in enumerate(theme_words):
-        st.markdown('<div class="word-card">', unsafe_allow_html=True)
-
-        col1, col2, col3 = st.columns([1.3, 2.1, 1.2])
+        if show_letter_name:
+            col1, col2, col3, col4, col5 = st.columns([1.1, 1.3, 1.5, 1.9, 1.7])
+        else:
+            col1, col2, col3, col4 = st.columns([1.1, 1.6, 2.1, 1.7])
 
         with col1:
-            st.markdown(f"<div class='word-badge'>🌱 Word {idx + 1}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='word-text'>{item['word']}</div>", unsafe_allow_html=True)
+            st.markdown("<div class='label-small'>글자 / 패턴</div>", unsafe_allow_html=True)
+            st.markdown(f"<div class='pattern-box'>{item['pattern']}</div>", unsafe_allow_html=True)
 
-        with col2:
-            st.markdown("<div class='small-muted'>뜻</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='meaning-text'>{item['meaning']}</div>", unsafe_allow_html=True)
+        if show_letter_name:
+            with col2:
+                st.markdown("<div class='label-small'>알파벳 이름</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='concept-box'>{item['letter_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 이름 듣기",
+                    item["letter_name"],
+                    key=f"name_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
 
-        with col3:
-            audio_button(
-                "🔊 발음 듣기",
-                item["word"],
-                key=f"{theme_name}_learn_audio_{idx}"
-            )
+            with col3:
+                st.markdown("<div class='label-small'>조건 / 개념</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='concept-box'>{item['concept']}</div>", unsafe_allow_html=True)
+
+            with col4:
+                st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 실제 소리 듣기",
+                    item["sound_audio"],
+                    key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
+
+            with col5:
+                st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 단어 듣기",
+                    item["word_audio"],
+                    key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
+
+        else:
+            with col2:
+                st.markdown("<div class='label-small'>조건 / 개념</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='concept-box'>{item['concept']}</div>", unsafe_allow_html=True)
+
+            with col3:
+                st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 실제 소리 듣기",
+                    item["sound_audio"],
+                    key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
+
+            with col4:
+                st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
+                st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
+                audio_button(
+                    "🔊 단어 듣기",
+                    item["word_audio"],
+                    key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
+                )
 
         st.markdown('</div>', unsafe_allow_html=True)
 
 
 # =========================
-# 퀴즈 풀기
-# =========================
-def show_quiz(theme_words, theme_name):
-    init_state(theme_name)
-
-    quiz_items = make_quiz_items(theme_words, theme_name)
-
-    submitted1_key = f"{theme_name}_submitted1"
-    submitted2_key = f"{theme_name}_submitted2"
-    wrong_key = f"{theme_name}_wrong"
-
-    if not st.session_state[submitted1_key]:
-        st.markdown("### 🧸 1차 퀴즈")
-        st.write("영어 단어를 보고 알맞은 뜻을 고르세요.")
-
-        for i, q in enumerate(quiz_items):
-            st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
-
-            st.markdown(f"<div class='quiz-number'>🌟 Question {i + 1}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
-
-            audio_button(
-                "🔊 발음 듣기",
-                q["word"],
-                key=f"{theme_name}_quiz_audio1_{i}"
-            )
-
-            options = get_shuffled_options(theme_name, i, q["options"])
-
-            st.radio(
-                "뜻을 고르세요.",
-                options,
-                key=f"{theme_name}_q1_{i}"
-            )
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        if st.button("✅ 1차 제출하기", key=f"{theme_name}_submit1"):
-            wrong = []
-
-            for i, q in enumerate(quiz_items):
-                user_answer = st.session_state.get(f"{theme_name}_q1_{i}")
-
-                if user_answer != q["answer"]:
-                    wrong.append(i)
-
-            st.session_state[wrong_key] = wrong
-            st.session_state[submitted1_key] = True
-            st.rerun()
-
-    elif st.session_state[submitted1_key] and not st.session_state[submitted2_key]:
-        wrong = st.session_state[wrong_key]
-        score = len(quiz_items) - len(wrong)
-
-        st.markdown(
-            f"""
-            <div class="score-box">
-                <div class="score-title">🎉 1차 결과: {score} / {len(quiz_items)}점</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        if len(wrong) == 0:
-            st.balloons()
-            st.success("🌈 완벽합니다! 이 테마의 단어를 모두 잘 기억하고 있습니다.")
-
-            if st.button("🔄 다시 풀기", key=f"{theme_name}_reset_all_correct"):
-                reset_theme(theme_name)
-                st.rerun()
-
-        else:
-            st.markdown(
-                f"""
-                <div class="wrong-box">
-                    🍊 틀린 단어 {len(wrong)}개를 다시 풀어 봅시다.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            st.markdown("### 🔁 2차 퀴즈: 틀린 단어만 다시 풀기")
-
-            for i in wrong:
-                q = quiz_items[i]
-
-                st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
-
-                st.markdown(f"<div class='quiz-number'>🌟 Retry {i + 1}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
-
-                audio_button(
-                    "🔊 발음 다시 듣기",
-                    q["word"],
-                    key=f"{theme_name}_quiz_audio2_{i}"
-                )
-
-                options = get_shuffled_options(theme_name, i, q["options"])
-
-                st.radio(
-                    "뜻을 다시 고르세요.",
-                    options,
-                    key=f"{theme_name}_q2_{i}"
-                )
-
-                st.markdown('</div>', unsafe_allow_html=True)
-
-            if st.button("✅ 2차 제출하기", key=f"{theme_name}_submit2"):
-                st.session_state[submitted2_key] = True
-                st.rerun()
-
-    else:
-        wrong = st.session_state[wrong_key]
-        second_wrong = []
-
-        for i in wrong:
-            q = quiz_items[i]
-            user_answer = st.session_state.get(f"{theme_name}_q2_{i}")
-
-            if user_answer != q["answer"]:
-                second_wrong.append(i)
-
-        final_score = len(quiz_items) - len(second_wrong)
-
-        st.markdown(
-            f"""
-            <div class="score-box">
-                <div class="score-title">🏆 최종 결과: {final_score} / {len(quiz_items)}점</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        if len(second_wrong) == 0:
-            st.balloons()
-            st.success("💖 좋습니다! 틀렸던 단어까지 모두 다시 확인했습니다.")
-        else:
-            st.warning("🍊 아래 단어들은 다시 복습하면 좋습니다.")
-
-        st.markdown("### ✅ 정답 확인")
-
-        if len(wrong) == 0:
-            st.info("틀린 문제가 없습니다.")
-        else:
-            for i in wrong:
-                q = quiz_items[i]
-                user1 = st.session_state.get(f"{theme_name}_q1_{i}")
-                user2 = st.session_state.get(f"{theme_name}_q2_{i}")
-
-                st.markdown('<div class="answer-box">', unsafe_allow_html=True)
-                st.markdown(f"### 🌱 {q['word']}")
-
-                audio_button(
-                    "🔊 발음 다시 듣기",
-                    q["word"],
-                    key=f"{theme_name}_answer_audio_{i}"
-                )
-
-                st.write(f"1차 선택: {user1}")
-                st.write(f"2차 선택: {user2}")
-                st.success(f"정답: {q['answer']}")
-                st.markdown('</div>', unsafe_allow_html=True)
-
-        if st.button("🔄 다시 풀기", key=f"{theme_name}_reset"):
-            reset_theme(theme_name)
-            st.rerun()
-
-
-# =========================
 # 탭 구성
 # =========================
-tabs = st.tabs(list(word_themes.keys()))
+tabs = st.tabs([
+    "① 자음 소리",
+    "② 짧은 모음",
+    "③ 긴 모음",
+    "④ 모음 예외",
+    "⑤ Blends",
+    "⑥ Digraphs",
+    "⑦ Vowel Teams",
+    "⑧ R-Controlled",
+    "⑨ Silent e"
+])
 
-for tab, theme_name in zip(tabs, word_themes.keys()):
-    with tab:
-        theme_words = word_themes[theme_name]
+with tabs[0]:
+    show_rule(
+        "자음 소리 Consonant Sounds",
+        [
+            "알파벳 이름과 실제 자음 소리는 다릅니다.",
+            "예를 들어 B의 이름은 bee이지만, 실제 소리는 /b/입니다.",
+            "표의 한글 소리 힌트는 정확한 발음값이 아니라 학생들이 소리를 떠올리기 위한 참고용입니다.",
+            "정확한 발음은 반드시 실제 소리 듣기 버튼으로 확인하도록 지도하면 좋습니다."
+        ]
+    )
+    show_cards(consonant_sounds, "① 자음 소리", show_letter_name=True)
 
-        st.markdown(
-            f"""
-            <div class="theme-header">
-                <div class="theme-title">{theme_name}</div>
-                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 단어가 있습니다. 먼저 익히고, 퀴즈로 확인해 봅시다.</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+with tabs[1]:
+    show_rule(
+        "짧은 모음 Short Vowels 규칙",
+        [
+            "짧은 모음은 짧게 나는 모음 소리입니다.",
+            "보통 모음이 자음 사이에 끼어 있는 CVC 단어에서 많이 나타납니다.",
+            "예: cat, bed, sit, hot, cup",
+            "발음기호 옆의 한글 소리 힌트는 정확한 발음값이 아니라 소리를 떠올리기 위한 참고용입니다.",
+            "실제 소리 버튼은 short a라고 읽지 않고, 실제 영어 소리만 두 번 들려줍니다."
+        ]
+    )
+    show_cards(short_vowels, "② 짧은 모음 Short Vowels", show_letter_name=True)
 
-        mode = st.radio(
-            "학습 모드를 선택하세요.",
-            ["🌼 단어 익히기", "🧸 퀴즈 풀기"],
-            key=f"{theme_name}_mode",
-            horizontal=True
-        )
+with tabs[2]:
+    show_rule(
+        "긴 모음 Long Vowels 규칙",
+        [
+            "긴 모음은 보통 알파벳 이름과 비슷하게 나는 소리입니다.",
+            "모음 뒤에 자음이 오고, 단어 끝에 e가 붙으면 앞의 모음이 긴 모음이 되는 경우가 많습니다.",
+            "예: cap → cape, kit → kite, hop → hope",
+            "두 모음이 함께 나올 때 첫 번째 모음이 긴 모음으로 나는 경우도 많습니다.",
+            "예: rain, boat, see",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(long_vowels, "③ 긴 모음 Long Vowels")
 
-        if mode == "🌼 단어 익히기":
-            show_word_cards(theme_words, theme_name)
-        else:
-            show_quiz(theme_words, theme_name)
+with tabs[3]:
+    show_rule(
+        "모음 예외 소리 규칙",
+        [
+            "영어 모음은 항상 짧은 모음이나 긴 모음으로만 읽히지 않습니다.",
+            "a 뒤에 l이 오면 /ɔː/처럼 나는 경우가 있습니다. 예: ball, call, tall",
+            "a 뒤에 r이 오면 /ɑːr/처럼 r의 영향을 받은 소리가 납니다. 예: car, far, star",
+            "강세가 약한 a는 /ə/처럼 약하게 나는 경우가 많습니다. 예: about, ago",
+            "o는 love, come, son처럼 /ʌ/로 나는 경우가 있습니다.",
+            "oo는 book처럼 짧은 /ʊ/ 소리도 나고, moon처럼 긴 /uː/ 소리도 납니다.",
+            "ea는 보통 eat처럼 /iː/로 나지만, bread처럼 /e/로 나는 예외도 있습니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(vowel_exceptions, "④ 모음 예외 소리")
+
+with tabs[4]:
+    show_rule(
+        "Consonant Blends 규칙",
+        [
+            "Blends는 두 자음이 이어져 나지만, 각각의 소리가 어느 정도 살아 있습니다.",
+            "예: bl은 /b/와 /l/ 소리가 이어집니다.",
+            "black, brown, frog, star처럼 단어의 앞부분에서 자주 나옵니다.",
+            "한글 소리 힌트는 참고용이며, 실제 연결 소리는 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(blends, "⑤ Consonant Blends")
+
+with tabs[5]:
+    show_rule(
+        "Consonant Digraphs 규칙",
+        [
+            "Digraphs는 두 글자가 만나 하나의 새로운 소리를 만드는 경우입니다.",
+            "ch, sh, th, ph, ck 등이 대표적입니다.",
+            "예: ch는 chair, sh는 ship, ph는 phone에서 하나의 소리처럼 납니다.",
+            "th는 three의 /θ/ 소리와 this의 /ð/ 소리가 다를 수 있습니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(digraphs, "⑥ Consonant Digraphs")
+
+with tabs[6]:
+    show_rule(
+        "Vowel Teams 규칙",
+        [
+            "Vowel Teams는 두 모음 글자가 함께 하나의 모음 소리를 만드는 경우입니다.",
+            "ai와 ay는 보통 /eɪ/ 소리가 납니다. ai는 단어 중간, ay는 단어 끝에 많이 옵니다.",
+            "예: rain, day",
+            "oa와 ow는 보통 /oʊ/ 소리가 납니다. 예: boat, snow",
+            "ow와 ou는 /aʊ/ 소리도 납니다. 예: cow, house",
+            "oi와 oy는 /ɔɪ/ 소리가 납니다. oi는 단어 중간, oy는 단어 끝에 많이 옵니다.",
+            "예: coin, boy",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(vowel_teams, "⑦ Vowel Teams")
+
+with tabs[7]:
+    show_rule(
+        "R-Controlled Vowels 규칙",
+        [
+            "모음 뒤에 r이 오면 r의 영향을 받아 모음 소리가 바뀝니다.",
+            "ar은 car처럼 /ɑːr/ 소리가 납니다.",
+            "er, ir, ur은 her, bird, turn처럼 비슷한 /ɜːr/ 소리로 나는 경우가 많습니다.",
+            "or은 corn처럼 /ɔːr/ 소리가 납니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(r_controlled, "⑧ R-Controlled Vowels")
+
+with tabs[8]:
+    show_rule(
+        "Silent e 규칙",
+        [
+            "단어 끝의 e는 직접 소리 나지 않는 경우가 많습니다.",
+            "하지만 앞의 모음을 긴 모음으로 바꾸는 역할을 합니다.",
+            "예: cap은 짧은 a, cape는 긴 a입니다.",
+            "kit → kite, hop → hope, cub → cube처럼 소리가 달라집니다.",
+            "그래서 silent e는 magic e라고도 부릅니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(silent_e, "⑨ Silent e")
