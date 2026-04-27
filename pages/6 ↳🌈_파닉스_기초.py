@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 st.title("🔤 Phonics Concept")
-st.caption("자음 소리, 모음 규칙, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
+st.caption("자음 소리, 짧은 모음, 긴 모음, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
 
 # =========================
 # 상단 공통 안내 박스
@@ -157,19 +157,19 @@ consonant_sounds = [
 ]
 
 short_vowels = [
-    {"pattern": "A a", "letter_name": "ay", "concept": "Short vowel", "sound_name": "Short a /æ/ (애에 가까운 소리)", "sound_audio": repeat_sound("a"), "word": "apple", "word_audio": "apple"},
-    {"pattern": "E e", "letter_name": "ee", "concept": "Short vowel", "sound_name": "Short e /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "egg", "word_audio": "egg"},
-    {"pattern": "I i", "letter_name": "eye", "concept": "Short vowel", "sound_name": "Short i /ɪ/ (이와 에 사이의 짧은 소리)", "sound_audio": repeat_sound("ih"), "word": "igloo", "word_audio": "igloo"},
-    {"pattern": "O o", "letter_name": "oh", "concept": "Short vowel", "sound_name": "Short o /ɑ/ (아에 가까운 소리)", "sound_audio": repeat_sound("ah"), "word": "octopus", "word_audio": "octopus"},
-    {"pattern": "U u", "letter_name": "you", "concept": "Short vowel", "sound_name": "Short u /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "umbrella", "word_audio": "umbrella"},
+    {"pattern": "A a", "letter_name": "ay", "concept": "짧은 모음", "sound_name": "Short a /æ/ (애에 가까운 소리)", "sound_audio": repeat_sound("a"), "word": "apple", "word_audio": "apple"},
+    {"pattern": "E e", "letter_name": "ee", "concept": "짧은 모음", "sound_name": "Short e /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "egg", "word_audio": "egg"},
+    {"pattern": "I i", "letter_name": "eye", "concept": "짧은 모음", "sound_name": "Short i /ɪ/ (이와 에 사이의 짧은 소리)", "sound_audio": repeat_sound("ih"), "word": "igloo", "word_audio": "igloo"},
+    {"pattern": "O o", "letter_name": "oh", "concept": "짧은 모음", "sound_name": "Short o /ɑ/ (아에 가까운 소리)", "sound_audio": repeat_sound("ah"), "word": "octopus", "word_audio": "octopus"},
+    {"pattern": "U u", "letter_name": "you", "concept": "짧은 모음", "sound_name": "Short u /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "umbrella", "word_audio": "umbrella"},
 ]
 
 long_vowels = [
-    {"pattern": "A a", "concept": "Long vowel", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
-    {"pattern": "E e", "concept": "Long vowel", "sound_name": "Long e /iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "tree", "word_audio": "tree"},
-    {"pattern": "I i", "concept": "Long vowel", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
-    {"pattern": "O o", "concept": "Long vowel", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "rope", "word_audio": "rope"},
-    {"pattern": "U u", "concept": "Long vowel", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
+    {"pattern": "A a", "concept": "긴 모음", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
+    {"pattern": "E e", "concept": "긴 모음", "sound_name": "Long e /iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "tree", "word_audio": "tree"},
+    {"pattern": "I i", "concept": "긴 모음", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
+    {"pattern": "O o", "concept": "긴 모음", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "rope", "word_audio": "rope"},
+    {"pattern": "U u", "concept": "긴 모음", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
 ]
 
 vowel_exceptions = [
@@ -326,8 +326,8 @@ def show_cards(data, title, show_letter_name=False):
 # =========================
 tabs = st.tabs([
     "① 자음 소리",
-    "② 단모음",
-    "③ 장모음",
+    "② 짧은 모음",
+    "③ 긴 모음",
     "④ 모음 예외",
     "⑤ Blends",
     "⑥ Digraphs",
@@ -350,36 +350,36 @@ with tabs[0]:
 
 with tabs[1]:
     show_rule(
-        "단모음 Short Vowels 규칙",
+        "짧은 모음 Short Vowels 규칙",
         [
-            "단모음은 짧게 나는 모음 소리입니다.",
+            "짧은 모음은 짧게 나는 모음 소리입니다.",
             "보통 모음이 자음 사이에 끼어 있는 CVC 단어에서 많이 나타납니다.",
             "예: cat, bed, sit, hot, cup",
             "발음기호 옆의 한글 소리 힌트는 정확한 발음값이 아니라 소리를 떠올리기 위한 참고용입니다.",
             "실제 소리 버튼은 short a라고 읽지 않고, 실제 영어 소리만 두 번 들려줍니다."
         ]
     )
-    show_cards(short_vowels, "② 단모음 Short Vowels", show_letter_name=True)
+    show_cards(short_vowels, "② 짧은 모음 Short Vowels", show_letter_name=True)
 
 with tabs[2]:
     show_rule(
-        "장모음 Long Vowels 규칙",
+        "긴 모음 Long Vowels 규칙",
         [
-            "장모음은 보통 알파벳 이름과 비슷하게 나는 소리입니다.",
-            "모음 뒤에 자음이 오고, 단어 끝에 e가 붙으면 앞의 모음이 장모음이 되는 경우가 많습니다.",
+            "긴 모음은 보통 알파벳 이름과 비슷하게 나는 소리입니다.",
+            "모음 뒤에 자음이 오고, 단어 끝에 e가 붙으면 앞의 모음이 긴 모음이 되는 경우가 많습니다.",
             "예: cap → cape, kit → kite, hop → hope",
-            "두 모음이 함께 나올 때 첫 번째 모음이 장모음으로 나는 경우도 많습니다.",
+            "두 모음이 함께 나올 때 첫 번째 모음이 긴 모음으로 나는 경우도 많습니다.",
             "예: rain, boat, see",
             "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
-    show_cards(long_vowels, "③ 장모음 Long Vowels")
+    show_cards(long_vowels, "③ 긴 모음 Long Vowels")
 
 with tabs[3]:
     show_rule(
         "모음 예외 소리 규칙",
         [
-            "영어 모음은 항상 단모음이나 장모음으로만 읽히지 않습니다.",
+            "영어 모음은 항상 짧은 모음이나 긴 모음으로만 읽히지 않습니다.",
             "a 뒤에 l이 오면 /ɔː/처럼 나는 경우가 있습니다. 예: ball, call, tall",
             "a 뒤에 r이 오면 /ɑːr/처럼 r의 영향을 받은 소리가 납니다. 예: car, far, star",
             "강세가 약한 a는 /ə/처럼 약하게 나는 경우가 많습니다. 예: about, ago",
@@ -450,7 +450,7 @@ with tabs[8]:
         "Silent e 규칙",
         [
             "단어 끝의 e는 직접 소리 나지 않는 경우가 많습니다.",
-            "하지만 앞의 모음을 장모음으로 바꾸는 역할을 합니다.",
+            "하지만 앞의 모음을 긴 모음으로 바꾸는 역할을 합니다.",
             "예: cap은 짧은 a, cape는 긴 a입니다.",
             "kit → kite, hop → hope, cub → cube처럼 소리가 달라집니다.",
             "그래서 silent e는 magic e라고도 부릅니다.",
