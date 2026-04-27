@@ -238,7 +238,6 @@ with tabs[0]:
 # ---------------------------
 with tabs[1]:
     st.subheader("❌ Negative Quiz")
-    st.info("여기에 be동사 / 일반동사 부정문 퀴즈 코드를 넣으면 됩니다.")
 import streamlit as st
 
 st.set_page_config(page_title="영어 부정문 퀴즈", layout="centered")
