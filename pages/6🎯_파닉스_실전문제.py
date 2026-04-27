@@ -3,10 +3,10 @@ import random
 import io
 from gtts import gTTS
 
-st.set_page_config(page_title="Phonics Practice", layout="centered")
+st.set_page_config(page_title="Phonics Pronunciation Practice", layout="centered")
 
-st.title("🎯 Phonics Practice")
-st.caption("소리를 듣고, 글자와 단어의 규칙을 맞혀 봅시다.")
+st.title("🎯 Phonics Pronunciation Practice")
+st.caption("단어를 보고, 발음을 듣고, 큰 소리로 따라 읽어 봅시다.")
 
 
 # =========================================================
@@ -26,619 +26,291 @@ def play_audio(text):
 
 
 # =========================================================
-# 공통 결과 메시지
+# 공통 발음 연습 함수
 # =========================================================
-def show_result_message(score, total):
-    if score == total:
-        st.success("만점입니다! 파닉스 감각이 아주 좋습니다! 🎉")
-        st.balloons()
-    elif score >= total * 0.8:
-        st.success("아주 잘했습니다! 소리와 글자의 관계를 잘 이해하고 있어요.")
-    elif score >= total * 0.6:
-        st.info("좋습니다. 헷갈린 문제만 다시 보면 더 좋아질 수 있습니다.")
-    else:
-        st.warning("괜찮습니다. 파닉스는 반복해서 듣고 읽으면 금방 익숙해집니다.")
-
-
-# =========================================================
-# 공통 퀴즈 함수
-# =========================================================
-def run_phonics_quiz(prefix, title, caption, guide_text, question_data):
-    total = len(question_data)
-
+def run_pronunciation_practice(prefix, title, caption, guide_text, word_data):
     st.subheader(title)
     st.caption(caption)
     st.info(guide_text)
 
-    if f"{prefix}_data" not in st.session_state:
-        quiz_data = question_data.copy()
-        random.shuffle(quiz_data)
-        st.session_state[f"{prefix}_data"] = quiz_data
+    if f"{prefix}_words" not in st.session_state:
+        words = word_data.copy()
+        random.shuffle(words)
+        st.session_state[f"{prefix}_words"] = words
 
-    if f"{prefix}_stage" not in st.session_state:
-        st.session_state[f"{prefix}_stage"] = 1
+    if f"{prefix}_checked" not in st.session_state:
+        st.session_state[f"{prefix}_checked"] = {}
 
-    if f"{prefix}_first_score" not in st.session_state:
-        st.session_state[f"{prefix}_first_score"] = 0
+    words = st.session_state[f"{prefix}_words"]
 
-    if f"{prefix}_second_score" not in st.session_state:
-        st.session_state[f"{prefix}_second_score"] = 0
-
-    if f"{prefix}_final_score" not in st.session_state:
-        st.session_state[f"{prefix}_final_score"] = 0
-
-    if f"{prefix}_wrong_indices" not in st.session_state:
-        st.session_state[f"{prefix}_wrong_indices"] = []
-
-    if f"{prefix}_final_wrong_indices" not in st.session_state:
-        st.session_state[f"{prefix}_final_wrong_indices"] = []
-
-    if st.button("처음부터 다시 시작", key=f"reset_{prefix}"):
-        for key in list(st.session_state.keys()):
-            if (
-                key.startswith(f"{prefix}_")
-                or key.startswith(f"q1_{prefix}_")
-                or key.startswith(f"q2_{prefix}_")
-            ):
-                del st.session_state[key]
+    if st.button("단어 순서 다시 섞기", key=f"shuffle_{prefix}"):
+        random.shuffle(words)
+        st.session_state[f"{prefix}_words"] = words
+        st.session_state[f"{prefix}_checked"] = {}
         st.rerun()
 
     st.markdown("---")
 
-    quiz_data = st.session_state[f"{prefix}_data"]
-    stage = st.session_state[f"{prefix}_stage"]
+    for i, item in enumerate(words):
+        word = item["word"]
+        meaning = item["meaning"]
+        pattern = item["pattern"]
+        audio_text = item.get("audio", word)
 
-    # =====================================================
-    # 1단계: 1차 풀이
-    # =====================================================
-    if stage == 1:
-        st.subheader("1차 풀이")
-        st.caption("문제를 보고 알맞은 답을 고르세요.")
+        st.markdown(
+            f"""
+            <div style="
+                background:#ffffff;
+                border-radius:22px;
+                padding:24px;
+                margin:18px 0;
+                box-shadow:0 5px 16px rgba(0,0,0,0.07);
+                border:1px solid #eeeeee;
+                text-align:center;
+            ">
+                <p style="font-size:17px; color:#666; margin-bottom:5px;">
+                    {i+1}번 단어
+                </p>
+                <h1 style="font-size:46px; color:#1f4e79; margin:8px 0;">
+                    {word}
+                </h1>
+                <p style="font-size:20px; color:#333;">
+                    뜻: <b>{meaning}</b>
+                </p>
+                <p style="font-size:18px; color:#777;">
+                    소리 패턴: <b>{pattern}</b>
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
-        for i, item in enumerate(quiz_data):
-            st.markdown(f"### {i+1}. {item['question']}")
+        st.write("🔊 발음을 듣고 따라 읽어 보세요.")
+        play_audio(audio_text)
 
-            if item.get("audio"):
-                st.write("🔊 소리를 먼저 들어 보세요.")
-                play_audio(item["audio"])
+        checked = st.checkbox(
+            "따라 읽기 완료",
+            key=f"{prefix}_check_{i}"
+        )
 
-            st.radio(
-                "정답을 고르세요.",
-                item["choices"],
-                key=f"q1_{prefix}_{i}",
-                index=None
-            )
-
-            st.markdown("---")
-
-        if st.button("1차 제출", key=f"submit_1_{prefix}"):
-            correct_count = 0
-            wrong_indices = []
-
-            for i, item in enumerate(quiz_data):
-                user_answer = st.session_state.get(f"q1_{prefix}_{i}")
-
-                if user_answer == item["answer"]:
-                    correct_count += 1
-                else:
-                    wrong_indices.append(i)
-
-            st.session_state[f"{prefix}_first_score"] = correct_count
-            st.session_state[f"{prefix}_wrong_indices"] = wrong_indices
-            st.session_state[f"{prefix}_stage"] = 1.5
-            st.rerun()
-
-    # =====================================================
-    # 1.5단계: 1차 결과
-    # =====================================================
-    elif stage == 1.5:
-        first_score = st.session_state[f"{prefix}_first_score"]
-        wrong_indices = st.session_state[f"{prefix}_wrong_indices"]
-        wrong_count = len(wrong_indices)
-
-        st.subheader("🎉 1차 풀이 완료!")
-        st.write(f"1차 점수: **{first_score} / {total}**")
-        st.write(f"다시 풀 문제: **{wrong_count}문제**")
-        st.progress(first_score / total)
-
-        if wrong_count == 0:
-            st.success("완벽합니다! 바로 정답을 확인해 봅시다.")
-            st.balloons()
-
-            if st.button("최종 결과 보기", key=f"final_after_first_{prefix}"):
-                st.session_state[f"{prefix}_final_score"] = total
-                st.session_state[f"{prefix}_second_score"] = 0
-                st.session_state[f"{prefix}_final_wrong_indices"] = []
-                st.session_state[f"{prefix}_stage"] = 3
-                st.rerun()
-        else:
-            st.info("틀린 문제만 한 번 더 풀어 봅시다.")
-
-            if st.button("2차 오답 다시 풀기", key=f"go_second_{prefix}"):
-                st.session_state[f"{prefix}_stage"] = 2
-                st.rerun()
-
-    # =====================================================
-    # 2단계: 오답 다시 풀기
-    # =====================================================
-    elif stage == 2:
-        wrong_indices = st.session_state[f"{prefix}_wrong_indices"]
-
-        st.subheader("2차 풀이")
-        st.caption("1차에서 틀린 문제만 다시 풉니다.")
-
-        for idx in wrong_indices:
-            item = quiz_data[idx]
-
-            st.markdown(f"### {idx+1}. {item['question']}")
-
-            if item.get("audio"):
-                st.write("🔊 다시 들어 보세요.")
-                play_audio(item["audio"])
-
-            st.radio(
-                "다시 정답을 고르세요.",
-                item["choices"],
-                key=f"q2_{prefix}_{idx}",
-                index=None
-            )
-
-            st.markdown("---")
-
-        if st.button("2차 제출", key=f"submit_2_{prefix}"):
-            additional_correct = 0
-            final_wrong_indices = []
-
-            for idx in wrong_indices:
-                item = quiz_data[idx]
-                user_answer = st.session_state.get(f"q2_{prefix}_{idx}")
-
-                if user_answer == item["answer"]:
-                    additional_correct += 1
-                else:
-                    final_wrong_indices.append(idx)
-
-            st.session_state[f"{prefix}_second_score"] = additional_correct
-            st.session_state[f"{prefix}_final_score"] = (
-                st.session_state[f"{prefix}_first_score"] + additional_correct
-            )
-            st.session_state[f"{prefix}_final_wrong_indices"] = final_wrong_indices
-            st.session_state[f"{prefix}_stage"] = 2.5
-            st.rerun()
-
-    # =====================================================
-    # 2.5단계: 2차 결과
-    # =====================================================
-    elif stage == 2.5:
-        final_score = st.session_state[f"{prefix}_final_score"]
-        second_score = st.session_state[f"{prefix}_second_score"]
-        retry_total = len(st.session_state[f"{prefix}_wrong_indices"])
-
-        st.subheader("🌟 2차 풀이 완료!")
-        st.write(f"2차에서 **{retry_total}문제 중 {second_score}문제**를 다시 맞혔습니다.")
-        st.write(f"현재 최종 점수: **{final_score} / {total}**")
-        st.progress(final_score / total)
-
-        st.success("끝까지 다시 도전한 것이 정말 멋집니다!")
-
-        if st.button("최종 결과와 정답 확인하기", key=f"go_final_{prefix}"):
-            st.session_state[f"{prefix}_stage"] = 3
-            st.rerun()
-
-    # =====================================================
-    # 3단계: 최종 결과 + 정답 확인
-    # =====================================================
-    elif stage == 3:
-        first_score = st.session_state[f"{prefix}_first_score"]
-        second_score = st.session_state[f"{prefix}_second_score"]
-        final_score = st.session_state[f"{prefix}_final_score"]
-        final_wrong_indices = st.session_state[f"{prefix}_final_wrong_indices"]
-
-        st.subheader("최종 결과")
-        st.write(f"1차 점수: **{first_score} / {total}**")
-        st.write(f"2차에서 다시 맞힌 문제 수: **{second_score}문제**")
-        st.write(f"최종 점수: **{final_score} / {total}**")
-
-        show_result_message(final_score, total)
+        st.session_state[f"{prefix}_checked"][i] = checked
 
         st.markdown("---")
-        st.subheader("📌 정답 확인")
 
-        for i, item in enumerate(quiz_data):
-            first_answer = st.session_state.get(f"q1_{prefix}_{i}")
-            second_answer = st.session_state.get(f"q2_{prefix}_{i}")
+    completed = sum(1 for v in st.session_state[f"{prefix}_checked"].values() if v)
+    total = len(words)
 
-            st.markdown(f"### {i+1}. {item['question']}")
+    st.subheader("학습 진행 상황")
+    st.write(f"완료한 단어: **{completed} / {total}**")
+    st.progress(completed / total)
 
-            if item.get("audio"):
-                st.write("🔊 문제 소리 다시 듣기")
-                play_audio(item["audio"])
-
-            st.write(f"- 정답: **{item['answer']}**")
-
-            if second_answer:
-                st.write(f"- 1차 선택: {first_answer if first_answer else '미응답'}")
-                st.write(f"- 2차 선택: {second_answer if second_answer else '미응답'}")
-
-                if i in final_wrong_indices:
-                    st.error("최종 오답")
-                else:
-                    st.success("2차에서 정답")
-            else:
-                st.write(f"- 선택: {first_answer if first_answer else '미응답'}")
-
-                if first_answer == item["answer"]:
-                    st.success("1차에서 정답")
-                else:
-                    st.error("오답")
-
-            if item.get("explanation"):
-                st.info(item["explanation"])
-
-            st.markdown("---")
+    if completed == total:
+        st.success("모든 단어를 따라 읽었습니다! 아주 잘했습니다 🎉")
+        st.balloons()
+    elif completed >= total * 0.7:
+        st.success("좋습니다! 거의 다 했습니다.")
+    elif completed >= total * 0.4:
+        st.info("잘하고 있습니다. 남은 단어도 천천히 따라 읽어 봅시다.")
+    else:
+        st.warning("먼저 발음을 듣고 한 단어씩 따라 읽어 봅시다.")
 
 
 # =========================================================
-# 문제 데이터 1: 자음 소리
+# 단어 데이터 1: 자음 단어
 # =========================================================
-consonant_questions = [
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "bat",
-        "answer": "b",
-        "choices": ["b", "d"],
-        "explanation": "bat은 /b/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "dog",
-        "answer": "d",
-        "choices": ["d", "t"],
-        "explanation": "dog은 /d/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "fish",
-        "answer": "f",
-        "choices": ["f", "v"],
-        "explanation": "fish는 /f/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "sun",
-        "answer": "s",
-        "choices": ["s", "z"],
-        "explanation": "sun은 /s/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "van",
-        "answer": "v",
-        "choices": ["v", "f"],
-        "explanation": "van은 /v/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "red",
-        "answer": "r",
-        "choices": ["r", "l"],
-        "explanation": "red는 /r/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "leg",
-        "answer": "l",
-        "choices": ["l", "r"],
-        "explanation": "leg는 /l/ 소리로 시작합니다."
-    },
-    {
-        "question": "소리를 듣고, 단어의 첫 글자로 알맞은 자음을 고르세요.",
-        "audio": "zip",
-        "answer": "z",
-        "choices": ["z", "s"],
-        "explanation": "zip은 /z/ 소리로 시작합니다."
-    },
+consonant_words = [
+    {"word": "bat", "meaning": "박쥐 / 방망이", "pattern": "b sound"},
+    {"word": "bag", "meaning": "가방", "pattern": "b sound"},
+    {"word": "dog", "meaning": "개", "pattern": "d sound"},
+    {"word": "desk", "meaning": "책상", "pattern": "d sound"},
+    {"word": "fish", "meaning": "물고기", "pattern": "f sound"},
+    {"word": "fox", "meaning": "여우", "pattern": "f sound"},
+    {"word": "goat", "meaning": "염소", "pattern": "g sound"},
+    {"word": "gum", "meaning": "껌", "pattern": "g sound"},
+    {"word": "hat", "meaning": "모자", "pattern": "h sound"},
+    {"word": "hen", "meaning": "암탉", "pattern": "h sound"},
+    {"word": "jam", "meaning": "잼", "pattern": "j sound"},
+    {"word": "jet", "meaning": "제트기", "pattern": "j sound"},
+    {"word": "king", "meaning": "왕", "pattern": "k sound"},
+    {"word": "kite", "meaning": "연", "pattern": "k sound"},
+    {"word": "lion", "meaning": "사자", "pattern": "l sound"},
+    {"word": "leg", "meaning": "다리", "pattern": "l sound"},
+    {"word": "man", "meaning": "남자", "pattern": "m sound"},
+    {"word": "milk", "meaning": "우유", "pattern": "m sound"},
+    {"word": "net", "meaning": "그물", "pattern": "n sound"},
+    {"word": "nose", "meaning": "코", "pattern": "n sound"},
 ]
 
 
 # =========================================================
-# 문제 데이터 2: 단모음
+# 단어 데이터 2: 단모음
 # =========================================================
-short_vowel_questions = [
-    {
-        "question": "cat의 모음 소리로 알맞은 것은?",
-        "audio": "cat",
-        "answer": "short a",
-        "choices": ["short a", "long a"],
-        "explanation": "cat의 a는 짧은 /a/ 소리입니다."
-    },
-    {
-        "question": "bed의 모음 소리로 알맞은 것은?",
-        "audio": "bed",
-        "answer": "short e",
-        "choices": ["short e", "long e"],
-        "explanation": "bed의 e는 짧은 /e/ 소리입니다."
-    },
-    {
-        "question": "sit의 모음 소리로 알맞은 것은?",
-        "audio": "sit",
-        "answer": "short i",
-        "choices": ["short i", "long i"],
-        "explanation": "sit의 i는 짧은 /i/ 소리입니다."
-    },
-    {
-        "question": "hot의 모음 소리로 알맞은 것은?",
-        "audio": "hot",
-        "answer": "short o",
-        "choices": ["short o", "long o"],
-        "explanation": "hot의 o는 짧은 /o/ 소리입니다."
-    },
-    {
-        "question": "cup의 모음 소리로 알맞은 것은?",
-        "audio": "cup",
-        "answer": "short u",
-        "choices": ["short u", "long u"],
-        "explanation": "cup의 u는 짧은 /u/ 소리입니다."
-    },
-    {
-        "question": "fish의 모음 소리로 알맞은 것은?",
-        "audio": "fish",
-        "answer": "short i",
-        "choices": ["short i", "long i"],
-        "explanation": "fish의 i는 짧은 /i/ 소리입니다."
-    },
-    {
-        "question": "bag의 모음 소리로 알맞은 것은?",
-        "audio": "bag",
-        "answer": "short a",
-        "choices": ["short a", "long a"],
-        "explanation": "bag의 a는 짧은 /a/ 소리입니다."
-    },
-    {
-        "question": "sun의 모음 소리로 알맞은 것은?",
-        "audio": "sun",
-        "answer": "short u",
-        "choices": ["short u", "long u"],
-        "explanation": "sun의 u는 짧은 /u/ 소리입니다."
-    },
+short_vowel_words = [
+    {"word": "cat", "meaning": "고양이", "pattern": "short a"},
+    {"word": "bag", "meaning": "가방", "pattern": "short a"},
+    {"word": "man", "meaning": "남자", "pattern": "short a"},
+    {"word": "hat", "meaning": "모자", "pattern": "short a"},
+    {"word": "bed", "meaning": "침대", "pattern": "short e"},
+    {"word": "pen", "meaning": "펜", "pattern": "short e"},
+    {"word": "ten", "meaning": "10", "pattern": "short e"},
+    {"word": "hen", "meaning": "암탉", "pattern": "short e"},
+    {"word": "sit", "meaning": "앉다", "pattern": "short i"},
+    {"word": "big", "meaning": "큰", "pattern": "short i"},
+    {"word": "fish", "meaning": "물고기", "pattern": "short i"},
+    {"word": "pig", "meaning": "돼지", "pattern": "short i"},
+    {"word": "hot", "meaning": "뜨거운", "pattern": "short o"},
+    {"word": "dog", "meaning": "개", "pattern": "short o"},
+    {"word": "box", "meaning": "상자", "pattern": "short o"},
+    {"word": "fox", "meaning": "여우", "pattern": "short o"},
+    {"word": "cup", "meaning": "컵", "pattern": "short u"},
+    {"word": "sun", "meaning": "태양", "pattern": "short u"},
+    {"word": "bus", "meaning": "버스", "pattern": "short u"},
+    {"word": "run", "meaning": "달리다", "pattern": "short u"},
 ]
 
 
 # =========================================================
-# 문제 데이터 3: 장모음
+# 단어 데이터 3: 장모음
 # =========================================================
-long_vowel_questions = [
-    {
-        "question": "cake의 모음 소리로 알맞은 것은?",
-        "audio": "cake",
-        "answer": "long a",
-        "choices": ["long a", "short a"],
-        "explanation": "cake의 a는 이름처럼 길게 나는 long a 소리입니다."
-    },
-    {
-        "question": "bike의 모음 소리로 알맞은 것은?",
-        "audio": "bike",
-        "answer": "long i",
-        "choices": ["long i", "short i"],
-        "explanation": "bike의 i는 long i 소리입니다."
-    },
-    {
-        "question": "home의 모음 소리로 알맞은 것은?",
-        "audio": "home",
-        "answer": "long o",
-        "choices": ["long o", "short o"],
-        "explanation": "home의 o는 long o 소리입니다."
-    },
-    {
-        "question": "cute의 모음 소리로 알맞은 것은?",
-        "audio": "cute",
-        "answer": "long u",
-        "choices": ["long u", "short u"],
-        "explanation": "cute의 u는 long u 소리입니다."
-    },
-    {
-        "question": "tree의 모음 소리로 알맞은 것은?",
-        "audio": "tree",
-        "answer": "long e",
-        "choices": ["long e", "short e"],
-        "explanation": "tree의 ee는 long e 소리입니다."
-    },
-    {
-        "question": "rain의 모음 소리로 알맞은 것은?",
-        "audio": "rain",
-        "answer": "long a",
-        "choices": ["long a", "short a"],
-        "explanation": "rain의 ai는 long a 소리입니다."
-    },
-    {
-        "question": "boat의 모음 소리로 알맞은 것은?",
-        "audio": "boat",
-        "answer": "long o",
-        "choices": ["long o", "short o"],
-        "explanation": "boat의 oa는 long o 소리입니다."
-    },
-    {
-        "question": "five의 모음 소리로 알맞은 것은?",
-        "audio": "five",
-        "answer": "long i",
-        "choices": ["long i", "short i"],
-        "explanation": "five의 i는 long i 소리입니다."
-    },
+long_vowel_words = [
+    {"word": "cake", "meaning": "케이크", "pattern": "long a"},
+    {"word": "name", "meaning": "이름", "pattern": "long a"},
+    {"word": "rain", "meaning": "비", "pattern": "long a"},
+    {"word": "train", "meaning": "기차", "pattern": "long a"},
+    {"word": "he", "meaning": "그", "pattern": "long e"},
+    {"word": "we", "meaning": "우리", "pattern": "long e"},
+    {"word": "tree", "meaning": "나무", "pattern": "long e"},
+    {"word": "green", "meaning": "초록색", "pattern": "long e"},
+    {"word": "bike", "meaning": "자전거", "pattern": "long i"},
+    {"word": "time", "meaning": "시간", "pattern": "long i"},
+    {"word": "five", "meaning": "5", "pattern": "long i"},
+    {"word": "kite", "meaning": "연", "pattern": "long i"},
+    {"word": "home", "meaning": "집", "pattern": "long o"},
+    {"word": "note", "meaning": "메모", "pattern": "long o"},
+    {"word": "boat", "meaning": "배", "pattern": "long o"},
+    {"word": "road", "meaning": "길", "pattern": "long o"},
+    {"word": "cute", "meaning": "귀여운", "pattern": "long u"},
+    {"word": "use", "meaning": "사용하다", "pattern": "long u"},
+    {"word": "blue", "meaning": "파란색", "pattern": "long u"},
+    {"word": "music", "meaning": "음악", "pattern": "long u"},
 ]
 
 
 # =========================================================
-# 문제 데이터 4: Magic E
+# 단어 데이터 4: Magic E
 # =========================================================
-magic_e_questions = [
-    {
-        "question": "cap에 Magic E가 붙으면 어떤 단어가 되나요?",
-        "audio": "cap, cape",
-        "answer": "cape",
-        "choices": ["cape", "caped"],
-        "explanation": "cap + e = cape입니다. a가 long a 소리로 바뀝니다."
-    },
-    {
-        "question": "kit에 Magic E가 붙으면 어떤 단어가 되나요?",
-        "audio": "kit, kite",
-        "answer": "kite",
-        "choices": ["kite", "kited"],
-        "explanation": "kit + e = kite입니다. i가 long i 소리로 바뀝니다."
-    },
-    {
-        "question": "hop에 Magic E가 붙으면 어떤 단어가 되나요?",
-        "audio": "hop, hope",
-        "answer": "hope",
-        "choices": ["hope", "hoping"],
-        "explanation": "hop + e = hope입니다. o가 long o 소리로 바뀝니다."
-    },
-    {
-        "question": "cut에 Magic E가 붙으면 어떤 단어가 되나요?",
-        "audio": "cut, cute",
-        "answer": "cute",
-        "choices": ["cute", "cuted"],
-        "explanation": "cut + e = cute입니다. u가 long u 소리로 바뀝니다."
-    },
-    {
-        "question": "tap에 Magic E가 붙으면 어떤 단어가 되나요?",
-        "audio": "tap, tape",
-        "answer": "tape",
-        "choices": ["tape", "taped"],
-        "explanation": "tap + e = tape입니다."
-    },
-    {
-        "question": "bit에 Magic E가 붙으면 어떤 단어가 되나요?",
-        "audio": "bit, bite",
-        "answer": "bite",
-        "choices": ["bite", "bited"],
-        "explanation": "bit + e = bite입니다."
-    },
+magic_e_words = [
+    {"word": "cape", "meaning": "망토", "pattern": "Magic E: cap → cape", "audio": "cap, cape"},
+    {"word": "tape", "meaning": "테이프", "pattern": "Magic E: tap → tape", "audio": "tap, tape"},
+    {"word": "kite", "meaning": "연", "pattern": "Magic E: kit → kite", "audio": "kit, kite"},
+    {"word": "bite", "meaning": "물다", "pattern": "Magic E: bit → bite", "audio": "bit, bite"},
+    {"word": "hope", "meaning": "희망하다", "pattern": "Magic E: hop → hope", "audio": "hop, hope"},
+    {"word": "cute", "meaning": "귀여운", "pattern": "Magic E: cut → cute", "audio": "cut, cute"},
+    {"word": "make", "meaning": "만들다", "pattern": "Magic E"},
+    {"word": "take", "meaning": "가져가다", "pattern": "Magic E"},
+    {"word": "like", "meaning": "좋아하다", "pattern": "Magic E"},
+    {"word": "ride", "meaning": "타다", "pattern": "Magic E"},
+    {"word": "home", "meaning": "집", "pattern": "Magic E"},
+    {"word": "nose", "meaning": "코", "pattern": "Magic E"},
 ]
 
 
 # =========================================================
-# 문제 데이터 5: Blends & Digraphs
+# 단어 데이터 5: Blends
 # =========================================================
-blend_digraph_questions = [
-    {
-        "question": "black의 처음 소리로 알맞은 것은?",
-        "audio": "black",
-        "answer": "bl",
-        "choices": ["bl", "br"],
-        "explanation": "black은 bl 소리로 시작합니다."
-    },
-    {
-        "question": "train의 처음 소리로 알맞은 것은?",
-        "audio": "train",
-        "answer": "tr",
-        "choices": ["tr", "dr"],
-        "explanation": "train은 tr 소리로 시작합니다."
-    },
-    {
-        "question": "frog의 처음 소리로 알맞은 것은?",
-        "audio": "frog",
-        "answer": "fr",
-        "choices": ["fr", "fl"],
-        "explanation": "frog는 fr 소리로 시작합니다."
-    },
-    {
-        "question": "ship의 처음 소리로 알맞은 것은?",
-        "audio": "ship",
-        "answer": "sh",
-        "choices": ["sh", "ch"],
-        "explanation": "ship은 sh 소리로 시작합니다."
-    },
-    {
-        "question": "chair의 처음 소리로 알맞은 것은?",
-        "audio": "chair",
-        "answer": "ch",
-        "choices": ["ch", "sh"],
-        "explanation": "chair는 ch 소리로 시작합니다."
-    },
-    {
-        "question": "phone에서 ph의 소리로 알맞은 것은?",
-        "audio": "phone",
-        "answer": "f",
-        "choices": ["f", "p"],
-        "explanation": "phone의 ph는 /f/ 소리입니다."
-    },
-    {
-        "question": "duck에서 ck의 소리로 알맞은 것은?",
-        "audio": "duck",
-        "answer": "k",
-        "choices": ["k", "ch"],
-        "explanation": "duck의 ck는 /k/ 소리입니다."
-    },
-    {
-        "question": "smile의 처음 소리로 알맞은 것은?",
-        "audio": "smile",
-        "answer": "sm",
-        "choices": ["sm", "sn"],
-        "explanation": "smile은 sm 소리로 시작합니다."
-    },
+blend_words = [
+    {"word": "black", "meaning": "검은색", "pattern": "bl"},
+    {"word": "blue", "meaning": "파란색", "pattern": "bl"},
+    {"word": "brown", "meaning": "갈색", "pattern": "br"},
+    {"word": "bread", "meaning": "빵", "pattern": "br"},
+    {"word": "clap", "meaning": "박수치다", "pattern": "cl"},
+    {"word": "clock", "meaning": "시계", "pattern": "cl"},
+    {"word": "crab", "meaning": "게", "pattern": "cr"},
+    {"word": "cross", "meaning": "건너다", "pattern": "cr"},
+    {"word": "drum", "meaning": "드럼", "pattern": "dr"},
+    {"word": "drive", "meaning": "운전하다", "pattern": "dr"},
+    {"word": "flag", "meaning": "깃발", "pattern": "fl"},
+    {"word": "flower", "meaning": "꽃", "pattern": "fl"},
+    {"word": "frog", "meaning": "개구리", "pattern": "fr"},
+    {"word": "friend", "meaning": "친구", "pattern": "fr"},
+    {"word": "green", "meaning": "초록색", "pattern": "gr"},
+    {"word": "grape", "meaning": "포도", "pattern": "gr"},
+    {"word": "plane", "meaning": "비행기", "pattern": "pl"},
+    {"word": "play", "meaning": "놀다", "pattern": "pl"},
+    {"word": "train", "meaning": "기차", "pattern": "tr"},
+    {"word": "tree", "meaning": "나무", "pattern": "tr"},
 ]
 
 
 # =========================================================
-# 문제 데이터 6: Vowel Teams
+# 단어 데이터 6: Digraphs
 # =========================================================
-vowel_team_questions = [
-    {
-        "question": "rain에서 long a 소리를 만드는 철자는?",
-        "audio": "rain",
-        "answer": "ai",
-        "choices": ["ai", "ea"],
-        "explanation": "rain의 ai는 long a 소리입니다."
-    },
-    {
-        "question": "play에서 long a 소리를 만드는 철자는?",
-        "audio": "play",
-        "answer": "ay",
-        "choices": ["ay", "oy"],
-        "explanation": "play의 ay는 long a 소리입니다."
-    },
-    {
-        "question": "tree에서 long e 소리를 만드는 철자는?",
-        "audio": "tree",
-        "answer": "ee",
-        "choices": ["ee", "oo"],
-        "explanation": "tree의 ee는 long e 소리입니다."
-    },
-    {
-        "question": "boat에서 long o 소리를 만드는 철자는?",
-        "audio": "boat",
-        "answer": "oa",
-        "choices": ["oa", "ai"],
-        "explanation": "boat의 oa는 long o 소리입니다."
-    },
-    {
-        "question": "coin에서 /oi/ 소리를 만드는 철자는?",
-        "audio": "coin",
-        "answer": "oi",
-        "choices": ["oi", "ou"],
-        "explanation": "coin의 oi는 /oi/ 소리입니다."
-    },
-    {
-        "question": "boy에서 /oy/ 소리를 만드는 철자는?",
-        "audio": "boy",
-        "answer": "oy",
-        "choices": ["oy", "ay"],
-        "explanation": "boy의 oy는 /oy/ 소리입니다."
-    },
-    {
-        "question": "moon에서 /oo/ 소리를 만드는 철자는?",
-        "audio": "moon",
-        "answer": "oo",
-        "choices": ["oo", "oa"],
-        "explanation": "moon의 oo는 긴 /oo/ 소리입니다."
-    },
-    {
-        "question": "cow에서 /ow/ 소리를 만드는 철자는?",
-        "audio": "cow",
-        "answer": "ow",
-        "choices": ["ow", "oa"],
-        "explanation": "cow의 ow는 /ow/ 소리입니다."
-    },
+digraph_words = [
+    {"word": "ship", "meaning": "배", "pattern": "sh"},
+    {"word": "shop", "meaning": "가게", "pattern": "sh"},
+    {"word": "fish", "meaning": "물고기", "pattern": "sh"},
+    {"word": "chair", "meaning": "의자", "pattern": "ch"},
+    {"word": "cheese", "meaning": "치즈", "pattern": "ch"},
+    {"word": "lunch", "meaning": "점심", "pattern": "ch"},
+    {"word": "thin", "meaning": "얇은", "pattern": "th"},
+    {"word": "this", "meaning": "이것", "pattern": "th"},
+    {"word": "bath", "meaning": "목욕", "pattern": "th"},
+    {"word": "what", "meaning": "무엇", "pattern": "wh"},
+    {"word": "when", "meaning": "언제", "pattern": "wh"},
+    {"word": "white", "meaning": "흰색", "pattern": "wh"},
+    {"word": "phone", "meaning": "전화", "pattern": "ph"},
+    {"word": "photo", "meaning": "사진", "pattern": "ph"},
+    {"word": "duck", "meaning": "오리", "pattern": "ck"},
+    {"word": "sock", "meaning": "양말", "pattern": "ck"},
+]
+
+
+# =========================================================
+# 단어 데이터 7: Vowel Teams
+# =========================================================
+vowel_team_words = [
+    {"word": "rain", "meaning": "비", "pattern": "ai"},
+    {"word": "train", "meaning": "기차", "pattern": "ai"},
+    {"word": "paint", "meaning": "페인트칠하다", "pattern": "ai"},
+    {"word": "day", "meaning": "날", "pattern": "ay"},
+    {"word": "play", "meaning": "놀다", "pattern": "ay"},
+    {"word": "say", "meaning": "말하다", "pattern": "ay"},
+    {"word": "see", "meaning": "보다", "pattern": "ee"},
+    {"word": "tree", "meaning": "나무", "pattern": "ee"},
+    {"word": "green", "meaning": "초록색", "pattern": "ee"},
+    {"word": "eat", "meaning": "먹다", "pattern": "ea"},
+    {"word": "meat", "meaning": "고기", "pattern": "ea"},
+    {"word": "sea", "meaning": "바다", "pattern": "ea"},
+    {"word": "boat", "meaning": "배", "pattern": "oa"},
+    {"word": "coat", "meaning": "코트", "pattern": "oa"},
+    {"word": "road", "meaning": "길", "pattern": "oa"},
+    {"word": "coin", "meaning": "동전", "pattern": "oi"},
+    {"word": "boy", "meaning": "소년", "pattern": "oy"},
+    {"word": "moon", "meaning": "달", "pattern": "oo"},
+    {"word": "book", "meaning": "책", "pattern": "oo"},
+    {"word": "cow", "meaning": "소", "pattern": "ow"},
+]
+
+
+# =========================================================
+# 단어 데이터 8: R-Controlled
+# =========================================================
+r_controlled_words = [
+    {"word": "car", "meaning": "자동차", "pattern": "ar"},
+    {"word": "star", "meaning": "별", "pattern": "ar"},
+    {"word": "park", "meaning": "공원", "pattern": "ar"},
+    {"word": "her", "meaning": "그녀의", "pattern": "er"},
+    {"word": "teacher", "meaning": "선생님", "pattern": "er"},
+    {"word": "sister", "meaning": "여자 형제", "pattern": "er"},
+    {"word": "bird", "meaning": "새", "pattern": "ir"},
+    {"word": "girl", "meaning": "소녀", "pattern": "ir"},
+    {"word": "shirt", "meaning": "셔츠", "pattern": "ir"},
+    {"word": "corn", "meaning": "옥수수", "pattern": "or"},
+    {"word": "horse", "meaning": "말", "pattern": "or"},
+    {"word": "sport", "meaning": "스포츠", "pattern": "or"},
+    {"word": "turn", "meaning": "돌다", "pattern": "ur"},
+    {"word": "nurse", "meaning": "간호사", "pattern": "ur"},
+    {"word": "purple", "meaning": "보라색", "pattern": "ur"},
 ]
 
 
@@ -646,12 +318,14 @@ vowel_team_questions = [
 # 탭 구성
 # =========================================================
 tabs = st.tabs([
-    "🧩 자음",
-    "🍎 단모음",
-    "🌟 장모음",
+    "🧩 자음 단어",
+    "🍎 단모음 단어",
+    "🌟 장모음 단어",
     "🪄 Magic E",
-    "🤝 Blends & Digraphs",
-    "🌊 Vowel Teams"
+    "🤝 Blends",
+    "👯 Digraphs",
+    "🌊 Vowel Teams",
+    "🚗 R-Controlled"
 ])
 
 
@@ -659,55 +333,73 @@ tabs = st.tabs([
 # 탭 실행
 # =========================================================
 with tabs[0]:
-    run_phonics_quiz(
+    run_pronunciation_practice(
         prefix="consonant",
-        title="🧩 자음 소리 문제",
-        caption="소리를 듣고 알맞은 첫 자음을 고르세요.",
-        guide_text="알파벳 이름과 실제 소리는 다릅니다. 단어의 첫소리를 잘 들어 보세요.",
-        question_data=consonant_questions
+        title="🧩 자음 단어 발음 연습",
+        caption="자음으로 시작하는 단어를 듣고 따라 읽어 봅시다.",
+        guide_text="알파벳 이름이 아니라 단어 안에서 나는 실제 자음 소리에 집중해 봅시다.",
+        word_data=consonant_words
     )
 
 with tabs[1]:
-    run_phonics_quiz(
+    run_pronunciation_practice(
         prefix="short_vowel",
-        title="🍎 단모음 문제",
-        caption="단어를 듣고 짧은 모음 소리를 고르세요.",
-        guide_text="단모음은 CVC 단어에서 자주 나옵니다. 예: cat, bed, sit, hot, cup",
-        question_data=short_vowel_questions
+        title="🍎 단모음 단어 발음 연습",
+        caption="짧은 모음 소리가 들어간 단어를 듣고 따라 읽어 봅시다.",
+        guide_text="cat, bed, sit, hot, cup처럼 짧은 모음 소리에 집중해 봅시다.",
+        word_data=short_vowel_words
     )
 
 with tabs[2]:
-    run_phonics_quiz(
+    run_pronunciation_practice(
         prefix="long_vowel",
-        title="🌟 장모음 문제",
-        caption="단어를 듣고 긴 모음 소리를 고르세요.",
-        guide_text="장모음은 모음 글자의 이름처럼 나는 소리입니다. 예: cake, bike, home",
-        question_data=long_vowel_questions
+        title="🌟 장모음 단어 발음 연습",
+        caption="긴 모음 소리가 들어간 단어를 듣고 따라 읽어 봅시다.",
+        guide_text="cake, bike, home처럼 모음 이름과 비슷하게 나는 소리를 들어 봅시다.",
+        word_data=long_vowel_words
     )
 
 with tabs[3]:
-    run_phonics_quiz(
+    run_pronunciation_practice(
         prefix="magic_e",
-        title="🪄 Magic E 문제",
-        caption="Magic E가 붙었을 때 바뀌는 단어를 고르세요.",
-        guide_text="단어 끝의 e는 조용하지만, 앞의 모음을 길게 만들어 줍니다.",
-        question_data=magic_e_questions
+        title="🪄 Magic E 발음 연습",
+        caption="Magic E가 붙었을 때 소리가 어떻게 바뀌는지 들어 봅시다.",
+        guide_text="cap → cape, kit → kite처럼 짧은 소리와 긴 소리를 비교해 봅시다.",
+        word_data=magic_e_words
     )
 
 with tabs[4]:
-    run_phonics_quiz(
-        prefix="blend_digraph",
-        title="🤝 Blends & Digraphs 문제",
-        caption="단어의 처음 소리나 글자 조합을 고르세요.",
-        guide_text="blend는 두 자음 소리가 살아 있고, digraph는 두 글자가 하나의 새 소리를 만듭니다.",
-        question_data=blend_digraph_questions
+    run_pronunciation_practice(
+        prefix="blend",
+        title="🤝 Blend 단어 발음 연습",
+        caption="두 자음 소리가 함께 나는 단어를 듣고 따라 읽어 봅시다.",
+        guide_text="bl, br, cl, tr처럼 두 자음 소리가 함께 나는 부분에 집중해 봅시다.",
+        word_data=blend_words
     )
 
 with tabs[5]:
-    run_phonics_quiz(
+    run_pronunciation_practice(
+        prefix="digraph",
+        title="👯 Digraph 단어 발음 연습",
+        caption="두 글자가 만나 하나의 새 소리를 내는 단어를 듣고 따라 읽어 봅시다.",
+        guide_text="sh, ch, th, ph처럼 두 글자가 하나의 소리를 만드는 부분에 집중해 봅시다.",
+        word_data=digraph_words
+    )
+
+with tabs[6]:
+    run_pronunciation_practice(
         prefix="vowel_team",
-        title="🌊 Vowel Team 문제",
-        caption="모음 조합이 만드는 소리를 고르세요.",
-        guide_text="vowel team은 두 모음이 함께 나와 하나의 소리를 만드는 경우입니다.",
-        question_data=vowel_team_questions
+        title="🌊 Vowel Team 단어 발음 연습",
+        caption="모음 두 개가 함께 만드는 소리를 듣고 따라 읽어 봅시다.",
+        guide_text="ai, ay, ee, oa, oo처럼 모음 조합의 소리에 집중해 봅시다.",
+        word_data=vowel_team_words
+    )
+
+with tabs[7]:
+    run_pronunciation_practice(
+        prefix="r_controlled",
+        title="🚗 R-Controlled 단어 발음 연습",
+        caption="모음 뒤에 r이 올 때 달라지는 소리를 듣고 따라 읽어 봅시다.",
+        guide_text="ar, er, ir, or, ur 소리에 집중해 봅시다.",
+        word_data=r_controlled_words
     )
