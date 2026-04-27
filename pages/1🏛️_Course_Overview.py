@@ -16,10 +16,10 @@ st.markdown(
         background: linear-gradient(135deg, #ffffff 0%, #eef6ff 50%, #fff7ed 100%);
         border: 1.5px solid #d9e7ff;
         border-radius: 34px;
-        padding: 42px 34px;
+        padding: 46px 36px;
         text-align: center;
         box-shadow: 0 12px 32px rgba(31,78,121,0.13);
-        margin-bottom: 30px;
+        margin-bottom: 34px;
     }
 
     .course-pill {
@@ -36,7 +36,7 @@ st.markdown(
 
     .main-title {
         color:#1f4e79;
-        font-size: 48px;
+        font-size: 50px;
         font-weight: 900;
         margin: 12px 0 10px 0;
     }
@@ -50,29 +50,16 @@ st.markdown(
 
     .main-desc {
         font-size: 22px;
-        line-height: 1.75;
+        line-height: 1.78;
         color: #34495e;
         margin: 0 auto;
-        max-width: 900px;
+        max-width: 940px;
     }
 
     .highlight {
         background: linear-gradient(transparent 58%, #fff1a8 58%);
         font-weight: 900;
         color: #1f4e79;
-    }
-
-    .abc-box {
-        background: #ffffff;
-        border: 1.5px solid #d9e7ff;
-        border-radius: 16px;
-        padding: 12px 0;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 900;
-        color: #1f4e79;
-        box-shadow: 0 4px 10px rgba(31,78,121,0.08);
-        margin-bottom: 8px;
     }
 
     .section-title {
@@ -171,22 +158,6 @@ st.markdown(
 )
 
 # ---------------------------
-# Alphabet Decoration
-# ---------------------------
-letters1 = ["A", "B", "C", "D", "E", "F", "G"]
-letters2 = ["H", "I", "J", "K", "L", "M", "N"]
-
-cols = st.columns(len(letters1))
-for col, letter in zip(cols, letters1):
-    with col:
-        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
-
-cols = st.columns(len(letters2))
-for col, letter in zip(cols, letters2):
-    with col:
-        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
-
-# ---------------------------
 # Top Card
 # ---------------------------
 st.markdown(
@@ -205,32 +176,24 @@ st.markdown(
         </h1>
 
         <h2 class="main-subtitle">
-            알파벳을 처음 읽는 순간부터 쉬운 영어 문장까지
+            영어가 낯설고 자신 없는 학습자를 위한 첫걸음
         </h2>
 
         <p class="main-desc">
-            이 앱은 <span class="highlight">알파벳을 처음 읽는 학습자</span>도 부담 없이 시작할 수 있도록 만든 
-            기초 영어 학습 공간입니다.<br>
-            알파벳 소리, 쉬운 단어, 기초 영어 듣기, 그리고 문장 구조를 
-            <span class="highlight">차근차근 재미있게</span> 배울 수 있습니다.
+            영어에 자신감이 없으신가요?<br>
+            영어만 생각하면 어렵고, 틀릴까 봐 말하기가 망설여지나요?<br><br>
+
+            이 앱은 <span class="highlight">알파벳을 처음 읽는 학습자</span>부터 
+            <span class="highlight">기초 영어 듣기와 문장 구조</span>를 다시 배우고 싶은 학습자까지 
+            누구나 쉽게 시작할 수 있도록 만든 영어 학습 공간입니다.<br>
+
+            한 글자, 한 단어, 한 문장씩 천천히 익히며 
+            영어에 대한 부담을 줄이고 자신감을 키워 봅시다.
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
-
-letters3 = ["O", "P", "Q", "R", "S", "T"]
-letters4 = ["U", "V", "W", "X", "Y", "Z"]
-
-cols = st.columns(len(letters3))
-for col, letter in zip(cols, letters3):
-    with col:
-        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
-
-cols = st.columns(len(letters4))
-for col, letter in zip(cols, letters4):
-    with col:
-        st.markdown(f"<div class='abc-box'>{letter}</div>", unsafe_allow_html=True)
 
 # ---------------------------
 # Learning Path
