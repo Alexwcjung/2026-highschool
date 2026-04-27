@@ -7,11 +7,11 @@ import io
 # =========================
 st.set_page_config(
     page_title="Phonics Concept",
-    page_icon="🔤",
+    page_icon="🌈",
     layout="wide"
 )
 
-st.title("🔤 Phonics Concept")
+st.title("🌈 Phonics Concept")
 st.caption("자음 소리, 짧은 모음, 긴 모음, blends, digraphs, vowel teams를 듣고 익혀 봅시다.")
 
 # =========================
