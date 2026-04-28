@@ -151,7 +151,7 @@ st.markdown(
     """
     <div class="title-box">
         <h1>🌟 기초 문법 확장</h1>
-        <p>can, 명령문, There is / are, 전치사, want, want to, have / has를 익혀 봅시다.</p>
+        <p>can, 명령문, There is / are, 전치사, want, want to, have / has, 문장 연결하기를 익혀 봅시다.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -164,7 +164,8 @@ tabs = st.tabs([
     "🧭 전치사",
     "💭 want",
     "🚀 want to",
-    "🎒 have / has"
+    "🎒 have / has",
+    "🔗 문장 연결하기"
 ])
 
 
@@ -842,3 +843,160 @@ with tabs[6]:
     )
 
     st.info("Tip: I, You, We, They는 have / He, She, It은 has를 씁니다.")
+
+
+# =========================================================
+# Tab 8: 문장 연결하기
+# =========================================================
+with tabs[7]:
+    st.subheader("🔗 문장 연결하기")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#fef9c3,#ffffff);">
+            <h3 style="color:#a16207;">🔗 문장 연결하기란?</h3>
+            <p>
+                짧은 문장 두 개를 연결하면 <b>더 길고 자연스러운 문장</b>을 만들 수 있습니다.
+            </p>
+            <p>
+                이번에는 <b>because, so, but, if</b>를 사용해 문장을 연결해 봅니다.
+            </p>
+            <div class="formula-box" style="color:#a16207;">
+                because / so / but / if
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 1. because = 왜냐하면")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>because</b>는 <b>왜냐하면</b>이라는 뜻입니다.</p>
+            <p>이유를 말할 때 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            I like English <b>because</b> it is fun.<br>
+            → 나는 영어를 좋아한다. 왜냐하면 재미있기 때문이다.
+        </div>
+
+        <div class="example-box">
+            She is happy <b>because</b> she has a dog.<br>
+            → 그녀는 행복하다. 왜냐하면 개를 가지고 있기 때문이다.
+        </div>
+
+        <div class="example-box">
+            I want water <b>because</b> I am thirsty.<br>
+            → 나는 물을 원한다. 왜냐하면 목이 마르기 때문이다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 2. so = 그래서")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>so</b>는 <b>그래서</b>라는 뜻입니다.</p>
+            <p>앞 문장 다음에 이어지는 일을 말할 때 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            I am hungry, <b>so</b> I want pizza.<br>
+            → 나는 배고프다. 그래서 피자를 원한다.
+        </div>
+
+        <div class="example-box">
+            It is cold, <b>so</b> I wear a jacket.<br>
+            → 날씨가 춥다. 그래서 나는 재킷을 입는다.
+        </div>
+
+        <div class="example-box">
+            He is tired, <b>so</b> he goes home.<br>
+            → 그는 피곤하다. 그래서 집에 간다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 3. but = 하지만")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>but</b>은 <b>하지만</b>이라는 뜻입니다.</p>
+            <p>앞 문장과 반대되는 내용을 말할 때 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            I like soccer, <b>but</b> I don't like baseball.<br>
+            → 나는 축구를 좋아한다. 하지만 야구는 좋아하지 않는다.
+        </div>
+
+        <div class="example-box">
+            She can sing, <b>but</b> she can't dance.<br>
+            → 그녀는 노래할 수 있다. 하지만 춤은 출 수 없다.
+        </div>
+
+        <div class="example-box">
+            I have a bike, <b>but</b> I don't have a car.<br>
+            → 나는 자전거를 가지고 있다. 하지만 자동차는 가지고 있지 않다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 4. if = 만약 ~라면")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>if</b>는 <b>만약 ~라면</b>이라는 뜻입니다.</p>
+            <p>어떤 일이 일어날 때를 상상해서 말할 때 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            <b>If</b> it rains, I will stay home.<br>
+            → 만약 비가 오면, 나는 집에 있을 것이다.
+        </div>
+
+        <div class="example-box">
+            <b>If</b> I am hungry, I will eat pizza.<br>
+            → 만약 내가 배고프면, 나는 피자를 먹을 것이다.
+        </div>
+
+        <div class="example-box">
+            <b>If</b> you need help, I can help you.<br>
+            → 만약 네가 도움이 필요하면, 내가 도와줄 수 있다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 문장 연결 표현 정리")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>because</b> = 왜냐하면</p>
+            <p><b>so</b> = 그래서</p>
+            <p><b>but</b> = 하지만</p>
+            <p><b>if</b> = 만약 ~라면</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: 처음에는 because, so, but, if의 뜻만 정확히 알고 짧은 문장을 연결해 보면 됩니다.")
