@@ -1,4 +1,3 @@
-
 import streamlit as st
 
 st.set_page_config(page_title="기초 문법 확장", page_icon="🌟", layout="centered")
@@ -152,7 +151,7 @@ st.markdown(
     """
     <div class="title-box">
         <h1>🌟 기초 문법 확장</h1>
-        <p>can, 명령문, There is / are, 전치사, 비교급을 차근차근 익혀 봅시다.</p>
+        <p>can, 명령문, There is / are, 전치사, want, want to, have / has를 익혀 봅시다.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -163,7 +162,9 @@ tabs = st.tabs([
     "📢 명령문",
     "📍 There is / are",
     "🧭 전치사",
-    "⚖️ 비교급"
+    "💭 want",
+    "🚀 want to",
+    "🎒 have / has"
 ])
 
 
@@ -522,51 +523,51 @@ with tabs[3]:
 
 
 # =========================================================
-# Tab 5: 비교급
+# Tab 5: want
 # =========================================================
 with tabs[4]:
-    st.subheader("⚖️ 비교급")
+    st.subheader("💭 want")
 
     st.markdown(
         """
-        <div class="grammar-card" style="background:linear-gradient(135deg,#fff1f2,#ffffff);">
-            <h3 style="color:#be123c;">⚖️ 비교급이란?</h3>
+        <div class="grammar-card" style="background:linear-gradient(135deg,#fff7ed,#ffffff);">
+            <h3 style="color:#c2410c;">💭 want란?</h3>
             <p>
-                <b>비교급</b>은 두 사람이나 두 물건을 비교할 때 씁니다.
+                <b>want</b>는 <b>‘원하다’</b>라는 뜻입니다.
             </p>
             <p>
-                <b>더 크다, 더 빠르다, 더 쉽다</b>처럼 차이를 말할 수 있습니다.
+                물, 음식, 물건처럼 <b>무엇을 원한다</b>고 말할 때 씁니다.
             </p>
-            <div class="formula-box" style="color:#be123c;">
-                비교급 + than
+            <div class="formula-box" style="color:#c2410c;">
+                want + 명사
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. 짧은 형용사: -er 붙이기")
+    st.markdown("### ✅ 1. want + 명사")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p>짧은 형용사는 보통 뒤에 <b>-er</b>을 붙입니다.</p>
-            <p>tall → taller / fast → faster / small → smaller</p>
+            <p><b>want 뒤에는 원하는 물건이나 대상을 씁니다.</b></p>
+            <p>water, pizza, a bike, a phone 같은 말이 올 수 있습니다.</p>
         </div>
 
         <div class="example-box">
-            Tom is <b>taller than</b> Mina.<br>
-            → Tom은 Mina보다 키가 더 크다.
+            I <b>want water</b>.<br>
+            → 나는 물을 원한다.
         </div>
 
         <div class="example-box">
-            This car is <b>faster than</b> that car.<br>
-            → 이 차는 저 차보다 더 빠르다.
+            You <b>want pizza</b>.<br>
+            → 너는 피자를 원한다.
         </div>
 
         <div class="example-box">
-            My bag is <b>smaller than</b> your bag.<br>
-            → 내 가방은 네 가방보다 더 작다.
+            They <b>want a new phone</b>.<br>
+            → 그들은 새 휴대전화를 원한다.
         </div>
         """,
         unsafe_allow_html=True
@@ -574,23 +575,87 @@ with tabs[4]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. 긴 형용사: more 붙이기")
+    st.markdown("### ✅ 2. He / She는 wants")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p>긴 형용사는 앞에 <b>more</b>를 붙이는 경우가 많습니다.</p>
-            <p>beautiful → more beautiful / interesting → more interesting</p>
+            <p>주어가 <b>He / She / It</b>처럼 1명 또는 1개일 때는 보통 동사 뒤에 <b>-s</b>를 붙입니다.</p>
+            <p><b>want → wants</b></p>
         </div>
 
         <div class="example-box">
-            This book is <b>more interesting than</b> that book.<br>
-            → 이 책은 저 책보다 더 재미있다.
+            He <b>wants water</b>.<br>
+            → 그는 물을 원한다.
         </div>
 
         <div class="example-box">
-            This flower is <b>more beautiful than</b> that flower.<br>
-            → 이 꽃은 저 꽃보다 더 아름답다.
+            She <b>wants a bike</b>.<br>
+            → 그녀는 자전거를 원한다.
+        </div>
+
+        <div class="example-box">
+            My brother <b>wants pizza</b>.<br>
+            → 내 남동생은 피자를 원한다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: I, You, We, They는 want / He, She, It은 wants를 씁니다.")
+
+
+# =========================================================
+# Tab 6: want to
+# =========================================================
+with tabs[5]:
+    st.subheader("🚀 want to")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#eef6ff,#ffffff);">
+            <h3 style="color:#1d4ed8;">🚀 want to란?</h3>
+            <p>
+                <b>want to</b>는 <b>‘~하고 싶다’</b>라는 뜻입니다.
+            </p>
+            <p>
+                먹고 싶다, 가고 싶다, 놀고 싶다처럼 <b>하고 싶은 행동</b>을 말할 때 씁니다.
+            </p>
+            <div class="formula-box" style="color:#1d4ed8;">
+                want to + 동사원형
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 1. want to + 동사원형")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>want to 뒤에는 동사의 기본 모양</b>을 씁니다.</p>
+            <p>want to eats ❌ / want to eat ✅</p>
+        </div>
+
+        <div class="example-box">
+            I <b>want to eat</b>.<br>
+            → 나는 먹고 싶다.
+        </div>
+
+        <div class="example-box">
+            I <b>want to go</b> home.<br>
+            → 나는 집에 가고 싶다.
+        </div>
+
+        <div class="example-box">
+            We <b>want to play</b> soccer.<br>
+            → 우리는 축구를 하고 싶다.
+        </div>
+
+        <div class="example-box">
+            They <b>want to study</b> English.<br>
+            → 그들은 영어를 공부하고 싶다.
         </div>
         """,
         unsafe_allow_html=True
@@ -598,27 +663,182 @@ with tabs[4]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 3. 자주 쓰는 불규칙 비교급")
+    st.markdown("### ✅ 2. He / She는 wants to")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>good → better</b> = 더 좋은</p>
-            <p><b>bad → worse</b> = 더 나쁜</p>
-            <p><b>many / much → more</b> = 더 많은</p>
+            <p>주어가 <b>He / She / It</b>이면 <b>wants to</b>를 씁니다.</p>
+            <p>하지만 <b>to 뒤의 동사에는 -s를 붙이지 않습니다.</b></p>
         </div>
 
         <div class="example-box">
-            This is <b>better than</b> that.<br>
-            → 이것은 저것보다 더 좋다.
+            He <b>wants to play</b> soccer.<br>
+            → 그는 축구를 하고 싶다.
         </div>
 
         <div class="example-box">
-            I have <b>more</b> books than you.<br>
-            → 나는 너보다 책을 더 많이 가지고 있다.
+            She <b>wants to sing</b>.<br>
+            → 그녀는 노래하고 싶다.
+        </div>
+
+        <div class="example-box">
+            My sister <b>wants to watch</b> TV.<br>
+            → 내 여동생은 TV를 보고 싶다.
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.info("Tip: 비교할 때는 보통 than을 함께 씁니다. 예: taller than, faster than, more interesting than")
+    st.markdown("---")
+
+    st.markdown("### ✅ 3. want와 want to 비교")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>want + 명사</b> = 무엇을 원하다</p>
+            <p><b>want to + 동사원형</b> = ~하고 싶다</p>
+        </div>
+
+        <div class="example-box">
+            I <b>want water</b>.<br>
+            → 나는 물을 원한다.
+        </div>
+
+        <div class="example-box">
+            I <b>want to drink</b> water.<br>
+            → 나는 물을 마시고 싶다.
+        </div>
+
+        <div class="example-box">
+            She <b>wants a bike</b>.<br>
+            → 그녀는 자전거를 원한다.
+        </div>
+
+        <div class="example-box">
+            She <b>wants to ride</b> a bike.<br>
+            → 그녀는 자전거를 타고 싶다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: want 뒤에는 물건, want to 뒤에는 행동이 옵니다. 예: want pizza / want to eat pizza")
+
+
+# =========================================================
+# Tab 7: have / has
+# =========================================================
+with tabs[6]:
+    st.subheader("🎒 have / has")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#ecfdf5,#ffffff);">
+            <h3 style="color:#047857;">🎒 have / has란?</h3>
+            <p>
+                <b>have / has</b>는 <b>‘가지고 있다’</b>라는 뜻입니다.
+            </p>
+            <p>
+                내가 가진 물건, 가족, 친구, 동물 등을 말할 때 자주 씁니다.
+            </p>
+            <div class="formula-box" style="color:#047857;">
+                I / You / We / They + have<br>
+                He / She / It + has
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 1. have")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>I / You / We / They</b> 뒤에는 보통 <b>have</b>를 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            I <b>have a bike</b>.<br>
+            → 나는 자전거를 가지고 있다.
+        </div>
+
+        <div class="example-box">
+            You <b>have a phone</b>.<br>
+            → 너는 휴대전화를 가지고 있다.
+        </div>
+
+        <div class="example-box">
+            We <b>have many books</b>.<br>
+            → 우리는 많은 책을 가지고 있다.
+        </div>
+
+        <div class="example-box">
+            They <b>have a dog</b>.<br>
+            → 그들은 개 한 마리를 가지고 있다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 2. has")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>He / She / It</b> 뒤에는 보통 <b>has</b>를 씁니다.</p>
+            <p>have에 -s가 붙은 느낌으로 생각하면 됩니다.</p>
+        </div>
+
+        <div class="example-box">
+            He <b>has a bike</b>.<br>
+            → 그는 자전거를 가지고 있다.
+        </div>
+
+        <div class="example-box">
+            She <b>has a dog</b>.<br>
+            → 그녀는 개 한 마리를 가지고 있다.
+        </div>
+
+        <div class="example-box">
+            My friend <b>has a new phone</b>.<br>
+            → 내 친구는 새 휴대전화를 가지고 있다.
+        </div>
+
+        <div class="example-box">
+            The school <b>has a gym</b>.<br>
+            → 그 학교는 체육관을 가지고 있다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 3. want / want to / have 연결하기")
+
+    st.markdown(
+        """
+        <div class="example-box">
+            I <b>want water</b>.<br>
+            → 나는 물을 원한다.
+        </div>
+
+        <div class="example-box">
+            I <b>want to drink</b> water.<br>
+            → 나는 물을 마시고 싶다.
+        </div>
+
+        <div class="example-box">
+            I <b>have water</b>.<br>
+            → 나는 물을 가지고 있다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: I, You, We, They는 have / He, She, It은 has를 씁니다.")
