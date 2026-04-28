@@ -181,7 +181,8 @@ tabs = st.tabs([
     "🕰️ 과거형",
     "🎮 불규칙동사 게임",
     "❌ 부정문",
-    "❓ 의문문"
+    "❓ 의문문",
+    "🕵️ 의문사 의문문"
 ])
 
 
@@ -840,3 +841,151 @@ with tabs[6]:
     )
 
     st.info("Tip: Does, Did가 앞에 오면 뒤의 동사는 기본 모양을 씁니다. 예: Does he plays? ❌ / Does he play? ✅")
+
+# Tab 8: 의문사 의문문
+# =========================================================
+with tabs[7]:
+    st.subheader("❔ 의문사 의문문 만들기")
+
+    st.markdown(
+        """
+        <div class="grammar-card" style="background:linear-gradient(135deg,#e0f7ff,#ffffff);">
+            <h3 style="color:#0477a8;">❔ 의문사 의문문이란?</h3>
+            <p>
+                <b>의문사</b>는 <b>무엇, 언제, 어디서, 누가, 왜, 어떻게</b>처럼
+                자세한 정보를 묻는 말입니다.
+            </p>
+            <div class="formula-box" style="color:#0477a8;">
+                의문사 + 의문문 어순
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 1. 자주 쓰는 의문사")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>What</b> = 무엇</p>
+            <p><b>When</b> = 언제</p>
+            <p><b>Where</b> = 어디에 / 어디에서</p>
+            <p><b>Who</b> = 누구</p>
+            <p><b>Why</b> = 왜</p>
+            <p><b>How</b> = 어떻게</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 2. Be동사와 함께 쓰는 의문사 의문문")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>의문사 + Be동사 + 주어 ~ ?</b></p>
+            <p>의문사가 맨 앞에 오고, 그 뒤에는 Be동사 의문문 어순을 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            You are happy.<br>
+            ↓<br>
+            <b>Why are you</b> happy?<br>
+            → 너는 왜 행복하니?
+        </div>
+
+        <div class="example-box">
+            She is in the classroom.<br>
+            ↓<br>
+            <b>Where is she?</b><br>
+            → 그녀는 어디에 있니?
+        </div>
+
+        <div class="example-box">
+            They are here.<br>
+            ↓<br>
+            <b>Why are they</b> here?<br>
+            → 그들은 왜 여기에 있니?
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 3. 일반동사와 함께 쓰는 의문사 의문문")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>의문사 + Do / Does / Did + 주어 + 동사원형 ~ ?</b></p>
+            <p>의문사가 맨 앞에 오고, 그 뒤에는 일반동사 의문문 어순을 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            You like pizza.<br>
+            ↓<br>
+            <b>What do you like?</b><br>
+            → 너는 무엇을 좋아하니?
+        </div>
+
+        <div class="example-box">
+            He plays soccer after school.<br>
+            ↓<br>
+            <b>When does he play</b> soccer?<br>
+            → 그는 언제 축구를 하니?
+        </div>
+
+        <div class="example-box">
+            They went to school yesterday.<br>
+            ↓<br>
+            <b>When did they go</b> to school?<br>
+            → 그들은 언제 학교에 갔니?
+        </div>
+
+        <div class="example-box">
+            You study English at school.<br>
+            ↓<br>
+            <b>Where do you study</b> English?<br>
+            → 너는 어디에서 영어를 공부하니?
+        </div>
+
+        <div class="example-box">
+            She likes him.<br>
+            ↓<br>
+            <b>Why does she like</b> him?<br>
+            → 그녀는 왜 그를 좋아하니?
+        </div>
+
+        <div class="example-box">
+            You go to school by bus.<br>
+            ↓<br>
+            <b>How do you go</b> to school?<br>
+            → 너는 어떻게 학교에 가니?
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 4. 의문사별 예문 정리")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>What do you want?</b> → 너는 무엇을 원하니?</p>
+            <p><b>When do you get up?</b> → 너는 언제 일어나니?</p>
+            <p><b>Where do you live?</b> → 너는 어디에 사니?</p>
+            <p><b>Who is he?</b> → 그는 누구니?</p>
+            <p><b>Why are you sad?</b> → 너는 왜 슬프니?</p>
+            <p><b>How do you feel?</b> → 너는 기분이 어떠니?</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: 의문사가 있어도 뒤에는 의문문 어순을 씁니다. 예: Where you live? ❌ / Where do you live? ✅")
