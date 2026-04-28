@@ -319,6 +319,8 @@ with tabs[1]:
 # =========================================================
 # Tab 3: 미래형
 # =========================================================
+# Tab 3: 미래형
+# =========================================================
 with tabs[2]:
     st.subheader("🚀 미래형")
 
@@ -330,14 +332,14 @@ with tabs[2]:
                 <b>미래형</b>은 <b>앞으로 일어날 일</b>을 말할 때 씁니다.
             </p>
             <div class="formula-box" style="color:#247a3d;">
-                will + 동사원형
+                will + 동사원형 / be going to + 동사원형
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 만드는 법")
+    st.markdown("### ✅ 1. will로 미래 말하기")
 
     st.markdown(
         """
@@ -364,6 +366,61 @@ with tabs[2]:
         unsafe_allow_html=True
     )
 
+    st.markdown("---")
+
+    st.markdown("### ✅ 2. be going to로 미래 말하기")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>am / are / is + going to + 동사원형</b></p>
+            <p><b>be going to</b>도 앞으로 할 일을 말할 때 씁니다.</p>
+            <p>주어에 맞게 <b>am, are, is</b>를 골라 씁니다.</p>
+        </div>
+
+        <div class="example-box">
+            I <b>am going to study</b> English.<br>
+            → 나는 영어를 공부할 예정이다.
+        </div>
+
+        <div class="example-box">
+            She <b>is going to call</b> me.<br>
+            → 그녀는 나에게 전화할 예정이다.
+        </div>
+
+        <div class="example-box">
+            We <b>are going to go</b> to Busan.<br>
+            → 우리는 부산에 갈 예정이다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("---")
+
+    st.markdown("### ✅ 3. will과 be going to 비교")
+
+    st.markdown(
+        """
+        <div class="mini-card">
+            <p><b>will</b>과 <b>be going to</b>는 둘 다 미래를 나타냅니다.</p>
+            <p>처음 배울 때는 둘 다 <b>~할 것이다 / ~할 예정이다</b> 정도로 이해하면 됩니다.</p>
+        </div>
+
+        <div class="example-box">
+            I <b>will study</b> English.<br>
+            → 나는 영어를 공부할 것이다.
+        </div>
+
+        <div class="example-box">
+            I <b>am going to study</b> English.<br>
+            → 나는 영어를 공부할 예정이다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.info("Tip: will 뒤에도 동사원형, be going to 뒤에도 동사원형을 씁니다.")
 
 # =========================================================
 # Tab 4: 과거형
