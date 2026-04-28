@@ -9,8 +9,8 @@ st.set_page_config(
 # ---------------------------
 # Top Section
 # ---------------------------
-st.markdown("# 🌼 Alex의 영어교실")
-st.markdown("### ✨ 영어가 낯설고 자신 없는 학습자를 위한 첫걸음")
+st.markdown("# ✨ Alex의 영어교실")
+st.markdown("### 영어가 낯설고 자신 없는 학습자를 위한 첫걸음")
 
 st.info(
     """
@@ -25,7 +25,7 @@ st.divider()
 # ---------------------------
 # Quick Guide
 # ---------------------------
-st.markdown("## 💖 이 앱은 이런 분들을 위한 공간입니다")
+st.markdown("## 🌼 이 앱은 이런 분들을 위한 공간입니다")
 
 g1, g2, g3 = st.columns(3)
 
