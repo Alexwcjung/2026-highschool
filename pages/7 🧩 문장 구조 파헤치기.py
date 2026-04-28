@@ -234,7 +234,7 @@ with tabs[0]:
         </div>
                 <div class="mini-card">
             <h4>🌱 1. am</h4>
-            <p>주어가 <b>I</b>일 때 씁니다. '나'는 1명이지만 나는 특별하기에 'is'가 아닌 'am'을 씁니다.</p>
+            <p>주어가 <b>I</b>일 때 씁니다. '나'는 1명이지만 나는 특별하기에 다른 것들과 차별을 두기 위해서 'is'가 아닌 'am'을 씁니다.</p>
             <div class="example-box">
                 I <b>am</b> a student.<br>
                 → 나는 학생이다.
