@@ -78,9 +78,9 @@ with col1:
 
     show_time = st.slider(
         "두더지가 나와 있는 시간",
-        min_value=2,
-        max_value=8,
-        value=5,
+        min_value=4,
+        max_value=15,
+        value=8,
         step=1
     )
 
@@ -608,7 +608,7 @@ function startTimer() {{
                 }}
 
                 messageBox.innerText = "😢 시간 끝! 단어를 놓쳤어요.";
-                nextRoundDelay(800);
+                nextRoundDelay(1500);
             }}
         }}
     }}, 1000);
@@ -660,7 +660,7 @@ function popMole(moleObj) {{
 
     setTimeout(() => {{
         if (moleObj.element) moleObj.element.remove();
-    }}, 420);
+    }}, 500);
 
     activeMoles = activeMoles.filter(m => !m.popped);
 
@@ -671,7 +671,7 @@ function popMole(moleObj) {{
 
     if (activeMoles.length === 0) {{
         clearInterval(timer);
-        nextRoundDelay(650);
+        nextRoundDelay(1200);
     }}
 }}
 
