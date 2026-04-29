@@ -3,8 +3,9 @@ from gtts import gTTS
 import io
 import streamlit.components.v1 as components
 import html
+import json
 
-st.set_page_config(page_title="문장 구조 말하기 문제", page_icon="🎤", layout="centered")
+st.set_page_config(page_title="문장 구조 말하기 게임", page_icon="🎤", layout="centered")
 
 # =========================================================
 # 디자인 CSS
@@ -18,9 +19,9 @@ st.markdown(
 
     .title-box {
         background: linear-gradient(135deg, #fff7ed 0%, #fffdf7 50%, #eef7ff 100%);
-        padding: 32px 28px;
+        padding: 30px 24px;
         border-radius: 30px;
-        margin-bottom: 26px;
+        margin-bottom: 22px;
         box-shadow: 0 10px 26px rgba(80, 80, 120, 0.12);
         text-align: center;
         border: 1.5px solid #fed7aa;
@@ -29,13 +30,13 @@ st.markdown(
     .title-box h1 {
         color: #334155;
         margin-bottom: 10px;
-        font-size: 36px;
+        font-size: 35px;
         font-weight: 900;
     }
 
     .title-box p {
         color: #64748b;
-        font-size: 19px;
+        font-size: 18px;
         margin: 0;
         line-height: 1.7;
     }
@@ -43,55 +44,23 @@ st.markdown(
     .guide-card {
         background: linear-gradient(135deg, #ffffff, #f8fbff);
         border-radius: 24px;
-        padding: 22px 24px;
-        margin: 16px 0 24px 0;
+        padding: 18px 20px;
+        margin: 14px 0 20px 0;
         box-shadow: 0 5px 16px rgba(0,0,0,0.055);
         border: 1.5px solid #edf2ff;
     }
 
     .guide-card p {
-        font-size: 20px;
-        line-height: 1.75;
+        font-size: 19px;
+        line-height: 1.65;
         color: #374151;
         margin: 0;
-    }
-
-    .practice-card {
-        background: linear-gradient(135deg, #ffffff, #fff7ed);
-        border-radius: 30px;
-        padding: 34px 28px;
-        margin: 20px 0;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
-        border: 1.5px solid #fed7aa;
-        text-align: center;
-    }
-
-    .practice-card .category {
-        font-size: 19px;
-        color: #9a3412;
-        font-weight: 900;
-        margin-bottom: 14px;
-    }
-
-    .practice-card .label {
-        font-size: 21px;
-        color: #475569;
-        font-weight: 800;
-        margin-bottom: 12px;
-    }
-
-    .practice-card .korean {
-        font-size: 34px;
-        color: #111827;
-        font-weight: 900;
-        margin: 14px 0;
-        line-height: 1.45;
     }
 
     .answer-card {
         background: linear-gradient(135deg, #eef7ff, #ffffff);
         border-radius: 26px;
-        padding: 28px 24px;
+        padding: 24px 20px;
         margin: 20px 0;
         box-shadow: 0 6px 16px rgba(0,0,0,0.06);
         border: 1.5px solid #dbeafe;
@@ -99,7 +68,7 @@ st.markdown(
     }
 
     .answer-card p {
-        font-size: 21px;
+        font-size: 20px;
         color: #475569;
         font-weight: 800;
         margin-bottom: 12px;
@@ -107,15 +76,10 @@ st.markdown(
 
     .answer-card h2 {
         color: #2563eb;
-        font-size: 36px;
+        font-size: 32px;
         font-weight: 900;
         margin: 8px 0;
         line-height: 1.35;
-    }
-
-    div[data-testid="stAlert"] {
-        border-radius: 18px;
-        font-size: 18px;
     }
 
     .stButton > button {
@@ -140,27 +104,14 @@ st.markdown(
 st.markdown(
     """
     <div class="title-box">
-        <h1>🎤 문장 구조 말하기 문제</h1>
-        <p>한국어 문장을 보고 영어로 말하면 문장 카드가 팡! 터집니다.</p>
+        <h1>🎤 문장 구조 말하기 게임</h1>
+        <p>한국어 문장을 보고 영어로 말하면 카드가 팡! 터지고 다음 문제가 바로 나옵니다.</p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-st.info("사용 방법: ① 문법 선택 → ② 한국어 문장 보고 영어로 말하기 → ③ 카드 터뜨리기 → ④ 정답과 발음 확인")
-
-st.markdown(
-    """
-    <div class="guide-card">
-        <p>
-            처음에는 <b>영어 정답이 보이지 않습니다.</b><br>
-            한국어 문장만 보고 먼저 영어로 말해 보세요.<br>
-            정확하게 말하면 아래 카드가 <b>팡!</b> 하고 터집니다.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.info("사용 방법: 문법 선택 → 게임 시작 → 한국어 문장을 영어로 말하기 → 맞으면 자동으로 다음 문제!")
 
 # =========================================================
 # TTS 함수
@@ -239,59 +190,34 @@ selected_category = st.selectbox(
 if selected_category == "전체":
     filtered_questions = speaking_questions
 else:
-    filtered_questions = [
-        q for q in speaking_questions
-        if q["category"] == selected_category
-    ]
+    filtered_questions = [q for q in speaking_questions if q["category"] == selected_category]
 
-question_labels = [
-    f"{i + 1}. {q['korean']}"
-    for i, q in enumerate(filtered_questions)
-]
-
-selected_label = st.selectbox(
-    "연습할 문제를 고르세요.",
-    question_labels
+game_question_count = st.slider(
+    "🎯 게임 문제 개수",
+    min_value=3,
+    max_value=len(filtered_questions),
+    value=min(10, len(filtered_questions))
 )
 
-selected_index = question_labels.index(selected_label)
-current_q = filtered_questions[selected_index]
-
-# 문제를 바꾸면 정답 다시 숨기기
-question_key = current_q["category"] + current_q["korean"]
-
-if "last_question_key" not in st.session_state:
-    st.session_state.last_question_key = question_key
-
-if "show_answer" not in st.session_state:
-    st.session_state.show_answer = False
-
-if st.session_state.last_question_key != question_key:
-    st.session_state.show_answer = False
-    st.session_state.last_question_key = question_key
-
-st.markdown("---")
-
-# =========================================================
-# 문제 카드: 한국어만 제시
-# =========================================================
-st.markdown(
-    f"""
-    <div class="practice-card">
-        <p class="category">{current_q["category"]}</p>
-        <p class="label">한국어 문장</p>
-        <div class="korean">{current_q["korean"]}</div>
-    </div>
-    """,
-    unsafe_allow_html=True
+pass_ratio = st.slider(
+    "✅ 정답 인정 기준",
+    min_value=50,
+    max_value=100,
+    value=70,
+    step=5,
+    help="낮을수록 학생 발음을 더 너그럽게 인정합니다."
 )
+
+show_english_hint = st.checkbox("영어 첫 글자 힌트 보이기", value=False)
+
+game_questions = filtered_questions[:game_question_count]
 
 st.markdown(
     """
     <div class="guide-card">
         <p>
-            위 한국어 문장을 보고 <b>영어로 먼저 말해 보세요.</b><br>
-            아래의 <b>🎤 말하기 시작</b> 버튼을 누르고 정확히 말하면 카드가 터집니다.
+            <b>게임 시작</b>을 누른 뒤, 화면에 나오는 한국어 문장을 영어로 말하세요.<br>
+            맞으면 카드가 터지고 <b>바로 다음 문제</b>로 넘어갑니다.
         </p>
     </div>
     """,
@@ -299,13 +225,12 @@ st.markdown(
 )
 
 # =========================================================
-# 말해서 터뜨리기 HTML
+# 빠른 진행 말하기 게임
 # =========================================================
-target_sentence = current_q["sentence"]
-safe_target = html.escape(target_sentence)
-safe_korean = html.escape(current_q["korean"])
+questions_json = json.dumps(game_questions, ensure_ascii=False)
+hint_value = "true" if show_english_hint else "false"
 
-speech_html = f"""
+game_html = f"""
 <!DOCTYPE html>
 <html>
 <head>
@@ -320,7 +245,7 @@ speech_html = f"""
 
     .game-wrap {{
         width: 100%;
-        min-height: 320px;
+        min-height: 460px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -329,39 +254,71 @@ speech_html = f"""
         border: 2px solid #fed7aa;
         border-radius: 30px;
         box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-        padding: 28px 18px;
+        padding: 24px 18px;
         box-sizing: border-box;
         position: relative;
         overflow: hidden;
     }}
 
-    .hint {{
+    .top-bar {{
+        width: 92%;
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }}
+
+    .badge {{
+        background: rgba(255,255,255,0.95);
+        border-radius: 999px;
+        padding: 10px 16px;
         font-size: 18px;
-        font-weight: 800;
-        color: #64748b;
-        margin-bottom: 16px;
+        font-weight: 900;
+        color: #334155;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }}
+
+    .category {{
+        font-size: 19px;
+        font-weight: 900;
+        color: #9a3412;
+        margin-bottom: 12px;
         text-align: center;
-        line-height: 1.5;
     }}
 
     .bubble {{
         background: white;
         border: 4px solid #ffd6ea;
-        border-radius: 999px;
-        min-width: 230px;
-        max-width: 90%;
-        padding: 24px 30px;
+        border-radius: 32px;
+        width: 88%;
+        min-height: 130px;
+        padding: 24px 22px;
         text-align: center;
         box-shadow: 0 10px 24px rgba(0,0,0,0.14);
-        font-size: 26px;
+        transition: all 0.22s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }}
+
+    .korean {{
+        font-size: 34px;
         font-weight: 900;
-        color: #334155;
-        line-height: 1.45;
-        transition: all 0.25s ease;
+        color: #111827;
+        line-height: 1.35;
+    }}
+
+    .hint {{
+        margin-top: 12px;
+        font-size: 20px;
+        color: #64748b;
+        font-weight: 800;
     }}
 
     .bubble.pop {{
-        animation: pop 0.55s forwards;
+        animation: pop 0.42s forwards;
     }}
 
     @keyframes pop {{
@@ -370,7 +327,7 @@ speech_html = f"""
             opacity: 1;
         }}
         45% {{
-            transform: scale(1.45) rotate(4deg);
+            transform: scale(1.35) rotate(3deg);
             opacity: 0.9;
         }}
         100% {{
@@ -379,16 +336,27 @@ speech_html = f"""
         }}
     }}
 
+    .btn-row {{
+        display: flex;
+        gap: 10px;
+        margin-top: 22px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }}
+
     .btn {{
-        margin-top: 24px;
         border: none;
         border-radius: 999px;
-        padding: 14px 28px;
-        font-size: 21px;
+        padding: 13px 24px;
+        font-size: 20px;
         font-weight: 900;
         color: white;
         background: linear-gradient(135deg, #ff7eb3, #ffb86c);
         box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }}
+
+    .sub-btn {{
+        background: linear-gradient(135deg, #60a5fa, #93c5fd);
     }}
 
     .btn:active {{
@@ -396,27 +364,28 @@ speech_html = f"""
     }}
 
     .status {{
-        margin-top: 18px;
+        margin-top: 16px;
         font-size: 18px;
         font-weight: 800;
         color: #475569;
         text-align: center;
-        min-height: 28px;
+        min-height: 30px;
+        line-height: 1.45;
     }}
 
-    .success {{
-        color: #16a34a;
-        font-size: 24px;
+    .answer {{
+        margin-top: 10px;
+        font-size: 21px;
         font-weight: 900;
-        margin-top: 18px;
+        color: #2563eb;
         display: none;
         text-align: center;
     }}
 
     .effect {{
         position: absolute;
-        font-size: 44px;
-        animation: floatUp 0.8s forwards;
+        font-size: 42px;
+        animation: floatUp 0.75s forwards;
         pointer-events: none;
     }}
 
@@ -435,20 +404,52 @@ speech_html = f"""
 
 <body>
 <div class="game-wrap">
-    <div class="hint">🎯 한국어 문장: {safe_korean}</div>
-
-    <div id="bubble" class="bubble">
-        영어로 말하면<br>팡! 터져요 🎈
+    <div class="top-bar">
+        <div class="badge">문제 <span id="qNum">1</span> / <span id="total">0</span></div>
+        <div class="badge">점수 <span id="score">0</span></div>
     </div>
 
-    <button class="btn" onclick="startRecognition()">🎤 말하기 시작</button>
+    <div id="category" class="category">문법</div>
 
-    <div id="status" class="status">마이크 버튼을 누르고 영어 문장을 말해 보세요.</div>
-    <div id="success" class="success">🎉 성공! 잘했어요!</div>
+    <div id="bubble" class="bubble">
+        <div id="korean" class="korean">게임 시작을 눌러 주세요 🎮</div>
+        <div id="hint" class="hint"></div>
+    </div>
+
+    <div id="answer" class="answer"></div>
+
+    <div class="btn-row">
+        <button class="btn" onclick="startGame()">🎤 게임 시작</button>
+        <button class="btn sub-btn" onclick="skipQuestion()">➡️ 넘기기</button>
+        <button class="btn sub-btn" onclick="showAnswer()">👀 정답</button>
+    </div>
+
+    <div id="status" class="status">시작하면 마이크가 계속 듣고, 맞히면 바로 다음 문제로 넘어갑니다.</div>
 </div>
 
 <script>
-const target = "{safe_target}".toLowerCase();
+const questions = {questions_json};
+const passRatio = {pass_ratio} / 100;
+const showHint = {hint_value};
+
+let currentIndex = 0;
+let score = 0;
+let recognition = null;
+let gameStarted = false;
+let recognizing = false;
+let locked = false;
+
+const qNum = document.getElementById("qNum");
+const total = document.getElementById("total");
+const scoreBox = document.getElementById("score");
+const categoryBox = document.getElementById("category");
+const koreanBox = document.getElementById("korean");
+const hintBox = document.getElementById("hint");
+const bubble = document.getElementById("bubble");
+const statusBox = document.getElementById("status");
+const answerBox = document.getElementById("answer");
+
+total.innerText = questions.length;
 
 function normalizeText(text) {{
     return text
@@ -456,6 +457,40 @@ function normalizeText(text) {{
         .replace(/[.,!?]/g, "")
         .replace(/\\s+/g, " ")
         .trim();
+}}
+
+function makeHint(sentence) {{
+    return sentence
+        .split(" ")
+        .map(w => w[0])
+        .join(" ");
+}}
+
+function showCurrentQuestion() {{
+    if (currentIndex >= questions.length) {{
+        endGame();
+        return;
+    }}
+
+    locked = false;
+    bubble.classList.remove("pop");
+    bubble.style.opacity = "1";
+    bubble.style.transform = "scale(1)";
+    answerBox.style.display = "none";
+
+    const q = questions[currentIndex];
+
+    qNum.innerText = currentIndex + 1;
+    categoryBox.innerText = q.category;
+    koreanBox.innerText = q.korean;
+
+    if (showHint) {{
+        hintBox.innerText = "힌트: " + makeHint(q.sentence);
+    }} else {{
+        hintBox.innerText = "";
+    }}
+
+    statusBox.innerText = "🎧 듣는 중... 영어로 말해 보세요!";
 }}
 
 function similarityCheck(spoken, target) {{
@@ -477,16 +512,14 @@ function similarityCheck(spoken, target) {{
     }}
 
     let ratio = matched / targetWords.length;
-
-    // 너무 엄격하지 않게 70% 이상 맞으면 성공
-    return ratio >= 0.7;
+    return ratio >= passRatio;
 }}
 
 function showEffects() {{
     const wrap = document.querySelector(".game-wrap");
     const icons = ["💥", "✨", "🎉", "⭐", "👏", "🌟"];
 
-    for (let i = 0; i < 12; i++) {{
+    for (let i = 0; i < 10; i++) {{
         const e = document.createElement("div");
         e.className = "effect";
         e.innerText = icons[Math.floor(Math.random() * icons.length)];
@@ -496,78 +529,153 @@ function showEffects() {{
 
         setTimeout(() => {{
             e.remove();
-        }}, 850);
+        }}, 800);
     }}
 }}
 
-function startRecognition() {{
+function correctAnswer() {{
+    if (locked) return;
+    locked = true;
+
+    score++;
+    scoreBox.innerText = score;
+
+    statusBox.innerText = "✅ 정답! 다음 문제로 넘어갑니다.";
+    answerBox.innerText = questions[currentIndex].sentence;
+    answerBox.style.display = "block";
+
+    bubble.classList.add("pop");
+    showEffects();
+
+    setTimeout(() => {{
+        currentIndex++;
+        showCurrentQuestion();
+    }}, 800);
+}}
+
+function skipQuestion() {{
+    if (!gameStarted) return;
+
+    answerBox.innerText = "정답: " + questions[currentIndex].sentence;
+    answerBox.style.display = "block";
+
+    setTimeout(() => {{
+        currentIndex++;
+        showCurrentQuestion();
+    }}, 500);
+}}
+
+function showAnswer() {{
+    if (!gameStarted) return;
+    answerBox.innerText = "정답: " + questions[currentIndex].sentence;
+    answerBox.style.display = "block";
+}}
+
+function startGame() {{
+    if (gameStarted) return;
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const status = document.getElementById("status");
-    const bubble = document.getElementById("bubble");
-    const success = document.getElementById("success");
 
     if (!SpeechRecognition) {{
-        status.innerText = "❌ 이 브라우저는 음성 인식을 지원하지 않습니다. Chrome으로 접속해 주세요.";
+        statusBox.innerText = "❌ 이 브라우저는 음성 인식을 지원하지 않습니다. Chrome으로 접속해 주세요.";
         return;
     }}
 
-    const recognition = new SpeechRecognition();
+    gameStarted = true;
+    currentIndex = 0;
+    score = 0;
+    scoreBox.innerText = score;
+
+    recognition = new SpeechRecognition();
     recognition.lang = "en-US";
-    recognition.continuous = false;
+    recognition.continuous = true;
     recognition.interimResults = true;
 
-    status.innerText = "🎧 듣는 중입니다. 영어로 말해 보세요!";
+    recognition.onstart = function() {{
+        recognizing = true;
+        statusBox.innerText = "🎧 듣는 중...";
+    }};
 
     recognition.onresult = function(event) {{
+        if (!gameStarted || locked || currentIndex >= questions.length) return;
+
         let transcript = "";
 
         for (let i = event.resultIndex; i < event.results.length; i++) {{
             transcript += event.results[i][0].transcript;
         }}
 
-        status.innerText = "🗣️ 인식된 말: " + transcript;
+        statusBox.innerText = "🗣️ " + transcript;
+
+        const target = questions[currentIndex].sentence;
 
         if (similarityCheck(transcript, target)) {{
-            bubble.classList.add("pop");
-            success.style.display = "block";
-            status.innerText = "✅ 정답으로 인식되었습니다!";
-            showEffects();
-
-            setTimeout(() => {{
-                bubble.innerHTML = "🎉 성공!";
-                bubble.style.opacity = "1";
-                bubble.style.transform = "scale(1)";
-                bubble.classList.remove("pop");
-            }}, 600);
-
-            recognition.stop();
+            correctAnswer();
         }}
     }};
 
     recognition.onerror = function(event) {{
-        status.innerText = "⚠️ 마이크 오류: " + event.error;
+        statusBox.innerText = "⚠️ 마이크 오류: " + event.error;
     }};
 
     recognition.onend = function() {{
-        if (success.style.display !== "block") {{
-            status.innerText += " / 다시 시도해 보세요.";
+        recognizing = false;
+        if (gameStarted && currentIndex < questions.length) {{
+            try {{
+                recognition.start();
+            }} catch(e) {{}}
         }}
     }};
 
+    showCurrentQuestion();
     recognition.start();
+}}
+
+function endGame() {{
+    gameStarted = false;
+
+    if (recognition) {{
+        try {{
+            recognition.stop();
+        }} catch(e) {{}}
+    }}
+
+    categoryBox.innerText = "🎉 게임 종료";
+    koreanBox.innerText = "최종 점수: " + score + " / " + questions.length;
+    hintBox.innerText = "수고했습니다!";
+    answerBox.style.display = "none";
+    statusBox.innerText = "다시 하려면 페이지를 새로고침하거나 게임 시작을 다시 눌러 주세요.";
 }}
 </script>
 </body>
 </html>
 """
 
-components.html(speech_html, height=380)
+components.html(game_html, height=540)
 
 st.markdown("---")
 
 # =========================================================
-# 정답 보기 + 원어민 발음
+# 아래는 기존 정답 확인용 영역 유지
 # =========================================================
+st.markdown("### 📘 정답 확인용")
+
+question_labels = [
+    f"{i + 1}. {q['korean']}"
+    for i, q in enumerate(filtered_questions)
+]
+
+selected_label = st.selectbox(
+    "정답과 발음을 확인할 문제를 고르세요.",
+    question_labels
+)
+
+selected_index = question_labels.index(selected_label)
+current_q = filtered_questions[selected_index]
+
+if "show_answer" not in st.session_state:
+    st.session_state.show_answer = False
+
 if st.button("✅ 정답 보기"):
     st.session_state.show_answer = True
 
@@ -583,23 +691,9 @@ if st.session_state.show_answer:
     )
 
     st.markdown("### 🔊 원어민 발음")
-
     audio = make_tts_audio(current_q["sentence"])
     st.audio(audio, format="audio/mp3")
 
-st.markdown("---")
-
-# =========================================================
-# 버튼
-# =========================================================
-col1, col2 = st.columns(2)
-
-with col1:
-    if st.button("🙈 정답 가리기"):
-        st.session_state.show_answer = False
-        st.rerun()
-
-with col2:
-    if st.button("🔄 다시 연습하기"):
-        st.session_state.show_answer = False
-        st.rerun()
+if st.button("🙈 정답 가리기"):
+    st.session_state.show_answer = False
+    st.rerun()
