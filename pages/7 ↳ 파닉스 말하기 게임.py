@@ -1,124 +1,18 @@
 import streamlit as st
-import random
-from streamlit_mic_recorder import mic_recorder
-import speech_recognition as sr
-import io
+import streamlit.components.v1 as components
+import json
 
 # =========================
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Phonics Speaking Boom Game",
-    page_icon="💥",
+    page_title="Phonics Mole Speaking Game",
+    page_icon="🕳️",
     layout="wide"
 )
 
-st.title("💥 Phonics Speaking Boom Game")
-st.caption("단어가 차례대로 내려오고, 말하면 단어가 터지는 말하기 게임입니다.")
-
-# =========================
-# CSS
-# =========================
-st.markdown(
-    """
-    <style>
-    .game-box {
-        height: 560px;
-        border-radius: 28px;
-        background: linear-gradient(180deg, #dbeafe 0%, #fef9c3 55%, #ffe4e6 100%);
-        border: 4px solid #93c5fd;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.15);
-        margin-bottom: 20px;
-    }
-
-    .falling-word {
-        position: absolute;
-        background: white;
-        color: #111827;
-        font-size: 38px;
-        font-weight: 900;
-        padding: 12px 26px;
-        border-radius: 24px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.20);
-        border: 4px solid #fb923c;
-        min-width: 130px;
-        text-align: center;
-    }
-
-    .score-card {
-        background: linear-gradient(135deg, #fff7ed, #fef3c7);
-        border-radius: 22px;
-        padding: 18px;
-        text-align: center;
-        font-size: 24px;
-        font-weight: 900;
-        border: 3px solid #fed7aa;
-        box-shadow: 0 5px 12px rgba(0,0,0,0.10);
-    }
-
-    .message-box {
-        background: linear-gradient(135deg, #fef3c7, #fed7aa);
-        border: 4px solid #fb923c;
-        border-radius: 26px;
-        padding: 18px;
-        text-align: center;
-        font-size: 30px;
-        font-weight: 900;
-        color: #7c2d12;
-        margin-bottom: 16px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.14);
-    }
-
-    .boom-box {
-        background: linear-gradient(135deg, #fee2e2, #fca5a5);
-        border: 4px solid #ef4444;
-        border-radius: 28px;
-        padding: 22px;
-        text-align: center;
-        font-size: 44px;
-        font-weight: 900;
-        color: #7f1d1d;
-        margin-bottom: 18px;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.18);
-        animation: pop 0.5s ease-in-out;
-    }
-
-    @keyframes pop {
-        0% { transform: scale(0.7); opacity: 0.3; }
-        50% { transform: scale(1.15); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    .ready-box {
-        background: #ffffff;
-        border-radius: 26px;
-        padding: 28px;
-        margin-top: 20px;
-        border: 3px solid #dbeafe;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.10);
-        text-align: center;
-    }
-
-    .ready-title {
-        font-size: 54px;
-        font-weight: 900;
-        color: #1f2937;
-    }
-
-    .word-preview {
-        background: #f8fafc;
-        border-radius: 20px;
-        padding: 18px;
-        border: 2px solid #e2e8f0;
-        font-size: 20px;
-        line-height: 1.8;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+st.title("🕳️ Phonics Mole Speaking Game")
+st.caption("단어 두더지가 튀어나오면 영어로 말해 보세요. 맞히면 팡! 하고 터집니다.")
 
 # =========================
 # 단어 데이터
@@ -162,125 +56,7 @@ word_sets = {
 }
 
 # =========================
-# 세션 상태 초기화
-# =========================
-if "game_started" not in st.session_state:
-    st.session_state.game_started = False
-
-if "falling_words" not in st.session_state:
-    st.session_state.falling_words = []
-
-if "score" not in st.session_state:
-    st.session_state.score = 0
-
-if "lives" not in st.session_state:
-    st.session_state.lives = 5
-
-if "message" not in st.session_state:
-    st.session_state.message = "게임을 시작해 보세요!"
-
-if "used_words" not in st.session_state:
-    st.session_state.used_words = []
-
-if "boom_word" not in st.session_state:
-    st.session_state.boom_word = ""
-
-if "last_recognized" not in st.session_state:
-    st.session_state.last_recognized = ""
-
-if "audio_debug" not in st.session_state:
-    st.session_state.audio_debug = ""
-
-if "step_count" not in st.session_state:
-    st.session_state.step_count = 0
-
-# =========================
-# 음성 인식 함수
-# =========================
-def recognize_speech(audio_bytes):
-    recognizer = sr.Recognizer()
-
-    try:
-        audio_file = sr.AudioFile(io.BytesIO(audio_bytes))
-
-        with audio_file as source:
-            audio_data = recognizer.record(source)
-
-        text = recognizer.recognize_google(audio_data, language="en-US")
-        return text.lower().strip()
-
-    except sr.UnknownValueError:
-        return ""
-    except sr.RequestError:
-        return ""
-    except Exception:
-        return ""
-
-# =========================
-# 단어 관련 함수
-# =========================
-def get_random_word(words):
-    remaining = [w for w in words if w not in st.session_state.used_words]
-
-    if len(remaining) == 0:
-        st.session_state.used_words = []
-        remaining = words[:]
-
-    word = random.choice(remaining)
-    st.session_state.used_words.append(word)
-    return word
-
-
-def add_falling_word(words):
-    word = get_random_word(words)
-
-    # 차례대로 내려오게 하기 위해 y 위치를 다르게 시작
-    current_count = len(st.session_state.falling_words)
-
-    new_item = {
-        "word": word,
-        "x": random.randint(8, 78),
-        "y": -120 - (current_count * 110),
-        "id": random.randint(100000, 999999)
-    }
-
-    st.session_state.falling_words.append(new_item)
-
-
-def move_words_down(words, word_count, fall_step):
-    new_words = []
-
-    for item in st.session_state.falling_words:
-        item["y"] += fall_step
-
-        if item["y"] >= 500:
-            st.session_state.lives -= 1
-            st.session_state.message = f"😢 '{item['word']}'를 놓쳤어요!"
-        else:
-            new_words.append(item)
-
-    st.session_state.falling_words = new_words
-
-    while len(st.session_state.falling_words) < word_count:
-        add_falling_word(words)
-
-    st.session_state.step_count += 1
-
-
-def reset_game():
-    st.session_state.game_started = False
-    st.session_state.falling_words = []
-    st.session_state.score = 0
-    st.session_state.lives = 5
-    st.session_state.message = "게임을 다시 시작해 보세요!"
-    st.session_state.used_words = []
-    st.session_state.boom_word = ""
-    st.session_state.last_recognized = ""
-    st.session_state.audio_debug = ""
-    st.session_state.step_count = 0
-
-# =========================
-# 사이드바
+# 사이드바 설정
 # =========================
 st.sidebar.header("🎲 게임 설정")
 
@@ -289,20 +65,20 @@ category = st.sidebar.selectbox(
     list(word_sets.keys())
 )
 
-word_count = st.sidebar.slider(
-    "화면에 나오는 단어 수",
+mole_count = st.sidebar.slider(
+    "한 번에 나오는 두더지 수",
+    min_value=1,
+    max_value=5,
+    value=3,
+    step=1
+)
+
+show_time = st.sidebar.slider(
+    "두더지가 나와 있는 시간",
     min_value=2,
     max_value=8,
     value=5,
     step=1
-)
-
-fall_step = st.sidebar.slider(
-    "한 번에 내려오는 거리",
-    min_value=20,
-    max_value=90,
-    value=45,
-    step=5
 )
 
 target_score = st.sidebar.slider(
@@ -313,235 +89,675 @@ target_score = st.sidebar.slider(
     step=5
 )
 
-words = word_sets[category]
+lives = st.sidebar.slider(
+    "기회",
+    min_value=3,
+    max_value=10,
+    value=5,
+    step=1
+)
+
+pass_ratio = st.sidebar.slider(
+    "정답 인정 기준",
+    min_value=50,
+    max_value=100,
+    value=70,
+    step=5,
+    help="낮을수록 발음을 더 너그럽게 인정합니다."
+)
 
 st.sidebar.markdown("---")
 st.sidebar.write("📌 사용 방법")
 st.sidebar.write("1. 게임 시작")
-st.sidebar.write("2. 단어 진행 버튼을 누르면 차례대로 내려옴")
-st.sidebar.write("3. 보이는 단어 중 하나 말하기")
-st.sidebar.write("4. 인식되면 해당 단어가 터짐")
-st.sidebar.write("5. 다시 단어 진행 버튼을 눌러 계속 진행")
+st.sidebar.write("2. 두더지 단어가 튀어나옴")
+st.sidebar.write("3. 보이는 단어 중 하나를 말하기")
+st.sidebar.write("4. 인식되면 해당 두더지가 터짐")
+st.sidebar.write("5. 시간이 지나면 못 맞힌 단어는 사라지고 기회가 줄어듦")
+
+words = word_sets[category]
 
 # =========================
-# 점수판
+# 안내 박스
 # =========================
-col_score, col_life, col_target = st.columns(3)
-
-with col_score:
-    st.markdown(
-        f"""
-        <div class="score-card">
-            ⭐ 점수<br>{st.session_state.score}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with col_life:
-    st.markdown(
-        f"""
-        <div class="score-card">
-            ❤️ 기회<br>{st.session_state.lives}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-with col_target:
-    st.markdown(
-        f"""
-        <div class="score-card">
-            🎯 목표<br>{target_score}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-st.markdown("")
+st.markdown(
+    """
+    <div style="
+        background: linear-gradient(135deg, #fff7ed, #eef7ff);
+        border: 2px solid #fed7aa;
+        border-radius: 24px;
+        padding: 20px 24px;
+        margin: 16px 0 22px 0;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        font-size: 20px;
+        line-height: 1.7;
+    ">
+        🕳️ <b>두더지 단어가 튀어나오면 바로 영어로 말하세요.</b><br>
+        🎤 맞게 인식되면 단어가 <b>팡!</b> 하고 터지고 점수가 올라갑니다.<br>
+        📱 폰에서는 Chrome으로 접속하고 마이크 권한을 허용해 주세요.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================
-# 버튼
+# HTML 게임 데이터
 # =========================
-col_start, col_move, col_reset = st.columns(3)
+game_data = {
+    "words": words,
+    "moleCount": mole_count,
+    "showTime": show_time,
+    "targetScore": target_score,
+    "lives": lives,
+    "passRatio": pass_ratio / 100
+}
 
-with col_start:
-    if st.button("▶️ 게임 시작", use_container_width=True):
-        st.session_state.game_started = True
-        st.session_state.score = 0
-        st.session_state.lives = 5
-        st.session_state.falling_words = []
-        st.session_state.used_words = []
-        st.session_state.boom_word = ""
-        st.session_state.last_recognized = ""
-        st.session_state.audio_debug = ""
-        st.session_state.step_count = 0
-        st.session_state.message = "단어가 차례대로 내려옵니다. 보이는 단어를 말해 보세요!"
-
-        for _ in range(word_count):
-            add_falling_word(words)
-
-        # 시작하자마자 조금 보이도록 이동
-        move_words_down(words, word_count, fall_step)
-
-        st.rerun()
-
-with col_move:
-    if st.button("⬇️ 단어 진행", use_container_width=True):
-        if st.session_state.game_started:
-            move_words_down(words, word_count, fall_step)
-            st.rerun()
-
-with col_reset:
-    if st.button("🔄 다시 시작", use_container_width=True):
-        reset_game()
-        st.rerun()
+game_json = json.dumps(game_data, ensure_ascii=False)
 
 # =========================
-# 게임 화면
+# 두더지 게임
 # =========================
-if st.session_state.game_started:
+game_html = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    if st.session_state.score >= target_score:
-        st.balloons()
-        st.success("🎉 목표 점수 달성! 훌륭합니다!")
-        st.session_state.game_started = False
+<style>
+    body {{
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: transparent;
+    }}
 
-    elif st.session_state.lives <= 0:
-        st.error("💥 Game Over! 다시 도전해 봅시다.")
-        st.session_state.game_started = False
+    .game-wrap {{
+        width: 100%;
+        min-height: 720px;
+        background: linear-gradient(180deg, #dbeafe 0%, #dcfce7 55%, #fef9c3 100%);
+        border-radius: 32px;
+        border: 4px solid #93c5fd;
+        box-shadow: 0 10px 28px rgba(0,0,0,0.14);
+        padding: 24px;
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden;
+    }}
 
-    else:
-        while len(st.session_state.falling_words) < word_count:
-            add_falling_word(words)
+    .top-bar {{
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }}
 
-        # BOOM 효과
-        if st.session_state.boom_word:
-            st.markdown(
-                f"""
-                <div class="boom-box">
-                    💥 BOOM! '{st.session_state.boom_word}' 터졌다!
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            st.session_state.boom_word = ""
+    .score-card {{
+        flex: 1;
+        min-width: 140px;
+        background: linear-gradient(135deg, #fff7ed, #fef3c7);
+        border-radius: 22px;
+        padding: 16px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 900;
+        border: 3px solid #fed7aa;
+        box-shadow: 0 5px 12px rgba(0,0,0,0.10);
+        color: #334155;
+    }}
 
-        # 메시지
-        st.markdown(
-            f"""
-            <div class="message-box">
-                {st.session_state.message}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    .message-box {{
+        background: linear-gradient(135deg, #fef3c7, #fed7aa);
+        border: 4px solid #fb923c;
+        border-radius: 26px;
+        padding: 16px;
+        text-align: center;
+        font-size: 26px;
+        font-weight: 900;
+        color: #7c2d12;
+        margin-bottom: 18px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.14);
+        min-height: 36px;
+    }}
 
-        # 게임 박스
-        words_html = ""
+    .field {{
+        position: relative;
+        width: 100%;
+        height: 420px;
+        background: linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
+        border-radius: 30px;
+        border: 4px solid rgba(255,255,255,0.85);
+        overflow: hidden;
+        box-shadow: inset 0 8px 18px rgba(0,0,0,0.08);
+    }}
 
-        for item in st.session_state.falling_words:
-            words_html += f"""
-            <div class="falling-word" style="left:{item['x']}%; top:{item['y']}px;">
-                {item['word']}
-            </div>
-            """
+    .hole {{
+        position: absolute;
+        width: 180px;
+        height: 62px;
+        background: #6b3f2a;
+        border-radius: 50%;
+        box-shadow: inset 0 8px 13px rgba(0,0,0,0.38);
+        z-index: 1;
+    }}
 
-        st.markdown(
-            f"""
-            <div class="game-box">
-                {words_html}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    .mole {{
+        position: absolute;
+        width: 190px;
+        min-height: 118px;
+        background: linear-gradient(135deg, #ffffff, #fff7ed);
+        border: 4px solid #fb923c;
+        border-radius: 34px;
+        box-shadow: 0 10px 22px rgba(0,0,0,0.20);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-size: 40px;
+        font-weight: 900;
+        color: #111827;
+        transform: translateY(80px) scale(0.7);
+        opacity: 0;
+        transition: all 0.23s ease;
+        z-index: 5;
+        padding: 8px;
+        box-sizing: border-box;
+    }}
 
-        # 마이크
-        st.markdown("### 🎤 보이는 단어 중 하나를 말해 보세요")
+    .mole.show {{
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }}
 
-        audio = mic_recorder(
-            start_prompt="🎤 말하기 시작",
-            stop_prompt="💥 말했어요! 터뜨리기",
-            just_once=True,
-            use_container_width=True,
-            key="stable_mic"
-        )
+    .mole.pop {{
+        animation: pop 0.45s forwards;
+    }}
 
-        if audio:
-            audio_bytes = audio["bytes"]
+    @keyframes pop {{
+        0% {{
+            transform: scale(1);
+            opacity: 1;
+        }}
+        50% {{
+            transform: scale(1.5) rotate(5deg);
+            opacity: 0.9;
+        }}
+        100% {{
+            transform: scale(0);
+            opacity: 0;
+        }}
+    }}
 
-            st.session_state.audio_debug = f"녹음 파일 크기: {len(audio_bytes)} bytes"
+    .control-row {{
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 24px;
+    }}
 
-            recognized = recognize_speech(audio_bytes)
-            st.session_state.last_recognized = recognized
+    .btn {{
+        border: none;
+        border-radius: 999px;
+        padding: 14px 30px;
+        font-size: 22px;
+        font-weight: 900;
+        color: white;
+        background: linear-gradient(135deg, #ff7eb3, #ffb86c);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }}
 
-            matched_word = None
+    .sub-btn {{
+        background: linear-gradient(135deg, #60a5fa, #93c5fd);
+    }}
 
-            for item in st.session_state.falling_words:
-                target_word = item["word"].lower()
+    .btn:active {{
+        transform: scale(0.96);
+    }}
 
-                if recognized == target_word:
-                    matched_word = item
-                    break
+    .recognized {{
+        margin-top: 18px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: 900;
+        color: #475569;
+        min-height: 32px;
+        line-height: 1.5;
+    }}
 
-                if target_word in recognized.split():
-                    matched_word = item
-                    break
+    .effect {{
+        position: absolute;
+        font-size: 44px;
+        animation: floatUp 0.75s forwards;
+        pointer-events: none;
+        z-index: 30;
+    }}
 
-            if matched_word:
-                st.session_state.score += 1
-                st.session_state.boom_word = matched_word["word"]
-                st.session_state.message = f"✅ 성공! '{matched_word['word']}' 단어를 정확히 말했어요!"
+    @keyframes floatUp {{
+        0% {{
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }}
+        100% {{
+            opacity: 0;
+            transform: translateY(-70px) scale(1.6);
+        }}
+    }}
 
-                st.session_state.falling_words = [
-                    item for item in st.session_state.falling_words
-                    if item["id"] != matched_word["id"]
-                ]
+    @media (max-width: 700px) {{
+        .game-wrap {{
+            padding: 14px;
+            min-height: 670px;
+        }}
 
-                add_falling_word(words)
+        .field {{
+            height: 370px;
+        }}
 
-                st.rerun()
+        .score-card {{
+            font-size: 18px;
+            padding: 12px;
+        }}
 
-            else:
-                if recognized:
-                    st.session_state.message = f"🤔 '{recognized}'라고 들렸어요. 화면에 있는 단어를 다시 말해 봅시다."
-                else:
-                    st.session_state.message = "🤔 인식하지 못했어요. 더 크게, 또박또박 말해 보세요."
+        .message-box {{
+            font-size: 21px;
+        }}
 
-                st.rerun()
+        .mole {{
+            width: 138px;
+            min-height: 95px;
+            font-size: 30px;
+            border-radius: 26px;
+        }}
 
-        if st.session_state.last_recognized:
-            st.info(f"🗣️ 마지막 인식: {st.session_state.last_recognized}")
+        .hole {{
+            width: 130px;
+            height: 46px;
+        }}
 
-        if st.session_state.audio_debug:
-            st.caption(st.session_state.audio_debug)
+        .btn {{
+            font-size: 19px;
+            padding: 12px 20px;
+        }}
+    }}
+</style>
+</head>
 
-else:
-    st.markdown(
-        """
-        <div class="ready-box">
-            <div class="ready-title">💥 Ready?</div>
-            <p style="font-size:21px;">
-                게임 시작 버튼을 누르면 단어들이 차례대로 위에서 아래로 내려옵니다.
-            </p>
-            <p style="font-size:19px;">
-                학생은 보이는 단어 중 하나를 골라 크게 말합니다.
-            </p>
-            <p style="font-size:19px;">
-                발음이 인식되면 그 단어가 <b>💥 BOOM!</b> 하고 터집니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+<body>
+<div class="game-wrap">
+    <div class="top-bar">
+        <div class="score-card">⭐ 점수<br><span id="score">0</span></div>
+        <div class="score-card">❤️ 기회<br><span id="lives">0</span></div>
+        <div class="score-card">🎯 목표<br><span id="target">0</span></div>
+        <div class="score-card">⏱️ 시간<br><span id="timeLeft">0</span>초</div>
+    </div>
 
-    st.markdown("### 📚 연습 단어 미리 보기")
+    <div id="message" class="message-box">
+        게임 시작을 누르면 두더지 단어가 튀어나옵니다!
+    </div>
 
-    st.markdown(
-        f"""
-        <div class="word-preview">
-            {", ".join(words)}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    <div class="field" id="field">
+        <div class="hole" style="left:8%; top:74%;"></div>
+        <div class="hole" style="left:39%; top:74%;"></div>
+        <div class="hole" style="left:70%; top:74%;"></div>
+
+        <div class="hole" style="left:21%; top:45%;"></div>
+        <div class="hole" style="left:57%; top:45%;"></div>
+    </div>
+
+    <div class="control-row">
+        <button class="btn" onclick="startGame()">🎤 게임 시작</button>
+        <button class="btn sub-btn" onclick="nextRound()">➡️ 다음 단어</button>
+        <button class="btn sub-btn" onclick="resetGame()">🔄 다시 시작</button>
+    </div>
+
+    <div id="recognized" class="recognized">
+        마이크 권한을 허용하고, 보이는 단어 중 하나를 말해 보세요.
+    </div>
+</div>
+
+<script>
+const config = {game_json};
+
+let words = config.words;
+let moleCount = config.moleCount;
+let showTime = config.showTime;
+let targetScore = config.targetScore;
+let maxLives = config.lives;
+let passRatio = config.passRatio;
+
+let score = 0;
+let lives = maxLives;
+let gameStarted = false;
+let activeMoles = [];
+let usedWords = [];
+let recognition = null;
+let timer = null;
+let timeLeft = showTime;
+let roundLocked = false;
+
+const field = document.getElementById("field");
+const scoreBox = document.getElementById("score");
+const livesBox = document.getElementById("lives");
+const targetBox = document.getElementById("target");
+const timeLeftBox = document.getElementById("timeLeft");
+const messageBox = document.getElementById("message");
+const recognizedBox = document.getElementById("recognized");
+
+targetBox.innerText = targetScore;
+livesBox.innerText = lives;
+timeLeftBox.innerText = showTime;
+
+const positions = [
+    {{left: "8%", top: "47%"}},
+    {{left: "39%", top: "47%"}},
+    {{left: "70%", top: "47%"}},
+    {{left: "21%", top: "18%"}},
+    {{left: "57%", top: "18%"}}
+];
+
+function normalizeText(text) {{
+    return text
+        .toLowerCase()
+        .replace(/[.,!?]/g, "")
+        .replace(/\\s+/g, " ")
+        .trim();
+}}
+
+function shuffle(array) {{
+    for (let i = array.length - 1; i > 0; i--) {{
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }}
+    return array;
+}}
+
+function getRandomWord() {{
+    let remaining = words.filter(w => !usedWords.includes(w));
+
+    if (remaining.length === 0) {{
+        usedWords = [];
+        remaining = [...words];
+    }}
+
+    const word = remaining[Math.floor(Math.random() * remaining.length)];
+    usedWords.push(word);
+    return word;
+}}
+
+function similarityCheck(spoken, target) {{
+    let s = normalizeText(spoken);
+    let t = normalizeText(target);
+
+    if (s === t) return true;
+
+    let spokenWords = s.split(" ");
+    if (spokenWords.includes(t)) return true;
+
+    let matched = 0;
+    for (let i = 0; i < Math.min(s.length, t.length); i++) {{
+        if (s[i] === t[i]) matched++;
+    }}
+
+    let ratio = matched / t.length;
+    return ratio >= passRatio;
+}}
+
+function clearMoles() {{
+    activeMoles.forEach(m => {{
+        if (m.element) m.element.remove();
+    }});
+    activeMoles = [];
+}}
+
+function createMoles() {{
+    clearMoles();
+
+    let selectedPositions = shuffle([...positions]).slice(0, moleCount);
+
+    selectedPositions.forEach((pos, index) => {{
+        const word = getRandomWord();
+
+        const mole = document.createElement("div");
+        mole.className = "mole";
+        mole.innerText = word;
+        mole.style.left = pos.left;
+        mole.style.top = pos.top;
+        mole.dataset.word = word;
+
+        field.appendChild(mole);
+
+        activeMoles.push({{
+            word: word,
+            element: mole,
+            popped: false
+        }});
+
+        setTimeout(() => {{
+            mole.classList.add("show");
+        }}, 120 + index * 100);
+    }});
+}}
+
+function startTimer() {{
+    clearInterval(timer);
+    timeLeft = showTime;
+    timeLeftBox.innerText = timeLeft;
+
+    timer = setInterval(() => {{
+        timeLeft--;
+        timeLeftBox.innerText = timeLeft;
+
+        if (timeLeft <= 0) {{
+            clearInterval(timer);
+
+            if (!roundLocked) {{
+                lives--;
+                livesBox.innerText = lives;
+
+                if (lives <= 0) {{
+                    endGame(false);
+                    return;
+                }}
+
+                messageBox.innerText = "😢 시간 끝! 단어를 놓쳤어요.";
+                nextRoundDelay(800);
+            }}
+        }}
+    }}, 1000);
+}}
+
+function nextRound() {{
+    if (!gameStarted) return;
+
+    roundLocked = false;
+    messageBox.innerText = "🎧 듣는 중... 보이는 단어를 말해 보세요!";
+    createMoles();
+    startTimer();
+}}
+
+function nextRoundDelay(ms) {{
+    setTimeout(() => {{
+        nextRound();
+    }}, ms);
+}}
+
+function showEffects() {{
+    const icons = ["💥", "✨", "🎉", "⭐", "👏", "🌟"];
+
+    for (let i = 0; i < 12; i++) {{
+        const e = document.createElement("div");
+        e.className = "effect";
+        e.innerText = icons[Math.floor(Math.random() * icons.length)];
+        e.style.left = Math.random() * 80 + 10 + "%";
+        e.style.top = Math.random() * 50 + 15 + "%";
+        field.appendChild(e);
+
+        setTimeout(() => {{
+            e.remove();
+        }}, 800);
+    }}
+}}
+
+function popMole(moleObj) {{
+    if (moleObj.popped) return;
+
+    moleObj.popped = true;
+    moleObj.element.classList.add("pop");
+
+    score++;
+    scoreBox.innerText = score;
+
+    messageBox.innerText = "💥 BOOM! '" + moleObj.word + "' 터졌다!";
+    showEffects();
+
+    setTimeout(() => {{
+        if (moleObj.element) moleObj.element.remove();
+    }}, 420);
+
+    activeMoles = activeMoles.filter(m => !m.popped);
+
+    if (score >= targetScore) {{
+        endGame(true);
+        return;
+    }}
+
+    // 현재 화면의 두더지를 모두 맞히면 바로 다음 라운드
+    if (activeMoles.length === 0) {{
+        clearInterval(timer);
+        nextRoundDelay(650);
+    }}
+}}
+
+function checkSpeech(transcript) {{
+    if (!gameStarted || roundLocked) return;
+
+    recognizedBox.innerText = "🗣️ 인식: " + transcript;
+
+    for (let m of activeMoles) {{
+        if (similarityCheck(transcript, m.word)) {{
+            popMole(m);
+            return;
+        }}
+    }}
+}}
+
+function startRecognition() {{
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {{
+        recognizedBox.innerText = "❌ 이 브라우저는 음성 인식을 지원하지 않습니다. Chrome으로 접속해 주세요.";
+        return false;
+    }}
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.continuous = true;
+    recognition.interimResults = true;
+
+    recognition.onstart = function() {{
+        recognizedBox.innerText = "🎧 마이크가 듣고 있습니다.";
+    }};
+
+    recognition.onresult = function(event) {{
+        let transcript = "";
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {{
+            transcript += event.results[i][0].transcript;
+        }}
+
+        checkSpeech(transcript);
+    }};
+
+    recognition.onerror = function(event) {{
+        recognizedBox.innerText = "⚠️ 마이크 오류: " + event.error;
+    }};
+
+    recognition.onend = function() {{
+        if (gameStarted) {{
+            try {{
+                recognition.start();
+            }} catch(e) {{}}
+        }}
+    }};
+
+    try {{
+        recognition.start();
+        return true;
+    }} catch(e) {{
+        recognizedBox.innerText = "⚠️ 마이크를 다시 시작해 주세요.";
+        return false;
+    }}
+}}
+
+function startGame() {{
+    if (gameStarted) return;
+
+    score = 0;
+    lives = maxLives;
+    usedWords = [];
+    activeMoles = [];
+    roundLocked = false;
+
+    scoreBox.innerText = score;
+    livesBox.innerText = lives;
+    timeLeftBox.innerText = showTime;
+
+    gameStarted = true;
+
+    const ok = startRecognition();
+    if (!ok) {{
+        gameStarted = false;
+        return;
+    }}
+
+    messageBox.innerText = "🎮 게임 시작! 튀어나온 단어를 말해 보세요!";
+    nextRound();
+}}
+
+function resetGame() {{
+    gameStarted = false;
+    clearInterval(timer);
+    clearMoles();
+
+    if (recognition) {{
+        try {{
+            recognition.stop();
+        }} catch(e) {{}}
+    }}
+
+    score = 0;
+    lives = maxLives;
+    usedWords = [];
+    roundLocked = false;
+
+    scoreBox.innerText = score;
+    livesBox.innerText = lives;
+    timeLeftBox.innerText = showTime;
+    messageBox.innerText = "게임 시작을 누르면 두더지 단어가 튀어나옵니다!";
+    recognizedBox.innerText = "마이크 권한을 허용하고, 보이는 단어 중 하나를 말해 보세요.";
+}}
+
+function endGame(success) {{
+    gameStarted = false;
+    clearInterval(timer);
+    clearMoles();
+
+    if (recognition) {{
+        try {{
+            recognition.stop();
+        }} catch(e) {{}}
+    }}
+
+    if (success) {{
+        messageBox.innerText = "🎉 목표 점수 달성! 훌륭합니다!";
+        recognizedBox.innerText = "최종 점수: " + score + "점";
+    }} else {{
+        messageBox.innerText = "💥 Game Over! 다시 도전해 봅시다.";
+        recognizedBox.innerText = "최종 점수: " + score + "점";
+    }}
+}}
+</script>
+</body>
+</html>
+"""
+
+components.html(game_html, height=780)
