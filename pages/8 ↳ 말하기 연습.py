@@ -1,11 +1,12 @@
 import streamlit as st
-from gtts import gTTS
-import io
 import streamlit.components.v1 as components
-import html
 import json
 
-st.set_page_config(page_title="문장 구조 말하기 게임", page_icon="🎤", layout="centered")
+st.set_page_config(
+    page_title="문장 구조 말하기 게임",
+    page_icon="🎤",
+    layout="centered"
+)
 
 # =========================================================
 # 디자인 CSS
@@ -57,41 +58,11 @@ st.markdown(
         margin: 0;
     }
 
-    .answer-card {
-        background: linear-gradient(135deg, #eef7ff, #ffffff);
-        border-radius: 26px;
-        padding: 24px 20px;
-        margin: 20px 0;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-        border: 1.5px solid #dbeafe;
-        text-align: center;
-    }
-
-    .answer-card p {
-        font-size: 20px;
-        color: #475569;
-        font-weight: 800;
-        margin-bottom: 12px;
-    }
-
-    .answer-card h2 {
-        color: #2563eb;
-        font-size: 32px;
-        font-weight: 900;
-        margin: 8px 0;
-        line-height: 1.35;
-    }
-
     .stButton > button {
         border-radius: 999px;
         font-weight: 800;
         padding: 0.45rem 1.1rem;
         border: 1.5px solid #d9e7ff;
-    }
-
-    .stButton > button:hover {
-        border-color: #60a5fa;
-        color: #2563eb;
     }
     </style>
     """,
@@ -111,17 +82,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.info("사용 방법: 문법 선택 → 게임 시작 → 한국어 문장을 영어로 말하기 → 맞으면 자동으로 다음 문제!")
-
-# =========================================================
-# TTS 함수
-# =========================================================
-def make_tts_audio(text):
-    tts = gTTS(text=text, lang="en", tld="com")
-    audio_fp = io.BytesIO()
-    tts.write_to_fp(audio_fp)
-    audio_fp.seek(0)
-    return audio_fp
+st.info("사용 방법: 문법 선택 → 게임 시작 → 한국어 문장을 영어로 말하기 → 맞으면 정답과 발음 확인!")
 
 # =========================================================
 # 말하기 문제
@@ -217,7 +178,7 @@ st.markdown(
     <div class="guide-card">
         <p>
             <b>게임 시작</b>을 누른 뒤, 화면에 나오는 한국어 문장을 영어로 말하세요.<br>
-            맞으면 카드가 터지고 <b>바로 다음 문제</b>로 넘어갑니다.
+            맞으면 카드가 터지고, <b>정답 문장과 원어민 발음 버튼</b>이 바로 나옵니다.
         </p>
     </div>
     """,
@@ -245,7 +206,7 @@ game_html = f"""
 
     .game-wrap {{
         width: 100%;
-        min-height: 460px;
+        min-height: 560px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -292,7 +253,7 @@ game_html = f"""
         border: 4px solid #ffd6ea;
         border-radius: 32px;
         width: 88%;
-        min-height: 130px;
+        min-height: 135px;
         padding: 24px 22px;
         text-align: center;
         box-shadow: 0 10px 24px rgba(0,0,0,0.14);
@@ -336,6 +297,33 @@ game_html = f"""
         }}
     }}
 
+    .answer-area {{
+        width: 88%;
+        margin-top: 18px;
+        background: rgba(255,255,255,0.96);
+        border: 2px solid #dbeafe;
+        border-radius: 26px;
+        padding: 18px 18px;
+        text-align: center;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+        display: none;
+    }}
+
+    .answer-label {{
+        font-size: 18px;
+        font-weight: 900;
+        color: #475569;
+        margin-bottom: 8px;
+    }}
+
+    .answer-sentence {{
+        font-size: 30px;
+        font-weight: 900;
+        color: #2563eb;
+        line-height: 1.35;
+        margin-bottom: 14px;
+    }}
+
     .btn-row {{
         display: flex;
         gap: 10px;
@@ -359,6 +347,12 @@ game_html = f"""
         background: linear-gradient(135deg, #60a5fa, #93c5fd);
     }}
 
+    .sound-btn {{
+        background: linear-gradient(135deg, #34d399, #60a5fa);
+        font-size: 19px;
+        padding: 12px 22px;
+    }}
+
     .btn:active {{
         transform: scale(0.96);
     }}
@@ -371,15 +365,6 @@ game_html = f"""
         text-align: center;
         min-height: 30px;
         line-height: 1.45;
-    }}
-
-    .answer {{
-        margin-top: 10px;
-        font-size: 21px;
-        font-weight: 900;
-        color: #2563eb;
-        display: none;
-        text-align: center;
     }}
 
     .effect {{
@@ -416,15 +401,19 @@ game_html = f"""
         <div id="hint" class="hint"></div>
     </div>
 
-    <div id="answer" class="answer"></div>
+    <div id="answerArea" class="answer-area">
+        <div class="answer-label">정답 문장</div>
+        <div id="answerSentence" class="answer-sentence"></div>
+        <button class="btn sound-btn" onclick="speakCurrentAnswer()">🔊 원어민 발음 듣기</button>
+    </div>
 
     <div class="btn-row">
         <button class="btn" onclick="startGame()">🎤 게임 시작</button>
         <button class="btn sub-btn" onclick="skipQuestion()">➡️ 넘기기</button>
-        <button class="btn sub-btn" onclick="showAnswer()">👀 정답</button>
+        <button class="btn sub-btn" onclick="showAnswer()">👀 정답 보기</button>
     </div>
 
-    <div id="status" class="status">시작하면 마이크가 계속 듣고, 맞히면 바로 다음 문제로 넘어갑니다.</div>
+    <div id="status" class="status">시작하면 마이크가 계속 듣고, 맞히면 정답과 발음 버튼이 바로 나옵니다.</div>
 </div>
 
 <script>
@@ -447,7 +436,8 @@ const koreanBox = document.getElementById("korean");
 const hintBox = document.getElementById("hint");
 const bubble = document.getElementById("bubble");
 const statusBox = document.getElementById("status");
-const answerBox = document.getElementById("answer");
+const answerArea = document.getElementById("answerArea");
+const answerSentence = document.getElementById("answerSentence");
 
 total.innerText = questions.length;
 
@@ -476,7 +466,7 @@ function showCurrentQuestion() {{
     bubble.classList.remove("pop");
     bubble.style.opacity = "1";
     bubble.style.transform = "scale(1)";
-    answerBox.style.display = "none";
+    answerArea.style.display = "none";
 
     const q = questions[currentIndex];
 
@@ -533,6 +523,34 @@ function showEffects() {{
     }}
 }}
 
+function showAnswerArea() {{
+    if (currentIndex >= questions.length) return;
+
+    answerSentence.innerText = questions[currentIndex].sentence;
+    answerArea.style.display = "block";
+}}
+
+function speakText(text) {{
+    if (!("speechSynthesis" in window)) {{
+        statusBox.innerText = "❌ 이 브라우저는 음성 재생을 지원하지 않습니다.";
+        return;
+    }}
+
+    window.speechSynthesis.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    utterance.rate = 0.85;
+    utterance.pitch = 1.0;
+
+    window.speechSynthesis.speak(utterance);
+}}
+
+function speakCurrentAnswer() {{
+    if (currentIndex >= questions.length) return;
+    speakText(questions[currentIndex].sentence);
+}}
+
 function correctAnswer() {{
     if (locked) return;
     locked = true;
@@ -540,35 +558,41 @@ function correctAnswer() {{
     score++;
     scoreBox.innerText = score;
 
-    statusBox.innerText = "✅ 정답! 다음 문제로 넘어갑니다.";
-    answerBox.innerText = questions[currentIndex].sentence;
-    answerBox.style.display = "block";
+    statusBox.innerText = "✅ 정답! 정답 문장과 발음을 확인하세요.";
+    showAnswerArea();
 
     bubble.classList.add("pop");
     showEffects();
 
+    // 맞히면 자동으로 발음도 한 번 들려줌
+    setTimeout(() => {{
+        speakCurrentAnswer();
+    }}, 350);
+
+    // 1.8초 뒤 다음 문제로 이동
     setTimeout(() => {{
         currentIndex++;
         showCurrentQuestion();
-    }}, 800);
+    }}, 1800);
 }}
 
 function skipQuestion() {{
     if (!gameStarted) return;
 
-    answerBox.innerText = "정답: " + questions[currentIndex].sentence;
-    answerBox.style.display = "block";
+    showAnswerArea();
+    statusBox.innerText = "➡️ 정답을 확인하고 다음 문제로 넘어갑니다.";
 
     setTimeout(() => {{
         currentIndex++;
         showCurrentQuestion();
-    }}, 500);
+    }}, 1000);
 }}
 
 function showAnswer() {{
     if (!gameStarted) return;
-    answerBox.innerText = "정답: " + questions[currentIndex].sentence;
-    answerBox.style.display = "block";
+
+    showAnswerArea();
+    statusBox.innerText = "👀 정답을 확인한 뒤, 발음 버튼을 눌러 들어보세요.";
 }}
 
 function startGame() {{
@@ -643,57 +667,12 @@ function endGame() {{
     categoryBox.innerText = "🎉 게임 종료";
     koreanBox.innerText = "최종 점수: " + score + " / " + questions.length;
     hintBox.innerText = "수고했습니다!";
-    answerBox.style.display = "none";
-    statusBox.innerText = "다시 하려면 페이지를 새로고침하거나 게임 시작을 다시 눌러 주세요.";
+    answerArea.style.display = "none";
+    statusBox.innerText = "다시 하려면 페이지를 새로고침하세요.";
 }}
 </script>
 </body>
 </html>
 """
 
-components.html(game_html, height=540)
-
-st.markdown("---")
-
-# =========================================================
-# 아래는 기존 정답 확인용 영역 유지
-# =========================================================
-st.markdown("### 📘 정답 확인용")
-
-question_labels = [
-    f"{i + 1}. {q['korean']}"
-    for i, q in enumerate(filtered_questions)
-]
-
-selected_label = st.selectbox(
-    "정답과 발음을 확인할 문제를 고르세요.",
-    question_labels
-)
-
-selected_index = question_labels.index(selected_label)
-current_q = filtered_questions[selected_index]
-
-if "show_answer" not in st.session_state:
-    st.session_state.show_answer = False
-
-if st.button("✅ 정답 보기"):
-    st.session_state.show_answer = True
-
-if st.session_state.show_answer:
-    st.markdown(
-        f"""
-        <div class="answer-card">
-            <p>정답 문장</p>
-            <h2>{current_q["sentence"]}</h2>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown("### 🔊 원어민 발음")
-    audio = make_tts_audio(current_q["sentence"])
-    st.audio(audio, format="audio/mp3")
-
-if st.button("🙈 정답 가리기"):
-    st.session_state.show_answer = False
-    st.rerun()
+components.html(game_html, height=620)
