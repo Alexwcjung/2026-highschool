@@ -7,23 +7,47 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🎤 말하면 단어가 터지는 파닉스 게임")
+st.title("🎤 말하면 단어가 터지는 영어 단어 게임")
 st.caption("폰에서 마이크를 허용하고, 떨어지는 단어를 말하면 단어가 터집니다!")
 
-words = [
+# -----------------------------
+# 단어 목록
+# -----------------------------
+all_words = [
     "cat", "dog", "sun", "run", "sit",
     "big", "red", "pen", "box", "cup",
-    "fish", "book", "milk", "jump", "bed"
+    "fish", "book", "milk", "jump", "bed",
+    "apple", "banana", "happy", "sad", "school",
+    "teacher", "student", "water", "chair", "desk",
+    "phone", "music", "pizza", "green", "blue"
 ]
 
+# -----------------------------
+# 조절 옵션 유지
+# -----------------------------
 speed = st.slider(
-    "🚀 단어 떨어지는 속도 조절",
+    "🚀 떨어지는 속도",
     min_value=1,
     max_value=10,
     value=4
 )
 
-word_list_js = str(words)
+word_count = st.slider(
+    "📚 사용할 단어 개수",
+    min_value=5,
+    max_value=len(all_words),
+    value=15
+)
+
+batch_count = st.slider(
+    "🌧️ 한 번에 떨어지는 단어 개수",
+    min_value=1,
+    max_value=5,
+    value=2
+)
+
+selected_words = all_words[:word_count]
+word_list_js = str(selected_words)
 
 html_code = f"""
 <!DOCTYPE html>
@@ -36,7 +60,7 @@ html_code = f"""
         margin: 0;
         overflow: hidden;
         font-family: Arial, sans-serif;
-        background: linear-gradient(180deg, #e0f7ff, #fff7d6);
+        background: linear-gradient(180deg, #dff7ff, #fff7d6);
     }}
 
     #gameArea {{
@@ -44,14 +68,15 @@ html_code = f"""
         width: 100%;
         height: 620px;
         overflow: hidden;
-        border-radius: 25px;
-        background: linear-gradient(180deg, #b3ecff, #fff5cc);
-        border: 4px solid #ffffff;
+        border-radius: 28px;
+        background: linear-gradient(180deg, #aeefff 0%, #fff4bd 100%);
+        border: 5px solid white;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
     }}
 
     .word {{
         position: absolute;
-        top: -70px;
+        top: -80px;
         padding: 14px 24px;
         font-size: 30px;
         font-weight: bold;
@@ -61,6 +86,7 @@ html_code = f"""
         box-shadow: 0 8px 18px rgba(0,0,0,0.18);
         transition: transform 0.2s, opacity 0.2s;
         white-space: nowrap;
+        border: 3px solid #ffd6ea;
     }}
 
     .pop {{
@@ -73,7 +99,7 @@ html_code = f"""
             opacity: 1;
         }}
         50% {{
-            transform: scale(1.7) rotate(10deg);
+            transform: scale(1.8) rotate(10deg);
             opacity: 0.8;
         }}
         100% {{
@@ -87,11 +113,12 @@ html_code = f"""
         top: 15px;
         left: 20px;
         z-index: 10;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.92);
         padding: 12px 18px;
         border-radius: 20px;
         font-size: 20px;
         font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }}
 
     #scoreBox {{
@@ -99,11 +126,12 @@ html_code = f"""
         top: 15px;
         right: 20px;
         z-index: 10;
-        background: rgba(255,255,255,0.9);
+        background: rgba(255,255,255,0.92);
         padding: 12px 18px;
         border-radius: 20px;
         font-size: 20px;
         font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }}
 
     #startBtn {{
@@ -114,10 +142,10 @@ html_code = f"""
         z-index: 20;
         font-size: 24px;
         font-weight: bold;
-        padding: 16px 34px;
+        padding: 16px 36px;
         border: none;
         border-radius: 999px;
-        background: #ff7eb3;
+        background: linear-gradient(135deg, #ff7eb3, #ffb86c);
         color: white;
         box-shadow: 0 8px 18px rgba(0,0,0,0.25);
     }}
@@ -128,7 +156,7 @@ html_code = f"""
 
     .effect {{
         position: absolute;
-        font-size: 38px;
+        font-size: 40px;
         pointer-events: none;
         animation: floatUp 0.7s forwards;
         z-index: 30;
@@ -165,21 +193,25 @@ let activeWords = [];
 let score = 0;
 let gameStarted = false;
 
-// Streamlit 슬라이더 값
 let fallSpeed = {speed};
+let batchCount = {batch_count};
 
-// 속도 계산
-// 숫자가 클수록 더 빠르게
-let baseSpeed = 0.6 + fallSpeed * 0.35;
+// 속도 조절
+let baseSpeed = 0.45 + fallSpeed * 0.28;
 
 // 단어 겹침 방지용 레인
-const laneCount = 5;
+const laneCount = 6;
 let laneBusy = Array(laneCount).fill(false);
 
 function getLaneX(laneIndex) {{
     const areaWidth = gameArea.clientWidth;
     const laneWidth = areaWidth / laneCount;
-    const randomOffset = Math.random() * Math.max(10, laneWidth - 130);
+
+    // 단어 폭을 고려해서 레인 안쪽에 배치
+    const minPadding = 8;
+    const maxOffset = Math.max(10, laneWidth - 130);
+    const randomOffset = minPadding + Math.random() * maxOffset;
+
     return laneIndex * laneWidth + randomOffset;
 }}
 
@@ -192,45 +224,59 @@ function getFreeLane() {{
         }}
     }}
 
-    // 빈 레인이 없으면 랜덤 레인 사용
-    // 하지만 생성 간격이 있어서 실제로는 거의 안 겹침
+    // 모든 레인이 사용 중이면 생성하지 않음
     if (freeLanes.length === 0) {{
-        return Math.floor(Math.random() * laneCount);
+        return null;
     }}
 
     return freeLanes[Math.floor(Math.random() * freeLanes.length)];
 }}
 
-function createWord() {{
+function createOneWord() {{
     if (!gameStarted) return;
+
+    const lane = getFreeLane();
+
+    // 빈 레인이 없으면 이번 단어는 건너뜀
+    if (lane === null) return;
+
+    laneBusy[lane] = true;
 
     const wordText = words[Math.floor(Math.random() * words.length)];
     const wordDiv = document.createElement("div");
-
-    const lane = getFreeLane();
-    laneBusy[lane] = true;
 
     wordDiv.className = "word";
     wordDiv.innerText = wordText;
     wordDiv.dataset.word = wordText.toLowerCase();
     wordDiv.dataset.lane = lane;
     wordDiv.style.left = getLaneX(lane) + "px";
-    wordDiv.style.top = "-70px";
+    wordDiv.style.top = "-80px";
 
     gameArea.appendChild(wordDiv);
 
     activeWords.push({{
         element: wordDiv,
         word: wordText.toLowerCase(),
-        y: -70,
-        speed: baseSpeed + Math.random() * 0.8,
+        y: -80,
+        speed: baseSpeed + Math.random() * 0.5,
         lane: lane
     }});
 
-    // 일정 시간 후 해당 레인 다시 사용 가능
+    // 일정 시간 후 같은 레인에 새 단어 생성 가능
+    // 이 시간이 길수록 덜 겹침
     setTimeout(() => {{
         laneBusy[lane] = false;
-    }}, 1500);
+    }}, 1700);
+}}
+
+function createWordsBatch() {{
+    if (!gameStarted) return;
+
+    for (let i = 0; i < batchCount; i++) {{
+        setTimeout(() => {{
+            createOneWord();
+        }}, i * 180);
+    }}
 }}
 
 function moveWords() {{
@@ -239,7 +285,7 @@ function moveWords() {{
         item.y += item.speed;
         item.element.style.top = item.y + "px";
 
-        if (item.y > gameArea.clientHeight + 80) {{
+        if (item.y > gameArea.clientHeight + 90) {{
             item.element.remove();
             activeWords.splice(i, 1);
         }}
@@ -278,7 +324,7 @@ function popWord(spokenText) {{
 }}
 
 function showEffect(x, y) {{
-    const effects = ["💥", "✨", "🎉", "⭐", "👏"];
+    const effects = ["💥", "✨", "🎉", "⭐", "👏", "🌟"];
     const effect = document.createElement("div");
     effect.className = "effect";
     effect.innerText = effects[Math.floor(Math.random() * effects.length)];
@@ -325,7 +371,9 @@ function startSpeechRecognition() {{
 
     recognition.onend = function() {{
         if (gameStarted) {{
-            recognition.start();
+            try {{
+                recognition.start();
+            }} catch(e) {{}}
         }}
     }};
 
@@ -341,8 +389,8 @@ startBtn.addEventListener("click", function() {{
     startSpeechRecognition();
 
     // 단어 생성 간격
-    // 속도가 빠를수록 너무 많이 생기지 않게 약간 조절
-    setInterval(createWord, 1300);
+    // 숫자를 줄이면 더 자주 나옴
+    setInterval(createWordsBatch, 1300);
 }});
 
 moveWords();
@@ -351,4 +399,4 @@ moveWords();
 </html>
 """
 
-components.html(html_code, height=680)
+components.html(html_code, height=700)
