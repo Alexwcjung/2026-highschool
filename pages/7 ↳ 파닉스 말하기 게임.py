@@ -1,6 +1,5 @@
 import streamlit as st
 import random
-import time
 from streamlit_mic_recorder import mic_recorder
 import speech_recognition as sr
 import io
@@ -9,16 +8,16 @@ import io
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Phonics Falling Words Game",
-    page_icon="🎮",
+    page_title="Phonics Speaking Boom Game",
+    page_icon="💥",
     layout="wide"
 )
 
-st.title("🎮 Phonics Falling Words Game")
-st.caption("떨어지는 단어를 보고 크게 말해 보세요. 발음이 인식되면 단어가 💥 터집니다!")
+st.title("💥 Phonics Speaking Boom Game")
+st.caption("화면에 보이는 단어를 말하면 단어가 터지는 말하기 게임입니다.")
 
 # =========================
-# CSS 디자인
+# CSS
 # =========================
 st.markdown(
     """
@@ -46,15 +45,6 @@ st.markdown(
         border: 4px solid #fb923c;
         min-width: 120px;
         text-align: center;
-        animation: wiggle 1.2s infinite;
-    }
-
-    @keyframes wiggle {
-        0% { transform: rotate(0deg); }
-        25% { transform: rotate(1.5deg); }
-        50% { transform: rotate(0deg); }
-        75% { transform: rotate(-1.5deg); }
-        100% { transform: rotate(0deg); }
     }
 
     .score-card {
@@ -87,7 +77,7 @@ st.markdown(
         border-radius: 28px;
         padding: 22px;
         text-align: center;
-        font-size: 42px;
+        font-size: 44px;
         font-weight: 900;
         color: #7f1d1d;
         margin-bottom: 18px;
@@ -97,7 +87,7 @@ st.markdown(
 
     @keyframes pop {
         0% { transform: scale(0.7); opacity: 0.3; }
-        50% { transform: scale(1.12); opacity: 1; }
+        50% { transform: scale(1.15); opacity: 1; }
         100% { transform: scale(1); opacity: 1; }
     }
 
@@ -115,15 +105,6 @@ st.markdown(
         font-size: 54px;
         font-weight: 900;
         color: #1f2937;
-    }
-
-    .word-preview {
-        background: #f8fafc;
-        border-radius: 20px;
-        padding: 18px;
-        border: 2px solid #e2e8f0;
-        font-size: 20px;
-        line-height: 1.8;
     }
     </style>
     """,
@@ -186,9 +167,6 @@ if "score" not in st.session_state:
 if "lives" not in st.session_state:
     st.session_state.lives = 5
 
-if "recognized_text" not in st.session_state:
-    st.session_state.recognized_text = ""
-
 if "message" not in st.session_state:
     st.session_state.message = "게임을 시작해 보세요!"
 
@@ -200,6 +178,9 @@ if "boom_word" not in st.session_state:
 
 if "last_recognized" not in st.session_state:
     st.session_state.last_recognized = ""
+
+if "audio_debug" not in st.session_state:
+    st.session_state.audio_debug = ""
 
 # =========================
 # 음성 인식 함수
@@ -220,11 +201,11 @@ def recognize_speech(audio_bytes):
         return ""
     except sr.RequestError:
         return ""
-    except Exception:
+    except Exception as e:
         return ""
 
 # =========================
-# 단어 생성 함수
+# 단어 함수
 # =========================
 def get_random_word(words):
     remaining = [w for w in words if w not in st.session_state.used_words]
@@ -241,19 +222,29 @@ def get_random_word(words):
 def add_falling_word(words):
     word = get_random_word(words)
 
-    x_pos = random.randint(5, 80)
-
-    individual_speed = random.uniform(0.8, 1.4)
-
     new_item = {
         "word": word,
-        "x": x_pos,
-        "y": random.randint(-220, -40),
-        "speed": individual_speed,
+        "x": random.randint(5, 80),
+        "y": random.randint(20, 360),
         "id": random.randint(100000, 999999)
     }
 
     st.session_state.falling_words.append(new_item)
+
+
+def move_words_down():
+    new_words = []
+
+    for item in st.session_state.falling_words:
+        item["y"] += random.randint(25, 50)
+
+        if item["y"] >= 480:
+            st.session_state.lives -= 1
+            st.session_state.message = f"😢 '{item['word']}'를 놓쳤어요!"
+        else:
+            new_words.append(item)
+
+    st.session_state.falling_words = new_words
 
 
 def reset_game():
@@ -261,14 +252,14 @@ def reset_game():
     st.session_state.falling_words = []
     st.session_state.score = 0
     st.session_state.lives = 5
-    st.session_state.recognized_text = ""
-    st.session_state.last_recognized = ""
     st.session_state.message = "게임을 다시 시작해 보세요!"
     st.session_state.used_words = []
     st.session_state.boom_word = ""
+    st.session_state.last_recognized = ""
+    st.session_state.audio_debug = ""
 
 # =========================
-# 사이드바 설정
+# 사이드바
 # =========================
 st.sidebar.header("🎲 게임 설정")
 
@@ -278,18 +269,10 @@ category = st.sidebar.selectbox(
 )
 
 word_count = st.sidebar.slider(
-    "동시에 떨어지는 단어 수",
+    "화면에 나오는 단어 수",
     min_value=2,
     max_value=8,
     value=4,
-    step=1
-)
-
-fall_speed = st.sidebar.slider(
-    "떨어지는 속도",
-    min_value=1,
-    max_value=20,
-    value=6,
     step=1
 )
 
@@ -306,13 +289,13 @@ words = word_sets[category]
 st.sidebar.markdown("---")
 st.sidebar.write("📌 사용 방법")
 st.sidebar.write("1. 게임 시작")
-st.sidebar.write("2. 여러 단어가 동시에 내려옴")
-st.sidebar.write("3. 보이는 단어 중 하나를 말하기")
-st.sidebar.write("4. 녹음이 끝나면 인식")
-st.sidebar.write("5. 맞으면 단어가 💥 터짐")
+st.sidebar.write("2. 보이는 단어 중 하나 말하기")
+st.sidebar.write("3. 녹음 끝 버튼 누르기")
+st.sidebar.write("4. 인식되면 단어가 터짐")
+st.sidebar.write("5. 단어 내려보내기로 난이도 조절")
 
 # =========================
-# 상단 점수판
+# 점수판
 # =========================
 col_score, col_life, col_target = st.columns(3)
 
@@ -349,9 +332,9 @@ with col_target:
 st.markdown("")
 
 # =========================
-# 게임 버튼
+# 버튼
 # =========================
-col_start, col_add, col_reset = st.columns(3)
+col_start, col_move, col_reset = st.columns(3)
 
 with col_start:
     if st.button("▶️ 게임 시작", use_container_width=True):
@@ -360,9 +343,9 @@ with col_start:
         st.session_state.lives = 5
         st.session_state.falling_words = []
         st.session_state.used_words = []
-        st.session_state.recognized_text = ""
-        st.session_state.last_recognized = ""
         st.session_state.boom_word = ""
+        st.session_state.last_recognized = ""
+        st.session_state.audio_debug = ""
         st.session_state.message = "보이는 단어 중 하나를 크게 말해 보세요!"
 
         for _ in range(word_count):
@@ -370,10 +353,14 @@ with col_start:
 
         st.rerun()
 
-with col_add:
-    if st.button("➕ 단어 추가", use_container_width=True):
+with col_move:
+    if st.button("⬇️ 단어 내려보내기", use_container_width=True):
         if st.session_state.game_started:
-            add_falling_word(words)
+            move_words_down()
+
+            while len(st.session_state.falling_words) < word_count:
+                add_falling_word(words)
+
             st.rerun()
 
 with col_reset:
@@ -382,7 +369,7 @@ with col_reset:
         st.rerun()
 
 # =========================
-# 게임 진행
+# 게임 화면
 # =========================
 if st.session_state.game_started:
 
@@ -396,27 +383,9 @@ if st.session_state.game_started:
         st.session_state.game_started = False
 
     else:
-        # 단어 수 유지
         while len(st.session_state.falling_words) < word_count:
             add_falling_word(words)
 
-        # 단어 위치 업데이트
-        new_falling_words = []
-
-        for item in st.session_state.falling_words:
-            item["y"] += fall_speed * item["speed"]
-
-            # 바닥에 닿으면 기회 차감
-            if item["y"] >= 480:
-                st.session_state.lives -= 1
-                st.session_state.message = f"😢 '{item['word']}'를 놓쳤어요!"
-                st.session_state.boom_word = ""
-            else:
-                new_falling_words.append(item)
-
-        st.session_state.falling_words = new_falling_words
-
-        # BOOM 효과 표시
         if st.session_state.boom_word:
             st.markdown(
                 f"""
@@ -428,7 +397,6 @@ if st.session_state.game_started:
             )
             st.session_state.boom_word = ""
 
-        # 메시지 박스
         st.markdown(
             f"""
             <div class="message-box">
@@ -438,7 +406,6 @@ if st.session_state.game_started:
             unsafe_allow_html=True
         )
 
-        # 게임 박스 안의 단어 HTML 생성
         words_html = ""
 
         for item in st.session_state.falling_words:
@@ -457,31 +424,34 @@ if st.session_state.game_started:
             unsafe_allow_html=True
         )
 
-        # 마이크 입력
         st.markdown("### 🎤 보이는 단어 중 하나를 말해 보세요")
 
         audio = mic_recorder(
             start_prompt="🎤 말하기 시작",
-            stop_prompt="💥 말하면 터뜨리기!",
+            stop_prompt="💥 말했어요! 터뜨리기",
             just_once=True,
             use_container_width=True,
-            key=f"mic_{st.session_state.score}_{st.session_state.lives}_{len(st.session_state.falling_words)}"
+            key="stable_mic"
         )
 
         if audio:
             audio_bytes = audio["bytes"]
-            recognized = recognize_speech(audio_bytes)
 
-            st.session_state.recognized_text = recognized
+            st.session_state.audio_debug = f"녹음 파일 크기: {len(audio_bytes)} bytes"
+
+            recognized = recognize_speech(audio_bytes)
             st.session_state.last_recognized = recognized
 
             matched_word = None
 
-            # 현재 떨어지는 단어 중 인식된 단어와 일치하는 것 찾기
             for item in st.session_state.falling_words:
                 target_word = item["word"].lower()
 
-                if recognized == target_word or target_word in recognized.split():
+                if recognized == target_word:
+                    matched_word = item
+                    break
+
+                if target_word in recognized.split():
                     matched_word = item
                     break
 
@@ -490,13 +460,11 @@ if st.session_state.game_started:
                 st.session_state.boom_word = matched_word["word"]
                 st.session_state.message = f"✅ 성공! '{matched_word['word']}' 단어를 정확히 말했어요!"
 
-                # 맞춘 단어 제거
                 st.session_state.falling_words = [
                     item for item in st.session_state.falling_words
                     if item["id"] != matched_word["id"]
                 ]
 
-                # 새 단어 추가
                 add_falling_word(words)
 
                 st.rerun()
@@ -505,40 +473,23 @@ if st.session_state.game_started:
                 if recognized:
                     st.session_state.message = f"🤔 '{recognized}'라고 들렸어요. 화면에 있는 단어를 다시 말해 봅시다."
                 else:
-                    st.session_state.message = "🤔 인식하지 못했어요. 더 크게, 또박또박 말해 봅시다."
+                    st.session_state.message = "🤔 인식하지 못했어요. 마이크 권한을 확인하고 더 크게 말해 보세요."
 
-                st.session_state.boom_word = ""
                 st.rerun()
 
         if st.session_state.last_recognized:
-            st.markdown(
-                f"""
-                <div style="
-                    background:#f8fafc;
-                    border:2px solid #cbd5e1;
-                    border-radius:18px;
-                    padding:14px;
-                    font-size:20px;
-                    text-align:center;
-                    margin-top:10px;
-                ">
-                    🗣️ 마지막 인식: <b>{st.session_state.last_recognized}</b>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            st.info(f"🗣️ 마지막 인식: {st.session_state.last_recognized}")
 
-        # 자동 진행
-        time.sleep(0.45)
-        st.rerun()
+        if st.session_state.audio_debug:
+            st.caption(st.session_state.audio_debug)
 
 else:
     st.markdown(
         """
         <div class="ready-box">
-            <div class="ready-title">🎮 Ready?</div>
+            <div class="ready-title">💥 Ready?</div>
             <p style="font-size:21px;">
-                게임 시작 버튼을 누르면 여러 단어가 동시에 위에서 아래로 내려옵니다.
+                게임 시작 버튼을 누르면 여러 단어가 화면에 나타납니다.
             </p>
             <p style="font-size:19px;">
                 학생은 보이는 단어 중 하나를 골라 크게 말합니다.
@@ -552,12 +503,4 @@ else:
     )
 
     st.markdown("### 📚 연습 단어 미리 보기")
-
-    st.markdown(
-        f"""
-        <div class="word-preview">
-            {", ".join(words)}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.write(", ".join(words))
