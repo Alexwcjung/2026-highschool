@@ -17,3 +17,5 @@ textstat
 
 scipy
 seaborn
+streamlit-mic-recorder
+SpeechRecognition
