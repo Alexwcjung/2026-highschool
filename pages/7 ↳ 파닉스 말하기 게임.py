@@ -15,7 +15,7 @@ st.set_page_config(
 )
 
 st.title("🎮 Phonics Falling Words Game")
-st.caption("떨어지는 단어를 보고 크게 말해 보세요. 발음이 인식되면 단어가 사라집니다!")
+st.caption("떨어지는 단어들을 보고 크게 말해 보세요. 발음이 인식되면 해당 단어가 사라집니다!")
 
 # =========================
 # CSS 디자인
@@ -24,7 +24,7 @@ st.markdown(
     """
     <style>
     .game-box {
-        height: 520px;
+        height: 560px;
         border-radius: 24px;
         background: linear-gradient(180deg, #e0f2fe 0%, #fef9c3 100%);
         border: 3px solid #bae6fd;
@@ -36,16 +36,16 @@ st.markdown(
 
     .falling-word {
         position: absolute;
-        left: 50%;
-        transform: translateX(-50%);
         background: white;
         color: #111827;
-        font-size: 48px;
+        font-size: 36px;
         font-weight: 900;
-        padding: 18px 34px;
-        border-radius: 26px;
+        padding: 12px 24px;
+        border-radius: 22px;
         box-shadow: 0 5px 15px rgba(0,0,0,0.18);
         border: 3px solid #fb923c;
+        min-width: 110px;
+        text-align: center;
     }
 
     .score-card {
@@ -59,19 +59,19 @@ st.markdown(
         box-shadow: 0 4px 10px rgba(0,0,0,0.08);
     }
 
-    .word-card {
+    .ready-box {
         background: #ffffff;
-        border-radius: 18px;
-        padding: 16px;
-        margin-bottom: 12px;
+        border-radius: 22px;
+        padding: 24px;
+        margin-top: 20px;
         border: 2px solid #dbeafe;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.07);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        text-align: center;
     }
 
-    .big-word {
+    .ready-title {
         font-size: 52px;
         font-weight: 900;
-        text-align: center;
         color: #1f2937;
     }
     </style>
@@ -85,31 +85,38 @@ st.markdown(
 word_sets = {
     "짧은 모음": [
         "cat", "bat", "hat", "bed", "egg",
-        "sit", "pig", "hot", "cup", "bus"
+        "sit", "pig", "hot", "cup", "bus",
+        "fox", "dog", "sun", "jam", "van"
     ],
     "긴 모음": [
         "cake", "name", "bike", "five", "home",
-        "rope", "cube", "cute", "make", "hope"
+        "rope", "cube", "cute", "make", "hope",
+        "see", "tree", "goat", "rain", "day"
     ],
     "Blends": [
         "black", "brown", "clock", "crab", "drum",
-        "flag", "frog", "green", "spoon", "star"
+        "flag", "frog", "green", "spoon", "star",
+        "blue", "grass", "snake", "smile", "train"
     ],
     "Digraphs": [
         "chair", "ship", "three", "this", "phone",
-        "whale", "duck", "shop", "cheese", "photo"
+        "whale", "duck", "shop", "cheese", "photo",
+        "fish", "chick", "thin", "thank", "white"
     ],
     "Vowel Teams": [
         "rain", "day", "see", "eat", "boat",
-        "snow", "cow", "house", "coin", "boy"
+        "snow", "cow", "house", "coin", "boy",
+        "road", "team", "seed", "toy", "out"
     ],
     "R-Controlled": [
         "car", "star", "her", "bird", "girl",
-        "corn", "fork", "turn", "burn", "teacher"
+        "corn", "fork", "turn", "burn", "teacher",
+        "park", "farm", "short", "shirt", "tiger"
     ],
     "Silent e": [
         "cake", "name", "bike", "five", "home",
-        "rope", "cube", "cute", "make", "hope"
+        "rope", "cube", "cute", "make", "hope",
+        "lake", "time", "nose", "line", "game"
     ],
 }
 
@@ -119,17 +126,14 @@ word_sets = {
 if "game_started" not in st.session_state:
     st.session_state.game_started = False
 
-if "current_word" not in st.session_state:
-    st.session_state.current_word = None
-
-if "word_y" not in st.session_state:
-    st.session_state.word_y = 0
+if "falling_words" not in st.session_state:
+    st.session_state.falling_words = []
 
 if "score" not in st.session_state:
     st.session_state.score = 0
 
 if "lives" not in st.session_state:
-    st.session_state.lives = 3
+    st.session_state.lives = 5
 
 if "recognized_text" not in st.session_state:
     st.session_state.recognized_text = ""
@@ -139,6 +143,7 @@ if "message" not in st.session_state:
 
 if "used_words" not in st.session_state:
     st.session_state.used_words = []
+
 
 # =========================
 # 음성 인식 함수
@@ -164,19 +169,48 @@ def recognize_speech(audio_bytes):
 
 
 # =========================
-# 단어 선택 함수
+# 단어 생성 함수
 # =========================
-def choose_new_word(words):
+def get_random_word(words):
     remaining = [w for w in words if w not in st.session_state.used_words]
 
     if len(remaining) == 0:
         st.session_state.used_words = []
         remaining = words[:]
 
-    new_word = random.choice(remaining)
-    st.session_state.current_word = new_word
-    st.session_state.used_words.append(new_word)
-    st.session_state.word_y = 0
+    word = random.choice(remaining)
+    st.session_state.used_words.append(word)
+    return word
+
+
+def add_falling_word(words):
+    word = get_random_word(words)
+
+    # x 위치는 5% ~ 80% 사이에서 랜덤
+    x_pos = random.randint(5, 80)
+
+    # 단어마다 조금 다른 속도
+    individual_speed = random.uniform(0.6, 1.1)
+
+    new_item = {
+        "word": word,
+        "x": x_pos,
+        "y": random.randint(-160, -20),
+        "speed": individual_speed,
+        "id": random.randint(100000, 999999)
+    }
+
+    st.session_state.falling_words.append(new_item)
+
+
+def reset_game():
+    st.session_state.game_started = False
+    st.session_state.falling_words = []
+    st.session_state.score = 0
+    st.session_state.lives = 5
+    st.session_state.recognized_text = ""
+    st.session_state.message = "게임을 다시 시작해 보세요!"
+    st.session_state.used_words = []
 
 
 # =========================
@@ -189,19 +223,27 @@ category = st.sidebar.selectbox(
     list(word_sets.keys())
 )
 
-speed = st.sidebar.slider(
-    "단어 내려오는 속도",
-    min_value=20,
-    max_value=80,
-    value=35,
-    step=5
+word_count = st.sidebar.slider(
+    "동시에 떨어지는 단어 수",
+    min_value=2,
+    max_value=8,
+    value=4,
+    step=1
+)
+
+fall_speed = st.sidebar.slider(
+    "떨어지는 속도",
+    min_value=2,
+    max_value=12,
+    value=4,
+    step=1
 )
 
 target_score = st.sidebar.slider(
     "목표 점수",
     min_value=5,
-    max_value=30,
-    value=10,
+    max_value=50,
+    value=15,
     step=5
 )
 
@@ -210,9 +252,9 @@ words = word_sets[category]
 st.sidebar.markdown("---")
 st.sidebar.write("📌 사용 방법")
 st.sidebar.write("1. 게임 시작")
-st.sidebar.write("2. 내려오는 단어 읽기")
-st.sidebar.write("3. 마이크 버튼 누르고 말하기")
-st.sidebar.write("4. 인식되면 단어 제거")
+st.sidebar.write("2. 여러 단어가 동시에 내려옴")
+st.sidebar.write("3. 보이는 단어 중 하나를 말하기")
+st.sidebar.write("4. 인식되면 그 단어가 사라짐")
 
 # =========================
 # 상단 점수판
@@ -254,42 +296,39 @@ st.markdown("")
 # =========================
 # 게임 버튼
 # =========================
-col_start, col_next, col_reset = st.columns(3)
+col_start, col_add, col_reset = st.columns(3)
 
 with col_start:
     if st.button("▶️ 게임 시작", use_container_width=True):
         st.session_state.game_started = True
         st.session_state.score = 0
-        st.session_state.lives = 3
+        st.session_state.lives = 5
+        st.session_state.falling_words = []
         st.session_state.used_words = []
         st.session_state.recognized_text = ""
-        st.session_state.message = "단어를 보고 크게 말해 보세요!"
-        choose_new_word(words)
+        st.session_state.message = "보이는 단어 중 하나를 크게 말해 보세요!"
+
+        for _ in range(word_count):
+            add_falling_word(words)
+
         st.rerun()
 
-with col_next:
-    if st.button("⏭️ 다음 단어", use_container_width=True):
+with col_add:
+    if st.button("➕ 단어 추가", use_container_width=True):
         if st.session_state.game_started:
-            choose_new_word(words)
-            st.session_state.message = "새 단어가 내려옵니다!"
+            add_falling_word(words)
             st.rerun()
 
 with col_reset:
     if st.button("🔄 다시 시작", use_container_width=True):
-        st.session_state.game_started = False
-        st.session_state.current_word = None
-        st.session_state.word_y = 0
-        st.session_state.score = 0
-        st.session_state.lives = 3
-        st.session_state.used_words = []
-        st.session_state.recognized_text = ""
-        st.session_state.message = "게임을 다시 시작해 보세요!"
+        reset_game()
         st.rerun()
 
 # =========================
 # 게임 진행
 # =========================
 if st.session_state.game_started:
+
     if st.session_state.score >= target_score:
         st.balloons()
         st.success("🎉 목표 점수 달성! 훌륭합니다!")
@@ -300,28 +339,39 @@ if st.session_state.game_started:
         st.session_state.game_started = False
 
     else:
-        if st.session_state.current_word is None:
-            choose_new_word(words)
+        # 단어 수 유지
+        while len(st.session_state.falling_words) < word_count:
+            add_falling_word(words)
 
-        current_word = st.session_state.current_word
+        # 단어 위치 업데이트
+        new_falling_words = []
 
-        # 단어 위치 증가
-        st.session_state.word_y += speed
+        for item in st.session_state.falling_words:
+            item["y"] += fall_speed * item["speed"]
 
-        # 단어가 바닥에 닿으면 기회 차감
-        if st.session_state.word_y >= 430:
-            st.session_state.lives -= 1
-            st.session_state.message = f"😢 {current_word}를 놓쳤어요!"
-            choose_new_word(words)
-            st.rerun()
+            # 바닥에 닿으면 기회 차감
+            if item["y"] >= 480:
+                st.session_state.lives -= 1
+                st.session_state.message = f"😢 {item['word']}를 놓쳤어요!"
+            else:
+                new_falling_words.append(item)
 
-        # 게임 화면
+        st.session_state.falling_words = new_falling_words
+
+        # 게임 박스 안의 단어 HTML 생성
+        words_html = ""
+
+        for item in st.session_state.falling_words:
+            words_html += f"""
+            <div class="falling-word" style="left:{item['x']}%; top:{item['y']}px;">
+                {item['word']}
+            </div>
+            """
+
         st.markdown(
             f"""
             <div class="game-box">
-                <div class="falling-word" style="top:{st.session_state.word_y}px;">
-                    {current_word}
-                </div>
+                {words_html}
             </div>
             """,
             unsafe_allow_html=True
@@ -330,14 +380,14 @@ if st.session_state.game_started:
         st.info(st.session_state.message)
 
         # 마이크 입력
-        st.markdown("### 🎤 단어를 말해 보세요")
+        st.markdown("### 🎤 보이는 단어 중 하나를 말해 보세요")
 
         audio = mic_recorder(
             start_prompt="🎙️ 녹음 시작",
             stop_prompt="⏹️ 녹음 끝",
             just_once=True,
             use_container_width=True,
-            key=f"mic_{current_word}_{st.session_state.score}_{st.session_state.lives}"
+            key=f"mic_{st.session_state.score}_{st.session_state.lives}_{len(st.session_state.falling_words)}"
         )
 
         if audio:
@@ -347,30 +397,49 @@ if st.session_state.game_started:
 
             st.write(f"🗣️ 인식된 말: **{recognized if recognized else '인식 실패'}**")
 
-            # 인식된 문장 안에 현재 단어가 들어가도 정답 처리
-            if current_word.lower() in recognized.split() or recognized == current_word.lower():
+            matched_word = None
+
+            # 현재 떨어지는 단어 중 인식된 단어와 일치하는 것 찾기
+            for item in st.session_state.falling_words:
+                target_word = item["word"].lower()
+
+                if recognized == target_word or target_word in recognized.split():
+                    matched_word = item
+                    break
+
+            if matched_word:
                 st.session_state.score += 1
-                st.session_state.message = f"✅ 성공! {current_word} 단어가 사라졌습니다!"
-                choose_new_word(words)
-                st.rerun()
-            else:
-                st.session_state.message = f"🤔 다시 한 번 말해 봅시다. 목표 단어는 {current_word}입니다."
+                st.session_state.message = f"✅ 성공! {matched_word['word']} 단어가 사라졌습니다!"
+
+                st.session_state.falling_words = [
+                    item for item in st.session_state.falling_words
+                    if item["id"] != matched_word["id"]
+                ]
+
+                add_falling_word(words)
                 st.rerun()
 
-        # 자동으로 조금씩 내려오게 하기
-        time.sleep(0.4)
+            else:
+                st.session_state.message = "🤔 다시 한 번 말해 봅시다. 화면에 있는 단어 중 하나를 정확히 말해 보세요."
+                st.rerun()
+
+        # 자동으로 천천히 내려오게 하기
+        time.sleep(0.7)
         st.rerun()
 
 else:
     st.markdown(
         """
-        <div class="word-card">
-            <div class="big-word">🎮 Ready?</div>
-            <p style="text-align:center; font-size:20px;">
-                게임 시작 버튼을 누르면 단어가 위에서 아래로 내려옵니다.
+        <div class="ready-box">
+            <div class="ready-title">🎮 Ready?</div>
+            <p style="font-size:20px;">
+                게임 시작 버튼을 누르면 여러 단어가 동시에 위에서 아래로 내려옵니다.
             </p>
-            <p style="text-align:center; font-size:18px;">
-                학생은 단어를 보고 직접 말합니다. 발음이 인식되면 단어가 사라집니다.
+            <p style="font-size:18px;">
+                학생은 보이는 단어 중 하나를 골라 크게 말합니다.
+            </p>
+            <p style="font-size:18px;">
+                발음이 인식되면 그 단어가 사라지고 점수가 올라갑니다.
             </p>
         </div>
         """,
