@@ -186,16 +186,16 @@ def get_random_word(words):
 def add_falling_word(words):
     word = get_random_word(words)
 
-    # x 위치는 5% ~ 80% 사이에서 랜덤
     x_pos = random.randint(5, 80)
 
-    # 단어마다 조금 다른 속도
-    individual_speed = random.uniform(0.6, 1.1)
+    # 단어마다 약간 다른 속도
+    # 기존보다 조금 더 빠르게 설정
+    individual_speed = random.uniform(0.9, 1.5)
 
     new_item = {
         "word": word,
         "x": x_pos,
-        "y": random.randint(-160, -20),
+        "y": random.randint(-180, -20),
         "speed": individual_speed,
         "id": random.randint(100000, 999999)
     }
@@ -231,11 +231,12 @@ word_count = st.sidebar.slider(
     step=1
 )
 
+# 기존보다 빠르게 수정
 fall_speed = st.sidebar.slider(
     "떨어지는 속도",
     min_value=2,
-    max_value=12,
-    value=4,
+    max_value=20,
+    value=8,
     step=1
 )
 
@@ -423,8 +424,8 @@ if st.session_state.game_started:
                 st.session_state.message = "🤔 다시 한 번 말해 봅시다. 화면에 있는 단어 중 하나를 정확히 말해 보세요."
                 st.rerun()
 
-        # 자동으로 천천히 내려오게 하기
-        time.sleep(0.7)
+        # 자동으로 더 빠르게 내려오게 하기
+        time.sleep(0.4)
         st.rerun()
 
 else:
