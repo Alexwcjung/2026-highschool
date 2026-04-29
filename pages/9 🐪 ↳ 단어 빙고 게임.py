@@ -197,7 +197,7 @@ let fallSpeed = {speed};
 let batchCount = {batch_count};
 
 // 속도 조절
-let baseSpeed = 0.45 + fallSpeed * 0.28;
+let baseSpeed = 0.12 + fallSpeed * 0.08;
 
 // 단어 겹침 방지용 레인
 const laneCount = 6;
