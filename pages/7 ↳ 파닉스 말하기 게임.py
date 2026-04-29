@@ -8,7 +8,7 @@ import json
 st.set_page_config(
     page_title="Phonics Mole Speaking Game",
     page_icon="🕳️",
-    layout="wide"
+    layout="centered"
 )
 
 st.title("🕳️ Phonics Mole Speaking Game")
@@ -56,48 +56,52 @@ word_sets = {
 }
 
 # =========================
-# 사이드바 설정
+# 게임 설정
 # =========================
-st.sidebar.header("🎲 게임 설정")
+st.markdown("### 🎲 게임 설정")
 
-category = st.sidebar.selectbox(
+category = st.selectbox(
     "단어 세트 선택",
     list(word_sets.keys())
 )
 
-mole_count = st.sidebar.slider(
-    "한 번에 나오는 두더지 수",
-    min_value=1,
-    max_value=5,
-    value=3,
-    step=1
-)
+col1, col2 = st.columns(2)
 
-show_time = st.sidebar.slider(
-    "두더지가 나와 있는 시간",
-    min_value=2,
-    max_value=8,
-    value=5,
-    step=1
-)
+with col1:
+    mole_count = st.slider(
+        "한 번에 나오는 두더지 수",
+        min_value=1,
+        max_value=5,
+        value=3,
+        step=1
+    )
 
-target_score = st.sidebar.slider(
-    "목표 점수",
-    min_value=5,
-    max_value=50,
-    value=15,
-    step=5
-)
+    show_time = st.slider(
+        "두더지가 나와 있는 시간",
+        min_value=2,
+        max_value=8,
+        value=5,
+        step=1
+    )
 
-lives = st.sidebar.slider(
-    "기회",
-    min_value=3,
-    max_value=10,
-    value=5,
-    step=1
-)
+with col2:
+    target_score = st.slider(
+        "목표 점수",
+        min_value=5,
+        max_value=50,
+        value=15,
+        step=5
+    )
 
-pass_ratio = st.sidebar.slider(
+    lives = st.slider(
+        "기회",
+        min_value=3,
+        max_value=10,
+        value=5,
+        step=1
+    )
+
+pass_ratio = st.slider(
     "정답 인정 기준",
     min_value=50,
     max_value=100,
@@ -105,14 +109,6 @@ pass_ratio = st.sidebar.slider(
     step=5,
     help="낮을수록 발음을 더 너그럽게 인정합니다."
 )
-
-st.sidebar.markdown("---")
-st.sidebar.write("📌 사용 방법")
-st.sidebar.write("1. 게임 시작")
-st.sidebar.write("2. 두더지 단어가 튀어나옴")
-st.sidebar.write("3. 보이는 단어 중 하나를 말하기")
-st.sidebar.write("4. 인식되면 해당 두더지가 터짐")
-st.sidebar.write("5. 시간이 지나면 못 맞힌 단어는 사라지고 기회가 줄어듦")
 
 words = word_sets[category]
 
@@ -124,11 +120,11 @@ st.markdown(
     <div style="
         background: linear-gradient(135deg, #fff7ed, #eef7ff);
         border: 2px solid #fed7aa;
-        border-radius: 24px;
-        padding: 20px 24px;
+        border-radius: 22px;
+        padding: 18px 20px;
         margin: 16px 0 22px 0;
         box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-        font-size: 20px;
+        font-size: 18px;
         line-height: 1.7;
     ">
         🕳️ <b>두더지 단어가 튀어나오면 바로 영어로 말하세요.</b><br>
@@ -154,7 +150,7 @@ game_data = {
 game_json = json.dumps(game_data, ensure_ascii=False)
 
 # =========================
-# 두더지 게임
+# 두더지 게임 HTML
 # =========================
 game_html = f"""
 <!DOCTYPE html>
@@ -171,59 +167,58 @@ game_html = f"""
 
     .game-wrap {{
         width: 100%;
-        min-height: 720px;
+        min-height: 690px;
         background: linear-gradient(180deg, #dbeafe 0%, #dcfce7 55%, #fef9c3 100%);
-        border-radius: 32px;
+        border-radius: 28px;
         border: 4px solid #93c5fd;
         box-shadow: 0 10px 28px rgba(0,0,0,0.14);
-        padding: 24px;
+        padding: 20px;
         box-sizing: border-box;
         position: relative;
         overflow: hidden;
     }}
 
     .top-bar {{
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-bottom: 20px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
     }}
 
     .score-card {{
-        flex: 1;
-        min-width: 140px;
         background: linear-gradient(135deg, #fff7ed, #fef3c7);
-        border-radius: 22px;
-        padding: 16px;
+        border-radius: 20px;
+        padding: 13px 8px;
         text-align: center;
-        font-size: 22px;
+        font-size: 19px;
         font-weight: 900;
         border: 3px solid #fed7aa;
         box-shadow: 0 5px 12px rgba(0,0,0,0.10);
         color: #334155;
+        line-height: 1.35;
     }}
 
     .message-box {{
         background: linear-gradient(135deg, #fef3c7, #fed7aa);
         border: 4px solid #fb923c;
-        border-radius: 26px;
-        padding: 16px;
+        border-radius: 24px;
+        padding: 14px;
         text-align: center;
-        font-size: 26px;
+        font-size: 24px;
         font-weight: 900;
         color: #7c2d12;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
         box-shadow: 0 6px 16px rgba(0,0,0,0.14);
-        min-height: 36px;
+        min-height: 34px;
+        line-height: 1.35;
     }}
 
     .field {{
         position: relative;
         width: 100%;
-        height: 420px;
+        height: 410px;
         background: linear-gradient(180deg, #bbf7d0 0%, #86efac 100%);
-        border-radius: 30px;
+        border-radius: 28px;
         border: 4px solid rgba(255,255,255,0.85);
         overflow: hidden;
         box-shadow: inset 0 8px 18px rgba(0,0,0,0.08);
@@ -231,27 +226,33 @@ game_html = f"""
 
     .hole {{
         position: absolute;
-        width: 180px;
-        height: 62px;
+        width: 165px;
+        height: 58px;
         background: #6b3f2a;
         border-radius: 50%;
         box-shadow: inset 0 8px 13px rgba(0,0,0,0.38);
         z-index: 1;
     }}
 
+    .hole1 {{ left: 8%; top: 74%; }}
+    .hole2 {{ left: 39%; top: 74%; }}
+    .hole3 {{ left: 70%; top: 74%; }}
+    .hole4 {{ left: 21%; top: 45%; }}
+    .hole5 {{ left: 57%; top: 45%; }}
+
     .mole {{
         position: absolute;
-        width: 190px;
-        min-height: 118px;
+        width: 175px;
+        min-height: 110px;
         background: linear-gradient(135deg, #ffffff, #fff7ed);
         border: 4px solid #fb923c;
-        border-radius: 34px;
+        border-radius: 32px;
         box-shadow: 0 10px 22px rgba(0,0,0,0.20);
         display: flex;
         align-items: center;
         justify-content: center;
         text-align: center;
-        font-size: 40px;
+        font-size: 36px;
         font-weight: 900;
         color: #111827;
         transform: translateY(80px) scale(0.7);
@@ -260,6 +261,7 @@ game_html = f"""
         z-index: 5;
         padding: 8px;
         box-sizing: border-box;
+        word-break: keep-all;
     }}
 
     .mole.show {{
@@ -289,16 +291,16 @@ game_html = f"""
     .control-row {{
         display: flex;
         justify-content: center;
-        gap: 12px;
+        gap: 10px;
         flex-wrap: wrap;
-        margin-top: 24px;
+        margin-top: 22px;
     }}
 
     .btn {{
         border: none;
         border-radius: 999px;
-        padding: 14px 30px;
-        font-size: 22px;
+        padding: 13px 26px;
+        font-size: 21px;
         font-weight: 900;
         color: white;
         background: linear-gradient(135deg, #ff7eb3, #ffb86c);
@@ -314,9 +316,9 @@ game_html = f"""
     }}
 
     .recognized {{
-        margin-top: 18px;
+        margin-top: 16px;
         text-align: center;
-        font-size: 20px;
+        font-size: 19px;
         font-weight: 900;
         color: #475569;
         min-height: 32px;
@@ -325,7 +327,7 @@ game_html = f"""
 
     .effect {{
         position: absolute;
-        font-size: 44px;
+        font-size: 42px;
         animation: floatUp 0.75s forwards;
         pointer-events: none;
         z-index: 30;
@@ -344,38 +346,78 @@ game_html = f"""
 
     @media (max-width: 700px) {{
         .game-wrap {{
-            padding: 14px;
-            min-height: 670px;
+            padding: 10px;
+            min-height: 640px;
+            border-radius: 22px;
+            border-width: 3px;
         }}
 
-        .field {{
-            height: 370px;
+        .top-bar {{
+            grid-template-columns: repeat(4, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
         }}
 
         .score-card {{
-            font-size: 18px;
-            padding: 12px;
+            font-size: 13px;
+            padding: 8px 4px;
+            border-radius: 14px;
+            border-width: 2px;
+            line-height: 1.3;
         }}
 
         .message-box {{
-            font-size: 21px;
+            font-size: 17px;
+            padding: 10px 8px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            border-width: 3px;
+            min-height: 30px;
         }}
 
-        .mole {{
-            width: 138px;
-            min-height: 95px;
-            font-size: 30px;
-            border-radius: 26px;
+        .field {{
+            height: 330px;
+            border-radius: 20px;
+            border-width: 3px;
         }}
 
         .hole {{
-            width: 130px;
-            height: 46px;
+            width: 94px;
+            height: 35px;
+        }}
+
+        .hole1 {{ left: 4%; top: 76%; }}
+        .hole2 {{ left: 36%; top: 76%; }}
+        .hole3 {{ left: 68%; top: 76%; }}
+        .hole4 {{ left: 20%; top: 47%; }}
+        .hole5 {{ left: 52%; top: 47%; }}
+
+        .mole {{
+            width: 98px;
+            min-height: 74px;
+            font-size: 22px;
+            border-radius: 19px;
+            border-width: 3px;
+            padding: 5px;
+        }}
+
+        .control-row {{
+            gap: 6px;
+            margin-top: 15px;
         }}
 
         .btn {{
-            font-size: 19px;
-            padding: 12px 20px;
+            font-size: 15px;
+            padding: 10px 12px;
+        }}
+
+        .recognized {{
+            font-size: 15px;
+            margin-top: 12px;
+        }}
+
+        .effect {{
+            font-size: 34px;
         }}
     }}
 </style>
@@ -395,12 +437,11 @@ game_html = f"""
     </div>
 
     <div class="field" id="field">
-        <div class="hole" style="left:8%; top:74%;"></div>
-        <div class="hole" style="left:39%; top:74%;"></div>
-        <div class="hole" style="left:70%; top:74%;"></div>
-
-        <div class="hole" style="left:21%; top:45%;"></div>
-        <div class="hole" style="left:57%; top:45%;"></div>
+        <div class="hole hole1"></div>
+        <div class="hole hole2"></div>
+        <div class="hole hole3"></div>
+        <div class="hole hole4"></div>
+        <div class="hole hole5"></div>
     </div>
 
     <div class="control-row">
@@ -446,12 +487,20 @@ targetBox.innerText = targetScore;
 livesBox.innerText = lives;
 timeLeftBox.innerText = showTime;
 
-const positions = [
-    {{left: "8%", top: "47%"}},
-    {{left: "39%", top: "47%"}},
-    {{left: "70%", top: "47%"}},
-    {{left: "21%", top: "18%"}},
-    {{left: "57%", top: "18%"}}
+const isMobile = window.innerWidth <= 700;
+
+const positions = isMobile ? [
+    {{left: "4%", top: "54%"}},
+    {{left: "36%", top: "54%"}},
+    {{left: "68%", top: "54%"}},
+    {{left: "20%", top: "25%"}},
+    {{left: "52%", top: "25%"}}
+] : [
+    {{left: "8%", top: "50%"}},
+    {{left: "39%", top: "50%"}},
+    {{left: "70%", top: "50%"}},
+    {{left: "21%", top: "21%"}},
+    {{left: "57%", top: "21%"}}
 ];
 
 function normalizeText(text) {{
@@ -620,7 +669,6 @@ function popMole(moleObj) {{
         return;
     }}
 
-    // 현재 화면의 두더지를 모두 맞히면 바로 다음 라운드
     if (activeMoles.length === 0) {{
         clearInterval(timer);
         nextRoundDelay(650);
@@ -760,4 +808,4 @@ function endGame(success) {{
 </html>
 """
 
-components.html(game_html, height=780)
+components.html(game_html, height=700)
