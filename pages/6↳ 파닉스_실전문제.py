@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 st.title("🗣️ Phonics Speaking Practice")
-st.caption("스펠링을 보고 먼저 말해 본 뒤, 원어민 발음을 듣고 따라 말해 봅시다.")
+st.caption("스펠링을 보고 먼저 말한 뒤, 원어민 발음을 듣고, 글자 소리가 어떻게 합쳐지는지 배워 봅시다.")
 
 # =========================
 # 안내 박스
@@ -33,8 +33,7 @@ st.markdown(
         </div>
         <div>1. 화면에 보이는 <b>영어 단어</b>를 먼저 큰 소리로 읽습니다.</div>
         <div>2. <b>🔊 원어민 발음 듣기</b> 버튼을 눌러 실제 발음을 확인합니다.</div>
-        <div>3. 다시 한 번 따라 말합니다.</div>
-        <div>4. 스스로 잘 읽었는지 체크합니다.</div>
+        <div>3. <b>글자 소리가 어떻게 합쳐지는지</b> 확인합니다.</div>
     </div>
     """,
     unsafe_allow_html=True
@@ -63,78 +62,398 @@ def play_audio(text, key):
 # =========================
 practice_sets = {
     "① 자음 소리": [
-        "bat", "cat", "dog", "fish", "goat",
-        "hat", "jam", "sun", "van", "yes"
+        {
+            "word": "bat",
+            "explain": "b의 '브' 소리 + a의 '애' 소리 + t의 '트' 소리가 합쳐져서 뱉(bat)처럼 발음됩니다."
+        },
+        {
+            "word": "cat",
+            "explain": "c의 '크' 소리 + a의 '애' 소리 + t의 '트' 소리가 합쳐져서 캣(cat)처럼 발음됩니다."
+        },
+        {
+            "word": "dog",
+            "explain": "d의 '드' 소리 + o의 '아/오' 소리 + g의 '그' 소리가 합쳐져서 닥/독(dog)처럼 발음됩니다."
+        },
+        {
+            "word": "fish",
+            "explain": "f의 '프' 소리 + i의 짧은 '이' 소리 + sh의 '쉬' 소리가 합쳐져서 피쉬(fish)처럼 발음됩니다."
+        },
+        {
+            "word": "goat",
+            "explain": "g의 '그' 소리 + oa의 '오우' 소리 + t의 '트' 소리가 합쳐져서 고우트(goat)처럼 발음됩니다."
+        },
+        {
+            "word": "hat",
+            "explain": "h의 '흐' 소리 + a의 '애' 소리 + t의 '트' 소리가 합쳐져서 햇(hat)처럼 발음됩니다."
+        },
+        {
+            "word": "jam",
+            "explain": "j의 '쥬/즈' 소리 + a의 '애' 소리 + m의 '므' 소리가 합쳐져서 잼(jam)처럼 발음됩니다."
+        },
+        {
+            "word": "sun",
+            "explain": "s의 '스' 소리 + u의 '어' 소리 + n의 '느' 소리가 합쳐져서 썬(sun)처럼 발음됩니다."
+        },
+        {
+            "word": "van",
+            "explain": "v의 '브' 소리 + a의 '애' 소리 + n의 '느' 소리가 합쳐져서 밴(van)처럼 발음됩니다."
+        },
+        {
+            "word": "yes",
+            "explain": "y의 '이/여' 소리 + e의 '에' 소리 + s의 '스' 소리가 합쳐져서 예스(yes)처럼 발음됩니다."
+        },
     ],
 
     "② 짧은 모음": [
-        "apple", "cat", "egg", "bed", "sit",
-        "pig", "hot", "cup", "bus", "fox"
+        {
+            "word": "apple",
+            "explain": "a의 '애' 소리 + pp의 '프' 소리 + le의 약한 '을' 소리가 합쳐져서 애플(apple)처럼 발음됩니다."
+        },
+        {
+            "word": "cat",
+            "explain": "c의 '크' 소리 + a의 '애' 소리 + t의 '트' 소리가 합쳐져서 캣(cat)처럼 발음됩니다."
+        },
+        {
+            "word": "egg",
+            "explain": "e의 '에' 소리 + gg의 '그' 소리가 합쳐져서 에그(egg)처럼 발음됩니다."
+        },
+        {
+            "word": "bed",
+            "explain": "b의 '브' 소리 + e의 '에' 소리 + d의 '드' 소리가 합쳐져서 베드(bed)처럼 발음됩니다."
+        },
+        {
+            "word": "sit",
+            "explain": "s의 '스' 소리 + i의 짧은 '이' 소리 + t의 '트' 소리가 합쳐져서 싯(sit)처럼 발음됩니다."
+        },
+        {
+            "word": "pig",
+            "explain": "p의 '프' 소리 + i의 짧은 '이' 소리 + g의 '그' 소리가 합쳐져서 피그(pig)처럼 발음됩니다."
+        },
+        {
+            "word": "hot",
+            "explain": "h의 '흐' 소리 + o의 '아/오' 소리 + t의 '트' 소리가 합쳐져서 핱(hot)처럼 발음됩니다."
+        },
+        {
+            "word": "cup",
+            "explain": "c의 '크' 소리 + u의 '어' 소리 + p의 '프' 소리가 합쳐져서 컵(cup)처럼 발음됩니다."
+        },
+        {
+            "word": "bus",
+            "explain": "b의 '브' 소리 + u의 '어' 소리 + s의 '스' 소리가 합쳐져서 버스(bus)처럼 발음됩니다."
+        },
+        {
+            "word": "fox",
+            "explain": "f의 '프' 소리 + o의 '아/오' 소리 + x의 '크스' 소리가 합쳐져서 팍스/폭스(fox)처럼 발음됩니다."
+        },
     ],
 
     "③ 긴 모음": [
-        "cake", "name", "tree", "see", "bike",
-        "five", "rope", "home", "cube", "cute"
+        {
+            "word": "cake",
+            "explain": "c의 '크' 소리 + a의 이름 소리 '에이' + k의 '크' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 케이크(cake)처럼 발음됩니다."
+        },
+        {
+            "word": "name",
+            "explain": "n의 '느' 소리 + a의 이름 소리 '에이' + m의 '므' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 네임(name)처럼 발음됩니다."
+        },
+        {
+            "word": "tree",
+            "explain": "t의 '트' 소리 + r의 '르' 소리 + ee의 긴 '이' 소리가 합쳐져서 트리(tree)처럼 발음됩니다."
+        },
+        {
+            "word": "see",
+            "explain": "s의 '스' 소리 + ee의 긴 '이' 소리가 합쳐져서 씨(see)처럼 발음됩니다."
+        },
+        {
+            "word": "bike",
+            "explain": "b의 '브' 소리 + i의 이름 소리 '아이' + k의 '크' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 바이크(bike)처럼 발음됩니다."
+        },
+        {
+            "word": "five",
+            "explain": "f의 '프' 소리 + i의 이름 소리 '아이' + v의 '브' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 파이브(five)처럼 발음됩니다."
+        },
+        {
+            "word": "rope",
+            "explain": "r의 '르' 소리 + o의 이름 소리 '오우' + p의 '프' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 로우프(rope)처럼 발음됩니다."
+        },
+        {
+            "word": "home",
+            "explain": "h의 '흐' 소리 + o의 이름 소리 '오우' + m의 '므' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 호움(home)처럼 발음됩니다."
+        },
+        {
+            "word": "cube",
+            "explain": "c의 '크' 소리 + u의 이름 소리 '유' + b의 '브' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 큐브(cube)처럼 발음됩니다."
+        },
+        {
+            "word": "cute",
+            "explain": "c의 '크' 소리 + u의 이름 소리 '유' + t의 '트' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 큐트(cute)처럼 발음됩니다."
+        },
     ],
 
     "④ 모음 예외": [
-        "ball", "call", "car", "father", "about",
-        "love", "do", "book", "moon", "bread"
+        {
+            "word": "ball",
+            "explain": "b의 '브' 소리 + all의 '올' 소리가 합쳐져서 볼(ball)처럼 발음됩니다."
+        },
+        {
+            "word": "call",
+            "explain": "c의 '크' 소리 + all의 '올' 소리가 합쳐져서 콜(call)처럼 발음됩니다."
+        },
+        {
+            "word": "car",
+            "explain": "c의 '크' 소리 + ar의 '아알' 소리가 합쳐져서 카알(car)처럼 발음됩니다."
+        },
+        {
+            "word": "father",
+            "explain": "f의 '프' 소리 + a의 '아' 소리 + th의 부드러운 'ㄷ' 소리 + er의 약한 '어' 소리가 합쳐져서 파더(father)처럼 발음됩니다."
+        },
+        {
+            "word": "about",
+            "explain": "a의 약한 '어' 소리 + b의 '브' 소리 + ou의 '아우' 소리 + t의 '트' 소리가 합쳐져서 어바웃(about)처럼 발음됩니다."
+        },
+        {
+            "word": "love",
+            "explain": "l의 '르' 소리 + o의 '어' 소리 + v의 '브' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 러브(love)처럼 발음됩니다."
+        },
+        {
+            "word": "do",
+            "explain": "d의 '드' 소리 + o의 긴 '우' 소리가 합쳐져서 두(do)처럼 발음됩니다."
+        },
+        {
+            "word": "book",
+            "explain": "b의 '브' 소리 + oo의 짧은 '우' 소리 + k의 '크' 소리가 합쳐져서 북(book)처럼 발음됩니다."
+        },
+        {
+            "word": "moon",
+            "explain": "m의 '므' 소리 + oo의 긴 '우' 소리 + n의 '느' 소리가 합쳐져서 문(moon)처럼 발음됩니다."
+        },
+        {
+            "word": "bread",
+            "explain": "b의 '브' 소리 + r의 '르' 소리 + ea의 '에' 소리 + d의 '드' 소리가 합쳐져서 브레드(bread)처럼 발음됩니다."
+        },
     ],
 
     "⑤ Blends": [
-        "black", "brown", "clock", "crab", "drum",
-        "flag", "frog", "green", "spoon", "star"
+        {
+            "word": "black",
+            "explain": "bl의 '블' 소리 + a의 '애' 소리 + ck의 '크' 소리가 합쳐져서 블랙(black)처럼 발음됩니다."
+        },
+        {
+            "word": "brown",
+            "explain": "br의 '브르' 소리 + ow의 '아우' 소리 + n의 '느' 소리가 합쳐져서 브라운(brown)처럼 발음됩니다."
+        },
+        {
+            "word": "clock",
+            "explain": "cl의 '클' 소리 + o의 '아/오' 소리 + ck의 '크' 소리가 합쳐져서 클락(clock)처럼 발음됩니다."
+        },
+        {
+            "word": "crab",
+            "explain": "cr의 '크르' 소리 + a의 '애' 소리 + b의 '브' 소리가 합쳐져서 크랩(crab)처럼 발음됩니다."
+        },
+        {
+            "word": "drum",
+            "explain": "dr의 '드르' 소리 + u의 '어' 소리 + m의 '므' 소리가 합쳐져서 드럼(drum)처럼 발음됩니다."
+        },
+        {
+            "word": "flag",
+            "explain": "fl의 '플' 소리 + a의 '애' 소리 + g의 '그' 소리가 합쳐져서 플래그(flag)처럼 발음됩니다."
+        },
+        {
+            "word": "frog",
+            "explain": "fr의 '프르' 소리 + o의 '아/오' 소리 + g의 '그' 소리가 합쳐져서 프락/프로그(frog)처럼 발음됩니다."
+        },
+        {
+            "word": "green",
+            "explain": "gr의 '그르' 소리 + ee의 긴 '이' 소리 + n의 '느' 소리가 합쳐져서 그린(green)처럼 발음됩니다."
+        },
+        {
+            "word": "spoon",
+            "explain": "sp의 '스프' 소리 + oo의 긴 '우' 소리 + n의 '느' 소리가 합쳐져서 스푼(spoon)처럼 발음됩니다."
+        },
+        {
+            "word": "star",
+            "explain": "st의 '스트' 소리 + ar의 '아알' 소리가 합쳐져서 스타알(star)처럼 발음됩니다."
+        },
     ],
 
     "⑥ Digraphs": [
-        "chair", "ship", "three", "this", "phone",
-        "whale", "duck", "shop", "cheese", "photo"
+        {
+            "word": "chair",
+            "explain": "ch의 '치' 소리 + air의 '에어' 소리가 합쳐져서 체어(chair)처럼 발음됩니다."
+        },
+        {
+            "word": "ship",
+            "explain": "sh의 '쉬' 소리 + i의 짧은 '이' 소리 + p의 '프' 소리가 합쳐져서 쉽(ship)처럼 발음됩니다."
+        },
+        {
+            "word": "three",
+            "explain": "th의 혀를 살짝 내미는 '쓰' 소리 + r의 '르' 소리 + ee의 긴 '이' 소리가 합쳐져서 쓰리(three)처럼 발음됩니다."
+        },
+        {
+            "word": "this",
+            "explain": "th의 혀를 살짝 내미는 '드' 소리 + i의 짧은 '이' 소리 + s의 '스' 소리가 합쳐져서 디스(this)처럼 발음됩니다."
+        },
+        {
+            "word": "phone",
+            "explain": "ph의 '프' 소리 + o의 이름 소리 '오우' + n의 '느' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 포운(phone)처럼 발음됩니다."
+        },
+        {
+            "word": "whale",
+            "explain": "wh의 '우/워' 소리 + a의 이름 소리 '에이' + l의 '을' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 웨일(whale)처럼 발음됩니다."
+        },
+        {
+            "word": "duck",
+            "explain": "d의 '드' 소리 + u의 '어' 소리 + ck의 '크' 소리가 합쳐져서 덕(duck)처럼 발음됩니다."
+        },
+        {
+            "word": "shop",
+            "explain": "sh의 '쉬' 소리 + o의 '아/오' 소리 + p의 '프' 소리가 합쳐져서 샵(shop)처럼 발음됩니다."
+        },
+        {
+            "word": "cheese",
+            "explain": "ch의 '치' 소리 + ee의 긴 '이' 소리 + s의 '즈' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 치즈(cheese)처럼 발음됩니다."
+        },
+        {
+            "word": "photo",
+            "explain": "ph의 '프' 소리 + o의 '오우' 소리 + t의 '트' 소리 + o의 '오우' 소리가 합쳐져서 포토(photo)처럼 발음됩니다."
+        },
     ],
 
     "⑦ Vowel Teams": [
-        "rain", "day", "see", "eat", "boat",
-        "snow", "cow", "house", "coin", "boy"
+        {
+            "word": "rain",
+            "explain": "r의 '르' 소리 + ai의 '에이' 소리 + n의 '느' 소리가 합쳐져서 레인(rain)처럼 발음됩니다."
+        },
+        {
+            "word": "day",
+            "explain": "d의 '드' 소리 + ay의 '에이' 소리가 합쳐져서 데이(day)처럼 발음됩니다."
+        },
+        {
+            "word": "see",
+            "explain": "s의 '스' 소리 + ee의 긴 '이' 소리가 합쳐져서 씨(see)처럼 발음됩니다."
+        },
+        {
+            "word": "eat",
+            "explain": "ea의 긴 '이' 소리 + t의 '트' 소리가 합쳐져서 잇(eat)처럼 발음됩니다."
+        },
+        {
+            "word": "boat",
+            "explain": "b의 '브' 소리 + oa의 '오우' 소리 + t의 '트' 소리가 합쳐져서 보우트(boat)처럼 발음됩니다."
+        },
+        {
+            "word": "snow",
+            "explain": "sn의 '스느' 소리 + ow의 '오우' 소리가 합쳐져서 스노우(snow)처럼 발음됩니다."
+        },
+        {
+            "word": "cow",
+            "explain": "c의 '크' 소리 + ow의 '아우' 소리가 합쳐져서 카우(cow)처럼 발음됩니다."
+        },
+        {
+            "word": "house",
+            "explain": "h의 '흐' 소리 + ou의 '아우' 소리 + s의 '스' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 하우스(house)처럼 발음됩니다."
+        },
+        {
+            "word": "coin",
+            "explain": "c의 '크' 소리 + oi의 '오이' 소리 + n의 '느' 소리가 합쳐져서 코인(coin)처럼 발음됩니다."
+        },
+        {
+            "word": "boy",
+            "explain": "b의 '브' 소리 + oy의 '오이' 소리가 합쳐져서 보이(boy)처럼 발음됩니다."
+        },
     ],
 
     "⑧ R-Controlled": [
-        "car", "star", "her", "bird", "girl",
-        "corn", "fork", "turn", "burn", "teacher"
+        {
+            "word": "car",
+            "explain": "c의 '크' 소리 + ar의 '아알' 소리가 합쳐져서 카알(car)처럼 발음됩니다."
+        },
+        {
+            "word": "star",
+            "explain": "st의 '스트' 소리 + ar의 '아알' 소리가 합쳐져서 스타알(star)처럼 발음됩니다."
+        },
+        {
+            "word": "her",
+            "explain": "h의 '흐' 소리 + er의 '얼' 소리가 합쳐져서 헐(her)처럼 발음됩니다."
+        },
+        {
+            "word": "bird",
+            "explain": "b의 '브' 소리 + ir의 '얼' 소리 + d의 '드' 소리가 합쳐져서 벌드(bird)처럼 발음됩니다."
+        },
+        {
+            "word": "girl",
+            "explain": "g의 '그' 소리 + ir의 '얼' 소리 + l의 '을' 소리가 합쳐져서 걸(girl)처럼 발음됩니다."
+        },
+        {
+            "word": "corn",
+            "explain": "c의 '크' 소리 + or의 '오얼' 소리 + n의 '느' 소리가 합쳐져서 코언(corn)처럼 발음됩니다."
+        },
+        {
+            "word": "fork",
+            "explain": "f의 '프' 소리 + or의 '오얼' 소리 + k의 '크' 소리가 합쳐져서 포크(fork)처럼 발음됩니다."
+        },
+        {
+            "word": "turn",
+            "explain": "t의 '트' 소리 + ur의 '얼' 소리 + n의 '느' 소리가 합쳐져서 턴(turn)처럼 발음됩니다."
+        },
+        {
+            "word": "burn",
+            "explain": "b의 '브' 소리 + ur의 '얼' 소리 + n의 '느' 소리가 합쳐져서 번(burn)처럼 발음됩니다."
+        },
+        {
+            "word": "teacher",
+            "explain": "t의 '트' 소리 + ea의 긴 '이' 소리 + ch의 '치' 소리 + er의 약한 '어' 소리가 합쳐져서 티처(teacher)처럼 발음됩니다."
+        },
     ],
 
     "⑨ Silent e": [
-        "cake", "name", "bike", "five", "home",
-        "rope", "cube", "cute", "make", "hope"
+        {
+            "word": "cake",
+            "explain": "c의 '크' 소리 + a의 이름 소리 '에이' + k의 '크' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 케이크(cake)처럼 발음됩니다."
+        },
+        {
+            "word": "name",
+            "explain": "n의 '느' 소리 + a의 이름 소리 '에이' + m의 '므' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 네임(name)처럼 발음됩니다."
+        },
+        {
+            "word": "bike",
+            "explain": "b의 '브' 소리 + i의 이름 소리 '아이' + k의 '크' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 바이크(bike)처럼 발음됩니다."
+        },
+        {
+            "word": "five",
+            "explain": "f의 '프' 소리 + i의 이름 소리 '아이' + v의 '브' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 파이브(five)처럼 발음됩니다."
+        },
+        {
+            "word": "home",
+            "explain": "h의 '흐' 소리 + o의 이름 소리 '오우' + m의 '므' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 호움(home)처럼 발음됩니다."
+        },
+        {
+            "word": "rope",
+            "explain": "r의 '르' 소리 + o의 이름 소리 '오우' + p의 '프' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 로우프(rope)처럼 발음됩니다."
+        },
+        {
+            "word": "cube",
+            "explain": "c의 '크' 소리 + u의 이름 소리 '유' + b의 '브' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 큐브(cube)처럼 발음됩니다."
+        },
+        {
+            "word": "cute",
+            "explain": "c의 '크' 소리 + u의 이름 소리 '유' + t의 '트' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 큐트(cute)처럼 발음됩니다."
+        },
+        {
+            "word": "make",
+            "explain": "m의 '므' 소리 + a의 이름 소리 '에이' + k의 '크' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 메이크(make)처럼 발음됩니다."
+        },
+        {
+            "word": "hope",
+            "explain": "h의 '흐' 소리 + o의 이름 소리 '오우' + p의 '프' 소리가 합쳐집니다. 끝의 e는 소리 나지 않아서 호우프(hope)처럼 발음됩니다."
+        },
     ],
 }
 
 
 # =========================
-# 세션 상태 초기화
-# =========================
-def init_tab_state(tab_name, words):
-    for i in range(len(words)):
-        key = f"{tab_name}_check_{i}"
-        if key not in st.session_state:
-            st.session_state[key] = False
-
-
-def reset_tab(tab_name):
-    keys_to_delete = []
-    for key in st.session_state.keys():
-        if key.startswith(tab_name):
-            keys_to_delete.append(key)
-
-    for key in keys_to_delete:
-        del st.session_state[key]
-
-
-# =========================
 # 말하기 연습 출력 함수
 # =========================
-def show_speaking_practice(tab_name, words):
-    init_tab_state(tab_name, words)
-
+def show_speaking_practice(tab_name, items):
     st.subheader(tab_name)
 
     st.markdown(
@@ -147,23 +466,17 @@ def show_speaking_practice(tab_name, words):
             margin-bottom:18px;
             line-height:1.7;
         ">
-            👀 <b>먼저 단어를 보고 직접 읽어 보세요.</b><br>
-            그 다음 원어민 발음을 듣고, 다시 한 번 따라 말해 봅니다.
+            👀 <b>단어를 보고 먼저 직접 읽어 보세요.</b><br>
+            그 다음 원어민 발음을 듣고, 마지막으로 글자 소리가 어떻게 합쳐지는지 확인합니다.
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    total = len(words)
-    checked = sum(
-        1 for i in range(total)
-        if st.session_state.get(f"{tab_name}_check_{i}", False)
-    )
+    for i, item in enumerate(items):
+        word = item["word"]
+        explain = item["explain"]
 
-    st.progress(checked / total)
-    st.write(f"✅ 연습 완료: **{checked} / {total}개**")
-
-    for i, word in enumerate(words):
         st.markdown("---")
 
         col1, col2 = st.columns([2, 3])
@@ -174,14 +487,14 @@ def show_speaking_practice(tab_name, words):
                 <div style="
                     background: linear-gradient(135deg, #e0f2fe, #fef3c7);
                     border-radius:22px;
-                    padding:28px 20px;
+                    padding:30px 20px;
                     text-align:center;
                     box-shadow:0 4px 10px rgba(0,0,0,0.08);
                 ">
                     <div style="font-size:18px; font-weight:700; color:#555;">
                         Word {i + 1}
                     </div>
-                    <div style="font-size:48px; font-weight:900; color:#111827; margin-top:10px;">
+                    <div style="font-size:52px; font-weight:900; color:#111827; margin-top:10px;">
                         {word}
                     </div>
                 </div>
@@ -191,33 +504,13 @@ def show_speaking_practice(tab_name, words):
 
         with col2:
             st.markdown("### 1단계: 먼저 직접 말하기")
-            st.write("단어를 보고 선생님 또는 친구 앞에서 먼저 읽어 보세요.")
+            st.write("스펠링을 보고 단어를 먼저 큰 소리로 읽어 보세요.")
 
-            st.markdown("### 2단계: 원어민 발음 확인")
+            st.markdown("### 2단계: 원어민 발음 듣기")
             play_audio(word, key=f"{tab_name}_audio_{i}")
 
-            st.markdown("### 3단계: 따라 말하고 체크")
-            st.checkbox(
-                "따라 말하기 완료!",
-                key=f"{tab_name}_check_{i}"
-            )
-
-    st.markdown("---")
-
-    checked = sum(
-        1 for i in range(total)
-        if st.session_state.get(f"{tab_name}_check_{i}", False)
-    )
-
-    if checked == total:
-        st.balloons()
-        st.success("🎉 모든 단어 말하기 연습을 완료했습니다! 아주 좋습니다!")
-    else:
-        st.info(f"조금만 더 해 봅시다! 아직 {total - checked}개가 남았습니다.")
-
-    if st.button("🔄 이 탭 다시 연습하기", key=f"{tab_name}_reset"):
-        reset_tab(tab_name)
-        st.rerun()
+            st.markdown("### 3단계: 글자 소리 합치기")
+            st.info(explain)
 
 
 # =========================
