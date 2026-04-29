@@ -1,7 +1,8 @@
 import streamlit as st
 import random
-import time
 import io
+import re
+import time
 import speech_recognition as sr
 from streamlit_mic_recorder import mic_recorder
 
@@ -9,147 +10,143 @@ from streamlit_mic_recorder import mic_recorder
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Speaking Bingo Game",
-    page_icon="🎤",
-    layout="wide"
+    page_title="Speaking Word Pop Game",
+    page_icon="💥",
+    layout="centered"
 )
 
-st.title("🎤 Time Attack Speaking Bingo")
-st.caption("빙고판의 단어를 보고 직접 말하세요. 음성 인식이 성공하면 칸이 체크됩니다!")
-
 # =========================
-# CSS 디자인
+# CSS
 # =========================
 st.markdown(
     """
     <style>
-    .hero-box {
-        background: linear-gradient(135deg, #fce7f3 0%, #e0f2fe 50%, #fef3c7 100%);
-        border-radius: 26px;
-        padding: 24px 28px;
-        margin-bottom: 24px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.8);
+    .main {
+        background: linear-gradient(180deg, #fff7ed 0%, #fdf2f8 45%, #eff6ff 100%);
     }
 
-    .hero-title {
-        font-size: 28px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 10px;
-    }
-
-    .hero-text {
-        font-size: 16px;
-        color: #374151;
-        line-height: 1.8;
-    }
-
-    .theme-header {
-        background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+    .title-box {
+        background: linear-gradient(135deg, #fb7185, #a78bfa, #38bdf8);
         color: white;
-        padding: 20px 24px;
-        border-radius: 24px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 20px rgba(139,92,246,0.25);
-    }
-
-    .theme-title {
-        font-size: 25px;
-        font-weight: 900;
-        margin-bottom: 6px;
-    }
-
-    .theme-desc {
-        font-size: 15px;
-        opacity: 0.95;
-    }
-
-    .score-box {
-        background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 50%, #fce7f3 100%);
-        border-radius: 22px;
-        padding: 18px 22px;
-        margin-bottom: 18px;
-        border: 1px solid #bbf7d0;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.06);
+        border-radius: 28px;
+        padding: 24px 22px;
         text-align: center;
-        font-size: 23px;
-        font-weight: 900;
-        color: #14532d;
-    }
-
-    .bingo-card {
-        background: white;
-        border-radius: 24px;
-        padding: 18px;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.07);
-        border: 1px solid #e9d5ff;
+        box-shadow: 0 10px 24px rgba(0,0,0,0.15);
         margin-bottom: 20px;
     }
 
-    .word-cell {
-        background: #ffffff;
-        border: 2px solid #dbeafe;
-        border-radius: 18px;
-        min-height: 76px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 19px;
+    .title-main {
+        font-size: 30px;
         font-weight: 900;
-        color: #111827;
-        margin-bottom: 10px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        margin-bottom: 8px;
     }
 
-    .marked-cell {
-        background: linear-gradient(135deg, #bbf7d0, #dbeafe);
-        border: 2px solid #22c55e;
-        border-radius: 18px;
-        min-height: 76px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 19px;
-        font-weight: 900;
-        color: #14532d;
-        margin-bottom: 10px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    .title-sub {
+        font-size: 16px;
+        font-weight: 700;
+        opacity: 0.95;
     }
 
-    .message-box {
-        background: #fff7ed;
-        border-left: 7px solid #fb923c;
-        border-radius: 18px;
-        padding: 16px 18px;
+    .word-card {
+        background: white;
+        border-radius: 32px;
+        padding: 42px 20px;
+        text-align: center;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        border: 4px solid #fbcfe8;
         margin: 18px 0;
+    }
+
+    .word-label {
         font-size: 17px;
         font-weight: 800;
-        color: #7c2d12;
+        color: #64748b;
+        margin-bottom: 12px;
+    }
+
+    .target-word {
+        font-size: 58px;
+        font-weight: 1000;
+        color: #be185d;
+        letter-spacing: 1px;
+    }
+
+    .pop-word {
+        background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe);
+        border-radius: 32px;
+        padding: 42px 20px;
+        text-align: center;
+        box-shadow: 0 12px 28px rgba(0,0,0,0.12);
+        border: 4px solid #fb7185;
+        margin: 18px 0;
+        animation: pop 0.7s ease-in-out;
+    }
+
+    .pop-text {
+        font-size: 54px;
+        font-weight: 1000;
+        color: #dc2626;
+    }
+
+    @keyframes pop {
+        0% { transform: scale(0.7); opacity: 0.4; }
+        45% { transform: scale(1.18); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .score-box {
+        background: white;
+        border-radius: 22px;
+        padding: 16px 10px;
+        text-align: center;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.08);
+        border: 2px solid #e0e7ff;
+        font-size: 18px;
+        font-weight: 900;
+        color: #1e293b;
+    }
+
+    .message-good {
+        background: #dcfce7;
+        color: #14532d;
+        border-radius: 20px;
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 900;
+        text-align: center;
+        margin: 16px 0;
+        border: 2px solid #86efac;
+    }
+
+    .message-bad {
+        background: #fff7ed;
+        color: #9a3412;
+        border-radius: 20px;
+        padding: 16px;
+        font-size: 18px;
+        font-weight: 900;
+        text-align: center;
+        margin: 16px 0;
+        border: 2px solid #fdba74;
     }
 
     .recognized-box {
         background: #f8fafc;
         border-radius: 18px;
-        padding: 16px 18px;
-        border: 1px solid #e2e8f0;
-        margin: 14px 0;
-        font-size: 18px;
+        padding: 14px;
+        font-size: 16px;
         font-weight: 800;
+        text-align: center;
+        color: #334155;
+        border: 1px solid #cbd5e1;
+        margin-top: 12px;
     }
 
     .stButton > button {
         border-radius: 999px;
         font-weight: 900;
-        font-size: 16px;
-        min-height: 45px;
-        border: 1px solid #d1d5db;
-    }
-
-    .stButton > button:hover {
-        border-color: #ec4899;
-        color: #ec4899;
-        background: #fdf2f8;
+        font-size: 17px;
+        min-height: 48px;
     }
     </style>
     """,
@@ -157,18 +154,13 @@ st.markdown(
 )
 
 # =========================
-# 안내 박스
+# 제목
 # =========================
 st.markdown(
     """
-    <div class="hero-box">
-        <div class="hero-title">🎯 게임 방법</div>
-        <div class="hero-text">
-            1. <b>게임 시작</b> 버튼을 누릅니다.<br>
-            2. 빙고판에 있는 영어 단어 중 하나를 골라 직접 말합니다.<br>
-            3. 음성 인식이 성공하면 해당 단어 칸이 체크됩니다.<br>
-            4. 제한 시간 안에 가로, 세로, 대각선 한 줄을 완성하면 <b>BINGO!</b>
-        </div>
+    <div class="title-box">
+        <div class="title-main">💥 Speaking Word Pop</div>
+        <div class="title-sub">폰으로 단어를 하나씩 말하면 단어가 펑! 터집니다</div>
     </div>
     """,
     unsafe_allow_html=True
@@ -178,60 +170,36 @@ st.markdown(
 # 단어 데이터
 # =========================
 word_groups = {
-    "🌱 사람·학교·동작": [
-        "person", "man", "woman", "child", "baby", "boy", "girl", "friend", "family", "parent",
-        "father", "mother", "brother", "sister", "son", "daughter", "teacher", "student", "classmate", "neighbor",
-        "customer", "worker", "driver", "doctor", "nurse", "owner", "guest", "team", "member",
-        "school", "class", "classroom", "lesson", "homework", "test", "exam", "quiz", "question", "answer",
-        "book", "notebook", "paper", "pen", "pencil", "desk", "chair", "board", "page", "word",
-        "sentence", "story", "language", "English", "Korean", "grade", "score", "rule", "practice", "study",
-        "go", "come", "walk", "run", "sit", "stand", "stop", "start", "open", "close",
-        "make", "do", "have", "get", "take", "give", "put", "bring", "use", "find",
-        "keep", "leave", "move", "turn", "wait", "help", "try", "need", "want", "like",
+    "🌱 기초 동작": [
+        "go", "come", "walk", "run", "sit", "stand", "stop", "start",
+        "open", "close", "make", "do", "have", "get", "take", "give",
+        "put", "bring", "use", "find", "help", "try", "need", "want",
+        "like", "read", "write", "speak", "listen", "eat"
     ],
-
-    "💖 감정·상태": [
-        "happy", "sad", "angry", "tired", "hungry", "thirsty", "excited", "bored", "afraid", "worried",
-        "proud", "kind", "nice", "brave", "honest", "friendly", "quiet", "shy", "smart", "strong",
-        "weak", "careful", "lazy", "busy", "ready", "sorry", "thankful", "lonely", "nervous", "calm",
-        "good", "bad", "big", "small", "long", "short", "new", "old", "young", "high",
-        "low", "fast", "slow", "easy", "hard", "right", "wrong", "same", "different", "important",
-        "beautiful", "clean", "dirty", "full", "empty", "free", "safe", "dangerous", "true", "false",
+    "🍎 음식": [
+        "food", "rice", "bread", "water", "milk", "juice", "coffee", "tea",
+        "apple", "banana", "egg", "meat", "fish", "chicken", "fruit",
+        "breakfast", "lunch", "dinner", "snack", "cake"
     ],
-
-    "🍎 음식·장소·이동": [
-        "food", "rice", "bread", "water", "milk", "juice", "coffee", "tea", "apple", "banana",
-        "egg", "meat", "fish", "chicken", "vegetable", "fruit", "breakfast", "lunch", "dinner", "snack",
-        "healthy", "sick", "pain", "headache", "medicine", "hospital", "exercise", "sleep", "rest", "wash",
-        "home", "house", "room", "kitchen", "bathroom", "door", "window", "city", "town", "country",
-        "street", "road", "park", "store", "market", "station", "bus", "car", "bike", "train",
-        "plane", "ship", "map", "place", "here", "there", "left", "right", "near", "far",
+    "🐶 동물": [
+        "dog", "cat", "bird", "fish", "horse", "cow", "pig", "sheep",
+        "goat", "chicken", "duck", "rabbit", "monkey", "lion", "tiger",
+        "bear", "fox", "deer", "whale", "shark"
     ],
-
-    "🌤️ 자연·동물": [
-        "sun", "moon", "star", "sky", "cloud", "rain", "snow", "wind", "weather", "air",
-        "water", "fire", "tree", "flower", "grass", "mountain", "river", "sea", "beach", "forest",
-        "earth", "ground", "rock", "hill", "lake", "island", "cold", "hot", "warm", "cool",
-        "dog", "cat", "bird", "fish", "horse", "cow", "pig", "sheep", "goat", "chicken",
-        "duck", "rabbit", "mouse", "monkey", "lion", "tiger", "bear", "wolf", "fox", "deer",
-        "elephant", "giraffe", "zebra", "snake", "frog", "turtle", "whale", "dolphin", "shark", "penguin",
+    "💖 감정": [
+        "happy", "sad", "angry", "tired", "hungry", "thirsty",
+        "excited", "bored", "afraid", "worried", "proud", "kind",
+        "nice", "brave", "shy", "smart", "strong", "busy", "ready", "sorry"
     ],
-
-    "⏰ 시간·물건·생각": [
-        "time", "day", "week", "month", "year", "today", "tomorrow", "yesterday", "morning", "afternoon",
-        "evening", "night", "hour", "minute", "second", "early", "late", "now", "before", "after",
-        "first", "last", "one", "two", "three", "four", "five", "many", "much", "few",
-        "thing", "bag", "box", "cup", "bottle", "phone", "computer", "camera", "key", "money",
-        "card", "ticket", "clothes", "shirt", "pants", "shoes", "hat", "watch", "table", "bed",
-        "light", "picture", "music", "game", "ball", "tool", "knife", "spoon", "fork", "plate",
-        "think", "know", "understand", "remember", "forget", "say", "tell", "speak", "talk", "ask",
-        "answer", "call", "listen", "hear", "read", "write", "learn", "teach", "mean", "feel",
-        "believe", "hope", "choose", "decide", "explain", "show", "share", "agree", "worry", "thank",
-    ],
+    "🏫 학교": [
+        "school", "class", "teacher", "student", "book", "notebook",
+        "paper", "pen", "pencil", "desk", "chair", "board", "word",
+        "sentence", "English", "Korean", "homework", "test", "quiz", "score"
+    ]
 }
 
 # =========================
-# 음성 인식 함수
+# 함수
 # =========================
 def recognize_speech(audio_bytes):
     recognizer = sr.Recognizer()
@@ -253,329 +221,258 @@ def recognize_speech(audio_bytes):
         return ""
 
 
-# =========================
-# 빙고 함수
-# =========================
-def make_board(words, size, seed_key):
-    random.seed(seed_key)
-    selected = random.sample(words, size * size)
-
-    board = []
-    idx = 0
-
-    for r in range(size):
-        row = []
-        for c in range(size):
-            row.append(selected[idx])
-            idx += 1
-        board.append(row)
-
-    return board
-
-
-def count_bingo_lines(marked, size):
-    lines = 0
-
-    for r in range(size):
-        if all(marked[r][c] for c in range(size)):
-            lines += 1
-
-    for c in range(size):
-        if all(marked[r][c] for r in range(size)):
-            lines += 1
-
-    if all(marked[i][i] for i in range(size)):
-        lines += 1
-
-    if all(marked[i][size - 1 - i] for i in range(size)):
-        lines += 1
-
-    return lines
-
-
 def normalize_text(text):
-    return text.lower().strip().replace(".", "").replace(",", "").replace("!", "").replace("?", "")
+    text = text.lower().strip()
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
+    return text
 
 
-def init_game_state(group_name, words, size):
-    prefix = f"speak_bingo_{group_name}_{size}"
-
-    if f"{prefix}_board" not in st.session_state:
-        st.session_state[f"{prefix}_board"] = make_board(words, size, f"{group_name}_{size}_board")
-        st.session_state[f"{prefix}_marked"] = [[False for _ in range(size)] for _ in range(size)]
-        st.session_state[f"{prefix}_score"] = 0
-        st.session_state[f"{prefix}_started"] = False
-        st.session_state[f"{prefix}_start_time"] = None
-        st.session_state[f"{prefix}_time_limit"] = 90
-        st.session_state[f"{prefix}_message"] = "게임 시작 버튼을 눌러 주세요."
-        st.session_state[f"{prefix}_recognized"] = ""
-
-    return prefix
-
-
-def reset_game(prefix):
-    keys_to_delete = [key for key in st.session_state.keys() if key.startswith(prefix)]
-    for key in keys_to_delete:
-        del st.session_state[key]
-
-
-def find_word_on_board(board, marked, size, spoken_text):
+def is_correct(spoken_text, target_word):
     spoken_text = normalize_text(spoken_text)
+    target_word = normalize_text(target_word)
 
     if not spoken_text:
-        return None
+        return False
 
     spoken_words = spoken_text.split()
 
-    for r in range(size):
-        for c in range(size):
-            target = normalize_text(board[r][c])
+    if spoken_text == target_word:
+        return True
 
-            if marked[r][c]:
-                continue
+    if target_word in spoken_words:
+        return True
 
-            # 정확히 말한 경우
-            if spoken_text == target:
-                return r, c
+    return False
 
-            # 인식 결과 문장 안에 단어가 들어간 경우
-            if target in spoken_words:
-                return r, c
 
-    return None
+def init_game(group_name, word_count):
+    key = f"word_pop_{group_name}_{word_count}"
+
+    if f"{key}_words" not in st.session_state:
+        words = word_groups[group_name].copy()
+        random.shuffle(words)
+
+        st.session_state[f"{key}_words"] = words[:word_count]
+        st.session_state[f"{key}_index"] = 0
+        st.session_state[f"{key}_score"] = 0
+        st.session_state[f"{key}_wrong"] = 0
+        st.session_state[f"{key}_started"] = False
+        st.session_state[f"{key}_recognized"] = ""
+        st.session_state[f"{key}_message"] = "시작 버튼을 누르고 단어를 크게 말해 보세요!"
+        st.session_state[f"{key}_pop"] = False
+
+    return key
+
+
+def reset_game(key):
+    delete_keys = [k for k in st.session_state.keys() if k.startswith(key)]
+    for k in delete_keys:
+        del st.session_state[k]
 
 
 # =========================
-# 게임 출력 함수
+# 게임 설정
 # =========================
-def show_speaking_bingo(group_name, words):
+group_name = st.selectbox(
+    "연습할 단어 묶음 선택",
+    list(word_groups.keys())
+)
+
+word_count = st.radio(
+    "연습할 단어 수",
+    [5, 10, 15, 20],
+    index=1,
+    horizontal=True
+)
+
+key = init_game(group_name, word_count)
+
+words = st.session_state[f"{key}_words"]
+index = st.session_state[f"{key}_index"]
+score = st.session_state[f"{key}_score"]
+wrong = st.session_state[f"{key}_wrong"]
+started = st.session_state[f"{key}_started"]
+recognized = st.session_state[f"{key}_recognized"]
+message = st.session_state[f"{key}_message"]
+pop = st.session_state[f"{key}_pop"]
+
+# =========================
+# 점수판
+# =========================
+col1, col2, col3 = st.columns(3)
+
+with col1:
     st.markdown(
         f"""
-        <div class="theme-header">
-            <div class="theme-title">{group_name}</div>
-            <div class="theme-desc">빙고판에 있는 단어를 직접 말해서 칸을 채우세요.</div>
+        <div class="score-box">
+            ⭐ 성공<br>{score}
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    col_size, col_time = st.columns(2)
+with col2:
+    st.markdown(
+        f"""
+        <div class="score-box">
+            🔥 진행<br>{index}/{len(words)}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    with col_size:
-        size = st.radio(
-            "빙고판 크기",
-            [3, 4, 5],
-            index=0,
-            horizontal=True,
-            key=f"{group_name}_size_select"
-        )
+with col3:
+    st.markdown(
+        f"""
+        <div class="score-box">
+            💪 다시 도전<br>{wrong}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    with col_time:
-        time_limit = st.selectbox(
-            "제한 시간",
-            [60, 90, 120, 180],
-            index=1,
-            key=f"{group_name}_time_select"
-        )
+# =========================
+# 시작 / 초기화 버튼
+# =========================
+col_start, col_reset = st.columns(2)
 
-    prefix = init_game_state(group_name, words, size)
-
-    # 제한 시간 반영
-    st.session_state[f"{prefix}_time_limit"] = time_limit
-
-    board = st.session_state[f"{prefix}_board"]
-    marked = st.session_state[f"{prefix}_marked"]
-    score = st.session_state[f"{prefix}_score"]
-    started = st.session_state[f"{prefix}_started"]
-    start_time = st.session_state[f"{prefix}_start_time"]
-    message = st.session_state[f"{prefix}_message"]
-    recognized = st.session_state[f"{prefix}_recognized"]
-
-    bingo_lines = count_bingo_lines(marked, size)
-
-    # 시간 계산
-    if started and start_time is not None:
-        elapsed = int(time.time() - start_time)
-        remaining = max(0, time_limit - elapsed)
-    else:
-        elapsed = 0
-        remaining = time_limit
-
-    # 시간 종료 처리
-    if started and remaining <= 0 and bingo_lines == 0:
-        st.session_state[f"{prefix}_started"] = False
-        st.session_state[f"{prefix}_message"] = "⏰ 시간 종료! 다시 도전해 봅시다."
+with col_start:
+    if st.button("▶️ 게임 시작", use_container_width=True):
+        st.session_state[f"{key}_started"] = True
+        st.session_state[f"{key}_message"] = "아래 단어를 보고 폰으로 크게 말하세요!"
         st.rerun()
 
-    # 점수판
-    col1, col2, col3, col4 = st.columns(4)
+with col_reset:
+    if st.button("🔄 새 단어로 다시 시작", use_container_width=True):
+        reset_game(key)
+        st.rerun()
 
-    with col1:
-        st.markdown(
-            f"""
-            <div class="score-box">
-                ⏰ 남은 시간<br>{remaining}초
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+# =========================
+# 게임 종료
+# =========================
+if index >= len(words):
+    st.balloons()
+    st.success(f"🎉 완료! 총 {len(words)}개 중 {score}개 성공했습니다!")
 
-    with col2:
-        st.markdown(
-            f"""
-            <div class="score-box">
-                ⭐ 맞힌 단어<br>{score}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    if st.button("처음부터 다시 하기", use_container_width=True):
+        reset_game(key)
+        st.rerun()
 
-    with col3:
-        st.markdown(
-            f"""
-            <div class="score-box">
-                🎯 빙고 줄<br>{bingo_lines}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.stop()
 
-    with col4:
-        st.markdown(
-            f"""
-            <div class="score-box">
-                🧩 전체 칸<br>{size * size}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+# =========================
+# 현재 단어
+# =========================
+target_word = words[index]
 
-    # 버튼
-    col_start, col_reset = st.columns(2)
+if pop:
+    st.markdown(
+        f"""
+        <div class="pop-word">
+            <div class="pop-text">💥 {target_word} 💥</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    with col_start:
-        if st.button("▶️ 게임 시작", use_container_width=True, key=f"{prefix}_start"):
-            st.session_state[f"{prefix}_started"] = True
-            st.session_state[f"{prefix}_start_time"] = time.time()
-            st.session_state[f"{prefix}_message"] = "빙고판에 있는 단어 중 하나를 골라 크게 말하세요!"
+    time.sleep(0.7)
+
+    st.session_state[f"{key}_index"] += 1
+    st.session_state[f"{key}_pop"] = False
+    st.rerun()
+
+else:
+    st.markdown(
+        f"""
+        <div class="word-card">
+            <div class="word-label">이 단어를 말하세요</div>
+            <div class="target-word">{target_word}</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# =========================
+# 메시지
+# =========================
+if "정답" in message or "성공" in message:
+    st.markdown(
+        f"""
+        <div class="message-good">
+            {message}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+elif "다시" in message or "인식 실패" in message:
+    st.markdown(
+        f"""
+        <div class="message-bad">
+            {message}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.info(message)
+
+# =========================
+# 음성 인식
+# =========================
+st.markdown("### 🎤 발음하기")
+
+if not started:
+    st.write("먼저 게임 시작 버튼을 눌러 주세요.")
+else:
+    audio = mic_recorder(
+        start_prompt="🎙️ 말하기 시작",
+        stop_prompt="⏹️ 말하기 끝",
+        just_once=True,
+        use_container_width=True,
+        key=f"{key}_mic_{index}_{score}_{wrong}"
+    )
+
+    if audio:
+        audio_bytes = audio["bytes"]
+        spoken_text = recognize_speech(audio_bytes)
+
+        st.session_state[f"{key}_recognized"] = spoken_text
+
+        if is_correct(spoken_text, target_word):
+            st.session_state[f"{key}_score"] += 1
+            st.session_state[f"{key}_message"] = f"✅ 정답! {target_word} 성공!"
+            st.session_state[f"{key}_pop"] = True
             st.rerun()
+        else:
+            st.session_state[f"{key}_wrong"] += 1
 
-    with col_reset:
-        if st.button("🔄 새 빙고판 만들기", use_container_width=True, key=f"{prefix}_reset"):
-            reset_game(prefix)
-            st.rerun()
-
-    # 메시지
-    if "BINGO" in message:
-        st.balloons()
-        st.success(message)
-    elif "정답" in message or "성공" in message:
-        st.success(message)
-    elif "시간 종료" in message or "인식 실패" in message:
-        st.warning(message)
-    else:
-        st.info(message)
-
-    # 음성 인식
-    st.markdown("### 🎤 단어 말하기")
-
-    if not started:
-        st.write("게임 시작 버튼을 누른 뒤 말하기를 시작하세요.")
-    else:
-        audio = mic_recorder(
-            start_prompt="🎙️ 녹음 시작",
-            stop_prompt="⏹️ 녹음 끝",
-            just_once=True,
-            use_container_width=True,
-            key=f"{prefix}_mic_{score}_{remaining}_{bingo_lines}"
-        )
-
-        if audio:
-            audio_bytes = audio["bytes"]
-            spoken_text = recognize_speech(audio_bytes)
-            st.session_state[f"{prefix}_recognized"] = spoken_text
-
-            result = find_word_on_board(board, marked, size, spoken_text)
-
-            if result is not None:
-                r, c = result
-                word = board[r][c]
-
-                st.session_state[f"{prefix}_marked"][r][c] = True
-                st.session_state[f"{prefix}_score"] += 1
-
-                new_bingo_lines = count_bingo_lines(st.session_state[f"{prefix}_marked"], size)
-
-                if new_bingo_lines > bingo_lines:
-                    st.session_state[f"{prefix}_started"] = False
-                    st.session_state[f"{prefix}_message"] = f"🎉 BINGO! {word} 단어를 말해서 빙고 완성!"
-                else:
-                    st.session_state[f"{prefix}_message"] = f"✅ 정답! {word} 칸이 체크되었습니다."
-
-                st.rerun()
-
+            if spoken_text:
+                st.session_state[f"{key}_message"] = f"🤔 인식된 말: {spoken_text} / 다시 말해 보세요!"
             else:
-                if spoken_text:
-                    st.session_state[f"{prefix}_message"] = f"🤔 인식된 말: {spoken_text} / 빙고판에 있는 단어를 다시 말해 보세요."
-                else:
-                    st.session_state[f"{prefix}_message"] = "🎤 인식 실패! 조금 더 크게 또박또박 말해 보세요."
+                st.session_state[f"{key}_message"] = "🎤 인식 실패! 조금 더 크게 또박또박 말해 보세요!"
 
-                st.rerun()
-
-    if recognized:
-        st.markdown(
-            f"""
-            <div class="recognized-box">
-                🗣️ 최근 인식된 말: {recognized}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    # 빙고판
-    st.markdown("### 🎯 Bingo Board")
-    st.markdown('<div class="bingo-card">', unsafe_allow_html=True)
-
-    for r in range(size):
-        cols = st.columns(size)
-
-        for c in range(size):
-            word = board[r][c]
-            is_marked = marked[r][c]
-
-            with cols[c]:
-                if is_marked:
-                    st.markdown(
-                        f"""
-                        <div class="marked-cell">
-                            ✅ {word}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-                else:
-                    st.markdown(
-                        f"""
-                        <div class="word-cell">
-                            {word}
-                        </div>
-                        """,
-                        unsafe_allow_html=True
-                    )
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    # 자동 시간 갱신
-    if started and bingo_lines == 0 and remaining > 0:
-        time.sleep(1)
-        st.rerun()
-
+            st.rerun()
 
 # =========================
-# 탭 구성
+# 최근 인식 결과
 # =========================
-tabs = st.tabs(list(word_groups.keys()))
+if recognized:
+    st.markdown(
+        f"""
+        <div class="recognized-box">
+            🗣️ 최근 인식된 말: {recognized}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-for tab, group_name in zip(tabs, word_groups.keys()):
-    with tab:
-        show_speaking_bingo(group_name, word_groups[group_name])
+# =========================
+# 안내
+# =========================
+with st.expander("📱 폰에서 사용할 때 주의할 점"):
+    st.write("""
+    1. Streamlit 앱 주소를 폰으로 접속합니다.
+    2. 마이크 권한을 허용해야 합니다.
+    3. 단어 하나를 말한 뒤, 말하기 끝 버튼을 누릅니다.
+    4. 발음이 인식되면 단어가 펑 터지고 다음 단어로 넘어갑니다.
+    """)
