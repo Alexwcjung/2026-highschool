@@ -31,9 +31,9 @@ st.markdown(
         <div style="font-size:22px; font-weight:900; margin-bottom:10px;">
             📌 연습 방법
         </div>
-        <div>1. 화면에 보이는 <b>영어 단어</b>를 먼저 큰 소리로 읽습니다.</div>
-        <div>2. <b>🔊 원어민 발음 듣기</b> 버튼을 눌러 실제 발음을 확인합니다.</div>
-        <div>3. <b>글자 소리가 어떻게 합쳐지는지</b> 확인합니다.</div>
+<div>👀 화면에 보이는 <b>영어 단어</b>를 먼저 큰 소리로 읽습니다.</div>
+<div>🔊 <b>원어민 발음 듣기</b> 버튼을 눌러 실제 발음을 확인합니다.</div>
+<div>💡 아래 설명을 보며 <b>소리를 이해해 봅니다.</b></div>
     </div>
     """,
     unsafe_allow_html=True
@@ -503,14 +503,14 @@ def show_speaking_practice(tab_name, items):
             )
 
         with col2:
-            st.markdown("### 1단계: 먼저 직접 말하기")
-            st.write("스펠링을 보고 단어를 먼저 큰 소리로 읽어 보세요.")
+st.markdown("### 🗣️ 먼저 직접 말해 보기")
+st.write("스펠링을 보고 단어를 먼저 큰 소리로 읽어 보세요.")
 
-            st.markdown("### 2단계: 원어민 발음 듣기")
-            play_audio(word, key=f"{tab_name}_audio_{i}")
+st.markdown("### 🔊 원어민 발음 듣기")
+play_audio(word, key=f"{tab_name}_audio_{i}")
 
-            st.markdown("### 3단계: 소리 이해하기")
-            st.info(explain)
+st.markdown("### 💡 소리 이해하기")
+st.info(explain)
 
 
 # =========================
