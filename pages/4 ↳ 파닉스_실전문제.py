@@ -509,7 +509,7 @@ def show_speaking_practice(tab_name, items):
             st.markdown("### 2단계: 원어민 발음 듣기")
             play_audio(word, key=f"{tab_name}_audio_{i}")
 
-            st.markdown("### 3단계: 글자 소리 합치기")
+            st.markdown("### 3단계: 소리 이해하기")
             st.info(explain)
 
 
