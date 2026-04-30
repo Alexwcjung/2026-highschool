@@ -54,7 +54,8 @@ speed = st.slider(
     "🚀 떨어지는 속도",
     min_value=1,
     max_value=10,
-    value=4
+    value=3,
+    help="숫자가 클수록 단어가 더 빠르게 떨어집니다."
 )
 
 word_count = st.slider(
@@ -68,7 +69,16 @@ batch_count = st.slider(
     "🌧️ 한 번에 떨어지는 단어 개수",
     min_value=1,
     max_value=5,
-    value=2
+    value=1
+)
+
+spawn_interval = st.slider(
+    "⏳ 단어 나오는 간격",
+    min_value=800,
+    max_value=3500,
+    value=2000,
+    step=100,
+    help="숫자가 클수록 단어가 더 천천히 나옵니다."
 )
 
 show_hint = st.checkbox(
@@ -334,9 +344,10 @@ let createInterval = null;
 
 let fallSpeed = {speed};
 let batchCount = {batch_count};
+let spawnInterval = {spawn_interval};
 
 // 속도 조절: 숫자가 클수록 빠름
-let baseSpeed = 0.12 + fallSpeed * 0.08;
+let baseSpeed = 0.10 + fallSpeed * 0.06;
 
 // 단어 겹침 방지용 레인
 const laneCount = 6;
@@ -398,13 +409,13 @@ function createOneWord() {{
         word: item.word,
         meanings: item.meanings,
         y: -80,
-        speed: baseSpeed + Math.random() * 0.15,
+        speed: baseSpeed + Math.random() * 0.12,
         lane: lane
     }});
 
     setTimeout(() => {{
         laneBusy[lane] = false;
-    }}, 1900);
+    }}, 2200);
 }}
 
 function createWordsBatch() {{
@@ -413,7 +424,7 @@ function createWordsBatch() {{
     for (let i = 0; i < batchCount; i++) {{
         setTimeout(() => {{
             createOneWord();
-        }}, i * 220);
+        }}, i * 300);
     }}
 }}
 
@@ -522,7 +533,11 @@ function startGame() {{
 
     answerInput.focus();
 
-    createInterval = setInterval(createWordsBatch, 1300);
+    if (createInterval) {{
+        clearInterval(createInterval);
+    }}
+
+    createInterval = setInterval(createWordsBatch, spawnInterval);
 }}
 
 submitBtn.addEventListener("click", checkAnswer);
