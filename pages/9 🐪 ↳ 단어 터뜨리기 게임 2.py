@@ -1,405 +1,544 @@
 import streamlit as st
-import random
+import streamlit.components.v1 as components
+import json
 
 st.set_page_config(
-    page_title="단어 뜻 쓰기 게임",
-    page_icon="✏️",
-    layout="centered"
+    page_title="단어 뜻 터뜨리기 게임",
+    page_icon="💥",
+    layout="wide"
 )
 
-# =========================
-# CSS
-# =========================
-st.markdown(
-    """
-    <style>
-    .title-box {
-        background: linear-gradient(135deg, #fce7f3, #e0f2fe, #fef3c7);
-        border-radius: 28px;
-        padding: 28px 24px;
-        text-align: center;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        margin-bottom: 24px;
-    }
+st.title("💥 단어 뜻 터뜨리기 게임")
+st.caption("위에서 떨어지는 영어 단어의 한국어 뜻을 입력하면 단어가 터집니다!")
 
-    .title-box h1 {
-        font-size: 40px;
-        font-weight: 900;
-        color: #1f2937;
-        margin-bottom: 8px;
-    }
-
-    .title-box p {
-        font-size: 18px;
-        color: #4b5563;
-        margin: 0;
-    }
-
-    .word-card {
-        background: linear-gradient(135deg, #ffffff, #fff7ed);
-        border: 4px solid #fed7aa;
-        border-radius: 32px;
-        padding: 38px 24px;
-        text-align: center;
-        box-shadow: 0 10px 26px rgba(0,0,0,0.12);
-        margin: 24px 0;
-    }
-
-    .word-label {
-        font-size: 19px;
-        font-weight: 900;
-        color: #9a3412;
-        margin-bottom: 12px;
-    }
-
-    .word-text {
-        font-size: 58px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
-    .score-box {
-        background: linear-gradient(135deg, #dcfce7, #dbeafe, #fce7f3);
-        border-radius: 22px;
-        padding: 18px;
-        text-align: center;
-        font-size: 22px;
-        font-weight: 900;
-        box-shadow: 0 5px 14px rgba(0,0,0,0.08);
-        border: 2px solid #bbf7d0;
-    }
-
-    .result-good {
-        background: #dcfce7;
-        border-left: 7px solid #22c55e;
-        border-radius: 18px;
-        padding: 18px;
-        font-size: 22px;
-        font-weight: 900;
-        color: #14532d;
-        margin: 18px 0;
-    }
-
-    .result-bad {
-        background: #fee2e2;
-        border-left: 7px solid #ef4444;
-        border-radius: 18px;
-        padding: 18px;
-        font-size: 22px;
-        font-weight: 900;
-        color: #7f1d1d;
-        margin: 18px 0;
-    }
-
-    .answer-box {
-        background: #f8fafc;
-        border: 2px solid #e2e8f0;
-        border-radius: 18px;
-        padding: 16px;
-        font-size: 18px;
-        line-height: 1.7;
-        margin: 14px 0;
-    }
-
-    .stButton > button {
-        border-radius: 999px;
-        font-weight: 900;
-        padding: 0.55rem 1.1rem;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
-# 제목
-# =========================
-st.markdown(
-    """
-    <div class="title-box">
-        <h1>✏️ 단어 뜻 쓰기 게임</h1>
-        <p>영어 단어를 보고 한국어 뜻을 직접 써 봅시다.</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
-# 단어 데이터
-# =========================
+# -----------------------------
+# 단어 + 한국어 뜻 목록
+# -----------------------------
 word_data = [
-    {"word": "cat", "meaning": ["고양이"]},
-    {"word": "dog", "meaning": ["개"]},
-    {"word": "sun", "meaning": ["태양", "해"]},
-    {"word": "run", "meaning": ["달리다", "뛰다"]},
-    {"word": "sit", "meaning": ["앉다"]},
-    {"word": "big", "meaning": ["큰", "크다"]},
-    {"word": "red", "meaning": ["빨간", "빨간색"]},
-    {"word": "pen", "meaning": ["펜"]},
-    {"word": "box", "meaning": ["상자"]},
-    {"word": "cup", "meaning": ["컵"]},
-    {"word": "fish", "meaning": ["물고기", "생선"]},
-    {"word": "book", "meaning": ["책"]},
-    {"word": "milk", "meaning": ["우유"]},
-    {"word": "jump", "meaning": ["점프하다", "뛰다", "뛰어오르다"]},
-    {"word": "bed", "meaning": ["침대"]},
-    {"word": "apple", "meaning": ["사과"]},
-    {"word": "banana", "meaning": ["바나나"]},
-    {"word": "happy", "meaning": ["행복한", "기쁜"]},
-    {"word": "sad", "meaning": ["슬픈"]},
-    {"word": "school", "meaning": ["학교"]},
-    {"word": "teacher", "meaning": ["선생님", "교사"]},
-    {"word": "student", "meaning": ["학생"]},
-    {"word": "water", "meaning": ["물"]},
-    {"word": "chair", "meaning": ["의자"]},
-    {"word": "desk", "meaning": ["책상"]},
-    {"word": "phone", "meaning": ["전화기", "휴대폰", "폰"]},
-    {"word": "music", "meaning": ["음악"]},
-    {"word": "pizza", "meaning": ["피자"]},
-    {"word": "green", "meaning": ["초록색", "초록", "녹색"]},
-    {"word": "blue", "meaning": ["파란색", "파랑", "푸른"]},
+    {"word": "cat", "meanings": ["고양이"]},
+    {"word": "dog", "meanings": ["개"]},
+    {"word": "sun", "meanings": ["태양", "해"]},
+    {"word": "run", "meanings": ["달리다", "뛰다"]},
+    {"word": "sit", "meanings": ["앉다"]},
+    {"word": "big", "meanings": ["큰", "크다"]},
+    {"word": "red", "meanings": ["빨간", "빨간색"]},
+    {"word": "pen", "meanings": ["펜"]},
+    {"word": "box", "meanings": ["상자"]},
+    {"word": "cup", "meanings": ["컵"]},
+    {"word": "fish", "meanings": ["물고기", "생선"]},
+    {"word": "book", "meanings": ["책"]},
+    {"word": "milk", "meanings": ["우유"]},
+    {"word": "jump", "meanings": ["점프하다", "뛰다", "뛰어오르다"]},
+    {"word": "bed", "meanings": ["침대"]},
+    {"word": "apple", "meanings": ["사과"]},
+    {"word": "banana", "meanings": ["바나나"]},
+    {"word": "happy", "meanings": ["행복한", "기쁜"]},
+    {"word": "sad", "meanings": ["슬픈"]},
+    {"word": "school", "meanings": ["학교"]},
+    {"word": "teacher", "meanings": ["선생님", "교사"]},
+    {"word": "student", "meanings": ["학생"]},
+    {"word": "water", "meanings": ["물"]},
+    {"word": "chair", "meanings": ["의자"]},
+    {"word": "desk", "meanings": ["책상"]},
+    {"word": "phone", "meanings": ["전화기", "휴대폰", "폰"]},
+    {"word": "music", "meanings": ["음악"]},
+    {"word": "pizza", "meanings": ["피자"]},
+    {"word": "green", "meanings": ["초록색", "초록", "녹색"]},
+    {"word": "blue", "meanings": ["파란색", "파랑", "푸른"]},
 ]
 
-# =========================
-# 설정
-# =========================
-st.markdown("### 🎲 게임 설정")
+# -----------------------------
+# 조절 옵션
+# -----------------------------
+speed = st.slider(
+    "🚀 떨어지는 속도",
+    min_value=1,
+    max_value=10,
+    value=4
+)
 
-col1, col2 = st.columns(2)
+word_count = st.slider(
+    "📚 사용할 단어 개수",
+    min_value=5,
+    max_value=len(word_data),
+    value=15
+)
 
-with col1:
-    question_count = st.slider(
-        "문제 개수",
-        min_value=5,
-        max_value=len(word_data),
-        value=10,
-        step=5
-    )
+batch_count = st.slider(
+    "🌧️ 한 번에 떨어지는 단어 개수",
+    min_value=1,
+    max_value=5,
+    value=2
+)
 
-with col2:
-    show_hint = st.checkbox(
-        "힌트 보기",
-        value=False
-    )
+show_hint = st.checkbox(
+    "💡 뜻 힌트 보기",
+    value=False
+)
 
-# =========================
-# 상태 초기화
-# =========================
-if "meaning_game_questions" not in st.session_state:
-    st.session_state.meaning_game_questions = random.sample(word_data, question_count)
+selected_words = word_data[:word_count]
+word_data_js = json.dumps(selected_words, ensure_ascii=False)
+show_hint_js = "true" if show_hint else "false"
 
-if "meaning_game_index" not in st.session_state:
-    st.session_state.meaning_game_index = 0
+html_code = f"""
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-if "meaning_game_score" not in st.session_state:
-    st.session_state.meaning_game_score = 0
+<style>
+    body {{
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(180deg, #dff7ff, #fff7d6);
+    }}
 
-if "meaning_game_checked" not in st.session_state:
-    st.session_state.meaning_game_checked = False
+    #gameArea {{
+        position: relative;
+        width: 100%;
+        height: 660px;
+        overflow: hidden;
+        border-radius: 28px;
+        background: linear-gradient(180deg, #aeefff 0%, #fff4bd 100%);
+        border: 5px solid white;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }}
 
-if "meaning_game_result" not in st.session_state:
-    st.session_state.meaning_game_result = ""
+    .word {{
+        position: absolute;
+        top: -80px;
+        padding: 14px 24px;
+        font-size: 30px;
+        font-weight: bold;
+        color: #333;
+        background: white;
+        border-radius: 999px;
+        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+        transition: transform 0.2s, opacity 0.2s;
+        white-space: nowrap;
+        border: 3px solid #ffd6ea;
+        z-index: 5;
+    }}
 
-if "meaning_game_wrong" not in st.session_state:
-    st.session_state.meaning_game_wrong = []
+    .pop {{
+        animation: pop 0.35s forwards;
+    }}
 
-# 문제 개수를 바꾸면 새로 시작
-if "last_question_count" not in st.session_state:
-    st.session_state.last_question_count = question_count
+    @keyframes pop {{
+        0% {{
+            transform: scale(1);
+            opacity: 1;
+        }}
+        50% {{
+            transform: scale(1.8) rotate(10deg);
+            opacity: 0.8;
+        }}
+        100% {{
+            transform: scale(0);
+            opacity: 0;
+        }}
+    }}
 
-if st.session_state.last_question_count != question_count:
-    st.session_state.meaning_game_questions = random.sample(word_data, question_count)
-    st.session_state.meaning_game_index = 0
-    st.session_state.meaning_game_score = 0
-    st.session_state.meaning_game_checked = False
-    st.session_state.meaning_game_result = ""
-    st.session_state.meaning_game_wrong = []
-    st.session_state.last_question_count = question_count
-    st.rerun()
+    #status {{
+        position: absolute;
+        top: 15px;
+        left: 20px;
+        z-index: 20;
+        background: rgba(255,255,255,0.94);
+        padding: 12px 18px;
+        border-radius: 20px;
+        font-size: 19px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        max-width: 55%;
+        line-height: 1.4;
+    }}
 
-# =========================
-# 점수판
-# =========================
-total_questions = len(st.session_state.meaning_game_questions)
-current_index = st.session_state.meaning_game_index
+    #scoreBox {{
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        z-index: 20;
+        background: rgba(255,255,255,0.94);
+        padding: 12px 18px;
+        border-radius: 20px;
+        font-size: 20px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }}
 
-col_score1, col_score2, col_score3 = st.columns(3)
+    #inputPanel {{
+        position: absolute;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 30;
+        width: 86%;
+        background: rgba(255,255,255,0.95);
+        border: 3px solid #bfdbfe;
+        border-radius: 28px;
+        padding: 18px 20px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+        box-sizing: border-box;
+        text-align: center;
+    }}
 
-with col_score1:
-    st.markdown(
-        f"""
-        <div class="score-box">
-            문제<br>{min(current_index + 1, total_questions)} / {total_questions}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    #answerInput {{
+        width: 68%;
+        padding: 14px 18px;
+        border-radius: 999px;
+        border: 2px solid #93c5fd;
+        font-size: 22px;
+        font-weight: bold;
+        outline: none;
+        text-align: center;
+    }}
 
-with col_score2:
-    st.markdown(
-        f"""
-        <div class="score-box">
-            점수<br>{st.session_state.meaning_game_score}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    #answerInput:focus {{
+        border-color: #ec4899;
+        box-shadow: 0 0 0 4px rgba(236,72,153,0.15);
+    }}
 
-with col_score3:
-    remaining = max(0, total_questions - current_index)
-    st.markdown(
-        f"""
-        <div class="score-box">
-            남은 문제<br>{remaining}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    #submitBtn {{
+        margin-left: 10px;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 999px;
+        font-size: 21px;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(135deg, #ff7eb3, #ffb86c);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    }}
 
-# =========================
-# 게임 종료
-# =========================
-if current_index >= total_questions:
-    st.success("🎉 게임이 끝났습니다!")
+    #startBtn {{
+        margin-left: 10px;
+        padding: 14px 24px;
+        border: none;
+        border-radius: 999px;
+        font-size: 21px;
+        font-weight: bold;
+        color: white;
+        background: linear-gradient(135deg, #60a5fa, #34d399);
+        box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+    }}
 
-    st.markdown(
-        f"""
-        <div class="score-box">
-            🏆 최종 점수: {st.session_state.meaning_game_score} / {total_questions}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    #hintBox {{
+        margin-top: 10px;
+        font-size: 17px;
+        font-weight: bold;
+        color: #475569;
+        min-height: 24px;
+    }}
 
-    if len(st.session_state.meaning_game_wrong) == 0:
-        st.balloons()
-        st.success("완벽합니다! 모든 단어의 뜻을 잘 알고 있습니다.")
-    else:
-        st.warning("아래 단어들을 다시 복습해 보세요.")
+    .effect {{
+        position: absolute;
+        font-size: 42px;
+        pointer-events: none;
+        animation: floatUp 0.7s forwards;
+        z-index: 40;
+    }}
 
-        for item in st.session_state.meaning_game_wrong:
-            st.markdown(
-                f"""
-                <div class="answer-box">
-                    <b>{item["word"]}</b><br>
-                    내가 쓴 답: {item["user_answer"]}<br>
-                    정답: {", ".join(item["meaning"])}
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+    @keyframes floatUp {{
+        0% {{
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }}
+        100% {{
+            opacity: 0;
+            transform: translateY(-60px) scale(1.5);
+        }}
+    }}
 
-    if st.button("🔄 다시 시작"):
-        st.session_state.meaning_game_questions = random.sample(word_data, question_count)
-        st.session_state.meaning_game_index = 0
-        st.session_state.meaning_game_score = 0
-        st.session_state.meaning_game_checked = False
-        st.session_state.meaning_game_result = ""
-        st.session_state.meaning_game_wrong = []
-        st.rerun()
+    @media (max-width: 700px) {{
+        #gameArea {{
+            height: 620px;
+            border-radius: 22px;
+        }}
 
-else:
-    # =========================
-    # 현재 문제
-    # =========================
-    current_q = st.session_state.meaning_game_questions[current_index]
-    word = current_q["word"]
-    meanings = current_q["meaning"]
+        .word {{
+            font-size: 24px;
+            padding: 11px 18px;
+        }}
 
-    st.markdown(
-        f"""
-        <div class="word-card">
-            <div class="word-label">영어 단어</div>
-            <div class="word-text">{word}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        #status {{
+            font-size: 15px;
+            max-width: 52%;
+            padding: 9px 12px;
+            top: 10px;
+            left: 10px;
+        }}
 
-    if show_hint:
-        first_hint = meanings[0][0]
-        st.info(f"힌트: 한국어 뜻은 '{first_hint}'로 시작합니다.")
+        #scoreBox {{
+            font-size: 16px;
+            padding: 9px 12px;
+            top: 10px;
+            right: 10px;
+        }}
 
-    user_answer = st.text_input(
-        "한국어 뜻을 쓰세요.",
-        key=f"meaning_answer_{current_index}",
-        placeholder="예: 고양이"
-    )
+        #inputPanel {{
+            width: 94%;
+            padding: 14px 12px;
+            bottom: 14px;
+        }}
 
-    col_check, col_next, col_pass = st.columns(3)
+        #answerInput {{
+            width: 58%;
+            font-size: 18px;
+            padding: 12px 14px;
+        }}
 
-    with col_check:
-        if st.button("✅ 정답 확인", use_container_width=True):
-            answer_clean = user_answer.strip().replace(" ", "")
-            correct_list = [m.replace(" ", "") for m in meanings]
+        #submitBtn, #startBtn {{
+            font-size: 16px;
+            padding: 12px 14px;
+            margin-left: 4px;
+        }}
 
-            if answer_clean in correct_list:
-                st.session_state.meaning_game_score += 1
-                st.session_state.meaning_game_result = "correct"
-            else:
-                st.session_state.meaning_game_result = "wrong"
-                st.session_state.meaning_game_wrong.append({
-                    "word": word,
-                    "meaning": meanings,
-                    "user_answer": user_answer
-                })
+        #hintBox {{
+            font-size: 14px;
+        }}
+    }}
+</style>
+</head>
 
-            st.session_state.meaning_game_checked = True
-            st.rerun()
+<body>
+<div id="gameArea">
+    <div id="status">🎮 게임 시작을 누르세요</div>
+    <div id="scoreBox">점수: <span id="score">0</span></div>
 
-    with col_next:
-        if st.button("➡️ 다음 문제", use_container_width=True):
-            if st.session_state.meaning_game_checked:
-                st.session_state.meaning_game_index += 1
-                st.session_state.meaning_game_checked = False
-                st.session_state.meaning_game_result = ""
-                st.rerun()
-            else:
-                st.warning("먼저 정답 확인을 눌러 주세요.")
+    <div id="inputPanel">
+        <input id="answerInput" type="text" placeholder="한국어 뜻 입력 예: 고양이" autocomplete="off">
+        <button id="submitBtn">💥 제출</button>
+        <button id="startBtn">▶️ 시작</button>
+        <div id="hintBox"></div>
+    </div>
+</div>
 
-    with col_pass:
-        if st.button("⏭️ 넘기기", use_container_width=True):
-            st.session_state.meaning_game_wrong.append({
-                "word": word,
-                "meaning": meanings,
-                "user_answer": "넘김"
-            })
-            st.session_state.meaning_game_index += 1
-            st.session_state.meaning_game_checked = False
-            st.session_state.meaning_game_result = ""
-            st.rerun()
+<script>
+const wordData = {word_data_js};
+const showHint = {show_hint_js};
 
-    # =========================
-    # 결과 표시
-    # =========================
-    if st.session_state.meaning_game_checked:
-        if st.session_state.meaning_game_result == "correct":
-            st.markdown(
-                """
-                <div class="result-good">
-                    🎉 정답입니다! 잘했어요!
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-        elif st.session_state.meaning_game_result == "wrong":
-            st.markdown(
-                f"""
-                <div class="result-bad">
-                    😢 아쉬워요! 정답은 {", ".join(meanings)} 입니다.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+const gameArea = document.getElementById("gameArea");
+const statusBox = document.getElementById("status");
+const scoreSpan = document.getElementById("score");
+const answerInput = document.getElementById("answerInput");
+const submitBtn = document.getElementById("submitBtn");
+const startBtn = document.getElementById("startBtn");
+const hintBox = document.getElementById("hintBox");
 
-    st.markdown("---")
+let activeWords = [];
+let score = 0;
+let gameStarted = false;
+let createInterval = null;
 
-    if st.button("🔄 게임 전체 다시 시작"):
-        st.session_state.meaning_game_questions = random.sample(word_data, question_count)
-        st.session_state.meaning_game_index = 0
-        st.session_state.meaning_game_score = 0
-        st.session_state.meaning_game_checked = False
-        st.session_state.meaning_game_result = ""
-        st.session_state.meaning_game_wrong = []
-        st.rerun()
+let fallSpeed = {speed};
+let batchCount = {batch_count};
+
+// 속도 조절: 숫자가 클수록 빠름
+let baseSpeed = 0.12 + fallSpeed * 0.08;
+
+// 단어 겹침 방지용 레인
+const laneCount = 6;
+let laneBusy = Array(laneCount).fill(false);
+
+function normalizeKorean(text) {{
+    return text
+        .toLowerCase()
+        .replace(/\\s+/g, "")
+        .replace(/[.,!?~]/g, "")
+        .trim();
+}}
+
+function getLaneX(laneIndex) {{
+    const areaWidth = gameArea.clientWidth;
+    const laneWidth = areaWidth / laneCount;
+    const maxOffset = Math.max(5, laneWidth - 120);
+    const randomOffset = 6 + Math.random() * maxOffset;
+    return laneIndex * laneWidth + randomOffset;
+}}
+
+function getFreeLane() {{
+    let freeLanes = [];
+
+    for (let i = 0; i < laneCount; i++) {{
+        if (!laneBusy[i]) {{
+            freeLanes.push(i);
+        }}
+    }}
+
+    if (freeLanes.length === 0) {{
+        return null;
+    }}
+
+    return freeLanes[Math.floor(Math.random() * freeLanes.length)];
+}}
+
+function createOneWord() {{
+    if (!gameStarted) return;
+
+    const lane = getFreeLane();
+    if (lane === null) return;
+
+    laneBusy[lane] = true;
+
+    const item = wordData[Math.floor(Math.random() * wordData.length)];
+    const wordDiv = document.createElement("div");
+
+    wordDiv.className = "word";
+    wordDiv.innerText = item.word;
+    wordDiv.dataset.word = item.word;
+    wordDiv.style.left = getLaneX(lane) + "px";
+    wordDiv.style.top = "-80px";
+
+    gameArea.appendChild(wordDiv);
+
+    activeWords.push({{
+        element: wordDiv,
+        word: item.word,
+        meanings: item.meanings,
+        y: -80,
+        speed: baseSpeed + Math.random() * 0.15,
+        lane: lane
+    }});
+
+    setTimeout(() => {{
+        laneBusy[lane] = false;
+    }}, 1900);
+}}
+
+function createWordsBatch() {{
+    if (!gameStarted) return;
+
+    for (let i = 0; i < batchCount; i++) {{
+        setTimeout(() => {{
+            createOneWord();
+        }}, i * 220);
+    }}
+}}
+
+function moveWords() {{
+    for (let i = activeWords.length - 1; i >= 0; i--) {{
+        let item = activeWords[i];
+        item.y += item.speed;
+        item.element.style.top = item.y + "px";
+
+        if (item.y > gameArea.clientHeight - 120) {{
+            item.element.remove();
+            activeWords.splice(i, 1);
+        }}
+    }}
+
+    updateHint();
+    requestAnimationFrame(moveWords);
+}}
+
+function checkAnswer() {{
+    if (!gameStarted) return;
+
+    const userAnswer = normalizeKorean(answerInput.value);
+
+    if (!userAnswer) {{
+        statusBox.innerText = "✏️ 한국어 뜻을 입력하세요!";
+        return;
+    }}
+
+    for (let i = activeWords.length - 1; i >= 0; i--) {{
+        let item = activeWords[i];
+
+        let correct = item.meanings.some(m => normalizeKorean(m) === userAnswer);
+
+        if (correct) {{
+            popWord(item, i);
+            answerInput.value = "";
+            return;
+        }}
+    }}
+
+    statusBox.innerText = "🤔 아직 맞는 단어가 없어요: " + answerInput.value;
+    answerInput.select();
+}}
+
+function popWord(item, index) {{
+    const rect = item.element.getBoundingClientRect();
+    const parentRect = gameArea.getBoundingClientRect();
+
+    showEffect(
+        rect.left - parentRect.left,
+        rect.top - parentRect.top
+    );
+
+    item.element.classList.add("pop");
+
+    setTimeout(() => {{
+        if (item.element) item.element.remove();
+    }}, 300);
+
+    activeWords.splice(index, 1);
+    score++;
+    scoreSpan.innerText = score;
+
+    statusBox.innerText = "✅ 정답! " + item.word + " = " + item.meanings[0];
+}}
+
+function showEffect(x, y) {{
+    const effects = ["💥", "✨", "🎉", "⭐", "👏", "🌟"];
+    const effect = document.createElement("div");
+    effect.className = "effect";
+    effect.innerText = effects[Math.floor(Math.random() * effects.length)];
+    effect.style.left = x + "px";
+    effect.style.top = y + "px";
+    gameArea.appendChild(effect);
+
+    setTimeout(() => {{
+        effect.remove();
+    }}, 700);
+}}
+
+function updateHint() {{
+    if (!showHint || !gameStarted) {{
+        hintBox.innerText = "";
+        return;
+    }}
+
+    if (activeWords.length === 0) {{
+        hintBox.innerText = "";
+        return;
+    }}
+
+    const sample = activeWords[activeWords.length - 1];
+    const firstMeaning = sample.meanings[0];
+    hintBox.innerText = "💡 힌트: 화면의 한 단어 뜻은 '" + firstMeaning[0] + "'로 시작합니다.";
+}}
+
+function startGame() {{
+    if (gameStarted) return;
+
+    gameStarted = true;
+    score = 0;
+    activeWords = [];
+    scoreSpan.innerText = score;
+    statusBox.innerText = "✏️ 떨어지는 단어의 한국어 뜻을 입력하세요!";
+
+    answerInput.focus();
+
+    createInterval = setInterval(createWordsBatch, 1300);
+}}
+
+submitBtn.addEventListener("click", checkAnswer);
+
+answerInput.addEventListener("keydown", function(event) {{
+    if (event.key === "Enter") {{
+        checkAnswer();
+    }}
+}});
+
+startBtn.addEventListener("click", startGame);
+
+moveWords();
+</script>
+</body>
+</html>
+"""
+
+components.html(html_code, height=730)
