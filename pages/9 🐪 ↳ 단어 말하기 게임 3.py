@@ -85,14 +85,14 @@ st.markdown(
             🗺️ 모두의 단어 말판
         </h1>
         <p style="font-size:18px; color:#4b5563; margin:0;">
-            주사위를 굴려 이동하고, 도착한 칸의 단어 뜻을 맞히는 게임
+            주사위 2개를 굴려 이동하고, 도착한 칸의 단어 뜻을 맞히는 게임
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-st.info("자기 차례에 주사위를 굴리면 캐릭터가 이동합니다. 도착한 칸의 영어 단어를 보고 한국어 뜻을 말하세요.")
+st.info("자기 차례에 주사위 2개를 굴리면 캐릭터가 이동합니다. 도착한 칸의 영어 단어를 보고 한국어 뜻을 말하세요.")
 
 # =========================
 # 설정
@@ -210,6 +210,8 @@ if (
     st.session_state.marble_positions = [0 for _ in range(player_count)]
     st.session_state.marble_turn = 0
     st.session_state.marble_dice = "-"
+    st.session_state.marble_dice1 = "-"
+    st.session_state.marble_dice2 = "-"
     st.session_state.marble_message = "🎲 주사위를 굴려 시작하세요!"
     st.session_state.marble_finished = False
     st.session_state.marble_needs_answer = False
@@ -226,6 +228,8 @@ if (
     st.session_state.marble_player_count_saved = player_count
     st.session_state.marble_turn = 0
     st.session_state.marble_dice = "-"
+    st.session_state.marble_dice1 = "-"
+    st.session_state.marble_dice2 = "-"
     st.session_state.marble_message = "🎲 주사위를 굴려 시작하세요!"
     st.session_state.marble_finished = False
     st.session_state.marble_needs_answer = False
@@ -237,6 +241,8 @@ if (
 for key, default in {
     "marble_turn": 0,
     "marble_dice": "-",
+    "marble_dice1": "-",
+    "marble_dice2": "-",
     "marble_message": "🎲 주사위를 굴려 시작하세요!",
     "marble_finished": False,
     "marble_needs_answer": False,
@@ -297,7 +303,7 @@ def apply_event(event):
         landed = board_items[positions[turn]]
 
         if landed["type"] == "word":
-            st.session_state.marble_message = f"🚀 앞으로 2칸! 도착 단어의 뜻을 말하세요."
+            st.session_state.marble_message = "🚀 앞으로 2칸! 도착 단어의 뜻을 말하세요."
             st.session_state.marble_needs_answer = True
         else:
             st.session_state.marble_message = "🚀 앞으로 2칸 이동했습니다!"
@@ -308,7 +314,7 @@ def apply_event(event):
         landed = board_items[positions[turn]]
 
         if landed["type"] == "word":
-            st.session_state.marble_message = f"🌀 뒤로 2칸! 도착 단어의 뜻을 말하세요."
+            st.session_state.marble_message = "🌀 뒤로 2칸! 도착 단어의 뜻을 말하세요."
             st.session_state.marble_needs_answer = True
         else:
             st.session_state.marble_message = "🌀 뒤로 2칸 이동했습니다!"
@@ -353,7 +359,7 @@ st.markdown(
             현재 차례: {selected_chars[current_turn]} {current_turn + 1}번
         </div>
         <div style="font-size:20px; font-weight:800; color:#334155; margin-top:8px;">
-            마지막 주사위: {st.session_state.marble_dice}
+            마지막 주사위: {st.session_state.marble_dice1} + {st.session_state.marble_dice2} = {st.session_state.marble_dice}
         </div>
         <div style="font-size:18px; font-weight:700; color:#475569; margin-top:8px;">
             {html.escape(st.session_state.marble_message)}
@@ -379,7 +385,12 @@ with col_roll:
             st.session_state.marble_message = "먼저 맞았어요 / 틀렸어요를 눌러 주세요."
 
         else:
-            dice = random.randint(1, 6)
+            dice1 = random.randint(1, 6)
+            dice2 = random.randint(1, 6)
+            dice = dice1 + dice2
+
+            st.session_state.marble_dice1 = dice1
+            st.session_state.marble_dice2 = dice2
             st.session_state.marble_dice = dice
             st.session_state.marble_show_answer = False
             st.session_state.marble_roll_count += 1
@@ -394,14 +405,14 @@ with col_roll:
 
             if landed["type"] == "word":
                 st.session_state.marble_message = (
-                    f"{selected_chars[current_turn]} {current_turn + 1}번이 {dice}칸 이동했습니다. "
-                    f"도착한 칸의 단어 뜻을 말하세요."
+                    f"{selected_chars[current_turn]} {current_turn + 1}번이 "
+                    f"{dice1}+{dice2}={dice}칸 이동했습니다. 도착한 칸의 단어 뜻을 말하세요."
                 )
                 st.session_state.marble_needs_answer = True
             else:
                 st.session_state.marble_message = (
-                    f"{selected_chars[current_turn]} {current_turn + 1}번이 {dice}칸 이동했습니다. "
-                    f"이벤트: {landed['title']}"
+                    f"{selected_chars[current_turn]} {current_turn + 1}번이 "
+                    f"{dice1}+{dice2}={dice}칸 이동했습니다. 이벤트: {landed['title']}"
                 )
                 apply_event(landed)
 
@@ -472,7 +483,12 @@ for idx, pos in enumerate(path_positions):
     cell_map[pos] = idx
 
 dice_value = st.session_state.marble_dice
-dice_face = dice_faces.get(dice_value, "🎲")
+dice1_value = st.session_state.marble_dice1
+dice2_value = st.session_state.marble_dice2
+
+dice1_face = dice_faces.get(dice1_value, "🎲")
+dice2_face = dice_faces.get(dice2_value, "🎲")
+
 roll_count = st.session_state.marble_roll_count
 
 board_html = f"""
@@ -544,6 +560,7 @@ body {{
 
 .bounce {{
     animation: bounceMove 0.9s ease-in-out;
+    display: inline-block;
 }}
 
 @keyframes bounceMove {{
@@ -572,25 +589,39 @@ body {{
     width: 100%;
 }}
 
-.dice-face {{
-    font-size: 76px;
-    font-weight: 900;
-    animation: diceRoll 0.9s ease-in-out;
+.dice-row {{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
 }}
 
-@keyframes diceRoll {{
-    0% {{ transform: rotate(0deg) scale(0.5); }}
-    20% {{ transform: rotate(90deg) scale(1.25); }}
-    40% {{ transform: rotate(180deg) scale(0.8); }}
-    60% {{ transform: rotate(270deg) scale(1.25); }}
-    80% {{ transform: rotate(360deg) scale(0.9); }}
-    100% {{ transform: rotate(720deg) scale(1); }}
+.dice-face {{
+    font-size: 66px;
+    font-weight: 900;
+    display: inline-block;
+    animation: diceJumpRoll 0.9s ease-in-out;
+}}
+
+.dice-face.second {{
+    animation-delay: 0.08s;
+}}
+
+@keyframes diceJumpRoll {{
+    0% {{ transform: translateY(0) rotate(0deg) scale(0.6); }}
+    15% {{ transform: translateY(-28px) rotate(100deg) scale(1.15); }}
+    30% {{ transform: translateY(0) rotate(180deg) scale(0.9); }}
+    45% {{ transform: translateY(-22px) rotate(280deg) scale(1.2); }}
+    60% {{ transform: translateY(0) rotate(380deg) scale(0.95); }}
+    78% {{ transform: translateY(-14px) rotate(540deg) scale(1.1); }}
+    100% {{ transform: translateY(0) rotate(720deg) scale(1); }}
 }}
 
 .dice-text {{
     font-size: 18px;
     font-weight: 900;
     color: #334155;
+    margin-top: 8px;
 }}
 
 @media (max-width: 700px) {{
@@ -633,7 +664,11 @@ body {{
     }}
 
     .dice-face {{
-        font-size: 38px;
+        font-size: 34px;
+    }}
+
+    .dice-row {{
+        gap: 4px;
     }}
 
     .dice-text {{
@@ -647,8 +682,6 @@ body {{
 <div class="board-grid">
 """
 
-center_start = 1
-center_end = board_side - 2
 center_cells = []
 for r in range(1, board_side - 1):
     for c in range(1, board_side - 1):
@@ -730,8 +763,11 @@ for r in range(board_side):
                 board_html += f"""
                 <div class="center-cell">
                     <div class="dice-box" key="{roll_count}">
-                        <div class="dice-face">{dice_face}</div>
-                        <div class="dice-text">주사위: {dice_value}</div>
+                        <div class="dice-row">
+                            <div class="dice-face">{dice1_face}</div>
+                            <div class="dice-face second">{dice2_face}</div>
+                        </div>
+                        <div class="dice-text">주사위: {dice1_value} + {dice2_value} = {dice_value}</div>
                     </div>
                 </div>
                 """
