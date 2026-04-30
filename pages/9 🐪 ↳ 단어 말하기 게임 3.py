@@ -4,8 +4,8 @@ import random
 import html
 
 st.set_page_config(
-    page_title="모두의 단어 말판 게임",
-    page_icon="🎲",
+    page_title="모두의 단어 말판",
+    page_icon="🗺️",
     layout="wide"
 )
 
@@ -45,6 +45,41 @@ word_data = [
     {"word": "blue", "meaning": "파란색"},
 ]
 
+team_icons = ["🔴", "🔵", "🟢", "🟡", "🟣", "🟠"]
+
+event_templates = [
+    {
+        "type": "event",
+        "title": "🚀 앞으로 2칸",
+        "action": "forward2",
+        "desc": "바로 앞으로 2칸 이동!"
+    },
+    {
+        "type": "event",
+        "title": "🌀 뒤로 2칸",
+        "action": "back2",
+        "desc": "아쉽지만 뒤로 2칸!"
+    },
+    {
+        "type": "event",
+        "title": "🎲 한 번 더",
+        "action": "extra",
+        "desc": "주사위를 한 번 더 굴리세요!"
+    },
+    {
+        "type": "event",
+        "title": "😴 한 번 쉬기",
+        "action": "skip",
+        "desc": "다음 차례를 한 번 쉽니다."
+    },
+    {
+        "type": "event",
+        "title": "🔄 자리 바꾸기",
+        "action": "swap",
+        "desc": "가장 앞선 모둠과 자리를 바꿉니다!"
+    },
+]
+
 # =========================
 # 제목
 # =========================
@@ -56,36 +91,28 @@ st.markdown(
         padding: 28px 24px;
         text-align: center;
         box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        margin-bottom: 24px;
+        margin-bottom: 22px;
     ">
         <h1 style="font-size:42px; font-weight:900; color:#1f2937; margin-bottom:8px;">
-            🗺️ 모두의 마블식 단어 말판
+            🗺️ 모두의 단어 말판
         </h1>
         <p style="font-size:18px; color:#4b5563; margin:0;">
-            바깥쪽 말판을 돌며 영어 단어의 한국어 뜻을 맞히는 모둠 게임입니다.
+            주사위를 굴려 이동하고, 도착한 단어의 뜻을 모둠끼리 확인하는 단체전 게임입니다.
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-st.info("게임 방법: 주사위 굴리기 → 도착한 칸의 단어 읽기 → 한국어 뜻 말하기 → 맞았어요/틀렸어요 클릭")
-
 # =========================
 # 설정
 # =========================
 st.markdown("### ⚙️ 게임 설정")
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    team_count = st.slider(
-        "모둠 수",
-        min_value=2,
-        max_value=6,
-        value=4,
-        step=1
-    )
+    team_count = st.slider("모둠 수", 2, 6, 4)
 
 with col2:
     board_side = st.slider(
@@ -94,45 +121,27 @@ with col2:
         max_value=7,
         value=6,
         step=1,
-        help="6이면 6x6 말판이 만들어집니다."
+        help="6이면 6x6 모두의 마블식 말판이 만들어집니다."
     )
 
 with col3:
-    penalty = st.slider(
-        "틀리면 뒤로",
-        min_value=0,
-        max_value=3,
-        value=1,
-        step=1
-    )
-
-with col4:
-    show_meaning = st.checkbox(
-        "말판에 뜻 보이기",
-        value=False
-    )
-
-team_icons = ["🔴", "🔵", "🟢", "🟡", "🟣", "🟠"]
+    penalty = st.slider("틀리면 뒤로", 0, 3, 1)
 
 # =========================
-# 보드 경로 만들기
+# 보드 경로
 # =========================
 def make_path_positions(n):
     path = []
 
-    # 위쪽: 왼쪽 → 오른쪽
     for c in range(n):
         path.append((0, c))
 
-    # 오른쪽: 위 → 아래
     for r in range(1, n):
         path.append((r, n - 1))
 
-    # 아래쪽: 오른쪽 → 왼쪽
     for c in range(n - 2, -1, -1):
         path.append((n - 1, c))
 
-    # 왼쪽: 아래 → 위
     for r in range(n - 2, 0, -1):
         path.append((r, 0))
 
@@ -143,24 +152,49 @@ path_positions = make_path_positions(board_side)
 board_size = len(path_positions)
 
 # =========================
-# 보드 단어 만들기
+# 보드 아이템 만들기
 # =========================
-def make_board_words(size):
+def make_board_items(size):
     random.seed(size)
 
     if size <= len(word_data):
-        return random.sample(word_data, size)
+        selected_words = random.sample(word_data, size)
+    else:
+        selected_words = []
+        while len(selected_words) < size:
+            selected_words.extend(word_data)
+        selected_words = selected_words[:size]
 
     board = []
-    while len(board) < size:
-        board.extend(word_data)
 
-    return board[:size]
+    for i, item in enumerate(selected_words):
+        board.append({
+            "type": "word",
+            "word": item["word"],
+            "meaning": item["meaning"]
+        })
+
+    possible_event_positions = list(range(3, size - 2))
+    random.seed(f"events_{size}")
+    event_count = max(3, size // 5)
+    event_positions = random.sample(possible_event_positions, min(event_count, len(possible_event_positions)))
+
+    for idx, pos in enumerate(event_positions):
+        event = event_templates[idx % len(event_templates)]
+        board[pos] = event
+
+    return board
 
 
 # =========================
-# 세션 상태 초기화
+# 세션 초기화
 # =========================
+def reset_game():
+    for key in list(st.session_state.keys()):
+        if key.startswith("marble_"):
+            del st.session_state[key]
+
+
 if "marble_board_side_saved" not in st.session_state:
     st.session_state.marble_board_side_saved = board_side
 
@@ -168,17 +202,18 @@ if "marble_team_count_saved" not in st.session_state:
     st.session_state.marble_team_count_saved = team_count
 
 if (
-    "marble_board_words" not in st.session_state
+    "marble_board_items" not in st.session_state
     or st.session_state.marble_board_side_saved != board_side
 ):
-    st.session_state.marble_board_words = make_board_words(board_size)
+    st.session_state.marble_board_items = make_board_items(board_size)
     st.session_state.marble_board_side_saved = board_side
     st.session_state.marble_positions = [0 for _ in range(team_count)]
     st.session_state.marble_turn = 0
     st.session_state.marble_dice = "-"
-    st.session_state.marble_message = "🎲 주사위를 굴려 게임을 시작하세요!"
+    st.session_state.marble_message = "🎲 자기 차례가 되면 주사위를 굴려 이동하세요!"
     st.session_state.marble_finished = False
-    st.session_state.marble_rolled = False
+    st.session_state.marble_needs_answer = False
+    st.session_state.marble_skip = [False for _ in range(team_count)]
 
 if (
     "marble_positions" not in st.session_state
@@ -188,26 +223,21 @@ if (
     st.session_state.marble_team_count_saved = team_count
     st.session_state.marble_turn = 0
     st.session_state.marble_dice = "-"
-    st.session_state.marble_message = "🎲 주사위를 굴려 게임을 시작하세요!"
+    st.session_state.marble_message = "🎲 자기 차례가 되면 주사위를 굴려 이동하세요!"
     st.session_state.marble_finished = False
-    st.session_state.marble_rolled = False
+    st.session_state.marble_needs_answer = False
+    st.session_state.marble_skip = [False for _ in range(team_count)]
 
-if "marble_turn" not in st.session_state:
-    st.session_state.marble_turn = 0
+if "marble_skip" not in st.session_state:
+    st.session_state.marble_skip = [False for _ in range(team_count)]
 
-if "marble_dice" not in st.session_state:
-    st.session_state.marble_dice = "-"
+if len(st.session_state.marble_skip) != team_count:
+    st.session_state.marble_skip = [False for _ in range(team_count)]
 
-if "marble_message" not in st.session_state:
-    st.session_state.marble_message = "🎲 주사위를 굴려 게임을 시작하세요!"
+if "marble_needs_answer" not in st.session_state:
+    st.session_state.marble_needs_answer = False
 
-if "marble_finished" not in st.session_state:
-    st.session_state.marble_finished = False
-
-if "marble_rolled" not in st.session_state:
-    st.session_state.marble_rolled = False
-
-board_words = st.session_state.marble_board_words
+board_items = st.session_state.marble_board_items
 positions = st.session_state.marble_positions
 current_turn = st.session_state.marble_turn
 
@@ -216,7 +246,126 @@ if current_turn >= team_count:
     st.session_state.marble_turn = 0
 
 current_position = positions[current_turn]
-current_item = board_words[current_position]
+current_item = board_items[current_position]
+
+# =========================
+# 차례 넘기기 함수
+# =========================
+def advance_turn():
+    next_turn = (st.session_state.marble_turn + 1) % team_count
+
+    skipped_messages = []
+
+    while st.session_state.marble_skip[next_turn]:
+        st.session_state.marble_skip[next_turn] = False
+        skipped_messages.append(f"{next_turn + 1}모둠은 한 번 쉬기!")
+        next_turn = (next_turn + 1) % team_count
+
+    st.session_state.marble_turn = next_turn
+
+    if skipped_messages:
+        st.session_state.marble_message += " / " + " ".join(skipped_messages)
+
+
+# =========================
+# 이벤트 처리
+# =========================
+def apply_event(event):
+    turn = st.session_state.marble_turn
+    positions = st.session_state.marble_positions
+    action = event["action"]
+
+    if action == "forward2":
+        positions[turn] = min(board_size - 1, positions[turn] + 2)
+        landed = board_items[positions[turn]]
+        if landed["type"] == "word":
+            st.session_state.marble_message = f"🚀 앞으로 2칸! '{landed['word']}' 단어의 뜻을 말하세요."
+            st.session_state.marble_needs_answer = True
+        else:
+            st.session_state.marble_message = "🚀 앞으로 2칸 이동했습니다!"
+            st.session_state.marble_needs_answer = False
+            advance_turn()
+
+    elif action == "back2":
+        positions[turn] = max(0, positions[turn] - 2)
+        landed = board_items[positions[turn]]
+        if landed["type"] == "word":
+            st.session_state.marble_message = f"🌀 뒤로 2칸! '{landed['word']}' 단어의 뜻을 말하세요."
+            st.session_state.marble_needs_answer = True
+        else:
+            st.session_state.marble_message = "🌀 뒤로 2칸 이동했습니다!"
+            st.session_state.marble_needs_answer = False
+            advance_turn()
+
+    elif action == "extra":
+        st.session_state.marble_message = "🎲 한 번 더! 같은 모둠이 다시 주사위를 굴리세요."
+        st.session_state.marble_needs_answer = False
+
+    elif action == "skip":
+        st.session_state.marble_skip[turn] = True
+        st.session_state.marble_message = "😴 다음 차례를 한 번 쉽니다. 다음 모둠 차례입니다."
+        st.session_state.marble_needs_answer = False
+        advance_turn()
+
+    elif action == "swap":
+        first_team = max(range(team_count), key=lambda i: positions[i])
+        if first_team != turn:
+            positions[turn], positions[first_team] = positions[first_team], positions[turn]
+            st.session_state.marble_message = f"🔄 {turn + 1}모둠과 {first_team + 1}모둠이 자리를 바꿨습니다!"
+        else:
+            st.session_state.marble_message = "🔄 이미 가장 앞에 있습니다. 자리 바꾸기 실패!"
+        st.session_state.marble_needs_answer = False
+        advance_turn()
+
+
+# =========================
+# 미션 박스
+# =========================
+st.markdown("### 🎯 현재 미션")
+
+mission_word = ""
+mission_text = ""
+
+if st.session_state.marble_finished:
+    mission_word = "🏆 게임 종료"
+    mission_text = st.session_state.marble_message
+
+elif st.session_state.marble_needs_answer and current_item["type"] == "word":
+    mission_word = current_item["word"]
+    mission_text = f"{team_icons[current_turn]} {current_turn + 1}모둠은 이 단어의 한국어 뜻을 말하세요. 다른 모둠은 답이 맞는지 확인해 주세요."
+
+elif current_item["type"] == "event":
+    mission_word = current_item["title"]
+    mission_text = current_item["desc"]
+
+else:
+    mission_word = "🎲 주사위 굴리기"
+    mission_text = f"{team_icons[current_turn]} {current_turn + 1}모둠 차례입니다. 주사위를 굴리면 바로 이동합니다."
+
+st.markdown(
+    f"""
+    <div style="
+        background: linear-gradient(135deg, #fff7ed, #e0f2fe);
+        border: 4px solid #fb923c;
+        border-radius: 30px;
+        padding: 26px 24px;
+        text-align: center;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+        margin-bottom: 18px;
+    ">
+        <div style="font-size:20px; font-weight:900; color:#9a3412;">
+            현재 차례: {team_icons[current_turn]} {current_turn + 1}모둠
+        </div>
+        <div style="font-size:48px; font-weight:900; color:#111827; margin-top:10px;">
+            {html.escape(mission_word)}
+        </div>
+        <div style="font-size:21px; font-weight:800; color:#374151; margin-top:12px; line-height:1.5;">
+            {html.escape(mission_text)}
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================
 # 상태판
@@ -226,16 +375,13 @@ st.markdown(
     <div style="
         background: linear-gradient(135deg, #dcfce7, #dbeafe, #fce7f3);
         border-radius: 24px;
-        padding: 22px;
-        margin: 20px 0;
+        padding: 18px;
+        margin: 16px 0;
         text-align: center;
         box-shadow: 0 6px 18px rgba(0,0,0,0.08);
         border: 2px solid #bbf7d0;
     ">
-        <div style="font-size:32px; font-weight:900; color:#14532d;">
-            현재 차례: {team_icons[current_turn]} {current_turn + 1}모둠
-        </div>
-        <div style="font-size:22px; font-weight:800; color:#334155; margin-top:8px;">
+        <div style="font-size:22px; font-weight:900; color:#334155;">
             🎲 마지막 주사위: {st.session_state.marble_dice}
         </div>
         <div style="font-size:18px; font-weight:700; color:#475569; margin-top:8px;">
@@ -247,7 +393,91 @@ st.markdown(
 )
 
 # =========================
-# 모두의 마블식 보드 만들기
+# 게임 진행 버튼
+# =========================
+st.markdown("### 🎮 게임 진행")
+
+col_roll, col_correct, col_wrong, col_reset = st.columns(4)
+
+with col_roll:
+    if st.button("🎲 주사위 굴리기", use_container_width=True):
+        if st.session_state.marble_finished:
+            st.session_state.marble_message = "이미 게임이 끝났습니다. 다시 시작하려면 리셋을 누르세요."
+
+        elif st.session_state.marble_needs_answer:
+            st.session_state.marble_message = "먼저 현재 단어의 답을 확인해 주세요."
+
+        else:
+            dice = random.randint(1, 6)
+            st.session_state.marble_dice = dice
+
+            new_pos = positions[current_turn] + dice
+            if new_pos >= board_size - 1:
+                new_pos = board_size - 1
+
+            positions[current_turn] = new_pos
+            landed = board_items[new_pos]
+
+            if landed["type"] == "word":
+                st.session_state.marble_message = (
+                    f"🚀 {current_turn + 1}모둠이 {dice}칸 이동했습니다. "
+                    f"'{landed['word']}' 단어의 뜻을 말하세요!"
+                )
+                st.session_state.marble_needs_answer = True
+
+            else:
+                st.session_state.marble_message = (
+                    f"✨ {current_turn + 1}모둠이 {dice}칸 이동해서 이벤트 칸에 도착했습니다: {landed['title']}"
+                )
+                apply_event(landed)
+
+        st.rerun()
+
+with col_correct:
+    if st.button("✅ 맞았어요", use_container_width=True):
+        if st.session_state.marble_finished:
+            st.session_state.marble_message = "이미 게임이 끝났습니다."
+
+        elif not st.session_state.marble_needs_answer:
+            st.session_state.marble_message = "현재 확인할 단어 미션이 없습니다. 주사위를 굴려 주세요."
+
+        else:
+            if positions[current_turn] >= board_size - 1:
+                st.session_state.marble_finished = True
+                st.session_state.marble_message = f"🏆 {current_turn + 1}모둠 승리!"
+                st.balloons()
+            else:
+                st.session_state.marble_message = f"✅ {current_turn + 1}모둠 정답! 다음 모둠 차례입니다."
+                st.session_state.marble_needs_answer = False
+                advance_turn()
+
+        st.rerun()
+
+with col_wrong:
+    if st.button("❌ 틀렸어요", use_container_width=True):
+        if st.session_state.marble_finished:
+            st.session_state.marble_message = "이미 게임이 끝났습니다."
+
+        elif not st.session_state.marble_needs_answer:
+            st.session_state.marble_message = "현재 확인할 단어 미션이 없습니다. 주사위를 굴려 주세요."
+
+        else:
+            positions[current_turn] = max(0, positions[current_turn] - penalty)
+            st.session_state.marble_message = (
+                f"😢 {current_turn + 1}모둠 오답! {penalty}칸 뒤로 이동합니다. 다음 모둠 차례입니다."
+            )
+            st.session_state.marble_needs_answer = False
+            advance_turn()
+
+        st.rerun()
+
+with col_reset:
+    if st.button("🔄 게임 리셋", use_container_width=True):
+        reset_game()
+        st.rerun()
+
+# =========================
+# 말판 HTML
 # =========================
 st.markdown("### 🗺️ 모두의 마블식 단어 말판")
 
@@ -302,18 +532,17 @@ board_html = f"""
     }}
 
     .cell-word {{
-        font-size: 24px;
+        font-size: 22px;
         font-weight: 900;
         color: #111827;
         line-height: 1.2;
         word-break: keep-all;
     }}
 
-    .cell-meaning {{
-        font-size: 14px;
+    .cell-desc {{
+        font-size: 13px;
         font-weight: 700;
         color: #475569;
-        margin-top: 4px;
         line-height: 1.25;
     }}
 
@@ -367,10 +596,10 @@ board_html = f"""
         }}
 
         .cell-word {{
-            font-size: 16px;
+            font-size: 15px;
         }}
 
-        .cell-meaning {{
+        .cell-desc {{
             font-size: 10px;
         }}
 
@@ -390,9 +619,7 @@ for r in range(board_side):
     for c in range(board_side):
         if (r, c) in cell_map:
             i = cell_map[(r, c)]
-            item = board_words[i]
-            word = html.escape(item["word"])
-            meaning = html.escape(item["meaning"])
+            item = board_items[i]
 
             teams_here = []
             for team_idx, pos in enumerate(positions):
@@ -403,7 +630,7 @@ for r in range(board_side):
 
             is_start = i == 0
             is_finish = i == board_size - 1
-            is_current = i == current_position
+            is_current = i == positions[current_turn]
 
             if is_finish:
                 bg = "linear-gradient(135deg, #fef3c7, #fecaca)"
@@ -422,17 +649,18 @@ for r in range(board_side):
                 border = "#e5e7eb"
                 label = f"{i + 1}"
 
-            meaning_html = ""
-            if show_meaning:
-                meaning_html = f"<div class='cell-meaning'>{meaning}</div>"
+            if item["type"] == "event":
+                cell_word = html.escape(item["title"])
+                cell_desc = html.escape(item["desc"])
             else:
-                meaning_html = "<div class='cell-meaning'>&nbsp;</div>"
+                cell_word = html.escape(item["word"])
+                cell_desc = "뜻 말하기"
 
             board_html += f"""
             <div class="cell" style="background:{bg}; border:4px solid {border};">
                 <div class="cell-label">{label}</div>
-                <div class="cell-word">{word}</div>
-                {meaning_html}
+                <div class="cell-word">{cell_word}</div>
+                <div class="cell-desc">{cell_desc}</div>
                 <div class="markers">{markers}</div>
             </div>
             """
@@ -450,104 +678,5 @@ board_html += """
 </html>
 """
 
-# HTML이 글자로 뜨지 않게 components.html 사용
 board_height = 930 if board_side == 7 else 780 if board_side == 6 else 650
 components.html(board_html, height=board_height, scrolling=True)
-
-# =========================
-# 현재 미션
-# =========================
-st.markdown(
-    f"""
-    <div style="
-        background: white;
-        border-radius: 26px;
-        padding: 22px;
-        margin: 20px 0;
-        text-align: center;
-        border: 3px solid #fed7aa;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-    ">
-        <div style="font-size:18px; font-weight:900; color:#9a3412;">
-            현재 미션
-        </div>
-        <div style="font-size:44px; font-weight:900; color:#111827; margin-top:8px;">
-            {html.escape(current_item["word"])}
-        </div>
-        <div style="font-size:20px; font-weight:800; color:#475569; margin-top:8px;">
-            {current_turn + 1}모둠은 이 단어를 읽고 한국어 뜻을 말하세요.
-        </div>
-        <div style="font-size:20px; font-weight:900; color:#2563eb; margin-top:8px;">
-            교사용 정답: {html.escape(current_item["meaning"])}
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
-# 게임 진행 버튼
-# =========================
-st.markdown("### 🎮 게임 진행")
-
-col_roll, col_correct, col_wrong, col_reset = st.columns(4)
-
-with col_roll:
-    if st.button("🎲 주사위 굴리기", use_container_width=True):
-        if not st.session_state.marble_finished:
-            dice = random.randint(1, 6)
-            st.session_state.marble_dice = dice
-
-            new_pos = positions[current_turn] + dice
-            if new_pos >= board_size - 1:
-                new_pos = board_size - 1
-
-            positions[current_turn] = new_pos
-            moved_word = board_words[new_pos]["word"]
-
-            st.session_state.marble_message = (
-                f"🚀 {current_turn + 1}모둠이 {dice}칸 이동했습니다. "
-                f"'{moved_word}' 단어의 뜻을 말하세요!"
-            )
-            st.session_state.marble_rolled = True
-            st.rerun()
-
-with col_correct:
-    if st.button("✅ 맞았어요", use_container_width=True):
-        if not st.session_state.marble_finished:
-            if not st.session_state.marble_rolled:
-                st.session_state.marble_message = "먼저 주사위를 굴려 주세요!"
-            else:
-                if positions[current_turn] >= board_size - 1:
-                    st.session_state.marble_finished = True
-                    st.session_state.marble_message = f"🏆 {current_turn + 1}모둠 승리!"
-                    st.balloons()
-                else:
-                    st.session_state.marble_message = f"✅ {current_turn + 1}모둠 정답! 다음 모둠 차례입니다."
-                    st.session_state.marble_turn = (current_turn + 1) % team_count
-                    st.session_state.marble_rolled = False
-            st.rerun()
-
-with col_wrong:
-    if st.button("❌ 틀렸어요", use_container_width=True):
-        if not st.session_state.marble_finished:
-            if not st.session_state.marble_rolled:
-                st.session_state.marble_message = "먼저 주사위를 굴려 주세요!"
-            else:
-                new_pos = max(0, positions[current_turn] - penalty)
-                positions[current_turn] = new_pos
-
-                st.session_state.marble_message = (
-                    f"😢 {current_turn + 1}모둠 오답! "
-                    f"{penalty}칸 뒤로 이동합니다."
-                )
-                st.session_state.marble_turn = (current_turn + 1) % team_count
-                st.session_state.marble_rolled = False
-            st.rerun()
-
-with col_reset:
-    if st.button("🔄 게임 리셋", use_container_width=True):
-        for key in list(st.session_state.keys()):
-            if key.startswith("marble_"):
-                del st.session_state[key]
-        st.rerun()
