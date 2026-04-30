@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import random
 import html
 
@@ -58,10 +59,10 @@ st.markdown(
         margin-bottom: 24px;
     ">
         <h1 style="font-size:42px; font-weight:900; color:#1f2937; margin-bottom:8px;">
-            🎲 모두의 단어 말판 게임
+            🗺️ 모두의 마블식 단어 말판
         </h1>
         <p style="font-size:18px; color:#4b5563; margin:0;">
-            모두의 마블처럼 바깥쪽 말판을 돌며 단어의 뜻을 맞히는 모둠 게임입니다.
+            바깥쪽 말판을 돌며 영어 단어의 한국어 뜻을 맞히는 모둠 게임입니다.
         </p>
     </div>
     """,
@@ -78,7 +79,13 @@ st.markdown("### ⚙️ 게임 설정")
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    team_count = st.slider("모둠 수", 2, 6, 4)
+    team_count = st.slider(
+        "모둠 수",
+        min_value=2,
+        max_value=6,
+        value=4,
+        step=1
+    )
 
 with col2:
     board_side = st.slider(
@@ -86,14 +93,24 @@ with col2:
         min_value=5,
         max_value=7,
         value=6,
+        step=1,
         help="6이면 6x6 말판이 만들어집니다."
     )
 
 with col3:
-    penalty = st.slider("틀리면 뒤로", 0, 3, 1)
+    penalty = st.slider(
+        "틀리면 뒤로",
+        min_value=0,
+        max_value=3,
+        value=1,
+        step=1
+    )
 
 with col4:
-    show_meaning = st.checkbox("말판에 뜻 보이기", value=False)
+    show_meaning = st.checkbox(
+        "말판에 뜻 보이기",
+        value=False
+    )
 
 team_icons = ["🔴", "🔵", "🟢", "🟡", "🟣", "🟠"]
 
@@ -103,19 +120,19 @@ team_icons = ["🔴", "🔵", "🟢", "🟡", "🟣", "🟠"]
 def make_path_positions(n):
     path = []
 
-    # 위쪽: 왼쪽 -> 오른쪽
+    # 위쪽: 왼쪽 → 오른쪽
     for c in range(n):
         path.append((0, c))
 
-    # 오른쪽: 위 -> 아래
+    # 오른쪽: 위 → 아래
     for r in range(1, n):
         path.append((r, n - 1))
 
-    # 아래쪽: 오른쪽 -> 왼쪽
+    # 아래쪽: 오른쪽 → 왼쪽
     for c in range(n - 2, -1, -1):
         path.append((n - 1, c))
 
-    # 왼쪽: 아래 -> 위
+    # 왼쪽: 아래 → 위
     for r in range(n - 2, 0, -1):
         path.append((r, 0))
 
@@ -130,30 +147,32 @@ board_size = len(path_positions)
 # =========================
 def make_board_words(size):
     random.seed(size)
+
     if size <= len(word_data):
         return random.sample(word_data, size)
 
     board = []
     while len(board) < size:
         board.extend(word_data)
+
     return board[:size]
 
 
 # =========================
-# 세션 초기화
+# 세션 상태 초기화
 # =========================
-if "marble_board_size_saved" not in st.session_state:
-    st.session_state.marble_board_size_saved = board_size
+if "marble_board_side_saved" not in st.session_state:
+    st.session_state.marble_board_side_saved = board_side
 
 if "marble_team_count_saved" not in st.session_state:
     st.session_state.marble_team_count_saved = team_count
 
 if (
     "marble_board_words" not in st.session_state
-    or st.session_state.marble_board_size_saved != board_size
+    or st.session_state.marble_board_side_saved != board_side
 ):
     st.session_state.marble_board_words = make_board_words(board_size)
-    st.session_state.marble_board_size_saved = board_size
+    st.session_state.marble_board_side_saved = board_side
     st.session_state.marble_positions = [0 for _ in range(team_count)]
     st.session_state.marble_turn = 0
     st.session_state.marble_dice = "-"
@@ -228,7 +247,7 @@ st.markdown(
 )
 
 # =========================
-# 모두의 마블식 보드
+# 모두의 마블식 보드 만들기
 # =========================
 st.markdown("### 🗺️ 모두의 마블식 단어 말판")
 
@@ -237,19 +256,134 @@ for idx, pos in enumerate(path_positions):
     cell_map[pos] = idx
 
 board_html = f"""
-<div style="
-    background: linear-gradient(135deg, #eff6ff, #fff7ed, #f0fdf4);
-    border: 6px solid #93c5fd;
-    border-radius: 34px;
-    padding: 24px;
-    margin-top: 22px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.14);
-">
-<div style="
-    display: grid;
-    grid-template-columns: repeat({board_side}, 1fr);
-    gap: 12px;
-">
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body {{
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: transparent;
+    }}
+
+    .board-wrap {{
+        background: linear-gradient(135deg, #eff6ff, #fff7ed, #f0fdf4);
+        border: 6px solid #93c5fd;
+        border-radius: 34px;
+        padding: 24px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.14);
+        box-sizing: border-box;
+        width: 100%;
+    }}
+
+    .board-grid {{
+        display: grid;
+        grid-template-columns: repeat({board_side}, 1fr);
+        gap: 12px;
+    }}
+
+    .cell {{
+        min-height: 125px;
+        border-radius: 22px;
+        padding: 10px;
+        text-align: center;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.10);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-sizing: border-box;
+    }}
+
+    .cell-label {{
+        font-size: 13px;
+        font-weight: 900;
+        color: #64748b;
+    }}
+
+    .cell-word {{
+        font-size: 24px;
+        font-weight: 900;
+        color: #111827;
+        line-height: 1.2;
+        word-break: keep-all;
+    }}
+
+    .cell-meaning {{
+        font-size: 14px;
+        font-weight: 700;
+        color: #475569;
+        margin-top: 4px;
+        line-height: 1.25;
+    }}
+
+    .markers {{
+        font-size: 22px;
+        font-weight: 900;
+        min-height: 28px;
+    }}
+
+    .center-cell {{
+        min-height: 125px;
+        background: rgba(255,255,255,0.45);
+        border: 3px dashed rgba(147,197,253,0.65);
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: #64748b;
+        font-size: 20px;
+        font-weight: 900;
+        line-height: 1.4;
+        box-sizing: border-box;
+    }}
+
+    @media (max-width: 700px) {{
+        .board-wrap {{
+            padding: 10px;
+            border-radius: 22px;
+            border-width: 4px;
+        }}
+
+        .board-grid {{
+            gap: 6px;
+        }}
+
+        .cell {{
+            min-height: 92px;
+            border-radius: 15px;
+            padding: 6px;
+        }}
+
+        .center-cell {{
+            min-height: 92px;
+            border-radius: 15px;
+            font-size: 13px;
+        }}
+
+        .cell-label {{
+            font-size: 10px;
+        }}
+
+        .cell-word {{
+            font-size: 16px;
+        }}
+
+        .cell-meaning {{
+            font-size: 10px;
+        }}
+
+        .markers {{
+            font-size: 14px;
+            min-height: 18px;
+        }}
+    }}
+</style>
+</head>
+<body>
+<div class="board-wrap">
+<div class="board-grid">
 """
 
 for r in range(board_side):
@@ -290,61 +424,35 @@ for r in range(board_side):
 
             meaning_html = ""
             if show_meaning:
-                meaning_html = f"""
-                <div style="font-size:14px; font-weight:700; color:#475569; margin-top:4px;">
-                    {meaning}
-                </div>
-                """
+                meaning_html = f"<div class='cell-meaning'>{meaning}</div>"
+            else:
+                meaning_html = "<div class='cell-meaning'>&nbsp;</div>"
 
             board_html += f"""
-            <div style="
-                min-height: 125px;
-                background: {bg};
-                border: 4px solid {border};
-                border-radius: 22px;
-                padding: 10px;
-                text-align: center;
-                box-shadow: 0 5px 14px rgba(0,0,0,0.10);
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-            ">
-                <div style="font-size:13px; font-weight:900; color:#64748b;">
-                    {label}
-                </div>
-                <div style="font-size:24px; font-weight:900; color:#111827; line-height:1.2;">
-                    {word}
-                </div>
+            <div class="cell" style="background:{bg}; border:4px solid {border};">
+                <div class="cell-label">{label}</div>
+                <div class="cell-word">{word}</div>
                 {meaning_html}
-                <div style="font-size:22px; font-weight:900; min-height:28px;">
-                    {markers}
-                </div>
+                <div class="markers">{markers}</div>
             </div>
             """
         else:
-            board_html += f"""
-            <div style="
-                min-height: 125px;
-                background: rgba(255,255,255,0.35);
-                border: 3px dashed rgba(147,197,253,0.55);
-                border-radius: 22px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                color: #94a3b8;
-                font-size: 20px;
-                font-weight: 900;
-            ">
-                🎲
+            board_html += """
+            <div class="center-cell">
+                모두의<br>단어 말판
             </div>
             """
 
 board_html += """
 </div>
 </div>
+</body>
+</html>
 """
 
-st.markdown(board_html, unsafe_allow_html=True)
+# HTML이 글자로 뜨지 않게 components.html 사용
+board_height = 930 if board_side == 7 else 780 if board_side == 6 else 650
+components.html(board_html, height=board_height, scrolling=True)
 
 # =========================
 # 현재 미션
