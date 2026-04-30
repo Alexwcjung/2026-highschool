@@ -215,7 +215,7 @@ with tabs[0]:
     st.markdown(
         """
         <div class="mini-card">
-            <h4>🌷 2. is</h4>
+            <h4>🌷 1. is</h4>
             <p>주어가 <b>1개</b>일 때 씁니다.</p>
             <div class="example-box">
                 He <b>is</b> kind.<br>
@@ -225,7 +225,7 @@ with tabs[0]:
         </div>
 
         <div class="mini-card">
-            <h4>🌈 3. are</h4>
+            <h4>🌈 2. are</h4>
             <p>주어가 <b>2개 이상</b>이거나 <b>you / we / they</b>일 때 씁니다.</p>
             <div class="example-box">
                 You <b>are</b> my friend.<br>
@@ -234,7 +234,7 @@ with tabs[0]:
             </div>
         </div>
                 <div class="mini-card">
-            <h4>🌱 1. am</h4>
+            <h4>🌱 3. am</h4>
             <p>주어가 <b>I</b>일 때 씁니다. '나'는 1명이지만 나는 특별하기에 다른 것들과 차별을 두기 위해서 'is'가 아닌 'am'을 씁니다.</p>
             <div class="example-box">
                 I <b>am</b> a student.<br>
