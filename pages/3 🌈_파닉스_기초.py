@@ -23,7 +23,6 @@ YOUTUBE_VIDEOS = [
 # 이미지 파일을 아직 안 올렸으면 비워 두세요.
 # 나중에 GitHub에 images 폴더를 만들고 이미지를 올린 뒤 아래에 경로를 넣으면 됩니다.
 IMAGE_FILES = [
-    # "IMAGE_FILES = [
     "https://raw.githubusercontent.com/Alexwcjung/2026-highschool/main/pages/images/phonics.png",
 ]",
     # "images/phonics_2.png",
