@@ -514,8 +514,7 @@ with tabs[0]:
         unsafe_allow_html=True
     )
 
-    st.video("https://www.youtube.com/watch?v=BELlZKpi1Zs")
-
+    st.video("https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWIn9y9")
     st.markdown(
         """
         <div class="top-guide-box">
