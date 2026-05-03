@@ -11,8 +11,8 @@ YOUTUBE_VIDEOS = [
         "url": "https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWI"
     },
     {
-        "title": "짧은 모음 배우기",
-        "url": "https://www.youtube.com/watch?v=두번째영상ID"
+        "title": "영어 글자 읽는법",
+        "url": "https://www.youtube.com/watch?v=bI_pJqWsWHI&list=PLH557iAZa5ASU2nnQyp8QrTEykeWIn9y9&index=2"
     },
     {
         "title": "긴 모음 배우기",
