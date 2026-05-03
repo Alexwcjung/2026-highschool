@@ -111,6 +111,50 @@ st.markdown(
         line-height: 1.8;
     }
 
+    .video-box {
+        background: linear-gradient(135deg, #fff1f2 0%, #f5f3ff 50%, #eff6ff 100%);
+        border-radius: 26px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+    }
+
+    .video-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #be185d;
+        margin-bottom: 8px;
+    }
+
+    .video-text {
+        font-size: 16px;
+        color: #475569;
+        line-height: 1.8;
+    }
+
+    .image-upload-box {
+        background: linear-gradient(135deg, #ecfeff 0%, #f0fdf4 50%, #fff7ed 100%);
+        border-radius: 26px;
+        padding: 24px;
+        margin-bottom: 24px;
+        border: 1px solid #bae6fd;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.06);
+    }
+
+    .image-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #047857;
+        margin-bottom: 8px;
+    }
+
+    .image-text {
+        font-size: 16px;
+        color: #475569;
+        line-height: 1.8;
+    }
+
     .phonics-card {
         background: linear-gradient(135deg, #ffffff 0%, #fcfcff 100%);
         border-radius: 22px;
@@ -440,6 +484,8 @@ def show_cards(data, title, show_letter_name=False):
 # 탭 구성
 # =========================
 tabs = st.tabs([
+    "🎬 YouTube 영상",
+    "🖼️ 이미지 자료",
     "① 자음 소리",
     "② 짧은 모음",
     "③ 긴 모음",
@@ -451,7 +497,75 @@ tabs = st.tabs([
     "⑨ Silent e"
 ])
 
+# =========================
+# 0. YouTube 영상 탭
+# =========================
 with tabs[0]:
+    st.markdown(
+        """
+        <div class="video-box">
+            <div class="video-title">🎬 파닉스 영상으로 먼저 배우기</div>
+            <div class="video-text">
+                본격적으로 파닉스 소리를 배우기 전에, 짧은 영상을 보며 알파벳 소리와 파닉스의 기본 개념을 익혀 봅니다.<br>
+                영상을 본 뒤 다음 탭의 이미지 자료를 보고, 그다음 자음, 모음, blends, digraphs 등을 하나씩 듣고 연습해 보세요.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.video("https://www.youtube.com/watch?v=BELlZKpi1Zs")
+
+    st.markdown(
+        """
+        <div class="top-guide-box">
+            <div class="top-guide-title">🌱 영상 시청 후 활동</div>
+            <div class="top-guide-text">
+                • 영상에서 들은 알파벳 소리를 따라 말해 봅니다.<br>
+                • 알파벳 이름과 실제 소리가 어떻게 다른지 생각해 봅니다.<br>
+                • 다음 탭으로 이동해 <b>이미지 자료</b>를 보고, 그다음 <b>자음 소리</b>부터 차례대로 연습합니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# =========================
+# 1. 이미지 자료 탭
+# =========================
+with tabs[1]:
+    st.markdown(
+        """
+        <div class="image-upload-box">
+            <div class="image-title">🖼️ 파닉스 이미지 자료 보기</div>
+            <div class="image-text">
+                수업에 사용할 파닉스 이미지, 알파벳 표, 발음 자료, 활동지 사진 등을 올려서 학생들과 함께 볼 수 있습니다.<br>
+                이미지를 업로드하면 아래에 크게 표시됩니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    uploaded_image = st.file_uploader(
+        "이미지를 올려 주세요",
+        type=["png", "jpg", "jpeg"],
+        key="phonics_image_uploader"
+    )
+
+    if uploaded_image is not None:
+        st.image(
+            uploaded_image,
+            caption="업로드한 이미지 자료",
+            use_container_width=True
+        )
+    else:
+        st.info("아직 이미지가 업로드되지 않았습니다. PNG, JPG, JPEG 파일을 올릴 수 있습니다.")
+
+# =========================
+# 2. 자음 소리
+# =========================
+with tabs[2]:
     show_rule(
         "자음 소리 Consonant Sounds",
         [
@@ -463,7 +577,10 @@ with tabs[0]:
     )
     show_cards(consonant_sounds, "① 자음 소리", show_letter_name=True)
 
-with tabs[1]:
+# =========================
+# 3. 짧은 모음
+# =========================
+with tabs[3]:
     show_rule(
         "짧은 모음 Short Vowels 규칙",
         [
@@ -476,7 +593,10 @@ with tabs[1]:
     )
     show_cards(short_vowels, "② 짧은 모음 Short Vowels", show_letter_name=True)
 
-with tabs[2]:
+# =========================
+# 4. 긴 모음
+# =========================
+with tabs[4]:
     show_rule(
         "긴 모음 Long Vowels 규칙",
         [
@@ -490,7 +610,10 @@ with tabs[2]:
     )
     show_cards(long_vowels, "③ 긴 모음 Long Vowels")
 
-with tabs[3]:
+# =========================
+# 5. 모음 예외
+# =========================
+with tabs[5]:
     show_rule(
         "모음 예외 소리 규칙",
         [
@@ -506,7 +629,10 @@ with tabs[3]:
     )
     show_cards(vowel_exceptions, "④ 모음 예외 소리")
 
-with tabs[4]:
+# =========================
+# 6. Blends
+# =========================
+with tabs[6]:
     show_rule(
         "Consonant Blends 규칙",
         [
@@ -518,7 +644,10 @@ with tabs[4]:
     )
     show_cards(blends, "⑤ Consonant Blends")
 
-with tabs[5]:
+# =========================
+# 7. Digraphs
+# =========================
+with tabs[7]:
     show_rule(
         "Consonant Digraphs 규칙",
         [
@@ -531,7 +660,10 @@ with tabs[5]:
     )
     show_cards(digraphs, "⑥ Consonant Digraphs")
 
-with tabs[6]:
+# =========================
+# 8. Vowel Teams
+# =========================
+with tabs[8]:
     show_rule(
         "Vowel Teams 규칙",
         [
@@ -547,7 +679,10 @@ with tabs[6]:
     )
     show_cards(vowel_teams, "⑦ Vowel Teams")
 
-with tabs[7]:
+# =========================
+# 9. R-Controlled
+# =========================
+with tabs[9]:
     show_rule(
         "R-Controlled Vowels 규칙",
         [
@@ -560,7 +695,10 @@ with tabs[7]:
     )
     show_cards(r_controlled, "⑧ R-Controlled Vowels")
 
-with tabs[8]:
+# =========================
+# 10. Silent e
+# =========================
+with tabs[10]:
     show_rule(
         "Silent e 규칙",
         [
