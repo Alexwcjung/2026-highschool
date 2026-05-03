@@ -2,8 +2,8 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(
-    page_title="Phonics Speaking Mole Game",
-    page_icon="🐹",
+    page_title="Phonics Speaking Mole Pop Game",
+    page_icon="💥",
     layout="wide"
 )
 
@@ -52,11 +52,11 @@ st.markdown(
         box-shadow: 0 10px 24px rgba(0,0,0,0.08);
     ">
         <div style="font-size: 42px; font-weight: 900; color: #334155;">
-            🐹🔨 파닉스 말하기 두더지 게임
+            💥🐹 파닉스 발음 두더지 터뜨리기
         </div>
         <div style="font-size: 18px; color: #64748b; line-height: 1.8; margin-top: 10px;">
-            단어 두더지가 튀어나오면, 그 단어를 영어로 말해 보세요.<br>
-            발음이 인식되면 두더지가 사라지고 점수가 올라갑니다.
+            단어 두더지가 튀어나오면 그 단어를 영어로 말해 보세요.<br>
+            발음이 인식되면 두더지가 펑! 하고 터집니다.
         </div>
     </div>
     """,
@@ -87,7 +87,7 @@ html_code = f"""
     }}
 
     .game-wrap {{
-        max-width: 1100px;
+        max-width: 1120px;
         margin: 0 auto;
         padding: 20px;
     }}
@@ -203,14 +203,14 @@ html_code = f"""
     .mole {{
         position: absolute;
         left: 50%;
-        bottom: -120px;
+        bottom: -125px;
         transform: translateX(-50%);
-        width: 150px;
-        height: 135px;
+        width: 155px;
+        height: 138px;
         background: linear-gradient(135deg, #92400e 0%, #b45309 100%);
         border-radius: 50% 50% 35% 35%;
         z-index: 2;
-        transition: bottom 0.35s ease;
+        transition: bottom 0.32s ease;
         text-align: center;
         color: white;
         box-shadow: 0 8px 16px rgba(0,0,0,0.18);
@@ -218,27 +218,17 @@ html_code = f"""
 
     .mole.show {{
         bottom: 34px;
-        animation: pop 0.45s ease;
+        animation: popUp 0.42s ease;
     }}
 
-    @keyframes pop {{
-        0% {{ transform: translateX(-50%) scale(0.75); }}
-        60% {{ transform: translateX(-50%) scale(1.08); }}
+    @keyframes popUp {{
+        0% {{ transform: translateX(-50%) scale(0.65); }}
+        60% {{ transform: translateX(-50%) scale(1.12); }}
         100% {{ transform: translateX(-50%) scale(1); }}
     }}
 
-    .mole.hit {{
-        animation: hit 0.45s ease forwards;
-    }}
-
-    @keyframes hit {{
-        0% {{ transform: translateX(-50%) scale(1); opacity: 1; }}
-        50% {{ transform: translateX(-50%) scale(1.2) rotate(8deg); opacity: 0.8; }}
-        100% {{ transform: translateX(-50%) scale(0.3); opacity: 0; bottom: -130px; }}
-    }}
-
     .face {{
-        font-size: 34px;
+        font-size: 35px;
         margin-top: 12px;
     }}
 
@@ -247,6 +237,113 @@ html_code = f"""
         font-weight: 900;
         margin-top: 4px;
         text-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    }}
+
+    /* 맞았을 때 두더지 폭발 */
+    .mole.explode {{
+        animation: explodeMole 0.6s ease-out forwards;
+    }}
+
+    @keyframes explodeMole {{
+        0% {{
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+            filter: brightness(1);
+        }}
+        35% {{
+            transform: translateX(-50%) scale(1.35) rotate(8deg);
+            opacity: 1;
+            filter: brightness(1.8);
+        }}
+        100% {{
+            transform: translateX(-50%) scale(0.05) rotate(-20deg);
+            opacity: 0;
+            bottom: 80px;
+            filter: brightness(2.2);
+        }}
+    }}
+
+    .boom {{
+        position: absolute;
+        left: 50%;
+        bottom: 88px;
+        transform: translateX(-50%);
+        font-size: 58px;
+        font-weight: 900;
+        color: #ef4444;
+        opacity: 0;
+        z-index: 4;
+        pointer-events: none;
+        text-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    }}
+
+    .boom.show {{
+        animation: boomText 0.75s ease-out forwards;
+    }}
+
+    @keyframes boomText {{
+        0% {{
+            opacity: 0;
+            transform: translateX(-50%) scale(0.4) rotate(-10deg);
+        }}
+        35% {{
+            opacity: 1;
+            transform: translateX(-50%) scale(1.3) rotate(8deg);
+        }}
+        100% {{
+            opacity: 0;
+            transform: translateX(-50%) scale(1.8) rotate(-5deg);
+        }}
+    }}
+
+    .particle {{
+        position: absolute;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        left: 50%;
+        bottom: 105px;
+        opacity: 0;
+        z-index: 3;
+        pointer-events: none;
+    }}
+
+    .particle.red {{ background: #ef4444; }}
+    .particle.yellow {{ background: #facc15; }}
+    .particle.orange {{ background: #fb923c; }}
+    .particle.pink {{ background: #ec4899; }}
+    .particle.blue {{ background: #38bdf8; }}
+
+    .particle.p1.show {{ animation: particle1 0.75s ease-out forwards; }}
+    .particle.p2.show {{ animation: particle2 0.75s ease-out forwards; }}
+    .particle.p3.show {{ animation: particle3 0.75s ease-out forwards; }}
+    .particle.p4.show {{ animation: particle4 0.75s ease-out forwards; }}
+    .particle.p5.show {{ animation: particle5 0.75s ease-out forwards; }}
+    .particle.p6.show {{ animation: particle6 0.75s ease-out forwards; }}
+
+    @keyframes particle1 {{
+        0% {{ opacity: 1; transform: translate(0,0) scale(1); }}
+        100% {{ opacity: 0; transform: translate(-95px,-80px) scale(0.4); }}
+    }}
+    @keyframes particle2 {{
+        0% {{ opacity: 1; transform: translate(0,0) scale(1); }}
+        100% {{ opacity: 0; transform: translate(95px,-85px) scale(0.4); }}
+    }}
+    @keyframes particle3 {{
+        0% {{ opacity: 1; transform: translate(0,0) scale(1); }}
+        100% {{ opacity: 0; transform: translate(-70px,30px) scale(0.4); }}
+    }}
+    @keyframes particle4 {{
+        0% {{ opacity: 1; transform: translate(0,0) scale(1); }}
+        100% {{ opacity: 0; transform: translate(75px,35px) scale(0.4); }}
+    }}
+    @keyframes particle5 {{
+        0% {{ opacity: 1; transform: translate(0,0) scale(1); }}
+        100% {{ opacity: 0; transform: translate(0,-110px) scale(0.4); }}
+    }}
+    @keyframes particle6 {{
+        0% {{ opacity: 1; transform: translate(0,0) scale(1); }}
+        100% {{ opacity: 0; transform: translate(0,70px) scale(0.4); }}
     }}
 
     .heard-box {{
@@ -316,10 +413,10 @@ html_code = f"""
 <div class="game-wrap">
 
     <div class="control-box">
-        <div class="title">🐹 단어가 튀어나오면 말해서 잡기!</div>
+        <div class="title">💥 발음하면 두더지가 터져요!</div>
         <div class="desc">
             마이크 시작을 누른 뒤, 화면에 나온 단어를 영어로 말하세요.<br>
-            발음이 맞게 인식되면 두더지가 사라지고 점수가 올라갑니다.
+            발음이 맞게 인식되면 단어 두더지가 <b>펑!</b> 하고 터집니다.
         </div>
         <button class="btn" onclick="startGame()">🎙️ 마이크 시작 / 게임 시작</button>
         <button class="btn btn-stop" onclick="stopGame()">⏹️ 정지</button>
@@ -332,7 +429,7 @@ html_code = f"""
             <div class="status-value" id="score">0</div>
         </div>
         <div class="status-card">
-            <div class="status-label">현재 목표 단어</div>
+            <div class="status-label">현재 단어</div>
             <div class="status-value" id="targetWord">-</div>
         </div>
         <div class="status-card">
@@ -342,12 +439,47 @@ html_code = f"""
     </div>
 
     <div class="board">
-        <div class="hole"><div class="mole" id="mole0"><div class="face">🐹</div><div class="word"></div></div><div class="ground-hole"></div></div>
-        <div class="hole"><div class="mole" id="mole1"><div class="face">🐹</div><div class="word"></div></div><div class="ground-hole"></div></div>
-        <div class="hole"><div class="mole" id="mole2"><div class="face">🐹</div><div class="word"></div></div><div class="ground-hole"></div></div>
-        <div class="hole"><div class="mole" id="mole3"><div class="face">🐹</div><div class="word"></div></div><div class="ground-hole"></div></div>
-        <div class="hole"><div class="mole" id="mole4"><div class="face">🐹</div><div class="word"></div></div><div class="ground-hole"></div></div>
-        <div class="hole"><div class="mole" id="mole5"><div class="face">🐹</div><div class="word"></div></div><div class="ground-hole"></div></div>
+        <div class="hole">
+            <div class="mole" id="mole0"><div class="face">🐹</div><div class="word"></div></div>
+            <div class="boom" id="boom0">💥</div>
+            <div class="particle p1 red" id="p0_1"></div><div class="particle p2 yellow" id="p0_2"></div><div class="particle p3 orange" id="p0_3"></div><div class="particle p4 pink" id="p0_4"></div><div class="particle p5 blue" id="p0_5"></div><div class="particle p6 red" id="p0_6"></div>
+            <div class="ground-hole"></div>
+        </div>
+
+        <div class="hole">
+            <div class="mole" id="mole1"><div class="face">🐹</div><div class="word"></div></div>
+            <div class="boom" id="boom1">💥</div>
+            <div class="particle p1 red" id="p1_1"></div><div class="particle p2 yellow" id="p1_2"></div><div class="particle p3 orange" id="p1_3"></div><div class="particle p4 pink" id="p1_4"></div><div class="particle p5 blue" id="p1_5"></div><div class="particle p6 red" id="p1_6"></div>
+            <div class="ground-hole"></div>
+        </div>
+
+        <div class="hole">
+            <div class="mole" id="mole2"><div class="face">🐹</div><div class="word"></div></div>
+            <div class="boom" id="boom2">💥</div>
+            <div class="particle p1 red" id="p2_1"></div><div class="particle p2 yellow" id="p2_2"></div><div class="particle p3 orange" id="p2_3"></div><div class="particle p4 pink" id="p2_4"></div><div class="particle p5 blue" id="p2_5"></div><div class="particle p6 red" id="p2_6"></div>
+            <div class="ground-hole"></div>
+        </div>
+
+        <div class="hole">
+            <div class="mole" id="mole3"><div class="face">🐹</div><div class="word"></div></div>
+            <div class="boom" id="boom3">💥</div>
+            <div class="particle p1 red" id="p3_1"></div><div class="particle p2 yellow" id="p3_2"></div><div class="particle p3 orange" id="p3_3"></div><div class="particle p4 pink" id="p3_4"></div><div class="particle p5 blue" id="p3_5"></div><div class="particle p6 red" id="p3_6"></div>
+            <div class="ground-hole"></div>
+        </div>
+
+        <div class="hole">
+            <div class="mole" id="mole4"><div class="face">🐹</div><div class="word"></div></div>
+            <div class="boom" id="boom4">💥</div>
+            <div class="particle p1 red" id="p4_1"></div><div class="particle p2 yellow" id="p4_2"></div><div class="particle p3 orange" id="p4_3"></div><div class="particle p4 pink" id="p4_4"></div><div class="particle p5 blue" id="p4_5"></div><div class="particle p6 red" id="p4_6"></div>
+            <div class="ground-hole"></div>
+        </div>
+
+        <div class="hole">
+            <div class="mole" id="mole5"><div class="face">🐹</div><div class="word"></div></div>
+            <div class="boom" id="boom5">💥</div>
+            <div class="particle p1 red" id="p5_1"></div><div class="particle p2 yellow" id="p5_2"></div><div class="particle p3 orange" id="p5_3"></div><div class="particle p4 pink" id="p5_4"></div><div class="particle p5 blue" id="p5_5"></div><div class="particle p6 red" id="p5_6"></div>
+            <div class="ground-hole"></div>
+        </div>
     </div>
 
     <div class="heard-box">
@@ -361,8 +493,8 @@ html_code = f"""
         💡 <b>사용 팁</b><br>
         • Chrome 브라우저에서 가장 잘 작동합니다.<br>
         • 처음 실행할 때 마이크 허용을 눌러야 합니다.<br>
-        • 조용한 환경에서 학생이 단어를 또박또박 말하면 인식률이 좋아집니다.<br>
-        • 휴대폰에서는 주소창 왼쪽 자물쇠 또는 사이트 설정에서 마이크 허용을 확인하세요.
+        • 학생이 단어를 말하면, 인식된 발음이 목표 단어와 같을 때 두더지가 터집니다.<br>
+        • 조용한 환경에서 또박또박 말하면 인식률이 좋아집니다.
     </div>
 
 </div>
@@ -376,6 +508,7 @@ let currentMoleIndex = -1;
 let gameTimer = null;
 let recognition = null;
 let isRunning = false;
+let isExploding = false;
 
 const moleCount = 6;
 
@@ -383,16 +516,31 @@ function randomChoice(arr) {{
     return arr[Math.floor(Math.random() * arr.length)];
 }}
 
+function clearEffects() {{
+    for (let i = 0; i < moleCount; i++) {{
+        const boom = document.getElementById("boom" + i);
+        boom.classList.remove("show");
+
+        for (let j = 1; j <= 6; j++) {{
+            const p = document.getElementById("p" + i + "_" + j);
+            p.classList.remove("show");
+        }}
+    }}
+}}
+
 function clearMoles() {{
     for (let i = 0; i < moleCount; i++) {{
         const mole = document.getElementById("mole" + i);
         mole.classList.remove("show");
-        mole.classList.remove("hit");
+        mole.classList.remove("explode");
         mole.querySelector(".word").innerText = "";
     }}
+    clearEffects();
 }}
 
 function popMole() {{
+    if (isExploding) return;
+
     clearMoles();
 
     currentTarget = randomChoice(WORDS);
@@ -403,17 +551,7 @@ function popMole() {{
     mole.classList.add("show");
 
     document.getElementById("targetWord").innerText = currentTarget;
-
-    speakWord(currentTarget);
-}}
-
-function speakWord(word) {{
-    try {{
-        const utterance = new SpeechSynthesisUtterance(word);
-        utterance.lang = "en-US";
-        utterance.rate = 0.85;
-        speechSynthesis.speak(utterance);
-    }} catch (e) {{}}
+    showMessage("🎯 '" + currentTarget + "' 를 발음해 보세요!", "good");
 }}
 
 function normalizeText(text) {{
@@ -429,28 +567,47 @@ function checkAnswer(spokenText) {{
 
     document.getElementById("heardText").innerText = spokenText;
 
-    if (!target) return;
+    if (!target || isExploding) return;
 
-    const words = heard.split(" ");
+    const heardWords = heard.split(" ");
 
-    if (heard === target || words.includes(target)) {{
-        hitMole();
+    if (heard === target || heardWords.includes(target)) {{
+        explodeMole();
     }} else {{
         showMessage("😅 '" + spokenText + "'로 들렸어요. 다시 말해 보세요!", "bad");
     }}
 }}
 
-function hitMole() {{
+function explodeMole() {{
+    isExploding = true;
+
     const mole = document.getElementById("mole" + currentMoleIndex);
+    const boom = document.getElementById("boom" + currentMoleIndex);
+
     mole.classList.remove("show");
-    mole.classList.add("hit");
+    mole.classList.add("explode");
+
+    boom.classList.remove("show");
+    void boom.offsetWidth;
+    boom.classList.add("show");
+
+    for (let j = 1; j <= 6; j++) {{
+        const p = document.getElementById("p" + currentMoleIndex + "_" + j);
+        p.classList.remove("show");
+        void p.offsetWidth;
+        p.classList.add("show");
+    }}
 
     score += 1;
     document.getElementById("score").innerText = score;
 
-    showMessage("🎉 정답! '" + currentTarget + "' 두더지를 잡았어요!", "good");
+    showMessage("💥 정답! '" + currentTarget + "' 두더지가 터졌어요!", "good");
 
     setTimeout(() => {{
+        mole.classList.remove("explode");
+        mole.querySelector(".word").innerText = "";
+        isExploding = false;
+
         if (isRunning) {{
             popMole();
         }}
@@ -472,10 +629,10 @@ function startGame() {{
     startRecognition();
 
     gameTimer = setInterval(() => {{
-        if (isRunning) {{
+        if (isRunning && !isExploding) {{
             popMole();
         }}
-    }}, 5500);
+    }}, 6500);
 }}
 
 function stopGame() {{
@@ -493,6 +650,7 @@ function resetGame() {{
     score = 0;
     currentTarget = "";
     currentMoleIndex = -1;
+    isExploding = false;
 
     document.getElementById("score").innerText = "0";
     document.getElementById("targetWord").innerText = "-";
@@ -547,4 +705,4 @@ function startRecognition() {{
 </html>
 """
 
-components.html(html_code, height=950, scrolling=True)
+components.html(html_code, height=980, scrolling=True)
