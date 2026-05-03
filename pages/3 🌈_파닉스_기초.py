@@ -269,7 +269,7 @@ st.markdown(
     <div class="hero-box">
         <div class="hero-title">🌈🐰 Alex의 Phonics Garden 🧸✨</div>
         <div class="hero-sub">
-            자음 소리, 짧은 모음, 긴 모음, blends, digraphs, vowel teams를<br>
+            자음 소리, 짧은 모음, 긴 모음, 모음 예외, 자음 예외를<br>
             귀엽고 쉽게 듣고 익혀 보는 파닉스 기초 학습 공간입니다.
         </div>
     </div>
@@ -311,17 +311,9 @@ def show_fixed_image(image_info, idx):
     url = image_info.get("url", "")
 
     if local_path and Path(local_path).exists():
-        st.image(
-            local_path,
-            caption=caption,
-            use_container_width=True
-        )
+        st.image(local_path, caption=caption, use_container_width=True)
     elif url:
-        st.image(
-            url,
-            caption=caption,
-            use_container_width=True
-        )
+        st.image(url, caption=caption, use_container_width=True)
     else:
         st.warning(f"이미지 자료 {idx}를 불러올 수 없습니다.")
 
@@ -369,17 +361,66 @@ long_vowels = [
     {"pattern": "U u", "concept": "긴 모음", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
 ]
 
+# =========================
+# 모음 예외: 비슷한 소리는 묶음
+# =========================
 vowel_exceptions = [
-    {"pattern": "A a", "concept": "A before l", "sound_name": "A as /ɔː/ (오와 어 사이의 긴 소리)", "sound_audio": repeat_sound("aw"), "word": "ball", "word_audio": "ball"},
-    {"pattern": "A a", "concept": "A before r", "sound_name": "A as /ɑːr/ (아르에 가까운 소리)", "sound_audio": repeat_sound("ar"), "word": "car", "word_audio": "car"},
-    {"pattern": "A a", "concept": "A in father", "sound_name": "A as /ɑː/ (긴 아 소리)", "sound_audio": repeat_sound("ah"), "word": "father", "word_audio": "father"},
-    {"pattern": "A a", "concept": "Unstressed a", "sound_name": "A as /ə/ (약한 어 소리)", "sound_audio": repeat_sound("uh"), "word": "about", "word_audio": "about"},
-    {"pattern": "O o", "concept": "O before v / m / n sometimes", "sound_name": "O as /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "love", "word_audio": "love"},
-    {"pattern": "O o", "concept": "O in do / to", "sound_name": "O as /uː/ (긴 우 소리)", "sound_audio": repeat_sound("oo"), "word": "do", "word_audio": "do"},
-    {"pattern": "OO", "concept": "Short oo", "sound_name": "OO as /ʊ/ (짧은 우 소리)", "sound_audio": repeat_sound("u"), "word": "book", "word_audio": "book"},
-    {"pattern": "OO", "concept": "Long oo", "sound_name": "OO as /uː/ (긴 우 소리)", "sound_audio": repeat_sound("oo"), "word": "moon", "word_audio": "moon"},
-    {"pattern": "EA", "concept": "EA exception", "sound_name": "EA as /e/ (에에 가까운 소리)", "sound_audio": repeat_sound("eh"), "word": "bread", "word_audio": "bread"},
-    {"pattern": "OU", "concept": "OU exception", "sound_name": "OU as /ʌ/ (짧은 어에 가까운 소리)", "sound_audio": repeat_sound("uh"), "word": "country", "word_audio": "country"},
+    {
+        "pattern": "al / ar / a",
+        "concept": "A 예외 묶음",
+        "sound_name": "ball, car, father처럼 A가 기본 short a와 다르게 남",
+        "sound_audio": repeat_sound("ah"),
+        "word": "ball / car / father",
+        "word_audio": "ball. car. father."
+    },
+    {
+        "pattern": "unstressed a",
+        "concept": "약한 a",
+        "sound_name": "about, ago처럼 a가 약한 /ə/ 소리로 남",
+        "sound_audio": repeat_sound("uh"),
+        "word": "about / ago",
+        "word_audio": "about. ago."
+    },
+    {
+        "pattern": "o",
+        "concept": "O 예외 묶음",
+        "sound_name": "love, come, son처럼 o가 /ʌ/ 소리로 남",
+        "sound_audio": repeat_sound("uh"),
+        "word": "love / come / son",
+        "word_audio": "love. come. son."
+    },
+    {
+        "pattern": "o",
+        "concept": "O 예외 묶음",
+        "sound_name": "do, to처럼 o가 긴 /uː/ 소리로 남",
+        "sound_audio": repeat_sound("oo"),
+        "word": "do / to",
+        "word_audio": "do. to."
+    },
+    {
+        "pattern": "oo",
+        "concept": "OO 소리 비교",
+        "sound_name": "book은 짧은 /ʊ/, moon은 긴 /uː/ 소리로 남",
+        "sound_audio": "book. moon.",
+        "word": "book / moon",
+        "word_audio": "book. moon."
+    },
+    {
+        "pattern": "ea",
+        "concept": "EA 예외",
+        "sound_name": "bread처럼 ea가 /e/ 소리로 나는 경우가 있음",
+        "sound_audio": repeat_sound("eh"),
+        "word": "bread",
+        "word_audio": "bread"
+    },
+    {
+        "pattern": "ou",
+        "concept": "OU 예외",
+        "sound_name": "country처럼 ou가 /ʌ/ 소리로 나는 경우가 있음",
+        "sound_audio": repeat_sound("uh"),
+        "word": "country",
+        "word_audio": "country"
+    },
 ]
 
 blends = [
@@ -441,6 +482,19 @@ silent_e = [
     {"pattern": "u_e", "concept": "Silent e", "sound_name": "Long u /juː/ (유에 가까운 소리)", "sound_audio": repeat_sound("you"), "word": "cube", "word_audio": "cube"},
 ]
 
+consonant_exceptions = [
+    {"pattern": "c + e", "concept": "Soft C", "sound_name": "c가 /s/ 소리로 남", "sound_audio": repeat_sound("sss"), "word": "cent", "word_audio": "cent"},
+    {"pattern": "c + i", "concept": "Soft C", "sound_name": "c가 /s/ 소리로 남", "sound_audio": repeat_sound("sss"), "word": "city", "word_audio": "city"},
+    {"pattern": "c + y", "concept": "Soft C", "sound_name": "c가 /s/ 소리로 남", "sound_audio": repeat_sound("sss"), "word": "cycle", "word_audio": "cycle"},
+    {"pattern": "g + e", "concept": "Soft G", "sound_name": "g가 /dʒ/ 소리로 나는 경우가 있음", "sound_audio": repeat_sound("juh"), "word": "gem", "word_audio": "gem"},
+    {"pattern": "g + i", "concept": "Soft G", "sound_name": "g가 /dʒ/ 소리로 나는 경우가 있음", "sound_audio": repeat_sound("juh"), "word": "giant", "word_audio": "giant"},
+    {"pattern": "g + y", "concept": "Soft G", "sound_name": "g가 /dʒ/ 소리로 나는 경우가 있음", "sound_audio": repeat_sound("juh"), "word": "gym", "word_audio": "gym"},
+    {"pattern": "kn", "concept": "Silent k", "sound_name": "k는 소리 나지 않고 n만 남", "sound_audio": repeat_sound("nnn"), "word": "knee", "word_audio": "knee"},
+    {"pattern": "wr", "concept": "Silent w", "sound_name": "w는 소리 나지 않고 r만 남", "sound_audio": repeat_sound("ruh"), "word": "write", "word_audio": "write"},
+    {"pattern": "mb", "concept": "Silent b", "sound_name": "단어 끝 mb에서 b는 소리 나지 않음", "sound_audio": repeat_sound("mmm"), "word": "lamb", "word_audio": "lamb"},
+    {"pattern": "x", "concept": "x as /gz/", "sound_name": "x가 /gz/ 소리로 나는 경우", "sound_audio": repeat_sound("gz"), "word": "exam", "word_audio": "exam"},
+]
+
 
 # =========================
 # 카드 출력 함수
@@ -465,11 +519,7 @@ def show_cards(data, title, show_letter_name=False):
             with col2:
                 st.markdown("<div class='label-small'>알파벳 이름</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='concept-box'>{item['letter_name']}</div>", unsafe_allow_html=True)
-                audio_button(
-                    "🔊 이름 듣기",
-                    item["letter_name"],
-                    key=f"name_{title}_{idx}_{item['pattern']}_{item['word']}"
-                )
+                audio_button("🔊 이름 듣기", item["letter_name"], key=f"name_{title}_{idx}_{item['pattern']}_{item['word']}")
 
             with col3:
                 st.markdown("<div class='label-small'>조건 / 개념</div>", unsafe_allow_html=True)
@@ -478,20 +528,12 @@ def show_cards(data, title, show_letter_name=False):
             with col4:
                 st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
-                audio_button(
-                    "🔊 실제 소리 듣기",
-                    item["sound_audio"],
-                    key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
-                )
+                audio_button("🔊 실제 소리 듣기", item["sound_audio"], key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}")
 
             with col5:
                 st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
-                audio_button(
-                    "🔊 단어 듣기",
-                    item["word_audio"],
-                    key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
-                )
+                audio_button("🔊 단어 듣기", item["word_audio"], key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}")
 
         else:
             with col2:
@@ -501,20 +543,12 @@ def show_cards(data, title, show_letter_name=False):
             with col3:
                 st.markdown("<div class='label-small'>실제 소리</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='sound-box'>{item['sound_name']}</div>", unsafe_allow_html=True)
-                audio_button(
-                    "🔊 실제 소리 듣기",
-                    item["sound_audio"],
-                    key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}"
-                )
+                audio_button("🔊 실제 소리 듣기", item["sound_audio"], key=f"sound_{title}_{idx}_{item['pattern']}_{item['word']}")
 
             with col4:
                 st.markdown("<div class='label-small'>예시 단어</div>", unsafe_allow_html=True)
                 st.markdown(f"<div class='word-box'>{item['word']}</div>", unsafe_allow_html=True)
-                audio_button(
-                    "🔊 단어 듣기",
-                    item["word_audio"],
-                    key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}"
-                )
+                audio_button("🔊 단어 듣기", item["word_audio"], key=f"word_{title}_{idx}_{item['pattern']}_{item['word']}")
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -529,11 +563,12 @@ tabs = st.tabs([
     "② 짧은 모음",
     "③ 긴 모음",
     "④ 모음 예외",
-    "⑤ 자음 연결 소리",
-    "⑥ 두 글자 자음 소리",
-    "⑦ 모음 묶음 소리",
-    "⑧ R의 영향을 받는 모음",
-    "⑨ 묵음 e"
+    "⑤ 자음 이어 읽기",
+    "⑥ 두 글자 한 소리",
+    "⑦ 모음 두 글자 소리",
+    "⑧ r이 붙은 모음",
+    "⑨ 소리 안 나는 e",
+    "⑩ 자음 예외"
 ])
 
 # =========================
@@ -655,23 +690,25 @@ with tabs[5]:
         "모음 예외 소리 규칙",
         [
             "영어 모음은 항상 짧은 모음이나 긴 모음으로만 읽히지 않습니다.",
-            "a 뒤에 l이 오면 /ɔː/처럼 나는 경우가 있습니다. 예: ball, call, tall",
-            "a 뒤에 r이 오면 /ɑːr/처럼 r의 영향을 받은 소리가 납니다. 예: car, far, star",
+            "비슷한 예외 소리는 한 줄로 묶어서 익히면 더 쉽습니다.",
+            "al, ar, father 계열은 A가 기본 short a와 다르게 나는 경우입니다. 예: ball, car, father",
             "강세가 약한 a는 /ə/처럼 약하게 나는 경우가 많습니다. 예: about, ago",
-            "o는 love, come, son처럼 /ʌ/로 나는 경우가 있습니다.",
+            "o는 love, come, son처럼 /ʌ/ 소리로 나는 경우가 있습니다.",
+            "o는 do, to처럼 긴 /uː/ 소리로 나는 경우도 있습니다.",
             "oo는 book처럼 짧은 /ʊ/ 소리도 나고, moon처럼 긴 /uː/ 소리도 납니다.",
-            "ea는 보통 eat처럼 /iː/로 나지만, bread처럼 /e/로 나는 예외도 있습니다.",
+            "ea는 bread처럼 /e/로 나는 예외가 있습니다.",
+            "ou는 country처럼 /ʌ/로 나는 예외가 있습니다.",
             "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
     show_cards(vowel_exceptions, "④ 모음 예외 소리")
 
 # =========================
-# 6. Blends
+# 6. 자음 이어 읽기
 # =========================
 with tabs[6]:
     show_rule(
-        "Consonant Blends 규칙",
+        "자음 이어 읽기 Consonant Blends",
         [
             "Blends는 두 자음이 이어져 나지만, 각각의 소리가 어느 정도 살아 있습니다.",
             "예: bl은 /b/와 /l/ 소리가 이어집니다.",
@@ -679,14 +716,14 @@ with tabs[6]:
             "한글 소리 힌트는 참고용이며, 실제 연결 소리는 버튼으로 확인합니다."
         ]
     )
-    show_cards(blends, "⑤ Consonant Blends")
+    show_cards(blends, "⑤ 자음 이어 읽기")
 
 # =========================
-# 7. Digraphs
+# 7. 두 글자 한 소리
 # =========================
 with tabs[7]:
     show_rule(
-        "Consonant Digraphs 규칙",
+        "두 글자 한 소리 Consonant Digraphs",
         [
             "Digraphs는 두 글자가 만나 하나의 새로운 소리를 만드는 경우입니다.",
             "ch, sh, th, ph, ck 등이 대표적입니다.",
@@ -695,14 +732,14 @@ with tabs[7]:
             "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
-    show_cards(digraphs, "⑥ Consonant Digraphs")
+    show_cards(digraphs, "⑥ 두 글자 한 소리")
 
 # =========================
-# 8. Vowel Teams
+# 8. 모음 두 글자 소리
 # =========================
 with tabs[8]:
     show_rule(
-        "Vowel Teams 규칙",
+        "모음 두 글자 소리 Vowel Teams",
         [
             "Vowel Teams는 두 모음 글자가 함께 하나의 모음 소리를 만드는 경우입니다.",
             "ai와 ay는 보통 /eɪ/ 소리가 납니다. ai는 단어 중간, ay는 단어 끝에 많이 옵니다.",
@@ -714,14 +751,14 @@ with tabs[8]:
             "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
-    show_cards(vowel_teams, "⑦ Vowel Teams")
+    show_cards(vowel_teams, "⑦ 모음 두 글자 소리")
 
 # =========================
-# 9. R-Controlled
+# 9. r이 붙은 모음
 # =========================
 with tabs[9]:
     show_rule(
-        "R-Controlled Vowels 규칙",
+        "r이 붙은 모음 R-Controlled Vowels",
         [
             "모음 뒤에 r이 오면 r의 영향을 받아 모음 소리가 바뀝니다.",
             "ar은 car처럼 /ɑːr/ 소리가 납니다.",
@@ -730,14 +767,14 @@ with tabs[9]:
             "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
-    show_cards(r_controlled, "⑧ R-Controlled Vowels")
+    show_cards(r_controlled, "⑧ r이 붙은 모음")
 
 # =========================
-# 10. Silent e
+# 10. 소리 안 나는 e
 # =========================
 with tabs[10]:
     show_rule(
-        "Silent e 규칙",
+        "소리 안 나는 e Silent e",
         [
             "단어 끝의 e는 직접 소리 나지 않는 경우가 많습니다.",
             "하지만 앞의 모음을 긴 모음으로 바꾸는 역할을 합니다.",
@@ -747,4 +784,24 @@ with tabs[10]:
             "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
         ]
     )
-    show_cards(silent_e, "⑨ Silent e")
+    show_cards(silent_e, "⑨ 소리 안 나는 e")
+
+# =========================
+# 11. 자음 예외
+# =========================
+with tabs[11]:
+    show_rule(
+        "자음 예외 소리 규칙",
+        [
+            "영어 자음은 항상 기본 소리로만 읽히지 않습니다.",
+            "c는 보통 /k/ 소리가 나지만, 뒤에 e, i, y가 오면 /s/ 소리가 나는 경우가 많습니다.",
+            "예: cent, city, cycle",
+            "g는 보통 /g/ 소리가 나지만, 뒤에 e, i, y가 오면 /dʒ/ 소리가 나는 경우가 있습니다.",
+            "예: gem, giant, gym",
+            "kn, wr, mb처럼 어떤 글자는 보이지만 소리 나지 않는 경우도 있습니다.",
+            "예: knee, write, lamb",
+            "x는 fox처럼 /ks/로 나기도 하지만, exam처럼 /gz/로 나는 경우도 있습니다.",
+            "한글 소리 힌트는 참고용이며, 정확한 발음은 실제 소리 듣기 버튼으로 확인합니다."
+        ]
+    )
+    show_cards(consonant_exceptions, "⑩ 자음 예외 소리")
