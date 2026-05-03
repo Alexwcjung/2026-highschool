@@ -5,7 +5,20 @@ import io
 # =========================
 # 선생님이 수정할 부분
 # =========================
-YOUTUBE_URL = "https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWIn9y9"
+YOUTUBE_VIDEOS = [
+    {
+        "title": "알파벳 기본 소리 배우기",
+        "url": "https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWI"
+    },
+    {
+        "title": "짧은 모음 배우기",
+        "url": "https://www.youtube.com/watch?v=두번째영상ID"
+    },
+    {
+        "title": "긴 모음 배우기",
+        "url": "https://www.youtube.com/watch?v=세번째영상ID"
+    },
+]
 
 IMAGE_FILES = [
     "images/phonics_1.png",
@@ -268,6 +281,9 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# =========================
+# 상단 공통 안내 박스
+# =========================
 st.markdown(
     """
     <div class="top-guide-box">
@@ -520,7 +536,10 @@ with tabs[0]:
         unsafe_allow_html=True
     )
 
-    st.video(YOUTUBE_URL)
+    for idx, video in enumerate(YOUTUBE_VIDEOS, start=1):
+        st.markdown(f"### 🎬 {idx}. {video['title']}")
+        st.video(video["url"])
+        st.divider()
 
     st.markdown(
         """
