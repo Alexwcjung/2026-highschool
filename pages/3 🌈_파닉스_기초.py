@@ -1,6 +1,7 @@
 import streamlit as st
 from gtts import gTTS
 import io
+from pathlib import Path
 
 # =========================
 # 선생님이 수정할 부분
@@ -8,21 +9,16 @@ import io
 YOUTUBE_VIDEOS = [
     {
         "title": "알파벳 기본 소리 배우기",
-        "url": "https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWI"
-    },
-    {
-        "title": "",
-        "url": ""
-    },
-    {
-        "title": "",
-        "url": "https://www.youtube.com/watch?v=세번째영상ID"
+        "url": "https://www.youtube.com/watch?v=rTuoEBqjaVg"
     },
 ]
 
 IMAGE_FILES = [
-    "images/phonics_1.png",
-    "images/phonics_2.png",
+    {
+        "caption": "파닉스 이미지 자료",
+        "local": "pages/images/phonics.png",
+        "url": "https://raw.githubusercontent.com/Alexwcjung/2026-highschool/main/pages/images/phonics.png"
+    }
 ]
 
 # =========================
@@ -309,6 +305,27 @@ def show_rule(title, lines):
     st.markdown(html, unsafe_allow_html=True)
 
 
+def show_fixed_image(image_info, idx):
+    caption = image_info.get("caption", f"파닉스 이미지 자료 {idx}")
+    local_path = image_info.get("local", "")
+    url = image_info.get("url", "")
+
+    if local_path and Path(local_path).exists():
+        st.image(
+            local_path,
+            caption=caption,
+            use_container_width=True
+        )
+    elif url:
+        st.image(
+            url,
+            caption=caption,
+            use_container_width=True
+        )
+    else:
+        st.warning(f"이미지 자료 {idx}를 불러올 수 없습니다.")
+
+
 # =========================
 # 데이터
 # =========================
@@ -537,9 +554,13 @@ with tabs[0]:
     )
 
     for idx, video in enumerate(YOUTUBE_VIDEOS, start=1):
-        st.markdown(f"### 🎬 {idx}. {video['title']}")
-        st.video(video["url"])
-        st.divider()
+        title = video.get("title", f"영상 {idx}")
+        url = video.get("url", "")
+
+        if url:
+            st.markdown(f"### 🎬 {idx}. {title}")
+            st.video(url)
+            st.markdown("---")
 
     st.markdown(
         """
@@ -572,15 +593,11 @@ with tabs[1]:
         unsafe_allow_html=True
     )
 
-    for idx, image_file in enumerate(IMAGE_FILES, start=1):
-        try:
-            st.image(
-                image_file,
-                caption=f"파닉스 이미지 자료 {idx}",
-                use_container_width=True
-            )
-        except Exception:
-            st.warning(f"이미지를 불러오지 못했습니다: {image_file}")
+    if IMAGE_FILES:
+        for idx, image_info in enumerate(IMAGE_FILES, start=1):
+            show_fixed_image(image_info, idx)
+    else:
+        st.info("아직 등록된 이미지가 없습니다.")
 
 # =========================
 # 2. 자음 소리
