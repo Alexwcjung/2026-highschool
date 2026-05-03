@@ -1,7 +1,6 @@
 import streamlit as st
 from gtts import gTTS
 import io
-import os
 
 # =========================
 # 선생님이 수정할 부분
@@ -9,23 +8,21 @@ import os
 YOUTUBE_VIDEOS = [
     {
         "title": "알파벳 기본 소리 배우기",
-        "url": "https://www.youtube.com/watch?v=rTuoEBqjaVg"
+        "url": "https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWI"
     },
-
-    # 영상을 더 넣고 싶으면 아래 형식으로 추가하세요.
-    # 빈 주소는 넣지 마세요.
-    # {
-    #     "title": "짧은 모음 배우기",
-    #     "url": "https://www.youtube.com/watch?v=실제영상ID"
-    # },
+    {
+        "title": "",
+        "url": ""
+    },
+    {
+        "title": "",
+        "url": "https://www.youtube.com/watch?v=세번째영상ID"
+    },
 ]
 
-# 이미지 파일을 아직 안 올렸으면 비워 두세요.
-# 나중에 GitHub에 images 폴더를 만들고 이미지를 올린 뒤 아래에 경로를 넣으면 됩니다.
 IMAGE_FILES = [
-    "https://raw.githubusercontent.com/Alexwcjung/2026-highschool/main/pages/images/phonics.png",
-]",
-    # "images/phonics_2.png",
+    "images/phonics_1.png",
+    "images/phonics_2.png",
 ]
 
 # =========================
@@ -539,25 +536,10 @@ with tabs[0]:
         unsafe_allow_html=True
     )
 
-    valid_videos = []
-    for video in YOUTUBE_VIDEOS:
-        title = video.get("title", "").strip()
-        url = video.get("url", "").strip()
-
-        if url and "youtube.com/watch?v=" in url:
-            valid_videos.append({
-                "title": title,
-                "url": url
-            })
-
-    if valid_videos:
-        for idx, video in enumerate(valid_videos, start=1):
-            title = video["title"] or f"영상 {idx}"
-            st.markdown(f"### 🎬 {idx}. {title}")
-            st.video(video["url"])
-            st.markdown("---")
-    else:
-        st.info("아직 등록된 YouTube 영상이 없습니다. 코드 위쪽의 YOUTUBE_VIDEOS에 실제 영상 주소를 넣어 주세요.")
+    for idx, video in enumerate(YOUTUBE_VIDEOS, start=1):
+        st.markdown(f"### 🎬 {idx}. {video['title']}")
+        st.video(video["url"])
+        st.divider()
 
     st.markdown(
         """
@@ -590,18 +572,15 @@ with tabs[1]:
         unsafe_allow_html=True
     )
 
-    if IMAGE_FILES:
-        for idx, image_file in enumerate(IMAGE_FILES, start=1):
-            if os.path.exists(image_file):
-                st.image(
-                    image_file,
-                    caption=f"파닉스 이미지 자료 {idx}",
-                    use_container_width=True
-                )
-            else:
-                st.warning(f"이미지 파일을 찾을 수 없습니다: {image_file}")
-    else:
-        st.info("아직 등록된 이미지가 없습니다. GitHub에 이미지를 올린 뒤 IMAGE_FILES에 파일 경로를 넣어 주세요.")
+    for idx, image_file in enumerate(IMAGE_FILES, start=1):
+        try:
+            st.image(
+                image_file,
+                caption=f"파닉스 이미지 자료 {idx}",
+                use_container_width=True
+            )
+        except Exception:
+            st.warning(f"이미지를 불러오지 못했습니다: {image_file}")
 
 # =========================
 # 2. 자음 소리
