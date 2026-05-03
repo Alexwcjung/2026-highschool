@@ -15,7 +15,7 @@ YOUTUBE_VIDEOS = [
         "url": "https://www.youtube.com/watch?v=bI_pJqWsWHI&list=PLH557iAZa5ASU2nnQyp8QrTEykeWIn9y9&index=2"
     },
     {
-        "title": "긴 모음 배우기",
+        "title": "",
         "url": "https://www.youtube.com/watch?v=세번째영상ID"
     },
 ]
