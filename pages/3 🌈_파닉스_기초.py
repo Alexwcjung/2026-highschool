@@ -3,6 +3,16 @@ from gtts import gTTS
 import io
 
 # =========================
+# 선생님이 수정할 부분
+# =========================
+YOUTUBE_URL = "https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWIn9y9"
+
+IMAGE_FILES = [
+    "images/phonics_1.png",
+    "images/phonics_2.png",
+]
+
+# =========================
 # 기본 설정
 # =========================
 st.set_page_config(
@@ -133,7 +143,7 @@ st.markdown(
         line-height: 1.8;
     }
 
-    .image-upload-box {
+    .image-box {
         background: linear-gradient(135deg, #ecfeff 0%, #f0fdf4 50%, #fff7ed 100%);
         border-radius: 26px;
         padding: 24px;
@@ -258,9 +268,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# =========================
-# 상단 공통 안내 박스
-# =========================
 st.markdown(
     """
     <div class="top-guide-box">
@@ -289,7 +296,6 @@ def show_rule(title, lines):
 # =========================
 # 데이터
 # =========================
-
 consonant_sounds = [
     {"pattern": "B b", "letter_name": "bee", "concept": "Consonant sound", "sound_name": "/b/ (브에 가까운 소리)", "sound_audio": repeat_sound("buh"), "word": "bat", "word_audio": "bat"},
     {"pattern": "C c", "letter_name": "see", "concept": "Consonant sound", "sound_name": "/k/ (크에 가까운 소리)", "sound_audio": repeat_sound("kuh"), "word": "cat", "word_audio": "cat"},
@@ -506,15 +512,16 @@ with tabs[0]:
         <div class="video-box">
             <div class="video-title">🎬 파닉스 영상으로 먼저 배우기</div>
             <div class="video-text">
-                본격적으로 파닉스 소리를 배우기 전에, 짧은 영상을 보며 알파벳 소리와 파닉스의 기본 개념을 익혀 봅니다.<br>
-                영상을 본 뒤 다음 탭의 이미지 자료를 보고, 그다음 자음, 모음, blends, digraphs 등을 하나씩 듣고 연습해 보세요.
+                선생님이 선택한 YouTube 파닉스 영상을 보고 알파벳 소리와 파닉스의 기본 개념을 익혀 봅니다.<br>
+                영상을 본 뒤 이미지 자료를 보고, 그다음 자음과 모음 소리를 차례대로 연습합니다.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.video("https://www.youtube.com/watch?v=rTuoEBqjaVg&list=PLH557iAZa5ASU2nnQyp8QrTEykeWIn9y9")
+    st.video(YOUTUBE_URL)
+
     st.markdown(
         """
         <div class="top-guide-box">
@@ -522,7 +529,7 @@ with tabs[0]:
             <div class="top-guide-text">
                 • 영상에서 들은 알파벳 소리를 따라 말해 봅니다.<br>
                 • 알파벳 이름과 실제 소리가 어떻게 다른지 생각해 봅니다.<br>
-                • 다음 탭으로 이동해 <b>이미지 자료</b>를 보고, 그다음 <b>자음 소리</b>부터 차례대로 연습합니다.
+                • 다음 탭으로 이동해 <b>이미지 자료</b>를 확인합니다.
             </div>
         </div>
         """,
@@ -535,31 +542,26 @@ with tabs[0]:
 with tabs[1]:
     st.markdown(
         """
-        <div class="image-upload-box">
+        <div class="image-box">
             <div class="image-title">🖼️ 파닉스 이미지 자료 보기</div>
             <div class="image-text">
-                수업에 사용할 파닉스 이미지, 알파벳 표, 발음 자료, 활동지 사진 등을 올려서 학생들과 함께 볼 수 있습니다.<br>
-                이미지를 업로드하면 아래에 크게 표시됩니다.
+                선생님이 GitHub에 올린 파닉스 이미지 자료를 보여주는 공간입니다.<br>
+                알파벳 표, 발음표, 단어 카드, 활동지 이미지를 넣어 수업에 활용할 수 있습니다.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    uploaded_image = st.file_uploader(
-        "이미지를 올려 주세요",
-        type=["png", "jpg", "jpeg"],
-        key="phonics_image_uploader"
-    )
-
-    if uploaded_image is not None:
-        st.image(
-            uploaded_image,
-            caption="업로드한 이미지 자료",
-            use_container_width=True
-        )
-    else:
-        st.info("아직 이미지가 업로드되지 않았습니다. PNG, JPG, JPEG 파일을 올릴 수 있습니다.")
+    for idx, image_file in enumerate(IMAGE_FILES, start=1):
+        try:
+            st.image(
+                image_file,
+                caption=f"파닉스 이미지 자료 {idx}",
+                use_container_width=True
+            )
+        except Exception:
+            st.warning(f"이미지를 불러오지 못했습니다: {image_file}")
 
 # =========================
 # 2. 자음 소리
