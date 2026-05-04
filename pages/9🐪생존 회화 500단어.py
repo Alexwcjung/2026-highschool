@@ -109,35 +109,42 @@ st.markdown(
 
     .word-card {
         background: white;
-        border-radius: 22px;
-        padding: 18px 20px;
-        margin-bottom: 14px;
-        border: 1px solid #f3e8ff;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.05);
+        border-radius: 18px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+        border: 1px solid #e0f2fe;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.04);
     }
 
-    .word-badge {
-        display: inline-block;
-        background: #e0f2fe;
-        color: #0369a1;
-        padding: 6px 12px;
-        border-radius: 999px;
+    .word-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .word-number {
+        min-width: 38px;
         font-size: 13px;
-        font-weight: 800;
-        margin-bottom: 8px;
+        font-weight: 900;
+        color: #0369a1;
+        background: #e0f2fe;
+        border-radius: 999px;
+        padding: 5px 9px;
+        text-align: center;
     }
 
     .word-text {
-        font-size: 31px;
+        min-width: 150px;
+        font-size: 25px;
         font-weight: 900;
         color: #111827;
-        margin-bottom: 4px;
     }
 
     .meaning-text {
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 19px;
+        font-weight: 800;
         color: #374151;
+        margin-left: 8px;
     }
 
     .quiz-card {
@@ -273,7 +280,7 @@ def make_dialogue_tts_text(dialogue):
 # =========================
 # 단어용 HTML 오디오 플레이어
 # =========================
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=105):
+def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=48):
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
@@ -289,20 +296,20 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
 
     components.html(
         f"""
-        <div style="font-family: Arial, sans-serif;">
+        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
             <button id="{play_btn_id}" style="
                 background: linear-gradient(135deg, #fce7f3, #dbeafe);
                 border: 1px solid #e9d5ff;
                 border-radius: 999px;
-                padding: 9px 15px;
+                padding: 6px 10px;
                 font-weight: 800;
-                font-size: 14px;
+                font-size: 13px;
                 color: #374151;
                 cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                margin-right: 6px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+                white-space: nowrap;
             ">
                 {label}
             </button>
@@ -311,22 +318,23 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 background: #fff7ed;
                 border: 1px solid #fed7aa;
                 border-radius: 999px;
-                padding: 9px 15px;
+                padding: 6px 10px;
                 font-weight: 800;
-                font-size: 14px;
+                font-size: 13px;
                 color: #9a3412;
                 cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+                white-space: nowrap;
             ">
                 ⏹ 중지
             </button>
 
-            <div id="{status_id}" style="
-                margin-top: 8px;
-                font-size: 13px;
+            <span id="{status_id}" style="
+                font-size: 12px;
                 color: #075985;
                 font-weight: 700;
-            "></div>
+                white-space: nowrap;
+            "></span>
 
             <script>
             const audio = document.getElementById("{audio_id}");
@@ -362,7 +370,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 playBtn.innerText = labelText;
 
                 if (showMessage) {{
-                    status.innerText = "⏹ 재생을 중지했습니다.";
+                    status.innerText = "중지됨";
                 }} else {{
                     status.innerText = "";
                 }}
@@ -380,7 +388,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 if (isStopped) return;
 
                 if (count >= maxCount) {{
-                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    status.innerText = "완료";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                     return;
@@ -390,9 +398,9 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
 
                 audio.play().then(() => {{
                     count += 1;
-                    status.innerText = "🔊 " + wordText + " 재생 중: " + count + " / " + maxCount;
+                    status.innerText = count + "/" + maxCount;
                 }}).catch((error) => {{
-                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
+                    status.innerText = "다시 클릭";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                 }});
@@ -404,7 +412,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 if (count < maxCount) {{
                     timer = setTimeout(playOnce, pauseMs);
                 }} else {{
-                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    status.innerText = "완료";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                 }}
@@ -421,8 +429,8 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 isStopped = false;
                 count = 0;
                 playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
-                status.innerText = "🔊 " + wordText + " 반복 재생을 시작합니다.";
+                playBtn.innerText = "재생중";
+                status.innerText = "시작";
                 playOnce();
             }});
 
@@ -442,7 +450,7 @@ def audio_button(label, text, key=None):
         text=text,
         repeat_count=20,
         pause_ms=1500,
-        height=105
+        height=48
     )
 
 
@@ -473,7 +481,7 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
 
     components.html(
         f"""
-        <div style="font-family: Arial, sans-serif;">
+        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
             <audio id="{audio_id}"></audio>
 
             <button id="{play_btn_id}" style="
@@ -1009,21 +1017,31 @@ def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns([1.3, 2.1, 1.4])
+        # 단어 / 발음·중지 / 뜻이 한 줄에 가깝게 보이도록 배치
+        col1, col2, col3 = st.columns([1.25, 1.65, 2.3])
 
         with col1:
-            st.markdown(f"<div class='word-badge'>🛟 Word {idx + 1}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='word-text'>{item['word']}</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="word-row">
+                    <div class="word-number">{idx + 1}</div>
+                    <div class="word-text">{item['word']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         with col2:
-            st.markdown("<div class='small-muted'>뜻</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='meaning-text'>{item['meaning']}</div>", unsafe_allow_html=True)
-
-        with col3:
             audio_button(
-                "🔊 발음 듣기",
+                "🔊 듣기",
                 item["word"],
                 key=f"{theme_name}_learn_audio_{idx}"
+            )
+
+        with col3:
+            st.markdown(
+                f"<div class='meaning-text'>{item['meaning']}</div>",
+                unsafe_allow_html=True
             )
 
         st.markdown('</div>', unsafe_allow_html=True)
