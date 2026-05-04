@@ -5,15 +5,15 @@ import random
 import base64
 import uuid
 import re
-from pathlib import Path
+import json
 import streamlit.components.v1 as components
 
 # =========================
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Fun Word Garden",
-    page_icon="🌈",
+    page_title="Daily English 1000",
+    page_icon="🌱",
     layout="wide"
 )
 
@@ -37,7 +37,7 @@ st.markdown(
     }
 
     .hero-box {
-        background: linear-gradient(135deg, #fce7f3 0%, #e0f2fe 50%, #fef3c7 100%);
+        background: linear-gradient(135deg, #dcfce7 0%, #e0f2fe 50%, #fef3c7 100%);
         border-radius: 26px;
         padding: 28px 30px;
         margin-bottom: 28px;
@@ -59,12 +59,12 @@ st.markdown(
     }
 
     .theme-header {
-        background: linear-gradient(135deg, #ec4899 0%, #8b5cf6 50%, #06b6d4 100%);
+        background: linear-gradient(135deg, #22c55e 0%, #0ea5e9 50%, #8b5cf6 100%);
         color: white;
         padding: 22px 26px;
         border-radius: 24px;
         margin-bottom: 22px;
-        box-shadow: 0 8px 20px rgba(139,92,246,0.25);
+        box-shadow: 0 8px 20px rgba(34,197,94,0.25);
     }
 
     .theme-title {
@@ -78,19 +78,48 @@ st.markdown(
         opacity: 0.95;
     }
 
+    .dialogue-box {
+        background: #fefce8;
+        border: 1px solid #fde68a;
+        border-radius: 24px;
+        padding: 20px 22px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    .dialogue-title {
+        font-size: 24px;
+        font-weight: 900;
+        color: #854d0e;
+        margin-bottom: 14px;
+    }
+
+    .dialogue-line {
+        font-size: 18px;
+        font-weight: 900;
+        color: #111827;
+        margin-top: 10px;
+    }
+
+    .dialogue-meaning {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 5px;
+    }
+
     .word-card {
         background: white;
         border-radius: 22px;
         padding: 18px 20px;
         margin-bottom: 14px;
-        border: 1px solid #f3e8ff;
+        border: 1px solid #dcfce7;
         box-shadow: 0 5px 16px rgba(0,0,0,0.05);
     }
 
     .word-badge {
         display: inline-block;
-        background: #fce7f3;
-        color: #be185d;
+        background: #dcfce7;
+        color: #166534;
         padding: 6px 12px;
         border-radius: 999px;
         font-size: 13px;
@@ -116,14 +145,14 @@ st.markdown(
         border-radius: 24px;
         padding: 22px 24px;
         margin-bottom: 18px;
-        border: 1px solid #e9d5ff;
+        border: 1px solid #dbeafe;
         box-shadow: 0 5px 18px rgba(0,0,0,0.06);
     }
 
     .quiz-number {
         display: inline-block;
-        background: #dcfce7;
-        color: #166534;
+        background: #dbeafe;
+        color: #1d4ed8;
         padding: 6px 12px;
         border-radius: 999px;
         font-weight: 900;
@@ -189,38 +218,8 @@ st.markdown(
     }
 
     .stButton > button:hover {
-        border-color: #ec4899;
-        color: #ec4899;
-    }
-
-
-    .dialogue-box {
-        background: #fefce8;
-        border: 1px solid #fde68a;
-        border-radius: 22px;
-        padding: 18px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 5px 14px rgba(0,0,0,0.05);
-    }
-
-    .dialogue-title {
-        font-size: 21px;
-        font-weight: 900;
-        color: #854d0e;
-        margin-bottom: 12px;
-    }
-
-    .dialogue-line {
-        font-size: 17px;
-        font-weight: 800;
-        color: #1f2937;
-        margin-bottom: 4px;
-    }
-
-    .dialogue-meaning {
-        font-size: 15px;
-        color: #6b7280;
-        margin-bottom: 10px;
+        border-color: #22c55e;
+        color: #22c55e;
     }
     </style>
     """,
@@ -230,21 +229,23 @@ st.markdown(
 # =========================
 # 상단 제목
 # =========================
-st.markdown("<div class='main-title'>🌟 Fun Word Garden 🌟</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>🌱 Daily English 1000</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='sub-title'>귀여운 단어 정원에서 테마별 영어 단어를 듣고, 보고, 퀴즈로 익혀 봅시다.</div>",
+    "<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고, 읽고, 퀴즈로 익혀 봅시다.</div>",
     unsafe_allow_html=True
 )
 
 st.markdown(
     """
     <div class="hero-box">
-        <div class="hero-title">🌱 오늘의 단어 학습 루틴</div>
+        <div class="hero-title">🌟 오늘의 학습 방식</div>
         <div class="hero-text">
-            • 단어를 <b>테마별</b>로 묶어 기억합니다.<br>
-            • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
-            • 다음으로 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.<br>
-            • 1차 제출 후 틀린 단어만 다시 풀고, 2차 제출 후 정답을 확인합니다.
+            • 각 테마는 <b>오늘의 일상 대화</b>로 시작합니다.<br>
+            • 대화를 듣고, 아래에서 핵심 단어를 익힙니다.<br>
+            • 단어 발음은 <b>20번 반복</b>됩니다.<br>
+            • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
+            • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
+            • 마지막으로 뜻 고르기 퀴즈로 확인합니다.
         </div>
     </div>
     """,
@@ -256,9 +257,6 @@ st.markdown(
 # =========================
 @st.cache_data
 def make_tts_audio(text, lang="en", tld="com"):
-    """
-    영어 문장 또는 단어 1번 발음 mp3 만들기
-    """
     fp = io.BytesIO()
     tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
     tts.write_to_fp(fp)
@@ -266,52 +264,39 @@ def make_tts_audio(text, lang="en", tld="com"):
     return fp.read()
 
 
-def safe_filename(text):
-    """
-    파일 이름에 쓸 수 없는 문자를 정리합니다.
-    """
-    text = re.sub(r"[^a-zA-Z0-9가-힣_ -]", "", text)
-    text = text.strip().replace(" ", "_")
-    return text[:60] if text else "audio"
+def remove_speaker_label(sentence):
+    return re.sub(r"^[A-Z]:\s*", "", sentence).strip()
 
 
-def save_tts_file(text, filename, folder="audio_files"):
-    """
-    듣기 mp3 파일을 실제 파일로 저장합니다.
-    이미 있으면 다시 만들지 않습니다.
-    """
-    folder_path = Path(folder)
-    folder_path.mkdir(exist_ok=True)
-
-    file_path = folder_path / filename
-
-    if not file_path.exists():
-        audio_bytes = make_tts_audio(text)
-        file_path.write_bytes(audio_bytes)
-
-    return file_path
+def make_dialogue_tts_text(dialogue):
+    return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
 
 
-def audio_button(label, text, key, repeat_count=20, pause_ms=1500):
-    """
-    HTML 버튼을 누르면 단어를 20번 반복 재생합니다.
-    각 발음 사이에는 pause_ms 만큼 쉽니다.
-    Streamlit 자동재생 차단 문제를 피하기 위해 components.html 내부 버튼을 사용합니다.
-    """
+# =========================
+# 단어용 HTML 오디오 플레이어
+# =========================
+def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=105):
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
     audio_id = f"audio_{uuid.uuid4().hex}"
-    btn_id = f"btn_{uuid.uuid4().hex}"
+    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
     status_id = f"status_{uuid.uuid4().hex}"
+    player_id = f"player_{uuid.uuid4().hex}"
+
+    safe_label = json.dumps(label)
+    safe_text = json.dumps(text)
+    safe_player_id = json.dumps(player_id)
 
     components.html(
         f"""
         <div style="font-family: Arial, sans-serif;">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
-            <button id="{btn_id}" style="
-                background: linear-gradient(135deg, #fce7f3, #dbeafe);
-                border: 1px solid #e9d5ff;
+            <button id="{play_btn_id}" style="
+                background: linear-gradient(135deg, #dcfce7, #dbeafe);
+                border: 1px solid #bbf7d0;
                 border-radius: 999px;
                 padding: 9px 15px;
                 font-weight: 800;
@@ -319,8 +304,23 @@ def audio_button(label, text, key, repeat_count=20, pause_ms=1500):
                 color: #374151;
                 cursor: pointer;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                margin-right: 6px;
             ">
                 {label}
+            </button>
+
+            <button id="{stop_btn_id}" style="
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #9a3412;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            ">
+                ⏹ 중지
             </button>
 
             <div id="{status_id}" style="
@@ -332,18 +332,59 @@ def audio_button(label, text, key, repeat_count=20, pause_ms=1500):
 
             <script>
             const audio = document.getElementById("{audio_id}");
-            const btn = document.getElementById("{btn_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
             const status = document.getElementById("{status_id}");
 
             let count = 0;
+            let timer = null;
+            let isStopped = false;
+
             const maxCount = {repeat_count};
             const pauseMs = {pause_ms};
+            const labelText = {safe_label};
+            const wordText = {safe_text};
+            const playerId = {safe_player_id};
+
+            const channel = new BroadcastChannel("daily_english_audio_channel");
+
+            function stopThisAudio(showMessage = false) {{
+                isStopped = true;
+
+                if (timer) {{
+                    clearTimeout(timer);
+                    timer = null;
+                }}
+
+                audio.pause();
+                audio.currentTime = 0;
+                count = 0;
+
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+
+                if (showMessage) {{
+                    status.innerText = "⏹ 재생을 중지했습니다.";
+                }} else {{
+                    status.innerText = "";
+                }}
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisAudio(false);
+                }}
+            }};
 
             function playOnce() {{
+                if (isStopped) return;
+
                 if (count >= maxCount) {{
                     status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
-                    btn.disabled = false;
-                    btn.innerText = "{label}";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
                     return;
                 }}
 
@@ -351,556 +392,888 @@ def audio_button(label, text, key, repeat_count=20, pause_ms=1500):
 
                 audio.play().then(() => {{
                     count += 1;
-                    status.innerText = "🔊 {text} 재생 중: " + count + " / " + maxCount;
+                    status.innerText = "🔊 " + wordText + " 재생 중: " + count + " / " + maxCount;
                 }}).catch((error) => {{
                     status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
-                    btn.disabled = false;
-                    btn.innerText = "{label}";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
                 }});
             }}
 
             audio.addEventListener("ended", function() {{
-                setTimeout(playOnce, pauseMs);
+                if (isStopped) return;
+
+                if (count < maxCount) {{
+                    timer = setTimeout(playOnce, pauseMs);
+                }} else {{
+                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }}
             }});
 
-            btn.addEventListener("click", function() {{
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                stopThisAudio(false);
+
+                isStopped = false;
                 count = 0;
-                btn.disabled = true;
-                btn.innerText = "재생 중...";
-                status.innerText = "🔊 {text} 반복 재생을 시작합니다.";
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중...";
+                status.innerText = "🔊 " + wordText + " 반복 재생을 시작합니다.";
                 playOnce();
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisAudio(true);
             }});
             </script>
         </div>
         """,
-        height=82
+        height=height
     )
 
 
-def simple_audio_player(text, key, label="▶️ 대화 듣기"):
-    """
-    대화문은 일반 st.audio로 들려줍니다.
-    동시에 mp3 파일도 audio_files 폴더에 저장됩니다.
-    """
-    filename = safe_filename(key) + ".mp3"
-    file_path = save_tts_file(text, filename)
-
-    st.audio(str(file_path), format="audio/mp3")
-    with open(file_path, "rb") as f:
-        st.download_button(
-            label=f"⬇️ {label} 파일 다운로드",
-            data=f,
-            file_name=filename,
-            mime="audio/mp3",
-            key=f"download_{key}"
-        )
+def audio_button(label, text, key=None):
+    html_word_audio_player(
+        label=label,
+        text=text,
+        repeat_count=20,
+        pause_ms=1500,
+        height=105
+    )
 
 
 # =========================
-# 테마별 단어 데이터
+# 대화용 HTML 오디오 플레이어
+# =========================
+def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height=105):
+    audio_data_list = []
+
+    for line in dialogue_lines:
+        clean_text = remove_speaker_label(line["en"])
+        audio_bytes = make_tts_audio(clean_text)
+        audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+        audio_data_list.append({
+            "text": clean_text,
+            "src": f"data:audio/mp3;base64,{audio_base64}"
+        })
+
+    audio_json = json.dumps(audio_data_list)
+    safe_label = json.dumps(label)
+
+    audio_id = f"dialogue_audio_{uuid.uuid4().hex}"
+    play_btn_id = f"dialogue_play_{uuid.uuid4().hex}"
+    stop_btn_id = f"dialogue_stop_{uuid.uuid4().hex}"
+    status_id = f"dialogue_status_{uuid.uuid4().hex}"
+    player_id = f"dialogue_player_{uuid.uuid4().hex}"
+    safe_player_id = json.dumps(player_id)
+
+    components.html(
+        f"""
+        <div style="font-family: Arial, sans-serif;">
+            <audio id="{audio_id}"></audio>
+
+            <button id="{play_btn_id}" style="
+                background: linear-gradient(135deg, #fef3c7, #dbeafe);
+                border: 1px solid #fde68a;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #374151;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                margin-right: 6px;
+            ">
+                {label}
+            </button>
+
+            <button id="{stop_btn_id}" style="
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #9a3412;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            ">
+                ⏹ 중지
+            </button>
+
+            <div id="{status_id}" style="
+                margin-top: 8px;
+                font-size: 13px;
+                color: #075985;
+                font-weight: 700;
+            "></div>
+
+            <script>
+            const audio = document.getElementById("{audio_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const status = document.getElementById("{status_id}");
+
+            const dialogueAudios = {audio_json};
+            const linePauseMs = {line_pause_ms};
+            const labelText = {safe_label};
+            const playerId = {safe_player_id};
+
+            let index = 0;
+            let timer = null;
+            let isStopped = false;
+
+            const channel = new BroadcastChannel("daily_english_audio_channel");
+
+            function stopThisAudio(showMessage = false) {{
+                isStopped = true;
+
+                if (timer) {{
+                    clearTimeout(timer);
+                    timer = null;
+                }}
+
+                audio.pause();
+                audio.currentTime = 0;
+                index = 0;
+
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+
+                if (showMessage) {{
+                    status.innerText = "⏹ 대화 듣기를 중지했습니다.";
+                }} else {{
+                    status.innerText = "";
+                }}
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisAudio(false);
+                }}
+            }};
+
+            function playCurrentLine() {{
+                if (isStopped) return;
+
+                if (index >= dialogueAudios.length) {{
+                    status.innerText = "✅ 대화 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                    return;
+                }}
+
+                audio.src = dialogueAudios[index].src;
+                audio.currentTime = 0;
+
+                audio.play().then(() => {{
+                    status.innerText = "🔊 대화 재생 중: " + (index + 1) + " / " + dialogueAudios.length;
+                }}).catch((error) => {{
+                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }});
+            }}
+
+            audio.addEventListener("ended", function() {{
+                if (isStopped) return;
+
+                index += 1;
+
+                if (index < dialogueAudios.length) {{
+                    timer = setTimeout(playCurrentLine, linePauseMs);
+                }} else {{
+                    status.innerText = "✅ 대화 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }}
+            }});
+
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                stopThisAudio(false);
+
+                isStopped = false;
+                index = 0;
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중...";
+                status.innerText = "🔊 대화 듣기를 시작합니다.";
+                playCurrentLine();
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisAudio(true);
+            }});
+            </script>
+        </div>
+        """,
+        height=height
+    )
+
+
+# =========================
+# Daily English 1000 테마별 단어
+# 20개 테마 × 20개 단어 = 400개 1차 세트
+# 이후 같은 구조로 테마당 50개까지 확장하면 1000개가 됩니다.
 # =========================
 word_themes = {
-    "🧑‍🤝‍🧑 사람·관계": [
-        {"word": "person", "meaning": "사람"},
-        {"word": "man", "meaning": "남자"},
-        {"word": "woman", "meaning": "여자"},
-        {"word": "child", "meaning": "아이"},
-        {"word": "baby", "meaning": "아기"},
-        {"word": "boy", "meaning": "소년"},
-        {"word": "girl", "meaning": "소녀"},
-        {"word": "friend", "meaning": "친구"},
-        {"word": "family", "meaning": "가족"},
-        {"word": "parent", "meaning": "부모"},
-        {"word": "father", "meaning": "아버지"},
-        {"word": "mother", "meaning": "어머니"},
-        {"word": "brother", "meaning": "형제, 남자 형제"},
-        {"word": "sister", "meaning": "자매, 여자 형제"},
-        {"word": "son", "meaning": "아들"},
-        {"word": "daughter", "meaning": "딸"},
-        {"word": "teacher", "meaning": "선생님"},
-        {"word": "student", "meaning": "학생"},
-        {"word": "classmate", "meaning": "반 친구"},
-        {"word": "neighbor", "meaning": "이웃"},
-        {"word": "customer", "meaning": "손님, 고객"},
-        {"word": "worker", "meaning": "노동자, 직원"},
-        {"word": "driver", "meaning": "운전자"},
-        {"word": "doctor", "meaning": "의사"},
-        {"word": "nurse", "meaning": "간호사"},
-        {"word": "police officer", "meaning": "경찰관"},
-        {"word": "owner", "meaning": "주인"},
-        {"word": "guest", "meaning": "손님"},
-        {"word": "team", "meaning": "팀, 무리"},
-        {"word": "member", "meaning": "구성원"},
-    ],
-
-    "🏫 학교·교실": [
-        {"word": "school", "meaning": "학교"},
-        {"word": "class", "meaning": "수업, 학급"},
-        {"word": "classroom", "meaning": "교실"},
-        {"word": "lesson", "meaning": "수업, 과"},
-        {"word": "homework", "meaning": "숙제"},
-        {"word": "test", "meaning": "시험"},
-        {"word": "exam", "meaning": "시험"},
-        {"word": "quiz", "meaning": "퀴즈, 간단한 시험"},
-        {"word": "question", "meaning": "질문, 문제"},
-        {"word": "answer", "meaning": "대답, 정답"},
-        {"word": "book", "meaning": "책"},
-        {"word": "notebook", "meaning": "공책"},
-        {"word": "paper", "meaning": "종이, 보고서"},
-        {"word": "pen", "meaning": "펜"},
-        {"word": "pencil", "meaning": "연필"},
-        {"word": "desk", "meaning": "책상"},
-        {"word": "chair", "meaning": "의자"},
-        {"word": "board", "meaning": "칠판, 게시판"},
-        {"word": "page", "meaning": "쪽, 페이지"},
-        {"word": "word", "meaning": "단어, 말"},
-        {"word": "sentence", "meaning": "문장"},
-        {"word": "story", "meaning": "이야기"},
-        {"word": "language", "meaning": "언어"},
-        {"word": "English", "meaning": "영어"},
-        {"word": "Korean", "meaning": "한국어"},
-        {"word": "grade", "meaning": "성적, 학년"},
-        {"word": "score", "meaning": "점수"},
-        {"word": "rule", "meaning": "규칙"},
-        {"word": "practice", "meaning": "연습하다, 연습"},
-        {"word": "study", "meaning": "공부하다"},
-    ],
-
-    "🏃 기본 동작 동사": [
-        {"word": "go", "meaning": "가다"},
-        {"word": "come", "meaning": "오다"},
-        {"word": "walk", "meaning": "걷다"},
-        {"word": "run", "meaning": "달리다"},
-        {"word": "sit", "meaning": "앉다"},
-        {"word": "stand", "meaning": "서다"},
-        {"word": "stop", "meaning": "멈추다"},
-        {"word": "start", "meaning": "시작하다"},
-        {"word": "open", "meaning": "열다"},
-        {"word": "close", "meaning": "닫다"},
-        {"word": "make", "meaning": "만들다"},
-        {"word": "do", "meaning": "하다"},
-        {"word": "have", "meaning": "가지다, 먹다"},
-        {"word": "get", "meaning": "얻다, 받다, 되다"},
-        {"word": "take", "meaning": "가져가다, 타다"},
-        {"word": "give", "meaning": "주다"},
-        {"word": "put", "meaning": "놓다, 두다"},
-        {"word": "bring", "meaning": "가져오다"},
-        {"word": "use", "meaning": "사용하다"},
-        {"word": "find", "meaning": "찾다"},
-        {"word": "keep", "meaning": "유지하다, 보관하다"},
-        {"word": "leave", "meaning": "떠나다, 남기다"},
-        {"word": "move", "meaning": "움직이다, 이사하다"},
-        {"word": "turn", "meaning": "돌다, 돌리다"},
-        {"word": "wait", "meaning": "기다리다"},
-        {"word": "help", "meaning": "돕다"},
-        {"word": "try", "meaning": "시도하다"},
-        {"word": "need", "meaning": "필요하다"},
-        {"word": "want", "meaning": "원하다"},
-        {"word": "like", "meaning": "좋아하다"},
-    ],
-
-    "💖 감정·성격": [
-        {"word": "happy", "meaning": "행복한"},
-        {"word": "sad", "meaning": "슬픈"},
-        {"word": "angry", "meaning": "화난"},
-        {"word": "tired", "meaning": "피곤한"},
-        {"word": "hungry", "meaning": "배고픈"},
-        {"word": "thirsty", "meaning": "목마른"},
-        {"word": "excited", "meaning": "신난"},
-        {"word": "bored", "meaning": "지루한"},
-        {"word": "afraid", "meaning": "두려워하는"},
-        {"word": "worried", "meaning": "걱정하는"},
-        {"word": "proud", "meaning": "자랑스러워하는"},
-        {"word": "kind", "meaning": "친절한"},
-        {"word": "nice", "meaning": "좋은, 친절한"},
-        {"word": "brave", "meaning": "용감한"},
-        {"word": "honest", "meaning": "정직한"},
-        {"word": "friendly", "meaning": "친근한"},
-        {"word": "quiet", "meaning": "조용한"},
-        {"word": "shy", "meaning": "수줍은"},
-        {"word": "smart", "meaning": "똑똑한"},
-        {"word": "strong", "meaning": "강한"},
-        {"word": "weak", "meaning": "약한"},
-        {"word": "careful", "meaning": "조심하는"},
-        {"word": "lazy", "meaning": "게으른"},
-        {"word": "busy", "meaning": "바쁜"},
-        {"word": "ready", "meaning": "준비된"},
-        {"word": "sorry", "meaning": "미안한"},
-        {"word": "thankful", "meaning": "감사하는"},
-        {"word": "lonely", "meaning": "외로운"},
-        {"word": "nervous", "meaning": "긴장한"},
-        {"word": "calm", "meaning": "차분한"},
-    ],
-
-    "🍎 음식·건강": [
-        {"word": "food", "meaning": "음식"},
-        {"word": "rice", "meaning": "밥, 쌀"},
-        {"word": "bread", "meaning": "빵"},
-        {"word": "water", "meaning": "물"},
-        {"word": "milk", "meaning": "우유"},
-        {"word": "juice", "meaning": "주스"},
-        {"word": "coffee", "meaning": "커피"},
-        {"word": "tea", "meaning": "차"},
-        {"word": "apple", "meaning": "사과"},
-        {"word": "banana", "meaning": "바나나"},
-        {"word": "egg", "meaning": "달걀"},
-        {"word": "meat", "meaning": "고기"},
-        {"word": "fish", "meaning": "생선, 물고기"},
-        {"word": "chicken", "meaning": "닭고기, 닭"},
-        {"word": "vegetable", "meaning": "채소"},
-        {"word": "fruit", "meaning": "과일"},
-        {"word": "breakfast", "meaning": "아침 식사"},
-        {"word": "lunch", "meaning": "점심 식사"},
-        {"word": "dinner", "meaning": "저녁 식사"},
-        {"word": "snack", "meaning": "간식"},
-        {"word": "healthy", "meaning": "건강한"},
-        {"word": "sick", "meaning": "아픈"},
-        {"word": "pain", "meaning": "통증"},
-        {"word": "headache", "meaning": "두통"},
-        {"word": "medicine", "meaning": "약"},
-        {"word": "hospital", "meaning": "병원"},
-        {"word": "exercise", "meaning": "운동하다, 운동"},
-        {"word": "sleep", "meaning": "자다, 잠"},
-        {"word": "rest", "meaning": "쉬다, 휴식"},
-        {"word": "wash", "meaning": "씻다"},
-    ],
-
-    "🚗 장소·이동": [
-        {"word": "home", "meaning": "집"},
-        {"word": "house", "meaning": "집"},
-        {"word": "room", "meaning": "방"},
-        {"word": "kitchen", "meaning": "부엌"},
-        {"word": "bathroom", "meaning": "화장실, 욕실"},
-        {"word": "door", "meaning": "문"},
-        {"word": "window", "meaning": "창문"},
-        {"word": "city", "meaning": "도시"},
-        {"word": "town", "meaning": "마을"},
-        {"word": "country", "meaning": "나라, 시골"},
-        {"word": "street", "meaning": "거리"},
-        {"word": "road", "meaning": "도로"},
-        {"word": "park", "meaning": "공원"},
-        {"word": "store", "meaning": "가게"},
-        {"word": "market", "meaning": "시장"},
-        {"word": "station", "meaning": "역"},
-        {"word": "bus", "meaning": "버스"},
-        {"word": "car", "meaning": "자동차"},
-        {"word": "bike", "meaning": "자전거"},
-        {"word": "train", "meaning": "기차"},
-        {"word": "plane", "meaning": "비행기"},
-        {"word": "ship", "meaning": "배"},
-        {"word": "map", "meaning": "지도"},
-        {"word": "place", "meaning": "장소"},
-        {"word": "here", "meaning": "여기"},
-        {"word": "there", "meaning": "거기"},
-        {"word": "left", "meaning": "왼쪽"},
-        {"word": "right", "meaning": "오른쪽, 맞는"},
-        {"word": "near", "meaning": "가까운"},
-        {"word": "far", "meaning": "먼"},
-    ],
-        "🌤️ 자연·날씨": [
-        {"word": "sun", "meaning": "태양"},
-        {"word": "moon", "meaning": "달"},
-        {"word": "star", "meaning": "별"},
-        {"word": "sky", "meaning": "하늘"},
-        {"word": "cloud", "meaning": "구름"},
-        {"word": "rain", "meaning": "비"},
-        {"word": "snow", "meaning": "눈"},
-        {"word": "wind", "meaning": "바람"},
-        {"word": "weather", "meaning": "날씨"},
-        {"word": "air", "meaning": "공기"},
-        {"word": "water", "meaning": "물"},
-        {"word": "fire", "meaning": "불"},
-        {"word": "tree", "meaning": "나무"},
-        {"word": "flower", "meaning": "꽃"},
-        {"word": "grass", "meaning": "풀, 잔디"},
-        {"word": "mountain", "meaning": "산"},
-        {"word": "river", "meaning": "강"},
-        {"word": "sea", "meaning": "바다"},
-        {"word": "beach", "meaning": "해변"},
-        {"word": "forest", "meaning": "숲"},
-        {"word": "earth", "meaning": "지구, 땅"},
-        {"word": "ground", "meaning": "땅, 지면"},
-        {"word": "rock", "meaning": "바위"},
-        {"word": "hill", "meaning": "언덕"},
-        {"word": "lake", "meaning": "호수"},
-        {"word": "island", "meaning": "섬"},
-        {"word": "cold", "meaning": "추운, 차가운"},
-        {"word": "hot", "meaning": "뜨거운, 더운"},
-        {"word": "warm", "meaning": "따뜻한"},
-        {"word": "cool", "meaning": "시원한, 멋진"},
-    ],
-
-    "🐶 동물 이름": [
-        {"word": "dog", "meaning": "개"},
-        {"word": "cat", "meaning": "고양이"},
-        {"word": "bird", "meaning": "새"},
-        {"word": "fish", "meaning": "물고기"},
-        {"word": "horse", "meaning": "말"},
-        {"word": "cow", "meaning": "소"},
-        {"word": "pig", "meaning": "돼지"},
-        {"word": "sheep", "meaning": "양"},
-        {"word": "goat", "meaning": "염소"},
-        {"word": "chicken", "meaning": "닭"},
-        {"word": "duck", "meaning": "오리"},
-        {"word": "rabbit", "meaning": "토끼"},
-        {"word": "mouse", "meaning": "쥐"},
-        {"word": "monkey", "meaning": "원숭이"},
-        {"word": "lion", "meaning": "사자"},
-        {"word": "tiger", "meaning": "호랑이"},
-        {"word": "bear", "meaning": "곰"},
-        {"word": "wolf", "meaning": "늑대"},
-        {"word": "fox", "meaning": "여우"},
-        {"word": "deer", "meaning": "사슴"},
-        {"word": "elephant", "meaning": "코끼리"},
-        {"word": "giraffe", "meaning": "기린"},
-        {"word": "zebra", "meaning": "얼룩말"},
-        {"word": "snake", "meaning": "뱀"},
-        {"word": "frog", "meaning": "개구리"},
-        {"word": "turtle", "meaning": "거북이"},
-        {"word": "whale", "meaning": "고래"},
-        {"word": "dolphin", "meaning": "돌고래"},
-        {"word": "shark", "meaning": "상어"},
-        {"word": "penguin", "meaning": "펭귄"},
-    ],
-
-    "⏰ 시간·숫자": [
-        {"word": "time", "meaning": "시간"},
-        {"word": "day", "meaning": "날, 하루"},
-        {"word": "week", "meaning": "주"},
-        {"word": "month", "meaning": "달, 월"},
-        {"word": "year", "meaning": "해, 년"},
-        {"word": "today", "meaning": "오늘"},
-        {"word": "tomorrow", "meaning": "내일"},
-        {"word": "yesterday", "meaning": "어제"},
-        {"word": "morning", "meaning": "아침"},
-        {"word": "afternoon", "meaning": "오후"},
-        {"word": "evening", "meaning": "저녁"},
-        {"word": "night", "meaning": "밤"},
-        {"word": "hour", "meaning": "시간"},
-        {"word": "minute", "meaning": "분"},
-        {"word": "second", "meaning": "초"},
-        {"word": "early", "meaning": "이른"},
-        {"word": "late", "meaning": "늦은"},
-        {"word": "now", "meaning": "지금"},
-        {"word": "before", "meaning": "~전에"},
-        {"word": "after", "meaning": "~후에"},
-        {"word": "first", "meaning": "첫 번째"},
-        {"word": "last", "meaning": "마지막의, 지난"},
-        {"word": "one", "meaning": "하나"},
-        {"word": "two", "meaning": "둘"},
-        {"word": "three", "meaning": "셋"},
-        {"word": "four", "meaning": "넷"},
-        {"word": "five", "meaning": "다섯"},
-        {"word": "many", "meaning": "많은"},
-        {"word": "much", "meaning": "많은"},
-        {"word": "few", "meaning": "거의 없는, 몇몇의"},
-    ],
-
-    "🧸 물건·도구": [
-        {"word": "thing", "meaning": "것, 물건"},
-        {"word": "bag", "meaning": "가방"},
-        {"word": "box", "meaning": "상자"},
-        {"word": "cup", "meaning": "컵"},
-        {"word": "bottle", "meaning": "병"},
-        {"word": "phone", "meaning": "전화기"},
-        {"word": "computer", "meaning": "컴퓨터"},
-        {"word": "camera", "meaning": "카메라"},
-        {"word": "key", "meaning": "열쇠"},
-        {"word": "money", "meaning": "돈"},
-        {"word": "card", "meaning": "카드"},
-        {"word": "ticket", "meaning": "표, 티켓"},
-        {"word": "clothes", "meaning": "옷"},
-        {"word": "shirt", "meaning": "셔츠"},
-        {"word": "pants", "meaning": "바지"},
-        {"word": "shoes", "meaning": "신발"},
-        {"word": "hat", "meaning": "모자"},
-        {"word": "watch", "meaning": "시계"},
-        {"word": "table", "meaning": "탁자"},
-        {"word": "bed", "meaning": "침대"},
-        {"word": "light", "meaning": "빛, 전등"},
-        {"word": "picture", "meaning": "그림, 사진"},
+    "🏫 학교생활": [
+        {"word": "subject", "meaning": "과목"},
+        {"word": "math", "meaning": "수학"},
+        {"word": "science", "meaning": "과학"},
+        {"word": "history", "meaning": "역사"},
         {"word": "music", "meaning": "음악"},
-        {"word": "game", "meaning": "게임, 경기"},
-        {"word": "ball", "meaning": "공"},
-        {"word": "tool", "meaning": "도구"},
-        {"word": "knife", "meaning": "칼"},
-        {"word": "spoon", "meaning": "숟가락"},
-        {"word": "fork", "meaning": "포크"},
-        {"word": "plate", "meaning": "접시"},
+        {"word": "art", "meaning": "미술"},
+        {"word": "P.E.", "meaning": "체육"},
+        {"word": "club", "meaning": "동아리"},
+        {"word": "schedule", "meaning": "일정표"},
+        {"word": "semester", "meaning": "학기"},
+        {"word": "assignment", "meaning": "과제"},
+        {"word": "project", "meaning": "프로젝트"},
+        {"word": "presentation", "meaning": "발표"},
+        {"word": "report", "meaning": "보고서"},
+        {"word": "textbook", "meaning": "교과서"},
+        {"word": "workbook", "meaning": "문제집"},
+        {"word": "library", "meaning": "도서관"},
+        {"word": "cafeteria", "meaning": "급식소, 식당"},
+        {"word": "hallway", "meaning": "복도"},
+        {"word": "attendance", "meaning": "출석"},
     ],
 
-    "💬 생각·말하기": [
+    "✏️ 교실 활동": [
+        {"word": "copy", "meaning": "베껴 쓰다"},
+        {"word": "repeat", "meaning": "반복하다"},
+        {"word": "underline", "meaning": "밑줄 치다"},
+        {"word": "circle", "meaning": "동그라미 치다"},
+        {"word": "choose", "meaning": "고르다"},
+        {"word": "check", "meaning": "확인하다"},
+        {"word": "match", "meaning": "연결하다, 맞추다"},
+        {"word": "complete", "meaning": "완성하다"},
+        {"word": "fill", "meaning": "채우다"},
+        {"word": "spell", "meaning": "철자를 말하다"},
+        {"word": "pronounce", "meaning": "발음하다"},
+        {"word": "review", "meaning": "복습하다"},
+        {"word": "explain", "meaning": "설명하다"},
+        {"word": "describe", "meaning": "묘사하다"},
+        {"word": "compare", "meaning": "비교하다"},
+        {"word": "discuss", "meaning": "토론하다"},
+        {"word": "present", "meaning": "발표하다"},
+        {"word": "take notes", "meaning": "필기하다"},
+        {"word": "turn in", "meaning": "제출하다"},
+        {"word": "hand out", "meaning": "나누어 주다"},
+    ],
+
+    "🏠 집과 생활": [
+        {"word": "living room", "meaning": "거실"},
+        {"word": "bedroom", "meaning": "침실"},
+        {"word": "kitchen", "meaning": "부엌"},
+        {"word": "balcony", "meaning": "발코니"},
+        {"word": "floor", "meaning": "바닥, 층"},
+        {"word": "wall", "meaning": "벽"},
+        {"word": "roof", "meaning": "지붕"},
+        {"word": "garden", "meaning": "정원"},
+        {"word": "yard", "meaning": "마당"},
+        {"word": "sofa", "meaning": "소파"},
+        {"word": "television", "meaning": "텔레비전"},
+        {"word": "refrigerator", "meaning": "냉장고"},
+        {"word": "microwave", "meaning": "전자레인지"},
+        {"word": "blanket", "meaning": "담요"},
+        {"word": "pillow", "meaning": "베개"},
+        {"word": "towel", "meaning": "수건"},
+        {"word": "soap", "meaning": "비누"},
+        {"word": "mirror", "meaning": "거울"},
+        {"word": "closet", "meaning": "옷장"},
+        {"word": "trash", "meaning": "쓰레기"},
+    ],
+
+    "🌅 하루 일과": [
+        {"word": "routine", "meaning": "일과"},
+        {"word": "wake up", "meaning": "잠에서 깨다"},
+        {"word": "get up", "meaning": "일어나다"},
+        {"word": "brush", "meaning": "닦다"},
+        {"word": "shower", "meaning": "샤워하다"},
+        {"word": "dress", "meaning": "옷을 입다"},
+        {"word": "leave", "meaning": "떠나다"},
+        {"word": "arrive", "meaning": "도착하다"},
+        {"word": "return", "meaning": "돌아오다"},
+        {"word": "finish", "meaning": "끝내다"},
+        {"word": "relax", "meaning": "쉬다"},
+        {"word": "weekday", "meaning": "평일"},
+        {"word": "weekend", "meaning": "주말"},
+        {"word": "usually", "meaning": "보통"},
+        {"word": "often", "meaning": "자주"},
+        {"word": "sometimes", "meaning": "가끔"},
+        {"word": "always", "meaning": "항상"},
+        {"word": "never", "meaning": "절대 ~않다"},
+        {"word": "habit", "meaning": "습관"},
+        {"word": "lifestyle", "meaning": "생활 방식"},
+    ],
+
+    "🎮 취미와 여가": [
+        {"word": "hobby", "meaning": "취미"},
+        {"word": "movie", "meaning": "영화"},
+        {"word": "drama", "meaning": "드라마"},
+        {"word": "song", "meaning": "노래"},
+        {"word": "concert", "meaning": "콘서트"},
+        {"word": "dance", "meaning": "춤"},
+        {"word": "drawing", "meaning": "그림 그리기"},
+        {"word": "painting", "meaning": "그림, 회화"},
+        {"word": "comic", "meaning": "만화"},
+        {"word": "novel", "meaning": "소설"},
+        {"word": "photography", "meaning": "사진 촬영"},
+        {"word": "cooking", "meaning": "요리"},
+        {"word": "baking", "meaning": "빵 굽기"},
+        {"word": "camping", "meaning": "캠핑"},
+        {"word": "hiking", "meaning": "하이킹"},
+        {"word": "fishing", "meaning": "낚시"},
+        {"word": "free time", "meaning": "여가 시간"},
+        {"word": "favorite", "meaning": "가장 좋아하는"},
+        {"word": "popular", "meaning": "인기 있는"},
+        {"word": "relaxing", "meaning": "편안한"},
+    ],
+
+    "⚽ 운동과 활동": [
+        {"word": "soccer", "meaning": "축구"},
+        {"word": "baseball", "meaning": "야구"},
+        {"word": "basketball", "meaning": "농구"},
+        {"word": "volleyball", "meaning": "배구"},
+        {"word": "tennis", "meaning": "테니스"},
+        {"word": "badminton", "meaning": "배드민턴"},
+        {"word": "swimming", "meaning": "수영"},
+        {"word": "cycling", "meaning": "자전거 타기"},
+        {"word": "skating", "meaning": "스케이트 타기"},
+        {"word": "boxing", "meaning": "복싱"},
+        {"word": "taekwondo", "meaning": "태권도"},
+        {"word": "yoga", "meaning": "요가"},
+        {"word": "fitness", "meaning": "체력 운동"},
+        {"word": "field", "meaning": "경기장, 들판"},
+        {"word": "court", "meaning": "코트"},
+        {"word": "stadium", "meaning": "경기장"},
+        {"word": "coach", "meaning": "코치"},
+        {"word": "match", "meaning": "경기"},
+        {"word": "competition", "meaning": "대회"},
+        {"word": "medal", "meaning": "메달"},
+    ],
+
+    "🌦️ 날씨와 계절": [
+        {"word": "season", "meaning": "계절"},
+        {"word": "spring", "meaning": "봄"},
+        {"word": "summer", "meaning": "여름"},
+        {"word": "fall", "meaning": "가을"},
+        {"word": "winter", "meaning": "겨울"},
+        {"word": "cloudy", "meaning": "흐린"},
+        {"word": "rainy", "meaning": "비 오는"},
+        {"word": "snowy", "meaning": "눈 오는"},
+        {"word": "windy", "meaning": "바람 부는"},
+        {"word": "stormy", "meaning": "폭풍우 치는"},
+        {"word": "foggy", "meaning": "안개 낀"},
+        {"word": "dry", "meaning": "건조한"},
+        {"word": "wet", "meaning": "젖은"},
+        {"word": "humid", "meaning": "습한"},
+        {"word": "temperature", "meaning": "온도"},
+        {"word": "degree", "meaning": "도"},
+        {"word": "forecast", "meaning": "일기예보"},
+        {"word": "umbrella", "meaning": "우산"},
+        {"word": "raincoat", "meaning": "비옷"},
+        {"word": "rainbow", "meaning": "무지개"},
+    ],
+
+    "🌳 자연과 환경": [
+        {"word": "nature", "meaning": "자연"},
+        {"word": "environment", "meaning": "환경"},
+        {"word": "plant", "meaning": "식물"},
+        {"word": "forest", "meaning": "숲"},
+        {"word": "lake", "meaning": "호수"},
+        {"word": "ocean", "meaning": "대양"},
+        {"word": "island", "meaning": "섬"},
+        {"word": "desert", "meaning": "사막"},
+        {"word": "field", "meaning": "들판"},
+        {"word": "farm", "meaning": "농장"},
+        {"word": "village", "meaning": "마을"},
+        {"word": "leaf", "meaning": "잎"},
+        {"word": "root", "meaning": "뿌리"},
+        {"word": "stone", "meaning": "돌"},
+        {"word": "sand", "meaning": "모래"},
+        {"word": "soil", "meaning": "흙"},
+        {"word": "plastic", "meaning": "플라스틱"},
+        {"word": "recycle", "meaning": "재활용하다"},
+        {"word": "protect", "meaning": "보호하다"},
+        {"word": "pollution", "meaning": "오염"},
+    ],
+
+    "🍽️ 식당과 주문": [
+        {"word": "restaurant", "meaning": "식당"},
+        {"word": "menu", "meaning": "메뉴"},
+        {"word": "seat", "meaning": "자리"},
+        {"word": "waiter", "meaning": "남자 종업원"},
+        {"word": "waitress", "meaning": "여자 종업원"},
+        {"word": "order", "meaning": "주문하다"},
+        {"word": "dish", "meaning": "요리, 접시"},
+        {"word": "meal", "meaning": "식사"},
+        {"word": "soup", "meaning": "수프"},
+        {"word": "salad", "meaning": "샐러드"},
+        {"word": "steak", "meaning": "스테이크"},
+        {"word": "pizza", "meaning": "피자"},
+        {"word": "pasta", "meaning": "파스타"},
+        {"word": "burger", "meaning": "버거"},
+        {"word": "sandwich", "meaning": "샌드위치"},
+        {"word": "dessert", "meaning": "디저트"},
+        {"word": "spicy", "meaning": "매운"},
+        {"word": "sweet", "meaning": "단"},
+        {"word": "bill", "meaning": "계산서"},
+        {"word": "receipt", "meaning": "영수증"},
+    ],
+
+    "🛍️ 쇼핑과 가격": [
+        {"word": "shop", "meaning": "가게"},
+        {"word": "market", "meaning": "시장"},
+        {"word": "mall", "meaning": "쇼핑몰"},
+        {"word": "supermarket", "meaning": "슈퍼마켓"},
+        {"word": "cashier", "meaning": "계산원"},
+        {"word": "customer", "meaning": "손님"},
+        {"word": "price", "meaning": "가격"},
+        {"word": "sale", "meaning": "할인 판매"},
+        {"word": "discount", "meaning": "할인"},
+        {"word": "coupon", "meaning": "쿠폰"},
+        {"word": "change", "meaning": "거스름돈"},
+        {"word": "coin", "meaning": "동전"},
+        {"word": "bill", "meaning": "지폐, 계산서"},
+        {"word": "expensive", "meaning": "비싼"},
+        {"word": "cheap", "meaning": "싼"},
+        {"word": "size", "meaning": "크기"},
+        {"word": "color", "meaning": "색깔"},
+        {"word": "brand", "meaning": "상표"},
+        {"word": "exchange", "meaning": "교환하다"},
+        {"word": "refund", "meaning": "환불"},
+    ],
+
+    "👕 옷과 외모": [
+        {"word": "T-shirt", "meaning": "티셔츠"},
+        {"word": "pants", "meaning": "바지"},
+        {"word": "jeans", "meaning": "청바지"},
+        {"word": "shorts", "meaning": "반바지"},
+        {"word": "skirt", "meaning": "치마"},
+        {"word": "dress", "meaning": "드레스, 원피스"},
+        {"word": "jacket", "meaning": "재킷"},
+        {"word": "coat", "meaning": "코트"},
+        {"word": "sweater", "meaning": "스웨터"},
+        {"word": "hoodie", "meaning": "후드티"},
+        {"word": "uniform", "meaning": "교복, 제복"},
+        {"word": "socks", "meaning": "양말"},
+        {"word": "sneakers", "meaning": "운동화"},
+        {"word": "boots", "meaning": "부츠"},
+        {"word": "sandals", "meaning": "샌들"},
+        {"word": "scarf", "meaning": "목도리"},
+        {"word": "gloves", "meaning": "장갑"},
+        {"word": "belt", "meaning": "벨트"},
+        {"word": "glasses", "meaning": "안경"},
+        {"word": "comfortable", "meaning": "편안한"},
+    ],
+
+    "🚇 교통과 길 찾기": [
+        {"word": "bus stop", "meaning": "버스 정류장"},
+        {"word": "subway", "meaning": "지하철"},
+        {"word": "airport", "meaning": "공항"},
+        {"word": "terminal", "meaning": "터미널"},
+        {"word": "platform", "meaning": "승강장"},
+        {"word": "route", "meaning": "경로"},
+        {"word": "direction", "meaning": "방향"},
+        {"word": "straight", "meaning": "똑바로"},
+        {"word": "corner", "meaning": "모퉁이"},
+        {"word": "block", "meaning": "구역, 블록"},
+        {"word": "traffic", "meaning": "교통"},
+        {"word": "crosswalk", "meaning": "횡단보도"},
+        {"word": "sidewalk", "meaning": "인도"},
+        {"word": "bridge", "meaning": "다리"},
+        {"word": "tunnel", "meaning": "터널"},
+        {"word": "entrance", "meaning": "입구"},
+        {"word": "exit", "meaning": "출구"},
+        {"word": "transfer", "meaning": "갈아타다"},
+        {"word": "lost", "meaning": "길을 잃은"},
+        {"word": "guide", "meaning": "안내하다, 안내자"},
+    ],
+
+    "🧳 여행과 숙박": [
+        {"word": "travel", "meaning": "여행하다"},
+        {"word": "trip", "meaning": "여행"},
+        {"word": "vacation", "meaning": "방학, 휴가"},
+        {"word": "tourist", "meaning": "관광객"},
+        {"word": "guide", "meaning": "안내자"},
+        {"word": "passport", "meaning": "여권"},
+        {"word": "flight", "meaning": "항공편"},
+        {"word": "hotel", "meaning": "호텔"},
+        {"word": "motel", "meaning": "모텔"},
+        {"word": "hostel", "meaning": "호스텔"},
+        {"word": "reservation", "meaning": "예약"},
+        {"word": "check in", "meaning": "체크인하다"},
+        {"word": "check out", "meaning": "체크아웃하다"},
+        {"word": "luggage", "meaning": "짐"},
+        {"word": "suitcase", "meaning": "여행 가방"},
+        {"word": "backpack", "meaning": "배낭"},
+        {"word": "souvenir", "meaning": "기념품"},
+        {"word": "museum", "meaning": "박물관"},
+        {"word": "famous", "meaning": "유명한"},
+        {"word": "local", "meaning": "현지의"},
+    ],
+
+    "👥 친구 관계": [
+        {"word": "friendship", "meaning": "우정"},
+        {"word": "best friend", "meaning": "가장 친한 친구"},
+        {"word": "teammate", "meaning": "팀 동료"},
+        {"word": "partner", "meaning": "짝, 파트너"},
+        {"word": "message", "meaning": "메시지"},
+        {"word": "call", "meaning": "전화하다"},
+        {"word": "chat", "meaning": "채팅하다"},
+        {"word": "invite", "meaning": "초대하다"},
+        {"word": "visit", "meaning": "방문하다"},
+        {"word": "meet", "meaning": "만나다"},
+        {"word": "hang out", "meaning": "어울려 놀다"},
+        {"word": "laugh", "meaning": "웃다"},
+        {"word": "share", "meaning": "나누다, 공유하다"},
+        {"word": "trust", "meaning": "믿다"},
+        {"word": "promise", "meaning": "약속"},
+        {"word": "secret", "meaning": "비밀"},
+        {"word": "joke", "meaning": "농담"},
+        {"word": "together", "meaning": "함께"},
+        {"word": "alone", "meaning": "혼자"},
+        {"word": "forgive", "meaning": "용서하다"},
+    ],
+
+    "😊 감정 표현 확장": [
+        {"word": "excited", "meaning": "신난"},
+        {"word": "nervous", "meaning": "긴장한"},
+        {"word": "bored", "meaning": "지루한"},
+        {"word": "surprised", "meaning": "놀란"},
+        {"word": "confused", "meaning": "혼란스러운"},
+        {"word": "embarrassed", "meaning": "당황한"},
+        {"word": "proud", "meaning": "자랑스러운"},
+        {"word": "disappointed", "meaning": "실망한"},
+        {"word": "lonely", "meaning": "외로운"},
+        {"word": "relaxed", "meaning": "편안한"},
+        {"word": "calm", "meaning": "차분한"},
+        {"word": "upset", "meaning": "속상한"},
+        {"word": "interested", "meaning": "관심 있는"},
+        {"word": "satisfied", "meaning": "만족한"},
+        {"word": "thankful", "meaning": "감사하는"},
+        {"word": "hopeful", "meaning": "희망적인"},
+        {"word": "mood", "meaning": "기분"},
+        {"word": "stress", "meaning": "스트레스"},
+        {"word": "confidence", "meaning": "자신감"},
+        {"word": "courage", "meaning": "용기"},
+    ],
+
+    "💭 생각과 의견": [
         {"word": "think", "meaning": "생각하다"},
-        {"word": "know", "meaning": "알다"},
-        {"word": "understand", "meaning": "이해하다"},
+        {"word": "believe", "meaning": "믿다"},
+        {"word": "guess", "meaning": "추측하다"},
         {"word": "remember", "meaning": "기억하다"},
         {"word": "forget", "meaning": "잊다"},
-        {"word": "say", "meaning": "말하다"},
-        {"word": "tell", "meaning": "말하다, 알려주다"},
-        {"word": "speak", "meaning": "말하다"},
-        {"word": "talk", "meaning": "이야기하다"},
-        {"word": "ask", "meaning": "묻다"},
-        {"word": "answer", "meaning": "대답하다, 답"},
-        {"word": "call", "meaning": "부르다, 전화하다"},
-        {"word": "listen", "meaning": "듣다"},
-        {"word": "hear", "meaning": "듣다, 들리다"},
-        {"word": "read", "meaning": "읽다"},
-        {"word": "write", "meaning": "쓰다"},
-        {"word": "learn", "meaning": "배우다"},
-        {"word": "teach", "meaning": "가르치다"},
         {"word": "mean", "meaning": "의미하다"},
-        {"word": "feel", "meaning": "느끼다"},
-        {"word": "believe", "meaning": "믿다"},
-        {"word": "hope", "meaning": "바라다, 희망하다"},
-        {"word": "choose", "meaning": "선택하다"},
-        {"word": "decide", "meaning": "결정하다"},
-        {"word": "explain", "meaning": "설명하다"},
-        {"word": "show", "meaning": "보여주다"},
-        {"word": "share", "meaning": "나누다, 공유하다"},
         {"word": "agree", "meaning": "동의하다"},
-        {"word": "worry", "meaning": "걱정하다"},
-        {"word": "thank", "meaning": "감사하다"},
+        {"word": "disagree", "meaning": "동의하지 않다"},
+        {"word": "opinion", "meaning": "의견"},
+        {"word": "idea", "meaning": "생각, 아이디어"},
+        {"word": "reason", "meaning": "이유"},
+        {"word": "example", "meaning": "예시"},
+        {"word": "fact", "meaning": "사실"},
+        {"word": "choice", "meaning": "선택"},
+        {"word": "decision", "meaning": "결정"},
+        {"word": "advice", "meaning": "조언"},
+        {"word": "suggestion", "meaning": "제안"},
+        {"word": "possible", "meaning": "가능한"},
+        {"word": "impossible", "meaning": "불가능한"},
+        {"word": "confusing", "meaning": "혼란스러운"},
     ],
 
-    "🎨 상태·형용사": [
-        {"word": "good", "meaning": "좋은"},
-        {"word": "bad", "meaning": "나쁜"},
-        {"word": "big", "meaning": "큰"},
-        {"word": "small", "meaning": "작은"},
-        {"word": "long", "meaning": "긴"},
-        {"word": "short", "meaning": "짧은"},
-        {"word": "new", "meaning": "새로운"},
-        {"word": "old", "meaning": "오래된, 나이 든"},
-        {"word": "young", "meaning": "어린, 젊은"},
-        {"word": "high", "meaning": "높은"},
-        {"word": "low", "meaning": "낮은"},
-        {"word": "fast", "meaning": "빠른"},
-        {"word": "slow", "meaning": "느린"},
-        {"word": "easy", "meaning": "쉬운"},
-        {"word": "hard", "meaning": "어려운, 딱딱한"},
-        {"word": "right", "meaning": "맞는, 오른쪽의"},
-        {"word": "wrong", "meaning": "틀린"},
-        {"word": "same", "meaning": "같은"},
-        {"word": "different", "meaning": "다른"},
-        {"word": "important", "meaning": "중요한"},
-        {"word": "beautiful", "meaning": "아름다운"},
-        {"word": "clean", "meaning": "깨끗한"},
-        {"word": "dirty", "meaning": "더러운"},
-        {"word": "full", "meaning": "가득 찬"},
-        {"word": "empty", "meaning": "빈"},
-        {"word": "free", "meaning": "자유로운, 무료의"},
-        {"word": "safe", "meaning": "안전한"},
-        {"word": "dangerous", "meaning": "위험한"},
-        {"word": "true", "meaning": "진짜의, 사실인"},
-        {"word": "false", "meaning": "거짓의"},
+    "📅 계획과 약속": [
+        {"word": "plan", "meaning": "계획"},
+        {"word": "appointment", "meaning": "약속, 예약"},
+        {"word": "promise", "meaning": "약속"},
+        {"word": "meeting", "meaning": "모임, 회의"},
+        {"word": "date", "meaning": "날짜, 데이트"},
+        {"word": "event", "meaning": "행사"},
+        {"word": "party", "meaning": "파티"},
+        {"word": "festival", "meaning": "축제"},
+        {"word": "deadline", "meaning": "마감일"},
+        {"word": "calendar", "meaning": "달력"},
+        {"word": "next week", "meaning": "다음 주"},
+        {"word": "message", "meaning": "메시지"},
+        {"word": "join", "meaning": "참여하다"},
+        {"word": "prepare", "meaning": "준비하다"},
+        {"word": "decide", "meaning": "결정하다"},
+        {"word": "change", "meaning": "바꾸다"},
+        {"word": "cancel", "meaning": "취소하다"},
+        {"word": "on time", "meaning": "시간 맞춰"},
+        {"word": "available", "meaning": "시간이 되는, 이용 가능한"},
+        {"word": "reminder", "meaning": "알림"},
+    ],
+
+    "🩺 건강한 생활": [
+        {"word": "health", "meaning": "건강"},
+        {"word": "body", "meaning": "몸"},
+        {"word": "eye", "meaning": "눈"},
+        {"word": "ear", "meaning": "귀"},
+        {"word": "nose", "meaning": "코"},
+        {"word": "mouth", "meaning": "입"},
+        {"word": "tooth", "meaning": "이"},
+        {"word": "hand", "meaning": "손"},
+        {"word": "arm", "meaning": "팔"},
+        {"word": "leg", "meaning": "다리"},
+        {"word": "foot", "meaning": "발"},
+        {"word": "stomach", "meaning": "배, 위"},
+        {"word": "back", "meaning": "등, 허리"},
+        {"word": "heart", "meaning": "심장"},
+        {"word": "clinic", "meaning": "의원, 진료소"},
+        {"word": "vitamin", "meaning": "비타민"},
+        {"word": "diet", "meaning": "식단"},
+        {"word": "cough", "meaning": "기침"},
+        {"word": "flu", "meaning": "독감"},
+        {"word": "breathe", "meaning": "숨 쉬다"},
+    ],
+
+    "📱 미디어와 스마트폰": [
+        {"word": "smartphone", "meaning": "스마트폰"},
+        {"word": "screen", "meaning": "화면"},
+        {"word": "app", "meaning": "앱"},
+        {"word": "website", "meaning": "웹사이트"},
+        {"word": "internet", "meaning": "인터넷"},
+        {"word": "Wi-Fi", "meaning": "와이파이"},
+        {"word": "password", "meaning": "비밀번호"},
+        {"word": "text", "meaning": "문자 메시지"},
+        {"word": "video call", "meaning": "영상 통화"},
+        {"word": "gallery", "meaning": "사진첩"},
+        {"word": "news", "meaning": "뉴스"},
+        {"word": "channel", "meaning": "채널"},
+        {"word": "post", "meaning": "게시물"},
+        {"word": "comment", "meaning": "댓글"},
+        {"word": "upload", "meaning": "업로드하다"},
+        {"word": "download", "meaning": "다운로드하다"},
+        {"word": "search", "meaning": "검색하다"},
+        {"word": "click", "meaning": "클릭하다"},
+        {"word": "battery", "meaning": "배터리"},
+        {"word": "notification", "meaning": "알림"},
+    ],
+
+    "🌈 직업과 미래": [
+        {"word": "job", "meaning": "직업"},
+        {"word": "work", "meaning": "일하다"},
+        {"word": "company", "meaning": "회사"},
+        {"word": "office", "meaning": "사무실"},
+        {"word": "factory", "meaning": "공장"},
+        {"word": "engineer", "meaning": "기술자, 엔지니어"},
+        {"word": "mechanic", "meaning": "정비사"},
+        {"word": "chef", "meaning": "요리사"},
+        {"word": "firefighter", "meaning": "소방관"},
+        {"word": "farmer", "meaning": "농부"},
+        {"word": "designer", "meaning": "디자이너"},
+        {"word": "singer", "meaning": "가수"},
+        {"word": "actor", "meaning": "배우"},
+        {"word": "athlete", "meaning": "운동선수"},
+        {"word": "dream", "meaning": "꿈"},
+        {"word": "future", "meaning": "미래"},
+        {"word": "goal", "meaning": "목표"},
+        {"word": "skill", "meaning": "기술, 능력"},
+        {"word": "interview", "meaning": "면접"},
+        {"word": "experience", "meaning": "경험"},
     ],
 }
 
 # =========================
-# 테마별 쉬운 대화
+# 오늘의 일상 대화
 # =========================
 theme_dialogues = {
-    "🧑‍🤝‍🧑 사람·관계": [
-        {"en": "A: Who is he?", "ko": "A: 그는 누구니?"},
-        {"en": "B: He is my friend.", "ko": "B: 그는 내 친구야."},
-        {"en": "A: Is she your teacher?", "ko": "A: 그녀는 너의 선생님이니?"},
-        {"en": "B: Yes, she is.", "ko": "B: 응, 맞아."},
+    "🏫 학교생활": [
+        {"en": "A: What is your favorite subject?", "ko": "A: 네가 가장 좋아하는 과목은 뭐니?"},
+        {"en": "B: My favorite subject is science.", "ko": "B: 내가 가장 좋아하는 과목은 과학이야."},
+        {"en": "A: Do you have homework today?", "ko": "A: 오늘 숙제 있니?"},
+        {"en": "B: Yes, I have a report.", "ko": "B: 응, 보고서가 있어."},
+        {"en": "A: When is the presentation?", "ko": "A: 발표는 언제니?"},
+        {"en": "B: It is next week.", "ko": "B: 다음 주야."},
     ],
-    "🏫 학교·교실": [
-        {"en": "A: Where is your book?", "ko": "A: 네 책은 어디에 있니?"},
-        {"en": "B: It is on my desk.", "ko": "B: 내 책상 위에 있어."},
-        {"en": "A: Do you have a pen?", "ko": "A: 너 펜 있니?"},
-        {"en": "B: Yes, I do.", "ko": "B: 응, 있어."},
+
+    "✏️ 교실 활동": [
+        {"en": "A: Please underline this word.", "ko": "A: 이 단어에 밑줄을 그어 주세요."},
+        {"en": "B: Okay. I will underline it.", "ko": "B: 좋아요. 밑줄 칠게요."},
+        {"en": "A: Can you repeat the sentence?", "ko": "A: 문장을 반복해 줄 수 있니?"},
+        {"en": "B: Yes, I can repeat it.", "ko": "B: 네, 반복할 수 있어요."},
+        {"en": "A: Please turn in your paper.", "ko": "A: 종이를 제출해 주세요."},
+        {"en": "B: Sure. Here it is.", "ko": "B: 네. 여기 있어요."},
     ],
-    "🏃 기본 동작 동사": [
-        {"en": "A: What do you do?", "ko": "A: 너는 무엇을 하니?"},
-        {"en": "B: I run.", "ko": "B: 나는 달려."},
-        {"en": "A: Can you help me?", "ko": "A: 나를 도와줄 수 있니?"},
-        {"en": "B: Yes, I can.", "ko": "B: 응, 할 수 있어."},
+
+    "🏠 집과 생활": [
+        {"en": "A: Where is your room?", "ko": "A: 네 방은 어디에 있니?"},
+        {"en": "B: It is next to the living room.", "ko": "B: 거실 옆에 있어."},
+        {"en": "A: Is your room clean?", "ko": "A: 네 방은 깨끗하니?"},
+        {"en": "B: No, it is a little messy.", "ko": "B: 아니, 조금 지저분해."},
+        {"en": "A: Can you clean it?", "ko": "A: 청소할 수 있니?"},
+        {"en": "B: Yes, I can clean it today.", "ko": "B: 응, 오늘 청소할 수 있어."},
     ],
-    "💖 감정·성격": [
-        {"en": "A: Are you happy?", "ko": "A: 너 행복하니?"},
-        {"en": "B: Yes, I am happy.", "ko": "B: 응, 나는 행복해."},
-        {"en": "A: Are you tired?", "ko": "A: 너 피곤하니?"},
-        {"en": "B: No, I am okay.", "ko": "B: 아니, 나는 괜찮아."},
+
+    "🌅 하루 일과": [
+        {"en": "A: What time do you get up?", "ko": "A: 너는 몇 시에 일어나니?"},
+        {"en": "B: I usually get up at seven.", "ko": "B: 나는 보통 7시에 일어나."},
+        {"en": "A: What do you do after school?", "ko": "A: 방과 후에 무엇을 하니?"},
+        {"en": "B: I relax and watch videos.", "ko": "B: 쉬면서 영상을 봐."},
+        {"en": "A: Do you sleep early?", "ko": "A: 너는 일찍 자니?"},
+        {"en": "B: No, I sometimes sleep late.", "ko": "B: 아니, 가끔 늦게 자."},
     ],
-    "🍎 음식·건강": [
-        {"en": "A: Are you hungry?", "ko": "A: 너 배고프니?"},
-        {"en": "B: Yes, I am hungry.", "ko": "B: 응, 나는 배고파."},
-        {"en": "A: Do you want water?", "ko": "A: 물 마시고 싶니?"},
-        {"en": "B: Yes, please.", "ko": "B: 응, 부탁해."},
+
+    "🎮 취미와 여가": [
+        {"en": "A: What is your hobby?", "ko": "A: 네 취미는 뭐니?"},
+        {"en": "B: My hobby is watching movies.", "ko": "B: 내 취미는 영화 보기야."},
+        {"en": "A: Do you like music?", "ko": "A: 음악 좋아하니?"},
+        {"en": "B: Yes, I like pop songs.", "ko": "B: 응, 나는 팝송을 좋아해."},
+        {"en": "A: What do you do in your free time?", "ko": "A: 여가 시간에 무엇을 하니?"},
+        {"en": "B: I play games and read comics.", "ko": "B: 게임하고 만화를 읽어."},
     ],
-    "🚗 장소·이동": [
-        {"en": "A: Where is your home?", "ko": "A: 너의 집은 어디에 있니?"},
-        {"en": "B: It is near the school.", "ko": "B: 학교 근처에 있어."},
-        {"en": "A: Do you go by bus?", "ko": "A: 너는 버스로 가니?"},
-        {"en": "B: Yes, I do.", "ko": "B: 응, 그래."},
+
+    "⚽ 운동과 활동": [
+        {"en": "A: What sport do you like?", "ko": "A: 어떤 운동을 좋아하니?"},
+        {"en": "B: I like tennis.", "ko": "B: 나는 테니스를 좋아해."},
+        {"en": "A: Do you practice often?", "ko": "A: 자주 연습하니?"},
+        {"en": "B: Yes, I practice after school.", "ko": "B: 응, 방과 후에 연습해."},
+        {"en": "A: Did your team win?", "ko": "A: 너희 팀이 이겼니?"},
+        {"en": "B: Yes, we won the match.", "ko": "B: 응, 우리는 경기에서 이겼어."},
     ],
-    "🌤️ 자연·날씨": [
-        {"en": "A: How is the weather?", "ko": "A: 날씨가 어때?"},
-        {"en": "B: It is sunny.", "ko": "B: 날씨가 맑아."},
-        {"en": "A: Is it cold?", "ko": "A: 춥니?"},
-        {"en": "B: No, it is warm.", "ko": "B: 아니, 따뜻해."},
+
+    "🌦️ 날씨와 계절": [
+        {"en": "A: How is the weather today?", "ko": "A: 오늘 날씨가 어때?"},
+        {"en": "B: It is cloudy and windy.", "ko": "B: 흐리고 바람이 불어."},
+        {"en": "A: Do you like winter?", "ko": "A: 겨울을 좋아하니?"},
+        {"en": "B: No, I like spring.", "ko": "B: 아니, 나는 봄을 좋아해."},
+        {"en": "A: Do you need an umbrella?", "ko": "A: 우산이 필요하니?"},
+        {"en": "B: Yes, it may rain.", "ko": "B: 응, 비가 올지도 몰라."},
     ],
-    "🐶 동물 이름": [
-        {"en": "A: What animal do you like?", "ko": "A: 너는 어떤 동물을 좋아하니?"},
-        {"en": "B: I like dogs.", "ko": "B: 나는 개를 좋아해."},
-        {"en": "A: Do you like cats?", "ko": "A: 고양이를 좋아하니?"},
-        {"en": "B: Yes, I do.", "ko": "B: 응, 좋아해."},
+
+    "🌳 자연과 환경": [
+        {"en": "A: Do you like nature?", "ko": "A: 자연을 좋아하니?"},
+        {"en": "B: Yes, I like forests and lakes.", "ko": "B: 응, 나는 숲과 호수를 좋아해."},
+        {"en": "A: What can we do for the environment?", "ko": "A: 환경을 위해 무엇을 할 수 있을까?"},
+        {"en": "B: We can recycle plastic.", "ko": "B: 플라스틱을 재활용할 수 있어."},
+        {"en": "A: Is pollution a problem?", "ko": "A: 오염은 문제니?"},
+        {"en": "B: Yes, it is a big problem.", "ko": "B: 응, 큰 문제야."},
     ],
-    "⏰ 시간·숫자": [
-        {"en": "A: What time is it?", "ko": "A: 지금 몇 시니?"},
-        {"en": "B: It is two.", "ko": "B: 2시야."},
-        {"en": "A: Is it morning?", "ko": "A: 아침이니?"},
-        {"en": "B: Yes, it is.", "ko": "B: 응, 맞아."},
+
+    "🍽️ 식당과 주문": [
+        {"en": "A: Are you ready to order?", "ko": "A: 주문할 준비가 되셨나요?"},
+        {"en": "B: Yes, I want pasta.", "ko": "B: 네, 파스타 주세요."},
+        {"en": "A: Do you want a drink?", "ko": "A: 음료도 원하시나요?"},
+        {"en": "B: Yes, I want juice.", "ko": "B: 네, 주스 주세요."},
+        {"en": "A: How is the food?", "ko": "A: 음식은 어때요?"},
+        {"en": "B: It is delicious.", "ko": "B: 맛있어요."},
     ],
-    "🧸 물건·도구": [
-        {"en": "A: What is this?", "ko": "A: 이것은 무엇이니?"},
-        {"en": "B: It is a bag.", "ko": "B: 그것은 가방이야."},
-        {"en": "A: Is this your phone?", "ko": "A: 이것은 네 전화기니?"},
-        {"en": "B: Yes, it is.", "ko": "B: 응, 맞아."},
+
+    "🛍️ 쇼핑과 가격": [
+        {"en": "A: Can I help you?", "ko": "A: 도와드릴까요?"},
+        {"en": "B: Yes, I am looking for a bag.", "ko": "B: 네, 가방을 찾고 있어요."},
+        {"en": "A: What color do you want?", "ko": "A: 어떤 색을 원하세요?"},
+        {"en": "B: I want a black one.", "ko": "B: 검은색을 원해요."},
+        {"en": "A: It is on sale today.", "ko": "A: 오늘 할인 중이에요."},
+        {"en": "B: Great. I will buy it.", "ko": "B: 좋아요. 살게요."},
     ],
-    "💬 생각·말하기": [
-        {"en": "A: Do you understand?", "ko": "A: 이해했니?"},
-        {"en": "B: Yes, I understand.", "ko": "B: 응, 이해했어."},
-        {"en": "A: Can you say it?", "ko": "A: 그것을 말할 수 있니?"},
-        {"en": "B: Yes, I can.", "ko": "B: 응, 할 수 있어."},
+
+    "👕 옷과 외모": [
+        {"en": "A: Do you like this jacket?", "ko": "A: 이 재킷 마음에 드니?"},
+        {"en": "B: Yes, it looks comfortable.", "ko": "B: 응, 편해 보여."},
+        {"en": "A: What size do you need?", "ko": "A: 어떤 사이즈가 필요하니?"},
+        {"en": "B: I need a medium size.", "ko": "B: 중간 사이즈가 필요해."},
+        {"en": "A: Are these sneakers new?", "ko": "A: 이 운동화는 새거니?"},
+        {"en": "B: Yes, they are new.", "ko": "B: 응, 새거야."},
     ],
-    "🎨 상태·형용사": [
-        {"en": "A: Is it big?", "ko": "A: 그것은 크니?"},
-        {"en": "B: No, it is small.", "ko": "B: 아니, 그것은 작아."},
-        {"en": "A: Is this easy?", "ko": "A: 이것은 쉬우니?"},
-        {"en": "B: Yes, it is easy.", "ko": "B: 응, 쉬워."},
+
+    "🚇 교통과 길 찾기": [
+        {"en": "A: Where is the bus stop?", "ko": "A: 버스 정류장이 어디에 있나요?"},
+        {"en": "B: Go straight and turn left.", "ko": "B: 똑바로 가서 왼쪽으로 도세요."},
+        {"en": "A: Is the subway station far?", "ko": "A: 지하철역은 먼가요?"},
+        {"en": "B: No, it is near here.", "ko": "B: 아니요, 여기 근처에 있어요."},
+        {"en": "A: I think I am lost.", "ko": "A: 길을 잃은 것 같아요."},
+        {"en": "B: I can help you.", "ko": "B: 제가 도와드릴 수 있어요."},
+    ],
+
+    "🧳 여행과 숙박": [
+        {"en": "A: Do you have a reservation?", "ko": "A: 예약하셨나요?"},
+        {"en": "B: Yes, I have a hotel reservation.", "ko": "B: 네, 호텔 예약이 있어요."},
+        {"en": "A: May I see your passport?", "ko": "A: 여권을 볼 수 있을까요?"},
+        {"en": "B: Sure. Here it is.", "ko": "B: 물론이죠. 여기 있어요."},
+        {"en": "A: What time is check out?", "ko": "A: 체크아웃은 몇 시인가요?"},
+        {"en": "B: It is at eleven.", "ko": "B: 11시입니다."},
+    ],
+
+    "👥 친구 관계": [
+        {"en": "A: Do you want to hang out this weekend?", "ko": "A: 이번 주말에 같이 놀래?"},
+        {"en": "B: Yes, that sounds fun.", "ko": "B: 응, 재미있겠다."},
+        {"en": "A: Can I invite my friend?", "ko": "A: 내 친구도 초대해도 돼?"},
+        {"en": "B: Sure. We can meet together.", "ko": "B: 물론이지. 같이 만날 수 있어."},
+        {"en": "A: Thank you for helping me.", "ko": "A: 도와줘서 고마워."},
+        {"en": "B: No problem. We are friends.", "ko": "B: 괜찮아. 우리는 친구잖아."},
+    ],
+
+    "😊 감정 표현 확장": [
+        {"en": "A: You look nervous.", "ko": "A: 너 긴장해 보여."},
+        {"en": "B: Yes, I have a presentation.", "ko": "B: 응, 발표가 있어."},
+        {"en": "A: Don't worry. You can do it.", "ko": "A: 걱정하지 마. 너는 할 수 있어."},
+        {"en": "B: Thank you. I feel better.", "ko": "B: 고마워. 기분이 나아졌어."},
+        {"en": "A: Are you proud of yourself?", "ko": "A: 너 자신이 자랑스럽니?"},
+        {"en": "B: Yes, I am proud.", "ko": "B: 응, 자랑스러워."},
+    ],
+
+    "💭 생각과 의견": [
+        {"en": "A: What do you think about this idea?", "ko": "A: 이 생각에 대해 어떻게 생각하니?"},
+        {"en": "B: I think it is useful.", "ko": "B: 유용하다고 생각해."},
+        {"en": "A: Do you agree with me?", "ko": "A: 내 말에 동의하니?"},
+        {"en": "B: Yes, I agree.", "ko": "B: 응, 동의해."},
+        {"en": "A: Can you give me a reason?", "ko": "A: 이유를 말해 줄 수 있니?"},
+        {"en": "B: Sure. It is simple and clear.", "ko": "B: 물론이지. 간단하고 명확해."},
+    ],
+
+    "📅 계획과 약속": [
+        {"en": "A: Do you have plans this weekend?", "ko": "A: 이번 주말에 계획 있니?"},
+        {"en": "B: Yes, I have a meeting.", "ko": "B: 응, 모임이 있어."},
+        {"en": "A: Are you available tomorrow?", "ko": "A: 내일 시간 돼?"},
+        {"en": "B: Yes, I am free in the afternoon.", "ko": "B: 응, 오후에 시간이 있어."},
+        {"en": "A: Can we change the time?", "ko": "A: 시간을 바꿀 수 있을까?"},
+        {"en": "B: Sure. No problem.", "ko": "B: 물론이지. 문제없어."},
+    ],
+
+    "🩺 건강한 생활": [
+        {"en": "A: You look tired.", "ko": "A: 너 피곤해 보여."},
+        {"en": "B: Yes, I did not sleep well.", "ko": "B: 응, 잠을 잘 못 잤어."},
+        {"en": "A: You should rest.", "ko": "A: 쉬는 게 좋겠어."},
+        {"en": "B: I know. I need more sleep.", "ko": "B: 알아. 잠이 더 필요해."},
+        {"en": "A: Do you exercise often?", "ko": "A: 자주 운동하니?"},
+        {"en": "B: Sometimes. I want to be healthy.", "ko": "B: 가끔. 건강해지고 싶어."},
+    ],
+
+    "📱 미디어와 스마트폰": [
+        {"en": "A: What app do you use often?", "ko": "A: 어떤 앱을 자주 사용하니?"},
+        {"en": "B: I often use a video app.", "ko": "B: 나는 영상 앱을 자주 사용해."},
+        {"en": "A: Can you send me the link?", "ko": "A: 링크를 보내줄 수 있니?"},
+        {"en": "B: Sure. I will send it now.", "ko": "B: 물론이지. 지금 보낼게."},
+        {"en": "A: Is your battery low?", "ko": "A: 배터리가 부족하니?"},
+        {"en": "B: Yes, I need to charge my phone.", "ko": "B: 응, 휴대폰을 충전해야 해."},
+    ],
+
+    "🌈 직업과 미래": [
+        {"en": "A: What is your dream job?", "ko": "A: 네 꿈의 직업은 뭐니?"},
+        {"en": "B: I want to be an engineer.", "ko": "B: 나는 엔지니어가 되고 싶어."},
+        {"en": "A: What skill do you need?", "ko": "A: 어떤 기술이 필요하니?"},
+        {"en": "B: I need computer skills.", "ko": "B: 컴퓨터 기술이 필요해."},
+        {"en": "A: Do you have a goal?", "ko": "A: 목표가 있니?"},
+        {"en": "B: Yes, I want to get a good job.", "ko": "B: 응, 좋은 직업을 얻고 싶어."},
     ],
 }
-
-
-# =========================
-# 쉬운 대화 보여주기
-# =========================
-def show_dialogue(theme_name):
-    dialogue = theme_dialogues.get(theme_name, [])
-
-    if not dialogue:
-        return
-
-    st.markdown('<div class="dialogue-box">', unsafe_allow_html=True)
-    st.markdown('<div class="dialogue-title">💬 아주 쉬운 대화</div>', unsafe_allow_html=True)
-
-    english_lines = []
-
-    for line in dialogue:
-        english_lines.append(line["en"])
-        st.markdown(f"<div class='dialogue-line'>{line['en']}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='dialogue-meaning'>{line['ko']}</div>", unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    dialogue_text = " ".join(english_lines)
-    audio_key = safe_filename(theme_name + "_dialogue")
-    st.markdown("#### 🎧 대화 듣기")
-    simple_audio_player(dialogue_text, key=audio_key, label="대화 듣기")
-
 
 # =========================
 # 전체 뜻 목록 만들기
@@ -910,7 +1283,6 @@ for theme_words in word_themes.values():
     all_words.extend(theme_words)
 
 all_meanings = [item["meaning"] for item in all_words]
-
 
 # =========================
 # 보기 고정 랜덤 섞기
@@ -926,7 +1298,6 @@ def get_shuffled_options(theme_name, index, options):
 
     return st.session_state[key]
 
-
 # =========================
 # 퀴즈 문항 만들기
 # =========================
@@ -935,10 +1306,13 @@ def make_quiz_items(theme_words, theme_name):
 
     for idx, item in enumerate(theme_words):
         correct = item["meaning"]
-
         distractors = [m for m in all_meanings if m != correct]
         random.seed(f"{theme_name}_{item['word']}_{idx}")
-        wrong_options = random.sample(distractors, 3)
+
+        if len(distractors) >= 3:
+            wrong_options = random.sample(distractors, 3)
+        else:
+            wrong_options = distractors
 
         options = [correct] + wrong_options
 
@@ -949,7 +1323,6 @@ def make_quiz_items(theme_words, theme_name):
         })
 
     return quiz_items
-
 
 # =========================
 # 상태 초기화
@@ -964,7 +1337,6 @@ def init_state(theme_name):
     if f"{theme_name}_wrong" not in st.session_state:
         st.session_state[f"{theme_name}_wrong"] = []
 
-
 def reset_theme(theme_name):
     keys_to_delete = []
 
@@ -975,18 +1347,61 @@ def reset_theme(theme_name):
     for key in keys_to_delete:
         del st.session_state[key]
 
+# =========================
+# 오늘의 일상 대화 보여주기
+# =========================
+def show_dialogue(theme_name):
+    dialogue = theme_dialogues.get(theme_name, [])
+
+    if not dialogue:
+        return
+
+    st.markdown('<div class="dialogue-box">', unsafe_allow_html=True)
+    st.markdown('<div class="dialogue-title">💬 오늘의 일상 대화</div>', unsafe_allow_html=True)
+
+    for line in dialogue:
+        st.markdown(
+            f"<div class='dialogue-line'>{line['en']}</div>",
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            f"<div class='dialogue-meaning'>{line['ko']}</div>",
+            unsafe_allow_html=True
+        )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    html_dialogue_audio_player(
+        label="🔊 대화 듣기",
+        dialogue_lines=dialogue,
+        line_pause_ms=1400,
+        height=105
+    )
+
+    dialogue_text = make_dialogue_tts_text(dialogue)
+    dialogue_audio_bytes = make_tts_audio(dialogue_text)
+
+    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
+
+    st.download_button(
+        label="⬇️ 대화 듣기 파일 다운로드",
+        data=dialogue_audio_bytes,
+        file_name=f"{safe_file_name}_dialogue.mp3",
+        mime="audio/mp3",
+        key=f"{theme_name}_dialogue_download"
+    )
 
 # =========================
 # 단어 익히기
 # =========================
 def show_word_cards(theme_words, theme_name):
-    st.markdown("### 🌼 단어 익히기")
-    st.write("단어, 뜻, 발음을 먼저 확인하세요.")
+    st.markdown("### 🌱 핵심 단어 익히기")
+    st.write("기초 일상대화에 꼭 필요한 단어를 듣고 익혀 보세요.")
 
     for idx, item in enumerate(theme_words):
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns([1.3, 2.1, 1.2])
+        col1, col2, col3 = st.columns([1.3, 2.1, 1.4])
 
         with col1:
             st.markdown(f"<div class='word-badge'>🌱 Word {idx + 1}</div>", unsafe_allow_html=True)
@@ -1004,7 +1419,6 @@ def show_word_cards(theme_words, theme_name):
             )
 
         st.markdown('</div>', unsafe_allow_html=True)
-
 
 # =========================
 # 퀴즈 풀기
@@ -1072,7 +1486,7 @@ def show_quiz(theme_words, theme_name):
 
         if len(wrong) == 0:
             st.balloons()
-            st.success("🌈 완벽합니다! 이 테마의 단어를 모두 잘 기억하고 있습니다.")
+            st.success("🌈 완벽합니다! 이 테마의 일상 단어를 모두 잘 기억하고 있습니다.")
 
             if st.button("🔄 다시 풀기", key=f"{theme_name}_reset_all_correct"):
                 reset_theme(theme_name)
@@ -1174,7 +1588,6 @@ def show_quiz(theme_words, theme_name):
             reset_theme(theme_name)
             st.rerun()
 
-
 # =========================
 # 탭 구성
 # =========================
@@ -1188,7 +1601,7 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
             f"""
             <div class="theme-header">
                 <div class="theme-title">{theme_name}</div>
-                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 단어가 있습니다. 먼저 익히고, 퀴즈로 확인해 봅시다.</div>
+                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 일상 단어가 있습니다. 먼저 대화를 듣고, 핵심 단어를 익혀 봅시다.</div>
             </div>
             """,
             unsafe_allow_html=True
@@ -1198,12 +1611,12 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
 
         mode = st.radio(
             "학습 모드를 선택하세요.",
-            ["🌼 단어 익히기", "🧸 퀴즈 풀기"],
+            ["🌱 핵심 단어 익히기", "🧸 퀴즈 풀기"],
             key=f"{theme_name}_mode",
             horizontal=True
         )
 
-        if mode == "🌼 단어 익히기":
+        if mode == "🌱 핵심 단어 익히기":
             show_word_cards(theme_words, theme_name)
         else:
             show_quiz(theme_words, theme_name)
