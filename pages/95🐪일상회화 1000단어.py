@@ -276,8 +276,8 @@ st.markdown(
             • 각 테마는 <b>오늘의 일상 대화</b>로 시작합니다.<br>
             • 대화를 듣고, 아래에서 핵심 단어를 익힙니다.<br>
             • 단어 발음은 <b>20번 반복</b>됩니다.<br>
-            • <b>전체 카세트 듣기</b>로 모든 테마 단어를 이어서 복습할 수 있습니다.<br>
-            • 카세트 듣기는 <b>10초 전/후 이동, 일시정지, 진행바 조절</b>이 가능합니다.<br>
+            • <b>카세트 듣기</b>로 단어를 이어서 복습할 수 있습니다.<br>
+            • 카세트 듣기는 <b>버튼을 눌렀을 때만 생성</b>되어 오류를 줄였습니다.<br>
             • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
             • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
             • 단어, 발음 버튼, 뜻이 한 줄에 가깝게 배치되어 빠르게 익힐 수 있습니다.
@@ -432,6 +432,8 @@ def get_word_emoji(word):
     }
     return emoji_map.get(word, "🌱")
 
+
+AUDIO_CHANNEL_NAME = "daily_english_audio_channel"
 
 # =========================
 # 단어용 HTML 오디오 플레이어
@@ -1439,18 +1441,18 @@ theme_dialogues = {
 # =========================
 # 카세트 듣기 기능
 # =========================
-AUDIO_CHANNEL_NAME = "daily_english_audio_channel"
-
-
 def clean_theme_title(theme_name):
     return re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
 
 
-def make_cassette_text(theme_name, theme_words):
+def make_short_cassette_text(theme_name, theme_words, start_index=0):
+    """
+    gTTS 오류 방지를 위해 최대 10개 단어 정도만 짧게 만듭니다.
+    """
     clean_name = clean_theme_title(theme_name)
 
     lines = []
-    lines.append(f"Daily English 1000. {clean_name}.")
+    lines.append("Daily English 1000.")
     lines.append("Listen and repeat.")
     lines.append("")
 
@@ -1458,7 +1460,7 @@ def make_cassette_text(theme_name, theme_words):
         word = item["word"]
         lines.append(f"{word}.")
         lines.append(f"{word}.")
-        lines.append("Listen and repeat.")
+        lines.append("Repeat.")
         lines.append("")
 
     lines.append("Good job.")
@@ -1467,32 +1469,14 @@ def make_cassette_text(theme_name, theme_words):
     return "\n".join(lines)
 
 
-def make_all_cassette_text():
-    lines = []
-    lines.append("Daily English 1000.")
-    lines.append("Listen and repeat.")
-    lines.append("Let's practice all the words.")
-    lines.append("")
-
-    for theme_name, theme_words in word_themes.items():
-        clean_name = clean_theme_title(theme_name)
-        lines.append(clean_name + ".")
-        lines.append("")
-
-        for item in theme_words:
-            word = item["word"]
-            lines.append(f"{word}.")
-            lines.append(f"{word}.")
-            lines.append("Listen and repeat.")
-            lines.append("")
-
-    lines.append("Great work.")
-    lines.append("Keep practicing every day.")
-
-    return "\n".join(lines)
+def split_words_for_cassette(theme_words, chunk_size=10):
+    chunks = []
+    for i in range(0, len(theme_words), chunk_size):
+        chunks.append(theme_words[i:i + chunk_size])
+    return chunks
 
 
-def cassette_audio_player(label, audio_bytes, height=135):
+def cassette_audio_player(label, audio_bytes, height=145):
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
     audio_id = f"cassette_audio_{uuid.uuid4().hex}"
@@ -1507,7 +1491,6 @@ def cassette_audio_player(label, audio_bytes, height=135):
 
     safe_label = json.dumps(label)
     safe_player_id = json.dumps(player_id)
-    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
 
     components.html(
         f"""
@@ -1617,8 +1600,7 @@ def cassette_audio_player(label, audio_bytes, height=135):
 
             const labelText = {safe_label};
             const playerId = {safe_player_id};
-            const channelName = {safe_channel};
-            const channel = new BroadcastChannel(channelName);
+            const channel = new BroadcastChannel("daily_english_audio_channel");
 
             function formatTime(seconds) {{
                 if (isNaN(seconds)) return "0:00";
@@ -1716,41 +1698,18 @@ def cassette_audio_player(label, audio_bytes, height=135):
     )
 
 
-def make_selected_theme_cassette_text(theme_name, theme_words):
-    clean_name = clean_theme_title(theme_name)
-
-    lines = []
-    lines.append("Daily English 1000.")
-    lines.append("Listen and repeat.")
-    lines.append("")
-
-    # gTTS 오류를 줄이기 위해 한국어 테마명은 음성에는 넣지 않고,
-    # 화면에만 보여 줍니다.
-    for item in theme_words:
-        word = item["word"]
-        lines.append(f"{word}.")
-        lines.append(f"{word}.")
-        lines.append("Listen and repeat.")
-        lines.append("")
-
-    lines.append("Good job.")
-    lines.append("Keep practicing.")
-
-    return "\n".join(lines)
-
-
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어 카세트 듣기")
-    st.write("gTTS 오류를 막기 위해 전체 단어를 한 번에 만들지 않고, 원하는 테마를 선택해서 카세트처럼 들을 수 있습니다.")
+    st.markdown("## 🎧 카세트 듣기")
+    st.write("오류를 막기 위해 원하는 테마를 고른 뒤, 10개 단어씩 나누어 카세트를 만듭니다.")
 
     st.markdown(
         """
         <div class="cassette-box">
-            <div class="cassette-title">📼 테마 선택 카세트 복습</div>
+            <div class="cassette-title">📼 안전 카세트 복습</div>
             <div class="cassette-text">
-                아래에서 원하는 테마를 선택하면 해당 테마의 단어만 카세트처럼 재생됩니다.<br>
-                전체 1000개를 한 번에 만들면 gTTS 오류가 날 수 있어, 테마별 생성 방식으로 바꾸었습니다.<br>
-                10초 전/후 이동, 일시정지, 진행바 조절, mp3 다운로드가 가능합니다.
+                전체 1000개를 한 번에 만들면 gTTS 오류가 날 수 있습니다.<br>
+                그래서 선택한 테마를 10개 단어씩 나누어 생성합니다.<br>
+                먼저 테마를 고르고, <b>카세트 만들기</b> 버튼을 눌러 주세요.
             </div>
         </div>
         """,
@@ -1766,36 +1725,46 @@ def show_all_cassette_tab():
     )
 
     selected_words = word_themes[selected_theme]
+    chunks = split_words_for_cassette(selected_words, chunk_size=10)
 
     st.markdown(f"### 🎧 {selected_theme}")
-    st.caption(f"이 테마에는 {len(selected_words)}개의 단어가 있습니다.")
+    st.caption(f"이 테마에는 {len(selected_words)}개의 단어가 있습니다. 10개씩 {len(chunks)}개 묶음으로 나누어 만듭니다.")
 
-    selected_text = make_selected_theme_cassette_text(selected_theme, selected_words)
-    selected_audio = make_tts_audio(selected_text, lang="en", tld="com")
+    make_key = f"make_cassette_{selected_theme}"
 
-    cassette_audio_player(
-        "▶️ 선택한 테마 카세트 재생",
-        selected_audio,
-        height=145
-    )
+    if st.button("🎧 선택한 테마 카세트 만들기", key=make_key):
+        st.session_state[f"cassette_ready_{selected_theme}"] = True
 
-    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", selected_theme)
+    if st.session_state.get(f"cassette_ready_{selected_theme}", False):
+        for idx, chunk in enumerate(chunks, start=1):
+            start_num = (idx - 1) * 10 + 1
+            end_num = start_num + len(chunk) - 1
 
-    st.download_button(
-        label="⬇️ 선택한 테마 mp3 다운로드",
-        data=selected_audio,
-        file_name=f"{safe_file_name}_daily_english_cassette.mp3",
-        mime="audio/mp3",
-        key=f"selected_cassette_download_{selected_theme}"
-    )
+            st.markdown(f"#### Part {idx}: {start_num}번 ~ {end_num}번 단어")
 
-    with st.expander("📜 선택한 테마 카세트 스크립트 보기"):
+            part_text = make_short_cassette_text(selected_theme, chunk)
+            part_audio = make_tts_audio(part_text, lang="en", tld="com")
+
+            cassette_audio_player(
+                f"▶️ Part {idx} 재생",
+                part_audio,
+                height=145
+            )
+
+            safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", selected_theme)
+
+            st.download_button(
+                label=f"⬇️ Part {idx} mp3 다운로드",
+                data=part_audio,
+                file_name=f"{safe_file_name}_part_{idx}_cassette.mp3",
+                mime="audio/mp3",
+                key=f"{selected_theme}_part_{idx}_download"
+            )
+
+    with st.expander("📜 선택한 테마 단어 보기"):
         for item in selected_words:
             st.markdown(f"**{item['word']}** : {item['meaning']}")
 
-    st.markdown("---")
-    st.markdown("### 📚 전체 테마 목록")
-    st.write("각 테마 탭에서도 해당 테마의 카세트 듣기와 mp3 다운로드를 할 수 있습니다.")
 
 def show_cassette_player(theme_words, theme_name):
     st.markdown(
@@ -1803,29 +1772,46 @@ def show_cassette_player(theme_words, theme_name):
         <div class="cassette-box">
             <div class="cassette-title">🎧 이 테마 카세트 듣기</div>
             <div class="cassette-text">
-                이 테마의 단어를 카세트처럼 이어서 듣고 복습할 수 있습니다.
+                오류를 막기 위해 10개 단어씩 나누어 재생합니다.<br>
+                먼저 아래 버튼을 눌러 카세트를 만들어 주세요.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    cassette_text = make_cassette_text(theme_name, theme_words)
-    cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
+    chunks = split_words_for_cassette(theme_words, chunk_size=10)
 
-    cassette_audio_player("▶️ 이 테마 카세트 재생", cassette_audio, height=145)
+    if st.button("🎧 이 테마 카세트 만들기", key=f"{theme_name}_make_theme_cassette"):
+        st.session_state[f"{theme_name}_cassette_ready"] = True
 
-    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
+    if st.session_state.get(f"{theme_name}_cassette_ready", False):
+        for idx, chunk in enumerate(chunks, start=1):
+            start_num = (idx - 1) * 10 + 1
+            end_num = start_num + len(chunk) - 1
 
-    st.download_button(
-        label="⬇️ 이 테마 카세트 mp3 다운로드",
-        data=cassette_audio,
-        file_name=f"{safe_file_name}_cassette_review.mp3",
-        mime="audio/mp3",
-        key=f"{theme_name}_cassette_download"
-    )
+            st.markdown(f"#### Part {idx}: {start_num}번 ~ {end_num}번 단어")
 
-    with st.expander("📜 이 테마 카세트 스크립트 보기"):
+            cassette_text = make_short_cassette_text(theme_name, chunk)
+            cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
+
+            cassette_audio_player(
+                f"▶️ Part {idx} 재생",
+                cassette_audio,
+                height=145
+            )
+
+            safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
+
+            st.download_button(
+                label=f"⬇️ Part {idx} mp3 다운로드",
+                data=cassette_audio,
+                file_name=f"{safe_file_name}_part_{idx}_cassette.mp3",
+                mime="audio/mp3",
+                key=f"{theme_name}_cassette_part_{idx}_download"
+            )
+
+    with st.expander("📜 이 테마 카세트 단어 보기"):
         for item in theme_words:
             st.markdown(f"**{item['word']}** : {item['meaning']}")
 
@@ -2169,7 +2155,7 @@ def show_quiz(theme_words, theme_name):
 # =========================
 # 탭 구성
 # =========================
-tab_names = ["🎧 전체 카세트 듣기"] + list(word_themes.keys())
+tab_names = ["🎧 카세트 듣기"] + list(word_themes.keys())
 tabs = st.tabs(tab_names)
 
 with tabs[0]:
