@@ -262,7 +262,7 @@ st.markdown(
 # =========================
 # 상단 제목
 # =========================
-st.markdown("<div class='main-title'>🌱 Daily English 400</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>🌱 Daily English 1000</div>", unsafe_allow_html=True)
 st.markdown(
     "<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고, 읽고, 퀴즈로 익혀 봅시다.</div>",
     unsafe_allow_html=True
@@ -273,14 +273,6 @@ st.markdown(
     <div class="hero-box">
         <div class="hero-title">🌟 오늘의 학습 방식</div>
         <div class="hero-text">
-            • 각 테마는 <b>오늘의 일상 대화</b>로 시작합니다.<br>
-            • 대화를 듣고, 아래에서 핵심 단어를 익힙니다.<br>
-            • 단어 발음은 <b>20번 반복</b>됩니다.<br>
-            • 맨 앞 <b>전체 카세트 듣기</b> 탭에서 전체 단어를 테이프처럼 이어서 들을 수 있습니다.<br>
-            • 전체 카세트는 별도 mp3 생성 없이 브라우저 음성으로 바로 재생되어 오류 가능성을 줄였습니다.<br>
-            • <b>재생 / 일시정지 / 이전 단어 / 다음 단어 / 중지 / 진행바 이동</b>이 가능합니다.<br>
-            • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
-            • 단어, 발음 버튼, 뜻이 한 줄에 가깝게 배치되어 빠르게 익힐 수 있습니다.
         </div>
     </div>
     """,
@@ -2396,7 +2388,7 @@ def browser_cassette_player(all_items, height=430):
                 color: #0f172a;
                 margin-bottom: 10px;
             ">
-                📼 Daily English 400 전체 테이프
+                📼 Daily English 1000 전체 테이프
             </div>
 
             <div id="{word_id}" style="
