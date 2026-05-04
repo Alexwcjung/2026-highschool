@@ -2,6 +2,7 @@ import streamlit as st
 from gtts import gTTS
 import io
 import random
+from pydub import AudioSegment
 
 # =========================
 # 기본 설정
@@ -208,6 +209,8 @@ st.markdown(
         <div class="hero-text">
             • 단어를 <b>테마별</b>로 묶어 기억합니다.<br>
             • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
+            • 발음 듣기 버튼을 누르면 단어가 <b>20번 반복</b>됩니다.<br>
+            • 각 발음 사이에는 <b>실제 무음 간격</b>이 들어갑니다.<br>
             • 다음으로 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.<br>
             • 1차 제출 후 틀린 단어만 다시 풀고, 2차 제출 후 정답을 확인합니다.
         </div>
@@ -220,7 +223,10 @@ st.markdown(
 # TTS 함수
 # =========================
 @st.cache_data
-def make_tts_audio(text, lang="en", tld="com"):
+def make_single_tts_audio(text, lang="en", tld="com"):
+    """
+    단어 1번 발음 mp3 만들기
+    """
     fp = io.BytesIO()
     tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
     tts.write_to_fp(fp)
@@ -228,18 +234,47 @@ def make_tts_audio(text, lang="en", tld="com"):
     return fp.read()
 
 
-def make_repeat_text(text, repeat_count=20):
+@st.cache_data
+def make_repeated_audio_with_silence(text, repeat_count=20, silence_ms=1500):
     """
-    같은 단어를 20번 반복해서 들려주는 함수입니다.
-    ... ... 를 넣어 단어 사이의 쉼을 더 길게 줍니다.
+    단어 발음 1번 + 무음 + 단어 발음 1번 + 무음...
+    이런 식으로 실제 쉬는 시간을 넣어 반복 mp3를 만듭니다.
+
+    repeat_count: 반복 횟수
+    silence_ms: 발음 사이 무음 시간
+    1000 = 1초
+    1500 = 1.5초
+    2000 = 2초
     """
-    return (text + "... ... ") * repeat_count
+    single_audio_bytes = make_single_tts_audio(text)
+
+    single_audio = AudioSegment.from_file(
+        io.BytesIO(single_audio_bytes),
+        format="mp3"
+    )
+
+    silence = AudioSegment.silent(duration=silence_ms)
+
+    combined = AudioSegment.empty()
+
+    for _ in range(repeat_count):
+        combined += single_audio
+        combined += silence
+
+    output = io.BytesIO()
+    combined.export(output, format="mp3")
+    output.seek(0)
+
+    return output.read()
 
 
 def audio_button(label, text, key):
     if st.button(label, key=key):
-        repeated_text = make_repeat_text(text, repeat_count=20)
-        audio_bytes = make_tts_audio(repeated_text)
+        audio_bytes = make_repeated_audio_with_silence(
+            text,
+            repeat_count=20,
+            silence_ms=1500
+        )
         st.audio(audio_bytes, format="audio/mp3")
 
 
@@ -653,7 +688,6 @@ for theme_words in word_themes.values():
 
 all_meanings = [item["meaning"] for item in all_words]
 
-
 # =========================
 # 보기 고정 랜덤 섞기
 # =========================
@@ -667,7 +701,6 @@ def get_shuffled_options(theme_name, index, options):
         st.session_state[key] = shuffled
 
     return st.session_state[key]
-
 
 # =========================
 # 퀴즈 문항 만들기
@@ -692,7 +725,6 @@ def make_quiz_items(theme_words, theme_name):
 
     return quiz_items
 
-
 # =========================
 # 상태 초기화
 # =========================
@@ -706,7 +738,6 @@ def init_state(theme_name):
     if f"{theme_name}_wrong" not in st.session_state:
         st.session_state[f"{theme_name}_wrong"] = []
 
-
 def reset_theme(theme_name):
     keys_to_delete = []
 
@@ -716,7 +747,6 @@ def reset_theme(theme_name):
 
     for key in keys_to_delete:
         del st.session_state[key]
-
 
 # =========================
 # 단어 익히기
@@ -746,7 +776,6 @@ def show_word_cards(theme_words, theme_name):
             )
 
         st.markdown('</div>', unsafe_allow_html=True)
-
 
 # =========================
 # 퀴즈 풀기
@@ -915,7 +944,6 @@ def show_quiz(theme_words, theme_name):
         if st.button("🔄 다시 풀기", key=f"{theme_name}_reset"):
             reset_theme(theme_name)
             st.rerun()
-
 
 # =========================
 # 탭 구성
