@@ -1,643 +1,583 @@
 import streamlit as st
-import random
-import io
-from gtts import gTTS
-st.set_page_config(page_title="After School English", layout="centered")
+import streamlit.components.v1 as components
+import json
 
-st.title("💫Alex선생님과 함께하는 영어 복습 퀴즈")
+st.set_page_config(
+    page_title="생존 문장 말하기 훈련",
+    page_icon="🎙️",
+    layout="wide"
+)
 
-tabs = st.tabs([
-    "⏰ 시제 맞추기",
-    "❌ 부정문 만들기",
-    "❓ 의문문 만들기",
-    "🎮 불규칙동사"
-])
+# =========================================================
+# 데이터
+# =========================================================
+PRACTICE_ITEMS = [{'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.', 'blank': 'I am ______.', 'answer': 'I am hungry.', 'hint': 'hungry'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 목말라.', 'blank': 'I am ______.', 'answer': 'I am thirsty.', 'hint': 'thirsty'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 피곤해.', 'blank': 'I am ______.', 'answer': 'I am tired.', 'hint': 'tired'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 아파.', 'blank': 'I am ______.', 'answer': 'I am sick.', 'hint': 'sick'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 괜찮아.', 'blank': 'I am ______.', 'answer': 'I am okay.', 'hint': 'okay'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 추워.', 'blank': 'I am ______.', 'answer': 'I am cold.', 'hint': 'cold'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 걱정돼.', 'blank': 'I am ______.', 'answer': 'I am worried.', 'hint': 'worried'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 무서워.', 'blank': 'I am ______.', 'answer': 'I am scared.', 'hint': 'scared'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 물이 필요해.', 'blank': 'I need ______.', 'answer': 'I need water.', 'hint': 'water'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 음식이 필요해.', 'blank': 'I need ______.', 'answer': 'I need food.', 'hint': 'food'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 도움이 필요해.', 'blank': 'I need ______.', 'answer': 'I need help.', 'hint': 'help'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 약이 필요해.', 'blank': 'I need ______.', 'answer': 'I need medicine.', 'hint': 'medicine'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 병원이 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a hospital.', 'hint': 'hospital'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 택시가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a taxi.', 'hint': 'taxi'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 표가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a ticket.', 'hint': 'ticket'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 열쇠가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a key.', 'hint': 'key'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 음식을 원해.', 'blank': 'I want ______.', 'answer': 'I want food.', 'hint': 'food'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 물을 원해.', 'blank': 'I want ______.', 'answer': 'I want water.', 'hint': 'water'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 밥을 원해.', 'blank': 'I want ______.', 'answer': 'I want rice.', 'hint': 'rice'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 빵을 원해.', 'blank': 'I want ______.', 'answer': 'I want bread.', 'hint': 'bread'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 우유를 원해.', 'blank': 'I want ______.', 'answer': 'I want milk.', 'hint': 'milk'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 주스를 원해.', 'blank': 'I want ______.', 'answer': 'I want juice.', 'hint': 'juice'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 커피를 원해.', 'blank': 'I want ______.', 'answer': 'I want coffee.', 'hint': 'coffee'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 간식을 원해.', 'blank': 'I want a ______.', 'answer': 'I want a snack.', 'hint': 'snack'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 먹고 있어.', 'blank': 'I am ______.', 'answer': 'I am eating.', 'hint': 'eating'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 마시고 있어.', 'blank': 'I am ______.', 'answer': 'I am drinking.', 'hint': 'drinking'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 기다리고 있어.', 'blank': 'I am ______.', 'answer': 'I am waiting.', 'hint': 'waiting'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 공부하고 있어.', 'blank': 'I am ______.', 'answer': 'I am studying.', 'hint': 'studying'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 읽고 있어.', 'blank': 'I am ______.', 'answer': 'I am reading.', 'hint': 'reading'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 쓰고 있어.', 'blank': 'I am ______.', 'answer': 'I am writing.', 'hint': 'writing'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 걷고 있어.', 'blank': 'I am ______.', 'answer': 'I am walking.', 'hint': 'walking'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 듣고 있어.', 'blank': 'I am ______.', 'answer': 'I am listening.', 'hint': 'listening'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 집에 갈 거야.', 'blank': 'I will ______ home.', 'answer': 'I will go home.', 'hint': 'go'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 기다릴 거야.', 'blank': 'I will ______.', 'answer': 'I will wait.', 'hint': 'wait'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 너를 도와줄 거야.', 'blank': 'I will ______ you.', 'answer': 'I will help you.', 'hint': 'help'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 영어를 공부할 거야.', 'blank': 'I will ______ English.', 'answer': 'I will study English.', 'hint': 'study'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 점심을 먹을 거야.', 'blank': 'I will ______ lunch.', 'answer': 'I will eat lunch.', 'hint': 'eat'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 물을 마실 거야.', 'blank': 'I will ______ water.', 'answer': 'I will drink water.', 'hint': 'drink'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 아프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not sick.', 'hint': 'sick'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 배고프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not hungry.', 'hint': 'hungry'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 괜찮지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not okay.', 'hint': 'okay'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 몰라.', 'blank': 'I do not ______.', 'answer': 'I do not know.', 'hint': 'know'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 이해하지 못해.', 'blank': 'I do not ______.', 'answer': 'I do not understand.', 'hint': 'understand'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 그것을 원하지 않아.', 'blank': 'I do not ______ it.', 'answer': 'I do not want it.', 'hint': 'want'}, {'cat': '❓ 간단히 물어보기', 'ko': '괜찮니?', 'blank': 'Are you ______?', 'answer': 'Are you okay?', 'hint': 'okay'}, {'cat': '❓ 간단히 물어보기', 'ko': '아프니?', 'blank': 'Are you ______?', 'answer': 'Are you sick?', 'hint': 'sick'}, {'cat': '❓ 간단히 물어보기', 'ko': '배고프니?', 'blank': 'Are you ______?', 'answer': 'Are you hungry?', 'hint': 'hungry'}, {'cat': '❓ 간단히 물어보기', 'ko': '목마르니?', 'blank': 'Are you ______?', 'answer': 'Are you thirsty?', 'hint': 'thirsty'}, {'cat': '❓ 간단히 물어보기', 'ko': '도움이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need help?', 'hint': 'help'}, {'cat': '❓ 간단히 물어보기', 'ko': '물이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need water?', 'hint': 'water'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '화장실은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the bathroom?', 'hint': 'bathroom'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '병원은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the hospital?', 'hint': 'hospital'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '가게는 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the store?', 'hint': 'store'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '역은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the station?', 'hint': 'station'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '지금 몇 시인가요?', 'blank': 'What ______ is it?', 'answer': 'What time is it?', 'hint': 'time'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '이름이 무엇인가요?', 'blank': 'What is your ______?', 'answer': 'What is your name?', 'hint': 'name'}]
 
 
 # =========================================================
-# 공통 결과 메시지 함수
+# 디자인
 # =========================================================
-def show_result_message(final_score, total):
-    if final_score == total:
-        st.success("만점입니다! 정말 훌륭합니다! 🎉")
-        st.balloons()
-    elif final_score >= total * 0.8:
-        st.success("아주 잘했습니다! 영어 문장 구조를 잘 이해하고 있어요!")
-    elif final_score >= total * 0.6:
-        st.info("잘했습니다. 조금만 더 연습하면 훨씬 더 좋아질 수 있습니다.")
-    else:
-        st.warning("괜찮습니다. 틀린 문제를 다시 보면서 천천히 익혀 봅시다.")
+st.markdown(
+    """
+    <style>
+    .main-title-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 30px;
+        padding: 28px 30px;
+        margin-bottom: 22px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+    }
 
+    .main-title-box h1 {
+        margin: 0 0 10px 0;
+        color: #0f172a;
+        font-size: 38px;
+        font-weight: 900;
+    }
 
-# =========================================================
-# 공통 퀴즈 실행 함수
-# =========================================================
-def run_quiz(prefix, title, caption, guide_text, question_data):
-    total = len(question_data)
+    .main-title-box p {
+        margin: 0;
+        color: #475569;
+        font-size: 18px;
+        line-height: 1.7;
+        font-weight: 700;
+    }
 
-    st.subheader(title)
-    st.caption(caption)
-    st.info(guide_text)
+    .guide-box {
+        background: white;
+        border: 1.5px solid #e0f2fe;
+        border-radius: 24px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.045);
+        color: #334155;
+        font-size: 17px;
+        line-height: 1.7;
+        font-weight: 700;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
-    if f"{prefix}_quiz_data" not in st.session_state:
-        quiz_data = question_data.copy()
-        random.shuffle(quiz_data)
-        st.session_state[f"{prefix}_quiz_data"] = quiz_data
+st.markdown(
+    """
+    <div class="main-title-box">
+        <h1>🎙️ 생존 단어 160개로 문장 말하기</h1>
+        <p>
+            한국어 상황을 보고, 빈칸에 들어갈 말을 떠올린 뒤 <b>문장 전체를 영어로 말해 보세요.</b><br>
+            힌트는 정답 단어의 앞 두 글자만 보여 줍니다.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
-    if f"{prefix}_stage" not in st.session_state:
-        st.session_state[f"{prefix}_stage"] = 1
-
-    if f"{prefix}_wrong_indices" not in st.session_state:
-        st.session_state[f"{prefix}_wrong_indices"] = []
-
-    if f"{prefix}_final_wrong_indices" not in st.session_state:
-        st.session_state[f"{prefix}_final_wrong_indices"] = []
-
-    if f"{prefix}_first_score" not in st.session_state:
-        st.session_state[f"{prefix}_first_score"] = 0
-
-    if f"{prefix}_second_score" not in st.session_state:
-        st.session_state[f"{prefix}_second_score"] = 0
-
-    if f"{prefix}_final_score" not in st.session_state:
-        st.session_state[f"{prefix}_final_score"] = 0
-
-    if f"{prefix}_first_celebration_shown" not in st.session_state:
-        st.session_state[f"{prefix}_first_celebration_shown"] = False
-
-    if f"{prefix}_second_celebration_shown" not in st.session_state:
-        st.session_state[f"{prefix}_second_celebration_shown"] = False
-
-    if st.button("처음부터 다시 시작", key=f"reset_{prefix}"):
-        for key in list(st.session_state.keys()):
-            if (
-                key.startswith(f"{prefix}_")
-                or key.startswith(f"q1_{prefix}_")
-                or key.startswith(f"q2_{prefix}_")
-            ):
-                del st.session_state[key]
-        st.rerun()
-
-    st.markdown("---")
-
-    quiz_data = st.session_state[f"{prefix}_quiz_data"]
-    stage = st.session_state[f"{prefix}_stage"]
-
-    # ---------------------------
-    # 1단계: 1차 풀이
-    # ---------------------------
-    if stage == 1:
-        st.subheader("1차 풀이")
-        st.caption("문장을 읽고 빈칸에 알맞은 표현을 고르세요.")
-
-        for i, item in enumerate(quiz_data):
-            st.write(f"### {i+1}. {item['question']}")
-            st.radio(
-                "알맞은 답을 고르세요.",
-                item["choices"],
-                key=f"q1_{prefix}_{i}",
-                index=None
-            )
-            st.markdown("---")
-
-        if st.button("1차 제출", key=f"submit_{prefix}_1"):
-            wrong_indices = []
-            correct_count = 0
-
-            for i, item in enumerate(quiz_data):
-                user_answer = st.session_state.get(f"q1_{prefix}_{i}")
-
-                if user_answer == item["answer"]:
-                    correct_count += 1
-                else:
-                    wrong_indices.append(i)
-
-            st.session_state[f"{prefix}_first_score"] = correct_count
-            st.session_state[f"{prefix}_wrong_indices"] = wrong_indices
-            st.session_state[f"{prefix}_first_celebration_shown"] = False
-            st.session_state[f"{prefix}_stage"] = 1.5
-
-            st.rerun()
-
-    # ---------------------------
-    # 1.5단계: 1차 응원 화면
-    # ---------------------------
-    elif stage == 1.5:
-        score = st.session_state[f"{prefix}_first_score"]
-        wrong_indices = st.session_state[f"{prefix}_wrong_indices"]
-        wrong_count = len(wrong_indices)
-
-        if not st.session_state[f"{prefix}_first_celebration_shown"]:
-            st.balloons()
-            st.session_state[f"{prefix}_first_celebration_shown"] = True
-
-        st.subheader("🎉 1차 풀이 완료!")
-        st.success("좋습니다! 끝까지 1차 문제를 풀어낸 것만으로도 충분히 잘했습니다.")
-        st.write(f"1차 점수: **{score} / {total}**")
-        st.write(f"다시 풀 문제: **{wrong_count}문제**")
-
-        st.progress(score / total)
-
-        if wrong_count == 0:
-            st.success("완벽합니다! 1차에서 모든 문제를 맞혔습니다. 정말 훌륭합니다!")
-            st.info("바로 최종 결과에서 정답을 확인해 봅시다.")
-
-            if st.button("최종 결과 보기", key=f"go_final_{prefix}_after_first"):
-                st.session_state[f"{prefix}_final_score"] = total
-                st.session_state[f"{prefix}_second_score"] = 0
-                st.session_state[f"{prefix}_final_wrong_indices"] = []
-                st.session_state[f"{prefix}_stage"] = 3
-                st.rerun()
-        else:
-            st.info("틀린 문제는 실패가 아니라 다시 배울 기회입니다. 한 번 더 풀면 더 오래 기억할 수 있어요!")
-
-            if st.button("2차 오답 다시 풀기 시작하기", key=f"go_second_{prefix}"):
-                st.session_state[f"{prefix}_stage"] = 2
-                st.rerun()
-
-    # ---------------------------
-    # 2단계: 오답 다시 풀기
-    # ---------------------------
-    elif stage == 2:
-        wrong_indices = st.session_state[f"{prefix}_wrong_indices"]
-
-        st.subheader("2차 풀이")
-        st.write(f"1차 점수: **{st.session_state[f'{prefix}_first_score']} / {total}**")
-        st.warning(f"다시 풀 문제: **{len(wrong_indices)}문제**")
-        st.caption("1차에서 틀린 문제만 다시 풉니다.")
-
-        st.markdown("---")
-
-        for idx in wrong_indices:
-            item = quiz_data[idx]
-            st.write(f"### {idx+1}. {item['question']}")
-            st.radio(
-                "다시 정답을 고르세요.",
-                item["choices"],
-                key=f"q2_{prefix}_{idx}",
-                index=None
-            )
-            st.markdown("---")
-
-        if st.button("2차 제출", key=f"submit_{prefix}_2"):
-            additional_correct = 0
-            final_wrong_indices = []
-
-            for idx in wrong_indices:
-                item = quiz_data[idx]
-                retry_answer = st.session_state.get(f"q2_{prefix}_{idx}")
-
-                if retry_answer == item["answer"]:
-                    additional_correct += 1
-                else:
-                    final_wrong_indices.append(idx)
-
-            st.session_state[f"{prefix}_second_score"] = additional_correct
-            st.session_state[f"{prefix}_final_score"] = (
-                st.session_state[f"{prefix}_first_score"] + additional_correct
-            )
-            st.session_state[f"{prefix}_final_wrong_indices"] = final_wrong_indices
-            st.session_state[f"{prefix}_second_celebration_shown"] = False
-            st.session_state[f"{prefix}_stage"] = 2.5
-
-            st.rerun()
-
-    # ---------------------------
-    # 2.5단계: 2차 응원 화면
-    # ---------------------------
-    elif stage == 2.5:
-        retry_total = len(st.session_state[f"{prefix}_wrong_indices"])
-        second_score = st.session_state[f"{prefix}_second_score"]
-        final_score = st.session_state[f"{prefix}_final_score"]
-        final_wrong_count = len(st.session_state[f"{prefix}_final_wrong_indices"])
-
-        if not st.session_state[f"{prefix}_second_celebration_shown"]:
-            st.balloons()
-            st.session_state[f"{prefix}_second_celebration_shown"] = True
-
-        st.subheader("🌟 2차 풀이 완료!")
-        st.success("끝까지 다시 도전한 것이 정말 멋집니다!")
-        st.write(f"2차에서 **{retry_total}문제 중 {second_score}문제**를 다시 맞혔습니다.")
-        st.write(f"현재 최종 점수: **{final_score} / {total}**")
-
-        st.progress(final_score / total)
-
-        if final_wrong_count == 0:
-            st.success("대단합니다! 2차까지 모두 해결했습니다. 실력이 분명히 늘고 있습니다.")
-        else:
-            st.info(f"아직 헷갈린 문제는 **{final_wrong_count}문제**입니다. 마지막 정답 확인에서 다시 정리해 봅시다.")
-
-        if st.button("최종 결과와 정답 확인하기", key=f"go_final_{prefix}_after_second"):
-            st.session_state[f"{prefix}_stage"] = 3
-            st.rerun()
-
-    # ---------------------------
-    # 3단계: 최종 결과 + 정답 공개
-    # ---------------------------
-    elif stage == 3:
-        st.subheader("최종 결과")
-
-        first_score = st.session_state[f"{prefix}_first_score"]
-        second_score = st.session_state[f"{prefix}_second_score"]
-        final_score = st.session_state[f"{prefix}_final_score"]
-
-        st.write(f"1차 점수: **{first_score} / {total}**")
-        st.write(f"2차에서 다시 맞힌 문제 수: **{second_score}문제**")
-        st.write(f"최종 점수: **{final_score} / {total}**")
-
-        show_result_message(final_score, total)
-
-        st.markdown("---")
-        st.subheader("정답 확인")
-
-        final_wrong_indices = st.session_state.get(f"{prefix}_final_wrong_indices", [])
-
-        for i, item in enumerate(quiz_data):
-            first_answer = st.session_state.get(f"q1_{prefix}_{i}")
-            second_answer = (
-                st.session_state.get(f"q2_{prefix}_{i}")
-                if f"q2_{prefix}_{i}" in st.session_state
-                else None
-            )
-
-            st.write(f"### {i+1}. {item['question']}")
-            st.write(f"- 정답: **{item['answer']}**")
-
-            if second_answer is not None:
-                st.write(f"- 1차 선택: {first_answer if first_answer else '미응답'}")
-                st.write(f"- 2차 선택: {second_answer if second_answer else '미응답'}")
-
-                if i in final_wrong_indices:
-                    st.error("최종 오답")
-                else:
-                    st.success("2차에서 정답")
-            else:
-                st.write(f"- 선택: {first_answer if first_answer else '미응답'}")
-
-                if first_answer == item["answer"]:
-                    st.success("1차에서 정답")
-                else:
-                    st.error("오답")
-
-            st.markdown("---")
+st.markdown(
+    """
+    <div class="guide-box">
+        <b>활동 순서</b><br>
+        1. 한국어 상황을 봅니다. → 2. 영어 빈칸 문장을 봅니다. → 3. 필요하면 앞 두 글자 힌트를 봅니다.<br>
+        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 문장 전체가 인식되면 정답으로 인정됩니다.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
 # =========================================================
-# 문제 데이터 1: 시제 맞추기
+# 말하기 훈련 컴포넌트
 # =========================================================
-tense_question_data = [
-    {"question": "She (     ) a book now.", "answer": "is reading", "choices": ["is reading", "reads", "read", "will read"]},
-    {"question": "I (     ) lunch every day.", "answer": "eat", "choices": ["am eating", "eat", "ate", "will eat"]},
-    {"question": "They (     ) soccer yesterday.", "answer": "played", "choices": ["play", "are playing", "played", "will play"]},
-    {"question": "He (     ) to school tomorrow.", "answer": "will go", "choices": ["goes", "went", "is going", "will go"]},
-    {"question": "We (     ) TV now.", "answer": "are watching", "choices": ["watch", "watched", "are watching", "will watch"]},
-    {"question": "My father (     ) coffee every morning.", "answer": "drinks", "choices": ["is drinking", "drinks", "drank", "will drink"]},
-    {"question": "The baby (     ) last night.", "answer": "cried", "choices": ["cries", "is crying", "cried", "will cry"]},
-    {"question": "I (     ) my homework tonight.", "answer": "will do", "choices": ["do", "am doing", "did", "will do"]},
-    {"question": "She (     ) dinner now.", "answer": "is cooking", "choices": ["cooks", "cooked", "is cooking", "will cook"]},
-    {"question": "He (     ) English very well.", "answer": "speaks", "choices": ["is speaking", "speaks", "spoke", "will speak"]},
-    {"question": "We (     ) in the park yesterday.", "answer": "walked", "choices": ["walk", "are walking", "walked", "will walk"]},
-    {"question": "They (     ) their grandma next weekend.", "answer": "will visit", "choices": ["visit", "visited", "are visiting", "will visit"]},
-    {"question": "I (     ) to music now.", "answer": "am listening", "choices": ["listen", "listened", "am listening", "will listen"]},
-    {"question": "She (     ) breakfast at 7 every day.", "answer": "has", "choices": ["is having", "has", "had", "will have"]},
-    {"question": "My friends (     ) a movie last Saturday.", "answer": "watched", "choices": ["watch", "are watching", "watched", "will watch"]},
-    {"question": "He (     ) his uncle next month.", "answer": "will meet", "choices": ["meets", "met", "is meeting", "will meet"]},
-    {"question": "The students (     ) in the classroom now.", "answer": "are studying", "choices": ["study", "studied", "are studying", "will study"]},
-    {"question": "My mother (     ) dinner every evening.", "answer": "makes", "choices": ["is making", "makes", "made", "will make"]},
-    {"question": "I (     ) my phone at home yesterday.", "answer": "left", "choices": ["leave", "am leaving", "left", "will leave"]},
-    {"question": "We (     ) to Busan next week.", "answer": "will travel", "choices": ["travel", "traveled", "are traveling", "will travel"]},
-]
+def speaking_practice_component(items):
+    items_json = json.dumps(items, ensure_ascii=False)
+
+    html = r"""
+    <div id="speaking-app" style="
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 30px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    ">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
+            <label style="font-weight:900; color:#334155;">문장 구조 선택</label>
+            <select id="categorySelect" style="
+                padding: 10px 14px;
+                border-radius: 999px;
+                border: 1.5px solid #bae6fd;
+                font-size: 15px;
+                font-weight: 800;
+                color: #0f172a;
+                background: white;
+            "></select>
+
+            <button id="randomBtn" style="
+                border: 1.5px solid #c7d2fe;
+                background: white;
+                color: #3730a3;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🎲 랜덤</button>
+
+            <button id="resetBtn" style="
+                border: 1.5px solid #fed7aa;
+                background: #fff7ed;
+                color: #9a3412;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🔄 점수 초기화</button>
+        </div>
+
+        <div style="
+            background:white;
+            border-radius:26px;
+            padding:24px;
+            border:1.5px solid #e0f2fe;
+            box-shadow:0 5px 16px rgba(0,0,0,0.055);
+        ">
+            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                <div id="categoryLabel" style="
+                    display:inline-block;
+                    background:#eef6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bfdbfe;
+                "></div>
+
+                <div id="scoreLabel" style="
+                    display:inline-block;
+                    background:#f0fdf4;
+                    color:#166534;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bbf7d0;
+                ">0 / 0</div>
+            </div>
+
+            <div style="
+                font-size: 30px;
+                font-weight: 900;
+                color: #111827;
+                line-height: 1.45;
+                margin-bottom: 18px;
+            " id="koPrompt">
+                한국어 상황
+            </div>
+
+            <div style="
+                background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+                border: 1.5px solid #dbeafe;
+                border-radius: 22px;
+                padding: 22px 20px;
+                margin-bottom: 18px;
+                font-size: 34px;
+                font-weight: 900;
+                color: #0f172a;
+                line-height: 1.5;
+            " id="blankSentence">
+                I am ______.
+            </div>
+
+            <div id="hintBox" style="
+                display:none;
+                background:#fffbeb;
+                border:1.5px solid #fde68a;
+                color:#92400e;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:16px;
+                font-size:22px;
+                font-weight:900;
+            "></div>
+
+            <div id="answerBox" style="
+                display:none;
+                background:#ecfdf5;
+                border:1.5px solid #bbf7d0;
+                color:#166534;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:16px;
+                font-size:22px;
+                font-weight:900;
+            "></div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
+                <button id="hintBtn" style="
+                    border:1.5px solid #fde68a;
+                    background:#fffbeb;
+                    color:#92400e;
+                    border-radius:999px;
+                    padding:11px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                ">💡 앞 두 글자 힌트</button>
+
+                <button id="listenBtn" style="
+                    border:1.5px solid #bfdbfe;
+                    background:#eff6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:11px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                ">🔊 정답 듣기</button>
+
+                <button id="answerBtn" style="
+                    border:1.5px solid #bbf7d0;
+                    background:#f0fdf4;
+                    color:#166534;
+                    border-radius:999px;
+                    padding:11px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                ">👀 정답 보기</button>
+
+                <button id="micBtn" style="
+                    border:1.5px solid #fecaca;
+                    background:#fff1f2;
+                    color:#be123c;
+                    border-radius:999px;
+                    padding:11px 18px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:16px;
+                ">🎙️ 말하기 시작</button>
+
+                <button id="nextBtn" style="
+                    border:1.5px solid #c7d2fe;
+                    background:#eef2ff;
+                    color:#3730a3;
+                    border-radius:999px;
+                    padding:11px 18px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:16px;
+                ">➡️ 다음 문제</button>
+            </div>
+
+            <div style="
+                background:#f8fafc;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:14px;
+                min-height:54px;
+            ">
+                <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 문장</div>
+                <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155;">아직 말하지 않았습니다.</div>
+            </div>
+
+            <div id="resultBox" style="
+                background:#f1f5f9;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                font-size:20px;
+                font-weight:900;
+                color:#334155;
+            ">
+                마이크 버튼을 누르고 문장 전체를 말해 보세요.
+            </div>
+        </div>
+
+        <div style="
+            margin-top:14px;
+            color:#64748b;
+            font-size:13px;
+            line-height:1.6;
+            font-weight:700;
+        ">
+            ※ Chrome 계열 브라우저에서 음성 인식이 가장 잘 작동합니다.<br>
+            ※ 마이크 권한 요청이 나오면 허용을 눌러 주세요.
+        </div>
+    </div>
+
+    <script>
+    const ITEMS = __ITEMS_JSON__;
+
+    let currentList = [];
+    let currentIndex = 0;
+    let currentItem = null;
+    let score = 0;
+    let attempts = 0;
+    let alreadyCorrect = false;
+
+    const categorySelect = document.getElementById("categorySelect");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const categoryLabel = document.getElementById("categoryLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const koPrompt = document.getElementById("koPrompt");
+    const blankSentence = document.getElementById("blankSentence");
+    const hintBox = document.getElementById("hintBox");
+    const answerBox = document.getElementById("answerBox");
+    const hintBtn = document.getElementById("hintBtn");
+    const listenBtn = document.getElementById("listenBtn");
+    const answerBtn = document.getElementById("answerBtn");
+    const micBtn = document.getElementById("micBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const transcriptBox = document.getElementById("transcriptBox");
+    const resultBox = document.getElementById("resultBox");
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    function uniqueCategories() {
+        const cats = ["전체"];
+        ITEMS.forEach(item => {
+            if (!cats.includes(item.cat)) cats.push(item.cat);
+        });
+        return cats;
+    }
+
+    function initCategories() {
+        const cats = uniqueCategories();
+        categorySelect.innerHTML = "";
+        cats.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.innerText = cat;
+            categorySelect.appendChild(option);
+        });
+    }
+
+    function getFilteredItems() {
+        const selected = categorySelect.value;
+        if (selected === "전체") return ITEMS.slice();
+        return ITEMS.filter(item => item.cat === selected);
+    }
+
+    function shuffleArray(arr) {
+        const copied = arr.slice();
+        for (let i = copied.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copied[i], copied[j]] = [copied[j], copied[i]];
+        }
+        return copied;
+    }
+
+    function makeTwoLetterHint(answerWord) {
+        if (!answerWord) return "";
+
+        return answerWord.split(" ").map(word => {
+            const clean = word.trim();
+            if (clean.length <= 2) return clean;
+            return clean.slice(0, 2) + "_".repeat(clean.length - 2);
+        }).join(" ");
+    }
+
+    function normalizeText(text) {
+        return text
+            .toLowerCase()
+            .replace(/[.,!?;:'"’‘“”]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function isCorrectSpeech(spoken, answer) {
+        const s = normalizeText(spoken);
+        const a = normalizeText(answer);
+
+        if (s === a) return true;
+
+        // 음성 인식이 앞뒤에 말을 덧붙이는 경우를 조금 허용
+        if (s.includes(a)) return true;
+
+        return false;
+    }
+
+    function updateScore() {
+        scoreLabel.innerText = score + " / " + attempts;
+    }
+
+    function loadQuestion(index = 0) {
+        if (currentList.length === 0) {
+            currentList = getFilteredItems();
+        }
+
+        if (index >= currentList.length) index = 0;
+        if (index < 0) index = currentList.length - 1;
+
+        currentIndex = index;
+        currentItem = currentList[currentIndex];
+        alreadyCorrect = false;
+
+        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
+        koPrompt.innerText = currentItem.ko;
+        blankSentence.innerText = currentItem.blank;
+        hintBox.style.display = "none";
+        answerBox.style.display = "none";
+        hintBox.innerText = "";
+        answerBox.innerText = "";
+        transcriptBox.innerText = "아직 말하지 않았습니다.";
+        resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요.";
+        resultBox.style.background = "#f1f5f9";
+        resultBox.style.borderColor = "#e2e8f0";
+        resultBox.style.color = "#334155";
+    }
+
+    function speak(text) {
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.82;
+        utterance.pitch = 1.05;
+
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v =>
+            v.lang && v.lang.toLowerCase().startsWith("en") &&
+            /(samantha|jenny|aria|zira|google us english|karen|victoria|female)/i.test(v.name)
+        );
+        if (preferred) utterance.voice = preferred;
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function checkSpeech(spokenText) {
+        attempts += 1;
+
+        if (isCorrectSpeech(spokenText, currentItem.answer)) {
+            if (!alreadyCorrect) {
+                score += 1;
+                alreadyCorrect = true;
+            }
+
+            resultBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:17px;'>잘 말했어요: " + currentItem.answer + "</span>";
+            resultBox.style.background = "#ecfdf5";
+            resultBox.style.borderColor = "#bbf7d0";
+            resultBox.style.color = "#166534";
+
+            speak(currentItem.answer);
+        } else {
+            resultBox.innerHTML =
+                "🍊 조금 달라요. 다시 말해 보세요.<br>" +
+                "<span style='font-size:17px;'>목표 문장: " + currentItem.answer + "</span>";
+            resultBox.style.background = "#fff7ed";
+            resultBox.style.borderColor = "#fed7aa";
+            resultBox.style.color = "#9a3412";
+        }
+
+        updateScore();
+    }
+
+    function startRecognition() {
+        if (!SpeechRecognition) {
+            resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
+            resultBox.style.background = "#fef2f2";
+            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.color = "#991b1b";
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.maxAlternatives = 3;
+
+        micBtn.innerText = "🎙️ 듣는 중...";
+        resultBox.innerText = "지금 말해 보세요.";
+        resultBox.style.background = "#eff6ff";
+        resultBox.style.borderColor = "#bfdbfe";
+        resultBox.style.color = "#1d4ed8";
+
+        recognition.onresult = function(event) {
+            let bestTranscript = "";
+            let matched = false;
+
+            for (let i = 0; i < event.results[0].length; i++) {
+                const transcript = event.results[0][i].transcript;
+                if (i === 0) bestTranscript = transcript;
+
+                if (isCorrectSpeech(transcript, currentItem.answer)) {
+                    bestTranscript = transcript;
+                    matched = true;
+                    break;
+                }
+            }
+
+            transcriptBox.innerText = bestTranscript;
+            checkSpeech(bestTranscript);
+        };
+
+        recognition.onerror = function(event) {
+            resultBox.innerText = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
+            resultBox.style.background = "#fef2f2";
+            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.color = "#991b1b";
+            micBtn.innerText = "🎙️ 말하기 시작";
+        };
+
+        recognition.onend = function() {
+            micBtn.innerText = "🎙️ 말하기 시작";
+        };
+
+        recognition.start();
+    }
+
+    categorySelect.addEventListener("change", function() {
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        loadQuestion(0);
+    });
+
+    randomBtn.addEventListener("click", function() {
+        currentList = shuffleArray(getFilteredItems());
+        loadQuestion(0);
+    });
+
+    resetBtn.addEventListener("click", function() {
+        score = 0;
+        attempts = 0;
+        alreadyCorrect = false;
+        updateScore();
+        resultBox.innerText = "점수를 초기화했습니다.";
+    });
+
+    hintBtn.addEventListener("click", function() {
+        hintBox.style.display = "block";
+        hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+    });
+
+    listenBtn.addEventListener("click", function() {
+        speak(currentItem.answer);
+    });
+
+    answerBtn.addEventListener("click", function() {
+        answerBox.style.display = "block";
+        answerBox.innerText = "정답: " + currentItem.answer;
+    });
+
+    micBtn.addEventListener("click", startRecognition);
+
+    nextBtn.addEventListener("click", function() {
+        loadQuestion(currentIndex + 1);
+    });
+
+    initCategories();
+    currentList = getFilteredItems();
+    updateScore();
+    loadQuestion(0);
+    </script>
+    """
+
+    html = html.replace("__ITEMS_JSON__", items_json)
+    components.html(html, height=760)
 
 
-# =========================================================
-# 문제 데이터 2: 부정문 만들기
-# =========================================================
-negative_question_data = [
-    {"question": "I (     ) a student.", "answer": "am not", "choices": ["am not", "do not", "does not", "did not"]},
-    {"question": "She (     ) happy now.", "answer": "is not", "choices": ["is not", "does not", "did not", "will not"]},
-    {"question": "They (     ) in the classroom.", "answer": "are not", "choices": ["are not", "do not", "does not", "did not"]},
-    {"question": "I (     ) like coffee.", "answer": "do not", "choices": ["am not", "do not", "does not", "was not"]},
-    {"question": "He (     ) play soccer.", "answer": "does not", "choices": ["is not", "do not", "does not", "did not"]},
-    {"question": "We (     ) go to school yesterday.", "answer": "did not", "choices": ["are not", "do not", "does not", "did not"]},
-    {"question": "She (     ) eat breakfast every day.", "answer": "does not", "choices": ["is not", "do not", "does not", "did not"]},
-    {"question": "My friends (     ) watch TV last night.", "answer": "did not", "choices": ["are not", "do not", "does not", "did not"]},
-    {"question": "You (     ) tired.", "answer": "are not", "choices": ["are not", "do not", "does not", "did not"]},
-    {"question": "He (     ) at home yesterday.", "answer": "was not", "choices": ["is not", "was not", "does not", "did not"]},
-    {"question": "They (     ) busy last week.", "answer": "were not", "choices": ["are not", "were not", "do not", "did not"]},
-    {"question": "I (     ) study English yesterday.", "answer": "did not", "choices": ["am not", "do not", "does not", "did not"]},
-    {"question": "My brother (     ) clean his room.", "answer": "does not", "choices": ["is not", "do not", "does not", "did not"]},
-    {"question": "We (     ) have lunch at school tomorrow.", "answer": "will not", "choices": ["are not", "do not", "did not", "will not"]},
-    {"question": "She (     ) call me tonight.", "answer": "will not", "choices": ["is not", "does not", "did not", "will not"]},
-    {"question": "The dog (     ) sleep on the bed.", "answer": "does not", "choices": ["is not", "do not", "does not", "did not"]},
-    {"question": "I (     ) late for school.", "answer": "am not", "choices": ["am not", "do not", "does not", "did not"]},
-    {"question": "The students (     ) studying now.", "answer": "are not", "choices": ["are not", "do not", "does not", "did not"]},
-    {"question": "He (     ) go to bed early.", "answer": "does not", "choices": ["is not", "do not", "does not", "did not"]},
-    {"question": "We (     ) clean the room last Sunday.", "answer": "did not", "choices": ["are not", "do not", "does not", "did not"]},
-]
-
-
-# =========================================================
-# 문제 데이터 3: 의문문 만들기
-# =========================================================
-question_question_data = [
-    {"question": "(     ) you a student?", "answer": "Are", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) she happy now?", "answer": "Is", "choices": ["Is", "Does", "Did", "Will"]},
-    {"question": "(     ) they in the classroom?", "answer": "Are", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) you like coffee?", "answer": "Do", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) he play soccer?", "answer": "Does", "choices": ["Is", "Do", "Does", "Did"]},
-    {"question": "(     ) they go to school yesterday?", "answer": "Did", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) she eat breakfast every day?", "answer": "Does", "choices": ["Is", "Do", "Does", "Did"]},
-    {"question": "(     ) your friends watch TV last night?", "answer": "Did", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) you tired?", "answer": "Are", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) he at home yesterday?", "answer": "Was", "choices": ["Is", "Was", "Does", "Did"]},
-    {"question": "(     ) they busy last week?", "answer": "Were", "choices": ["Are", "Were", "Do", "Did"]},
-    {"question": "(     ) you study English yesterday?", "answer": "Did", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) your brother clean his room?", "answer": "Does", "choices": ["Is", "Do", "Does", "Did"]},
-    {"question": "(     ) we have lunch at school tomorrow?", "answer": "Will", "choices": ["Are", "Do", "Did", "Will"]},
-    {"question": "(     ) she call me tonight?", "answer": "Will", "choices": ["Is", "Does", "Did", "Will"]},
-    {"question": "(     ) the dog sleep on the bed?", "answer": "Does", "choices": ["Is", "Do", "Does", "Did"]},
-    {"question": "(     ) I late for school?", "answer": "Am", "choices": ["Am", "Do", "Does", "Did"]},
-    {"question": "(     ) the students studying now?", "answer": "Are", "choices": ["Are", "Do", "Does", "Did"]},
-    {"question": "(     ) he go to bed early?", "answer": "Does", "choices": ["Is", "Do", "Does", "Did"]},
-    {"question": "(     ) we clean the room last Sunday?", "answer": "Did", "choices": ["Are", "Do", "Does", "Did"]},
-]
-
-
-# =========================================================
-# 탭 실행
-# =========================================================
-with tabs[0]:
-    run_quiz(
-        prefix="tense",
-        title="⏰ 일반동사 / Be동사 시제 맞추기",
-        caption="현재형, 현재진행형, 과거형, 미래형 중 알맞은 표현을 고르세요.",
-        guide_text="""
-        현재형: 평소에 하는 일  
-        현재진행형: 지금 하고 있는 일 → be동사 + -ing  
-        과거형: 이미 일어난 일  
-        미래형: 앞으로 일어날 일 → will + 동사원형
-        """,
-        question_data=tense_question_data
-    )
-
-with tabs[1]:
-    run_quiz(
-        prefix="negative",
-        title="❌ 일반동사 / Be동사의 부정문 만들기",
-        caption="빈칸에 알맞은 부정 표현을 고르세요.",
-        guide_text="""
-        Be동사의 부정문: am / is / are + not  
-        일반동사의 부정문: do not / does not / did not + 동사원형  
-        미래 부정문: will not + 동사원형
-        """,
-        question_data=negative_question_data
-    )
-
-with tabs[2]:
-    run_quiz(
-        prefix="question",
-        title="❓ 일반동사 / Be동사의 의문문 만들기",
-        caption="빈칸에 알맞은 의문문 표현을 고르세요.",
-        guide_text="""
-        Be동사 의문문: Am / Is / Are + 주어 ~ ?  
-        일반동사 의문문: Do / Does / Did + 주어 + 동사원형 ~ ?  
-        미래 의문문: Will + 주어 + 동사원형 ~ ?
-        """,
-        question_data=question_question_data
-    )
-    # =========================================================
-# 영어 발음 오디오 생성 함수
-# =========================================================
-@st.cache_data
-def make_tts_audio(text):
-    fp = io.BytesIO()
-    tts = gTTS(text=text, lang="en")
-    tts.write_to_fp(fp)
-    fp.seek(0)
-    return fp.read()
-
-
-# =========================================================
-# 불규칙동사 2지선다 퀴즈 함수
-# =========================================================
-def run_irregular_quiz():
-    st.subheader("🎮 불규칙동사 2지선다 퀴즈")
-    st.caption("현재형을 보고 알맞은 과거형을 고르세요.")
-    st.info("불규칙동사는 -ed를 붙이지 않고 모양이 다르게 바뀌는 동사입니다. 예: go → went")
-
-    irregular_verbs = [
-        {"base": "be", "past": "was / were", "meaning": "~이다 / 있다"},
-        {"base": "become", "past": "became", "meaning": "~이 되다"},
-        {"base": "begin", "past": "began", "meaning": "시작하다"},
-        {"base": "break", "past": "broke", "meaning": "깨다 / 부수다"},
-        {"base": "bring", "past": "brought", "meaning": "가져오다"},
-        {"base": "build", "past": "built", "meaning": "짓다 / 만들다"},
-        {"base": "buy", "past": "bought", "meaning": "사다"},
-        {"base": "catch", "past": "caught", "meaning": "잡다"},
-        {"base": "choose", "past": "chose", "meaning": "고르다"},
-        {"base": "come", "past": "came", "meaning": "오다"},
-
-        {"base": "cut", "past": "cut", "meaning": "자르다"},
-        {"base": "do", "past": "did", "meaning": "하다"},
-        {"base": "draw", "past": "drew", "meaning": "그리다"},
-        {"base": "drink", "past": "drank", "meaning": "마시다"},
-        {"base": "drive", "past": "drove", "meaning": "운전하다"},
-        {"base": "eat", "past": "ate", "meaning": "먹다"},
-        {"base": "fall", "past": "fell", "meaning": "떨어지다 / 넘어지다"},
-        {"base": "feel", "past": "felt", "meaning": "느끼다"},
-        {"base": "find", "past": "found", "meaning": "찾다 / 발견하다"},
-        {"base": "fly", "past": "flew", "meaning": "날다"},
-
-        {"base": "forget", "past": "forgot", "meaning": "잊다"},
-        {"base": "get", "past": "got", "meaning": "얻다 / 받다 / 되다"},
-        {"base": "give", "past": "gave", "meaning": "주다"},
-        {"base": "go", "past": "went", "meaning": "가다"},
-        {"base": "grow", "past": "grew", "meaning": "자라다 / 기르다"},
-        {"base": "have", "past": "had", "meaning": "가지다 / 먹다"},
-        {"base": "hear", "past": "heard", "meaning": "듣다"},
-        {"base": "hold", "past": "held", "meaning": "잡다 / 열다"},
-        {"base": "keep", "past": "kept", "meaning": "유지하다 / 보관하다"},
-        {"base": "know", "past": "knew", "meaning": "알다"},
-
-        {"base": "leave", "past": "left", "meaning": "떠나다 / 남기다"},
-        {"base": "lose", "past": "lost", "meaning": "잃다 / 지다"},
-        {"base": "make", "past": "made", "meaning": "만들다"},
-        {"base": "meet", "past": "met", "meaning": "만나다"},
-        {"base": "pay", "past": "paid", "meaning": "지불하다"},
-        {"base": "put", "past": "put", "meaning": "놓다 / 두다"},
-        {"base": "read", "past": "read", "meaning": "읽다"},
-        {"base": "ride", "past": "rode", "meaning": "타다"},
-        {"base": "run", "past": "ran", "meaning": "달리다"},
-        {"base": "say", "past": "said", "meaning": "말하다"},
-
-        {"base": "see", "past": "saw", "meaning": "보다"},
-        {"base": "sell", "past": "sold", "meaning": "팔다"},
-        {"base": "send", "past": "sent", "meaning": "보내다"},
-        {"base": "sing", "past": "sang", "meaning": "노래하다"},
-        {"base": "sit", "past": "sat", "meaning": "앉다"},
-        {"base": "sleep", "past": "slept", "meaning": "자다"},
-        {"base": "speak", "past": "spoke", "meaning": "말하다"},
-        {"base": "spend", "past": "spent", "meaning": "쓰다 / 보내다"},
-        {"base": "stand", "past": "stood", "meaning": "서다"},
-        {"base": "swim", "past": "swam", "meaning": "수영하다"},
-    ]
-
-    if "irregular_stage" not in st.session_state:
-        st.session_state.irregular_stage = 1
-
-    if "irregular_quiz_data" not in st.session_state:
-        quiz_data = irregular_verbs.copy()
-        random.shuffle(quiz_data)
-
-        question_data = []
-
-        for item in quiz_data:
-            wrong_pool = [
-                verb["past"] for verb in irregular_verbs
-                if verb["past"] != item["past"]
-            ]
-
-            wrong_answer = random.choice(wrong_pool)
-            choices = [item["past"], wrong_answer]
-            random.shuffle(choices)
-
-            question_data.append({
-                "base": item["base"],
-                "past": item["past"],
-                "meaning": item["meaning"],
-                "choices": choices
-            })
-
-        st.session_state.irregular_quiz_data = question_data
-
-    if "irregular_score" not in st.session_state:
-        st.session_state.irregular_score = 0
-
-    if "irregular_wrong_indices" not in st.session_state:
-        st.session_state.irregular_wrong_indices = []
-
-    if st.button("처음부터 다시 시작", key="reset_irregular"):
-        for key in list(st.session_state.keys()):
-            if key.startswith("irregular") or key.startswith("ir_q_"):
-                del st.session_state[key]
-        st.rerun()
-
-    st.markdown("---")
-
-    quiz_data = st.session_state.irregular_quiz_data
-    total = len(quiz_data)
-
-    # ---------------------------
-    # 1단계: 문제 풀기
-    # ---------------------------
-    if st.session_state.irregular_stage == 1:
-        st.subheader("1차 풀이")
-        st.caption("현재형을 보고 알맞은 과거형을 고르세요.")
-
-        for i, item in enumerate(quiz_data):
-            st.markdown(
-                f"""
-                <div style="
-                    background:#ffffff;
-                    border-radius:18px;
-                    padding:18px;
-                    margin:14px 0;
-                    box-shadow:0 4px 12px rgba(0,0,0,0.05);
-                    border:1px solid #eeeeee;
-                ">
-                    <h3>{i+1}. {item['base']} → ?</h3>
-                    <p style="font-size:18px;">뜻: <b>{item['meaning']}</b></p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            st.radio(
-                "알맞은 과거형을 고르세요.",
-                item["choices"],
-                key=f"ir_q_{i}",
-                index=None
-            )
-
-            st.markdown("---")
-
-        if st.button("제출하기", key="submit_irregular"):
-            score = 0
-            wrong_indices = []
-
-            for i, item in enumerate(quiz_data):
-                user_answer = st.session_state.get(f"ir_q_{i}")
-
-                if user_answer == item["past"]:
-                    score += 1
-                else:
-                    wrong_indices.append(i)
-
-            st.session_state.irregular_score = score
-            st.session_state.irregular_wrong_indices = wrong_indices
-            st.session_state.irregular_stage = 2
-            st.rerun()
-
-    # ---------------------------
-    # 2단계: 결과 + 발음 듣기
-    # ---------------------------
-    elif st.session_state.irregular_stage == 2:
-        score = st.session_state.irregular_score
-        wrong_indices = st.session_state.irregular_wrong_indices
-
-        st.subheader("🎉 결과 확인")
-        st.write(f"점수: **{score} / {total}**")
-        st.progress(score / total)
-
-        if score == total:
-            st.success("만점입니다! 불규칙동사를 아주 잘 익혔습니다! 🎉")
-            st.balloons()
-        elif score >= total * 0.8:
-            st.success("아주 잘했습니다! 조금만 더 복습하면 완벽합니다.")
-        elif score >= total * 0.6:
-            st.info("좋습니다. 헷갈린 동사만 다시 확인해 봅시다.")
-        else:
-            st.warning("괜찮습니다. 불규칙동사는 반복해서 보면 익숙해집니다.")
-
-        st.markdown("---")
-        st.subheader("📌 정답 확인")
-
-        for i, item in enumerate(quiz_data):
-            user_answer = st.session_state.get(f"ir_q_{i}", "미응답")
-
-            st.markdown(
-                f"""
-                <div style="
-                    background:#ffffff;
-                    border-radius:18px;
-                    padding:18px;
-                    margin:14px 0;
-                    box-shadow:0 4px 12px rgba(0,0,0,0.05);
-                    border:1px solid #eeeeee;
-                ">
-                    <h3>{i+1}. {item['base']} → {item['past']}</h3>
-                    <p>뜻: <b>{item['meaning']}</b></p>
-                    <p>내 선택: <b>{user_answer}</b></p>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            if i in wrong_indices:
-                st.error("오답")
-            else:
-                st.success("정답")
-
-        st.markdown("---")
-        st.subheader("🔊 불규칙동사 발음 듣기")
-
-        st.caption("현재형과 과거형을 함께 들어 보세요.")
-
-        for i, item in enumerate(quiz_data):
-            text_for_audio = f"{item['base']}. {item['past']}."
-
-            with st.expander(f"{i+1}. {item['base']} → {item['past']}"):
-                st.write(f"뜻: **{item['meaning']}**")
-                st.audio(make_tts_audio(text_for_audio), format="audio/mp3")
-with tabs[3]:
-    run_irregular_quiz()
+speaking_practice_component(PRACTICE_ITEMS)
