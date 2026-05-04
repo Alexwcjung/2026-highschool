@@ -30,27 +30,36 @@ st.markdown(
     
     @media (max-width: 640px) {
         #speaking-app {
-            padding: 14px !important;
-            border-radius: 24px !important;
+            padding: 12px !important;
+            border-radius: 22px !important;
         }
         #speaking-app #blankSentence {
-            font-size: 23px !important;
-            padding: 16px 14px !important;
+            font-size: 22px !important;
+            padding: 15px 13px !important;
+            margin-bottom: 10px !important;
         }
         #speaking-app #koPrompt {
-            font-size: 22px !important;
-            margin-bottom: 12px !important;
+            font-size: 21px !important;
+            margin-bottom: 10px !important;
         }
         #speaking-app #transcriptBox {
-            font-size: 20px !important;
+            font-size: 18px !important;
+            line-height: 1.55 !important;
         }
         #speaking-app #micBtn {
-            width: 86px !important;
-            height: 86px !important;
-            font-size: 30px !important;
+            width: 82px !important;
+            height: 82px !important;
+            font-size: 28px !important;
+        }
+        #speaking-app #hintBtn,
+        #speaking-app #answerBtn,
+        #speaking-app #listenBtn,
+        #speaking-app #nextBtn {
+            padding: 9px 13px !important;
+            font-size: 14px !important;
         }
         #speaking-app #hintBox {
-            font-size: 18px !important;
+            font-size: 17px !important;
         }
     }
 
@@ -630,12 +639,21 @@ def speaking_practice_component(items):
         updateScore();
     }
 
-    function startRecognition() {
+    async function startRecognition() {
         if (!SpeechRecognition) {
-            resultBox.style.display = "block";
-            resultBox.innerText = "Chrome에서 실행해 주세요.";
-            resultBox.style.color = "#991b1b";
+            transcriptBox.innerText = "Chrome에서 열어 주세요.";
             return;
+        }
+
+        // 모바일에서 먼저 마이크 권한 요청
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+            } catch (err) {
+                transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                return;
+            }
         }
 
         window.speechSynthesis.cancel();
@@ -649,6 +667,7 @@ def speaking_practice_component(items):
         micBtn.innerText = "👂";
         resultBox.style.display = "none";
         resultBox.innerText = "";
+        transcriptBox.innerText = "";
 
         recognition.onresult = function(event) {
             let spokenText = "";
@@ -672,9 +691,13 @@ def speaking_practice_component(items):
         };
 
         recognition.onerror = function(event) {
-            resultBox.style.display = "block";
-            resultBox.innerText = "다시 눌러 주세요.";
-            resultBox.style.color = "#991b1b";
+            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+            } else if (event.error === "no-speech") {
+                transcriptBox.innerText = "";
+            } else {
+                transcriptBox.innerText = "다시 눌러 주세요.";
+            }
             micBtn.innerText = "🎙️";
         };
 
@@ -682,7 +705,12 @@ def speaking_practice_component(items):
             micBtn.innerText = "🎙️";
         };
 
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (err) {
+            transcriptBox.innerText = "다시 눌러 주세요.";
+            micBtn.innerText = "🎙️";
+        }
     }
 
     categorySelect.addEventListener("change", function() {
