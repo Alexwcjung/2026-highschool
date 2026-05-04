@@ -260,6 +260,7 @@ st.markdown(
         <div class="hero-text">
             • 각 테마는 <b>오늘의 생존 대화</b>로 시작합니다.<br>
             • 대화를 듣고, 바로 아래에서 핵심 단어를 익힙니다.<br>
+            • 이 단어들만 외우면 미국에서 생존이 가능합니다. 힘냅시다.<br>
     </div>
     """,
     unsafe_allow_html=True
