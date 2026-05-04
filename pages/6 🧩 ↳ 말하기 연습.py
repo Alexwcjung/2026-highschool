@@ -201,17 +201,7 @@ def speaking_practice_component(items):
                 font-weight:900;
             "></div>
 
-            <div id="answerBox" style="
-                display:none;
-                background:#ecfdf5;
-                border:1.5px solid #bbf7d0;
-                color:#166534;
-                border-radius:18px;
-                padding:14px 16px;
-                margin-bottom:16px;
-                font-size:22px;
-                font-weight:900;
-            "></div>
+            <div id="answerBox" style="display:none;"></div>
 
             <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
                 <button id="hintBtn" style="
@@ -272,25 +262,8 @@ def speaking_practice_component(items):
                 ">➡️ 다음 문제</button>
             </div>
 
-            <div style="
-                background:#f8fafc;
-                border:1.5px solid #e2e8f0;
-                border-radius:18px;
-                padding:14px 16px;
-                margin-bottom:14px;
-                min-height:54px;
-            ">
-                <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:8px;">내가 말한 문장</div>
-                <div id="transcriptBox" style="
-                    font-size:22px;
-                    font-weight:900;
-                    color:#334155;
-                    background:linear-gradient(135deg,#ede9fe,#ddd6fe);
-                    border-radius:18px;
-                    padding:12px 14px;
-                    min-height:36px;
-                    line-height:1.7;
-                ">아직 말하지 않았습니다.</div>
+            <div style="display:none;">
+                <div id="transcriptBox">아직 말하지 않았습니다.</div>
             </div>
 
             <div id="resultBox" style="
@@ -511,6 +484,69 @@ def speaking_practice_component(items):
         return html;
     }
 
+
+    function makeBlankSentenceHtml(blankText) {
+        const parts = blankText.split(/(______)/g);
+
+        return parts.map(part => {
+            if (part === "______") {
+                return "<span style='display:inline-block; min-width:120px; height:42px; vertical-align:middle; background:#e0f2fe; border-radius:14px; margin:0 6px; border:1.5px solid #bae6fd;'></span>";
+            }
+
+            return escapeHtml(part);
+        }).join("");
+    }
+
+    function makeSpokenSentenceHtml(spoken, answer) {
+        const spokenWordsRaw = spoken.trim().split(/\s+/).filter(w => w.length > 0);
+        const spokenWordsNorm = wordsOnly(spoken);
+        const answerWordsNorm = wordsOnly(answer);
+
+        if (spokenWordsRaw.length === 0) {
+            return makeBlankSentenceHtml(currentItem.blank);
+        }
+
+        let html = "";
+
+        for (let i = 0; i < spokenWordsRaw.length; i++) {
+            const raw = escapeHtml(spokenWordsRaw[i]);
+            const norm = spokenWordsNorm[i] || "";
+            const target = answerWordsNorm[i] || "";
+
+            let bg = "#fee2e2";
+            let color = "#991b1b";
+            let border = "#fecaca";
+
+            if (norm === target) {
+                bg = "#dcfce7";
+                color = "#166534";
+                border = "#bbf7d0";
+            }
+
+            html += "<span style='display:inline-block; margin:4px 5px; padding:6px 11px; border-radius:999px; background:" +
+                    bg + "; color:" + color + "; border:1px solid " + border + "; font-weight:900;'>" +
+                    raw + "</span>";
+        }
+
+        if (spokenWordsNorm.length < answerWordsNorm.length) {
+            const missing = answerWordsNorm.slice(spokenWordsNorm.length);
+            missing.forEach(w => {
+                html += "<span style='display:inline-block; margin:4px 5px; padding:6px 11px; border-radius:999px; background:#f1f5f9; color:#94a3b8; border:1px dashed #cbd5e1; font-weight:900;'>"
+                        + w + "</span>";
+            });
+        }
+
+        return html;
+    }
+
+    function makeAnswerSentenceHtml(answer) {
+        return answer.split(/\s+/).map(word => {
+            return "<span style='display:inline-block; margin:4px 5px; padding:6px 11px; border-radius:999px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; font-weight:900;'>" +
+                    escapeHtml(word) + "</span>";
+        }).join("");
+    }
+
+
     function updateScore() {
         scoreLabel.innerText = score + " / " + attempts;
     }
@@ -532,7 +568,7 @@ def speaking_practice_component(items):
         koPrompt.innerHTML =
             "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
             "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
-        blankSentence.innerText = currentItem.blank;
+        blankSentence.innerHTML = makeBlankSentenceHtml(currentItem.blank);
         hintBox.style.display = "none";
         answerBox.style.display = "none";
         hintBox.innerText = "";
@@ -546,7 +582,7 @@ def speaking_practice_component(items):
         listenBtn.style.display = "none";
         nextBtn.style.display = "none";
 
-        resultBox.innerText = "먼저 문장 전체를 말해 보세요. 틀리면 정답 보기 버튼이 나타납니다.";
+        resultBox.innerText = "문장 전체를 말해 보세요.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
@@ -586,8 +622,8 @@ def speaking_practice_component(items):
             resultBox.style.borderColor = "#bbf7d0";
             resultBox.style.color = "#166534";
 
-            answerBox.style.display = "block";
-            answerBox.innerText = "정답: " + currentItem.answer;
+            answerBox.style.display = "none";
+            blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
 
             answerBtn.style.display = "none";
             listenBtn.style.display = "inline-block";
@@ -648,7 +684,8 @@ def speaking_practice_component(items):
                 }
             }
 
-            transcriptBox.innerHTML = highlightTranscript(bestTranscript, currentItem.answer);
+            transcriptBox.innerHTML = "";
+            blankSentence.innerHTML = makeSpokenSentenceHtml(bestTranscript, currentItem.answer);
             checkSpeech(bestTranscript);
         };
 
@@ -696,14 +733,14 @@ def speaking_practice_component(items):
     });
 
     answerBtn.addEventListener("click", function() {
-        answerBox.style.display = "block";
-        answerBox.innerText = "정답: " + currentItem.answer;
+        answerBox.style.display = "none";
+        blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
         listenBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
         resultBox.innerHTML =
             "👂 정답을 듣고 따라 말해 보세요.<br>" +
-            "<span style='font-size:17px;'>정답을 그대로 말해야 다음 문제 버튼이 열립니다.</span>";
+            "<span style='font-size:17px;'>정답을 그대로 다시 말해야 다음 문제 버튼이 열립니다.</span>";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
         resultBox.style.color = "#1d4ed8";
@@ -731,7 +768,7 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=760)
+    components.html(html, height=680)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
