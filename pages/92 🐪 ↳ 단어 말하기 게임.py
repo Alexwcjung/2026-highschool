@@ -1,791 +1,821 @@
 import streamlit as st
-import streamlit.components.v1 as components
+from gtts import gTTS
+import io
 import random
-import html
+import base64
+import uuid
+import json
+import streamlit.components.v1 as components
 
+# =========================
+# 기본 설정
+# =========================
 st.set_page_config(
-    page_title="모두의 단어 말판",
-    page_icon="🗺️",
+    page_title="Survival English 500 Test",
+    page_icon="🛟",
     layout="wide"
 )
 
 # =========================
-# 단어 데이터
+# CSS
 # =========================
-word_data = [
-    {"word": "cat", "meaning": "고양이"},
-    {"word": "dog", "meaning": "개"},
-    {"word": "sun", "meaning": "태양, 해"},
-    {"word": "run", "meaning": "달리다, 뛰다"},
-    {"word": "sit", "meaning": "앉다"},
-    {"word": "big", "meaning": "큰"},
-    {"word": "red", "meaning": "빨간색"},
-    {"word": "pen", "meaning": "펜"},
-    {"word": "box", "meaning": "상자"},
-    {"word": "cup", "meaning": "컵"},
-    {"word": "fish", "meaning": "물고기, 생선"},
-    {"word": "book", "meaning": "책"},
-    {"word": "milk", "meaning": "우유"},
-    {"word": "jump", "meaning": "뛰다, 점프하다"},
-    {"word": "bed", "meaning": "침대"},
-    {"word": "apple", "meaning": "사과"},
-    {"word": "banana", "meaning": "바나나"},
-    {"word": "happy", "meaning": "행복한, 기쁜"},
-    {"word": "sad", "meaning": "슬픈"},
-    {"word": "school", "meaning": "학교"},
-    {"word": "teacher", "meaning": "선생님, 교사"},
-    {"word": "student", "meaning": "학생"},
-    {"word": "water", "meaning": "물"},
-    {"word": "chair", "meaning": "의자"},
-    {"word": "desk", "meaning": "책상"},
-    {"word": "phone", "meaning": "전화기, 휴대폰"},
-    {"word": "music", "meaning": "음악"},
-    {"word": "pizza", "meaning": "피자"},
-    {"word": "green", "meaning": "초록색"},
-    {"word": "blue", "meaning": "파란색"},
-]
+st.markdown(
+    """
+    <style>
+    .main-title {
+        font-size: 44px;
+        font-weight: 900;
+        color: #1f2937;
+        margin-bottom: 4px;
+    }
 
-character_options = [
-    "🐶", "🐱", "🐭", "🐹", "🐰", "🦊", "🐻", "🐼",
-    "🐯", "🦁", "🐸", "🐵", "🐧", "🐢", "🦄", "🐳"
-]
+    .sub-title {
+        font-size: 17px;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
 
-dice_faces = {
-    "-": "🎲",
-    1: "⚀",
-    2: "⚁",
-    3: "⚂",
-    4: "⚃",
-    5: "⚄",
-    6: "⚅",
-}
+    .hero-box {
+        background: linear-gradient(135deg, #ecfeff 0%, #fef3c7 50%, #fce7f3 100%);
+        border-radius: 26px;
+        padding: 26px 30px;
+        margin-bottom: 26px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        border: 1px solid rgba(255,255,255,0.8);
+    }
 
-event_templates = [
-    {"type": "event", "title": "🚀 앞으로 2칸", "action": "forward2", "desc": "앞으로 2칸 이동"},
-    {"type": "event", "title": "🌀 뒤로 2칸", "action": "back2", "desc": "뒤로 2칸 이동"},
-    {"type": "event", "title": "🎲 한 번 더", "action": "extra", "desc": "한 번 더 굴리기"},
-    {"type": "event", "title": "😴 한 번 쉬기", "action": "skip", "desc": "다음 차례 쉬기"},
-    {"type": "event", "title": "🔄 자리 바꾸기", "action": "swap", "desc": "1등과 자리 바꾸기"},
-]
+    .hero-title {
+        font-size: 26px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 8px;
+    }
+
+    .hero-text {
+        font-size: 16px;
+        color: #374151;
+        line-height: 1.8;
+    }
+
+    .question-card {
+        background: white;
+        border-radius: 28px;
+        padding: 34px 36px;
+        margin-bottom: 24px;
+        border: 1px solid #dbeafe;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+    }
+
+    .progress-badge {
+        display: inline-block;
+        background: #dbeafe;
+        color: #1d4ed8;
+        padding: 8px 15px;
+        border-radius: 999px;
+        font-size: 15px;
+        font-weight: 900;
+        margin-bottom: 18px;
+    }
+
+    .theme-badge {
+        display: inline-block;
+        background: #fce7f3;
+        color: #be185d;
+        padding: 7px 13px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 900;
+        margin-left: 8px;
+        margin-bottom: 18px;
+    }
+
+    .emoji-box {
+        font-size: 78px;
+        margin-bottom: 8px;
+    }
+
+    .korean-meaning {
+        font-size: 42px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 16px;
+    }
+
+    .instruction {
+        font-size: 18px;
+        color: #4b5563;
+        font-weight: 700;
+        margin-bottom: 18px;
+    }
+
+    .result-correct {
+        background: #dcfce7;
+        color: #166534;
+        border-radius: 20px;
+        padding: 18px 20px;
+        font-size: 22px;
+        font-weight: 900;
+        margin-top: 18px;
+        margin-bottom: 14px;
+    }
+
+    .result-wrong {
+        background: #fee2e2;
+        color: #991b1b;
+        border-radius: 20px;
+        padding: 18px 20px;
+        font-size: 22px;
+        font-weight: 900;
+        margin-top: 18px;
+        margin-bottom: 14px;
+    }
+
+    .answer-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 18px 20px;
+        margin-top: 12px;
+        margin-bottom: 18px;
+    }
+
+    .answer-word {
+        font-size: 34px;
+        font-weight: 900;
+        color: #111827;
+    }
+
+    .answer-meaning {
+        font-size: 18px;
+        font-weight: 800;
+        color: #475569;
+    }
+
+    .score-box {
+        background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 50%, #fce7f3 100%);
+        border-radius: 28px;
+        padding: 30px 34px;
+        margin-bottom: 26px;
+        border: 1px solid #bbf7d0;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.07);
+    }
+
+    .score-title {
+        font-size: 38px;
+        font-weight: 900;
+        color: #14532d;
+        margin-bottom: 10px;
+    }
+
+    .score-text {
+        font-size: 19px;
+        font-weight: 800;
+        color: #374151;
+        line-height: 1.8;
+    }
+
+    .review-card {
+        background: white;
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin-bottom: 10px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+    }
+
+    .review-line {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .review-num {
+        min-width: 44px;
+        background: #fef3c7;
+        color: #92400e;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-weight: 900;
+        text-align: center;
+    }
+
+    .review-emoji {
+        font-size: 28px;
+        min-width: 34px;
+    }
+
+    .review-ko {
+        font-size: 20px;
+        font-weight: 900;
+        min-width: 110px;
+    }
+
+    .review-en {
+        font-size: 22px;
+        font-weight: 900;
+        color: #111827;
+        min-width: 130px;
+    }
+
+    .review-user {
+        font-size: 15px;
+        font-weight: 700;
+        color: #6b7280;
+    }
+
+    .correct-mark {
+        color: #15803d;
+        font-weight: 900;
+    }
+
+    .wrong-mark {
+        color: #b91c1c;
+        font-weight: 900;
+    }
+
+    div[data-testid="stRadio"] > label {
+        font-weight: 900;
+        color: #374151;
+    }
+
+    .stButton > button {
+        border-radius: 999px;
+        font-weight: 900;
+        border: 1px solid #d1d5db;
+        padding: 0.55rem 1.2rem;
+    }
+
+    .stButton > button:hover {
+        border-color: #0ea5e9;
+        color: #0ea5e9;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================
 # 제목
 # =========================
+st.markdown("<div class='main-title'>🛟 Survival English 500 Test</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='sub-title'>이모지와 한국어 뜻을 보고 알맞은 영어 단어를 고르는 50문제 테스트입니다.</div>",
+    unsafe_allow_html=True
+)
+
 st.markdown(
     """
-    <div style="
-        background: linear-gradient(135deg, #fce7f3, #e0f2fe, #fef3c7);
-        border-radius: 30px;
-        padding: 26px 24px;
-        text-align: center;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        margin-bottom: 18px;
-    ">
-        <h1 style="font-size:42px; font-weight:900; color:#1f2937; margin-bottom:8px;">
-            🗺️ 모두의 단어 말판
-        </h1>
-        <p style="font-size:18px; color:#4b5563; margin:0;">
-            주사위 2개를 굴려 이동하고, 도착한 칸의 단어 뜻을 맞히는 게임
-        </p>
+    <div class="hero-box">
+        <div class="hero-title">🎧 테스트 방법</div>
+        <div class="hero-text">
+            • 문제는 <b>이모지 + 한국어 뜻</b>으로 나옵니다.<br>
+            • 알맞은 <b>영어 단어</b>를 고르세요.<br>
+            • 한 문제씩 풀고, 제출 후 <b>정답 발음</b>을 들을 수 있습니다.<br>
+            • 총 <b>50문제</b>이며, 테마는 섞여서 랜덤으로 나옵니다.<br>
+            • 마지막에 <b>점수와 오답 기록</b>을 확인할 수 있습니다.
+        </div>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-st.info("자기 차례에 주사위 2개를 굴리면 캐릭터가 이동합니다. 도착한 칸의 영어 단어를 보고 한국어 뜻을 말하세요.")
+# =========================
+# TTS 함수
+# =========================
+@st.cache_data
+def make_tts_audio(text, lang="en", tld="com"):
+    fp = io.BytesIO()
+    tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    return fp.read()
+
 
 # =========================
-# 설정
+# 발음 버튼
 # =========================
-st.markdown("### ⚙️ 게임 설정")
+def audio_button(label, text, height=54):
+    audio_bytes = make_tts_audio(text)
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-col1, col2, col3 = st.columns(3)
+    audio_id = f"audio_{uuid.uuid4().hex}"
+    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
+    player_id = f"player_{uuid.uuid4().hex}"
+    status_id = f"status_{uuid.uuid4().hex}"
 
-with col1:
-    player_count = st.slider("학생 / 모둠 수", 1, 4, 4)
+    safe_label = json.dumps(label)
+    safe_player_id = json.dumps(player_id)
 
-with col2:
-    board_side = st.slider("말판 크기", 5, 7, 6)
+    components.html(
+        f"""
+        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:10px; height:46px;">
+            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
-with col3:
-    penalty = st.slider("틀리면 뒤로", 0, 3, 1)
+            <button id="{play_btn_id}" style="
+                background: linear-gradient(135deg, #dcfce7, #dbeafe);
+                border: 1px solid #bbf7d0;
+                border-radius: 999px;
+                padding: 8px 14px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #374151;
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+                white-space: nowrap;
+            ">
+                {label}
+            </button>
 
-st.markdown("### 🧸 캐릭터 선택")
+            <button id="{stop_btn_id}" style="
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                border-radius: 999px;
+                padding: 8px 14px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #9a3412;
+                cursor: pointer;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+                white-space: nowrap;
+            ">
+                ⏹ 중지
+            </button>
 
-char_cols = st.columns(player_count)
-selected_chars = []
+            <span id="{status_id}" style="
+                font-size: 13px;
+                color: #075985;
+                font-weight: 700;
+                white-space: nowrap;
+            "></span>
 
-for i in range(player_count):
-    with char_cols[i]:
-        selected = st.selectbox(
-            f"{i + 1}번",
-            character_options,
-            index=i,
-            key=f"char_select_{i}"
-        )
-        selected_chars.append(selected)
+            <script>
+            const audio = document.getElementById("{audio_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const status = document.getElementById("{status_id}");
+            const playerId = {safe_player_id};
+            const labelText = {safe_label};
 
-# =========================
-# 보드 경로 만들기
-# =========================
-def make_path_positions(n):
-    path = []
+            const channel = new BroadcastChannel("survival_test_audio_channel");
 
-    for c in range(n):
-        path.append((0, c))
+            function stopAudio(showMessage = false) {{
+                audio.pause();
+                audio.currentTime = 0;
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+                if (showMessage) {{
+                    status.innerText = "중지됨";
+                }} else {{
+                    status.innerText = "";
+                }}
+            }}
 
-    for r in range(1, n):
-        path.append((r, n - 1))
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopAudio(false);
+                }}
+            }};
 
-    for c in range(n - 2, -1, -1):
-        path.append((n - 1, c))
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
 
-    for r in range(n - 2, 0, -1):
-        path.append((r, 0))
+                stopAudio(false);
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중";
+                status.innerText = "듣는 중";
 
-    return path
+                audio.play().then(() => {{
+                    status.innerText = "듣는 중";
+                }}).catch((error) => {{
+                    status.innerText = "다시 클릭";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }});
+            }});
 
+            audio.addEventListener("ended", function() {{
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+                status.innerText = "완료";
+            }});
 
-path_positions = make_path_positions(board_side)
-board_size = len(path_positions)
-
-# =========================
-# 보드 아이템 만들기
-# =========================
-def make_board_items(size):
-    random.seed(size)
-
-    if size <= len(word_data):
-        selected_words = random.sample(word_data, size)
-    else:
-        selected_words = []
-        while len(selected_words) < size:
-            selected_words.extend(word_data)
-        selected_words = selected_words[:size]
-
-    board = []
-    for item in selected_words:
-        board.append({
-            "type": "word",
-            "word": item["word"],
-            "meaning": item["meaning"]
-        })
-
-    possible_event_positions = list(range(3, size - 2))
-    event_count = max(3, size // 5)
-
-    random.seed(f"events_{size}")
-    event_positions = random.sample(
-        possible_event_positions,
-        min(event_count, len(possible_event_positions))
+            stopBtn.addEventListener("click", function() {{
+                stopAudio(true);
+            }});
+            </script>
+        </div>
+        """,
+        height=height
     )
 
-    for idx, pos in enumerate(event_positions):
-        board[pos] = event_templates[idx % len(event_templates)]
-
-    return board
-
-
-def reset_game():
-    for key in list(st.session_state.keys()):
-        if key.startswith("marble_"):
-            del st.session_state[key]
-
 
 # =========================
-# 세션 상태 초기화
+# Survival English 500 단어 데이터
 # =========================
-if "marble_board_side_saved" not in st.session_state:
-    st.session_state.marble_board_side_saved = board_side
+word_themes = {
+    "🧍 나와 사람": [
+        {"word": "I", "meaning": "나", "emoji": "🙋"},
+        {"word": "you", "meaning": "너, 당신", "emoji": "👉"},
+        {"word": "he", "meaning": "그", "emoji": "👦"},
+        {"word": "she", "meaning": "그녀", "emoji": "👧"},
+        {"word": "we", "meaning": "우리", "emoji": "👥"},
+        {"word": "they", "meaning": "그들", "emoji": "👥"},
+        {"word": "friend", "meaning": "친구", "emoji": "🤝"},
+        {"word": "teacher", "meaning": "선생님", "emoji": "👩‍🏫"},
+        {"word": "student", "meaning": "학생", "emoji": "🧑‍🎓"},
+        {"word": "classmate", "meaning": "반 친구", "emoji": "👫"},
+        {"word": "family", "meaning": "가족", "emoji": "👨‍👩‍👧"},
+        {"word": "father", "meaning": "아버지", "emoji": "👨"},
+        {"word": "mother", "meaning": "어머니", "emoji": "👩"},
+        {"word": "brother", "meaning": "형제, 남자 형제", "emoji": "👦"},
+        {"word": "sister", "meaning": "자매, 여자 형제", "emoji": "👧"},
+        {"word": "name", "meaning": "이름", "emoji": "🏷️"},
+        {"word": "person", "meaning": "사람", "emoji": "🧍"},
+        {"word": "man", "meaning": "남자", "emoji": "👨"},
+        {"word": "woman", "meaning": "여자", "emoji": "👩"},
+        {"word": "child", "meaning": "아이", "emoji": "🧒"},
+    ],
 
-if "marble_player_count_saved" not in st.session_state:
-    st.session_state.marble_player_count_saved = player_count
+    "🏃 기본 동작": [
+        {"word": "go", "meaning": "가다", "emoji": "➡️"},
+        {"word": "come", "meaning": "오다", "emoji": "⬅️"},
+        {"word": "walk", "meaning": "걷다", "emoji": "🚶"},
+        {"word": "run", "meaning": "달리다", "emoji": "🏃"},
+        {"word": "sit", "meaning": "앉다", "emoji": "🪑"},
+        {"word": "stand", "meaning": "서다", "emoji": "🧍"},
+        {"word": "stop", "meaning": "멈추다", "emoji": "🛑"},
+        {"word": "start", "meaning": "시작하다", "emoji": "▶️"},
+        {"word": "open", "meaning": "열다", "emoji": "📖"},
+        {"word": "close", "meaning": "닫다", "emoji": "📕"},
+        {"word": "eat", "meaning": "먹다", "emoji": "🍽️"},
+        {"word": "drink", "meaning": "마시다", "emoji": "🥤"},
+        {"word": "sleep", "meaning": "자다", "emoji": "😴"},
+        {"word": "study", "meaning": "공부하다", "emoji": "📚"},
+        {"word": "read", "meaning": "읽다", "emoji": "📖"},
+        {"word": "write", "meaning": "쓰다", "emoji": "✏️"},
+        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
+        {"word": "help", "meaning": "돕다", "emoji": "🆘"},
+        {"word": "wait", "meaning": "기다리다", "emoji": "⏳"},
+    ],
 
-if (
-    "marble_board_items" not in st.session_state
-    or st.session_state.marble_board_side_saved != board_side
-):
-    st.session_state.marble_board_items = make_board_items(board_size)
-    st.session_state.marble_board_side_saved = board_side
-    st.session_state.marble_positions = [0 for _ in range(player_count)]
-    st.session_state.marble_turn = 0
-    st.session_state.marble_dice = "-"
-    st.session_state.marble_dice1 = "-"
-    st.session_state.marble_dice2 = "-"
-    st.session_state.marble_message = "🎲 주사위를 굴려 시작하세요!"
-    st.session_state.marble_finished = False
-    st.session_state.marble_needs_answer = False
-    st.session_state.marble_show_answer = False
-    st.session_state.marble_skip = [False for _ in range(player_count)]
-    st.session_state.marble_roll_count = 0
-    st.session_state.marble_last_moved_player = None
+    "💖 감정·몸 상태": [
+        {"word": "happy", "meaning": "행복한", "emoji": "😊"},
+        {"word": "sad", "meaning": "슬픈", "emoji": "😢"},
+        {"word": "angry", "meaning": "화난", "emoji": "😡"},
+        {"word": "tired", "meaning": "피곤한", "emoji": "🥱"},
+        {"word": "hungry", "meaning": "배고픈", "emoji": "😋"},
+        {"word": "thirsty", "meaning": "목마른", "emoji": "💧"},
+        {"word": "sick", "meaning": "아픈", "emoji": "🤒"},
+        {"word": "okay", "meaning": "괜찮은", "emoji": "👌"},
+        {"word": "fine", "meaning": "괜찮은", "emoji": "🙂"},
+        {"word": "cold", "meaning": "추운, 차가운", "emoji": "🥶"},
+        {"word": "hot", "meaning": "더운, 뜨거운", "emoji": "🥵"},
+        {"word": "pain", "meaning": "통증", "emoji": "🤕"},
+        {"word": "headache", "meaning": "두통", "emoji": "🤯"},
+        {"word": "stomachache", "meaning": "복통", "emoji": "🤢"},
+        {"word": "fever", "meaning": "열", "emoji": "🌡️"},
+        {"word": "hurt", "meaning": "아프다, 다치다", "emoji": "🩹"},
+        {"word": "good", "meaning": "좋은", "emoji": "👍"},
+        {"word": "bad", "meaning": "나쁜", "emoji": "👎"},
+        {"word": "worried", "meaning": "걱정하는", "emoji": "😟"},
+        {"word": "scared", "meaning": "무서워하는", "emoji": "😨"},
+    ],
 
-if (
-    "marble_positions" not in st.session_state
-    or st.session_state.marble_player_count_saved != player_count
-):
-    st.session_state.marble_positions = [0 for _ in range(player_count)]
-    st.session_state.marble_player_count_saved = player_count
-    st.session_state.marble_turn = 0
-    st.session_state.marble_dice = "-"
-    st.session_state.marble_dice1 = "-"
-    st.session_state.marble_dice2 = "-"
-    st.session_state.marble_message = "🎲 주사위를 굴려 시작하세요!"
-    st.session_state.marble_finished = False
-    st.session_state.marble_needs_answer = False
-    st.session_state.marble_show_answer = False
-    st.session_state.marble_skip = [False for _ in range(player_count)]
-    st.session_state.marble_roll_count = 0
-    st.session_state.marble_last_moved_player = None
+    "🍎 음식·물": [
+        {"word": "food", "meaning": "음식", "emoji": "🍽️"},
+        {"word": "water", "meaning": "물", "emoji": "💧"},
+        {"word": "rice", "meaning": "밥, 쌀", "emoji": "🍚"},
+        {"word": "bread", "meaning": "빵", "emoji": "🍞"},
+        {"word": "milk", "meaning": "우유", "emoji": "🥛"},
+        {"word": "juice", "meaning": "주스", "emoji": "🧃"},
+        {"word": "coffee", "meaning": "커피", "emoji": "☕"},
+        {"word": "tea", "meaning": "차", "emoji": "🍵"},
+        {"word": "apple", "meaning": "사과", "emoji": "🍎"},
+        {"word": "banana", "meaning": "바나나", "emoji": "🍌"},
+        {"word": "egg", "meaning": "달걀", "emoji": "🥚"},
+        {"word": "meat", "meaning": "고기", "emoji": "🥩"},
+        {"word": "chicken", "meaning": "닭고기, 닭", "emoji": "🍗"},
+        {"word": "fish", "meaning": "생선, 물고기", "emoji": "🐟"},
+        {"word": "breakfast", "meaning": "아침 식사", "emoji": "🍳"},
+        {"word": "lunch", "meaning": "점심 식사", "emoji": "🍱"},
+        {"word": "dinner", "meaning": "저녁 식사", "emoji": "🍽️"},
+        {"word": "snack", "meaning": "간식", "emoji": "🍪"},
+        {"word": "medicine", "meaning": "약", "emoji": "💊"},
+        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+    ],
 
-for key, default in {
-    "marble_turn": 0,
-    "marble_dice": "-",
-    "marble_dice1": "-",
-    "marble_dice2": "-",
-    "marble_message": "🎲 주사위를 굴려 시작하세요!",
-    "marble_finished": False,
-    "marble_needs_answer": False,
-    "marble_show_answer": False,
-    "marble_roll_count": 0,
-    "marble_last_moved_player": None,
-}.items():
-    if key not in st.session_state:
-        st.session_state[key] = default
+    "🚗 장소·이동": [
+        {"word": "home", "meaning": "집", "emoji": "🏠"},
+        {"word": "school", "meaning": "학교", "emoji": "🏫"},
+        {"word": "classroom", "meaning": "교실", "emoji": "🧑‍🏫"},
+        {"word": "bathroom", "meaning": "화장실", "emoji": "🚻"},
+        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+        {"word": "store", "meaning": "가게", "emoji": "🏪"},
+        {"word": "station", "meaning": "역", "emoji": "🚉"},
+        {"word": "bus", "meaning": "버스", "emoji": "🚌"},
+        {"word": "car", "meaning": "자동차", "emoji": "🚗"},
+        {"word": "taxi", "meaning": "택시", "emoji": "🚕"},
+        {"word": "train", "meaning": "기차", "emoji": "🚆"},
+        {"word": "bike", "meaning": "자전거", "emoji": "🚲"},
+        {"word": "road", "meaning": "도로", "emoji": "🛣️"},
+        {"word": "street", "meaning": "거리", "emoji": "🏙️"},
+        {"word": "here", "meaning": "여기", "emoji": "📍"},
+        {"word": "there", "meaning": "거기", "emoji": "📌"},
+        {"word": "near", "meaning": "가까운", "emoji": "📍"},
+        {"word": "far", "meaning": "먼", "emoji": "🧭"},
+        {"word": "left", "meaning": "왼쪽", "emoji": "⬅️"},
+        {"word": "right", "meaning": "오른쪽, 맞는", "emoji": "➡️"},
+    ],
 
-if "marble_skip" not in st.session_state:
-    st.session_state.marble_skip = [False for _ in range(player_count)]
+    "⏰ 시간·숫자": [
+        {"word": "time", "meaning": "시간", "emoji": "⏰"},
+        {"word": "now", "meaning": "지금", "emoji": "🕒"},
+        {"word": "today", "meaning": "오늘", "emoji": "📅"},
+        {"word": "tomorrow", "meaning": "내일", "emoji": "➡️"},
+        {"word": "yesterday", "meaning": "어제", "emoji": "⬅️"},
+        {"word": "morning", "meaning": "아침", "emoji": "🌅"},
+        {"word": "afternoon", "meaning": "오후", "emoji": "☀️"},
+        {"word": "evening", "meaning": "저녁", "emoji": "🌆"},
+        {"word": "night", "meaning": "밤", "emoji": "🌙"},
+        {"word": "early", "meaning": "이른", "emoji": "🐓"},
+        {"word": "late", "meaning": "늦은", "emoji": "🌃"},
+        {"word": "one", "meaning": "하나", "emoji": "1️⃣"},
+        {"word": "two", "meaning": "둘", "emoji": "2️⃣"},
+        {"word": "three", "meaning": "셋", "emoji": "3️⃣"},
+        {"word": "four", "meaning": "넷", "emoji": "4️⃣"},
+        {"word": "five", "meaning": "다섯", "emoji": "5️⃣"},
+        {"word": "six", "meaning": "여섯", "emoji": "6️⃣"},
+        {"word": "seven", "meaning": "일곱", "emoji": "7️⃣"},
+        {"word": "eight", "meaning": "여덟", "emoji": "8️⃣"},
+        {"word": "ten", "meaning": "열", "emoji": "🔟"},
+    ],
 
-if len(st.session_state.marble_skip) != player_count:
-    st.session_state.marble_skip = [False for _ in range(player_count)]
+    "🎒 물건·돈": [
+        {"word": "bag", "meaning": "가방", "emoji": "🎒"},
+        {"word": "phone", "meaning": "전화기", "emoji": "📱"},
+        {"word": "book", "meaning": "책", "emoji": "📘"},
+        {"word": "notebook", "meaning": "공책", "emoji": "📓"},
+        {"word": "pen", "meaning": "펜", "emoji": "🖊️"},
+        {"word": "pencil", "meaning": "연필", "emoji": "✏️"},
+        {"word": "desk", "meaning": "책상", "emoji": "🪑"},
+        {"word": "chair", "meaning": "의자", "emoji": "🪑"},
+        {"word": "door", "meaning": "문", "emoji": "🚪"},
+        {"word": "window", "meaning": "창문", "emoji": "🪟"},
+        {"word": "key", "meaning": "열쇠", "emoji": "🔑"},
+        {"word": "money", "meaning": "돈", "emoji": "💰"},
+        {"word": "card", "meaning": "카드", "emoji": "💳"},
+        {"word": "ticket", "meaning": "표, 티켓", "emoji": "🎫"},
+        {"word": "clothes", "meaning": "옷", "emoji": "👕"},
+        {"word": "shoes", "meaning": "신발", "emoji": "👟"},
+        {"word": "hat", "meaning": "모자", "emoji": "🧢"},
+        {"word": "watch", "meaning": "시계", "emoji": "⌚"},
+        {"word": "cup", "meaning": "컵", "emoji": "🥤"},
+        {"word": "bottle", "meaning": "병", "emoji": "🍼"},
+    ],
 
-board_items = st.session_state.marble_board_items
-positions = st.session_state.marble_positions
-current_turn = st.session_state.marble_turn
-
-if current_turn >= player_count:
-    current_turn = 0
-    st.session_state.marble_turn = 0
-
-current_position = positions[current_turn]
-current_item = board_items[current_position]
+    "🆘 도움 요청": [
+        {"word": "help", "meaning": "도움, 돕다", "emoji": "🆘"},
+        {"word": "please", "meaning": "부디, 제발", "emoji": "🙏"},
+        {"word": "sorry", "meaning": "미안합니다", "emoji": "🙇"},
+        {"word": "excuse me", "meaning": "실례합니다", "emoji": "🙋"},
+        {"word": "again", "meaning": "다시", "emoji": "🔁"},
+        {"word": "slowly", "meaning": "천천히", "emoji": "🐢"},
+        {"word": "understand", "meaning": "이해하다", "emoji": "💡"},
+        {"word": "question", "meaning": "질문", "emoji": "❓"},
+        {"word": "problem", "meaning": "문제", "emoji": "⚠️"},
+        {"word": "need", "meaning": "필요하다", "emoji": "📌"},
+        {"word": "want", "meaning": "원하다", "emoji": "🙋"},
+        {"word": "know", "meaning": "알다", "emoji": "🧠"},
+        {"word": "say", "meaning": "말하다", "emoji": "💬"},
+        {"word": "tell", "meaning": "말하다, 알려주다", "emoji": "🗣️"},
+        {"word": "ask", "meaning": "묻다", "emoji": "❓"},
+        {"word": "answer", "meaning": "대답, 답", "emoji": "✅"},
+        {"word": "repeat", "meaning": "반복하다", "emoji": "🔁"},
+        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
+        {"word": "look", "meaning": "보다", "emoji": "👀"},
+        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+    ],
+}
 
 # =========================
-# 차례 넘기기
+# 전체 단어 목록 만들기
 # =========================
-def advance_turn():
-    if player_count == 1:
-        st.session_state.marble_turn = 0
-        return
+all_words = []
+for theme, words in word_themes.items():
+    for item in words:
+        new_item = item.copy()
+        new_item["theme"] = theme
+        all_words.append(new_item)
 
-    next_turn = (st.session_state.marble_turn + 1) % player_count
-    checked = 0
-
-    while st.session_state.marble_skip[next_turn] and checked < player_count:
-        st.session_state.marble_skip[next_turn] = False
-        st.session_state.marble_message += f" / {next_turn + 1}번은 한 번 쉬기!"
-        next_turn = (next_turn + 1) % player_count
-        checked += 1
-
-    st.session_state.marble_turn = next_turn
-
+all_word_texts = [item["word"] for item in all_words]
 
 # =========================
-# 이벤트 처리
+# 세션 초기화
 # =========================
-def apply_event(event):
-    turn = st.session_state.marble_turn
-    positions = st.session_state.marble_positions
-    action = event["action"]
+def start_new_test():
+    questions = random.sample(all_words, 50)
 
-    if action == "forward2":
-        positions[turn] = min(board_size - 1, positions[turn] + 2)
-        landed = board_items[positions[turn]]
+    st.session_state.test_questions = questions
+    st.session_state.current_index = 0
+    st.session_state.score = 0
+    st.session_state.answers = []
+    st.session_state.submitted = False
+    st.session_state.selected_answer = None
+    st.session_state.test_started = True
+    st.session_state.test_finished = False
 
-        if landed["type"] == "word":
-            st.session_state.marble_message = "🚀 앞으로 2칸! 도착 단어의 뜻을 말하세요."
-            st.session_state.marble_needs_answer = True
-        else:
-            st.session_state.marble_message = "🚀 앞으로 2칸 이동했습니다!"
-            advance_turn()
+    # 문제별 보기 고정
+    st.session_state.options_by_question = []
 
-    elif action == "back2":
-        positions[turn] = max(0, positions[turn] - 2)
-        landed = board_items[positions[turn]]
+    for q in questions:
+        distractors = [w for w in all_word_texts if w != q["word"]]
+        wrongs = random.sample(distractors, 3)
+        options = [q["word"]] + wrongs
+        random.shuffle(options)
+        st.session_state.options_by_question.append(options)
 
-        if landed["type"] == "word":
-            st.session_state.marble_message = "🌀 뒤로 2칸! 도착 단어의 뜻을 말하세요."
-            st.session_state.marble_needs_answer = True
-        else:
-            st.session_state.marble_message = "🌀 뒤로 2칸 이동했습니다!"
-            advance_turn()
 
-    elif action == "extra":
-        st.session_state.marble_message = "🎲 한 번 더! 같은 학생이 다시 주사위를 굴리세요."
-        st.session_state.marble_needs_answer = False
+if "test_started" not in st.session_state:
+    st.session_state.test_started = False
 
-    elif action == "skip":
-        st.session_state.marble_skip[turn] = True
-        st.session_state.marble_message = "😴 다음 차례를 한 번 쉽니다."
-        st.session_state.marble_needs_answer = False
-        advance_turn()
-
-    elif action == "swap":
-        first_player = max(range(player_count), key=lambda i: positions[i])
-        if first_player != turn:
-            positions[turn], positions[first_player] = positions[first_player], positions[turn]
-            st.session_state.marble_message = f"🔄 {turn + 1}번과 {first_player + 1}번이 자리를 바꿨습니다!"
-        else:
-            st.session_state.marble_message = "🔄 이미 가장 앞에 있습니다!"
-        st.session_state.marble_needs_answer = False
-        advance_turn()
-
+if "test_finished" not in st.session_state:
+    st.session_state.test_finished = False
 
 # =========================
-# 현재 상태 안내
+# 시작 화면
 # =========================
-st.markdown(
-    f"""
-    <div style="
-        background: linear-gradient(135deg, #dcfce7, #dbeafe, #fce7f3);
-        border-radius: 24px;
-        padding: 18px;
-        margin: 16px 0;
-        text-align: center;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-        border: 2px solid #bbf7d0;
-    ">
-        <div style="font-size:28px; font-weight:900; color:#14532d;">
-            현재 차례: {selected_chars[current_turn]} {current_turn + 1}번
-        </div>
-        <div style="font-size:20px; font-weight:800; color:#334155; margin-top:8px;">
-            마지막 주사위: {st.session_state.marble_dice1} + {st.session_state.marble_dice2} = {st.session_state.marble_dice}
-        </div>
-        <div style="font-size:18px; font-weight:700; color:#475569; margin-top:8px;">
-            {html.escape(st.session_state.marble_message)}
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+if not st.session_state.test_started:
+    st.markdown("### 🧪 테스트를 시작해 봅시다")
+    st.write("총 50문제가 랜덤으로 출제됩니다. 한 문제씩 풀고 정답 발음을 확인할 수 있습니다.")
+
+    if st.button("🚀 50문제 테스트 시작하기"):
+        start_new_test()
+        st.rerun()
 
 # =========================
-# 버튼
+# 테스트 진행 화면
 # =========================
-st.markdown("### 🎮 게임 진행")
+elif st.session_state.test_started and not st.session_state.test_finished:
+    questions = st.session_state.test_questions
+    idx = st.session_state.current_index
+    q = questions[idx]
+    options = st.session_state.options_by_question[idx]
 
-col_roll, col_flip, col_correct, col_wrong, col_reset = st.columns(5)
+    st.markdown('<div class="question-card">', unsafe_allow_html=True)
 
-with col_roll:
-    if st.button("🎲 주사위 굴리기", use_container_width=True):
-        if st.session_state.marble_finished:
-            st.session_state.marble_message = "이미 게임이 끝났습니다."
+    st.markdown(
+        f"""
+        <span class="progress-badge">{idx + 1} / 50</span>
+        <span class="theme-badge">{q['theme']}</span>
+        """,
+        unsafe_allow_html=True
+    )
 
-        elif st.session_state.marble_needs_answer:
-            st.session_state.marble_message = "먼저 맞았어요 / 틀렸어요를 눌러 주세요."
+    st.markdown(f"<div class='emoji-box'>{q['emoji']}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='korean-meaning'>{q['meaning']}</div>", unsafe_allow_html=True)
+    st.markdown("<div class='instruction'>알맞은 영어 단어를 고르세요.</div>", unsafe_allow_html=True)
 
-        else:
-            dice1 = random.randint(1, 6)
-            dice2 = random.randint(1, 6)
-            dice = dice1 + dice2
+    selected = st.radio(
+        "보기",
+        options,
+        index=None,
+        key=f"question_{idx}"
+    )
 
-            st.session_state.marble_dice1 = dice1
-            st.session_state.marble_dice2 = dice2
-            st.session_state.marble_dice = dice
-            st.session_state.marble_show_answer = False
-            st.session_state.marble_roll_count += 1
-            st.session_state.marble_last_moved_player = current_turn
+    st.session_state.selected_answer = selected
 
-            new_pos = positions[current_turn] + dice
-            if new_pos >= board_size - 1:
-                new_pos = board_size - 1
-
-            positions[current_turn] = new_pos
-            landed = board_items[new_pos]
-
-            if landed["type"] == "word":
-                st.session_state.marble_message = (
-                    f"{selected_chars[current_turn]} {current_turn + 1}번이 "
-                    f"{dice1}+{dice2}={dice}칸 이동했습니다. 도착한 칸의 단어 뜻을 말하세요."
-                )
-                st.session_state.marble_needs_answer = True
+    if not st.session_state.submitted:
+        if st.button("✅ 제출하기", key=f"submit_{idx}"):
+            if selected is None:
+                st.warning("답을 먼저 선택해 주세요.")
             else:
-                st.session_state.marble_message = (
-                    f"{selected_chars[current_turn]} {current_turn + 1}번이 "
-                    f"{dice1}+{dice2}={dice}칸 이동했습니다. 이벤트: {landed['title']}"
-                )
-                apply_event(landed)
+                is_correct = selected == q["word"]
 
-        st.rerun()
+                if is_correct:
+                    st.session_state.score += 1
 
-with col_flip:
-    if st.button("🔁 정답 뒤집기", use_container_width=True):
-        if st.session_state.marble_needs_answer:
-            st.session_state.marble_show_answer = not st.session_state.marble_show_answer
+                st.session_state.answers.append({
+                    "number": idx + 1,
+                    "theme": q["theme"],
+                    "emoji": q["emoji"],
+                    "meaning": q["meaning"],
+                    "correct_word": q["word"],
+                    "user_answer": selected,
+                    "is_correct": is_correct
+                })
+
+                st.session_state.submitted = True
+                st.rerun()
+
+    else:
+        last = st.session_state.answers[-1]
+
+        if last["is_correct"]:
+            st.markdown("<div class='result-correct'>🎉 정답입니다!</div>", unsafe_allow_html=True)
         else:
-            st.session_state.marble_message = "현재 뒤집을 단어가 없습니다."
-        st.rerun()
+            st.markdown("<div class='result-wrong'>🍊 아쉬워요. 다시 확인해 봅시다.</div>", unsafe_allow_html=True)
 
-with col_correct:
-    if st.button("✅ 맞았어요", use_container_width=True):
-        st.session_state.marble_show_answer = False
-
-        if st.session_state.marble_finished:
-            st.session_state.marble_message = "이미 게임이 끝났습니다."
-
-        elif not st.session_state.marble_needs_answer:
-            st.session_state.marble_message = "현재 확인할 단어가 없습니다."
-
-        else:
-            if positions[current_turn] >= board_size - 1:
-                st.session_state.marble_finished = True
-                st.session_state.marble_message = f"🏆 {selected_chars[current_turn]} {current_turn + 1}번 승리!"
-                st.balloons()
-            else:
-                st.session_state.marble_message = f"✅ {current_turn + 1}번 정답! 다음 차례입니다."
-                st.session_state.marble_needs_answer = False
-                advance_turn()
-
-        st.rerun()
-
-with col_wrong:
-    if st.button("❌ 틀렸어요", use_container_width=True):
-        st.session_state.marble_show_answer = False
-
-        if st.session_state.marble_finished:
-            st.session_state.marble_message = "이미 게임이 끝났습니다."
-
-        elif not st.session_state.marble_needs_answer:
-            st.session_state.marble_message = "현재 확인할 단어가 없습니다."
-
-        else:
-            positions[current_turn] = max(0, positions[current_turn] - penalty)
-            st.session_state.marble_message = (
-                f"😢 {current_turn + 1}번 오답! {penalty}칸 뒤로 이동합니다."
-            )
-            st.session_state.marble_needs_answer = False
-            advance_turn()
-
-        st.rerun()
-
-with col_reset:
-    if st.button("🔄 리셋", use_container_width=True):
-        reset_game()
-        st.rerun()
-
-# =========================
-# 말판
-# =========================
-st.markdown("### 🗺️ 모두의 마블식 단어 말판")
-
-cell_map = {}
-for idx, pos in enumerate(path_positions):
-    cell_map[pos] = idx
-
-dice_value = st.session_state.marble_dice
-dice1_value = st.session_state.marble_dice1
-dice2_value = st.session_state.marble_dice2
-
-dice1_face = dice_faces.get(dice1_value, "🎲")
-dice2_face = dice_faces.get(dice2_value, "🎲")
-
-roll_count = st.session_state.marble_roll_count
-
-board_html = f"""
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body {{
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: transparent;
-}}
-
-.board-wrap {{
-    background: linear-gradient(135deg, #eff6ff, #fff7ed, #f0fdf4);
-    border: 6px solid #93c5fd;
-    border-radius: 34px;
-    padding: 24px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.14);
-    box-sizing: border-box;
-    width: 100%;
-}}
-
-.board-grid {{
-    display: grid;
-    grid-template-columns: repeat({board_side}, 1fr);
-    gap: 12px;
-}}
-
-.cell {{
-    min-height: 125px;
-    border-radius: 22px;
-    padding: 10px;
-    text-align: center;
-    box-shadow: 0 5px 14px rgba(0,0,0,0.10);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    box-sizing: border-box;
-}}
-
-.cell-label {{
-    font-size: 13px;
-    font-weight: 900;
-    color: #64748b;
-}}
-
-.cell-word {{
-    font-size: 22px;
-    font-weight: 900;
-    color: #111827;
-    line-height: 1.2;
-    word-break: keep-all;
-}}
-
-.cell-desc {{
-    font-size: 13px;
-    font-weight: 700;
-    color: #475569;
-    line-height: 1.25;
-}}
-
-.markers {{
-    font-size: 24px;
-    font-weight: 900;
-    min-height: 30px;
-}}
-
-.bounce {{
-    animation: bounceMove 0.9s ease-in-out;
-    display: inline-block;
-}}
-
-@keyframes bounceMove {{
-    0% {{ transform: translateY(0) scale(1); }}
-    20% {{ transform: translateY(-18px) scale(1.15); }}
-    40% {{ transform: translateY(0) scale(1); }}
-    60% {{ transform: translateY(-12px) scale(1.12); }}
-    80% {{ transform: translateY(0) scale(1); }}
-    100% {{ transform: translateY(0) scale(1); }}
-}}
-
-.center-cell {{
-    min-height: 125px;
-    background: rgba(255,255,255,0.55);
-    border: 3px dashed rgba(147,197,253,0.75);
-    border-radius: 22px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    color: #64748b;
-    box-sizing: border-box;
-}}
-
-.dice-box {{
-    width: 100%;
-}}
-
-.dice-row {{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 14px;
-}}
-
-.dice-face {{
-    font-size: 66px;
-    font-weight: 900;
-    display: inline-block;
-    animation: diceJumpRoll 0.9s ease-in-out;
-}}
-
-.dice-face.second {{
-    animation-delay: 0.08s;
-}}
-
-@keyframes diceJumpRoll {{
-    0% {{ transform: translateY(0) rotate(0deg) scale(0.6); }}
-    15% {{ transform: translateY(-28px) rotate(100deg) scale(1.15); }}
-    30% {{ transform: translateY(0) rotate(180deg) scale(0.9); }}
-    45% {{ transform: translateY(-22px) rotate(280deg) scale(1.2); }}
-    60% {{ transform: translateY(0) rotate(380deg) scale(0.95); }}
-    78% {{ transform: translateY(-14px) rotate(540deg) scale(1.1); }}
-    100% {{ transform: translateY(0) rotate(720deg) scale(1); }}
-}}
-
-.dice-text {{
-    font-size: 18px;
-    font-weight: 900;
-    color: #334155;
-    margin-top: 8px;
-}}
-
-@media (max-width: 700px) {{
-    .board-wrap {{
-        padding: 10px;
-        border-radius: 22px;
-        border-width: 4px;
-    }}
-
-    .board-grid {{
-        gap: 6px;
-    }}
-
-    .cell {{
-        min-height: 92px;
-        border-radius: 15px;
-        padding: 6px;
-    }}
-
-    .center-cell {{
-        min-height: 92px;
-        border-radius: 15px;
-    }}
-
-    .cell-label {{
-        font-size: 10px;
-    }}
-
-    .cell-word {{
-        font-size: 15px;
-    }}
-
-    .cell-desc {{
-        font-size: 10px;
-    }}
-
-    .markers {{
-        font-size: 16px;
-        min-height: 18px;
-    }}
-
-    .dice-face {{
-        font-size: 34px;
-    }}
-
-    .dice-row {{
-        gap: 4px;
-    }}
-
-    .dice-text {{
-        font-size: 11px;
-    }}
-}}
-</style>
-</head>
-<body>
-<div class="board-wrap">
-<div class="board-grid">
-"""
-
-center_cells = []
-for r in range(1, board_side - 1):
-    for c in range(1, board_side - 1):
-        center_cells.append((r, c))
-
-center_index = len(center_cells) // 2
-dice_center_pos = center_cells[center_index] if center_cells else (1, 1)
-
-for r in range(board_side):
-    for c in range(board_side):
-        if (r, c) in cell_map:
-            i = cell_map[(r, c)]
-            item = board_items[i]
-
-            markers = []
-            for player_idx, pos in enumerate(positions):
-                if pos == i:
-                    marker_class = ""
-                    if st.session_state.marble_last_moved_player == player_idx:
-                        marker_class = "bounce"
-                    markers.append(
-                        f"<span class='{marker_class}'>{html.escape(selected_chars[player_idx])}{player_idx + 1}</span>"
-                    )
-
-            markers_text = " ".join(markers)
-
-            is_start = i == 0
-            is_finish = i == board_size - 1
-            is_current = i == positions[current_turn]
-
-            if is_finish:
-                bg = "linear-gradient(135deg, #fef3c7, #fecaca)"
-                border = "#f97316"
-                label = "🏁 FINISH"
-            elif is_start:
-                bg = "linear-gradient(135deg, #dcfce7, #dbeafe)"
-                border = "#22c55e"
-                label = "START"
-            elif is_current:
-                bg = "linear-gradient(135deg, #fce7f3, #dbeafe)"
-                border = "#ec4899"
-                label = f"현재 {i + 1}"
-            else:
-                bg = "white"
-                border = "#e5e7eb"
-                label = f"{i + 1}"
-
-            show_answer_here = (
-                st.session_state.marble_show_answer
-                and st.session_state.marble_needs_answer
-                and i == positions[current_turn]
-                and item["type"] == "word"
-            )
-
-            if item["type"] == "event":
-                cell_word = html.escape(item["title"])
-                cell_desc = html.escape(item["desc"])
-            else:
-                if show_answer_here:
-                    cell_word = html.escape(item["meaning"])
-                    cell_desc = "한국어 뜻"
-                    bg = "linear-gradient(135deg, #dcfce7, #dbeafe)"
-                    border = "#22c55e"
-                else:
-                    cell_word = html.escape(item["word"])
-                    cell_desc = "뜻 말하기"
-
-            board_html += f"""
-            <div class="cell" style="background:{bg}; border:4px solid {border};">
-                <div class="cell-label">{label}</div>
-                <div class="cell-word">{cell_word}</div>
-                <div class="cell-desc">{cell_desc}</div>
-                <div class="markers">{markers_text}</div>
+        st.markdown(
+            f"""
+            <div class="answer-box">
+                <div class="answer-word">{q['emoji']} {q['word']}</div>
+                <div class="answer-meaning">{q['meaning']}</div>
             </div>
-            """
+            """,
+            unsafe_allow_html=True
+        )
 
-        else:
-            if (r, c) == dice_center_pos:
-                board_html += f"""
-                <div class="center-cell">
-                    <div class="dice-box" key="{roll_count}">
-                        <div class="dice-row">
-                            <div class="dice-face">{dice1_face}</div>
-                            <div class="dice-face second">{dice2_face}</div>
-                        </div>
-                        <div class="dice-text">주사위: {dice1_value} + {dice2_value} = {dice_value}</div>
-                    </div>
-                </div>
-                """
+        audio_button("🔊 정답 발음 듣기", q["word"])
+
+        col1, col2 = st.columns([1, 4])
+
+        with col1:
+            if idx < 49:
+                if st.button("➡️ 다음 문제", key=f"next_{idx}"):
+                    st.session_state.current_index += 1
+                    st.session_state.submitted = False
+                    st.session_state.selected_answer = None
+                    st.rerun()
             else:
-                board_html += """
-                <div class="center-cell">
-                    <div style="font-size:18px; font-weight:900; color:#94a3b8;">
-                        모두의<br>단어 말판
-                    </div>
-                </div>
-                """
+                if st.button("🏁 결과 보기", key="finish_test"):
+                    st.session_state.test_finished = True
+                    st.rerun()
 
-board_html += """
-</div>
-</div>
-</body>
-</html>
-"""
+        with col2:
+            st.markdown(
+                f"현재 점수: **{st.session_state.score} / {idx + 1}점**"
+            )
 
-board_height = 930 if board_side == 7 else 780 if board_side == 6 else 650
-components.html(board_html, height=board_height, scrolling=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# =========================
+# 결과 화면
+# =========================
+else:
+    score = st.session_state.score
+    total = 50
+    percent = round(score / total * 100, 1)
+
+    if score >= 45:
+        message = "🌟 훌륭합니다! 생존 영어 단어를 아주 잘 알고 있습니다."
+    elif score >= 35:
+        message = "👍 좋습니다! 조금만 더 복습하면 안정적입니다."
+    elif score >= 25:
+        message = "🌱 괜찮습니다. 틀린 단어 위주로 다시 연습해 봅시다."
+    else:
+        message = "🛟 아직 시작 단계입니다. 발음 듣기와 단어 복습을 반복해 봅시다."
+
+    st.markdown(
+        f"""
+        <div class="score-box">
+            <div class="score-title">🏆 최종 점수: {score} / {total}점</div>
+            <div class="score-text">
+                정답률: {percent}%<br>
+                {message}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        if st.button("🔄 다시 50문제 풀기"):
+            start_new_test()
+            st.rerun()
+
+    with col2:
+        if st.button("🧹 처음 화면으로"):
+            for key in list(st.session_state.keys()):
+                del st.session_state[key]
+            st.rerun()
+
+    st.markdown("### 📋 전체 기록")
+
+    for item in st.session_state.answers:
+        mark = "✅" if item["is_correct"] else "❌"
+        mark_class = "correct-mark" if item["is_correct"] else "wrong-mark"
+
+        st.markdown('<div class="review-card">', unsafe_allow_html=True)
+        st.markdown(
+            f"""
+            <div class="review-line">
+                <div class="review-num">{item['number']}</div>
+                <div class="review-emoji">{item['emoji']}</div>
+                <div class="review-ko">{item['meaning']}</div>
+                <div class="review-en">{item['correct_word']}</div>
+                <div class="{mark_class}">{mark}</div>
+                <div class="review-user">내 답: {item['user_answer']}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
