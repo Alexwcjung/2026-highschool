@@ -262,8 +262,20 @@ def speaking_practice_component(items):
                 ">➡️ 다음</button>
             </div>
 
-            <div style="display:none;">
-                <div id="transcriptBox">아직 말하지 않았습니다.</div>
+            <div style="
+                background:#f8fafc;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:14px;
+                min-height:52px;
+            ">
+                <div id="transcriptBox" style="
+                    font-size:24px;
+                    font-weight:900;
+                    color:#334155;
+                    line-height:1.7;
+                ">말하면 여기에 표시됩니다.</div>
             </div>
 
             <div id="resultBox" style="
@@ -569,7 +581,7 @@ def speaking_practice_component(items):
         answerBox.style.display = "none";
         hintBox.innerText = "";
         answerBox.innerText = "";
-        transcriptBox.innerHTML = "아직 말하지 않았습니다.";
+        transcriptBox.innerText = "말하면 여기에 표시됩니다.";
 
         // 처음에는 힌트와 말하기 버튼만 보이게 함
         hintBtn.style.display = "inline-block";
@@ -612,7 +624,7 @@ def speaking_practice_component(items):
             resultBox.style.display = "none";
 
             answerBox.style.display = "none";
-            blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
+            transcriptBox.innerText = currentItem.answer;
 
             answerBtn.style.display = "none";
             listenBtn.style.display = "inline-block";
@@ -665,8 +677,7 @@ def speaking_practice_component(items):
                 }
             }
 
-            transcriptBox.innerHTML = "";
-            blankSentence.innerHTML = makeSpokenSentenceHtml(bestTranscript, currentItem.answer);
+            transcriptBox.innerText = bestTranscript;
             checkSpeech(bestTranscript);
         };
 
@@ -715,7 +726,7 @@ def speaking_practice_component(items):
 
     answerBtn.addEventListener("click", function() {
         answerBox.style.display = "none";
-        blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
+        transcriptBox.innerText = currentItem.answer;
         listenBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
