@@ -238,9 +238,9 @@ st.markdown(
         <div class="hero-text">
             • 문제는 <b>이모지 + 한국어 뜻</b>으로 나옵니다.<br>
             • <b>정답 발음 듣기</b>를 누르고 영어 단어를 따라 말해 보세요.<br>
-            • 말한 뒤 자기 진단 버튼을 누릅니다.<br>
+            • 말한 뒤 <b>잘 말했어요</b> 또는 <b>아직 외우지 못했어요</b>를 선택합니다.<br>
             • 총 <b>50문제</b>가 랜덤으로 출제됩니다.<br>
-            • 마지막에 <b>잘 말했어요 / 다시 연습 / 아직 못 외움</b> 기록을 확인합니다.
+            • 마지막에 <b>잘 말한 단어 / 아직 외우지 못한 단어</b> 기록을 확인합니다.
         </div>
     </div>
     """,
@@ -656,7 +656,7 @@ elif st.session_state.mission_started and not st.session_state.mission_finished:
 
     st.markdown("### 자기 진단")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2 = st.columns(2)
 
     def save_record(status):
         st.session_state.records.append({
@@ -680,10 +680,6 @@ elif st.session_state.mission_started and not st.session_state.mission_finished:
             save_record("잘 말했어요")
 
     with col2:
-        if st.button("🔁 다시 연습할래요", key=f"practice_{idx}"):
-            save_record("다시 연습할래요")
-
-    with col3:
         if st.button("😵 아직 외우지 못했어요", key=f"notyet_{idx}"):
             save_record("아직 외우지 못했어요")
 
@@ -696,7 +692,6 @@ else:
     records = st.session_state.records
 
     good_count = sum(1 for r in records if r["status"] == "잘 말했어요")
-    practice_count = sum(1 for r in records if r["status"] == "다시 연습할래요")
     notyet_count = sum(1 for r in records if r["status"] == "아직 외우지 못했어요")
 
     st.markdown(
@@ -706,7 +701,6 @@ else:
             <div class="score-text">
                 총 말하기 단어: 50개<br>
                 😊 잘 말했어요: {good_count}개<br>
-                🔁 다시 연습할래요: {practice_count}개<br>
                 😵 아직 외우지 못했어요: {notyet_count}개
             </div>
         </div>
@@ -717,7 +711,7 @@ else:
     if good_count >= 40:
         st.success("🌟 훌륭합니다! 오늘 말하기 미션을 아주 잘 해냈습니다.")
     elif good_count >= 25:
-        st.info("👍 좋습니다! 다시 연습할 단어만 조금 더 반복하면 됩니다.")
+        st.info("👍 좋습니다! 아직 외우지 못한 단어만 다시 반복하면 됩니다.")
     else:
         st.warning("🌱 괜찮습니다. 오늘은 입으로 영어를 꺼내 본 것 자체가 큰 성공입니다.")
 
@@ -739,8 +733,6 @@ else:
     for item in records:
         if item["status"] == "잘 말했어요":
             status_icon = "😊"
-        elif item["status"] == "다시 연습할래요":
-            status_icon = "🔁"
         else:
             status_icon = "😵"
 
