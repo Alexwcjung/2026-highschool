@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="English Sentence Guide", page_icon="🧩", layout="centered")
+st.set_page_config(page_title="Survival Sentence Guide", page_icon="🛟", layout="centered")
 
 # =========================================================
 # 전체 디자인 CSS
@@ -105,6 +105,55 @@ st.markdown(
         color: #374151;
     }
 
+
+    .path-box {
+        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 28px;
+        padding: 24px 26px;
+        margin: 18px 0 28px 0;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.065);
+    }
+
+    .path-box h3 {
+        margin-top: 0;
+        color: #1e3a8a;
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .path-box p {
+        font-size: 19px;
+        line-height: 1.8;
+        color: #374151;
+        margin: 8px 0;
+    }
+
+    .mission-chip {
+        display: inline-block;
+        background: white;
+        border: 1.5px solid #c7d2fe;
+        border-radius: 999px;
+        padding: 8px 14px;
+        margin: 5px 4px;
+        font-size: 16px;
+        font-weight: 900;
+        color: #3730a3;
+        box-shadow: 0 3px 8px rgba(55,48,163,0.06);
+    }
+
+    .tool-label {
+        display: inline-block;
+        background: #eef6ff;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 7px 13px;
+        font-size: 16px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        border: 1px solid #bfdbfe;
+    }
+
     .word-chip {
         display: inline-block;
         background: linear-gradient(135deg, #eef6ff, #ffffff);
@@ -167,22 +216,47 @@ st.markdown(
 st.markdown(
     """
     <div class="title-box">
-        <h1>🧩 English Sentence Guide</h1>
-        <p>be동사, 일반동사, 시제, 부정문, 의문문을 차근차근 익혀 봅시다.</p>
+        <h1>🛟 Survival Sentence Guide</h1>
+        <p>
+            영어 문법을 외우는 것이 아니라,<br>
+            실제 상황에서 살아남기 위한 문장 구조를 순서대로 익혀 봅시다.
+        </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
+
+st.markdown(
+    """
+    <div class="path-box">
+        <h3>🧭 생존 문장 구조 학습 순서</h3>
+        <p>
+            이 수업은 문법 이름을 외우는 순서가 아니라,
+            <b>실제 상황에서 필요한 말부터</b> 익히는 순서입니다.
+        </p>
+        <span class="mission-chip">1. 나와 상태 말하기</span>
+        <span class="mission-chip">2. 지금 하는 일 말하기</span>
+        <span class="mission-chip">3. 앞으로 할 일 말하기</span>
+        <span class="mission-chip">4. 지난 일 말하기</span>
+        <span class="mission-chip">5. 아니라고 말하기</span>
+        <span class="mission-chip">6. 물어보기</span>
+        <span class="mission-chip">7. 자세히 물어보기</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
 tabs = st.tabs([
-    "🌱 Be동사 / 일반동사",
-    "🏃 현재진행형",
-    "🚀 미래형",
-    "🕰️ 과거형",
-    "🎮 불규칙동사 게임",
-    "❌ 부정문",
-    "❓ 의문문",
-    "🕵️ 의문사 의문문"
+    "🙋 나와 상태 말하기",
+    "🏃 지금 하는 일 말하기",
+    "🚀 앞으로 할 일 말하기",
+    "🕰️ 지난 일 말하기",
+    "🎮 지난 일 단어 게임",
+    "❌ 아니라고 말하기",
+    "❓ 간단히 물어보기",
+    "🕵️ 자세히 물어보기"
 ])
 
 
@@ -190,18 +264,22 @@ tabs = st.tabs([
 # Tab 1: Be동사 / 일반동사
 # =========================================================
 with tabs[0]:
-    st.subheader("🌱 Be동사 / 일반동사")
+    st.subheader("🙋 나와 상태 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#f3f8ff,#ffffff);">
-            <h3 style="color:#1f4e79;">🌼 Be동사란?</h3>
+            <span class="tool-label">오늘의 문장 도구: be동사 / 일반동사</span>
+            <h3 style="color:#1f4e79;">🙋 생존의 첫 문장: 나는 누구이고, 어떤 상태인가?</h3>
             <p>
-                <b>Be동사</b>는 보통 <b>‘~이다’</b>라는 뜻으로 쓰입니다.
+                낯선 상황에서 가장 먼저 필요한 말은 <b>나를 소개하고, 내 상태를 말하는 것</b>입니다.
+                <b>am, are, is</b>를 알면 “나는 학생이다”, “나는 배고프다”, “괜찮다” 같은 기본 문장을 만들 수 있습니다.
             </p>
             <div class="example-box">
-                <b>I am a boy.</b><br>
-                → 나는 소년이다.
+                <b>I am hungry.</b><br>
+                → 나는 배고프다.<br><br>
+                <b>I am a student.</b><br>
+                → 나는 학생이다.
             </div>
         </div>
         """,
@@ -210,7 +288,7 @@ with tabs[0]:
 
     st.success("Be동사에는 am, are, is가 있습니다.")
 
-    st.markdown("### ✅ Be동사 고르는 법")
+    st.markdown("### ✅ 나와 상태를 말할 때 be동사 고르는 법")
 
     st.markdown(
         """
@@ -247,7 +325,7 @@ with tabs[0]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 일반동사란?")
+    st.markdown("### ✅ 행동을 말할 때 쓰는 일반동사")
 
     st.markdown(
         """
@@ -272,24 +350,26 @@ with tabs[0]:
 # Tab 2: 현재진행형
 # =========================================================
 with tabs[1]:
-    st.subheader("🏃 현재진행형")
+    st.subheader("🏃 지금 하는 일 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff8e6,#ffffff);">
-            <h3 style="color:#8a5a00;">🏃 현재진행형이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: be동사 + 동사-ing</span>
+            <h3 style="color:#8a5a00;">🏃 지금 무슨 일이 일어나고 있는지 말하기</h3>
             <p>
-                <b>현재진행형</b>은 <b>지금 하고 있는 일</b>을 말할 때 씁니다.
+                생존 상황에서는 “지금 기다리고 있어요”, “지금 먹고 있어요”, “지금 가고 있어요”처럼
+                <b>현재 상황</b>을 말할 수 있어야 합니다.
             </p>
             <div class="formula-box" style="color:#8a5a00;">
-                be동사 + 동사-ing
+                am / are / is + 동사-ing
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 만드는 법")
+    st.markdown("### ✅ 지금 하는 일을 만드는 법")
 
     st.markdown(
         """
@@ -322,14 +402,16 @@ with tabs[1]:
 # Tab 3: 미래형
 # =========================================================
 with tabs[2]:
-    st.subheader("🚀 미래형")
+    st.subheader("🚀 앞으로 할 일 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#ecfff1,#ffffff);">
-            <h3 style="color:#247a3d;">🚀 미래형이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: will / be going to</span>
+            <h3 style="color:#247a3d;">🚀 앞으로 할 일 말하기</h3>
             <p>
-                <b>미래형</b>은 <b>앞으로 일어날 일</b>을 말할 때 씁니다.
+                약속을 잡거나 계획을 말할 때는 <b>앞으로 할 일</b>을 표현해야 합니다.
+                “갈 거예요”, “전화할게요”, “도와줄게요” 같은 말이 여기에 들어갑니다.
             </p>
             <div class="formula-box" style="color:#247a3d;">
                 will + 동사원형 / be going to + 동사원형
@@ -339,7 +421,7 @@ with tabs[2]:
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. will로 미래 말하기")
+    st.markdown("### ✅ 1. 바로 할 일을 말할 때: will")
 
     st.markdown(
         """
@@ -368,7 +450,7 @@ with tabs[2]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. be going to로 미래 말하기")
+    st.markdown("### ✅ 2. 계획된 일을 말할 때: be going to")
 
     st.markdown(
         """
@@ -398,7 +480,7 @@ with tabs[2]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 3. will과 be going to 비교")
+    st.markdown("### ✅ 3. 앞으로 할 일 표현 비교")
 
     st.markdown(
         """
@@ -426,24 +508,26 @@ with tabs[2]:
 # Tab 4: 과거형
 # =========================================================
 with tabs[3]:
-    st.subheader("🕰️ 과거형")
+    st.subheader("🕰️ 지난 일 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff0f6,#ffffff);">
-            <h3 style="color:#9b2c5a;">🕰️ 과거형이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: 과거형</span>
+            <h3 style="color:#9b2c5a;">🕰️ 이미 일어난 일 말하기</h3>
             <p>
-                <b>과거형</b>은 <b>이미 일어난 일</b>을 말할 때 씁니다.
+                무슨 일이 있었는지 설명하려면 <b>지난 일</b>을 말할 수 있어야 합니다.
+                “어제 갔어요”, “먹었어요”, “봤어요” 같은 문장이 필요합니다.
             </p>
             <div class="formula-box" style="color:#9b2c5a;">
-                규칙동사: 동사 + ed
+                규칙동사: 동사 + ed / 불규칙동사: 따로 익히기
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 규칙동사 만드는 법")
+    st.markdown("### ✅ 지난 일을 말하는 기본 방법")
 
     st.markdown(
         """
@@ -474,7 +558,7 @@ with tabs[3]:
 
     st.markdown("---")
 
-    st.markdown("### ⭐ 불규칙동사")
+    st.markdown("### ⭐ 자주 쓰는 지난 일 표현: 불규칙동사")
 
     st.warning("모든 동사에 -ed를 붙이는 것은 아닙니다. 불규칙동사는 따로 외워야 합니다.")
 
@@ -502,15 +586,16 @@ with tabs[3]:
 # Tab 5: 불규칙동사 게임
 # =========================================================
 with tabs[4]:
-    st.subheader("🎮 불규칙동사 미니게임")
+    st.subheader("🎮 지난 일 단어 게임")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fffbe6,#ffffff);">
-            <h3 style="color:#8a6d00;">🎲 불규칙동사란?</h3>
+            <span class="tool-label">오늘의 문장 도구: 자주 쓰는 과거형 단어</span>
+            <h3 style="color:#8a6d00;">🎲 지난 일을 말하려면 꼭 필요한 단어들</h3>
             <p>
-                <b>불규칙동사</b>는 과거형을 만들 때 <b>-ed를 붙이지 않고</b>
-                모양이 다르게 바뀌는 동사입니다.
+                “갔다”, “먹었다”, “봤다”, “샀다”처럼 자주 쓰는 말은 과거형 모양이 따로 바뀝니다.
+                생존 영어에서는 이런 단어들을 먼저 익히는 것이 중요합니다.
             </p>
             <div class="formula-box" style="color:#8a6d00;">
                 go → went / eat → ate / see → saw
@@ -732,24 +817,26 @@ with tabs[4]:
 # Tab 6: 부정문
 # =========================================================
 with tabs[5]:
-    st.subheader("❌ 부정문 만들기")
+    st.subheader("❌ 아니라고 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff3f3,#ffffff);">
-            <h3 style="color:#b23a3a;">❌ 부정문이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: not</span>
+            <h3 style="color:#b23a3a;">❌ 아니라고 말하기</h3>
             <p>
-                <b>부정문</b>은 <b>‘~이 아니다’, ‘~하지 않는다’</b>라는 뜻을 나타내는 문장입니다.
+                생존 상황에서는 거절하거나, 모른다고 하거나, 아프지 않다고 말해야 할 때가 있습니다.
+                이때 필요한 것이 <b>not</b>입니다.
             </p>
             <div class="formula-box" style="color:#b23a3a;">
-                not을 넣어서 부정의 뜻을 만듭니다.
+                be동사 + not / do not + 동사원형
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. Be동사의 부정문")
+    st.markdown("### ✅ 1. 상태를 아니라고 말하기")
 
     st.markdown(
         """
@@ -778,7 +865,7 @@ with tabs[5]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. 일반동사의 부정문")
+    st.markdown("### ✅ 2. 행동을 안 한다고 말하기")
 
     st.markdown(
         """
@@ -812,24 +899,26 @@ with tabs[5]:
 # Tab 7: 의문문
 # =========================================================
 with tabs[6]:
-    st.subheader("❓ 의문문 만들기")
+    st.subheader("❓ 간단히 물어보기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#f3f0ff,#ffffff);">
-            <h3 style="color:#5b3aa4;">❓ 의문문이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: Are / Do / Did</span>
+            <h3 style="color:#5b3aa4;">❓ 간단히 물어보기</h3>
             <p>
-                <b>의문문</b>은 <b>질문하는 문장</b>입니다.
+                “괜찮니?”, “필요하니?”, “먹었니?”처럼 짧게 확인하는 질문은 실제 대화에서 매우 자주 씁니다.
+                질문을 만들 때는 <b>문장 앞에 오는 단어</b>가 중요합니다.
             </p>
             <div class="formula-box" style="color:#5b3aa4;">
-                앞에 오는 단어가 중요합니다.
+                Be동사 + 주어? / Do, Does, Did + 주어 + 동사원형?
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. Be동사의 의문문")
+    st.markdown("### ✅ 1. 상태를 확인하는 질문")
 
     st.markdown(
         """
@@ -864,7 +953,7 @@ with tabs[6]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. 일반동사의 의문문")
+    st.markdown("### ✅ 2. 행동을 확인하는 질문")
 
     st.markdown(
         """
@@ -902,28 +991,30 @@ with tabs[6]:
 # Tab 7: 의문사 의문문
 # =========================================================
 with tabs[7]:
-    st.subheader("🕵️ 의문사 의문문 만들기")
+    st.subheader("🕵️ 자세히 물어보기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#e0f7ff,#ffffff);">
-            <h3 style="color:#0477a8;">🕵️ 의문사 의문문이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: What / When / Where / Who / Why / How</span>
+            <h3 style="color:#0477a8;">🕵️ 자세히 물어보기</h3>
             <p>
-                <b>의문사</b>는 <b>무엇, 언제, 어디서, 누가, 왜, 어떻게</b>처럼
-                더 자세한 정보를 묻는 말입니다.
+                단순히 yes/no로 끝나는 질문보다 더 중요한 질문도 있습니다.
+                “어디예요?”, “언제예요?”, “무엇을 원하세요?”, “어떻게 가나요?”처럼
+                <b>자세한 정보를 묻는 문장</b>입니다.
             </p>
             <div class="formula-box" style="color:#0477a8;">
                 의문사 + 의문문
             </div>
             <p style="margin-top:14px;">
-                쉽게 말하면, <b>이미 만든 의문문 앞에 의문사를 하나 붙이면 됩니다.</b>
+                쉽게 말하면, <b>이미 만든 의문문 앞에 What, When, Where, Who, Why, How를 붙이면 됩니다.</b>
             </p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. 자주 쓰는 의문사")
+    st.markdown("### ✅ 1. 자세히 물을 때 필요한 말")
 
     st.markdown(
         """
@@ -941,7 +1032,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. 만드는 방법")
+    st.markdown("### ✅ 2. 자세한 질문 만드는 방법")
 
     st.markdown(
         """
@@ -958,7 +1049,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 3. Be동사 의문문 앞에 붙이기")
+    st.markdown("### ✅ 3. 상태를 자세히 물어보기")
 
     st.markdown(
         """
@@ -995,7 +1086,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 4. 일반동사 의문문 앞에 붙이기")
+    st.markdown("### ✅ 4. 행동을 자세히 물어보기")
 
     st.markdown(
         """
@@ -1046,7 +1137,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 5. 의문사별 예문 정리")
+    st.markdown("### ✅ 5. 생존 질문 예문 정리")
 
     st.markdown(
         """
