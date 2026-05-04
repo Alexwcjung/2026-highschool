@@ -223,7 +223,7 @@ st.markdown(
         border: 1px solid #bae6fd;
         border-radius: 24px;
         padding: 22px 24px;
-        margin: 18px 0 26px 0;
+        margin: 18px 0 18px 0;
         box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
 
@@ -239,11 +239,6 @@ st.markdown(
         color: #475569;
         line-height: 1.7;
         margin-bottom: 14px;
-    }
-
-    .small-muted {
-        font-size: 14px;
-        color: #6b7280;
     }
 
     div[data-testid="stRadio"] > label {
@@ -283,7 +278,7 @@ st.markdown(
         <div class="hero-text">
             • 이 단어 500개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
             • 전체 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
-            • 대화를 듣고, 바로 아래에서 핵심 단어를 익힙니다.
+            • 카세트 듣기 중 아래 단어 듣기를 누르면 카세트가 자동으로 멈춥니다.
         </div>
     </div>
     """,
@@ -496,169 +491,61 @@ word_themes = {
 # 단어별 예문
 # =========================
 CASSETTE_EXAMPLES = {
-    "I": "I am a student.",
-    "you": "You are my friend.",
-    "he": "He is my friend.",
-    "she": "She is a student.",
-    "we": "We are happy.",
-    "they": "They are students.",
-    "friend": "He is my friend.",
-    "teacher": "She is my teacher.",
-    "student": "I am a student.",
-    "classmate": "He is my classmate.",
-    "family": "This is my family.",
-    "father": "He is my father.",
-    "mother": "She is my mother.",
-    "brother": "He is my brother.",
-    "sister": "She is my sister.",
-    "name": "My name is Alex.",
-    "person": "He is a good person.",
-    "man": "He is a man.",
-    "woman": "She is a woman.",
-    "child": "He is a child.",
+    "I": "I am a student.", "you": "You are my friend.", "he": "He is my friend.", "she": "She is a student.",
+    "we": "We are happy.", "they": "They are students.", "friend": "He is my friend.", "teacher": "She is my teacher.",
+    "student": "I am a student.", "classmate": "He is my classmate.", "family": "This is my family.",
+    "father": "He is my father.", "mother": "She is my mother.", "brother": "He is my brother.",
+    "sister": "She is my sister.", "name": "My name is Alex.", "person": "He is a good person.",
+    "man": "He is a man.", "woman": "She is a woman.", "child": "He is a child.",
 
-    "go": "I go to school.",
-    "come": "Please come here.",
-    "walk": "I walk to school.",
-    "run": "I can run.",
-    "sit": "Please sit down.",
-    "stand": "Please stand up.",
-    "stop": "Please stop.",
-    "start": "Let's start.",
-    "open": "Open the door.",
-    "close": "Close the door.",
-    "eat": "I eat lunch.",
-    "drink": "I drink water.",
-    "sleep": "I sleep at night.",
-    "study": "I study English.",
-    "read": "I read a book.",
-    "write": "I write my name.",
-    "listen": "Listen carefully.",
-    "speak": "Please speak slowly.",
-    "help": "Can you help me?",
-    "wait": "Please wait.",
+    "go": "I go to school.", "come": "Please come here.", "walk": "I walk to school.", "run": "I can run.",
+    "sit": "Please sit down.", "stand": "Please stand up.", "stop": "Please stop.", "start": "Let's start.",
+    "open": "Open the door.", "close": "Close the door.", "eat": "I eat lunch.", "drink": "I drink water.",
+    "sleep": "I sleep at night.", "study": "I study English.", "read": "I read a book.", "write": "I write my name.",
+    "listen": "Listen carefully.", "speak": "Please speak slowly.", "help": "Can you help me?", "wait": "Please wait.",
 
-    "happy": "I am happy.",
-    "sad": "I am sad.",
-    "angry": "I am angry.",
-    "tired": "I am tired.",
-    "hungry": "I am hungry.",
-    "thirsty": "I am thirsty.",
-    "sick": "I am sick.",
-    "okay": "I am okay.",
-    "fine": "I am fine.",
-    "cold": "I am cold.",
-    "hot": "It is hot.",
-    "pain": "I have pain.",
-    "headache": "I have a headache.",
-    "stomachache": "I have a stomachache.",
-    "fever": "I have a fever.",
-    "hurt": "My leg hurts.",
-    "good": "It is good.",
-    "bad": "It is bad.",
-    "worried": "I am worried.",
+    "happy": "I am happy.", "sad": "I am sad.", "angry": "I am angry.", "tired": "I am tired.",
+    "hungry": "I am hungry.", "thirsty": "I am thirsty.", "sick": "I am sick.", "okay": "I am okay.",
+    "fine": "I am fine.", "cold": "I am cold.", "hot": "It is hot.", "pain": "I have pain.",
+    "headache": "I have a headache.", "stomachache": "I have a stomachache.", "fever": "I have a fever.",
+    "hurt": "My leg hurts.", "good": "It is good.", "bad": "It is bad.", "worried": "I am worried.",
     "scared": "I am scared.",
 
-    "food": "I need food.",
-    "water": "I need water.",
-    "rice": "I eat rice.",
-    "bread": "I eat bread.",
-    "milk": "I drink milk.",
-    "juice": "I drink juice.",
-    "coffee": "I drink coffee.",
-    "tea": "I drink tea.",
-    "apple": "I like apples.",
-    "banana": "I like bananas.",
-    "egg": "I eat an egg.",
-    "meat": "I eat meat.",
-    "chicken": "I like chicken.",
-    "fish": "I eat fish.",
-    "breakfast": "I eat breakfast.",
-    "lunch": "I eat lunch.",
-    "dinner": "I eat dinner.",
-    "snack": "I want a snack.",
-    "medicine": "I need medicine.",
-    "hospital": "I need a hospital.",
+    "food": "I need food.", "water": "I need water.", "rice": "I eat rice.", "bread": "I eat bread.",
+    "milk": "I drink milk.", "juice": "I drink juice.", "coffee": "I drink coffee.", "tea": "I drink tea.",
+    "apple": "I like apples.", "banana": "I like bananas.", "egg": "I eat an egg.", "meat": "I eat meat.",
+    "chicken": "I like chicken.", "fish": "I eat fish.", "breakfast": "I eat breakfast.", "lunch": "I eat lunch.",
+    "dinner": "I eat dinner.", "snack": "I want a snack.", "medicine": "I need medicine.", "hospital": "I need a hospital.",
 
-    "home": "I go home.",
-    "school": "I go to school.",
-    "classroom": "This is my classroom.",
-    "bathroom": "Where is the bathroom?",
-    "store": "I go to the store.",
-    "station": "Where is the station?",
-    "bus": "I take a bus.",
-    "car": "This is my car.",
-    "taxi": "I need a taxi.",
-    "train": "I take a train.",
-    "bike": "I ride a bike.",
-    "road": "This road is long.",
-    "street": "This street is busy.",
-    "here": "Come here.",
-    "there": "Go there.",
-    "near": "It is near here.",
-    "far": "It is far.",
-    "left": "Turn left.",
-    "right": "Turn right.",
+    "home": "I go home.", "school": "I go to school.", "classroom": "This is my classroom.",
+    "bathroom": "Where is the bathroom?", "store": "I go to the store.", "station": "Where is the station?",
+    "bus": "I take a bus.", "car": "This is my car.", "taxi": "I need a taxi.", "train": "I take a train.",
+    "bike": "I ride a bike.", "road": "This road is long.", "street": "This street is busy.",
+    "here": "Come here.", "there": "Go there.", "near": "It is near here.", "far": "It is far.",
+    "left": "Turn left.", "right": "Turn right.",
 
-    "time": "What time is it?",
-    "now": "I am here now.",
-    "today": "Today is Monday.",
-    "tomorrow": "See you tomorrow.",
-    "yesterday": "I studied yesterday.",
-    "morning": "Good morning.",
-    "afternoon": "Good afternoon.",
-    "evening": "Good evening.",
-    "night": "Good night.",
-    "early": "It is early.",
-    "late": "It is late.",
-    "one": "I have one book.",
-    "two": "I have two books.",
-    "three": "I have three books.",
-    "four": "I have four books.",
-    "five": "I have five books.",
-    "six": "I have six books.",
-    "seven": "I have seven books.",
-    "eight": "I have eight books.",
+    "time": "What time is it?", "now": "I am here now.", "today": "Today is Monday.",
+    "tomorrow": "See you tomorrow.", "yesterday": "I studied yesterday.", "morning": "Good morning.",
+    "afternoon": "Good afternoon.", "evening": "Good evening.", "night": "Good night.",
+    "early": "It is early.", "late": "It is late.", "one": "I have one book.", "two": "I have two books.",
+    "three": "I have three books.", "four": "I have four books.", "five": "I have five books.",
+    "six": "I have six books.", "seven": "I have seven books.", "eight": "I have eight books.",
     "ten": "I have ten books.",
 
-    "bag": "This is my bag.",
-    "phone": "This is my phone.",
-    "book": "This is my book.",
-    "notebook": "This is my notebook.",
-    "pen": "I have a pen.",
-    "pencil": "I have a pencil.",
-    "desk": "This is my desk.",
-    "chair": "This is my chair.",
-    "door": "Open the door.",
-    "window": "Close the window.",
-    "key": "I need a key.",
-    "money": "I need money.",
-    "card": "I have a card.",
-    "ticket": "I need a ticket.",
-    "clothes": "These are my clothes.",
-    "shoes": "These are my shoes.",
-    "hat": "This is my hat.",
-    "watch": "This is my watch.",
-    "cup": "This is my cup.",
-    "bottle": "This is my bottle.",
+    "bag": "This is my bag.", "phone": "This is my phone.", "book": "This is my book.",
+    "notebook": "This is my notebook.", "pen": "I have a pen.", "pencil": "I have a pencil.",
+    "desk": "This is my desk.", "chair": "This is my chair.", "door": "Open the door.",
+    "window": "Close the window.", "key": "I need a key.", "money": "I need money.",
+    "card": "I have a card.", "ticket": "I need a ticket.", "clothes": "These are my clothes.",
+    "shoes": "These are my shoes.", "hat": "This is my hat.", "watch": "This is my watch.",
+    "cup": "This is my cup.", "bottle": "This is my bottle.",
 
-    "please": "Please help me.",
-    "sorry": "I am sorry.",
-    "excuse me": "Excuse me.",
-    "again": "Please say it again.",
-    "slowly": "Please speak slowly.",
-    "understand": "I understand.",
-    "question": "I have a question.",
-    "problem": "I have a problem.",
-    "need": "I need help.",
-    "want": "I want water.",
-    "know": "I know.",
-    "say": "Please say it again.",
-    "tell": "Please tell me.",
-    "ask": "Can I ask you?",
-    "answer": "This is the answer.",
-    "repeat": "Please repeat.",
-    "look": "Look at this.",
+    "please": "Please help me.", "sorry": "I am sorry.", "excuse me": "Excuse me.",
+    "again": "Please say it again.", "slowly": "Please speak slowly.", "understand": "I understand.",
+    "question": "I have a question.", "problem": "I have a problem.", "need": "I need help.",
+    "want": "I want water.", "know": "I know.", "say": "Please say it again.",
+    "tell": "Please tell me.", "ask": "Can I ask you?", "answer": "This is the answer.",
+    "repeat": "Please repeat.", "look": "Look at this.",
 }
 
 # =========================
@@ -711,7 +598,151 @@ def get_word_emoji(word):
 
 
 # =========================
-# 단어 오디오 플레이어
+# 모든 오디오 공통 중지 채널 사용
+# 핵심:
+# - 카세트 재생 버튼 클릭 시 다른 오디오 중지
+# - 단어 듣기 버튼 클릭 시 카세트 자동 중지
+# - 대화 듣기 버튼 클릭 시 카세트 자동 중지
+# =========================
+AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
+
+
+# =========================
+# 카세트용 HTML 오디오 플레이어
+# =========================
+def cassette_audio_player(label, audio_bytes, height=92):
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+    audio_id = f"cassette_audio_{uuid.uuid4().hex}"
+    play_btn_id = f"cassette_play_{uuid.uuid4().hex}"
+    stop_btn_id = f"cassette_stop_{uuid.uuid4().hex}"
+    status_id = f"cassette_status_{uuid.uuid4().hex}"
+    player_id = f"cassette_player_{uuid.uuid4().hex}"
+
+    safe_label = json.dumps(label)
+    safe_player_id = json.dumps(player_id)
+    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
+
+    components.html(
+        f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            padding: 14px 16px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #eff6ff, #fff7ed);
+            border: 1px solid #bfdbfe;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        ">
+            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
+
+            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                <button id="{play_btn_id}" style="
+                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
+                    border: 1px solid #bfdbfe;
+                    border-radius: 999px;
+                    padding: 10px 18px;
+                    font-weight: 900;
+                    font-size: 15px;
+                    color: #1f2937;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                ">
+                    {label}
+                </button>
+
+                <button id="{stop_btn_id}" style="
+                    background: #fff7ed;
+                    border: 1px solid #fed7aa;
+                    border-radius: 999px;
+                    padding: 10px 18px;
+                    font-weight: 900;
+                    font-size: 15px;
+                    color: #9a3412;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                ">
+                    ⏹ 중지
+                </button>
+
+                <span id="{status_id}" style="
+                    font-size: 13px;
+                    color: #075985;
+                    font-weight: 800;
+                "></span>
+            </div>
+
+            <div style="
+                margin-top: 8px;
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 700;
+            ">
+                ※ 아래 단어 듣기나 대화 듣기를 누르면 이 카세트는 자동으로 중지됩니다.
+            </div>
+
+            <script>
+            const audio = document.getElementById("{audio_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const status = document.getElementById("{status_id}");
+
+            const labelText = {safe_label};
+            const playerId = {safe_player_id};
+            const channelName = {safe_channel};
+            const channel = new BroadcastChannel(channelName);
+
+            function stopThisAudio(showMessage = false) {{
+                audio.pause();
+                audio.currentTime = 0;
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+                status.innerText = showMessage ? "중지됨" : "";
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisAudio(false);
+                }}
+            }};
+
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                audio.currentTime = 0;
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중...";
+                status.innerText = "카세트 재생 중";
+
+                audio.play().catch((error) => {{
+                    status.innerText = "다시 클릭";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }});
+            }});
+
+            audio.addEventListener("ended", function() {{
+                status.innerText = "완료";
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisAudio(true);
+            }});
+            </script>
+        </div>
+        """,
+        height=height
+    )
+
+
+# =========================
+# 단어용 HTML 오디오 플레이어
 # =========================
 def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=42):
     audio_bytes = make_tts_audio(text)
@@ -726,6 +757,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
     safe_label = json.dumps(label)
     safe_text = json.dumps(text)
     safe_player_id = json.dumps(player_id)
+    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
 
     components.html(
         f"""
@@ -784,8 +816,9 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
             const labelText = {safe_label};
             const wordText = {safe_text};
             const playerId = {safe_player_id};
+            const channelName = {safe_channel};
 
-            const channel = new BroadcastChannel("survival_english_audio_channel");
+            const channel = new BroadcastChannel(channelName);
 
             function stopThisAudio(showMessage = false) {{
                 isStopped = true;
@@ -911,6 +944,7 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
     status_id = f"dialogue_status_{uuid.uuid4().hex}"
     player_id = f"dialogue_player_{uuid.uuid4().hex}"
     safe_player_id = json.dumps(player_id)
+    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
 
     components.html(
         f"""
@@ -963,12 +997,13 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
             const linePauseMs = {line_pause_ms};
             const labelText = {safe_label};
             const playerId = {safe_player_id};
+            const channelName = {safe_channel};
 
             let index = 0;
             let timer = null;
             let isStopped = false;
 
-            const channel = new BroadcastChannel("survival_english_audio_channel");
+            const channel = new BroadcastChannel(channelName);
 
             function stopThisAudio(showMessage = false) {{
                 isStopped = true;
@@ -1209,7 +1244,7 @@ def show_all_cassette_tab():
         unsafe_allow_html=True
     )
 
-    st.audio(all_cassette_audio, format="audio/mp3")
+    cassette_audio_player("▶️ 전체 카세트 재생", all_cassette_audio, height=98)
 
     st.download_button(
         label="⬇️ 전체 단어 카세트 mp3 다운로드",
@@ -1248,7 +1283,7 @@ def show_cassette_player(theme_words, theme_name):
     cassette_text = make_cassette_text(theme_name, theme_words)
     cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
 
-    st.audio(cassette_audio, format="audio/mp3")
+    cassette_audio_player("▶️ 이 테마 카세트 재생", cassette_audio, height=98)
 
     safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
 
