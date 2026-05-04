@@ -228,9 +228,18 @@ def make_tts_audio(text, lang="en", tld="com"):
     return fp.read()
 
 
+def make_repeat_text(text, repeat_count=20):
+    """
+    같은 단어를 20번 반복해서 들려주는 함수입니다.
+    마침표를 넣어 단어 사이에 자연스러운 쉼을 줍니다.
+    """
+    return (text + ". ") * repeat_count
+
+
 def audio_button(label, text, key):
     if st.button(label, key=key):
-        audio_bytes = make_tts_audio(text)
+        repeated_text = make_repeat_text(text, repeat_count=20)
+        audio_bytes = make_tts_audio(repeated_text)
         st.audio(audio_bytes, format="audio/mp3")
 
 
@@ -435,7 +444,8 @@ word_themes = {
         {"word": "near", "meaning": "가까운"},
         {"word": "far", "meaning": "먼"},
     ],
-        "🌤️ 자연·날씨": [
+
+    "🌤️ 자연·날씨": [
         {"word": "sun", "meaning": "태양"},
         {"word": "moon", "meaning": "달"},
         {"word": "star", "meaning": "별"},
