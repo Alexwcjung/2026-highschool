@@ -147,6 +147,13 @@ st.markdown(
         margin-left: 8px;
     }
 
+    .emoji-text {
+        font-size: 25px;
+        line-height: 1;
+        text-align: center;
+        padding-top: 2px;
+    }
+
     .quiz-card {
         background: #ffffff;
         border-radius: 24px;
@@ -272,6 +279,132 @@ def remove_speaker_label(sentence):
 
 def make_dialogue_tts_text(dialogue):
     return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
+
+
+def get_word_emoji(word):
+    """단어별로 최대한 어울리는 이모지를 붙입니다."""
+    emoji_map = {
+        # 학교생활
+        "subject": "📚", "math": "➗", "science": "🔬", "history": "🏛️", "music": "🎵",
+        "art": "🎨", "P.E.": "🏃", "club": "👥", "schedule": "🗓️", "semester": "🏫",
+        "assignment": "📝", "project": "📁", "presentation": "🗣️", "report": "📄", "textbook": "📘",
+        "workbook": "📗", "library": "📚", "cafeteria": "🍽️", "hallway": "🚶", "attendance": "✅",
+
+        # 교실 활동
+        "copy": "✍️", "repeat": "🔁", "underline": "〽️", "circle": "⭕", "choose": "☝️",
+        "check": "✅", "match": "🧩", "complete": "🏁", "fill": "🖊️", "spell": "🔤",
+        "pronounce": "🗣️", "review": "🔎", "explain": "💬", "describe": "🖼️", "compare": "⚖️",
+        "discuss": "🗨️", "present": "📢", "take notes": "📝", "turn in": "📥", "hand out": "📤",
+
+        # 집과 생활
+        "living room": "🛋️", "bedroom": "🛏️", "kitchen": "🍳", "balcony": "🌇", "floor": "🧱",
+        "wall": "🧱", "roof": "🏠", "garden": "🌷", "yard": "🌳", "sofa": "🛋️",
+        "television": "📺", "refrigerator": "🧊", "microwave": "♨️", "blanket": "🛌", "pillow": "🛏️",
+        "towel": "🧺", "soap": "🧼", "mirror": "🪞", "closet": "🚪", "trash": "🗑️",
+
+        # 하루 일과
+        "routine": "🔄", "wake up": "⏰", "get up": "🌅", "brush": "🪥", "shower": "🚿",
+        "dress": "👕", "leave": "🚪", "arrive": "📍", "return": "↩️", "finish": "🏁",
+        "relax": "😌", "weekday": "📅", "weekend": "🎉", "usually": "🔁", "often": "🔂",
+        "sometimes": "🤔", "always": "♾️", "never": "🚫", "habit": "🔁", "lifestyle": "🌿",
+
+        # 취미와 여가
+        "hobby": "🎯", "movie": "🎬", "drama": "📺", "song": "🎵", "concert": "🎤",
+        "dance": "💃", "drawing": "✏️", "painting": "🖌️", "comic": "💬", "novel": "📖",
+        "photography": "📷", "cooking": "🍳", "baking": "🍞", "camping": "⛺", "hiking": "🥾",
+        "fishing": "🎣", "free time": "🕒", "favorite": "⭐", "popular": "🔥", "relaxing": "😌",
+
+        # 운동과 활동
+        "soccer": "⚽", "baseball": "⚾", "basketball": "🏀", "volleyball": "🏐", "tennis": "🎾",
+        "badminton": "🏸", "swimming": "🏊", "cycling": "🚴", "skating": "⛸️", "boxing": "🥊",
+        "taekwondo": "🥋", "yoga": "🧘", "fitness": "💪", "field": "🏟️", "court": "🎾",
+        "stadium": "🏟️", "coach": "📣", "match": "🏆", "competition": "🏁", "medal": "🏅",
+
+        # 날씨와 계절
+        "season": "🍂", "spring": "🌸", "summer": "☀️", "fall": "🍁", "winter": "❄️",
+        "cloudy": "☁️", "rainy": "🌧️", "snowy": "🌨️", "windy": "🌬️", "stormy": "⛈️",
+        "foggy": "🌫️", "dry": "🏜️", "wet": "💦", "humid": "💧", "temperature": "🌡️",
+        "degree": "🌡️", "forecast": "📡", "umbrella": "☂️", "raincoat": "🧥", "rainbow": "🌈",
+
+        # 자연과 환경
+        "nature": "🌿", "environment": "🌎", "plant": "🌱", "forest": "🌲", "lake": "🏞️",
+        "ocean": "🌊", "island": "🏝️", "desert": "🏜️", "farm": "🚜", "village": "🏘️",
+        "leaf": "🍃", "root": "🌱", "stone": "🪨", "sand": "🏖️", "soil": "🌱",
+        "plastic": "🥤", "recycle": "♻️", "protect": "🛡️", "pollution": "🏭",
+
+        # 식당과 주문
+        "restaurant": "🍽️", "menu": "📋", "seat": "💺", "waiter": "🤵", "waitress": "🤵‍♀️",
+        "order": "🛎️", "dish": "🍛", "meal": "🍽️", "soup": "🍲", "salad": "🥗",
+        "steak": "🥩", "pizza": "🍕", "pasta": "🍝", "burger": "🍔", "sandwich": "🥪",
+        "dessert": "🍰", "spicy": "🌶️", "sweet": "🍬", "bill": "🧾", "receipt": "🧾",
+
+        # 쇼핑과 가격
+        "shop": "🏪", "market": "🛒", "mall": "🏬", "supermarket": "🛒", "cashier": "💁",
+        "customer": "🧑", "price": "💰", "sale": "🏷️", "discount": "🔻", "coupon": "🎟️",
+        "change": "💵", "coin": "🪙", "expensive": "💸", "cheap": "👍", "size": "📏",
+        "color": "🎨", "brand": "🏷️", "exchange": "🔄", "refund": "↩️",
+
+        # 옷과 외모
+        "T-shirt": "👕", "pants": "👖", "jeans": "👖", "shorts": "🩳", "skirt": "👗",
+        "dress": "👗", "jacket": "🧥", "coat": "🧥", "sweater": "🧶", "hoodie": "🧥",
+        "uniform": "🎽", "socks": "🧦", "sneakers": "👟", "boots": "🥾", "sandals": "🩴",
+        "scarf": "🧣", "gloves": "🧤", "belt": "👖", "glasses": "👓", "comfortable": "😌",
+
+        # 교통과 길 찾기
+        "bus stop": "🚏", "subway": "🚇", "airport": "✈️", "terminal": "🚌", "platform": "🚉",
+        "route": "🗺️", "direction": "➡️", "straight": "⬆️", "corner": "↪️", "block": "🏙️",
+        "traffic": "🚦", "crosswalk": "🚸", "sidewalk": "🚶", "bridge": "🌉", "tunnel": "🚇",
+        "entrance": "🚪", "exit": "🚪", "transfer": "🔁", "lost": "😵", "guide": "🧭",
+
+        # 여행과 숙박
+        "travel": "✈️", "trip": "🧳", "vacation": "🏖️", "tourist": "📸", "passport": "🛂",
+        "flight": "🛫", "hotel": "🏨", "motel": "🏩", "hostel": "🛏️", "reservation": "📅",
+        "check in": "🔑", "check out": "👋", "luggage": "🧳", "suitcase": "🧳", "backpack": "🎒",
+        "souvenir": "🎁", "museum": "🏛️", "famous": "⭐", "local": "📍",
+
+        # 친구 관계
+        "friendship": "🤝", "best friend": "👯", "teammate": "👥", "partner": "🤝", "message": "💬",
+        "call": "📞", "chat": "💬", "invite": "✉️", "visit": "🏠", "meet": "🤝",
+        "hang out": "🎉", "laugh": "😂", "share": "🤲", "trust": "🤝", "promise": "🤞",
+        "secret": "🤫", "joke": "😄", "together": "👥", "alone": "🚶", "forgive": "🫶",
+
+        # 감정 표현 확장
+        "excited": "🤩", "nervous": "😬", "bored": "🥱", "surprised": "😲", "confused": "😕",
+        "embarrassed": "😳", "proud": "😊", "disappointed": "😞", "lonely": "🥲", "relaxed": "😌",
+        "calm": "🧘", "upset": "😟", "interested": "🧐", "satisfied": "😌", "thankful": "🙏",
+        "hopeful": "🌟", "mood": "🙂", "stress": "😣", "confidence": "💪", "courage": "🦁",
+
+        # 생각과 의견
+        "think": "💭", "believe": "🙏", "guess": "🤔", "remember": "🧠", "forget": "💨",
+        "mean": "💡", "agree": "👍", "disagree": "👎", "opinion": "💬", "idea": "💡",
+        "reason": "❓", "example": "🔎", "fact": "✅", "choice": "☝️", "decision": "✅",
+        "advice": "💡", "suggestion": "💬", "possible": "✅", "impossible": "🚫", "confusing": "😵",
+
+        # 계획과 약속
+        "plan": "📝", "appointment": "📅", "meeting": "👥", "date": "📆", "event": "🎪",
+        "party": "🎉", "festival": "🎊", "deadline": "⏳", "calendar": "📅", "next week": "➡️",
+        "join": "🙋", "prepare": "🎒", "decide": "✅", "cancel": "❌", "on time": "⏰",
+        "available": "🟢", "reminder": "🔔",
+
+        # 건강한 생활
+        "health": "🩺", "body": "🧍", "eye": "👁️", "ear": "👂", "nose": "👃",
+        "mouth": "👄", "tooth": "🦷", "hand": "✋", "arm": "💪", "leg": "🦵",
+        "foot": "🦶", "stomach": "🤰", "back": "🔙", "heart": "❤️", "clinic": "🏥",
+        "vitamin": "💊", "diet": "🥗", "cough": "😷", "flu": "🤒", "breathe": "🌬️",
+
+        # 미디어와 스마트폰
+        "smartphone": "📱", "screen": "🖥️", "app": "📲", "website": "🌐", "internet": "🌐",
+        "Wi-Fi": "📶", "password": "🔐", "text": "💬", "video call": "📹", "gallery": "🖼️",
+        "news": "📰", "channel": "📺", "post": "📝", "comment": "💬", "upload": "⬆️",
+        "download": "⬇️", "search": "🔎", "click": "🖱️", "battery": "🔋", "notification": "🔔",
+
+        # 직업과 미래
+        "job": "💼", "work": "💼", "company": "🏢", "office": "🏢", "factory": "🏭",
+        "engineer": "🛠️", "mechanic": "🔧", "chef": "👨‍🍳", "firefighter": "🚒", "farmer": "🚜",
+        "designer": "🎨", "singer": "🎤", "actor": "🎭", "athlete": "🏃", "dream": "🌈",
+        "future": "🔮", "goal": "🎯", "skill": "🛠️", "interview": "🎙️", "experience": "🌱",
+    }
+    return emoji_map.get(word, "🌱")
 
 
 # =========================
@@ -1408,7 +1541,8 @@ def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns([1.25, 1.65, 2.3])
+        # 기존 크기감은 유지하면서: 영어 → 한국어 → 이모지 → 듣기/중지 순서
+        col1, col2, col3, col4 = st.columns([1.25, 1.05, 0.35, 1.65])
 
         with col1:
             st.markdown(
@@ -1422,16 +1556,22 @@ def show_word_cards(theme_words, theme_name):
             )
 
         with col2:
-            audio_button(
-                "🔊 듣기",
-                item["word"],
-                key=f"{theme_name}_learn_audio_{idx}"
+            st.markdown(
+                f"<div class='meaning-text'>{item['meaning']}</div>",
+                unsafe_allow_html=True
             )
 
         with col3:
             st.markdown(
-                f"<div class='meaning-text'>{item['meaning']}</div>",
+                f"<div class='emoji-text'>{get_word_emoji(item['word'])}</div>",
                 unsafe_allow_html=True
+            )
+
+        with col4:
+            audio_button(
+                "🔊 듣기",
+                item["word"],
+                key=f"{theme_name}_learn_audio_{idx}"
             )
 
         st.markdown('</div>', unsafe_allow_html=True)
