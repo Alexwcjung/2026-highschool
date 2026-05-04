@@ -1827,15 +1827,6 @@ def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
     st.write("전체 160개 단어를 처음부터 끝까지 카세트처럼 이어서 들을 수 있습니다.")
 
-    st.markdown(
-        """
-        <div class="cassette-box">
-            <div class="cassette-title">📼 Survival English 160 전체 카세트</div>
-            <div class="cassette-text">
-                구간 선택 없이 전체 단어가 처음부터 끝까지 순서대로 이어집니다.<br>
-                단어를 두 번 듣고, 짧은 예문 하나를 들은 뒤 다음 단어로 넘어갑니다.<br>
-                현재 재생 중인 단어의 뜻, 예문, 예문 뜻도 함께 볼 수 있습니다.
-            </div>
         </div>
         """,
         unsafe_allow_html=True
