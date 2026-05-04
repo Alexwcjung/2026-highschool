@@ -882,7 +882,7 @@ def get_word_emoji(word):
 # =========================
 # 단어 한 줄 compact 플레이어
 # =========================
-def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20, pause_ms=1500, height=44):
+def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20, pause_ms=1500, height=52):
     """
     한 줄에 번호 / 영어 / 한국어 / 이모지 / 듣기·중지 버튼을 모두 붙여서 보여줍니다.
     """
@@ -906,9 +906,9 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
         font-family: Arial, sans-serif;
         display:flex;
         align-items:center;
-        gap:6px;
-        height:38px;
-        padding:3px 6px;
+        gap:10px;
+        height:44px;
+        padding:5px 9px;
         border:1px solid #e0f2fe;
         border-radius:14px;
         background:white;
@@ -918,11 +918,11 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
         <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
         <span style="
-            min-width:26px;
+            min-width:30px;
             background:#e0f2fe;
             color:#0369a1;
             border-radius:999px;
-            padding:3px 6px;
+            padding:4px 8px;
             font-size:12px;
             font-weight:900;
             text-align:center;
@@ -930,8 +930,8 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
         ">{number}</span>
 
         <span style="
-            min-width:86px;
-            max-width:132px;
+            min-width:105px;
+            max-width:155px;
             font-size:20px;
             font-weight:900;
             color:#111827;
@@ -941,8 +941,8 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
         ">{safe_word_html}</span>
 
         <span style="
-            min-width:70px;
-            max-width:145px;
+            min-width:90px;
+            max-width:170px;
             font-size:16px;
             font-weight:800;
             color:#374151;
@@ -952,8 +952,8 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
         ">{safe_meaning_html}</span>
 
         <span style="
-            font-size:20px;
-            min-width:26px;
+            font-size:21px;
+            min-width:32px;
             text-align:center;
             line-height:22px;
         ">{safe_emoji_html}</span>
@@ -962,26 +962,26 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
             background:linear-gradient(135deg, #fce7f3, #dbeafe);
             border:1px solid #e9d5ff;
             border-radius:999px;
-            padding:5px 8px;
+            padding:6px 10px;
             font-weight:800;
             font-size:12px;
             color:#374151;
             cursor:pointer;
             white-space:nowrap;
-            line-height:16px;
+            line-height:18px;
         ">🔊 듣기</button>
 
         <button id="{stop_btn_id}" style="
             background:#fff7ed;
             border:1px solid #fed7aa;
             border-radius:999px;
-            padding:5px 8px;
+            padding:6px 10px;
             font-weight:800;
             font-size:12px;
             color:#9a3412;
             cursor:pointer;
             white-space:nowrap;
-            line-height:16px;
+            line-height:18px;
         ">⏹ 중지</button>
 
         <span id="{status_id}" style="
@@ -989,7 +989,7 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
             color:#075985;
             font-weight:700;
             white-space:nowrap;
-            min-width:28px;
+            min-width:34px;
         "></span>
 
         <script>
@@ -1283,7 +1283,7 @@ def show_word_cards(theme_words, theme_name):
             emoji=emoji,
             repeat_count=20,
             pause_ms=1500,
-            height=46
+            height=52
         )
 
 # =========================
