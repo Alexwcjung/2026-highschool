@@ -214,6 +214,30 @@ st.markdown(
         margin-bottom: 16px;
     }
 
+
+    .cassette-box {
+        background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #fff7ed 100%);
+        border: 1px solid #bbf7d0;
+        border-radius: 24px;
+        padding: 22px 24px;
+        margin: 18px 0 18px 0;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    .cassette-title {
+        font-size: 25px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .cassette-text {
+        font-size: 15px;
+        color: #475569;
+        line-height: 1.7;
+        margin-bottom: 14px;
+    }
+
     div[data-testid="stRadio"] > label {
         font-weight: 800;
         color: #374151;
@@ -252,6 +276,8 @@ st.markdown(
             • 각 테마는 <b>오늘의 일상 대화</b>로 시작합니다.<br>
             • 대화를 듣고, 아래에서 핵심 단어를 익힙니다.<br>
             • 단어 발음은 <b>20번 반복</b>됩니다.<br>
+            • <b>전체 카세트 듣기</b>로 모든 테마 단어를 이어서 복습할 수 있습니다.<br>
+            • 카세트 듣기는 <b>10초 전/후 이동, 일시정지, 진행바 조절</b>이 가능합니다.<br>
             • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
             • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
             • 단어, 발음 버튼, 뜻이 한 줄에 가깝게 배치되어 빠르게 익힐 수 있습니다.
@@ -1409,6 +1435,356 @@ theme_dialogues = {
     ],
 }
 
+
+# =========================
+# 카세트 듣기 기능
+# =========================
+AUDIO_CHANNEL_NAME = "daily_english_audio_channel"
+
+
+def clean_theme_title(theme_name):
+    return re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
+
+
+def make_cassette_text(theme_name, theme_words):
+    clean_name = clean_theme_title(theme_name)
+
+    lines = []
+    lines.append(f"Daily English 1000. {clean_name}.")
+    lines.append("Listen and repeat.")
+    lines.append("")
+
+    for item in theme_words:
+        word = item["word"]
+        lines.append(f"{word}.")
+        lines.append(f"{word}.")
+        lines.append("Listen and repeat.")
+        lines.append("")
+
+    lines.append("Good job.")
+    lines.append("Keep practicing.")
+
+    return "\n".join(lines)
+
+
+def make_all_cassette_text():
+    lines = []
+    lines.append("Daily English 1000.")
+    lines.append("Listen and repeat.")
+    lines.append("Let's practice all the words.")
+    lines.append("")
+
+    for theme_name, theme_words in word_themes.items():
+        clean_name = clean_theme_title(theme_name)
+        lines.append(clean_name + ".")
+        lines.append("")
+
+        for item in theme_words:
+            word = item["word"]
+            lines.append(f"{word}.")
+            lines.append(f"{word}.")
+            lines.append("Listen and repeat.")
+            lines.append("")
+
+    lines.append("Great work.")
+    lines.append("Keep practicing every day.")
+
+    return "\n".join(lines)
+
+
+def cassette_audio_player(label, audio_bytes, height=135):
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+    audio_id = f"cassette_audio_{uuid.uuid4().hex}"
+    play_btn_id = f"cassette_play_{uuid.uuid4().hex}"
+    pause_btn_id = f"cassette_pause_{uuid.uuid4().hex}"
+    rewind_btn_id = f"cassette_rewind_{uuid.uuid4().hex}"
+    forward_btn_id = f"cassette_forward_{uuid.uuid4().hex}"
+    stop_btn_id = f"cassette_stop_{uuid.uuid4().hex}"
+    status_id = f"cassette_status_{uuid.uuid4().hex}"
+    progress_id = f"cassette_progress_{uuid.uuid4().hex}"
+    player_id = f"cassette_player_{uuid.uuid4().hex}"
+
+    safe_label = json.dumps(label)
+    safe_player_id = json.dumps(player_id)
+    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
+
+    components.html(
+        f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            padding: 14px 16px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f0fdf4, #eff6ff, #fff7ed);
+            border: 1px solid #bbf7d0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        ">
+            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
+
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button id="{rewind_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏪ 10초 전</button>
+
+                <button id="{play_btn_id}" style="
+                    background: linear-gradient(135deg, #dcfce7, #dbeafe);
+                    border: 1px solid #bbf7d0;
+                    border-radius: 999px;
+                    padding: 9px 16px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #1f2937;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                ">
+                    {label}
+                </button>
+
+                <button id="{pause_btn_id}" style="
+                    background:#ecfeff;
+                    border:1px solid #67e8f9;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#155e75;
+                    cursor:pointer;
+                ">⏸ 일시정지</button>
+
+                <button id="{forward_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏩ 10초 후</button>
+
+                <button id="{stop_btn_id}" style="
+                    background: #fff7ed;
+                    border: 1px solid #fed7aa;
+                    border-radius: 999px;
+                    padding: 9px 14px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #9a3412;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                ">
+                    ⏹ 중지
+                </button>
+
+                <span id="{status_id}" style="
+                    font-size: 13px;
+                    color: #075985;
+                    font-weight: 800;
+                "></span>
+            </div>
+
+            <input id="{progress_id}" type="range" min="0" max="100" value="0" step="0.1" style="
+                width:100%;
+                margin-top:14px;
+                cursor:pointer;
+            ">
+
+            <div style="
+                margin-top: 6px;
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 700;
+            ">
+                ※ 진행 바를 움직여 원하는 부분으로 이동할 수 있습니다. 아래 단어 듣기나 대화 듣기를 누르면 이 카세트는 자동으로 중지됩니다.
+            </div>
+
+            <script>
+            const audio = document.getElementById("{audio_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const pauseBtn = document.getElementById("{pause_btn_id}");
+            const rewindBtn = document.getElementById("{rewind_btn_id}");
+            const forwardBtn = document.getElementById("{forward_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const status = document.getElementById("{status_id}");
+            const progress = document.getElementById("{progress_id}");
+
+            const labelText = {safe_label};
+            const playerId = {safe_player_id};
+            const channelName = {safe_channel};
+            const channel = new BroadcastChannel(channelName);
+
+            function formatTime(seconds) {{
+                if (isNaN(seconds)) return "0:00";
+                const m = Math.floor(seconds / 60);
+                const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+                return m + ":" + s;
+            }}
+
+            function updateStatus() {{
+                status.innerText = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
+            }}
+
+            function stopThisAudio(showMessage = false) {{
+                audio.pause();
+                audio.currentTime = 0;
+                progress.value = 0;
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+                status.innerText = showMessage ? "중지됨" : "";
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisAudio(false);
+                }}
+            }};
+
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중...";
+
+                audio.play().then(() => {{
+                    status.innerText = "카세트 재생 중";
+                }}).catch((error) => {{
+                    status.innerText = "다시 클릭";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }});
+            }});
+
+            pauseBtn.addEventListener("click", function() {{
+                audio.pause();
+                playBtn.disabled = false;
+                playBtn.innerText = "▶️ 이어 듣기";
+                status.innerText = "일시정지 " + formatTime(audio.currentTime);
+            }});
+
+            rewindBtn.addEventListener("click", function() {{
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+                updateStatus();
+            }});
+
+            forwardBtn.addEventListener("click", function() {{
+                if (!isNaN(audio.duration)) {{
+                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+                    updateStatus();
+                }}
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisAudio(true);
+            }});
+
+            audio.addEventListener("timeupdate", function() {{
+                if (!isNaN(audio.duration) && audio.duration > 0) {{
+                    progress.value = (audio.currentTime / audio.duration) * 100;
+                    updateStatus();
+                }}
+            }});
+
+            progress.addEventListener("input", function() {{
+                if (!isNaN(audio.duration) && audio.duration > 0) {{
+                    audio.currentTime = (progress.value / 100) * audio.duration;
+                    updateStatus();
+                }}
+            }});
+
+            audio.addEventListener("ended", function() {{
+                status.innerText = "완료";
+                progress.value = 100;
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+            }});
+            </script>
+        </div>
+        """,
+        height=height
+    )
+
+
+def show_all_cassette_tab():
+    st.markdown("## 🎧 전체 단어 카세트 듣기")
+    st.write("모든 테마의 단어를 카세트처럼 한 번에 들을 수 있습니다.")
+
+    all_cassette_text = make_all_cassette_text()
+    all_cassette_audio = make_tts_audio(all_cassette_text, lang="en", tld="com")
+
+    st.markdown(
+        """
+        <div class="cassette-box">
+            <div class="cassette-title">📼 전체 카세트 복습</div>
+            <div class="cassette-text">
+                전체 테마의 단어를 두 번씩 듣고 따라 말할 수 있습니다.<br>
+                10초 전/후 이동, 일시정지, 진행바 조절, mp3 다운로드가 가능합니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    cassette_audio_player("▶️ 전체 카세트 재생", all_cassette_audio, height=145)
+
+    st.download_button(
+        label="⬇️ 전체 단어 카세트 mp3 다운로드",
+        data=all_cassette_audio,
+        file_name="daily_english_1000_all_cassette.mp3",
+        mime="audio/mp3",
+        key="all_cassette_download"
+    )
+
+    with st.expander("📜 전체 카세트 스크립트 보기"):
+        for theme_name, theme_words in word_themes.items():
+            st.markdown(f"### {theme_name}")
+            for item in theme_words:
+                st.markdown(f"**{item['word']}** : {item['meaning']}")
+
+
+def show_cassette_player(theme_words, theme_name):
+    st.markdown(
+        """
+        <div class="cassette-box">
+            <div class="cassette-title">🎧 이 테마 카세트 듣기</div>
+            <div class="cassette-text">
+                이 테마의 단어를 카세트처럼 이어서 듣고 복습할 수 있습니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    cassette_text = make_cassette_text(theme_name, theme_words)
+    cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
+
+    cassette_audio_player("▶️ 이 테마 카세트 재생", cassette_audio, height=145)
+
+    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
+
+    st.download_button(
+        label="⬇️ 이 테마 카세트 mp3 다운로드",
+        data=cassette_audio,
+        file_name=f"{safe_file_name}_cassette_review.mp3",
+        mime="audio/mp3",
+        key=f"{theme_name}_cassette_download"
+    )
+
+    with st.expander("📜 이 테마 카세트 스크립트 보기"):
+        for item in theme_words:
+            st.markdown(f"**{item['word']}** : {item['meaning']}")
+
 # =========================
 # 전체 뜻 목록 만들기
 # =========================
@@ -1749,9 +2125,13 @@ def show_quiz(theme_words, theme_name):
 # =========================
 # 탭 구성
 # =========================
-tabs = st.tabs(list(word_themes.keys()))
+tab_names = ["🎧 전체 카세트 듣기"] + list(word_themes.keys())
+tabs = st.tabs(tab_names)
 
-for tab, theme_name in zip(tabs, word_themes.keys()):
+with tabs[0]:
+    show_all_cassette_tab()
+
+for tab, theme_name in zip(tabs[1:], word_themes.keys()):
     with tab:
         theme_words = word_themes[theme_name]
 
@@ -1766,6 +2146,8 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
         )
 
         show_dialogue(theme_name)
+
+        show_cassette_player(theme_words, theme_name)
 
         mode = st.radio(
             "학습 모드를 선택하세요.",
