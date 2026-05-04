@@ -144,24 +144,9 @@ st.markdown(
         font-size: 19px;
         font-weight: 800;
         color: #374151;
-        margin-left: 8px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        margin-left: 0px;
         white-space: nowrap;
-    }
-
-    .meaning-emoji {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 30px;
-        height: 30px;
-        background: #fef3c7;
-        border: 1px solid #fde68a;
-        border-radius: 999px;
-        font-size: 17px;
-        flex: 0 0 auto;
+        line-height: 42px;
     }
 
     .quiz-card {
@@ -1025,34 +1010,6 @@ def show_dialogue(theme_name):
     )
 
 # =========================
-# 뜻 옆 이모지 자동 선택
-# =========================
-def get_meaning_emoji(word, meaning, theme_name=""):
-    """
-    뜻과 테마를 보고 간단한 이모지를 자동으로 붙입니다.
-    필요하면 아래 키워드를 추가해서 더 세밀하게 조정할 수 있습니다.
-    """
-    text = f"{word} {meaning} {theme_name}".lower()
-
-    emoji_rules = [
-        ("🧍", ["나", "너", "그", "그녀", "우리", "그들", "사람", "남자", "여자", "아이", "친구", "학생", "선생님", "가족", "아버지", "어머니", "형제", "자매", "이름"]),
-        ("🏃", ["가다", "오다", "걷다", "달리다", "앉다", "서다", "멈추다", "시작", "열다", "닫다", "먹다", "마시다", "자다", "공부", "읽다", "쓰다", "듣다", "말하다", "돕다", "기다리다"]),
-        ("💖", ["행복", "슬픈", "화난", "피곤", "배고픈", "목마른", "아픈", "괜찮", "좋은", "나쁜", "걱정", "무서", "기분"]),
-        ("🩺", ["통증", "두통", "복통", "열", "다치", "약", "병원"]),
-        ("🍎", ["음식", "물", "밥", "쌀", "빵", "우유", "주스", "커피", "차", "사과", "바나나", "달걀", "고기", "닭", "생선", "식사", "간식"]),
-        ("🚗", ["집", "학교", "교실", "화장실", "가게", "역", "버스", "자동차", "택시", "기차", "자전거", "도로", "거리", "여기", "거기", "가까운", "먼", "왼쪽", "오른쪽"]),
-        ("⏰", ["시간", "지금", "오늘", "내일", "어제", "아침", "오후", "저녁", "밤", "이른", "늦은", "하나", "둘", "셋", "넷", "다섯", "여섯", "일곱", "여덟", "열"]),
-        ("🎒", ["가방", "전화기", "책", "공책", "펜", "연필", "책상", "의자", "문", "창문", "열쇠", "돈", "카드", "표", "티켓", "옷", "신발", "모자", "시계", "컵", "병"]),
-        ("🆘", ["도움", "부디", "제발", "미안", "실례", "다시", "천천히", "이해", "질문", "문제", "필요", "원하다", "알다", "반복", "보다", "대답"]),
-    ]
-
-    for emoji, keywords in emoji_rules:
-        if any(keyword in text for keyword in keywords):
-            return emoji
-
-    return "✨"
-
-# =========================
 # 단어 익히기
 # =========================
 def show_word_cards(theme_words, theme_name):
@@ -1060,11 +1017,10 @@ def show_word_cards(theme_words, theme_name):
     st.write("생존 회화에 꼭 필요한 단어를 듣고 익혀 보세요.")
 
     for idx, item in enumerate(theme_words):
-        meaning_emoji = get_meaning_emoji(item["word"], item["meaning"], theme_name)
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        # 단어 / 발음·중지 / 뜻+이모지가 한 줄에 가깝게 보이도록 배치
-        col1, col2, col3 = st.columns([1.25, 1.65, 2.3])
+        # 영어 단어 / 한국어 뜻 / 발음·중지 버튼 순서로 compact하게 배치
+        col1, col2, col3 = st.columns([1.45, 1.55, 1.65])
 
         with col1:
             st.markdown(
@@ -1078,16 +1034,16 @@ def show_word_cards(theme_words, theme_name):
             )
 
         with col2:
+            st.markdown(
+                f"<div class='meaning-text'>{item['meaning']}</div>",
+                unsafe_allow_html=True
+            )
+
+        with col3:
             audio_button(
                 "🔊 듣기",
                 item["word"],
                 key=f"{theme_name}_learn_audio_{idx}"
-            )
-
-        with col3:
-            st.markdown(
-                f"<div class='meaning-text'><span class='meaning-emoji'>{meaning_emoji}</span><span>{item['meaning']}</span></div>",
-                unsafe_allow_html=True
             )
 
         st.markdown('</div>', unsafe_allow_html=True)
