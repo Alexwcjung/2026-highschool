@@ -231,9 +231,9 @@ def make_tts_audio(text, lang="en", tld="com"):
 def make_repeat_text(text, repeat_count=20):
     """
     같은 단어를 20번 반복해서 들려주는 함수입니다.
-    마침표를 넣어 단어 사이에 자연스러운 쉼을 줍니다.
+    ... ... 를 넣어 단어 사이의 쉼을 더 길게 줍니다.
     """
-    return (text + ". ") * repeat_count
+    return (text + "... ... ") * repeat_count
 
 
 def audio_button(label, text, key):
