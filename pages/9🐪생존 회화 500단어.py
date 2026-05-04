@@ -258,7 +258,7 @@ st.markdown(
     <div class="hero-box">
         <div class="hero-title">🌟 오늘의 학습 방식</div>
         <div class="hero-text">
-            • 이 단어들만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
+            • 이 단어 500개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
             • 대화를 듣고, 바로 아래에서 핵심 단어를 익힙니다.<br>
 
     </div>
