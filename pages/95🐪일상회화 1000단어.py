@@ -1457,9 +1457,445 @@ def flatten_all_words():
     return all_items
 
 
-def make_simple_example(word):
-    return f"I can say {word}."
+def make_daily_example(word, meaning="", theme=""):
+    """
+    전체 카세트에서 단어 뒤에 붙일 짧은 일상회화 문장입니다.
+    너무 어색한 I like closet 같은 문장을 피하기 위해 자주 쓰는 단어는 따로 예문을 지정합니다.
+    """
+    examples = {
+        "subject": "What is your favorite subject?",
+        "math": "I have math today.",
+        "science": "Science is interesting.",
+        "history": "I study history at school.",
+        "music": "I like listening to music.",
+        "art": "Art class is fun.",
+        "P.E.": "We have P.E. on Friday.",
+        "club": "I joined a school club.",
+        "schedule": "Let me check my schedule.",
+        "semester": "This semester is busy.",
+        "assignment": "I have an assignment today.",
+        "project": "We are working on a project.",
+        "presentation": "I have a presentation tomorrow.",
+        "report": "I need to write a report.",
+        "textbook": "Open your textbook.",
+        "workbook": "Please finish your workbook.",
+        "library": "I study in the library.",
+        "cafeteria": "Let's meet at the cafeteria.",
+        "hallway": "Do not run in the hallway.",
+        "attendance": "The teacher checks attendance.",
 
+        "copy": "Please copy this sentence.",
+        "repeat": "Can you repeat that?",
+        "underline": "Underline the important word.",
+        "circle": "Circle the correct answer.",
+        "choose": "Choose the best answer.",
+        "check": "Please check your answer.",
+        "match": "Match the word and picture.",
+        "complete": "Complete the sentence.",
+        "fill": "Fill in the blank.",
+        "spell": "How do you spell your name?",
+        "pronounce": "Please pronounce this word.",
+        "review": "Let's review the lesson.",
+        "explain": "Can you explain it again?",
+        "describe": "Describe the picture.",
+        "compare": "Compare the two answers.",
+        "discuss": "Let's discuss this topic.",
+        "present": "Please present your idea.",
+        "take notes": "Take notes while you listen.",
+        "turn in": "Turn in your paper.",
+        "hand out": "Please hand out the worksheets.",
+
+        "living room": "My family talks in the living room.",
+        "bedroom": "My bedroom is small but cozy.",
+        "kitchen": "My mom is in the kitchen.",
+        "balcony": "I can see the street from the balcony.",
+        "floor": "The floor is clean.",
+        "wall": "There is a picture on the wall.",
+        "roof": "The roof is red.",
+        "garden": "There are flowers in the garden.",
+        "yard": "The dog is in the yard.",
+        "sofa": "I sit on the sofa.",
+        "television": "I watch television at night.",
+        "refrigerator": "The milk is in the refrigerator.",
+        "microwave": "Please use the microwave.",
+        "blanket": "I need a warm blanket.",
+        "pillow": "This pillow is soft.",
+        "towel": "I need a clean towel.",
+        "soap": "Please wash your hands with soap.",
+        "mirror": "I look in the mirror.",
+        "closet": "My clothes are in the closet.",
+        "trash": "Please take out the trash.",
+
+        "routine": "This is my morning routine.",
+        "wake up": "I wake up at seven.",
+        "get up": "I get up early.",
+        "brush": "I brush my teeth.",
+        "shower": "I take a shower.",
+        "dress": "I dress quickly in the morning.",
+        "leave": "I leave home at eight.",
+        "arrive": "I arrive at school on time.",
+        "return": "I return home after school.",
+        "finish": "I finish my homework.",
+        "relax": "I relax after dinner.",
+        "weekday": "I go to school on weekdays.",
+        "weekend": "I sleep late on the weekend.",
+        "usually": "I usually eat breakfast.",
+        "often": "I often watch videos.",
+        "sometimes": "I sometimes play soccer.",
+        "always": "I always bring my phone.",
+        "never": "I never skip breakfast.",
+        "habit": "This is a good habit.",
+        "lifestyle": "I want a healthy lifestyle.",
+
+        "hobby": "My hobby is watching movies.",
+        "movie": "Let's watch a movie.",
+        "drama": "This drama is popular.",
+        "song": "I like this song.",
+        "concert": "I want to go to a concert.",
+        "dance": "She likes to dance.",
+        "drawing": "I enjoy drawing.",
+        "painting": "This painting is beautiful.",
+        "comic": "I read comics in my free time.",
+        "novel": "This novel is interesting.",
+        "photography": "I like photography.",
+        "cooking": "Cooking is fun.",
+        "baking": "My sister likes baking.",
+        "camping": "We go camping in summer.",
+        "hiking": "I go hiking with my friends.",
+        "fishing": "My father likes fishing.",
+        "free time": "What do you do in your free time?",
+        "favorite": "This is my favorite song.",
+        "popular": "This game is popular.",
+        "relaxing": "This music is relaxing.",
+
+        "soccer": "I play soccer after school.",
+        "baseball": "Baseball is popular in Korea.",
+        "basketball": "Let's play basketball.",
+        "volleyball": "We play volleyball in P.E.",
+        "tennis": "I like playing tennis.",
+        "badminton": "Badminton is fun.",
+        "swimming": "Swimming is good exercise.",
+        "cycling": "Cycling is my favorite sport.",
+        "skating": "Skating looks difficult.",
+        "boxing": "Boxing is very hard.",
+        "taekwondo": "Taekwondo is a Korean martial art.",
+        "yoga": "Yoga helps me relax.",
+        "fitness": "Fitness is important.",
+        "field": "The players are on the field.",
+        "court": "They are on the tennis court.",
+        "stadium": "The stadium is crowded.",
+        "coach": "The coach is kind.",
+        "competition": "I joined a competition.",
+        "medal": "She won a medal.",
+
+        "season": "What is your favorite season?",
+        "spring": "Spring is warm.",
+        "summer": "Summer is hot.",
+        "fall": "Fall is cool.",
+        "winter": "Winter is cold.",
+        "cloudy": "It is cloudy today.",
+        "rainy": "It is rainy outside.",
+        "snowy": "It is snowy in winter.",
+        "windy": "It is windy today.",
+        "stormy": "The weather is stormy.",
+        "foggy": "It is foggy this morning.",
+        "dry": "The air is dry.",
+        "wet": "My shoes are wet.",
+        "humid": "It is humid today.",
+        "temperature": "The temperature is high.",
+        "degree": "It is thirty degrees.",
+        "forecast": "Check the weather forecast.",
+        "umbrella": "I need an umbrella.",
+        "raincoat": "Wear a raincoat.",
+        "rainbow": "Look at the rainbow.",
+
+        "nature": "I love nature.",
+        "environment": "We should protect the environment.",
+        "plant": "This plant needs water.",
+        "forest": "The forest is quiet.",
+        "lake": "The lake is beautiful.",
+        "ocean": "The ocean is blue.",
+        "island": "Jeju is a beautiful island.",
+        "desert": "The desert is very hot.",
+        "farm": "My uncle has a farm.",
+        "village": "This village is quiet.",
+        "leaf": "A leaf is falling.",
+        "root": "The root is under the ground.",
+        "stone": "There is a stone on the road.",
+        "sand": "The sand is hot.",
+        "soil": "Plants grow in soil.",
+        "plastic": "Do not throw away plastic.",
+        "recycle": "We should recycle bottles.",
+        "protect": "We should protect nature.",
+        "pollution": "Pollution is a serious problem.",
+
+        "restaurant": "Let's go to a restaurant.",
+        "menu": "Can I see the menu?",
+        "seat": "Is this seat taken?",
+        "waiter": "The waiter is friendly.",
+        "waitress": "The waitress brought water.",
+        "order": "I want to order pizza.",
+        "dish": "This dish is delicious.",
+        "meal": "Enjoy your meal.",
+        "soup": "This soup is hot.",
+        "salad": "I want a salad.",
+        "steak": "The steak smells good.",
+        "pizza": "I like pizza.",
+        "pasta": "I want pasta.",
+        "burger": "This burger is big.",
+        "sandwich": "I made a sandwich.",
+        "dessert": "Do you want dessert?",
+        "spicy": "This food is spicy.",
+        "sweet": "This cake is sweet.",
+        "bill": "Can I have the bill?",
+        "receipt": "Can I get a receipt?",
+
+        "shop": "Let's go to the shop.",
+        "market": "I bought fruit at the market.",
+        "mall": "The mall is crowded.",
+        "supermarket": "I go to the supermarket.",
+        "cashier": "Pay the cashier.",
+        "customer": "The customer is waiting.",
+        "price": "What is the price?",
+        "sale": "This shirt is on sale.",
+        "discount": "Can I get a discount?",
+        "coupon": "I have a coupon.",
+        "change": "Here is your change.",
+        "coin": "I found a coin.",
+        "expensive": "This bag is expensive.",
+        "cheap": "This pen is cheap.",
+        "size": "What size do you need?",
+        "color": "What color do you like?",
+        "brand": "This brand is famous.",
+        "exchange": "Can I exchange this?",
+        "refund": "Can I get a refund?",
+
+        "T-shirt": "I wear a T-shirt.",
+        "pants": "These pants are comfortable.",
+        "jeans": "I like these jeans.",
+        "shorts": "I wear shorts in summer.",
+        "skirt": "This skirt is pretty.",
+        "dress": "She wears a dress.",
+        "jacket": "I need a jacket.",
+        "coat": "Wear a coat in winter.",
+        "sweater": "This sweater is warm.",
+        "hoodie": "I like this hoodie.",
+        "uniform": "Students wear uniforms.",
+        "socks": "I need clean socks.",
+        "sneakers": "These sneakers are new.",
+        "boots": "I wear boots in winter.",
+        "sandals": "I wear sandals in summer.",
+        "scarf": "This scarf is warm.",
+        "gloves": "I need gloves.",
+        "belt": "He wears a belt.",
+        "glasses": "She wears glasses.",
+        "comfortable": "These shoes are comfortable.",
+
+        "bus stop": "Where is the bus stop?",
+        "subway": "I take the subway.",
+        "airport": "I go to the airport.",
+        "terminal": "The bus terminal is near here.",
+        "platform": "Wait on the platform.",
+        "route": "This is the bus route.",
+        "direction": "Which direction should I go?",
+        "straight": "Go straight.",
+        "corner": "Turn at the corner.",
+        "block": "Walk two blocks.",
+        "traffic": "There is heavy traffic.",
+        "crosswalk": "Use the crosswalk.",
+        "sidewalk": "Walk on the sidewalk.",
+        "bridge": "Cross the bridge.",
+        "tunnel": "Go through the tunnel.",
+        "entrance": "Where is the entrance?",
+        "exit": "Where is the exit?",
+        "transfer": "I need to transfer.",
+        "lost": "I think I am lost.",
+        "guide": "The guide is helpful.",
+
+        "travel": "I want to travel.",
+        "trip": "Have a nice trip.",
+        "vacation": "I need a vacation.",
+        "tourist": "Many tourists visit Seoul.",
+        "passport": "I need my passport.",
+        "flight": "My flight is at three.",
+        "hotel": "I booked a hotel.",
+        "motel": "We stayed at a motel.",
+        "hostel": "A hostel is cheaper.",
+        "reservation": "I have a reservation.",
+        "check in": "I want to check in.",
+        "check out": "What time is check out?",
+        "luggage": "My luggage is heavy.",
+        "suitcase": "This suitcase is big.",
+        "backpack": "I carry a backpack.",
+        "souvenir": "I bought a souvenir.",
+        "museum": "Let's visit the museum.",
+        "famous": "This place is famous.",
+        "local": "Try the local food.",
+
+        "friendship": "Friendship is important.",
+        "best friend": "He is my best friend.",
+        "teammate": "She is my teammate.",
+        "partner": "Work with your partner.",
+        "message": "Send me a message.",
+        "call": "Can I call you?",
+        "chat": "Let's chat later.",
+        "invite": "I want to invite you.",
+        "visit": "Please visit my house.",
+        "meet": "Nice to meet you.",
+        "hang out": "Let's hang out after school.",
+        "laugh": "We laugh together.",
+        "share": "Please share your idea.",
+        "trust": "I trust my friend.",
+        "promise": "I made a promise.",
+        "secret": "Can you keep a secret?",
+        "joke": "That joke is funny.",
+        "together": "Let's study together.",
+        "alone": "I am alone at home.",
+        "forgive": "Please forgive me.",
+
+        "excited": "I am excited.",
+        "nervous": "I am nervous.",
+        "bored": "I am bored.",
+        "surprised": "I am surprised.",
+        "confused": "I am confused.",
+        "embarrassed": "I am embarrassed.",
+        "proud": "I am proud of you.",
+        "disappointed": "I am disappointed.",
+        "lonely": "I feel lonely.",
+        "relaxed": "I feel relaxed.",
+        "calm": "Stay calm.",
+        "upset": "I am upset.",
+        "interested": "I am interested in music.",
+        "satisfied": "I am satisfied.",
+        "thankful": "I am thankful.",
+        "hopeful": "I feel hopeful.",
+        "mood": "I am in a good mood.",
+        "stress": "I have a lot of stress.",
+        "confidence": "Confidence is important.",
+        "courage": "You have courage.",
+
+        "think": "What do you think?",
+        "believe": "I believe you.",
+        "guess": "Can you guess?",
+        "remember": "I remember your name.",
+        "forget": "Do not forget your homework.",
+        "mean": "What does this mean?",
+        "agree": "I agree with you.",
+        "disagree": "I disagree with him.",
+        "opinion": "What is your opinion?",
+        "idea": "That is a good idea.",
+        "reason": "What is the reason?",
+        "example": "Give me an example.",
+        "fact": "That is a fact.",
+        "choice": "This is your choice.",
+        "decision": "I made a decision.",
+        "advice": "I need your advice.",
+        "suggestion": "Thank you for your suggestion.",
+        "possible": "It is possible.",
+        "impossible": "It is impossible.",
+        "confusing": "This question is confusing.",
+
+        "plan": "What is your plan?",
+        "appointment": "I have an appointment.",
+        "meeting": "I have a meeting.",
+        "date": "What is the date today?",
+        "event": "This event is fun.",
+        "party": "I am going to a party.",
+        "festival": "The festival starts today.",
+        "deadline": "The deadline is tomorrow.",
+        "calendar": "Check your calendar.",
+        "next week": "See you next week.",
+        "join": "Can I join you?",
+        "prepare": "I need to prepare.",
+        "decide": "Please decide now.",
+        "cancel": "I need to cancel it.",
+        "on time": "Please come on time.",
+        "available": "Are you available today?",
+        "reminder": "Set a reminder.",
+
+        "health": "Health is important.",
+        "body": "My body feels tired.",
+        "eye": "My eye hurts.",
+        "ear": "My ear hurts.",
+        "nose": "My nose is runny.",
+        "mouth": "Open your mouth.",
+        "tooth": "My tooth hurts.",
+        "hand": "Raise your hand.",
+        "arm": "My arm hurts.",
+        "leg": "My leg hurts.",
+        "foot": "My foot hurts.",
+        "stomach": "My stomach hurts.",
+        "back": "My back hurts.",
+        "heart": "My heart is beating fast.",
+        "clinic": "I went to the clinic.",
+        "vitamin": "I take vitamins.",
+        "diet": "I need a healthy diet.",
+        "cough": "I have a cough.",
+        "flu": "I have the flu.",
+        "breathe": "Breathe slowly.",
+
+        "smartphone": "I use my smartphone.",
+        "screen": "The screen is bright.",
+        "app": "Open the app.",
+        "website": "Visit the website.",
+        "internet": "The internet is slow.",
+        "Wi-Fi": "Do you have Wi-Fi?",
+        "password": "What is the password?",
+        "text": "Send me a text.",
+        "video call": "Let's have a video call.",
+        "gallery": "Check your gallery.",
+        "news": "I watch the news.",
+        "channel": "Change the channel.",
+        "post": "I wrote a post.",
+        "comment": "Leave a comment.",
+        "upload": "Upload the photo.",
+        "download": "Download the file.",
+        "search": "Search for the word.",
+        "click": "Click the button.",
+        "battery": "My battery is low.",
+        "notification": "I got a notification.",
+
+        "job": "I want a good job.",
+        "work": "I work hard.",
+        "company": "He works at a company.",
+        "office": "She works in an office.",
+        "factory": "My father works in a factory.",
+        "engineer": "I want to be an engineer.",
+        "mechanic": "A mechanic fixes cars.",
+        "chef": "The chef cooks well.",
+        "firefighter": "A firefighter helps people.",
+        "farmer": "A farmer grows food.",
+        "designer": "She is a designer.",
+        "singer": "He is a singer.",
+        "actor": "She is an actor.",
+        "athlete": "He is an athlete.",
+        "dream": "What is your dream?",
+        "future": "Think about your future.",
+        "goal": "My goal is clear.",
+        "skill": "This skill is useful.",
+        "interview": "I have an interview.",
+        "experience": "This is a good experience.",
+    }
+
+    if word in examples:
+        return examples[word]
+
+    if "집" in theme:
+        return f"I use the {word} at home."
+    if "학교" in theme or "교실" in theme:
+        return f"We use {word} in class."
+    if "식당" in theme or "쇼핑" in theme:
+        return f"I need {word}, please."
+    if "교통" in theme or "여행" in theme:
+        return f"I need help with {word}."
+    if "감정" in theme:
+        return f"I feel {word} today."
+    if "운동" in theme:
+        return f"I like {word}."
+    if "건강" in theme:
+        return f"My {word} is important."
+
+    return f"I use the word {word} in daily English."
 
 def browser_cassette_player(all_items, height=260):
     """
@@ -1486,8 +1922,8 @@ def browser_cassette_player(all_items, height=260):
             "theme": item["theme"],
             "word": word,
             "meaning": item["meaning"],
-            "example": make_simple_example(word),
-            "script": f'{word}. {word}. {make_simple_example(word)} Repeat after me. {word}.'
+            "example": make_daily_example(word, item["meaning"], item["theme"]),
+            "script": f'{word}. {word}. {make_daily_example(word, item["meaning"], item["theme"])} {word}.'
         })
 
     cassette_json = json.dumps(cassette_items, ensure_ascii=False)
@@ -1660,6 +2096,43 @@ def browser_cassette_player(all_items, height=260):
                 }}
             }};
 
+
+            function getFemaleEnglishVoice() {{
+                const voices = window.speechSynthesis.getVoices();
+
+                const preferredNames = [
+                    "Samantha",
+                    "Google US English",
+                    "Microsoft Jenny",
+                    "Microsoft Aria",
+                    "Microsoft Zira",
+                    "Karen",
+                    "Moira",
+                    "Tessa",
+                    "Fiona",
+                    "Victoria"
+                ];
+
+                for (const name of preferredNames) {{
+                    const found = voices.find(v =>
+                        v.name && v.name.toLowerCase().includes(name.toLowerCase()) &&
+                        v.lang && v.lang.toLowerCase().startsWith("en")
+                    );
+                    if (found) return found;
+                }}
+
+                const femaleLike = voices.find(v =>
+                    v.lang && v.lang.toLowerCase().startsWith("en") &&
+                    v.name && /(female|woman|jenny|aria|zira|samantha|karen|moira|tessa|fiona|victoria)/i.test(v.name)
+                );
+                if (femaleLike) return femaleLike;
+
+                const englishVoice = voices.find(v =>
+                    v.lang && v.lang.toLowerCase().startsWith("en")
+                );
+                return englishVoice || null;
+            }}
+
             function speakCurrent() {{
                 if (!isPlaying) return;
 
@@ -1675,7 +2148,12 @@ def browser_cassette_player(all_items, height=260):
                 const utterance = new SpeechSynthesisUtterance(item.script);
                 utterance.lang = "en-US";
                 utterance.rate = 0.82;
-                utterance.pitch = 1.0;
+                utterance.pitch = 1.08;
+
+                const femaleVoice = getFemaleEnglishVoice();
+                if (femaleVoice) {{
+                    utterance.voice = femaleVoice;
+                }}
 
                 utterance.onend = function() {{
                     if (!isPlaying || isPaused) return;
@@ -1766,6 +2244,12 @@ def browser_cassette_player(all_items, height=260):
                     setTimeout(speakCurrent, 200);
                 }}
             }});
+
+            if (typeof speechSynthesis !== "undefined") {{
+                speechSynthesis.onvoiceschanged = function() {{
+                    getFemaleEnglishVoice();
+                }};
+            }}
 
             updateDisplay();
             </script>
