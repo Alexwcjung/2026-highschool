@@ -21,17 +21,17 @@ st.markdown(
     """
     <style>
     .main-title-box {
-        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1.5px solid #dbeafe;
-        border-radius: 30px;
+        background: linear-gradient(135deg, #dbeafe 0%, #fae8ff 35%, #fef3c7 70%, #dcfce7 100%);
+        border: 2px solid #c4b5fd;
+        border-radius: 34px;
         padding: 28px 30px;
         margin-bottom: 22px;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+        box-shadow: 0 10px 26px rgba(124,58,237,0.12);
     }
 
     .main-title-box h1 {
         margin: 0 0 10px 0;
-        color: #0f172a;
+        color: #1e1b4b;
         font-size: 38px;
         font-weight: 900;
     }
@@ -53,7 +53,7 @@ st.markdown(
 st.markdown(
     """
     <div class="main-title-box">
-        <h1>🎙️ 생존 단어 160개로 문장 말하기</h1>
+        <h1>🎙️ 🌈 생존 단어 160개로 문장 말하기</h1>
         <p>
             한국어 상황을 보고, 영어 문장을 말해 보세요.
         </p>
@@ -73,11 +73,11 @@ def speaking_practice_component(items):
     html = r"""
     <div id="speaking-app" style="
         font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1.5px solid #dbeafe;
-        border-radius: 30px;
+        background: linear-gradient(135deg, #eff6ff 0%, #fdf4ff 35%, #fff7ed 68%, #f0fdf4 100%);
+        border: 2px solid #c4b5fd;
+        border-radius: 34px;
         padding: 24px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        box-shadow: 0 12px 28px rgba(124,58,237,0.12);
     ">
         <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
             <label style="font-weight:900; color:#334155;">문장 구조 선택</label>
@@ -122,24 +122,24 @@ def speaking_practice_component(items):
             <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
                 <div id="categoryLabel" style="
                     display:inline-block;
-                    background:#eef6ff;
-                    color:#1d4ed8;
+                    background:linear-gradient(135deg,#dbeafe,#ede9fe);
+                    color:#3730a3;
                     border-radius:999px;
                     padding:8px 14px;
                     font-size:15px;
                     font-weight:900;
-                    border:1px solid #bfdbfe;
+                    border:1.5px solid #c4b5fd;
                 "></div>
 
                 <div id="scoreLabel" style="
                     display:inline-block;
-                    background:#f0fdf4;
+                    background:linear-gradient(135deg,#dcfce7,#fef9c3);
                     color:#166534;
                     border-radius:999px;
                     padding:8px 14px;
                     font-size:15px;
                     font-weight:900;
-                    border:1px solid #bbf7d0;
+                    border:1.5px solid #86efac;
                 ">0 / 0</div>
             </div>
 
@@ -183,73 +183,78 @@ def speaking_practice_component(items):
 
             <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:14px;">
                 <button id="hintBtn" style="
-                    border:1.5px solid #fde68a;
-                    background:#fffbeb;
+                    border:1.5px solid #fcd34d;
+                    background:linear-gradient(135deg,#fef3c7,#fde68a);
                     color:#92400e;
                     border-radius:999px;
-                    padding:11px 16px;
+                    padding:11px 18px;
                     font-weight:900;
                     cursor:pointer;
+                    box-shadow:0 4px 10px rgba(245,158,11,0.14);
                 ">💡 힌트</button>
 
                 <button id="micBtn" style="
-                    border:3px solid rgba(255,255,255,0.9);
-                    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                    border:4px solid rgba(255,255,255,0.95);
+                    background: linear-gradient(135deg, #8b5cf6, #ec4899);
                     color:white;
                     border-radius:999px;
-                    width:104px;
-                    height:104px;
+                    width:108px;
+                    height:108px;
                     font-weight:900;
                     cursor:pointer;
-                    font-size:36px;
-                    box-shadow:0 10px 25px rgba(124,58,237,0.28);
+                    font-size:38px;
+                    box-shadow:0 12px 26px rgba(124,58,237,0.26);
                 ">🎙️</button>
 
                 <button id="answerBtn" style="
                     display:none;
-                    border:1.5px solid #bbf7d0;
-                    background:#f0fdf4;
+                    border:1.5px solid #86efac;
+                    background:linear-gradient(135deg,#dcfce7,#f0fdf4);
                     color:#166534;
                     border-radius:999px;
                     padding:11px 16px;
                     font-weight:900;
                     cursor:pointer;
+                    box-shadow:0 4px 10px rgba(34,197,94,0.12);
                 ">👀 정답</button>
 
                 <button id="listenBtn" style="
                     display:none;
-                    border:1.5px solid #bfdbfe;
-                    background:#eff6ff;
+                    border:1.5px solid #93c5fd;
+                    background:linear-gradient(135deg,#dbeafe,#eff6ff);
                     color:#1d4ed8;
                     border-radius:999px;
                     padding:11px 16px;
                     font-weight:900;
                     cursor:pointer;
+                    box-shadow:0 4px 10px rgba(59,130,246,0.12);
                 ">🔊 듣기</button>
 
                 <button id="nextBtn" style="
                     display:none;
-                    border:1.5px solid #c7d2fe;
-                    background:#eef2ff;
-                    color:#3730a3;
+                    border:1.5px solid #c4b5fd;
+                    background:linear-gradient(135deg,#ede9fe,#eef2ff);
+                    color:#5b21b6;
                     border-radius:999px;
                     padding:11px 18px;
                     font-weight:900;
                     cursor:pointer;
                     font-size:16px;
+                    box-shadow:0 4px 10px rgba(124,58,237,0.12);
                 ">➡️ 다음</button>
             </div>
 
             <div id="hintBox" style="
                 display:none;
-                background:#fffbeb;
-                border:1.5px solid #fde68a;
+                background:linear-gradient(135deg,#fef3c7,#fffbeb);
+                border:1.5px solid #fbbf24;
                 color:#92400e;
                 border-radius:18px;
                 padding:14px 16px;
                 margin-bottom:14px;
                 font-size:22px;
                 font-weight:900;
+                box-shadow: 0 4px 12px rgba(251,191,36,0.12);
             "></div>
 
             <div id="answerBox" style="display:none;"></div>
@@ -265,7 +270,7 @@ def speaking_practice_component(items):
                 <div id="transcriptBox" style="
                     font-size:24px;
                     font-weight:900;
-                    color:#334155;
+                    color:#4c1d95;
                     line-height:1.7;
                     min-height:32px;
                 "></div>
