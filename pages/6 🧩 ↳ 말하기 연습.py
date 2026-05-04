@@ -79,7 +79,7 @@ st.markdown(
     <div class="guide-box">
         <b>활동 순서</b><br>
         1. 한국어 상황을 봅니다. → 2. 영어 빈칸 문장을 봅니다. → 3. 필요하면 앞 두 글자 힌트를 봅니다.<br>
-        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 문장 전체가 인식되면 정답으로 인정됩니다.
+        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 문장 전체가 거의 맞게 인식되면 정답으로 인정됩니다.
     </div>
     """,
     unsafe_allow_html=True
@@ -288,7 +288,7 @@ def speaking_practice_component(items):
                 font-weight:900;
                 color:#334155;
             ">
-                마이크 버튼을 누르고 문장 전체를 말해 보세요.
+                마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형도 괜찮습니다.
             </div>
         </div>
 
@@ -381,21 +381,109 @@ def speaking_practice_component(items):
     function normalizeText(text) {
         return text
             .toLowerCase()
+            // 축약형을 먼저 풀어 줌
+            .replace(/\bi'm\b/g, "i am")
+            .replace(/\bim\b/g, "i am")
+            .replace(/\byou're\b/g, "you are")
+            .replace(/\bhe's\b/g, "he is")
+            .replace(/\bshe's\b/g, "she is")
+            .replace(/\bit's\b/g, "it is")
+            .replace(/\bwe're\b/g, "we are")
+            .replace(/\bthey're\b/g, "they are")
+            .replace(/\bdon't\b/g, "do not")
+            .replace(/\bdoesn't\b/g, "does not")
+            .replace(/\bdidn't\b/g, "did not")
+            .replace(/\bcan't\b/g, "cannot")
+            .replace(/\bcant\b/g, "cannot")
+            .replace(/\bi'll\b/g, "i will")
+            .replace(/\byou'll\b/g, "you will")
+            .replace(/\bhe'll\b/g, "he will")
+            .replace(/\bshe'll\b/g, "she will")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/\s+/g, " ")
             .trim();
     }
 
-    function isCorrectSpeech(spoken, answer) {
+    function wordsOnly(text) {
+        return normalizeText(text)
+            .split(" ")
+            .filter(w => w.length > 0);
+    }
+
+    function editDistance(a, b) {
+        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return dp[a.length][b.length];
+    }
+
+    function isCloseEnough(spoken, answer) {
         const s = normalizeText(spoken);
         const a = normalizeText(answer);
 
+        if (!s || !a) return false;
+
+        // 완전 일치
         if (s === a) return true;
 
-        // 음성 인식이 앞뒤에 말을 덧붙이는 경우를 조금 허용
+        // 음성 인식이 앞뒤에 말을 덧붙이는 경우 허용
         if (s.includes(a)) return true;
 
+        const sWords = wordsOnly(s);
+        const aWords = wordsOnly(a);
+
+        // 정답 핵심 단어들이 모두 들어 있으면 인정
+        // 예: "I'm hungry" → "I am hungry"
+        const allAnswerWordsIncluded = aWords.every(w => sWords.includes(w));
+        if (allAnswerWordsIncluded) return true;
+
+        // 너무 짧은 문장은 단어 하나 빠지면 의미가 크게 달라지므로 조금 엄격하게
+        if (aWords.length <= 3) {
+            let matchCount = 0;
+            aWords.forEach(w => {
+                if (sWords.includes(w)) matchCount += 1;
+            });
+
+            if (matchCount >= aWords.length - 1 && sWords.length >= aWords.length - 1) {
+                return true;
+            }
+        }
+
+        // 긴 문장은 한 단어 정도 인식 오류가 있어도 허용
+        if (aWords.length >= 4) {
+            let matchCount = 0;
+            aWords.forEach(w => {
+                if (sWords.includes(w)) matchCount += 1;
+            });
+
+            if (matchCount >= aWords.length - 1) return true;
+        }
+
+        // 철자 비슷한 인식 오류 약간 허용
+        const distance = editDistance(s, a);
+        const maxLen = Math.max(s.length, a.length);
+        const similarity = 1 - distance / maxLen;
+
+        if (similarity >= 0.82) return true;
+
         return false;
+    }
+
+    function isCorrectSpeech(spoken, answer) {
+        return isCloseEnough(spoken, answer);
     }
 
     function updateScore() {
@@ -422,7 +510,7 @@ def speaking_practice_component(items):
         hintBox.innerText = "";
         answerBox.innerText = "";
         transcriptBox.innerText = "아직 말하지 않았습니다.";
-        resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요.";
+        resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형도 괜찮습니다.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
