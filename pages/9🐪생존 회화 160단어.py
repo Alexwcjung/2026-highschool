@@ -13,7 +13,7 @@ import streamlit.components.v1 as components
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Survival English 500",
+    page_title="Survival English 160",
     page_icon="🛟",
     layout="wide"
 )
@@ -265,7 +265,7 @@ st.markdown(
 # =========================
 # 상단 제목
 # =========================
-st.markdown("<div class='main-title'>🛟 Survival English 500</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>🛟 Survival English 160</div>", unsafe_allow_html=True)
 st.markdown(
     "<div class='sub-title'>생존 회화에 꼭 필요한 문장과 단어를 듣고, 따라 하고, 퀴즈로 익혀 봅시다.</div>",
     unsafe_allow_html=True
@@ -276,7 +276,7 @@ st.markdown(
     <div class="hero-box">
         <div class="hero-title">🌟 오늘의 학습 방식</div>
         <div class="hero-text">
-            • 이 단어 500개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
+            • 이 단어 160개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
             • 전체 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
             • 카세트 듣기 중 아래 단어 듣기를 누르면 카세트가 자동으로 멈춥니다.
         </div>
@@ -1261,141 +1261,627 @@ theme_dialogues = {
 }
 
 # =========================
-# 카세트 텍스트 만들기
+# 전체 카세트 듣기 기능
+# 브라우저 음성 엔진 사용: 긴 gTTS 오류 방지
 # =========================
 def clean_theme_title(theme_name):
     return re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
 
 
-def make_cassette_text(theme_name, theme_words):
-    clean_name = clean_theme_title(theme_name)
+CASSETTE_EXAMPLES_KO = {
+    "I": "나는 학생입니다.",
+    "you": "너는 나의 친구입니다.",
+    "he": "그는 나의 친구입니다.",
+    "she": "그녀는 학생입니다.",
+    "we": "우리는 행복합니다.",
+    "they": "그들은 학생들입니다.",
+    "friend": "그는 나의 친구입니다.",
+    "teacher": "그녀는 나의 선생님입니다.",
+    "student": "나는 학생입니다.",
+    "classmate": "그는 나의 반 친구입니다.",
+    "family": "이것은 나의 가족입니다.",
+    "father": "그는 나의 아버지입니다.",
+    "mother": "그녀는 나의 어머니입니다.",
+    "brother": "그는 나의 남자 형제입니다.",
+    "sister": "그녀는 나의 여자 형제입니다.",
+    "name": "내 이름은 Alex입니다.",
+    "person": "그는 좋은 사람입니다.",
+    "man": "그는 남자입니다.",
+    "woman": "그녀는 여자입니다.",
+    "child": "그는 아이입니다.",
 
-    lines = []
-    lines.append(f"Survival English. {clean_name}.")
-    lines.append("Listen and repeat.")
-    lines.append("")
+    "go": "나는 학교에 갑니다.",
+    "come": "이리 와 주세요.",
+    "walk": "나는 걸어서 학교에 갑니다.",
+    "run": "나는 달릴 수 있습니다.",
+    "sit": "앉아 주세요.",
+    "stand": "일어나 주세요.",
+    "stop": "멈춰 주세요.",
+    "start": "시작합시다.",
+    "open": "문을 여세요.",
+    "close": "문을 닫으세요.",
+    "eat": "나는 점심을 먹습니다.",
+    "drink": "나는 물을 마십니다.",
+    "sleep": "나는 밤에 잡니다.",
+    "study": "나는 영어를 공부합니다.",
+    "read": "나는 책을 읽습니다.",
+    "write": "나는 내 이름을 씁니다.",
+    "listen": "주의 깊게 들으세요.",
+    "speak": "천천히 말해 주세요.",
+    "help": "나를 도와줄 수 있나요?",
+    "wait": "기다려 주세요.",
 
-    for item in theme_words:
-        word = item["word"]
-        example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+    "happy": "나는 행복합니다.",
+    "sad": "나는 슬픕니다.",
+    "angry": "나는 화가 났습니다.",
+    "tired": "나는 피곤합니다.",
+    "hungry": "나는 배고픕니다.",
+    "thirsty": "나는 목마릅니다.",
+    "sick": "나는 아픕니다.",
+    "okay": "나는 괜찮습니다.",
+    "fine": "나는 괜찮습니다.",
+    "cold": "나는 춥습니다.",
+    "hot": "날씨가 덥습니다.",
+    "pain": "나는 통증이 있습니다.",
+    "headache": "나는 두통이 있습니다.",
+    "stomachache": "나는 복통이 있습니다.",
+    "fever": "나는 열이 있습니다.",
+    "hurt": "내 다리가 아픕니다.",
+    "good": "그것은 좋습니다.",
+    "bad": "그것은 나쁩니다.",
+    "worried": "나는 걱정됩니다.",
+    "scared": "나는 무섭습니다.",
 
-        lines.append(f"{word}.")
-        lines.append(f"{word}.")
-        lines.append(example)
-        lines.append("")
+    "food": "나는 음식이 필요합니다.",
+    "water": "나는 물이 필요합니다.",
+    "rice": "나는 밥을 먹습니다.",
+    "bread": "나는 빵을 먹습니다.",
+    "milk": "나는 우유를 마십니다.",
+    "juice": "나는 주스를 마십니다.",
+    "coffee": "나는 커피를 마십니다.",
+    "tea": "나는 차를 마십니다.",
+    "apple": "나는 사과를 좋아합니다.",
+    "banana": "나는 바나나를 좋아합니다.",
+    "egg": "나는 달걀 하나를 먹습니다.",
+    "meat": "나는 고기를 먹습니다.",
+    "chicken": "나는 닭고기를 좋아합니다.",
+    "fish": "나는 생선을 먹습니다.",
+    "breakfast": "나는 아침 식사를 먹습니다.",
+    "lunch": "나는 점심을 먹습니다.",
+    "dinner": "나는 저녁을 먹습니다.",
+    "snack": "나는 간식을 원합니다.",
+    "medicine": "나는 약이 필요합니다.",
+    "hospital": "나는 병원이 필요합니다.",
 
-    lines.append("Good job.")
-    lines.append("Keep practicing.")
+    "home": "나는 집에 갑니다.",
+    "school": "나는 학교에 갑니다.",
+    "classroom": "여기는 나의 교실입니다.",
+    "bathroom": "화장실이 어디에 있나요?",
+    "store": "나는 가게에 갑니다.",
+    "station": "역은 어디에 있나요?",
+    "bus": "나는 버스를 탑니다.",
+    "car": "이것은 나의 차입니다.",
+    "taxi": "나는 택시가 필요합니다.",
+    "train": "나는 기차를 탑니다.",
+    "bike": "나는 자전거를 탑니다.",
+    "road": "이 도로는 깁니다.",
+    "street": "이 거리는 붐빕니다.",
+    "here": "여기로 오세요.",
+    "there": "그곳으로 가세요.",
+    "near": "그것은 여기 근처에 있습니다.",
+    "far": "그것은 멉니다.",
+    "left": "왼쪽으로 도세요.",
+    "right": "오른쪽으로 도세요.",
 
-    return "\n".join(lines)
+    "time": "지금 몇 시인가요?",
+    "now": "나는 지금 여기에 있습니다.",
+    "today": "오늘은 월요일입니다.",
+    "tomorrow": "내일 봅시다.",
+    "yesterday": "나는 어제 공부했습니다.",
+    "morning": "좋은 아침입니다.",
+    "afternoon": "좋은 오후입니다.",
+    "evening": "좋은 저녁입니다.",
+    "night": "안녕히 주무세요.",
+    "early": "이릅니다.",
+    "late": "늦었습니다.",
+    "one": "나는 책 한 권이 있습니다.",
+    "two": "나는 책 두 권이 있습니다.",
+    "three": "나는 책 세 권이 있습니다.",
+    "four": "나는 책 네 권이 있습니다.",
+    "five": "나는 책 다섯 권이 있습니다.",
+    "six": "나는 책 여섯 권이 있습니다.",
+    "seven": "나는 책 일곱 권이 있습니다.",
+    "eight": "나는 책 여덟 권이 있습니다.",
+    "ten": "나는 책 열 권이 있습니다.",
+
+    "bag": "이것은 나의 가방입니다.",
+    "phone": "이것은 나의 전화기입니다.",
+    "book": "이것은 나의 책입니다.",
+    "notebook": "이것은 나의 공책입니다.",
+    "pen": "나는 펜이 있습니다.",
+    "pencil": "나는 연필이 있습니다.",
+    "desk": "이것은 나의 책상입니다.",
+    "chair": "이것은 나의 의자입니다.",
+    "door": "문을 여세요.",
+    "window": "창문을 닫으세요.",
+    "key": "나는 열쇠가 필요합니다.",
+    "money": "나는 돈이 필요합니다.",
+    "card": "나는 카드가 있습니다.",
+    "ticket": "나는 표가 필요합니다.",
+    "clothes": "이것들은 나의 옷입니다.",
+    "shoes": "이것들은 나의 신발입니다.",
+    "hat": "이것은 나의 모자입니다.",
+    "watch": "이것은 나의 시계입니다.",
+    "cup": "이것은 나의 컵입니다.",
+    "bottle": "이것은 나의 병입니다.",
+
+    "please": "제발 나를 도와주세요.",
+    "sorry": "미안합니다.",
+    "excuse me": "실례합니다.",
+    "again": "다시 말해 주세요.",
+    "slowly": "천천히 말해 주세요.",
+    "understand": "나는 이해합니다.",
+    "question": "나는 질문이 있습니다.",
+    "problem": "나는 문제가 있습니다.",
+    "need": "나는 도움이 필요합니다.",
+    "want": "나는 물을 원합니다.",
+    "know": "나는 압니다.",
+    "say": "다시 말해 주세요.",
+    "tell": "나에게 말해 주세요.",
+    "ask": "질문해도 될까요?",
+    "answer": "이것이 답입니다.",
+    "repeat": "반복해 주세요.",
+    "look": "이것을 보세요.",
+}
 
 
-def make_all_cassette_text():
-    lines = []
-    lines.append("Survival English 500.")
-    lines.append("Listen and repeat.")
-    lines.append("Let's practice all the words.")
-    lines.append("")
+def get_example_sentence(word):
+    return CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+
+
+def get_example_sentence_ko(word):
+    return CASSETTE_EXAMPLES_KO.get(word, "이 단어를 사용한 생존 영어 문장입니다.")
+
+
+def flatten_survival_words():
+    all_items = []
+    number = 1
 
     for theme_name, theme_words in word_themes.items():
-        clean_name = clean_theme_title(theme_name)
-        lines.append(clean_name + ".")
-        lines.append("")
-
         for item in theme_words:
             word = item["word"]
-            example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+            example = get_example_sentence(word)
+            example_ko = get_example_sentence_ko(word)
 
-            lines.append(f"{word}.")
-            lines.append(f"{word}.")
-            lines.append(example)
-            lines.append("")
+            all_items.append({
+                "number": number,
+                "theme": theme_name,
+                "word": word,
+                "meaning": item["meaning"],
+                "example": example,
+                "example_ko": example_ko,
+                "script": f"{word}. {word}. {example} {word}."
+            })
+            number += 1
 
-    lines.append("Great work.")
-    lines.append("Keep practicing every day.")
+    return all_items
 
-    return "\n".join(lines)
+
+def browser_survival_cassette_player(all_items, height=430):
+    player_id = f"survival_browser_cassette_{uuid.uuid4().hex}"
+    play_btn_id = f"play_{uuid.uuid4().hex}"
+    pause_btn_id = f"pause_{uuid.uuid4().hex}"
+    prev_btn_id = f"prev_{uuid.uuid4().hex}"
+    next_btn_id = f"next_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_{uuid.uuid4().hex}"
+    progress_id = f"progress_{uuid.uuid4().hex}"
+    status_id = f"status_{uuid.uuid4().hex}"
+    word_id = f"word_{uuid.uuid4().hex}"
+    meaning_id = f"meaning_{uuid.uuid4().hex}"
+
+    cassette_json = json.dumps(all_items, ensure_ascii=False)
+    safe_player_id = json.dumps(player_id)
+
+    components.html(
+        f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            padding: 18px 18px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);
+            border: 1px solid #bfdbfe;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        ">
+            <div style="
+                font-size: 18px;
+                font-weight: 900;
+                color: #0f172a;
+                margin-bottom: 10px;
+            ">
+                📼 Survival English 160 전체 카세트
+            </div>
+
+            <div id="{word_id}" style="
+                font-size: 32px;
+                font-weight: 900;
+                color: #111827;
+                margin-bottom: 8px;
+            ">
+                Ready
+            </div>
+
+            <div id="{meaning_id}" style="
+                font-size: 16px;
+                font-weight: 800;
+                color: #475569;
+                margin-bottom: 14px;
+                line-height: 1.7;
+                background: rgba(255,255,255,0.72);
+                border: 1px solid #dbeafe;
+                border-radius: 16px;
+                padding: 12px 14px;
+            ">
+                재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button id="{prev_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏮ 이전 단어</button>
+
+                <button id="{play_btn_id}" style="
+                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
+                    border: 1px solid #bfdbfe;
+                    border-radius: 999px;
+                    padding: 9px 16px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #1f2937;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                ">▶️ 재생</button>
+
+                <button id="{pause_btn_id}" style="
+                    background:#ecfeff;
+                    border:1px solid #67e8f9;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#155e75;
+                    cursor:pointer;
+                ">⏸ 일시정지</button>
+
+                <button id="{next_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏭ 다음 단어</button>
+
+                <button id="{stop_btn_id}" style="
+                    background: #fff7ed;
+                    border: 1px solid #fed7aa;
+                    border-radius: 999px;
+                    padding: 9px 14px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #9a3412;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                ">⏹ 중지</button>
+
+                <span id="{status_id}" style="
+                    font-size: 13px;
+                    color: #075985;
+                    font-weight: 800;
+                "></span>
+            </div>
+
+            <input id="{progress_id}" type="range" min="0" max="{max(len(all_items)-1, 0)}" value="0" step="1" style="
+                width:100%;
+                margin-top:16px;
+                cursor:pointer;
+            ">
+
+            <div style="
+                margin-top: 6px;
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 700;
+                line-height: 1.6;
+            ">
+                ※ 진행 바를 움직여 원하는 단어로 이동할 수 있습니다.<br>
+                ※ 단어 뜻, 예문, 예문 뜻이 위에 표시됩니다.<br>
+                ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 카세트는 자동으로 중지됩니다.
+            </div>
+
+            <script>
+            const cassetteItems = {cassette_json};
+
+            const playBtn = document.getElementById("{play_btn_id}");
+            const pauseBtn = document.getElementById("{pause_btn_id}");
+            const prevBtn = document.getElementById("{prev_btn_id}");
+            const nextBtn = document.getElementById("{next_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const progress = document.getElementById("{progress_id}");
+            const status = document.getElementById("{status_id}");
+            const wordBox = document.getElementById("{word_id}");
+            const meaningBox = document.getElementById("{meaning_id}");
+
+            const playerId = {safe_player_id};
+            const channel = new BroadcastChannel("survival_english_audio_channel");
+
+            let index = 0;
+            let isPlaying = false;
+            let isPaused = false;
+
+            function updateDisplay() {{
+                const item = cassetteItems[index];
+                if (!item) return;
+
+                progress.value = index;
+                wordBox.innerText = item.number + ". " + item.word;
+
+                meaningBox.innerHTML =
+                    "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + item.meaning + "</div>" +
+                    "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + item.example + "</div>" +
+                    "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + item.example_ko + "</div>" +
+                    "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + item.theme + "</div>";
+
+                status.innerText = (index + 1) + " / " + cassetteItems.length;
+            }}
+
+            function stopThisTape(showMessage = false) {{
+                window.speechSynthesis.cancel();
+                isPlaying = false;
+                isPaused = false;
+                playBtn.innerText = "▶️ 재생";
+                if (showMessage) {{
+                    status.innerText = "중지됨";
+                }}
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisTape(false);
+                }}
+            }};
+
+            function getFemaleEnglishVoice() {{
+                const voices = window.speechSynthesis.getVoices();
+
+                const preferredNames = [
+                    "Samantha",
+                    "Google US English",
+                    "Microsoft Jenny",
+                    "Microsoft Aria",
+                    "Microsoft Zira",
+                    "Karen",
+                    "Moira",
+                    "Tessa",
+                    "Fiona",
+                    "Victoria"
+                ];
+
+                for (const name of preferredNames) {{
+                    const found = voices.find(v =>
+                        v.name && v.name.toLowerCase().includes(name.toLowerCase()) &&
+                        v.lang && v.lang.toLowerCase().startsWith("en")
+                    );
+                    if (found) return found;
+                }}
+
+                const femaleLike = voices.find(v =>
+                    v.lang && v.lang.toLowerCase().startsWith("en") &&
+                    v.name && /(female|woman|jenny|aria|zira|samantha|karen|moira|tessa|fiona|victoria)/i.test(v.name)
+                );
+                if (femaleLike) return femaleLike;
+
+                const englishVoice = voices.find(v =>
+                    v.lang && v.lang.toLowerCase().startsWith("en")
+                );
+                return englishVoice || null;
+            }}
+
+            function speakCurrent() {{
+                if (!isPlaying) return;
+
+                const item = cassetteItems[index];
+                if (!item) {{
+                    stopThisTape(false);
+                    status.innerText = "완료";
+                    return;
+                }}
+
+                updateDisplay();
+
+                const utterance = new SpeechSynthesisUtterance(item.script);
+                utterance.lang = "en-US";
+                utterance.rate = 0.82;
+                utterance.pitch = 1.08;
+
+                const femaleVoice = getFemaleEnglishVoice();
+                if (femaleVoice) {{
+                    utterance.voice = femaleVoice;
+                }}
+
+                utterance.onend = function() {{
+                    if (!isPlaying || isPaused) return;
+
+                    index += 1;
+
+                    if (index >= cassetteItems.length) {{
+                        stopThisTape(false);
+                        status.innerText = "전체 재생 완료";
+                        return;
+                    }}
+
+                    setTimeout(speakCurrent, 650);
+                }};
+
+                utterance.onerror = function() {{
+                    status.innerText = "음성 오류. 다시 눌러 주세요.";
+                    isPlaying = false;
+                    playBtn.innerText = "▶️ 재생";
+                }};
+
+                window.speechSynthesis.speak(utterance);
+            }}
+
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                if (isPaused) {{
+                    window.speechSynthesis.resume();
+                    isPaused = false;
+                    isPlaying = true;
+                    playBtn.innerText = "재생 중...";
+                    status.innerText = (index + 1) + " / " + cassetteItems.length;
+                    return;
+                }}
+
+                window.speechSynthesis.cancel();
+                isPlaying = true;
+                isPaused = false;
+                playBtn.innerText = "재생 중...";
+                updateDisplay();
+                speakCurrent();
+            }});
+
+            pauseBtn.addEventListener("click", function() {{
+                if (window.speechSynthesis.speaking) {{
+                    window.speechSynthesis.pause();
+                    isPaused = true;
+                    isPlaying = true;
+                    playBtn.innerText = "▶️ 이어 듣기";
+                    status.innerText = "일시정지: " + (index + 1) + " / " + cassetteItems.length;
+                }}
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisTape(true);
+            }});
+
+            prevBtn.addEventListener("click", function() {{
+                index = Math.max(0, index - 1);
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying) {{
+                    setTimeout(speakCurrent, 200);
+                }}
+            }});
+
+            nextBtn.addEventListener("click", function() {{
+                index = Math.min(cassetteItems.length - 1, index + 1);
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying) {{
+                    setTimeout(speakCurrent, 200);
+                }}
+            }});
+
+            progress.addEventListener("input", function() {{
+                index = parseInt(progress.value);
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying) {{
+                    setTimeout(speakCurrent, 200);
+                }}
+            }});
+
+            if (typeof speechSynthesis !== "undefined") {{
+                speechSynthesis.onvoiceschanged = function() {{
+                    getFemaleEnglishVoice();
+                }};
+            }}
+
+            updateDisplay();
+            </script>
+        </div>
+        """,
+        height=height
+    )
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어 카세트 듣기")
-    st.write("모든 테마의 단어를 예전 카세트 테이프처럼 한 번에 들을 수 있습니다.")
-
-    all_cassette_text = make_all_cassette_text()
-    all_cassette_audio = make_tts_audio(all_cassette_text, lang="en", tld="com")
+    st.markdown("## 🎧 전체 카세트 듣기")
+    st.write("전체 160개 단어를 처음부터 끝까지 카세트처럼 이어서 들을 수 있습니다.")
 
     st.markdown(
         """
         <div class="cassette-box">
-            <div class="cassette-title">📼 전체 카세트 복습</div>
+            <div class="cassette-title">📼 Survival English 160 전체 카세트</div>
             <div class="cassette-text">
-                단어를 두 번 듣고, 바로 짧은 예문을 듣는 방식입니다.<br>
-                화면을 보지 않고 틀어놓고 복습하기 좋습니다.
+                구간 선택 없이 전체 단어가 처음부터 끝까지 순서대로 이어집니다.<br>
+                단어를 두 번 듣고, 짧은 예문 하나를 들은 뒤 다음 단어로 넘어갑니다.<br>
+                현재 재생 중인 단어의 뜻, 예문, 예문 뜻도 함께 볼 수 있습니다.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    cassette_audio_player("▶️ 전체 카세트 재생", all_cassette_audio, height=135)
+    all_items = flatten_survival_words()
+    browser_survival_cassette_player(all_items, height=430)
 
-    st.download_button(
-        label="⬇️ 전체 단어 카세트 mp3 다운로드",
-        data=all_cassette_audio,
-        file_name="survival_english_500_all_cassette.mp3",
-        mime="audio/mp3",
-        key="all_cassette_download"
-    )
+    with st.expander("📜 전체 카세트 단어 목록 보기"):
+        st.write("카세트에서 실제로 들려주는 단어, 예문, 예문 뜻을 함께 확인할 수 있습니다.")
 
-    with st.expander("📜 전체 카세트 스크립트 보기"):
-        for theme_name, theme_words in word_themes.items():
-            st.markdown(f"### {theme_name}")
-
-            for item in theme_words:
-                word = item["word"]
-                meaning = item["meaning"]
-                example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
-
-                st.markdown(f"**{word}** : {meaning}")
-                st.caption(example)
+        for item in all_items:
+            st.markdown(
+                f"""
+                <div style="
+                    background:white;
+                    border:1px solid #dbeafe;
+                    border-radius:16px;
+                    padding:12px 14px;
+                    margin-bottom:8px;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.035);
+                ">
+                    <div style="font-size:18px; font-weight:900; color:#111827;">
+                        {item['number']}. {item['word']}
+                    </div>
+                    <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
+                        단어 뜻: {item['meaning']}
+                    </div>
+                    <div style="font-size:15px; font-weight:800; color:#0369a1; margin-top:4px;">
+                        예문: {item['example']}
+                    </div>
+                    <div style="font-size:15px; font-weight:800; color:#166534; margin-top:4px;">
+                        예문 뜻: {item['example_ko']}
+                    </div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
+                        {item['theme']}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown(
-        """
-        <div class="cassette-box">
-            <div class="cassette-title">🎧 이 테마 카세트 듣기</div>
-            <div class="cassette-text">
-                이 테마의 단어를 카세트처럼 이어서 듣고 복습할 수 있습니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    cassette_text = make_cassette_text(theme_name, theme_words)
-    cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
-
-    cassette_audio_player("▶️ 이 테마 카세트 재생", cassette_audio, height=98)
-
-    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
-
-    st.download_button(
-        label="⬇️ 이 테마 카세트 mp3 다운로드",
-        data=cassette_audio,
-        file_name=f"{safe_file_name}_cassette_review.mp3",
-        mime="audio/mp3",
-        key=f"{theme_name}_cassette_download"
-    )
-
-    with st.expander("📜 이 테마 카세트 스크립트 보기"):
-        for item in theme_words:
-            word = item["word"]
-            meaning = item["meaning"]
-            example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
-            st.markdown(f"**{word}** : {meaning}")
-            st.caption(example)
-
+    # 테마별 카세트는 만들지 않고, 맨 앞 전체 카세트 듣기 탭에만 카세트 기능을 둡니다.
+    return
 
 # =========================
 # 전체 뜻 목록 만들기
