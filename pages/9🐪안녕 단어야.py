@@ -4,6 +4,8 @@ import io
 import random
 import base64
 import uuid
+import re
+import json
 import streamlit.components.v1 as components
 
 # =========================
@@ -174,6 +176,36 @@ st.markdown(
         color: #6b7280;
     }
 
+    .dialogue-box {
+        background: #fefce8;
+        border: 1px solid #fde68a;
+        border-radius: 24px;
+        padding: 20px 22px;
+        margin-top: 28px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    }
+
+    .dialogue-title {
+        font-size: 24px;
+        font-weight: 900;
+        color: #854d0e;
+        margin-bottom: 14px;
+    }
+
+    .dialogue-line {
+        font-size: 18px;
+        font-weight: 900;
+        color: #111827;
+        margin-top: 10px;
+    }
+
+    .dialogue-meaning {
+        font-size: 15px;
+        color: #6b7280;
+        margin-bottom: 5px;
+    }
+
     div[data-testid="stRadio"] > label {
         font-weight: 800;
         color: #374151;
@@ -214,7 +246,7 @@ st.markdown(
             • 발음 버튼을 누르면 단어가 <b>20번 반복</b>됩니다.<br>
             • 각 발음 사이에는 <b>1.5초 쉬는 시간</b>이 들어갑니다.<br>
             • 다음으로 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.<br>
-            • 1차 제출 후 틀린 단어만 다시 풀고, 2차 제출 후 정답을 확인합니다.
+            • 각 테마의 맨 아래에서 <b>쉬운 대화</b>를 듣고 읽어 봅니다.
         </div>
     </div>
     """,
@@ -226,9 +258,6 @@ st.markdown(
 # =========================
 @st.cache_data
 def make_tts_audio(text, lang="en", tld="com"):
-    """
-    단어 1번 발음 mp3 만들기
-    """
     fp = io.BytesIO()
     tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
     tts.write_to_fp(fp)
@@ -240,13 +269,16 @@ def audio_button(label, text, key):
     """
     HTML 버튼을 누르면 단어를 20번 반복 재생합니다.
     각 발음 사이에는 1.5초 간격을 줍니다.
-    Streamlit의 st.button 자동재생 문제를 피하기 위해 components.html 내부 버튼을 사용합니다.
     """
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
     audio_id = f"audio_{uuid.uuid4().hex}"
     btn_id = f"btn_{uuid.uuid4().hex}"
     status_id = f"status_{uuid.uuid4().hex}"
+
+    safe_label = json.dumps(label)
+    safe_text = json.dumps(text)
 
     components.html(
         f"""
@@ -282,12 +314,14 @@ def audio_button(label, text, key):
             let count = 0;
             const maxCount = 20;
             const pauseMs = 1500;
+            const labelText = {safe_label};
+            const wordText = {safe_text};
 
             function playOnce() {{
                 if (count >= maxCount) {{
                     status.innerText = "✅ 20번 반복 재생 완료";
                     btn.disabled = false;
-                    btn.innerText = "{label}";
+                    btn.innerText = labelText;
                     return;
                 }}
 
@@ -295,11 +329,11 @@ def audio_button(label, text, key):
 
                 audio.play().then(() => {{
                     count += 1;
-                    status.innerText = "🔊 {text} 재생 중: " + count + " / " + maxCount;
+                    status.innerText = "🔊 " + wordText + " 재생 중: " + count + " / " + maxCount;
                 }}).catch((error) => {{
                     status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
                     btn.disabled = false;
-                    btn.innerText = "{label}";
+                    btn.innerText = labelText;
                 }});
             }}
 
@@ -311,14 +345,42 @@ def audio_button(label, text, key):
                 count = 0;
                 btn.disabled = true;
                 btn.innerText = "재생 중...";
-                status.innerText = "🔊 {text} 반복 재생을 시작합니다.";
+                status.innerText = "🔊 " + wordText + " 반복 재생을 시작합니다.";
                 playOnce();
             }});
             </script>
         </div>
         """,
-        height=80
+        height=85
     )
+
+
+# =========================
+# 대화 TTS용 함수
+# =========================
+def remove_speaker_label(sentence):
+    """
+    A:, B: 같은 표시를 TTS에서 읽지 않도록 제거합니다.
+    화면에는 A:, B:가 그대로 보입니다.
+    """
+    return re.sub(r"^[A-Z]:\s*", "", sentence).strip()
+
+
+def make_dialogue_tts_text(dialogue):
+    """
+    대화 전체를 TTS용 텍스트로 만듭니다.
+    A:, B:는 제거하고 영어 문장만 읽게 합니다.
+    """
+    lines = []
+    for item in dialogue:
+        lines.append(remove_speaker_label(item["en"]))
+    return " ".join(lines)
+
+
+@st.cache_data
+def make_dialogue_audio(theme_name, dialogue):
+    text = make_dialogue_tts_text(dialogue)
+    return make_tts_audio(text)
 
 
 # =========================
@@ -723,6 +785,119 @@ word_themes = {
 }
 
 # =========================
+# 테마별 쉬운 대화
+# =========================
+theme_dialogues = {
+    "🧑‍🤝‍🧑 사람·관계": [
+        {"en": "A: Who is he?", "ko": "A: 그는 누구니?"},
+        {"en": "B: He is my friend.", "ko": "B: 그는 내 친구야."},
+        {"en": "A: Is she your teacher?", "ko": "A: 그녀는 너의 선생님이니?"},
+        {"en": "B: Yes, she is.", "ko": "B: 응, 맞아."},
+        {"en": "A: Is he your brother?", "ko": "A: 그는 너의 형제니?"},
+        {"en": "B: No, he is my classmate.", "ko": "B: 아니, 그는 내 반 친구야."},
+    ],
+
+    "🏫 학교·교실": [
+        {"en": "A: Where is your book?", "ko": "A: 네 책은 어디에 있니?"},
+        {"en": "B: It is on my desk.", "ko": "B: 내 책상 위에 있어."},
+        {"en": "A: Do you have a pen?", "ko": "A: 너 펜 있니?"},
+        {"en": "B: Yes, I do.", "ko": "B: 응, 있어."},
+        {"en": "A: Is this your notebook?", "ko": "A: 이것은 네 공책이니?"},
+        {"en": "B: Yes, it is my notebook.", "ko": "B: 응, 그것은 내 공책이야."},
+    ],
+
+    "🏃 기본 동작 동사": [
+        {"en": "A: What do you do?", "ko": "A: 너는 무엇을 하니?"},
+        {"en": "B: I run.", "ko": "B: 나는 달려."},
+        {"en": "A: Can you help me?", "ko": "A: 나를 도와줄 수 있니?"},
+        {"en": "B: Yes, I can help you.", "ko": "B: 응, 너를 도와줄 수 있어."},
+        {"en": "A: Do you want to go?", "ko": "A: 너는 가고 싶니?"},
+        {"en": "B: Yes, I want to go.", "ko": "B: 응, 나는 가고 싶어."},
+    ],
+
+    "💖 감정·성격": [
+        {"en": "A: Are you happy?", "ko": "A: 너 행복하니?"},
+        {"en": "B: Yes, I am happy.", "ko": "B: 응, 나는 행복해."},
+        {"en": "A: Are you tired?", "ko": "A: 너 피곤하니?"},
+        {"en": "B: Yes, I am a little tired.", "ko": "B: 응, 나는 조금 피곤해."},
+        {"en": "A: Are you worried?", "ko": "A: 너 걱정되니?"},
+        {"en": "B: No, I am okay.", "ko": "B: 아니, 나는 괜찮아."},
+    ],
+
+    "🍎 음식·건강": [
+        {"en": "A: Are you hungry?", "ko": "A: 너 배고프니?"},
+        {"en": "B: Yes, I am hungry.", "ko": "B: 응, 나는 배고파."},
+        {"en": "A: Do you want water?", "ko": "A: 물 마시고 싶니?"},
+        {"en": "B: Yes, please.", "ko": "B: 응, 부탁해."},
+        {"en": "A: Do you like apples?", "ko": "A: 너는 사과를 좋아하니?"},
+        {"en": "B: Yes, I like apples.", "ko": "B: 응, 나는 사과를 좋아해."},
+    ],
+
+    "🚗 장소·이동": [
+        {"en": "A: Where is your home?", "ko": "A: 너의 집은 어디에 있니?"},
+        {"en": "B: It is near the school.", "ko": "B: 학교 근처에 있어."},
+        {"en": "A: Do you go by bus?", "ko": "A: 너는 버스로 가니?"},
+        {"en": "B: Yes, I go by bus.", "ko": "B: 응, 나는 버스로 가."},
+        {"en": "A: Is the park far?", "ko": "A: 공원은 멀리 있니?"},
+        {"en": "B: No, it is near here.", "ko": "B: 아니, 여기 가까이에 있어."},
+    ],
+
+    "🌤️ 자연·날씨": [
+        {"en": "A: How is the weather?", "ko": "A: 날씨가 어때?"},
+        {"en": "B: It is sunny.", "ko": "B: 날씨가 맑아."},
+        {"en": "A: Is it cold today?", "ko": "A: 오늘 춥니?"},
+        {"en": "B: No, it is warm.", "ko": "B: 아니, 따뜻해."},
+        {"en": "A: Do you like the sea?", "ko": "A: 너는 바다를 좋아하니?"},
+        {"en": "B: Yes, I like the sea.", "ko": "B: 응, 나는 바다를 좋아해."},
+    ],
+
+    "🐶 동물 이름": [
+        {"en": "A: What animal do you like?", "ko": "A: 너는 어떤 동물을 좋아하니?"},
+        {"en": "B: I like dogs.", "ko": "B: 나는 개를 좋아해."},
+        {"en": "A: Do you like cats?", "ko": "A: 고양이를 좋아하니?"},
+        {"en": "B: Yes, I do.", "ko": "B: 응, 좋아해."},
+        {"en": "A: Is the bird small?", "ko": "A: 그 새는 작니?"},
+        {"en": "B: Yes, it is small.", "ko": "B: 응, 그것은 작아."},
+    ],
+
+    "⏰ 시간·숫자": [
+        {"en": "A: What time is it?", "ko": "A: 지금 몇 시니?"},
+        {"en": "B: It is two.", "ko": "B: 2시야."},
+        {"en": "A: Is it morning?", "ko": "A: 아침이니?"},
+        {"en": "B: Yes, it is morning.", "ko": "B: 응, 아침이야."},
+        {"en": "A: Do you study today?", "ko": "A: 너는 오늘 공부하니?"},
+        {"en": "B: Yes, I study today.", "ko": "B: 응, 나는 오늘 공부해."},
+    ],
+
+    "🧸 물건·도구": [
+        {"en": "A: What is this?", "ko": "A: 이것은 무엇이니?"},
+        {"en": "B: It is a bag.", "ko": "B: 그것은 가방이야."},
+        {"en": "A: Is this your phone?", "ko": "A: 이것은 네 전화기니?"},
+        {"en": "B: Yes, it is my phone.", "ko": "B: 응, 그것은 내 전화기야."},
+        {"en": "A: Do you have a key?", "ko": "A: 너는 열쇠가 있니?"},
+        {"en": "B: No, I do not.", "ko": "B: 아니, 없어."},
+    ],
+
+    "💬 생각·말하기": [
+        {"en": "A: Do you understand?", "ko": "A: 이해했니?"},
+        {"en": "B: Yes, I understand.", "ko": "B: 응, 이해했어."},
+        {"en": "A: Can you say it?", "ko": "A: 그것을 말할 수 있니?"},
+        {"en": "B: Yes, I can say it.", "ko": "B: 응, 그것을 말할 수 있어."},
+        {"en": "A: Do you remember this word?", "ko": "A: 이 단어를 기억하니?"},
+        {"en": "B: Yes, I remember it.", "ko": "B: 응, 그것을 기억해."},
+    ],
+
+    "🎨 상태·형용사": [
+        {"en": "A: Is it big?", "ko": "A: 그것은 크니?"},
+        {"en": "B: No, it is small.", "ko": "B: 아니, 그것은 작아."},
+        {"en": "A: Is this easy?", "ko": "A: 이것은 쉬우니?"},
+        {"en": "B: Yes, it is easy.", "ko": "B: 응, 쉬워."},
+        {"en": "A: Is the room clean?", "ko": "A: 그 방은 깨끗하니?"},
+        {"en": "B: Yes, it is clean.", "ko": "B: 응, 깨끗해."},
+    ],
+}
+
+# =========================
 # 전체 뜻 목록 만들기
 # =========================
 all_words = []
@@ -996,6 +1171,45 @@ def show_quiz(theme_words, theme_name):
 
 
 # =========================
+# 대화 보여주기
+# =========================
+def show_dialogue(theme_name):
+    dialogue = theme_dialogues.get(theme_name, [])
+
+    if not dialogue:
+        return
+
+    st.markdown('<div class="dialogue-box">', unsafe_allow_html=True)
+    st.markdown('<div class="dialogue-title">💬 아주 쉬운 대화</div>', unsafe_allow_html=True)
+
+    for line in dialogue:
+        st.markdown(
+            f"<div class='dialogue-line'>{line['en']}</div>",
+            unsafe_allow_html=True
+        )
+        st.markdown(
+            f"<div class='dialogue-meaning'>{line['ko']}</div>",
+            unsafe_allow_html=True
+        )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    dialogue_audio = make_dialogue_audio(theme_name, dialogue)
+
+    st.audio(dialogue_audio, format="audio/mp3")
+
+    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
+
+    st.download_button(
+        label="⬇️ 대화 듣기 파일 다운로드",
+        data=dialogue_audio,
+        file_name=f"{safe_file_name}_dialogue.mp3",
+        mime="audio/mp3",
+        key=f"{theme_name}_dialogue_download"
+    )
+
+
+# =========================
 # 탭 구성
 # =========================
 tabs = st.tabs(list(word_themes.keys()))
@@ -1025,3 +1239,6 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
             show_word_cards(theme_words, theme_name)
         else:
             show_quiz(theme_words, theme_name)
+
+        # 대화는 각 테마의 제일 밑에 배치
+        show_dialogue(theme_name)
