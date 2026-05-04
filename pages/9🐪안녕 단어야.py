@@ -245,6 +245,7 @@ st.markdown(
             • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
             • 발음 버튼을 누르면 단어가 <b>20번 반복</b>됩니다.<br>
             • 각 발음 사이에는 <b>1.5초 쉬는 시간</b>이 들어갑니다.<br>
+            • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
             • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
             • 각 테마의 맨 아래에서 <b>쉬운 대화</b>를 듣고 읽어 봅니다.
         </div>
@@ -266,23 +267,24 @@ def make_tts_audio(text, lang="en", tld="com"):
 
 
 # =========================
-# 공통 HTML 오디오 플레이어
+# 단어용 HTML 오디오 플레이어
 # =========================
-def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
+def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=105):
     """
-    모든 단어 발음과 대화 듣기가 이 함수를 사용합니다.
-    그래서 새 오디오를 재생하면 이전 오디오는 자동으로 멈춥니다.
+    단어 발음용 플레이어입니다.
+    재생 / 중지 버튼이 있고, 다른 단어 또는 대화를 누르면 자동으로 멈춥니다.
     """
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
     audio_id = f"audio_{uuid.uuid4().hex}"
-    btn_id = f"btn_{uuid.uuid4().hex}"
+    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
     status_id = f"status_{uuid.uuid4().hex}"
     player_id = f"player_{uuid.uuid4().hex}"
 
     safe_label = json.dumps(label)
-    safe_text = json.dumps(text[:40])
+    safe_text = json.dumps(text)
     safe_player_id = json.dumps(player_id)
 
     components.html(
@@ -290,7 +292,7 @@ def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
         <div style="font-family: Arial, sans-serif;">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
-            <button id="{btn_id}" style="
+            <button id="{play_btn_id}" style="
                 background: linear-gradient(135deg, #fce7f3, #dbeafe);
                 border: 1px solid #e9d5ff;
                 border-radius: 999px;
@@ -300,8 +302,23 @@ def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
                 color: #374151;
                 cursor: pointer;
                 box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                margin-right: 6px;
             ">
                 {label}
+            </button>
+
+            <button id="{stop_btn_id}" style="
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #9a3412;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            ">
+                ⏹ 중지
             </button>
 
             <div id="{status_id}" style="
@@ -313,20 +330,25 @@ def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
 
             <script>
             const audio = document.getElementById("{audio_id}");
-            const btn = document.getElementById("{btn_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
             const status = document.getElementById("{status_id}");
 
             let count = 0;
             let timer = null;
+            let isStopped = false;
+
             const maxCount = {repeat_count};
             const pauseMs = {pause_ms};
             const labelText = {safe_label};
-            const displayText = {safe_text};
+            const wordText = {safe_text};
             const playerId = {safe_player_id};
 
             const channel = new BroadcastChannel("fun_word_garden_audio_channel");
 
-            function stopThisAudio() {{
+            function stopThisAudio(showMessage = false) {{
+                isStopped = true;
+
                 if (timer) {{
                     clearTimeout(timer);
                     timer = null;
@@ -335,28 +357,34 @@ def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
                 audio.pause();
                 audio.currentTime = 0;
                 count = 0;
-                btn.disabled = false;
-                btn.innerText = labelText;
-                status.innerText = "";
+
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+
+                if (showMessage) {{
+                    status.innerText = "⏹ 재생을 중지했습니다.";
+                }} else {{
+                    status.innerText = "";
+                }}
             }}
 
             channel.onmessage = function(event) {{
                 if (!event.data) return;
 
                 if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio();
+                    stopThisAudio(false);
                 }}
             }};
 
             function playOnce() {{
+                if (isStopped) {{
+                    return;
+                }}
+
                 if (count >= maxCount) {{
-                    if (maxCount === 1) {{
-                        status.innerText = "✅ 재생 완료";
-                    }} else {{
-                        status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
-                    }}
-                    btn.disabled = false;
-                    btn.innerText = labelText;
+                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
                     return;
                 }}
 
@@ -364,46 +392,46 @@ def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
 
                 audio.play().then(() => {{
                     count += 1;
-
-                    if (maxCount === 1) {{
-                        status.innerText = "🔊 재생 중";
-                    }} else {{
-                        status.innerText = "🔊 재생 중: " + count + " / " + maxCount;
-                    }}
+                    status.innerText = "🔊 " + wordText + " 재생 중: " + count + " / " + maxCount;
                 }}).catch((error) => {{
                     status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
-                    btn.disabled = false;
-                    btn.innerText = labelText;
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
                 }});
             }}
 
             audio.addEventListener("ended", function() {{
+                if (isStopped) {{
+                    return;
+                }}
+
                 if (count < maxCount) {{
                     timer = setTimeout(playOnce, pauseMs);
                 }} else {{
-                    if (maxCount === 1) {{
-                        status.innerText = "✅ 재생 완료";
-                    }} else {{
-                        status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
-                    }}
-                    btn.disabled = false;
-                    btn.innerText = labelText;
+                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
                 }}
             }});
 
-            btn.addEventListener("click", function() {{
+            playBtn.addEventListener("click", function() {{
                 channel.postMessage({{
                     type: "STOP_OTHERS",
                     playerId: playerId
                 }});
 
-                stopThisAudio();
+                stopThisAudio(false);
 
+                isStopped = false;
                 count = 0;
-                btn.disabled = true;
-                btn.innerText = "재생 중...";
-                status.innerText = "🔊 재생을 시작합니다.";
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중...";
+                status.innerText = "🔊 " + wordText + " 반복 재생을 시작합니다.";
                 playOnce();
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisAudio(true);
             }});
             </script>
         </div>
@@ -413,29 +441,196 @@ def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
 
 
 def audio_button(label, text, key=None):
-    """
-    단어 발음용: 20번 반복 재생
-    """
-    html_audio_player(
+    html_word_audio_player(
         label=label,
         text=text,
         repeat_count=20,
         pause_ms=1500,
-        height=85
+        height=105
     )
 
 
-def dialogue_audio_button(label, text):
+# =========================
+# 대화용 HTML 오디오 플레이어
+# =========================
+def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1200, height=105):
     """
-    대화 듣기용: 1번 재생
-    단어 발음과 같은 채널을 쓰므로 대화를 켜면 단어 반복 발음이 멈춥니다.
+    대화 듣기용 플레이어입니다.
+    각 A/B 발화 사이에 실제 간격을 넣기 위해 문장별 오디오를 순서대로 재생합니다.
+    단어 발음과 같은 채널을 사용하므로, 대화를 틀면 단어 발음이 멈춥니다.
     """
-    html_audio_player(
-        label=label,
-        text=text,
-        repeat_count=1,
-        pause_ms=0,
-        height=85
+    audio_data_list = []
+
+    for line in dialogue_lines:
+        clean_text = remove_speaker_label(line["en"])
+        audio_bytes = make_tts_audio(clean_text)
+        audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+        audio_data_list.append({
+            "text": clean_text,
+            "src": f"data:audio/mp3;base64,{audio_base64}"
+        })
+
+    audio_json = json.dumps(audio_data_list)
+    safe_label = json.dumps(label)
+
+    audio_id = f"dialogue_audio_{uuid.uuid4().hex}"
+    play_btn_id = f"dialogue_play_{uuid.uuid4().hex}"
+    stop_btn_id = f"dialogue_stop_{uuid.uuid4().hex}"
+    status_id = f"dialogue_status_{uuid.uuid4().hex}"
+    player_id = f"dialogue_player_{uuid.uuid4().hex}"
+    safe_player_id = json.dumps(player_id)
+
+    components.html(
+        f"""
+        <div style="font-family: Arial, sans-serif;">
+            <audio id="{audio_id}"></audio>
+
+            <button id="{play_btn_id}" style="
+                background: linear-gradient(135deg, #fef3c7, #dbeafe);
+                border: 1px solid #fde68a;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #374151;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                margin-right: 6px;
+            ">
+                {label}
+            </button>
+
+            <button id="{stop_btn_id}" style="
+                background: #fff7ed;
+                border: 1px solid #fed7aa;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #9a3412;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            ">
+                ⏹ 중지
+            </button>
+
+            <div id="{status_id}" style="
+                margin-top: 8px;
+                font-size: 13px;
+                color: #075985;
+                font-weight: 700;
+            "></div>
+
+            <script>
+            const audio = document.getElementById("{audio_id}");
+            const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const status = document.getElementById("{status_id}");
+
+            const dialogueAudios = {audio_json};
+            const linePauseMs = {line_pause_ms};
+            const labelText = {safe_label};
+            const playerId = {safe_player_id};
+
+            let index = 0;
+            let timer = null;
+            let isStopped = false;
+
+            const channel = new BroadcastChannel("fun_word_garden_audio_channel");
+
+            function stopThisAudio(showMessage = false) {{
+                isStopped = true;
+
+                if (timer) {{
+                    clearTimeout(timer);
+                    timer = null;
+                }}
+
+                audio.pause();
+                audio.currentTime = 0;
+                index = 0;
+
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
+
+                if (showMessage) {{
+                    status.innerText = "⏹ 대화 듣기를 중지했습니다.";
+                }} else {{
+                    status.innerText = "";
+                }}
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisAudio(false);
+                }}
+            }};
+
+            function playCurrentLine() {{
+                if (isStopped) {{
+                    return;
+                }}
+
+                if (index >= dialogueAudios.length) {{
+                    status.innerText = "✅ 대화 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                    return;
+                }}
+
+                audio.src = dialogueAudios[index].src;
+                audio.currentTime = 0;
+
+                audio.play().then(() => {{
+                    status.innerText = "🔊 대화 재생 중: " + (index + 1) + " / " + dialogueAudios.length;
+                }}).catch((error) => {{
+                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }});
+            }}
+
+            audio.addEventListener("ended", function() {{
+                if (isStopped) {{
+                    return;
+                }}
+
+                index += 1;
+
+                if (index < dialogueAudios.length) {{
+                    timer = setTimeout(playCurrentLine, linePauseMs);
+                }} else {{
+                    status.innerText = "✅ 대화 재생 완료";
+                    playBtn.disabled = false;
+                    playBtn.innerText = labelText;
+                }}
+            }});
+
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                stopThisAudio(false);
+
+                isStopped = false;
+                index = 0;
+                playBtn.disabled = true;
+                playBtn.innerText = "재생 중...";
+                status.innerText = "🔊 대화 듣기를 시작합니다.";
+                playCurrentLine();
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisAudio(true);
+            }});
+            </script>
+        </div>
+        """,
+        height=height
     )
 
 
@@ -443,9 +638,6 @@ def dialogue_audio_button(label, text):
 # 대화 TTS용 함수
 # =========================
 def remove_speaker_label(sentence):
-    """
-    A:, B: 같은 표시를 TTS에서 읽지 않도록 제거합니다.
-    """
     return re.sub(r"^[A-Z]:\s*", "", sentence).strip()
 
 
@@ -1267,13 +1459,15 @@ def show_dialogue(theme_name):
 
     st.markdown('</div>', unsafe_allow_html=True)
 
+    html_dialogue_audio_player(
+        label="🔊 대화 듣기",
+        dialogue_lines=dialogue,
+        line_pause_ms=1200,
+        height=105
+    )
+
     dialogue_text = make_dialogue_tts_text(dialogue)
     dialogue_audio_bytes = make_tts_audio(dialogue_text)
-
-    dialogue_audio_button(
-        label="🔊 대화 듣기",
-        text=dialogue_text
-    )
 
     safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
 
@@ -1317,5 +1511,4 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
         else:
             show_quiz(theme_words, theme_name)
 
-        # 대화는 각 테마의 제일 밑에 배치
         show_dialogue(theme_name)
