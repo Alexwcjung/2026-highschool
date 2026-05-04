@@ -288,7 +288,11 @@ def show_speaking_practice(tab_name, groups):
         words = item["words"]
         explain = item["explain"]
 
-        words_audio = ". ".join(words) + "."
+        # ✅ 핵심 수정:
+        # 각 단어를 마침표로 끊고, 공백을 넓게 넣어 단어 사이 발음 간격을 늘림
+        # 예: gem.     gentle.     page.     large.     orange.     cage.
+        words_audio = ".     ".join(words) + "."
+
         words_html = "".join(
             [f"<span class='word-pill'>{html.escape(word)}</span>" for word in words]
         )
@@ -321,6 +325,7 @@ def show_speaking_practice(tab_name, groups):
             )
 
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 # =========================
 # 탭 구성
