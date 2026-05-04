@@ -280,22 +280,6 @@ st.markdown(
 # =========================
 # 상단 공통 안내 박스
 # =========================
-st.markdown(
-    """
-    <div class="top-guide-box">
-        <div class="top-guide-title">📌 발음기호와 한글 소리 힌트 안내</div>
-        <div class="top-guide-text">
-            • 표에 나오는 발음기호는 영어의 실제 소리를 나타냅니다.<br>
-            • 학생들이 발음기호를 읽기 어려울 수 있어, 옆에 한글식 소리 힌트를 함께 적었습니다.<br>
-            • 단, 한글 힌트는 정확한 영어 발음이 아니라 소리를 떠올리기 위한 참고용입니다.<br>
-            • 정확한 발음은 반드시 <b>🔊 실제 소리 듣기</b> 버튼을 눌러 확인하도록 지도하면 좋습니다.<br>
-            • 실제 소리 버튼은 <b>short a</b>, <b>long a</b>처럼 설명을 읽지 않고, 실제 영어 소리만 두 번 들려줍니다.
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
 
 def show_rule(title, lines):
     html = f"<div class='rule-box'><div class='rule-title'>{title}</div><div class='rule-text'>"
