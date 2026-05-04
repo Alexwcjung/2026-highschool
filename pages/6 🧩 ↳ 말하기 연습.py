@@ -66,7 +66,7 @@ st.markdown(
     <div class="main-title-box">
         <h1>🎙️ 생존 단어 160개로 문장 말하기</h1>
         <p>
-            한국어 상황과 이모지를 보고, 빈칸에 들어갈 말을 떠올린 뒤 <b>문장 전체를 영어로 말해 보세요.</b><br>
+            한국어 상황과 빈칸 문장을 보고 <b>문장 전체를 영어로 말해 보세요.</b><br>
             힌트는 정답 단어의 앞 두 글자만 보여 줍니다.
         </p>
     </div>
@@ -223,7 +223,7 @@ def speaking_practice_component(items):
                     padding:11px 16px;
                     font-weight:900;
                     cursor:pointer;
-                ">🔊 정답 다시 듣기</button>
+                ">🔊 듣기</button>
 
                 <button id="answerBtn" style="
                     display:none;
@@ -234,7 +234,7 @@ def speaking_practice_component(items):
                     padding:11px 16px;
                     font-weight:900;
                     cursor:pointer;
-                ">👀 정답 보기 / 듣기</button>
+                ">👀 정답</button>
 
                 <button id="micBtn" style="
                     border:3px solid rgba(255,255,255,0.9);
@@ -259,7 +259,7 @@ def speaking_practice_component(items):
                     font-weight:900;
                     cursor:pointer;
                     font-size:16px;
-                ">➡️ 다음 문제</button>
+                ">➡️ 다음</button>
             </div>
 
             <div style="display:none;">
@@ -267,16 +267,12 @@ def speaking_practice_component(items):
             </div>
 
             <div id="resultBox" style="
-                background:#f1f5f9;
-                border:1.5px solid #e2e8f0;
-                border-radius:18px;
-                padding:14px 16px;
-                font-size:20px;
-                font-weight:900;
-                color:#334155;
-            ">
-                마이크 버튼을 누르고 문장 전체를 말해 보세요. 처음에는 힌트와 말하기 버튼만 보입니다.
-            </div>
+                display:none;
+                margin-top:8px;
+                font-size:15px;
+                font-weight:800;
+                color:#64748b;
+            "></div>
         </div>
 
         <div style="
@@ -568,7 +564,7 @@ def speaking_practice_component(items):
         koPrompt.innerHTML =
             "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
             "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
-        blankSentence.innerHTML = makeBlankSentenceHtml(currentItem.blank);
+        blankSentence.innerText = currentItem.blank;
         hintBox.style.display = "none";
         answerBox.style.display = "none";
         hintBox.innerText = "";
@@ -582,10 +578,8 @@ def speaking_practice_component(items):
         listenBtn.style.display = "none";
         nextBtn.style.display = "none";
 
-        resultBox.innerText = "문장 전체를 말해 보세요.";
-        resultBox.style.background = "#f1f5f9";
-        resultBox.style.borderColor = "#e2e8f0";
-        resultBox.style.color = "#334155";
+        resultBox.style.display = "none";
+        resultBox.innerText = "";
     }
 
     function speak(text) {
@@ -615,12 +609,7 @@ def speaking_practice_component(items):
                 alreadyCorrect = true;
             }
 
-            resultBox.innerHTML =
-                "✅ 정답입니다! 이제 다음 문제로 갈 수 있어요.<br>" +
-                "<span style='font-size:17px;'>정답 문장: " + currentItem.answer + "</span>";
-            resultBox.style.background = "#ecfdf5";
-            resultBox.style.borderColor = "#bbf7d0";
-            resultBox.style.color = "#166534";
+            resultBox.style.display = "none";
 
             answerBox.style.display = "none";
             blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
@@ -631,12 +620,7 @@ def speaking_practice_component(items):
 
             speak(currentItem.answer);
         } else {
-            resultBox.innerHTML =
-                "🍊 아직 정답이 아니에요. 문장 전체를 다시 말해 보세요.<br>" +
-                "<span style='font-size:17px;'>필요하면 정답 보기 / 듣기를 눌러 연습한 뒤 다시 말하세요.</span>";
-            resultBox.style.background = "#fff7ed";
-            resultBox.style.borderColor = "#fed7aa";
-            resultBox.style.color = "#9a3412";
+            resultBox.style.display = "none";
 
             // 틀린 뒤에만 정답 보기 버튼 제공
             answerBtn.style.display = "inline-block";
@@ -648,9 +632,8 @@ def speaking_practice_component(items):
 
     function startRecognition() {
         if (!SpeechRecognition) {
-            resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
-            resultBox.style.background = "#fef2f2";
-            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.display = "block";
+            resultBox.innerText = "Chrome에서 실행해 주세요.";
             resultBox.style.color = "#991b1b";
             return;
         }
@@ -664,10 +647,8 @@ def speaking_practice_component(items):
         recognition.maxAlternatives = 3;
 
         micBtn.innerText = "👂";
-        resultBox.innerText = "지금 말해 보세요.";
-        resultBox.style.background = "#eff6ff";
-        resultBox.style.borderColor = "#bfdbfe";
-        resultBox.style.color = "#1d4ed8";
+        resultBox.style.display = "none";
+        resultBox.innerText = "";
 
         recognition.onresult = function(event) {
             let bestTranscript = "";
@@ -690,9 +671,8 @@ def speaking_practice_component(items):
         };
 
         recognition.onerror = function(event) {
-            resultBox.innerText = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
-            resultBox.style.background = "#fef2f2";
-            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.display = "block";
+            resultBox.innerText = "다시 눌러 주세요.";
             resultBox.style.color = "#991b1b";
             micBtn.innerText = "🎙️";
         };
@@ -720,7 +700,8 @@ def speaking_practice_component(items):
         attempts = 0;
         alreadyCorrect = false;
         updateScore();
-        resultBox.innerText = "점수를 초기화했습니다.";
+        resultBox.style.display = "none";
+        resultBox.innerText = "";
     });
 
     hintBtn.addEventListener("click", function() {
@@ -738,22 +719,16 @@ def speaking_practice_component(items):
         listenBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
-        resultBox.innerHTML =
-            "👂 정답을 듣고 따라 말해 보세요.<br>" +
-            "<span style='font-size:17px;'>정답을 그대로 다시 말해야 다음 문제 버튼이 열립니다.</span>";
-        resultBox.style.background = "#eff6ff";
-        resultBox.style.borderColor = "#bfdbfe";
-        resultBox.style.color = "#1d4ed8";
+        resultBox.style.display = "none";
+        resultBox.innerText = "";
     });
 
     micBtn.addEventListener("click", startRecognition);
 
     nextBtn.addEventListener("click", function() {
         if (!alreadyCorrect) {
-            resultBox.innerText = "먼저 문장 전체를 정확히 말해야 다음 문제로 갈 수 있습니다.";
-            resultBox.style.background = "#fff7ed";
-            resultBox.style.borderColor = "#fed7aa";
-            resultBox.style.color = "#9a3412";
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
             return;
         }
 
@@ -768,7 +743,7 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=680)
+    components.html(html, height=650)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
