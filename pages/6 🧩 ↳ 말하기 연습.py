@@ -181,7 +181,7 @@ def speaking_practice_component(items):
 
             <div id="answerBox" style="display:none;"></div>
 
-            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:16px;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:14px;">
                 <button id="hintBtn" style="
                     border:1.5px solid #fde68a;
                     background:#fffbeb;
@@ -197,8 +197,8 @@ def speaking_practice_component(items):
                     background: linear-gradient(135deg, #8b5cf6, #7c3aed);
                     color:white;
                     border-radius:999px;
-                    width:102px;
-                    height:102px;
+                    width:104px;
+                    height:104px;
                     font-weight:900;
                     cursor:pointer;
                     font-size:36px;
@@ -239,6 +239,20 @@ def speaking_practice_component(items):
                     font-size:16px;
                 ">➡️ 다음</button>
             </div>
+
+            <div id="hintBox" style="
+                display:none;
+                background:#fffbeb;
+                border:1.5px solid #fde68a;
+                color:#92400e;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:14px;
+                font-size:22px;
+                font-weight:900;
+            "></div>
+
+            <div id="answerBox" style="display:none;"></div>
 
             <div style="
                 background:#f8fafc;
@@ -735,7 +749,7 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=620)
+    components.html(html, height=610)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
