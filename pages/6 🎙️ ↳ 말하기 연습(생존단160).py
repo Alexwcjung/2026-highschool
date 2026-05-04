@@ -30,36 +30,42 @@ st.markdown(
     
     @media (max-width: 640px) {
         #speaking-app {
-            padding: 12px !important;
-            border-radius: 22px !important;
+            padding: 10px !important;
+            border-radius: 20px !important;
         }
         #speaking-app #blankSentence {
-            font-size: 22px !important;
-            padding: 15px 13px !important;
-            margin-bottom: 10px !important;
+            font-size: 20px !important;
+            padding: 13px 12px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.35 !important;
         }
         #speaking-app #koPrompt {
-            font-size: 21px !important;
-            margin-bottom: 10px !important;
+            font-size: 19px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.35 !important;
         }
         #speaking-app #transcriptBox {
-            font-size: 18px !important;
-            line-height: 1.55 !important;
+            font-size: 17px !important;
+            line-height: 1.45 !important;
         }
         #speaking-app #micBtn {
-            width: 82px !important;
-            height: 82px !important;
-            font-size: 28px !important;
+            width: 78px !important;
+            height: 78px !important;
+            font-size: 27px !important;
         }
         #speaking-app #hintBtn,
         #speaking-app #answerBtn,
         #speaking-app #listenBtn,
         #speaking-app #nextBtn {
-            padding: 9px 13px !important;
-            font-size: 14px !important;
+            padding: 8px 12px !important;
+            font-size: 13px !important;
         }
         #speaking-app #hintBox {
-            font-size: 17px !important;
+            font-size: 15px !important;
+            padding: 8px 10px !important;
+            line-height: 1.3 !important;
+            max-width: 100% !important;
+            overflow-wrap: anywhere !important;
         }
     }
 
@@ -265,11 +271,14 @@ def speaking_practice_component(items):
                 background:linear-gradient(135deg,#fef3c7,#fffbeb);
                 border:1.5px solid #fbbf24;
                 color:#92400e;
-                border-radius:18px;
-                padding:12px 14px;
+                border-radius:16px;
+                padding:10px 12px;
                 margin-bottom:10px;
-                font-size:21px;
+                font-size:18px;
                 font-weight:900;
+                line-height:1.35;
+                word-break:break-word;
+                white-space:normal;
                 box-shadow: 0 4px 12px rgba(251,191,36,0.12);
             "></div>
 
@@ -735,7 +744,7 @@ def speaking_practice_component(items):
 
     hintBtn.addEventListener("click", function() {
         hintBox.style.display = "block";
-        hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+        hintBox.innerText = makeTwoLetterHint(currentItem.hint);
     });
 
     listenBtn.addEventListener("click", function() {
