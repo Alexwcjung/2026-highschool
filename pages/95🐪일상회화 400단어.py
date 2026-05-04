@@ -12,7 +12,7 @@ import streamlit.components.v1 as components
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Daily English 1000",
+    page_title="Daily English 400",
     page_icon="🌱",
     layout="wide"
 )
@@ -262,7 +262,7 @@ st.markdown(
 # =========================
 # 상단 제목
 # =========================
-st.markdown("<div class='main-title'>🌱 Daily English 1000</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>🌱 Daily English 400</div>", unsafe_allow_html=True)
 st.markdown(
     "<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고, 읽고, 퀴즈로 익혀 봅시다.</div>",
     unsafe_allow_html=True
@@ -2723,9 +2723,6 @@ def show_all_cassette_tab():
         <div class="cassette-box">
             <div class="cassette-title">📼 전체 단어 테이프</div>
             <div class="cassette-text">
-                구간 선택 없이 전체 단어가 처음부터 끝까지 순서대로 이어집니다.<br>
-                단어를 두 번 듣고, 짧은 문장 하나를 들은 뒤 다음 단어로 넘어갑니다.<br>
-                mp3를 생성하지 않기 때문에 gTTS 긴 텍스트 오류가 나지 않습니다.
             </div>
         </div>
         """,
