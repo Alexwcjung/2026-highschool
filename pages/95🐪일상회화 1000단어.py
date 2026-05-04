@@ -1716,42 +1716,93 @@ def cassette_audio_player(label, audio_bytes, height=135):
     )
 
 
+def split_themes_into_cassette_parts(themes_dict, themes_per_part=4):
+    theme_items = list(themes_dict.items())
+    parts = []
+
+    for i in range(0, len(theme_items), themes_per_part):
+        part_items = theme_items[i:i + themes_per_part]
+        part_number = len(parts) + 1
+
+        lines = []
+        lines.append(f"Daily English 1000. Part {part_number}.")
+        lines.append("Listen and repeat.")
+        lines.append("Let's practice the words.")
+        lines.append("")
+
+        for theme_name, theme_words in part_items:
+            clean_name = clean_theme_title(theme_name)
+            lines.append(clean_name + ".")
+            lines.append("")
+
+            for item in theme_words:
+                word = item["word"]
+                lines.append(f"{word}.")
+                lines.append(f"{word}.")
+                lines.append("Listen and repeat.")
+                lines.append("")
+
+        lines.append("Great work.")
+        lines.append("Keep practicing.")
+
+        parts.append({
+            "part_number": part_number,
+            "theme_names": [name for name, _ in part_items],
+            "text": "\n".join(lines),
+        })
+
+    return parts
+
+
 def show_all_cassette_tab():
     st.markdown("## 🎧 전체 단어 카세트 듣기")
-    st.write("모든 테마의 단어를 카세트처럼 한 번에 들을 수 있습니다.")
-
-    all_cassette_text = make_all_cassette_text()
-    all_cassette_audio = make_tts_audio(all_cassette_text, lang="en", tld="com")
+    st.write("전체 1000개 단어를 한 번에 만들면 gTTS 오류가 날 수 있어, 여러 개의 Part로 나누어 재생합니다.")
 
     st.markdown(
         """
         <div class="cassette-box">
             <div class="cassette-title">📼 전체 카세트 복습</div>
             <div class="cassette-text">
-                전체 테마의 단어를 두 번씩 듣고 따라 말할 수 있습니다.<br>
-                10초 전/후 이동, 일시정지, 진행바 조절, mp3 다운로드가 가능합니다.
+                전체 테마의 단어를 여러 Part로 나누어 들을 수 있습니다.<br>
+                각 Part는 10초 전/후 이동, 일시정지, 진행바 조절, mp3 다운로드가 가능합니다.<br>
+                아래 단어 듣기나 대화 듣기를 누르면 현재 재생 중인 카세트는 자동으로 중지됩니다.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    cassette_audio_player("▶️ 전체 카세트 재생", all_cassette_audio, height=145)
+    cassette_parts = split_themes_into_cassette_parts(word_themes, themes_per_part=4)
 
-    st.download_button(
-        label="⬇️ 전체 단어 카세트 mp3 다운로드",
-        data=all_cassette_audio,
-        file_name="daily_english_1000_all_cassette.mp3",
-        mime="audio/mp3",
-        key="all_cassette_download"
-    )
+    for part in cassette_parts:
+        part_number = part["part_number"]
+        theme_names = part["theme_names"]
+        part_text = part["text"]
+
+        st.markdown(f"### 🎧 Part {part_number}")
+        st.caption(" / ".join(theme_names))
+
+        part_audio = make_tts_audio(part_text, lang="en", tld="com")
+
+        cassette_audio_player(
+            f"▶️ Part {part_number} 카세트 재생",
+            part_audio,
+            height=145
+        )
+
+        st.download_button(
+            label=f"⬇️ Part {part_number} mp3 다운로드",
+            data=part_audio,
+            file_name=f"daily_english_1000_cassette_part_{part_number}.mp3",
+            mime="audio/mp3",
+            key=f"all_cassette_part_{part_number}_download"
+        )
 
     with st.expander("📜 전체 카세트 스크립트 보기"):
         for theme_name, theme_words in word_themes.items():
             st.markdown(f"### {theme_name}")
             for item in theme_words:
                 st.markdown(f"**{item['word']}** : {item['meaning']}")
-
 
 def show_cassette_player(theme_words, theme_name):
     st.markdown(
