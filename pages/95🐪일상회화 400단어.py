@@ -262,7 +262,7 @@ st.markdown(
 # =========================
 # 상단 제목
 # =========================
-st.markdown("<div class='main-title'>🌱 Daily English 1000</div>", unsafe_allow_html=True)
+st.markdown("<div class='main-title'>🌱 Daily English 400</div>", unsafe_allow_html=True)
 st.markdown(
     "<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고, 읽고, 퀴즈로 익혀 봅시다.</div>",
     unsafe_allow_html=True
