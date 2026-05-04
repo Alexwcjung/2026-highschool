@@ -1074,39 +1074,16 @@ def show_word_cards(theme_words, theme_name):
     st.write("생존 회화에 꼭 필요한 단어를 듣고 익혀 보세요.")
 
     for idx, item in enumerate(theme_words):
-        st.markdown('<div class="word-card">', unsafe_allow_html=True)
-
-        # 영어 단어 / 한국어 뜻 / 발음·중지 버튼이 최대한 붙어서 보이도록 배치
-        col1, col2, col3 = st.columns([1.85, 1.2, 1.15], gap="small")
-
         emoji = get_word_emoji(item["word"])
-
-        with col1:
-            st.markdown(
-                f"""
-                <div class="word-row">
-                    <div class="word-number">{idx + 1}</div>
-                    <div class="word-emoji">{emoji}</div>
-                    <div class="word-text">{item['word']}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        with col2:
-            st.markdown(
-                f"<div class='meaning-text'>{item['meaning']}</div>",
-                unsafe_allow_html=True
-            )
-
-        with col3:
-            audio_button(
-                "🔊 듣기",
-                item["word"],
-                key=f"{theme_name}_learn_audio_{idx}"
-            )
-
-        st.markdown('</div>', unsafe_allow_html=True)
+        compact_word_row_audio_player(
+            number=idx + 1,
+            word=item["word"],
+            meaning=item["meaning"],
+            emoji=emoji,
+            repeat_count=20,
+            pause_ms=1500,
+            height=46
+        )
 
 # =========================
 # 퀴즈 풀기
