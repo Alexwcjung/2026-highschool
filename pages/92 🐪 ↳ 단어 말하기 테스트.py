@@ -1,879 +1,685 @@
 import streamlit as st
-from gtts import gTTS
-import io
-import random
-import base64
-import uuid
-import json
 import streamlit.components.v1 as components
+import json
 
-# =========================
-# 기본 설정
-# =========================
 st.set_page_config(
-    page_title="Survival English 500 Speaking Mission",
-    page_icon="🗣️",
+    page_title="생존 문장 말하기 훈련",
+    page_icon="🎙️",
     layout="wide"
 )
 
-TOTAL_QUESTIONS = 100
+# =========================================================
+# 데이터
+# =========================================================
+PRACTICE_ITEMS = [{'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.', 'blank': 'I am ______.', 'answer': 'I am hungry.', 'hint': 'hungry', 'emoji': '🍽️'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 목말라.', 'blank': 'I am ______.', 'answer': 'I am thirsty.', 'hint': 'thirsty', 'emoji': '💧'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 피곤해.', 'blank': 'I am ______.', 'answer': 'I am tired.', 'hint': 'tired', 'emoji': '😴'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 아파.', 'blank': 'I am ______.', 'answer': 'I am sick.', 'hint': 'sick', 'emoji': '🤒'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 괜찮아.', 'blank': 'I am ______.', 'answer': 'I am okay.', 'hint': 'okay', 'emoji': '🙂'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 추워.', 'blank': 'I am ______.', 'answer': 'I am cold.', 'hint': 'cold', 'emoji': '🥶'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 걱정돼.', 'blank': 'I am ______.', 'answer': 'I am worried.', 'hint': 'worried', 'emoji': '😟'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 무서워.', 'blank': 'I am ______.', 'answer': 'I am scared.', 'hint': 'scared', 'emoji': '😨'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 물이 필요해.', 'blank': 'I need ______.', 'answer': 'I need water.', 'hint': 'water', 'emoji': '💧'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 음식이 필요해.', 'blank': 'I need ______.', 'answer': 'I need food.', 'hint': 'food', 'emoji': '🍽️'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 도움이 필요해.', 'blank': 'I need ______.', 'answer': 'I need help.', 'hint': 'help', 'emoji': '🆘'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 약이 필요해.', 'blank': 'I need ______.', 'answer': 'I need medicine.', 'hint': 'medicine', 'emoji': '💊'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 병원이 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a hospital.', 'hint': 'hospital', 'emoji': '🏥'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 택시가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a taxi.', 'hint': 'taxi', 'emoji': '🚕'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 표가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a ticket.', 'hint': 'ticket', 'emoji': '🎫'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 열쇠가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a key.', 'hint': 'key', 'emoji': '🔑'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 음식을 원해.', 'blank': 'I want ______.', 'answer': 'I want food.', 'hint': 'food', 'emoji': '🍽️'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 물을 원해.', 'blank': 'I want ______.', 'answer': 'I want water.', 'hint': 'water', 'emoji': '💧'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 밥을 원해.', 'blank': 'I want ______.', 'answer': 'I want rice.', 'hint': 'rice', 'emoji': '🍚'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 빵을 원해.', 'blank': 'I want ______.', 'answer': 'I want bread.', 'hint': 'bread', 'emoji': '🍞'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 우유를 원해.', 'blank': 'I want ______.', 'answer': 'I want milk.', 'hint': 'milk', 'emoji': '🥛'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 주스를 원해.', 'blank': 'I want ______.', 'answer': 'I want juice.', 'hint': 'juice', 'emoji': '🧃'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 커피를 원해.', 'blank': 'I want ______.', 'answer': 'I want coffee.', 'hint': 'coffee', 'emoji': '☕'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 간식을 원해.', 'blank': 'I want a ______.', 'answer': 'I want a snack.', 'hint': 'snack', 'emoji': '🍪'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 먹고 있어.', 'blank': 'I am ______.', 'answer': 'I am eating.', 'hint': 'eating', 'emoji': '🍽️'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 마시고 있어.', 'blank': 'I am ______.', 'answer': 'I am drinking.', 'hint': 'drinking', 'emoji': '🥤'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 기다리고 있어.', 'blank': 'I am ______.', 'answer': 'I am waiting.', 'hint': 'waiting', 'emoji': '⏳'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 공부하고 있어.', 'blank': 'I am ______.', 'answer': 'I am studying.', 'hint': 'studying', 'emoji': '📚'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 읽고 있어.', 'blank': 'I am ______.', 'answer': 'I am reading.', 'hint': 'reading', 'emoji': '📖'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 쓰고 있어.', 'blank': 'I am ______.', 'answer': 'I am writing.', 'hint': 'writing', 'emoji': '✏️'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 걷고 있어.', 'blank': 'I am ______.', 'answer': 'I am walking.', 'hint': 'walking', 'emoji': '🚶'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 듣고 있어.', 'blank': 'I am ______.', 'answer': 'I am listening.', 'hint': 'listening', 'emoji': '👂'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 집에 갈 거야.', 'blank': 'I will ______ home.', 'answer': 'I will go home.', 'hint': 'go', 'emoji': '🏠'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 기다릴 거야.', 'blank': 'I will ______.', 'answer': 'I will wait.', 'hint': 'wait', 'emoji': '⏳'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 너를 도와줄 거야.', 'blank': 'I will ______ you.', 'answer': 'I will help you.', 'hint': 'help', 'emoji': '🤝'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 영어를 공부할 거야.', 'blank': 'I will ______ English.', 'answer': 'I will study English.', 'hint': 'study', 'emoji': '📚'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 점심을 먹을 거야.', 'blank': 'I will ______ lunch.', 'answer': 'I will eat lunch.', 'hint': 'eat', 'emoji': '🍱'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 물을 마실 거야.', 'blank': 'I will ______ water.', 'answer': 'I will drink water.', 'hint': 'drink', 'emoji': '💧'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 아프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not sick.', 'hint': 'sick', 'emoji': '🙂'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 배고프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not hungry.', 'hint': 'hungry', 'emoji': '🙅🍽️'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 괜찮지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not okay.', 'hint': 'okay', 'emoji': '😟'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 몰라.', 'blank': 'I do not ______.', 'answer': 'I do not know.', 'hint': 'know', 'emoji': '🤷'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 이해하지 못해.', 'blank': 'I do not ______.', 'answer': 'I do not understand.', 'hint': 'understand', 'emoji': '❓'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 그것을 원하지 않아.', 'blank': 'I do not ______ it.', 'answer': 'I do not want it.', 'hint': 'want', 'emoji': '🙅'}, {'cat': '❓ 간단히 물어보기', 'ko': '괜찮니?', 'blank': 'Are you ______?', 'answer': 'Are you okay?', 'hint': 'okay', 'emoji': '🙂'}, {'cat': '❓ 간단히 물어보기', 'ko': '아프니?', 'blank': 'Are you ______?', 'answer': 'Are you sick?', 'hint': 'sick', 'emoji': '🤒'}, {'cat': '❓ 간단히 물어보기', 'ko': '배고프니?', 'blank': 'Are you ______?', 'answer': 'Are you hungry?', 'hint': 'hungry', 'emoji': '🍽️'}, {'cat': '❓ 간단히 물어보기', 'ko': '목마르니?', 'blank': 'Are you ______?', 'answer': 'Are you thirsty?', 'hint': 'thirsty', 'emoji': '💧'}, {'cat': '❓ 간단히 물어보기', 'ko': '도움이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need help?', 'hint': 'help', 'emoji': '🆘'}, {'cat': '❓ 간단히 물어보기', 'ko': '물이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need water?', 'hint': 'water', 'emoji': '💧'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '화장실은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the bathroom?', 'hint': 'bathroom', 'emoji': '🚻'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '병원은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the hospital?', 'hint': 'hospital', 'emoji': '🏥'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '가게는 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the store?', 'hint': 'store', 'emoji': '🏪'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '역은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the station?', 'hint': 'station', 'emoji': '🚉'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '지금 몇 시인가요?', 'blank': 'What ______ is it?', 'answer': 'What time is it?', 'hint': 'time', 'emoji': '⏰'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '이름이 무엇인가요?', 'blank': 'What is your ______?', 'answer': 'What is your name?', 'hint': 'name', 'emoji': '🏷️'}]
 
-# =========================
-# CSS
-# =========================
+
+# =========================================================
+# 디자인
+# =========================================================
 st.markdown(
     """
     <style>
-    .main-title {
-        font-size: 46px;
-        font-weight: 900;
-        color: #1f2937;
-        margin-bottom: 4px;
-    }
-
-    .sub-title {
-        font-size: 17px;
-        color: #6b7280;
-        margin-bottom: 24px;
-    }
-
-    .hero-box {
-        background: linear-gradient(135deg, #ecfeff 0%, #fef3c7 48%, #fce7f3 100%);
+    .main-title-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
         border-radius: 30px;
-        padding: 28px 32px;
-        margin-bottom: 26px;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-        border: 1px solid rgba(255,255,255,0.9);
+        padding: 28px 30px;
+        margin-bottom: 22px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
     }
 
-    .hero-title {
-        font-size: 27px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
-    .hero-text {
-        font-size: 16px;
-        color: #374151;
-        line-height: 1.8;
-    }
-
-    .mission-card {
-        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
-        border-radius: 34px;
-        padding: 38px 40px;
-        margin-bottom: 24px;
-        border: 1px solid #dbeafe;
-        box-shadow: 0 12px 30px rgba(15,23,42,0.08);
-        text-align: center;
-    }
-
-    .top-badges {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 10px;
-        flex-wrap: wrap;
-        margin-bottom: 16px;
-    }
-
-    .question-number-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #0ea5e9, #6366f1);
-        color: white;
-        padding: 10px 18px;
-        border-radius: 999px;
-        font-size: 17px;
-        font-weight: 900;
-        box-shadow: 0 4px 12px rgba(14,165,233,0.25);
-    }
-
-    .progress-badge {
-        display: inline-block;
-        background: #dbeafe;
-        color: #1d4ed8;
-        padding: 9px 16px;
-        border-radius: 999px;
-        font-size: 15px;
-        font-weight: 900;
-    }
-
-    .theme-badge {
-        display: inline-block;
-        background: #fce7f3;
-        color: #be185d;
-        padding: 9px 15px;
-        border-radius: 999px;
-        font-size: 15px;
-        font-weight: 900;
-    }
-
-    .mini-score-row {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 12px;
-        flex-wrap: wrap;
-        margin-top: 10px;
-        margin-bottom: 18px;
-    }
-
-    .mini-score-good {
-        background: #dcfce7;
-        color: #166534;
-        padding: 8px 14px;
-        border-radius: 999px;
-        font-size: 15px;
-        font-weight: 900;
-    }
-
-    .mini-score-practice {
-        background: #fff7ed;
-        color: #9a3412;
-        padding: 8px 14px;
-        border-radius: 999px;
-        font-size: 15px;
-        font-weight: 900;
-    }
-
-    .emoji-circle {
-        width: 150px;
-        height: 150px;
-        border-radius: 999px;
-        background: linear-gradient(135deg, #fef9c3, #dbeafe, #fce7f3);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin: 18px auto 12px auto;
-        box-shadow: inset 0 0 0 8px rgba(255,255,255,0.65), 0 8px 20px rgba(0,0,0,0.08);
-    }
-
-    .emoji-box {
-        font-size: 84px;
-        line-height: 1;
-    }
-
-    .meaning-box {
-        font-size: 48px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 18px;
-    }
-
-    .speak-guide {
-        font-size: 20px;
-        font-weight: 800;
-        color: #374151;
-        margin-top: 16px;
-        margin-bottom: 16px;
-    }
-
-    .hidden-word {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 22px;
-        padding: 18px 20px;
-        margin: 16px auto 20px auto;
-        max-width: 520px;
-    }
-
-    .english-word {
-        font-size: 40px;
-        font-weight: 900;
-        color: #111827;
-    }
-
-    .english-caption {
-        font-size: 15px;
-        font-weight: 700;
-        color: #64748b;
-    }
-
-    .score-box {
-        background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 50%, #fce7f3 100%);
-        border-radius: 30px;
-        padding: 32px 36px;
-        margin-bottom: 26px;
-        border: 1px solid #bbf7d0;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-    }
-
-    .score-title {
-        font-size: 40px;
-        font-weight: 900;
-        color: #14532d;
-        margin-bottom: 10px;
-    }
-
-    .score-text {
-        font-size: 20px;
-        font-weight: 800;
-        color: #374151;
-        line-height: 1.8;
-    }
-
-    .result-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(180px, 1fr));
-        gap: 16px;
-        margin-top: 18px;
-        margin-bottom: 18px;
-    }
-
-    .result-mini-card {
-        background: rgba(255,255,255,0.82);
-        border: 1px solid rgba(255,255,255,0.9);
-        border-radius: 22px;
-        padding: 18px 20px;
-        text-align: center;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.05);
-    }
-
-    .result-number {
+    .main-title-box h1 {
+        margin: 0 0 10px 0;
+        color: #0f172a;
         font-size: 38px;
         font-weight: 900;
-        color: #111827;
     }
 
-    .result-label {
-        font-size: 16px;
-        font-weight: 900;
+    .main-title-box p {
+        margin: 0;
         color: #475569;
+        font-size: 18px;
+        line-height: 1.7;
+        font-weight: 700;
     }
 
-    .review-card {
+    .guide-box {
         background: white;
-        border-radius: 18px;
-        padding: 14px 16px;
-        margin-bottom: 10px;
-        border: 1px solid #e5e7eb;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-    }
-
-    .review-line {
-        display: flex;
-        align-items: center;
-        gap: 16px;
-        flex-wrap: wrap;
-    }
-
-    .review-num {
-        min-width: 54px;
-        background: #fef3c7;
-        color: #92400e;
-        border-radius: 999px;
-        padding: 6px 11px;
-        font-weight: 900;
-        text-align: center;
-    }
-
-    .review-emoji {
-        font-size: 28px;
-        min-width: 34px;
-    }
-
-    .review-ko {
-        font-size: 20px;
-        font-weight: 900;
-        min-width: 110px;
-    }
-
-    .review-en {
-        font-size: 22px;
-        font-weight: 900;
-        color: #111827;
-        min-width: 130px;
-    }
-
-    .review-status {
-        font-size: 16px;
-        font-weight: 900;
-        color: #374151;
-    }
-
-    .stButton > button {
-        border-radius: 999px;
-        font-weight: 900;
-        border: 1px solid #d1d5db;
-        padding: 0.68rem 1.25rem;
-        font-size: 16px;
-        white-space: nowrap;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-    }
-
-    .stButton > button:hover {
-        border-color: #0ea5e9;
-        color: #0ea5e9;
+        border: 1.5px solid #e0f2fe;
+        border-radius: 24px;
+        padding: 18px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.045);
+        color: #334155;
+        font-size: 17px;
+        line-height: 1.7;
+        font-weight: 700;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# =========================
-# 제목
-# =========================
-st.markdown("<div class='main-title'>🗣️ Survival English 500 Speaking Mission</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='sub-title'>이모지와 한국어 뜻을 보고, 영어 발음을 듣고, 직접 따라 말하는 100문제 자기진단 미션입니다.</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    f"""
-    <div class="hero-box">
-        <div class="hero-title">🎧 말하기 미션 방법</div>
-        <div class="hero-text">
-            • 문제는 <b>이모지 + 한국어 뜻</b>으로 나옵니다.<br>
-            • <b>정답 발음 듣기</b>를 누르고 영어 단어를 따라 말해 보세요.<br>
-            • 말한 뒤 <b>잘 말했어요</b> 또는 <b>연습이 더 필요해요</b>를 선택합니다.<br>
-            • 총 <b>{TOTAL_QUESTIONS}문제</b>가 랜덤으로 출제됩니다.<br>
-            • 마지막에 <b>잘 말한 단어 / 연습이 필요한 단어</b> 기록을 확인합니다.
-        </div>
+    """
+    <div class="main-title-box">
+        <h1>🎙️ 생존 단어 160개로 문장 말하기</h1>
+        <p>
+            한국어 상황과 이모지를 보고, 빈칸에 들어갈 말을 떠올린 뒤 <b>문장 전체를 영어로 말해 보세요.</b><br>
+            힌트는 정답 단어의 앞 두 글자만 보여 줍니다.
+        </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# =========================
-# TTS
-# =========================
-@st.cache_data
-def make_tts_audio(text, lang="en", tld="com"):
-    fp = io.BytesIO()
-    tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
-    tts.write_to_fp(fp)
-    fp.seek(0)
-    return fp.read()
+st.markdown(
+    """
+    <div class="guide-box">
+        <b>활동 순서</b><br>
+        1. 한국어 상황과 이모지를 봅니다. → 2. 영어 빈칸 문장을 봅니다. → 3. 필요하면 앞 두 글자 힌트를 봅니다.<br>
+        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 문장 전체가 맞게 인식되면 정답으로 인정됩니다.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
-# =========================
-# 발음 버튼
-# =========================
-def audio_button(label, text, height=58):
-    audio_bytes = make_tts_audio(text)
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+# =========================================================
+# 말하기 훈련 컴포넌트
+# =========================================================
+def speaking_practice_component(items):
+    items_json = json.dumps(items, ensure_ascii=False)
 
-    audio_id = f"audio_{uuid.uuid4().hex}"
-    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
-    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    player_id = f"player_{uuid.uuid4().hex}"
-
-    safe_label = json.dumps(label)
-    safe_player_id = json.dumps(player_id)
-
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; justify-content:center; gap:12px; height:50px;">
-            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
-
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #dcfce7, #dbeafe);
-                border: 1px solid #bbf7d0;
+    html = r"""
+    <div id="speaking-app" style="
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 30px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    ">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
+            <label style="font-weight:900; color:#334155;">문장 구조 선택</label>
+            <select id="categorySelect" style="
+                padding: 10px 14px;
                 border-radius: 999px;
-                padding: 9px 17px;
-                font-weight: 900;
+                border: 1.5px solid #bae6fd;
                 font-size: 15px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-                white-space: nowrap;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 9px 17px;
-                font-weight: 900;
-                font-size: 15px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 2px 6px rgba(0,0,0,0.04);
-                white-space: nowrap;
-            ">
-                ⏹ 중지
-            </button>
-
-            <span id="{status_id}" style="
-                font-size: 13px;
-                color: #075985;
                 font-weight: 800;
-                white-space: nowrap;
-            "></span>
+                color: #0f172a;
+                background: white;
+            "></select>
 
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-            const playerId = {safe_player_id};
-            const labelText = {safe_label};
+            <button id="randomBtn" style="
+                border: 1.5px solid #c7d2fe;
+                background: white;
+                color: #3730a3;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🎲 랜덤</button>
 
-            const channel = new BroadcastChannel("survival_speaking_audio_channel");
-
-            function stopAudio(showMessage = false) {{
-                audio.pause();
-                audio.currentTime = 0;
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-
-                if (showMessage) {{
-                    status.innerText = "중지됨";
-                }} else {{
-                    status.innerText = "";
-                }}
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopAudio(false);
-                }}
-            }};
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                stopAudio(false);
-                playBtn.disabled = true;
-                playBtn.innerText = "재생 중";
-                status.innerText = "듣는 중";
-
-                audio.play().then(() => {{
-                    status.innerText = "듣는 중";
-                }}).catch((error) => {{
-                    status.innerText = "다시 클릭";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }});
-
-            audio.addEventListener("ended", function() {{
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-                status.innerText = "완료";
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopAudio(true);
-            }});
-            </script>
+            <button id="resetBtn" style="
+                border: 1.5px solid #fed7aa;
+                background: #fff7ed;
+                color: #9a3412;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🔄 점수 초기화</button>
         </div>
-        """,
-        height=height
-    )
 
+        <div style="
+            background:white;
+            border-radius:26px;
+            padding:24px;
+            border:1.5px solid #e0f2fe;
+            box-shadow:0 5px 16px rgba(0,0,0,0.055);
+        ">
+            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                <div id="categoryLabel" style="
+                    display:inline-block;
+                    background:#eef6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bfdbfe;
+                "></div>
 
-# =========================
-# 단어 데이터
-# 형식: 테마|영어|한국어|이모지
-# =========================
-DATA = """
-🧍 나와 사람|I|나|🙋
-🧍 나와 사람|you|너, 당신|👉
-🧍 나와 사람|he|그|👦
-🧍 나와 사람|she|그녀|👧
-🧍 나와 사람|we|우리|👥
-🧍 나와 사람|they|그들|👥
-🧍 나와 사람|friend|친구|🤝
-🧍 나와 사람|teacher|선생님|👩‍🏫
-🧍 나와 사람|student|학생|🧑‍🎓
-🧍 나와 사람|classmate|반 친구|👫
-🧍 나와 사람|family|가족|👨‍👩‍👧
-🧍 나와 사람|father|아버지|👨
-🧍 나와 사람|mother|어머니|👩
-🧍 나와 사람|brother|형제, 남자 형제|👦
-🧍 나와 사람|sister|자매, 여자 형제|👧
-🧍 나와 사람|name|이름|🏷️
-🧍 나와 사람|person|사람|🧍
-🧍 나와 사람|man|남자|👨
-🧍 나와 사람|woman|여자|👩
-🧍 나와 사람|child|아이|🧒
-🏃 기본 동작|go|가다|➡️
-🏃 기본 동작|come|오다|⬅️
-🏃 기본 동작|walk|걷다|🚶
-🏃 기본 동작|run|달리다|🏃
-🏃 기본 동작|sit|앉다|🪑
-🏃 기본 동작|stand|서다|🧍
-🏃 기본 동작|stop|멈추다|🛑
-🏃 기본 동작|start|시작하다|▶️
-🏃 기본 동작|open|열다|📖
-🏃 기본 동작|close|닫다|📕
-🏃 기본 동작|eat|먹다|🍽️
-🏃 기본 동작|drink|마시다|🥤
-🏃 기본 동작|sleep|자다|😴
-🏃 기본 동작|study|공부하다|📚
-🏃 기본 동작|read|읽다|📖
-🏃 기본 동작|write|쓰다|✏️
-🏃 기본 동작|listen|듣다|👂
-🏃 기본 동작|speak|말하다|🗣️
-🏃 기본 동작|help|돕다|🆘
-🏃 기본 동작|wait|기다리다|⏳
-💖 감정·몸 상태|happy|행복한|😊
-💖 감정·몸 상태|sad|슬픈|😢
-💖 감정·몸 상태|angry|화난|😡
-💖 감정·몸 상태|tired|피곤한|🥱
-💖 감정·몸 상태|hungry|배고픈|😋
-💖 감정·몸 상태|thirsty|목마른|💧
-💖 감정·몸 상태|sick|아픈|🤒
-💖 감정·몸 상태|okay|괜찮은|👌
-💖 감정·몸 상태|fine|괜찮은|🙂
-💖 감정·몸 상태|cold|추운, 차가운|🥶
-💖 감정·몸 상태|hot|더운, 뜨거운|🥵
-💖 감정·몸 상태|pain|통증|🤕
-💖 감정·몸 상태|headache|두통|🤯
-💖 감정·몸 상태|stomachache|복통|🤢
-💖 감정·몸 상태|fever|열|🌡️
-💖 감정·몸 상태|hurt|아프다, 다치다|🩹
-💖 감정·몸 상태|good|좋은|👍
-💖 감정·몸 상태|bad|나쁜|👎
-💖 감정·몸 상태|worried|걱정하는|😟
-💖 감정·몸 상태|scared|무서워하는|😨
-🍎 음식·물|food|음식|🍽️
-🍎 음식·물|water|물|💧
-🍎 음식·물|rice|밥, 쌀|🍚
-🍎 음식·물|bread|빵|🍞
-🍎 음식·물|milk|우유|🥛
-🍎 음식·물|juice|주스|🧃
-🍎 음식·물|coffee|커피|☕
-🍎 음식·물|tea|차|🍵
-🍎 음식·물|apple|사과|🍎
-🍎 음식·물|banana|바나나|🍌
-🍎 음식·물|egg|달걀|🥚
-🍎 음식·물|meat|고기|🥩
-🍎 음식·물|chicken|닭고기, 닭|🍗
-🍎 음식·물|fish|생선, 물고기|🐟
-🍎 음식·물|breakfast|아침 식사|🍳
-🍎 음식·물|lunch|점심 식사|🍱
-🍎 음식·물|dinner|저녁 식사|🍽️
-🍎 음식·물|snack|간식|🍪
-🍎 음식·물|medicine|약|💊
-🍎 음식·물|hospital|병원|🏥
-🚗 장소·이동|home|집|🏠
-🚗 장소·이동|school|학교|🏫
-🚗 장소·이동|classroom|교실|🧑‍🏫
-🚗 장소·이동|bathroom|화장실|🚻
-🚗 장소·이동|hospital|병원|🏥
-🚗 장소·이동|store|가게|🏪
-🚗 장소·이동|station|역|🚉
-🚗 장소·이동|bus|버스|🚌
-🚗 장소·이동|car|자동차|🚗
-🚗 장소·이동|taxi|택시|🚕
-🚗 장소·이동|train|기차|🚆
-🚗 장소·이동|bike|자전거|🚲
-🚗 장소·이동|road|도로|🛣️
-🚗 장소·이동|street|거리|🏙️
-🚗 장소·이동|here|여기|📍
-🚗 장소·이동|there|거기|📌
-🚗 장소·이동|near|가까운|📍
-🚗 장소·이동|far|먼|🧭
-🚗 장소·이동|left|왼쪽|⬅️
-🚗 장소·이동|right|오른쪽, 맞는|➡️
-⏰ 시간·숫자|time|시간|⏰
-⏰ 시간·숫자|now|지금|🕒
-⏰ 시간·숫자|today|오늘|📅
-⏰ 시간·숫자|tomorrow|내일|➡️
-⏰ 시간·숫자|yesterday|어제|⬅️
-⏰ 시간·숫자|morning|아침|🌅
-⏰ 시간·숫자|afternoon|오후|☀️
-⏰ 시간·숫자|evening|저녁|🌆
-⏰ 시간·숫자|night|밤|🌙
-⏰ 시간·숫자|early|이른|🐓
-⏰ 시간·숫자|late|늦은|🌃
-⏰ 시간·숫자|one|하나|1️⃣
-⏰ 시간·숫자|two|둘|2️⃣
-⏰ 시간·숫자|three|셋|3️⃣
-⏰ 시간·숫자|four|넷|4️⃣
-⏰ 시간·숫자|five|다섯|5️⃣
-⏰ 시간·숫자|six|여섯|6️⃣
-⏰ 시간·숫자|seven|일곱|7️⃣
-⏰ 시간·숫자|eight|여덟|8️⃣
-⏰ 시간·숫자|ten|열|🔟
-🎒 물건·돈|bag|가방|🎒
-🎒 물건·돈|phone|전화기|📱
-🎒 물건·돈|book|책|📘
-🎒 물건·돈|notebook|공책|📓
-🎒 물건·돈|pen|펜|🖊️
-🎒 물건·돈|pencil|연필|✏️
-🎒 물건·돈|desk|책상|🪑
-🎒 물건·돈|chair|의자|🪑
-🎒 물건·돈|door|문|🚪
-🎒 물건·돈|window|창문|🪟
-🎒 물건·돈|key|열쇠|🔑
-🎒 물건·돈|money|돈|💰
-🎒 물건·돈|card|카드|💳
-🎒 물건·돈|ticket|표, 티켓|🎫
-🎒 물건·돈|clothes|옷|👕
-🎒 물건·돈|shoes|신발|👟
-🎒 물건·돈|hat|모자|🧢
-🎒 물건·돈|watch|시계|⌚
-🎒 물건·돈|cup|컵|🥤
-🎒 물건·돈|bottle|병|🍼
-🆘 도움 요청|help|도움, 돕다|🆘
-🆘 도움 요청|please|부디, 제발|🙏
-🆘 도움 요청|sorry|미안합니다|🙇
-🆘 도움 요청|excuse me|실례합니다|🙋
-🆘 도움 요청|again|다시|🔁
-🆘 도움 요청|slowly|천천히|🐢
-🆘 도움 요청|understand|이해하다|💡
-🆘 도움 요청|question|질문|❓
-🆘 도움 요청|problem|문제|⚠️
-🆘 도움 요청|need|필요하다|📌
-🆘 도움 요청|want|원하다|🙋
-🆘 도움 요청|know|알다|🧠
-🆘 도움 요청|say|말하다|💬
-🆘 도움 요청|tell|말하다, 알려주다|🗣️
-🆘 도움 요청|ask|묻다|❓
-🆘 도움 요청|answer|대답, 답|✅
-🆘 도움 요청|repeat|반복하다|🔁
-🆘 도움 요청|speak|말하다|🗣️
-🆘 도움 요청|look|보다|👀
-🆘 도움 요청|listen|듣다|👂
-"""
-
-# =========================
-# 전체 단어 목록 만들기
-# =========================
-all_words = []
-
-for line in DATA.strip().splitlines():
-    theme, word, meaning, emoji = line.split("|")
-    all_words.append({
-        "theme": theme,
-        "word": word,
-        "meaning": meaning,
-        "emoji": emoji
-    })
-
-
-# =========================
-# 미션 시작 함수
-# =========================
-def start_new_mission():
-    question_count = min(TOTAL_QUESTIONS, len(all_words))
-    questions = random.sample(all_words, question_count)
-
-    st.session_state.questions = questions
-    st.session_state.total_questions = question_count
-    st.session_state.current_index = 0
-    st.session_state.records = []
-    st.session_state.mission_started = True
-    st.session_state.mission_finished = False
-
-
-if "mission_started" not in st.session_state:
-    st.session_state.mission_started = False
-
-if "mission_finished" not in st.session_state:
-    st.session_state.mission_finished = False
-
-if st.session_state.get("mission_started", False):
-    if "questions" in st.session_state and "total_questions" not in st.session_state:
-        st.session_state.total_questions = len(st.session_state.questions)
-
-    if "records" not in st.session_state:
-        st.session_state.records = []
-
-    if "current_index" not in st.session_state:
-        st.session_state.current_index = 0
-
-
-# =========================
-# 시작 화면
-# =========================
-if not st.session_state.mission_started:
-    st.markdown("### 🚀 말하기 미션 시작")
-    st.write(f"총 {TOTAL_QUESTIONS}개의 단어가 랜덤으로 나옵니다. 듣고 따라 말한 뒤 자기진단을 해 보세요.")
-
-    if st.button(f"🗣️ {TOTAL_QUESTIONS}개 말하기 미션 시작하기"):
-        start_new_mission()
-        st.rerun()
-
-
-# =========================
-# 미션 진행 화면
-# =========================
-elif st.session_state.mission_started and not st.session_state.mission_finished:
-    idx = st.session_state.current_index
-    q = st.session_state.questions[idx]
-    total = st.session_state.total_questions
-
-    good_now = sum(1 for r in st.session_state.records if r["status"] == "잘 말했어요")
-    practice_now = sum(1 for r in st.session_state.records if r["status"] == "연습이 더 필요해요")
-
-    progress_value = (idx + 1) / total
-    st.progress(progress_value)
-
-    st.markdown('<div class="mission-card">', unsafe_allow_html=True)
-
-    st.markdown(
-        f"""
-        <div class="top-badges">
-            <span class="question-number-badge">문제 {idx + 1}번</span>
-            <span class="progress-badge">{idx + 1} / {total}</span>
-            <span class="theme-badge">{q['theme']}</span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        f"""
-        <div class="mini-score-row">
-            <span class="mini-score-good">😊 잘 말했어요 {good_now}개</span>
-            <span class="mini-score-practice">🔁 연습 필요 {practice_now}개</span>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        f"""
-        <div class="emoji-circle">
-            <div class="emoji-box">{q['emoji']}</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown(f"<div class='meaning-box'>{q['meaning']}</div>", unsafe_allow_html=True)
-
-    st.markdown(
-        """
-        <div class="speak-guide">
-            발음을 듣고, 큰 소리로 따라 말해 보세요.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    audio_button("🔊 정답 발음 듣기", q["word"])
-
-    with st.expander("👀 영어 단어 확인하기"):
-        st.markdown(
-            f"""
-            <div class="hidden-word">
-                <div class="english-caption">정답 영어 단어</div>
-                <div class="english-word">{q['word']}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.markdown("### 자기 진단")
-
-    def save_record(status):
-        st.session_state.records.append({
-            "number": idx + 1,
-            "theme": q["theme"],
-            "emoji": q["emoji"],
-            "meaning": q["meaning"],
-            "word": q["word"],
-            "status": status
-        })
-
-        if idx < total - 1:
-            st.session_state.current_index += 1
-        else:
-            st.session_state.mission_finished = True
-
-        st.rerun()
-
-    left_space, btn1_col, btn2_col, right_space = st.columns([2.8, 1.2, 1.2, 2.8], gap="small")
-
-    with btn1_col:
-        if st.button("😊 잘 말했어요", key=f"good_{idx}"):
-            save_record("잘 말했어요")
-
-    with btn2_col:
-        if st.button("🔁 연습이 더 필요해요", key=f"practice_{idx}"):
-            save_record("연습이 더 필요해요")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-# =========================
-# 결과 화면
-# =========================
-else:
-    records = st.session_state.records
-    total = st.session_state.total_questions
-
-    good_count = sum(1 for r in records if r["status"] == "잘 말했어요")
-    practice_count = sum(1 for r in records if r["status"] == "연습이 더 필요해요")
-    percent = round(good_count / total * 100, 1)
-
-    st.markdown(
-        f"""
-        <div class="score-box">
-            <div class="score-title">🏆 말하기 미션 결과</div>
-            <div class="score-text">
-                총 말하기 단어: {total}개<br>
-                잘 말한 비율: {percent}%
+                <div id="scoreLabel" style="
+                    display:inline-block;
+                    background:#f0fdf4;
+                    color:#166534;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bbf7d0;
+                ">0 / 0</div>
             </div>
 
-            <div class="result-grid">
-                <div class="result-mini-card">
-                    <div class="result-number">😊 {good_count}</div>
-                    <div class="result-label">잘 말했어요</div>
-                </div>
-                <div class="result-mini-card">
-                    <div class="result-number">🔁 {practice_count}</div>
-                    <div class="result-label">연습이 더 필요해요</div>
-                </div>
+            <div style="
+                font-size: 30px;
+                font-weight: 900;
+                color: #111827;
+                line-height: 1.45;
+                margin-bottom: 18px;
+            " id="koPrompt">
+                한국어 상황
+            </div>
+
+            <div style="
+                background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
+                border: 1.5px solid #dbeafe;
+                border-radius: 22px;
+                padding: 22px 20px;
+                margin-bottom: 18px;
+                font-size: 34px;
+                font-weight: 900;
+                color: #0f172a;
+                line-height: 1.5;
+            " id="blankSentence">
+                I am ______.
+            </div>
+
+            <div id="hintBox" style="
+                display:none;
+                background:#fffbeb;
+                border:1.5px solid #fde68a;
+                color:#92400e;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:16px;
+                font-size:22px;
+                font-weight:900;
+            "></div>
+
+            <div id="answerBox" style="
+                display:none;
+                background:#ecfdf5;
+                border:1.5px solid #bbf7d0;
+                color:#166534;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:16px;
+                font-size:22px;
+                font-weight:900;
+            "></div>
+
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
+                <button id="hintBtn" style="
+                    border:1.5px solid #fde68a;
+                    background:#fffbeb;
+                    color:#92400e;
+                    border-radius:999px;
+                    padding:11px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                ">💡 앞 두 글자 힌트</button>
+
+                <button id="listenBtn" style="
+                    border:1.5px solid #bfdbfe;
+                    background:#eff6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:11px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                ">🔊 정답 듣기</button>
+
+                <button id="answerBtn" style="
+                    border:1.5px solid #bbf7d0;
+                    background:#f0fdf4;
+                    color:#166534;
+                    border-radius:999px;
+                    padding:11px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                ">👀 정답 보기</button>
+
+                <button id="micBtn" style="
+                    border:1.5px solid #fecaca;
+                    background:#fff1f2;
+                    color:#be123c;
+                    border-radius:999px;
+                    padding:11px 18px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:16px;
+                ">🎙️ 말하기 시작</button>
+
+                <button id="nextBtn" style="
+                    border:1.5px solid #c7d2fe;
+                    background:#eef2ff;
+                    color:#3730a3;
+                    border-radius:999px;
+                    padding:11px 18px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:16px;
+                ">➡️ 다음 문제</button>
+            </div>
+
+            <div style="
+                background:#f8fafc;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:14px;
+                min-height:54px;
+            ">
+                <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 문장</div>
+                <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155;">아직 말하지 않았습니다.</div>
+            </div>
+
+            <div id="resultBox" style="
+                background:#f1f5f9;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                font-size:20px;
+                font-weight:900;
+                color:#334155;
+            ">
+                마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형은 괜찮습니다.
             </div>
         </div>
-        """,
-        unsafe_allow_html=True
-    )
 
-    if good_count >= int(total * 0.8):
-        st.success("🌟 훌륭합니다! 오늘 말하기 미션을 아주 잘 해냈습니다.")
-    elif good_count >= int(total * 0.5):
-        st.info("👍 좋습니다! 연습이 필요한 단어만 다시 반복하면 됩니다.")
-    else:
-        st.warning("🌱 괜찮습니다. 오늘은 입으로 영어를 꺼내 본 것 자체가 큰 성공입니다.")
+        <div style="
+            margin-top:14px;
+            color:#64748b;
+            font-size:13px;
+            line-height:1.6;
+            font-weight:700;
+        ">
+            ※ Chrome 계열 브라우저에서 음성 인식이 가장 잘 작동합니다.<br>
+            ※ 마이크 권한 요청이 나오면 허용을 눌러 주세요.
+        </div>
+    </div>
 
-    col1, col2 = st.columns(2)
+    <script>
+    const ITEMS = __ITEMS_JSON__;
 
-    with col1:
-        if st.button(f"🔄 다시 {TOTAL_QUESTIONS}개 말하기"):
-            start_new_mission()
-            st.rerun()
+    let currentList = [];
+    let currentIndex = 0;
+    let currentItem = null;
+    let score = 0;
+    let attempts = 0;
+    let alreadyCorrect = false;
 
-    with col2:
-        if st.button("🧹 처음 화면으로"):
-            for key in list(st.session_state.keys()):
-                del st.session_state[key]
-            st.rerun()
+    const categorySelect = document.getElementById("categorySelect");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const categoryLabel = document.getElementById("categoryLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const koPrompt = document.getElementById("koPrompt");
+    const blankSentence = document.getElementById("blankSentence");
+    const hintBox = document.getElementById("hintBox");
+    const answerBox = document.getElementById("answerBox");
+    const hintBtn = document.getElementById("hintBtn");
+    const listenBtn = document.getElementById("listenBtn");
+    const answerBtn = document.getElementById("answerBtn");
+    const micBtn = document.getElementById("micBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const transcriptBox = document.getElementById("transcriptBox");
+    const resultBox = document.getElementById("resultBox");
 
-    st.markdown("### 📋 전체 기록")
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
 
-    for item in records:
-        if item["status"] == "잘 말했어요":
-            status_icon = "😊"
-        else:
-            status_icon = "🔁"
+    function uniqueCategories() {
+        const cats = ["전체"];
+        ITEMS.forEach(item => {
+            if (!cats.includes(item.cat)) cats.push(item.cat);
+        });
+        return cats;
+    }
 
-        st.markdown('<div class="review-card">', unsafe_allow_html=True)
-        st.markdown(
-            f"""
-            <div class="review-line">
-                <div class="review-num">{item['number']}번</div>
-                <div class="review-emoji">{item['emoji']}</div>
-                <div class="review-ko">{item['meaning']}</div>
-                <div class="review-en">{item['word']}</div>
-                <div class="review-status">{status_icon} {item['status']}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        st.markdown('</div>', unsafe_allow_html=True)
+    function initCategories() {
+        const cats = uniqueCategories();
+        categorySelect.innerHTML = "";
+        cats.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.innerText = cat;
+            categorySelect.appendChild(option);
+        });
+    }
+
+    function getFilteredItems() {
+        const selected = categorySelect.value;
+        if (selected === "전체") return ITEMS.slice();
+        return ITEMS.filter(item => item.cat === selected);
+    }
+
+    function shuffleArray(arr) {
+        const copied = arr.slice();
+        for (let i = copied.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copied[i], copied[j]] = [copied[j], copied[i]];
+        }
+        return copied;
+    }
+
+    function makeTwoLetterHint(answerWord) {
+        if (!answerWord) return "";
+
+        return answerWord.split(" ").map(word => {
+            const clean = word.trim();
+            if (clean.length <= 2) return clean;
+            return clean.slice(0, 2) + "_".repeat(clean.length - 2);
+        }).join(" ");
+    }
+
+    function normalizeText(text) {
+        return text
+            .toLowerCase()
+            // 축약형을 먼저 풀어 줌
+            .replace(/\bi'm\b/g, "i am")
+            .replace(/\bim\b/g, "i am")
+            .replace(/\byou're\b/g, "you are")
+            .replace(/\bhe's\b/g, "he is")
+            .replace(/\bshe's\b/g, "she is")
+            .replace(/\bit's\b/g, "it is")
+            .replace(/\bwe're\b/g, "we are")
+            .replace(/\bthey're\b/g, "they are")
+            .replace(/\bdon't\b/g, "do not")
+            .replace(/\bdoesn't\b/g, "does not")
+            .replace(/\bdidn't\b/g, "did not")
+            .replace(/\bcan't\b/g, "cannot")
+            .replace(/\bcant\b/g, "cannot")
+            .replace(/\bi'll\b/g, "i will")
+            .replace(/\byou'll\b/g, "you will")
+            .replace(/\bhe'll\b/g, "he will")
+            .replace(/\bshe'll\b/g, "she will")
+            .replace(/[.,!?;:'"’‘“”]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function wordsOnly(text) {
+        return normalizeText(text)
+            .split(" ")
+            .filter(w => w.length > 0);
+    }
+
+    function editDistance(a, b) {
+        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return dp[a.length][b.length];
+    }
+
+    function isCloseEnough(spoken, answer) {
+        const s = normalizeText(spoken);
+        const a = normalizeText(answer);
+
+        if (!s || !a) return false;
+
+        const sWords = wordsOnly(s);
+        const aWords = wordsOnly(a);
+
+        // 1) 축약형을 푼 뒤 완전 일치하면 정답
+        // 예: "I'm hungry" → "I am hungry"
+        if (s === a) return true;
+
+        // 2) 음성 인식이 정답 앞뒤에 짧은 말을 붙이는 경우만 허용
+        // 예: "um i am hungry" / "i am hungry please"
+        if (sWords.length <= aWords.length + 2) {
+            for (let i = 0; i <= sWords.length - aWords.length; i++) {
+                const slice = sWords.slice(i, i + aWords.length).join(" ");
+                if (slice === a) return true;
+            }
+        }
+
+        // 3) 핵심 정답 단어는 반드시 들어가야 함
+        // 빈칸 정답 단어 currentItem.hint가 빠지면 오답
+        const keyWords = normalizeText(currentItem.hint || "").split(" ").filter(w => w.length > 0);
+        const hasAllKeyWords = keyWords.every(w => sWords.includes(w));
+        if (!hasAllKeyWords) return false;
+
+        // 4) 정답 단어 수와 말한 단어 수가 너무 다르면 오답
+        // 예: "water"만 말했는데 "I need water" 정답 처리되는 것 방지
+        if (sWords.length < aWords.length) return false;
+        if (sWords.length > aWords.length + 2) return false;
+
+        // 5) 정답 문장의 각 단어가 순서대로 거의 들어 있는지 확인
+        // 핵심 단어는 위에서 이미 확인했고, i/am/do 같은 짧은 기능어는 약간만 허용
+        let matchedCount = 0;
+        let searchStart = 0;
+
+        for (const aw of aWords) {
+            let foundIndex = -1;
+
+            for (let i = searchStart; i < sWords.length; i++) {
+                if (sWords[i] === aw) {
+                    foundIndex = i;
+                    break;
+                }
+            }
+
+            if (foundIndex !== -1) {
+                matchedCount += 1;
+                searchStart = foundIndex + 1;
+            }
+        }
+
+        // 짧은 문장은 거의 완전 일치해야 함
+        if (aWords.length <= 3) {
+            return matchedCount === aWords.length;
+        }
+
+        // 긴 문장도 한 단어 이상 빠지면 오답에 가깝게 처리
+        return matchedCount >= aWords.length - 1;
+    }
+
+    function isCorrectSpeech(spoken, answer) {
+        return isCloseEnough(spoken, answer);
+    }
+
+    function updateScore() {
+        scoreLabel.innerText = score + " / " + attempts;
+    }
+
+    function loadQuestion(index = 0) {
+        if (currentList.length === 0) {
+            currentList = getFilteredItems();
+        }
+
+        if (index >= currentList.length) index = 0;
+        if (index < 0) index = currentList.length - 1;
+
+        currentIndex = index;
+        currentItem = currentList[currentIndex];
+        alreadyCorrect = false;
+
+        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
+        const emoji = currentItem.emoji || "🛟";
+        koPrompt.innerHTML =
+            "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
+            "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
+        blankSentence.innerText = currentItem.blank;
+        hintBox.style.display = "none";
+        answerBox.style.display = "none";
+        hintBox.innerText = "";
+        answerBox.innerText = "";
+        transcriptBox.innerText = "아직 말하지 않았습니다.";
+        resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형은 괜찮습니다.";
+        resultBox.style.background = "#f1f5f9";
+        resultBox.style.borderColor = "#e2e8f0";
+        resultBox.style.color = "#334155";
+    }
+
+    function speak(text) {
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.82;
+        utterance.pitch = 1.05;
+
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v =>
+            v.lang && v.lang.toLowerCase().startsWith("en") &&
+            /(samantha|jenny|aria|zira|google us english|karen|victoria|female)/i.test(v.name)
+        );
+        if (preferred) utterance.voice = preferred;
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function checkSpeech(spokenText) {
+        attempts += 1;
+
+        if (isCorrectSpeech(spokenText, currentItem.answer)) {
+            if (!alreadyCorrect) {
+                score += 1;
+                alreadyCorrect = true;
+            }
+
+            resultBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:17px;'>잘 말했어요: " + currentItem.answer + "</span>";
+            resultBox.style.background = "#ecfdf5";
+            resultBox.style.borderColor = "#bbf7d0";
+            resultBox.style.color = "#166534";
+
+            speak(currentItem.answer);
+        } else {
+            resultBox.innerHTML =
+                "🍊 문장 전체가 정확히 맞아야 해요. 다시 말해 보세요.<br>" +
+                "<span style='font-size:17px;'>목표 문장: " + currentItem.answer + "</span>";
+            resultBox.style.background = "#fff7ed";
+            resultBox.style.borderColor = "#fed7aa";
+            resultBox.style.color = "#9a3412";
+        }
+
+        updateScore();
+    }
+
+    function startRecognition() {
+        if (!SpeechRecognition) {
+            resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
+            resultBox.style.background = "#fef2f2";
+            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.color = "#991b1b";
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.maxAlternatives = 3;
+
+        micBtn.innerText = "🎙️ 듣는 중...";
+        resultBox.innerText = "지금 말해 보세요.";
+        resultBox.style.background = "#eff6ff";
+        resultBox.style.borderColor = "#bfdbfe";
+        resultBox.style.color = "#1d4ed8";
+
+        recognition.onresult = function(event) {
+            let bestTranscript = "";
+            let matched = false;
+
+            for (let i = 0; i < event.results[0].length; i++) {
+                const transcript = event.results[0][i].transcript;
+                if (i === 0) bestTranscript = transcript;
+
+                if (isCorrectSpeech(transcript, currentItem.answer)) {
+                    bestTranscript = transcript;
+                    matched = true;
+                    break;
+                }
+            }
+
+            transcriptBox.innerText = bestTranscript;
+            checkSpeech(bestTranscript);
+        };
+
+        recognition.onerror = function(event) {
+            resultBox.innerText = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
+            resultBox.style.background = "#fef2f2";
+            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.color = "#991b1b";
+            micBtn.innerText = "🎙️ 말하기 시작";
+        };
+
+        recognition.onend = function() {
+            micBtn.innerText = "🎙️ 말하기 시작";
+        };
+
+        recognition.start();
+    }
+
+    categorySelect.addEventListener("change", function() {
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        loadQuestion(0);
+    });
+
+    randomBtn.addEventListener("click", function() {
+        currentList = shuffleArray(getFilteredItems());
+        loadQuestion(0);
+    });
+
+    resetBtn.addEventListener("click", function() {
+        score = 0;
+        attempts = 0;
+        alreadyCorrect = false;
+        updateScore();
+        resultBox.innerText = "점수를 초기화했습니다.";
+    });
+
+    hintBtn.addEventListener("click", function() {
+        hintBox.style.display = "block";
+        hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+    });
+
+    listenBtn.addEventListener("click", function() {
+        speak(currentItem.answer);
+    });
+
+    answerBtn.addEventListener("click", function() {
+        answerBox.style.display = "block";
+        answerBox.innerText = "정답: " + currentItem.answer;
+    });
+
+    micBtn.addEventListener("click", startRecognition);
+
+    nextBtn.addEventListener("click", function() {
+        loadQuestion(currentIndex + 1);
+    });
+
+    initCategories();
+    currentList = getFilteredItems();
+    updateScore();
+    loadQuestion(0);
+    </script>
+    """
+
+    html = html.replace("__ITEMS_JSON__", items_json)
+    components.html(html, height=760)
+
+
+speaking_practice_component(PRACTICE_ITEMS)
