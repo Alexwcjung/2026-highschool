@@ -260,9 +260,6 @@ st.markdown(
         <div class="hero-text">
             • 각 테마는 <b>오늘의 생존 대화</b>로 시작합니다.<br>
             • 대화를 듣고, 바로 아래에서 핵심 단어를 익힙니다.<br>
-            • 단어 발음은 <b>20번 반복</b>됩니다.<br>
-            • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
-        </div>
     </div>
     """,
     unsafe_allow_html=True
