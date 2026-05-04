@@ -245,7 +245,7 @@ st.markdown(
             • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
             • 발음 버튼을 누르면 단어가 <b>20번 반복</b>됩니다.<br>
             • 각 발음 사이에는 <b>1.5초 쉬는 시간</b>이 들어갑니다.<br>
-            • 다른 단어를 누르면 <b>이전에 재생되던 단어는 자동으로 멈춥니다.</b><br>
+            • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
             • 각 테마의 맨 아래에서 <b>쉬운 대화</b>를 듣고 읽어 봅니다.
         </div>
     </div>
@@ -265,10 +265,13 @@ def make_tts_audio(text, lang="en", tld="com"):
     return fp.read()
 
 
-def audio_button(label, text, key):
+# =========================
+# 공통 HTML 오디오 플레이어
+# =========================
+def html_audio_player(label, text, repeat_count=1, pause_ms=1500, height=90):
     """
-    HTML 버튼을 누르면 단어를 20번 반복 재생합니다.
-    다른 단어 버튼을 누르면 이전 단어 재생은 자동으로 멈춥니다.
+    모든 단어 발음과 대화 듣기가 이 함수를 사용합니다.
+    그래서 새 오디오를 재생하면 이전 오디오는 자동으로 멈춥니다.
     """
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
@@ -279,7 +282,7 @@ def audio_button(label, text, key):
     player_id = f"player_{uuid.uuid4().hex}"
 
     safe_label = json.dumps(label)
-    safe_text = json.dumps(text)
+    safe_text = json.dumps(text[:40])
     safe_player_id = json.dumps(player_id)
 
     components.html(
@@ -315,10 +318,10 @@ def audio_button(label, text, key):
 
             let count = 0;
             let timer = null;
-            const maxCount = 20;
-            const pauseMs = 1500;
+            const maxCount = {repeat_count};
+            const pauseMs = {pause_ms};
             const labelText = {safe_label};
-            const wordText = {safe_text};
+            const displayText = {safe_text};
             const playerId = {safe_player_id};
 
             const channel = new BroadcastChannel("fun_word_garden_audio_channel");
@@ -347,7 +350,11 @@ def audio_button(label, text, key):
 
             function playOnce() {{
                 if (count >= maxCount) {{
-                    status.innerText = "✅ 20번 반복 재생 완료";
+                    if (maxCount === 1) {{
+                        status.innerText = "✅ 재생 완료";
+                    }} else {{
+                        status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    }}
                     btn.disabled = false;
                     btn.innerText = labelText;
                     return;
@@ -357,7 +364,12 @@ def audio_button(label, text, key):
 
                 audio.play().then(() => {{
                     count += 1;
-                    status.innerText = "🔊 " + wordText + " 재생 중: " + count + " / " + maxCount;
+
+                    if (maxCount === 1) {{
+                        status.innerText = "🔊 재생 중";
+                    }} else {{
+                        status.innerText = "🔊 재생 중: " + count + " / " + maxCount;
+                    }}
                 }}).catch((error) => {{
                     status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
                     btn.disabled = false;
@@ -366,7 +378,17 @@ def audio_button(label, text, key):
             }}
 
             audio.addEventListener("ended", function() {{
-                timer = setTimeout(playOnce, pauseMs);
+                if (count < maxCount) {{
+                    timer = setTimeout(playOnce, pauseMs);
+                }} else {{
+                    if (maxCount === 1) {{
+                        status.innerText = "✅ 재생 완료";
+                    }} else {{
+                        status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    }}
+                    btn.disabled = false;
+                    btn.innerText = labelText;
+                }}
             }});
 
             btn.addEventListener("click", function() {{
@@ -380,12 +402,39 @@ def audio_button(label, text, key):
                 count = 0;
                 btn.disabled = true;
                 btn.innerText = "재생 중...";
-                status.innerText = "🔊 " + wordText + " 반복 재생을 시작합니다.";
+                status.innerText = "🔊 재생을 시작합니다.";
                 playOnce();
             }});
             </script>
         </div>
         """,
+        height=height
+    )
+
+
+def audio_button(label, text, key=None):
+    """
+    단어 발음용: 20번 반복 재생
+    """
+    html_audio_player(
+        label=label,
+        text=text,
+        repeat_count=20,
+        pause_ms=1500,
+        height=85
+    )
+
+
+def dialogue_audio_button(label, text):
+    """
+    대화 듣기용: 1번 재생
+    단어 발음과 같은 채널을 쓰므로 대화를 켜면 단어 반복 발음이 멈춥니다.
+    """
+    html_audio_player(
+        label=label,
+        text=text,
+        repeat_count=1,
+        pause_ms=0,
         height=85
     )
 
@@ -394,6 +443,9 @@ def audio_button(label, text, key):
 # 대화 TTS용 함수
 # =========================
 def remove_speaker_label(sentence):
+    """
+    A:, B: 같은 표시를 TTS에서 읽지 않도록 제거합니다.
+    """
     return re.sub(r"^[A-Z]:\s*", "", sentence).strip()
 
 
@@ -402,12 +454,6 @@ def make_dialogue_tts_text(dialogue):
     for item in dialogue:
         lines.append(remove_speaker_label(item["en"]))
     return " ".join(lines)
-
-
-@st.cache_data
-def make_dialogue_audio(theme_name, dialogue):
-    text = make_dialogue_tts_text(dialogue)
-    return make_tts_audio(text)
 
 
 # =========================
@@ -1221,15 +1267,19 @@ def show_dialogue(theme_name):
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    dialogue_audio = make_dialogue_audio(theme_name, dialogue)
+    dialogue_text = make_dialogue_tts_text(dialogue)
+    dialogue_audio_bytes = make_tts_audio(dialogue_text)
 
-    st.audio(dialogue_audio, format="audio/mp3")
+    dialogue_audio_button(
+        label="🔊 대화 듣기",
+        text=dialogue_text
+    )
 
     safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
 
     st.download_button(
         label="⬇️ 대화 듣기 파일 다운로드",
-        data=dialogue_audio,
+        data=dialogue_audio_bytes,
         file_name=f"{safe_file_name}_dialogue.mp3",
         mime="audio/mp3",
         key=f"{theme_name}_dialogue_download"
