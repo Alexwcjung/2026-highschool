@@ -1,6 +1,6 @@
 import streamlit as st
 
-st.set_page_config(page_title="기초 문법 확장", page_icon="🌟", layout="centered")
+st.set_page_config(page_title="Survival Sentence Builder 2", page_icon="🛠️", layout="centered")
 
 # =========================================================
 # 전체 디자인 CSS
@@ -105,6 +105,55 @@ st.markdown(
         color: #374151;
     }
 
+
+    .path-box {
+        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #f7fee7 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 28px;
+        padding: 24px 26px;
+        margin: 18px 0 28px 0;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.065);
+    }
+
+    .path-box h3 {
+        margin-top: 0;
+        color: #1e3a8a;
+        font-size: 25px;
+        font-weight: 900;
+    }
+
+    .path-box p {
+        font-size: 19px;
+        line-height: 1.8;
+        color: #374151;
+        margin: 8px 0;
+    }
+
+    .mission-chip {
+        display: inline-block;
+        background: white;
+        border: 1.5px solid #bbf7d0;
+        border-radius: 999px;
+        padding: 8px 14px;
+        margin: 5px 4px;
+        font-size: 16px;
+        font-weight: 900;
+        color: #166534;
+        box-shadow: 0 3px 8px rgba(22,101,52,0.06);
+    }
+
+    .tool-label {
+        display: inline-block;
+        background: #eef6ff;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 7px 13px;
+        font-size: 16px;
+        font-weight: 900;
+        margin-bottom: 10px;
+        border: 1px solid #bfdbfe;
+    }
+
     .word-chip {
         display: inline-block;
         background: linear-gradient(135deg, #eef6ff, #ffffff);
@@ -150,55 +199,79 @@ st.markdown(
 st.markdown(
     """
     <div class="title-box">
-        <h1>🌟 기초 문법 확장</h1>
-        <p>can, 명령문, There is / are, 전치사, want, want to, have / has, 문장 연결하기를 익혀 봅시다.</p>
+        <h1>🛠️ Survival Sentence Builder 2</h1>
+        <p>
+            이제는 더 실제 상황으로 갑니다.<br>
+            할 수 있는 일 말하기, 부탁하기, 위치 말하기, 원하는 것 말하기, 문장 연결하기까지 익혀 봅시다.
+        </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
+
+st.markdown(
+    """
+    <div class="path-box">
+        <h3>🧭 생존 문장 확장 순서</h3>
+        <p>
+            앞에서 기본 문장을 만들었다면, 이제는 실제 상황에서 더 많이 쓰는 표현을 배웁니다.
+            <b>할 수 있다, 해 주세요, 어디에 있다, 원한다, 가지고 있다, 이유를 말한다</b> 같은 말이 핵심입니다.
+        </p>
+        <span class="mission-chip">1. 할 수 있는 일 말하기</span>
+        <span class="mission-chip">2. 부탁하고 지시하기</span>
+        <span class="mission-chip">3. 위치 말하기</span>
+        <span class="mission-chip">4. 원하는 것 말하기</span>
+        <span class="mission-chip">5. 하고 싶은 일 말하기</span>
+        <span class="mission-chip">6. 가진 것 말하기</span>
+        <span class="mission-chip">7. 이유와 조건 붙이기</span>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
 tabs = st.tabs([
-    "💪 can 조동사",
-    "📢 명령문",
-    "📍 There is / are",
-    "🧭 전치사",
-    "💭 want",
-    "🚀 want to",
-    "🎒 have / has",
-    "🔗 문장 연결하기"
+    "💪 할 수 있는 일 말하기",
+    "📢 부탁하고 지시하기",
+    "📍 어디에 있는지 말하기",
+    "🧭 위치 자세히 말하기",
+    "💭 원하는 것 말하기",
+    "🚀 하고 싶은 일 말하기",
+    "🎒 가진 것 말하기",
+    "🔗 이유와 조건 붙이기"
 ])
 
 
 # =========================================================
-# Tab 1: can 조동사
+# Tab 1: can 
 # =========================================================
 with tabs[0]:
-    st.subheader("💪 can 조동사")
+    st.subheader("💪 할 수 있는 일 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#eef6ff,#ffffff);">
-            <h3 style="color:#1d4ed8;">💪 can이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: can</span>
+            <h3 style="color:#1d4ed8;">💪 할 수 있는 일 말하기</h3>
             <p>
-                <b>can</b>은 <b>‘~할 수 있다’</b>라는 뜻입니다.
-            </p>
-            <p>
-                내가 할 수 있는 일, 친구가 할 수 있는 일, 가능한 일을 말할 때 씁니다.
+                실제 상황에서는 “할 수 있어요”, “도와줄 수 있어요”, “영어를 조금 말할 수 있어요” 같은 말이 자주 필요합니다.
+                <b>can</b>을 쓰면 내가 할 수 있는 일이나 가능한 일을 쉽게 말할 수 있습니다.
             </p>
             <div class="formula-box" style="color:#1d4ed8;">
-                can + 동사원형
+                can + 동사
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. can으로 말하기")
+    st.markdown("### ✅ 1. 할 수 있다고 말하기")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>can 뒤에는 동사의 기본 모양</b>을 씁니다.</p>
+            <p><b>can 뒤에는 동사</b>을 씁니다.</p>
             <p>can swims ❌ / can swim ✅</p>
         </div>
 
@@ -222,12 +295,12 @@ with tabs[0]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. can의 부정문")
+    st.markdown("### ✅ 2. 할 수 없다고 말하기")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>cannot / can't + 동사원형</b></p>
+            <p><b>cannot / can't + 동사</b></p>
             <p><b>cannot</b>은 <b>~할 수 없다</b>라는 뜻입니다.</p>
         </div>
 
@@ -246,13 +319,13 @@ with tabs[0]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 3. can의 의문문")
+    st.markdown("### ✅ 3. 할 수 있는지 물어보기")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>Can + 주어 + 동사원형 ~ ?</b></p>
-            <p>질문할 때는 <b>Can</b>을 문장 앞으로 보냅니다.</p>
+            <p><b>Can + 사람 + 동사 ~ ?</b></p>
+            <p>물어볼 때는 <b>Can</b>으로 시작합니다.</p>
         </div>
 
         <div class="example-box">
@@ -272,40 +345,39 @@ with tabs[0]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: can 뒤에는 항상 동사원형을 씁니다. 예: can plays ❌ / can play ✅")
+    st.info("Tip: can 뒤에는 항상 동사을 씁니다. 예: can plays ❌ / can play ✅")
 
 
 # =========================================================
-# Tab 2: 명령문
+# Tab 2: 부탁하거나 지시하는 말
 # =========================================================
 with tabs[1]:
-    st.subheader("📢 명령문")
+    st.subheader("📢 부탁하고 지시하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff7ed,#ffffff);">
-            <h3 style="color:#c2410c;">📢 명령문이란?</h3>
+            <span class="tool-label">오늘의 문장 도구: 동사로 시작하기</span>
+            <h3 style="color:#c2410c;">📢 부탁하고 지시하기</h3>
             <p>
-                <b>명령문</b>은 상대방에게 <b>무엇을 하라고 말하는 문장</b>입니다.
-            </p>
-            <p>
-                교실 영어, 안내문, 규칙을 말할 때 자주 씁니다.
+                길을 알려 주거나, 조심하라고 말하거나, 교실에서 활동을 안내할 때는 짧고 분명한 말이 필요합니다.
+                이때는 <b>Open, Listen, Stand, Don't run</b>처럼 바로 행동을 말합니다.
             </p>
             <div class="formula-box" style="color:#c2410c;">
-                동사원형으로 시작
+                Open / Listen / Don't run
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. 긍정 명령문")
+    st.markdown("### ✅ 1. 해 달라고 말하기")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>동사원형 ~.</b></p>
-            <p>주어 You를 쓰지 않고, 바로 동사로 시작합니다.</p>
+            <p><b>동사 ~.</b></p>
+            <p>말하는 대상 You를 쓰지 않고, 바로 동사로 시작합니다.</p>
         </div>
 
         <div class="example-box">
@@ -328,12 +400,12 @@ with tabs[1]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. 부정 명령문")
+    st.markdown("### ✅ 2. 부정 부탁하거나 지시하는 말")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>Don't + 동사원형 ~.</b></p>
+            <p><b>Don't + 동사 ~.</b></p>
             <p><b>~하지 마라</b>라고 말할 때 씁니다.</p>
         </div>
 
@@ -355,34 +427,33 @@ with tabs[1]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: 명령문은 보통 주어 You를 생략하고 동사원형으로 시작합니다.")
+    st.info("Tip: 부탁하거나 지시하는 말은 보통 말하는 대상 You를 생략하고 동사로 시작합니다.")
 
 
 # =========================================================
 # Tab 3: There is / There are
 # =========================================================
 with tabs[2]:
-    st.subheader("📍 There is / There are")
+    st.subheader("📍 어디에 있는지 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#ecfdf5,#ffffff);">
-            <h3 style="color:#047857;">📍 There is / There are란?</h3>
+            <span class="tool-label">오늘의 문장 도구: There is / There are</span>
+            <h3 style="color:#047857;">📍 어디에 무엇이 있는지 말하기</h3>
             <p>
-                <b>There is / There are</b>는 <b>‘~이 있다’</b>라는 뜻입니다.
-            </p>
-            <p>
-                사람이나 물건이 어디에 있는지 말할 때 자주 씁니다.
+                낯선 곳에서는 “책상이 있어요”, “사람들이 있어요”, “가게가 있어요”처럼
+                <b>무엇이 있는지</b> 말하는 표현이 중요합니다.
             </p>
             <div class="formula-box" style="color:#047857;">
-                There is + 1개 / There are + 2개 이상
+                There is + 하나 / There are + 여러 개
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. There is")
+    st.markdown("### ✅ 1. 하나가 있다고 말하기")
 
     st.markdown(
         """
@@ -411,7 +482,7 @@ with tabs[2]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. There are")
+    st.markdown("### ✅ 2. 여러 개가 있다고 말하기")
 
     st.markdown(
         """
@@ -442,20 +513,19 @@ with tabs[2]:
 
 
 # =========================================================
-# Tab 4: 전치사
+# Tab 4: 위치를 알려주는 말
 # =========================================================
 with tabs[3]:
-    st.subheader("🧭 전치사")
+    st.subheader("🧭 위치 자세히 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#f5f3ff,#ffffff);">
-            <h3 style="color:#6d28d9;">🧭 전치사란?</h3>
+            <span class="tool-label">오늘의 문장 도구: in / on / under / next to</span>
+            <h3 style="color:#6d28d9;">🧭 위치를 자세히 말하기</h3>
             <p>
-                <b>전치사</b>는 사람이나 물건의 <b>위치, 방향, 시간</b> 등을 알려주는 말입니다.
-            </p>
-            <p>
-                기초 단계에서는 먼저 <b>위치 전치사</b>를 익히면 좋습니다.
+                “어디에 있어요?”라는 질문에 답하려면 위치를 정확히 말할 수 있어야 합니다.
+                <b>안에, 위에, 아래에, 옆에, 뒤에, 앞에</b>를 말하는 표현을 익혀 봅니다.
             </p>
             <div class="formula-box" style="color:#6d28d9;">
                 in / on / under / next to / behind / in front of
@@ -465,7 +535,7 @@ with tabs[3]:
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 자주 쓰는 위치 전치사")
+    st.markdown("### ✅ 자주 쓰는 위치 표현")
 
     st.markdown(
         """
@@ -483,7 +553,7 @@ with tabs[3]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 예문으로 익히기")
+    st.markdown("### ✅ 위치를 문장으로 말하기")
 
     st.markdown(
         """
@@ -520,34 +590,33 @@ with tabs[3]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: 전치사는 그림이나 교실 물건을 보면서 연습하면 훨씬 쉽게 익힐 수 있습니다.")
+    st.info("Tip: 위치를 알려주는 말는 그림이나 교실 물건을 보면서 연습하면 훨씬 쉽게 익힐 수 있습니다.")
 
 
 # =========================================================
 # Tab 5: want
 # =========================================================
 with tabs[4]:
-    st.subheader("💭 want")
+    st.subheader("💭 원하는 것 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff7ed,#ffffff);">
-            <h3 style="color:#c2410c;">💭 want란?</h3>
+            <span class="tool-label">오늘의 문장 도구: want</span>
+            <h3 style="color:#c2410c;">💭 원하는 것 말하기</h3>
             <p>
-                <b>want</b>는 <b>‘원하다’</b>라는 뜻입니다.
-            </p>
-            <p>
-                물, 음식, 물건처럼 <b>무엇을 원한다</b>고 말할 때 씁니다.
+                생존 영어에서 가장 중요한 말 중 하나는 “원해요”입니다.
+                물, 음식, 휴대폰, 도움처럼 <b>필요하거나 원하는 것</b>을 말할 때 씁니다.
             </p>
             <div class="formula-box" style="color:#c2410c;">
-                want + 명사
+                want + 원하는 것
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. want + 명사")
+    st.markdown("### ✅ 1. want + 원하는 것")
 
     st.markdown(
         """
@@ -576,12 +645,12 @@ with tabs[4]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. He / She는 wants")
+    st.markdown("### ✅ 2. 한 사람의 원하는 것 말하기")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p>주어가 <b>He / She / It</b>처럼 1명 또는 1개일 때는 보통 동사 뒤에 <b>-s</b>를 붙입니다.</p>
+            <p>말하는 대상가 <b>He / She / It</b>처럼 1명 또는 1개일 때는 보통 동사 뒤에 <b>-s</b>를 붙입니다.</p>
             <p><b>want → wants</b></p>
         </div>
 
@@ -610,32 +679,31 @@ with tabs[4]:
 # Tab 6: want to
 # =========================================================
 with tabs[5]:
-    st.subheader("🚀 want to")
+    st.subheader("🚀 하고 싶은 일 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#eef6ff,#ffffff);">
-            <h3 style="color:#1d4ed8;">🚀 want to란?</h3>
+            <span class="tool-label">오늘의 문장 도구: want to</span>
+            <h3 style="color:#1d4ed8;">🚀 하고 싶은 일 말하기</h3>
             <p>
-                <b>want to</b>는 <b>‘~하고 싶다’</b>라는 뜻입니다.
-            </p>
-            <p>
-                먹고 싶다, 가고 싶다, 놀고 싶다처럼 <b>하고 싶은 행동</b>을 말할 때 씁니다.
+                “물을 원해요”에서 한 걸음 더 나아가 “물을 마시고 싶어요”, “집에 가고 싶어요”처럼
+                <b>하고 싶은 행동</b>을 말해 봅니다.
             </p>
             <div class="formula-box" style="color:#1d4ed8;">
-                want to + 동사원형
+                want to + 동사
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. want to + 동사원형")
+    st.markdown("### ✅ 1. 하고 싶은 일 말하기")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>want to 뒤에는 동사의 기본 모양</b>을 씁니다.</p>
+            <p><b>want to 뒤에는 동사</b>을 씁니다.</p>
             <p>want to eats ❌ / want to eat ✅</p>
         </div>
 
@@ -664,13 +732,13 @@ with tabs[5]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. He / She는 wants to")
+    st.markdown("### ✅ 2. 한 사람의 원하는 것 말하기 to")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p>주어가 <b>He / She / It</b>이면 <b>wants to</b>를 씁니다.</p>
-            <p>하지만 <b>to 뒤의 동사에는 -s를 붙이지 않습니다.</b></p>
+            <p>말하는 대상가 <b>He / She / It</b>이면 <b>wants to</b>를 씁니다.</p>
+            <p>하지만 <b>to 뒤에는 s를 붙이지 않은 동사가 옵니다.</b></p>
         </div>
 
         <div class="example-box">
@@ -693,13 +761,13 @@ with tabs[5]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 3. want와 want to 비교")
+    st.markdown("### ✅ 3. 원하는 것과 하고 싶은 일 비교")
 
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>want + 명사</b> = 무엇을 원하다</p>
-            <p><b>want to + 동사원형</b> = ~하고 싶다</p>
+            <p><b>want + 원하는 것</b> = 무엇을 원하다</p>
+            <p><b>want to + 동사</b> = ~하고 싶다</p>
         </div>
 
         <div class="example-box">
@@ -732,28 +800,26 @@ with tabs[5]:
 # Tab 7: have / has
 # =========================================================
 with tabs[6]:
-    st.subheader("🎒 have / has")
+    st.subheader("🎒 가진 것 말하기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#ecfdf5,#ffffff);">
-            <h3 style="color:#047857;">🎒 have / has란?</h3>
+            <span class="tool-label">오늘의 문장 도구: have / has</span>
+            <h3 style="color:#047857;">🎒 가진 것 말하기</h3>
             <p>
-                <b>have / has</b>는 <b>‘가지고 있다’</b>라는 뜻입니다.
-            </p>
-            <p>
-                내가 가진 물건, 가족, 친구, 동물 등을 말할 때 자주 씁니다.
+                여행이나 학교생활에서는 내가 가진 물건, 친구, 가족, 필요한 물건을 말해야 할 때가 많습니다.
+                이때 <b>have / has</b>를 씁니다.
             </p>
             <div class="formula-box" style="color:#047857;">
-                I / You / We / They + have<br>
-                He / She / It + has
+                I have / He has
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    st.markdown("### ✅ 1. have")
+    st.markdown("### ✅ 1. 내가 가진 것 말하기")
 
     st.markdown(
         """
@@ -786,13 +852,13 @@ with tabs[6]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 2. has")
+    st.markdown("### ✅ 2. 한 사람이 가진 것 말하기")
 
     st.markdown(
         """
         <div class="mini-card">
             <p><b>He / She / It</b> 뒤에는 보통 <b>has</b>를 씁니다.</p>
-            <p>have에 -s가 붙은 느낌으로 생각하면 됩니다.</p>
+            <p>have가 has로 바뀐다고 생각하면 됩니다.</p>
         </div>
 
         <div class="example-box">
@@ -820,7 +886,7 @@ with tabs[6]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 3. want / want to / have 연결하기")
+    st.markdown("### ✅ 3. 원한다 / 하고 싶다 / 가지고 있다 연결하기")
 
     st.markdown(
         """
@@ -849,17 +915,16 @@ with tabs[6]:
 # Tab 8: 문장 연결하기
 # =========================================================
 with tabs[7]:
-    st.subheader("🔗 문장 연결하기")
+    st.subheader("🔗 이유와 조건 붙이기")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fef9c3,#ffffff);">
-            <h3 style="color:#a16207;">🔗 문장 연결하기란?</h3>
+            <span class="tool-label">오늘의 문장 도구: because / so / but / if</span>
+            <h3 style="color:#a16207;">🔗 이유와 조건 붙이기</h3>
             <p>
-                짧은 문장 두 개를 연결하면 <b>더 길고 자연스러운 문장</b>을 만들 수 있습니다.
-            </p>
-            <p>
-                이번에는 <b>because, so, but, if</b>를 사용해 문장을 연결해 봅니다.
+                짧은 문장만 말해도 통하지만, 이유를 붙이면 훨씬 자연스럽습니다.
+                “배고파서 먹고 싶어요”, “비가 오면 집에 있을게요”처럼 문장을 이어 봅니다.
             </p>
             <div class="formula-box" style="color:#a16207;">
                 because / so / but / if
@@ -985,7 +1050,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 문장 연결 표현 정리")
+    st.markdown("### ✅ 이어 주는 말 정리")
 
     st.markdown(
         """
@@ -999,4 +1064,4 @@ with tabs[7]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: 처음에는 because, so, but, if의 뜻만 정확히 알고 짧은 문장을 연결해 보면 됩니다.")
+    st.info("Tip: 처음에는 because, so, but, if의 뜻만 알고 짧은 문장을 이어 보면 됩니다.")
