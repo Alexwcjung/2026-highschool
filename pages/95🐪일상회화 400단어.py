@@ -1897,6 +1897,453 @@ def make_daily_example(word, meaning="", theme=""):
 
     return f"I use the word {word} in daily English."
 
+
+def make_daily_example_ko(word, meaning="", theme=""):
+    """
+    전체 카세트 목록에서 예시 문장의 한국어 뜻을 보여 주기 위한 함수입니다.
+    주요 단어는 자연스러운 한국어 번역을 따로 지정하고,
+    없는 경우에는 단어 뜻을 활용한 안내 문장을 보여 줍니다.
+    """
+    examples_ko = {
+        # 학교생활
+        "subject": "네가 가장 좋아하는 과목은 뭐니?",
+        "math": "나는 오늘 수학 수업이 있어.",
+        "science": "과학은 흥미로워.",
+        "history": "나는 학교에서 역사를 공부해.",
+        "music": "나는 음악 듣는 것을 좋아해.",
+        "art": "미술 수업은 재미있어.",
+        "P.E.": "우리는 금요일에 체육 수업이 있어.",
+        "club": "나는 학교 동아리에 가입했어.",
+        "schedule": "내 일정을 확인해 볼게.",
+        "semester": "이번 학기는 바빠.",
+        "assignment": "나는 오늘 과제가 있어.",
+        "project": "우리는 프로젝트를 하고 있어.",
+        "presentation": "나는 내일 발표가 있어.",
+        "report": "나는 보고서를 써야 해.",
+        "textbook": "교과서를 펴세요.",
+        "workbook": "문제집을 끝내 주세요.",
+        "library": "나는 도서관에서 공부해.",
+        "cafeteria": "급식소에서 만나자.",
+        "hallway": "복도에서 뛰지 마세요.",
+        "attendance": "선생님께서 출석을 확인하신다.",
+
+        # 교실 활동
+        "copy": "이 문장을 베껴 쓰세요.",
+        "repeat": "다시 말해 줄 수 있니?",
+        "underline": "중요한 단어에 밑줄을 그으세요.",
+        "circle": "정답에 동그라미 치세요.",
+        "choose": "가장 좋은 답을 고르세요.",
+        "check": "네 답을 확인해 보세요.",
+        "match": "단어와 그림을 연결하세요.",
+        "complete": "문장을 완성하세요.",
+        "fill": "빈칸을 채우세요.",
+        "spell": "네 이름 철자를 어떻게 쓰니?",
+        "pronounce": "이 단어를 발음해 보세요.",
+        "review": "수업 내용을 복습합시다.",
+        "explain": "다시 설명해 줄 수 있니?",
+        "describe": "그림을 묘사해 보세요.",
+        "compare": "두 답을 비교해 보세요.",
+        "discuss": "이 주제에 대해 토론해 봅시다.",
+        "present": "네 생각을 발표해 보세요.",
+        "take notes": "들으면서 필기하세요.",
+        "turn in": "종이를 제출하세요.",
+        "hand out": "학습지를 나누어 주세요.",
+
+        # 집과 생활
+        "living room": "우리 가족은 거실에서 이야기를 나눈다.",
+        "bedroom": "내 침실은 작지만 아늑해.",
+        "kitchen": "엄마는 부엌에 계셔.",
+        "balcony": "나는 발코니에서 거리를 볼 수 있어.",
+        "floor": "바닥이 깨끗해.",
+        "wall": "벽에 그림이 있어.",
+        "roof": "지붕은 빨간색이야.",
+        "garden": "정원에 꽃들이 있어.",
+        "yard": "개가 마당에 있어.",
+        "sofa": "나는 소파에 앉아.",
+        "television": "나는 밤에 텔레비전을 봐.",
+        "refrigerator": "우유는 냉장고 안에 있어.",
+        "microwave": "전자레인지를 사용하세요.",
+        "blanket": "나는 따뜻한 담요가 필요해.",
+        "pillow": "이 베개는 부드러워.",
+        "towel": "나는 깨끗한 수건이 필요해.",
+        "soap": "비누로 손을 씻으세요.",
+        "mirror": "나는 거울을 봐.",
+        "closet": "내 옷은 옷장 안에 있어.",
+        "trash": "쓰레기를 내다 버려 주세요.",
+
+        # 하루 일과
+        "routine": "이것은 나의 아침 일과야.",
+        "wake up": "나는 7시에 잠에서 깨.",
+        "get up": "나는 일찍 일어나.",
+        "brush": "나는 이를 닦아.",
+        "shower": "나는 샤워를 해.",
+        "dress": "나는 아침에 빨리 옷을 입어.",
+        "leave": "나는 8시에 집을 떠나.",
+        "arrive": "나는 학교에 제시간에 도착해.",
+        "return": "나는 방과 후에 집으로 돌아와.",
+        "finish": "나는 숙제를 끝내.",
+        "relax": "나는 저녁 식사 후에 쉬어.",
+        "weekday": "나는 평일에 학교에 가.",
+        "weekend": "나는 주말에 늦게 자.",
+        "usually": "나는 보통 아침을 먹어.",
+        "often": "나는 자주 영상을 봐.",
+        "sometimes": "나는 가끔 축구를 해.",
+        "always": "나는 항상 휴대폰을 가져와.",
+        "never": "나는 절대 아침을 거르지 않아.",
+        "habit": "이것은 좋은 습관이야.",
+        "lifestyle": "나는 건강한 생활 방식을 원해.",
+
+        # 취미와 여가
+        "hobby": "내 취미는 영화 보기야.",
+        "movie": "영화 보자.",
+        "drama": "이 드라마는 인기가 있어.",
+        "song": "나는 이 노래를 좋아해.",
+        "concert": "나는 콘서트에 가고 싶어.",
+        "dance": "그녀는 춤추는 것을 좋아해.",
+        "drawing": "나는 그림 그리기를 즐겨.",
+        "painting": "이 그림은 아름다워.",
+        "comic": "나는 여가 시간에 만화를 읽어.",
+        "novel": "이 소설은 흥미로워.",
+        "photography": "나는 사진 촬영을 좋아해.",
+        "cooking": "요리는 재미있어.",
+        "baking": "내 여동생은 빵 굽기를 좋아해.",
+        "camping": "우리는 여름에 캠핑을 가.",
+        "hiking": "나는 친구들과 하이킹을 가.",
+        "fishing": "아버지는 낚시를 좋아하셔.",
+        "free time": "너는 여가 시간에 무엇을 하니?",
+        "favorite": "이것은 내가 가장 좋아하는 노래야.",
+        "popular": "이 게임은 인기가 있어.",
+        "relaxing": "이 음악은 편안해.",
+
+        # 운동과 활동
+        "soccer": "나는 방과 후에 축구를 해.",
+        "baseball": "야구는 한국에서 인기가 있어.",
+        "basketball": "농구하자.",
+        "volleyball": "우리는 체육 시간에 배구를 해.",
+        "tennis": "나는 테니스 치는 것을 좋아해.",
+        "badminton": "배드민턴은 재미있어.",
+        "swimming": "수영은 좋은 운동이야.",
+        "cycling": "자전거 타기는 내가 가장 좋아하는 운동이야.",
+        "skating": "스케이트 타기는 어려워 보여.",
+        "boxing": "복싱은 매우 힘들어.",
+        "taekwondo": "태권도는 한국 무술이야.",
+        "yoga": "요가는 내가 쉬는 데 도움이 돼.",
+        "fitness": "체력 운동은 중요해.",
+        "field": "선수들이 경기장에 있어.",
+        "court": "그들은 테니스 코트에 있어.",
+        "stadium": "경기장이 붐벼.",
+        "coach": "코치는 친절해.",
+        "competition": "나는 대회에 참가했어.",
+        "medal": "그녀는 메달을 땄어.",
+
+        # 날씨와 계절
+        "season": "네가 가장 좋아하는 계절은 뭐니?",
+        "spring": "봄은 따뜻해.",
+        "summer": "여름은 더워.",
+        "fall": "가을은 시원해.",
+        "winter": "겨울은 추워.",
+        "cloudy": "오늘은 흐려.",
+        "rainy": "밖에 비가 와.",
+        "snowy": "겨울에는 눈이 와.",
+        "windy": "오늘은 바람이 불어.",
+        "stormy": "날씨가 폭풍우 쳐.",
+        "foggy": "오늘 아침은 안개가 꼈어.",
+        "dry": "공기가 건조해.",
+        "wet": "내 신발이 젖었어.",
+        "humid": "오늘은 습해.",
+        "temperature": "기온이 높아.",
+        "degree": "30도야.",
+        "forecast": "일기예보를 확인해.",
+        "umbrella": "나는 우산이 필요해.",
+        "raincoat": "비옷을 입어.",
+        "rainbow": "무지개를 봐.",
+
+        # 자연과 환경
+        "nature": "나는 자연을 사랑해.",
+        "environment": "우리는 환경을 보호해야 해.",
+        "plant": "이 식물은 물이 필요해.",
+        "forest": "숲은 조용해.",
+        "lake": "호수는 아름다워.",
+        "ocean": "바다는 파래.",
+        "island": "제주는 아름다운 섬이야.",
+        "desert": "사막은 매우 더워.",
+        "farm": "우리 삼촌은 농장을 가지고 있어.",
+        "village": "이 마을은 조용해.",
+        "leaf": "잎이 떨어지고 있어.",
+        "root": "뿌리는 땅 아래에 있어.",
+        "stone": "도로 위에 돌이 있어.",
+        "sand": "모래가 뜨거워.",
+        "soil": "식물은 흙에서 자라.",
+        "plastic": "플라스틱을 버리지 마세요.",
+        "recycle": "우리는 병을 재활용해야 해.",
+        "protect": "우리는 자연을 보호해야 해.",
+        "pollution": "오염은 심각한 문제야.",
+
+        # 식당과 주문
+        "restaurant": "식당에 가자.",
+        "menu": "메뉴를 볼 수 있을까요?",
+        "seat": "이 자리 사용 중인가요?",
+        "waiter": "남자 종업원이 친절해.",
+        "waitress": "여자 종업원이 물을 가져왔어.",
+        "order": "나는 피자를 주문하고 싶어.",
+        "dish": "이 요리는 맛있어.",
+        "meal": "맛있게 드세요.",
+        "soup": "이 수프는 뜨거워.",
+        "salad": "나는 샐러드를 원해.",
+        "steak": "스테이크 냄새가 좋아.",
+        "pizza": "나는 피자를 좋아해.",
+        "pasta": "나는 파스타를 원해.",
+        "burger": "이 버거는 커.",
+        "sandwich": "나는 샌드위치를 만들었어.",
+        "dessert": "디저트 먹을래?",
+        "spicy": "이 음식은 매워.",
+        "sweet": "이 케이크는 달아.",
+        "bill": "계산서를 받을 수 있을까요?",
+        "receipt": "영수증을 받을 수 있을까요?",
+
+        # 쇼핑과 가격
+        "shop": "가게에 가자.",
+        "market": "나는 시장에서 과일을 샀어.",
+        "mall": "쇼핑몰이 붐벼.",
+        "supermarket": "나는 슈퍼마켓에 가.",
+        "cashier": "계산원에게 계산하세요.",
+        "customer": "손님이 기다리고 있어.",
+        "price": "가격이 얼마인가요?",
+        "sale": "이 셔츠는 할인 중이야.",
+        "discount": "할인 받을 수 있을까요?",
+        "coupon": "나는 쿠폰이 있어.",
+        "change": "여기 거스름돈입니다.",
+        "coin": "나는 동전을 찾았어.",
+        "expensive": "이 가방은 비싸.",
+        "cheap": "이 펜은 싸.",
+        "size": "어떤 사이즈가 필요하세요?",
+        "color": "무슨 색을 좋아하세요?",
+        "brand": "이 브랜드는 유명해.",
+        "exchange": "이것을 교환할 수 있을까요?",
+        "refund": "환불 받을 수 있을까요?",
+
+        # 옷과 외모
+        "T-shirt": "나는 티셔츠를 입어.",
+        "pants": "이 바지는 편안해.",
+        "jeans": "나는 이 청바지를 좋아해.",
+        "shorts": "나는 여름에 반바지를 입어.",
+        "skirt": "이 치마는 예뻐.",
+        "dress": "그녀는 원피스를 입어.",
+        "jacket": "나는 재킷이 필요해.",
+        "coat": "겨울에는 코트를 입어.",
+        "sweater": "이 스웨터는 따뜻해.",
+        "hoodie": "나는 이 후드티를 좋아해.",
+        "uniform": "학생들은 교복을 입어.",
+        "socks": "나는 깨끗한 양말이 필요해.",
+        "sneakers": "이 운동화는 새거야.",
+        "boots": "나는 겨울에 부츠를 신어.",
+        "sandals": "나는 여름에 샌들을 신어.",
+        "scarf": "이 목도리는 따뜻해.",
+        "gloves": "나는 장갑이 필요해.",
+        "belt": "그는 벨트를 착용해.",
+        "glasses": "그녀는 안경을 써.",
+        "comfortable": "이 신발은 편안해.",
+
+        # 교통과 길 찾기
+        "bus stop": "버스 정류장이 어디에 있나요?",
+        "subway": "나는 지하철을 타.",
+        "airport": "나는 공항에 가.",
+        "terminal": "버스 터미널은 여기 근처에 있어.",
+        "platform": "승강장에서 기다리세요.",
+        "route": "이것은 버스 경로야.",
+        "direction": "어느 방향으로 가야 하나요?",
+        "straight": "똑바로 가세요.",
+        "corner": "모퉁이에서 도세요.",
+        "block": "두 블록 걸어가세요.",
+        "traffic": "교통이 매우 혼잡해.",
+        "crosswalk": "횡단보도를 이용하세요.",
+        "sidewalk": "인도로 걸으세요.",
+        "bridge": "다리를 건너세요.",
+        "tunnel": "터널을 지나가세요.",
+        "entrance": "입구가 어디인가요?",
+        "exit": "출구가 어디인가요?",
+        "transfer": "나는 갈아타야 해.",
+        "lost": "나는 길을 잃은 것 같아.",
+        "guide": "안내자가 도움이 돼.",
+
+        # 여행과 숙박
+        "travel": "나는 여행하고 싶어.",
+        "trip": "좋은 여행 되세요.",
+        "vacation": "나는 휴가가 필요해.",
+        "tourist": "많은 관광객들이 서울을 방문해.",
+        "passport": "나는 여권이 필요해.",
+        "flight": "내 항공편은 3시야.",
+        "hotel": "나는 호텔을 예약했어.",
+        "motel": "우리는 모텔에 묵었어.",
+        "hostel": "호스텔은 더 저렴해.",
+        "reservation": "나는 예약이 있어.",
+        "check in": "체크인하고 싶어요.",
+        "check out": "체크아웃 시간이 언제인가요?",
+        "luggage": "내 짐은 무거워.",
+        "suitcase": "이 여행 가방은 커.",
+        "backpack": "나는 배낭을 메고 다녀.",
+        "souvenir": "나는 기념품을 샀어.",
+        "museum": "박물관에 가자.",
+        "famous": "이곳은 유명해.",
+        "local": "현지 음식을 먹어 봐.",
+
+        # 친구 관계
+        "friendship": "우정은 중요해.",
+        "best friend": "그는 내 가장 친한 친구야.",
+        "teammate": "그녀는 내 팀 동료야.",
+        "partner": "짝과 함께 활동하세요.",
+        "message": "나에게 메시지를 보내.",
+        "call": "너에게 전화해도 될까?",
+        "chat": "나중에 채팅하자.",
+        "invite": "나는 너를 초대하고 싶어.",
+        "visit": "우리 집에 방문해 주세요.",
+        "meet": "만나서 반가워.",
+        "hang out": "방과 후에 같이 놀자.",
+        "laugh": "우리는 함께 웃어.",
+        "share": "네 생각을 나눠 주세요.",
+        "trust": "나는 내 친구를 믿어.",
+        "promise": "나는 약속을 했어.",
+        "secret": "비밀을 지켜 줄 수 있니?",
+        "joke": "그 농담은 웃겨.",
+        "together": "함께 공부하자.",
+        "alone": "나는 집에 혼자 있어.",
+        "forgive": "나를 용서해 주세요.",
+
+        # 감정 표현
+        "excited": "나는 신이 났어.",
+        "nervous": "나는 긴장돼.",
+        "bored": "나는 지루해.",
+        "surprised": "나는 놀랐어.",
+        "confused": "나는 혼란스러워.",
+        "embarrassed": "나는 당황했어.",
+        "proud": "나는 네가 자랑스러워.",
+        "disappointed": "나는 실망했어.",
+        "lonely": "나는 외로워.",
+        "relaxed": "나는 편안해.",
+        "calm": "침착해.",
+        "upset": "나는 속상해.",
+        "interested": "나는 음악에 관심이 있어.",
+        "satisfied": "나는 만족해.",
+        "thankful": "나는 감사해.",
+        "hopeful": "나는 희망적이야.",
+        "mood": "나는 기분이 좋아.",
+        "stress": "나는 스트레스가 많아.",
+        "confidence": "자신감은 중요해.",
+        "courage": "너는 용기가 있어.",
+
+        # 생각과 의견
+        "think": "너는 어떻게 생각해?",
+        "believe": "나는 너를 믿어.",
+        "guess": "추측해 볼 수 있니?",
+        "remember": "나는 네 이름을 기억해.",
+        "forget": "숙제를 잊지 마.",
+        "mean": "이것은 무슨 뜻이야?",
+        "agree": "나는 너에게 동의해.",
+        "disagree": "나는 그에게 동의하지 않아.",
+        "opinion": "네 의견은 뭐야?",
+        "idea": "그것은 좋은 생각이야.",
+        "reason": "이유가 뭐야?",
+        "example": "예를 들어 줘.",
+        "fact": "그것은 사실이야.",
+        "choice": "이것은 너의 선택이야.",
+        "decision": "나는 결정을 내렸어.",
+        "advice": "나는 네 조언이 필요해.",
+        "suggestion": "네 제안 고마워.",
+        "possible": "그것은 가능해.",
+        "impossible": "그것은 불가능해.",
+        "confusing": "이 문제는 혼란스러워.",
+
+        # 계획과 약속
+        "plan": "네 계획은 뭐야?",
+        "appointment": "나는 약속이 있어.",
+        "meeting": "나는 회의가 있어.",
+        "date": "오늘 날짜가 뭐야?",
+        "event": "이 행사는 재미있어.",
+        "party": "나는 파티에 갈 거야.",
+        "festival": "축제가 오늘 시작해.",
+        "deadline": "마감일은 내일이야.",
+        "calendar": "달력을 확인해.",
+        "next week": "다음 주에 보자.",
+        "join": "나도 함께해도 될까?",
+        "prepare": "나는 준비해야 해.",
+        "decide": "지금 결정해 주세요.",
+        "cancel": "나는 그것을 취소해야 해.",
+        "on time": "제시간에 와 주세요.",
+        "available": "오늘 시간 돼?",
+        "reminder": "알림을 설정해.",
+
+        # 건강한 생활
+        "health": "건강은 중요해.",
+        "body": "내 몸이 피곤해.",
+        "eye": "내 눈이 아파.",
+        "ear": "내 귀가 아파.",
+        "nose": "내 코가 막혔어.",
+        "mouth": "입을 벌리세요.",
+        "tooth": "내 이가 아파.",
+        "hand": "손을 드세요.",
+        "arm": "내 팔이 아파.",
+        "leg": "내 다리가 아파.",
+        "foot": "내 발이 아파.",
+        "stomach": "내 배가 아파.",
+        "back": "내 등이 아파.",
+        "heart": "내 심장이 빨리 뛰어.",
+        "clinic": "나는 의원에 갔어.",
+        "vitamin": "나는 비타민을 먹어.",
+        "diet": "나는 건강한 식단이 필요해.",
+        "cough": "나는 기침이 나.",
+        "flu": "나는 독감에 걸렸어.",
+        "breathe": "천천히 숨 쉬어.",
+
+        # 미디어와 스마트폰
+        "smartphone": "나는 스마트폰을 사용해.",
+        "screen": "화면이 밝아.",
+        "app": "앱을 열어.",
+        "website": "웹사이트를 방문해.",
+        "internet": "인터넷이 느려.",
+        "Wi-Fi": "와이파이가 있나요?",
+        "password": "비밀번호가 뭐예요?",
+        "text": "나에게 문자 보내.",
+        "video call": "영상 통화를 하자.",
+        "gallery": "사진첩을 확인해.",
+        "news": "나는 뉴스를 봐.",
+        "channel": "채널을 바꿔.",
+        "post": "나는 게시물을 썼어.",
+        "comment": "댓글을 남겨.",
+        "upload": "사진을 업로드해.",
+        "download": "파일을 다운로드해.",
+        "search": "그 단어를 검색해.",
+        "click": "버튼을 클릭해.",
+        "battery": "내 배터리가 부족해.",
+        "notification": "나는 알림을 받았어.",
+
+        # 직업과 미래
+        "job": "나는 좋은 직업을 원해.",
+        "work": "나는 열심히 일해.",
+        "company": "그는 회사에서 일해.",
+        "office": "그녀는 사무실에서 일해.",
+        "factory": "아버지는 공장에서 일하셔.",
+        "engineer": "나는 엔지니어가 되고 싶어.",
+        "mechanic": "정비사는 자동차를 고친다.",
+        "chef": "요리사는 요리를 잘해.",
+        "firefighter": "소방관은 사람들을 도와.",
+        "farmer": "농부는 음식을 기른다.",
+        "designer": "그녀는 디자이너야.",
+        "singer": "그는 가수야.",
+        "actor": "그녀는 배우야.",
+        "athlete": "그는 운동선수야.",
+        "dream": "네 꿈은 뭐야?",
+        "future": "너의 미래에 대해 생각해.",
+        "goal": "내 목표는 분명해.",
+        "skill": "이 기술은 유용해.",
+        "interview": "나는 면접이 있어.",
+        "experience": "이것은 좋은 경험이야.",
+    }
+
+    return examples_ko.get(
+        word,
+        f"이 문장은 '{meaning}'이라는 뜻의 단어를 사용한 일상 영어 문장입니다."
+    )
+
 def browser_cassette_player(all_items, height=260):
     """
     gTTS로 mp3를 만들지 않고, 브라우저 speechSynthesis로 전체 단어를 순서대로 읽습니다.
@@ -1917,13 +2364,17 @@ def browser_cassette_player(all_items, height=260):
     cassette_items = []
     for item in all_items:
         word = item["word"]
+        example_sentence = make_daily_example(word, item["meaning"], item["theme"])
+        example_sentence_ko = make_daily_example_ko(word, item["meaning"], item["theme"])
+
         cassette_items.append({
             "number": item["number"],
             "theme": item["theme"],
             "word": word,
             "meaning": item["meaning"],
-            "example": make_daily_example(word, item["meaning"], item["theme"]),
-            "script": f'{word}. {word}. {make_daily_example(word, item["meaning"], item["theme"])} {word}.'
+            "example": example_sentence,
+            "example_ko": example_sentence_ko,
+            "script": f'{word}. {word}. {example_sentence} {word}.'
         })
 
     cassette_json = json.dumps(cassette_items, ensure_ascii=False)
@@ -1962,6 +2413,11 @@ def browser_cassette_player(all_items, height=260):
                 font-weight: 800;
                 color: #475569;
                 margin-bottom: 14px;
+                line-height: 1.7;
+                background: rgba(255,255,255,0.72);
+                border: 1px solid #dcfce7;
+                border-radius: 16px;
+                padding: 12px 14px;
             ">
                 재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
             </div>
@@ -2074,7 +2530,13 @@ def browser_cassette_player(all_items, height=260):
 
                 progress.value = index;
                 wordBox.innerText = item.number + ". " + item.word;
-                meaningBox.innerText = item.meaning + "  |  " + item.theme;
+
+                meaningBox.innerHTML =
+                    "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + item.meaning + "</div>" +
+                    "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예시 문장: " + item.example + "</div>" +
+                    "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>문장 뜻: " + item.example_ko + "</div>" +
+                    "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + item.theme + "</div>";
+
                 status.innerText = (index + 1) + " / " + cassetteItems.length;
             }}
 
@@ -2290,6 +2752,11 @@ def show_all_cassette_tab():
                 item["meaning"],
                 item["theme"]
             )
+            example_sentence_ko = make_daily_example_ko(
+                item["word"],
+                item["meaning"],
+                item["theme"]
+            )
 
             st.markdown(
                 f"""
@@ -2305,10 +2772,13 @@ def show_all_cassette_tab():
                         {item['number']}. {item['word']}
                     </div>
                     <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
-                        뜻: {item['meaning']}
+                        단어 뜻: {item['meaning']}
                     </div>
                     <div style="font-size:15px; font-weight:800; color:#0369a1; margin-top:4px;">
-                        문장: {example_sentence}
+                        예시 문장: {example_sentence}
+                    </div>
+                    <div style="font-size:15px; font-weight:800; color:#166534; margin-top:4px;">
+                        문장 뜻: {example_sentence_ko}
                     </div>
                     <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
                         {item['theme']}
