@@ -2344,7 +2344,7 @@ def make_daily_example_ko(word, meaning="", theme=""):
         f"이 문장은 '{meaning}'이라는 뜻의 단어를 사용한 일상 영어 문장입니다."
     )
 
-def browser_cassette_player(all_items, height=260):
+def browser_cassette_player(all_items, height=430):
     """
     gTTS로 mp3를 만들지 않고, 브라우저 speechSynthesis로 전체 단어를 순서대로 읽습니다.
     따라서 전체 카세트를 한 번에 보여도 gTTS 오류가 나지 않습니다.
@@ -2501,6 +2501,7 @@ def browser_cassette_player(all_items, height=260):
                 line-height: 1.6;
             ">
                 ※ 진행 바를 움직여 원하는 단어로 이동할 수 있습니다.<br>
+                ※ 단어 뜻, 예시 문장, 문장 뜻이 위에 표시됩니다.<br>
                 ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 테이프는 자동으로 중지됩니다.
             </div>
 
@@ -2741,7 +2742,7 @@ def show_all_cassette_tab():
 
     all_items = flatten_all_words()
 
-    browser_cassette_player(all_items, height=270)
+    browser_cassette_player(all_items, height=430)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
         st.write("카세트에서 실제로 들려주는 단어, 일상회화 문장, 한국어 뜻을 함께 확인할 수 있습니다.")
