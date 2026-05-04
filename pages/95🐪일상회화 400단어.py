@@ -778,7 +778,7 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
 
 
 # =========================
-# Daily English 1000 테마별 단어
+# Daily English 400 테마별 단어
 # =========================
 word_themes = {
     "🏫 학교생활": [
@@ -2388,7 +2388,7 @@ def browser_cassette_player(all_items, height=430):
                 color: #0f172a;
                 margin-bottom: 10px;
             ">
-                📼 Daily English 1000 전체 테이프
+                
             </div>
 
             <div id="{word_id}" style="
@@ -2715,7 +2715,7 @@ def browser_cassette_player(all_items, height=430):
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 카세트 듣기")
+    st.markdown("## 📼 전체 카세트 듣기")
     st.write("전체 단어를 처음부터 끝까지 테이프처럼 이어서 들을 수 있습니다.")
 
 
