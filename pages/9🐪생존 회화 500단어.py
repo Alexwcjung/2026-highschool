@@ -1077,6 +1077,241 @@ def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20,
     components.html(html_code, height=height)
 
 # =========================
+# 전체 단어 카세트 듣기용 예문
+# =========================
+CASSETTE_EXAMPLES = {
+    "I": "I am a student.",
+    "you": "You are my friend.",
+    "he": "He is my friend.",
+    "she": "She is a student.",
+    "we": "We are happy.",
+    "they": "They are students.",
+    "friend": "He is my friend.",
+    "teacher": "She is my teacher.",
+    "student": "I am a student.",
+    "classmate": "He is my classmate.",
+    "family": "This is my family.",
+    "father": "He is my father.",
+    "mother": "She is my mother.",
+    "brother": "He is my brother.",
+    "sister": "She is my sister.",
+    "name": "My name is Alex.",
+    "person": "He is a good person.",
+    "man": "He is a man.",
+    "woman": "She is a woman.",
+    "child": "He is a child.",
+
+    "go": "I go to school.",
+    "come": "Please come here.",
+    "walk": "I walk to school.",
+    "run": "I can run.",
+    "sit": "Please sit down.",
+    "stand": "Please stand up.",
+    "stop": "Please stop.",
+    "start": "Let's start.",
+    "open": "Open the door.",
+    "close": "Close the door.",
+    "eat": "I eat lunch.",
+    "drink": "I drink water.",
+    "sleep": "I sleep at night.",
+    "study": "I study English.",
+    "read": "I read a book.",
+    "write": "I write my name.",
+    "listen": "Listen carefully.",
+    "speak": "Please speak slowly.",
+    "help": "Can you help me?",
+    "wait": "Please wait.",
+
+    "happy": "I am happy.",
+    "sad": "I am sad.",
+    "angry": "I am angry.",
+    "tired": "I am tired.",
+    "hungry": "I am hungry.",
+    "thirsty": "I am thirsty.",
+    "sick": "I am sick.",
+    "okay": "I am okay.",
+    "fine": "I am fine.",
+    "cold": "I am cold.",
+    "hot": "It is hot.",
+    "pain": "I have pain.",
+    "headache": "I have a headache.",
+    "stomachache": "I have a stomachache.",
+    "fever": "I have a fever.",
+    "hurt": "My leg hurts.",
+    "good": "It is good.",
+    "bad": "It is bad.",
+    "worried": "I am worried.",
+    "scared": "I am scared.",
+
+    "food": "I need food.",
+    "water": "I need water.",
+    "rice": "I eat rice.",
+    "bread": "I eat bread.",
+    "milk": "I drink milk.",
+    "juice": "I drink juice.",
+    "coffee": "I drink coffee.",
+    "tea": "I drink tea.",
+    "apple": "I like apples.",
+    "banana": "I like bananas.",
+    "egg": "I eat an egg.",
+    "meat": "I eat meat.",
+    "chicken": "I like chicken.",
+    "fish": "I eat fish.",
+    "breakfast": "I eat breakfast.",
+    "lunch": "I eat lunch.",
+    "dinner": "I eat dinner.",
+    "snack": "I want a snack.",
+    "medicine": "I need medicine.",
+    "hospital": "I need a hospital.",
+
+    "home": "I go home.",
+    "school": "I go to school.",
+    "classroom": "This is my classroom.",
+    "bathroom": "Where is the bathroom?",
+    "store": "I go to the store.",
+    "station": "Where is the station?",
+    "bus": "I take a bus.",
+    "car": "This is my car.",
+    "taxi": "I need a taxi.",
+    "train": "I take a train.",
+    "bike": "I ride a bike.",
+    "road": "This road is long.",
+    "street": "This street is busy.",
+    "here": "Come here.",
+    "there": "Go there.",
+    "near": "It is near here.",
+    "far": "It is far.",
+    "left": "Turn left.",
+    "right": "Turn right.",
+
+    "time": "What time is it?",
+    "now": "I am here now.",
+    "today": "Today is Monday.",
+    "tomorrow": "See you tomorrow.",
+    "yesterday": "I studied yesterday.",
+    "morning": "Good morning.",
+    "afternoon": "Good afternoon.",
+    "evening": "Good evening.",
+    "night": "Good night.",
+    "early": "It is early.",
+    "late": "It is late.",
+    "one": "I have one book.",
+    "two": "I have two books.",
+    "three": "I have three books.",
+    "four": "I have four books.",
+    "five": "I have five books.",
+    "six": "I have six books.",
+    "seven": "I have seven books.",
+    "eight": "I have eight books.",
+    "ten": "I have ten books.",
+
+    "bag": "This is my bag.",
+    "phone": "This is my phone.",
+    "book": "This is my book.",
+    "notebook": "This is my notebook.",
+    "pen": "I have a pen.",
+    "pencil": "I have a pencil.",
+    "desk": "This is my desk.",
+    "chair": "This is my chair.",
+    "door": "Open the door.",
+    "window": "Close the window.",
+    "key": "I need a key.",
+    "money": "I need money.",
+    "card": "I have a card.",
+    "ticket": "I need a ticket.",
+    "clothes": "These are my clothes.",
+    "shoes": "These are my shoes.",
+    "hat": "This is my hat.",
+    "watch": "This is my watch.",
+    "cup": "This is my cup.",
+    "bottle": "This is my bottle.",
+
+    "please": "Please help me.",
+    "sorry": "I am sorry.",
+    "excuse me": "Excuse me.",
+    "again": "Please say it again.",
+    "slowly": "Please speak slowly.",
+    "understand": "I understand.",
+    "question": "I have a question.",
+    "problem": "I have a problem.",
+    "need": "I need help.",
+    "want": "I want water.",
+    "know": "I know.",
+    "say": "Please say it again.",
+    "tell": "Please tell me.",
+    "ask": "Can I ask you?",
+    "answer": "This is the answer.",
+    "repeat": "Please repeat.",
+    "look": "Look at this.",
+}
+
+
+# =========================
+# 전체 단어 카세트 스크립트 만들기
+# =========================
+def make_cassette_text(theme_name, theme_words):
+    clean_theme_name = re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
+
+    lines = []
+    lines.append(f"Survival English. {clean_theme_name}.")
+    lines.append("Listen and repeat.")
+    lines.append("First, listen to the words.")
+    lines.append("")
+
+    for idx, item in enumerate(theme_words, start=1):
+        word = item["word"]
+        example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+
+        # 카세트 느낌: 단어 2번 → 짧은 쉼 → 예문
+        lines.append(f"Number {idx}.")
+        lines.append(f"{word}.")
+        lines.append(f"{word}.")
+        lines.append(f"{example}")
+        lines.append("")
+
+    lines.append("Good job.")
+    lines.append("Now listen again and practice one more time.")
+
+    for item in theme_words:
+        word = item["word"]
+        lines.append(f"{word}.")
+
+    lines.append("Great work. Keep practicing.")
+
+    return "\n".join(lines)
+
+
+# =========================
+# 전체 단어 카세트 듣기 보여주기
+# =========================
+def show_cassette_player(theme_words, theme_name):
+    st.markdown("### 🎧 전체 단어 카세트 듣기")
+    st.write("예전 카세트 테이프처럼 틀어놓고 단어와 짧은 문장을 반복해서 들어 보세요.")
+
+    cassette_text = make_cassette_text(theme_name, theme_words)
+    cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
+
+    with st.expander("📜 카세트 듣기 스크립트 보기"):
+        for idx, item in enumerate(theme_words, start=1):
+            word = item["word"]
+            meaning = item["meaning"]
+            example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+            st.markdown(f"**{idx}. {word}** : {meaning}")
+            st.caption(example)
+
+    st.audio(cassette_audio, format="audio/mp3")
+
+    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
+
+    st.download_button(
+        label="⬇️ 전체 단어 카세트 mp3 다운로드",
+        data=cassette_audio,
+        file_name=f"{safe_file_name}_cassette_review.mp3",
+        mime="audio/mp3",
+        key=f"{theme_name}_cassette_download"
+    )
+    
+# =========================
 # 오늘의 생존 대화
 # =========================
 theme_dialogues = {
@@ -1501,6 +1736,9 @@ for tab, theme_name in zip(tabs, word_themes.keys()):
 
         # 오늘의 생존 문장은 항상 대화로 맨 위에 배치
         show_dialogue(theme_name)
+
+        # 전체 단어 카세트 듣기
+        show_cassette_player(theme_words, theme_name)
 
         mode = st.radio(
             "학습 모드를 선택하세요.",
