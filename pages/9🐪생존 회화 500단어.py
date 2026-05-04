@@ -1253,30 +1253,18 @@ def make_cassette_text(theme_name, theme_words):
     clean_theme_name = re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
 
     lines = []
-    lines.append(f"Survival English. {clean_theme_name}.")
+    lines.append(f"{clean_theme_name}.")
     lines.append("Listen and repeat.")
-    lines.append("First, listen to the words.")
     lines.append("")
 
-    for idx, item in enumerate(theme_words, start=1):
+    for item in theme_words:
         word = item["word"]
         example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
 
-        # 카세트 느낌: 단어 2번 → 짧은 쉼 → 예문
-        lines.append(f"Number {idx}.")
         lines.append(f"{word}.")
         lines.append(f"{word}.")
         lines.append(f"{example}")
         lines.append("")
-
-    lines.append("Good job.")
-    lines.append("Now listen again and practice one more time.")
-
-    for item in theme_words:
-        word = item["word"]
-        lines.append(f"{word}.")
-
-    lines.append("Great work. Keep practicing.")
 
     return "\n".join(lines)
 
@@ -1310,7 +1298,64 @@ def show_cassette_player(theme_words, theme_name):
         mime="audio/mp3",
         key=f"{theme_name}_cassette_download"
     )
-    
+
+    def make_all_cassette_text():
+    lines = []
+
+    lines.append("Survival English 500.")
+    lines.append("Listen and repeat.")
+    lines.append("Let's practice all the words.")
+    lines.append("")
+
+    for theme_name, theme_words in word_themes.items():
+        clean_theme_name = re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
+
+        lines.append(clean_theme_name + ".")
+        lines.append("")
+
+        for item in theme_words:
+            word = item["word"]
+            example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+
+            lines.append(f"{word}.")
+            lines.append(f"{word}.")
+            lines.append(f"{example}")
+            lines.append("")
+
+    lines.append("Great work.")
+    lines.append("Keep practicing every day.")
+
+    return "\n".join(lines)
+
+
+def show_all_cassette_tab():
+    st.markdown("## 🎧 전체 단어 카세트 듣기")
+    st.write("모든 테마의 단어를 예전 카세트 테이프처럼 한 번에 들을 수 있습니다.")
+
+    all_cassette_text = make_all_cassette_text()
+    all_cassette_audio = make_tts_audio(all_cassette_text, lang="en", tld="com")
+
+    st.audio(all_cassette_audio, format="audio/mp3")
+
+    st.download_button(
+        label="⬇️ 전체 단어 카세트 mp3 다운로드",
+        data=all_cassette_audio,
+        file_name="survival_english_500_all_cassette.mp3",
+        mime="audio/mp3",
+        key="all_cassette_download"
+    )
+
+    with st.expander("📜 전체 카세트 스크립트 보기"):
+        for theme_name, theme_words in word_themes.items():
+            st.markdown(f"### {theme_name}")
+
+            for item in theme_words:
+                word = item["word"]
+                meaning = item["meaning"]
+                example = CASSETTE_EXAMPLES.get(word, f"This is {word}.")
+
+                st.markdown(f"**{word}** : {meaning}")
+                st.caption(example)
 # =========================
 # 오늘의 생존 대화
 # =========================
@@ -1718,11 +1763,41 @@ def show_quiz(theme_words, theme_name):
 # =========================
 # 탭 구성
 # =========================
-tabs = st.tabs(list(word_themes.keys()))
+tab_names = ["🎧 전체 카세트 듣기"] + list(word_themes.keys())
+tabs = st.tabs(tab_names)
 
-for tab, theme_name in zip(tabs, word_themes.keys()):
+with tabs[0]:
+    show_all_cassette_tab()
+
+for tab, theme_name in zip(tabs[1:], word_themes.keys()):
     with tab:
         theme_words = word_themes[theme_name]
+
+        st.markdown(
+            f"""
+            <div class="theme-header">
+                <div class="theme-title">{theme_name}</div>
+                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 생존 단어가 있습니다. 먼저 대화를 듣고, 핵심 단어를 익혀 봅시다.</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        show_dialogue(theme_name)
+
+        show_cassette_player(theme_words, theme_name)
+
+        mode = st.radio(
+            "학습 모드를 선택하세요.",
+            ["🌱 핵심 단어 익히기", "🧸 퀴즈 풀기"],
+            key=f"{theme_name}_mode",
+            horizontal=True
+        )
+
+        if mode == "🌱 핵심 단어 익히기":
+            show_word_cards(theme_words, theme_name)
+        else:
+            show_quiz(theme_words, theme_name)
 
         st.markdown(
             f"""
