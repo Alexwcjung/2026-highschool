@@ -109,35 +109,42 @@ st.markdown(
 
     .word-card {
         background: white;
-        border-radius: 22px;
-        padding: 18px 20px;
-        margin-bottom: 14px;
+        border-radius: 18px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
         border: 1px solid #dcfce7;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.05);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.04);
     }
 
-    .word-badge {
-        display: inline-block;
-        background: #dcfce7;
-        color: #166534;
-        padding: 6px 12px;
-        border-radius: 999px;
+    .word-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .word-number {
+        min-width: 38px;
         font-size: 13px;
-        font-weight: 800;
-        margin-bottom: 8px;
+        font-weight: 900;
+        color: #166534;
+        background: #dcfce7;
+        border-radius: 999px;
+        padding: 5px 9px;
+        text-align: center;
     }
 
     .word-text {
-        font-size: 31px;
+        min-width: 170px;
+        font-size: 25px;
         font-weight: 900;
         color: #111827;
-        margin-bottom: 4px;
     }
 
     .meaning-text {
-        font-size: 20px;
-        font-weight: 700;
+        font-size: 19px;
+        font-weight: 800;
         color: #374151;
+        margin-left: 8px;
     }
 
     .quiz-card {
@@ -200,11 +207,6 @@ st.markdown(
         margin-bottom: 16px;
     }
 
-    .small-muted {
-        font-size: 14px;
-        color: #6b7280;
-    }
-
     div[data-testid="stRadio"] > label {
         font-weight: 800;
         color: #374151;
@@ -245,7 +247,7 @@ st.markdown(
             • 단어 발음은 <b>20번 반복</b>됩니다.<br>
             • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
             • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
-            • 마지막으로 뜻 고르기 퀴즈로 확인합니다.
+            • 단어, 발음 버튼, 뜻이 한 줄에 가깝게 배치되어 빠르게 익힐 수 있습니다.
         </div>
     </div>
     """,
@@ -275,7 +277,7 @@ def make_dialogue_tts_text(dialogue):
 # =========================
 # 단어용 HTML 오디오 플레이어
 # =========================
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=105):
+def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=48):
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
@@ -291,20 +293,20 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
 
     components.html(
         f"""
-        <div style="font-family: Arial, sans-serif;">
+        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
             <button id="{play_btn_id}" style="
                 background: linear-gradient(135deg, #dcfce7, #dbeafe);
                 border: 1px solid #bbf7d0;
                 border-radius: 999px;
-                padding: 9px 15px;
+                padding: 6px 10px;
                 font-weight: 800;
-                font-size: 14px;
+                font-size: 13px;
                 color: #374151;
                 cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                margin-right: 6px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.06);
+                white-space: nowrap;
             ">
                 {label}
             </button>
@@ -313,22 +315,23 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 background: #fff7ed;
                 border: 1px solid #fed7aa;
                 border-radius: 999px;
-                padding: 9px 15px;
+                padding: 6px 10px;
                 font-weight: 800;
-                font-size: 14px;
+                font-size: 13px;
                 color: #9a3412;
                 cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+                white-space: nowrap;
             ">
                 ⏹ 중지
             </button>
 
-            <div id="{status_id}" style="
-                margin-top: 8px;
-                font-size: 13px;
+            <span id="{status_id}" style="
+                font-size: 12px;
                 color: #075985;
                 font-weight: 700;
-            "></div>
+                white-space: nowrap;
+            "></span>
 
             <script>
             const audio = document.getElementById("{audio_id}");
@@ -364,7 +367,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 playBtn.innerText = labelText;
 
                 if (showMessage) {{
-                    status.innerText = "⏹ 재생을 중지했습니다.";
+                    status.innerText = "중지됨";
                 }} else {{
                     status.innerText = "";
                 }}
@@ -382,7 +385,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 if (isStopped) return;
 
                 if (count >= maxCount) {{
-                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    status.innerText = "완료";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                     return;
@@ -392,9 +395,9 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
 
                 audio.play().then(() => {{
                     count += 1;
-                    status.innerText = "🔊 " + wordText + " 재생 중: " + count + " / " + maxCount;
+                    status.innerText = count + "/" + maxCount;
                 }}).catch((error) => {{
-                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
+                    status.innerText = "다시 클릭";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                 }});
@@ -406,7 +409,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 if (count < maxCount) {{
                     timer = setTimeout(playOnce, pauseMs);
                 }} else {{
-                    status.innerText = "✅ " + maxCount + "번 반복 재생 완료";
+                    status.innerText = "완료";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                 }}
@@ -423,8 +426,8 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=1
                 isStopped = false;
                 count = 0;
                 playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
-                status.innerText = "🔊 " + wordText + " 반복 재생을 시작합니다.";
+                playBtn.innerText = "재생중";
+                status.innerText = "시작";
                 playOnce();
             }});
 
@@ -444,7 +447,7 @@ def audio_button(label, text, key=None):
         text=text,
         repeat_count=20,
         pause_ms=1500,
-        height=105
+        height=48
     )
 
 
@@ -625,8 +628,6 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
 
 # =========================
 # Daily English 1000 테마별 단어
-# 20개 테마 × 20개 단어 = 400개 1차 세트
-# 이후 같은 구조로 테마당 50개까지 확장하면 1000개가 됩니다.
 # =========================
 word_themes = {
     "🏫 학교생활": [
@@ -1284,6 +1285,7 @@ for theme_words in word_themes.values():
 
 all_meanings = [item["meaning"] for item in all_words]
 
+
 # =========================
 # 보기 고정 랜덤 섞기
 # =========================
@@ -1297,6 +1299,7 @@ def get_shuffled_options(theme_name, index, options):
         st.session_state[key] = shuffled
 
     return st.session_state[key]
+
 
 # =========================
 # 퀴즈 문항 만들기
@@ -1324,6 +1327,7 @@ def make_quiz_items(theme_words, theme_name):
 
     return quiz_items
 
+
 # =========================
 # 상태 초기화
 # =========================
@@ -1337,6 +1341,7 @@ def init_state(theme_name):
     if f"{theme_name}_wrong" not in st.session_state:
         st.session_state[f"{theme_name}_wrong"] = []
 
+
 def reset_theme(theme_name):
     keys_to_delete = []
 
@@ -1346,6 +1351,7 @@ def reset_theme(theme_name):
 
     for key in keys_to_delete:
         del st.session_state[key]
+
 
 # =========================
 # 오늘의 일상 대화 보여주기
@@ -1391,6 +1397,7 @@ def show_dialogue(theme_name):
         key=f"{theme_name}_dialogue_download"
     )
 
+
 # =========================
 # 단어 익히기
 # =========================
@@ -1401,24 +1408,34 @@ def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        col1, col2, col3 = st.columns([1.3, 2.1, 1.4])
+        col1, col2, col3 = st.columns([1.25, 1.65, 2.3])
 
         with col1:
-            st.markdown(f"<div class='word-badge'>🌱 Word {idx + 1}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='word-text'>{item['word']}</div>", unsafe_allow_html=True)
+            st.markdown(
+                f"""
+                <div class="word-row">
+                    <div class="word-number">{idx + 1}</div>
+                    <div class="word-text">{item['word']}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
         with col2:
-            st.markdown("<div class='small-muted'>뜻</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='meaning-text'>{item['meaning']}</div>", unsafe_allow_html=True)
-
-        with col3:
             audio_button(
-                "🔊 발음 듣기",
+                "🔊 듣기",
                 item["word"],
                 key=f"{theme_name}_learn_audio_{idx}"
             )
 
+        with col3:
+            st.markdown(
+                f"<div class='meaning-text'>{item['meaning']}</div>",
+                unsafe_allow_html=True
+            )
+
         st.markdown('</div>', unsafe_allow_html=True)
+
 
 # =========================
 # 퀴즈 풀기
@@ -1443,7 +1460,7 @@ def show_quiz(theme_words, theme_name):
             st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
 
             audio_button(
-                "🔊 발음 듣기",
+                "🔊 듣기",
                 q["word"],
                 key=f"{theme_name}_quiz_audio1_{i}"
             )
@@ -1513,7 +1530,7 @@ def show_quiz(theme_words, theme_name):
                 st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
 
                 audio_button(
-                    "🔊 발음 다시 듣기",
+                    "🔊 듣기",
                     q["word"],
                     key=f"{theme_name}_quiz_audio2_{i}"
                 )
@@ -1574,7 +1591,7 @@ def show_quiz(theme_words, theme_name):
                 st.markdown(f"### 🌱 {q['word']}")
 
                 audio_button(
-                    "🔊 발음 다시 듣기",
+                    "🔊 듣기",
                     q["word"],
                     key=f"{theme_name}_answer_audio_{i}"
                 )
@@ -1587,6 +1604,7 @@ def show_quiz(theme_words, theme_name):
         if st.button("🔄 다시 풀기", key=f"{theme_name}_reset"):
             reset_theme(theme_name)
             st.rerun()
+
 
 # =========================
 # 탭 구성
