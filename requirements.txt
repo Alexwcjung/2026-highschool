@@ -19,4 +19,3 @@ scipy
 seaborn
 streamlit-mic-recorder
 SpeechRecognition
-pydub
