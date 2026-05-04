@@ -109,39 +109,47 @@ st.markdown(
 
     .word-card {
         background: white;
-        border-radius: 18px;
-        padding: 10px 14px;
-        margin-bottom: 8px;
+        border-radius: 16px;
+        padding: 7px 10px;
+        margin-bottom: 6px;
         border: 1px solid #e0f2fe;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.035);
     }
 
     .word-row {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 7px;
+        min-height: 42px;
     }
 
     .word-number {
-        min-width: 38px;
-        font-size: 13px;
+        min-width: 30px;
+        font-size: 12px;
         font-weight: 900;
         color: #0369a1;
         background: #e0f2fe;
         border-radius: 999px;
-        padding: 5px 9px;
+        padding: 4px 7px;
+        text-align: center;
+    }
+
+    .word-emoji {
+        font-size: 22px;
+        min-width: 28px;
         text-align: center;
     }
 
     .word-text {
-        min-width: 150px;
-        font-size: 25px;
+        min-width: 120px;
+        font-size: 23px;
         font-weight: 900;
         color: #111827;
+        white-space: nowrap;
     }
 
     .meaning-text {
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 800;
         color: #374151;
         margin-left: 0px;
@@ -282,7 +290,7 @@ def make_dialogue_tts_text(dialogue):
 # =========================
 # 단어용 HTML 오디오 플레이어
 # =========================
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=48):
+def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=42):
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
@@ -298,16 +306,16 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
 
     components.html(
         f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
+        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:36px;">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
             <button id="{play_btn_id}" style="
                 background: linear-gradient(135deg, #fce7f3, #dbeafe);
                 border: 1px solid #e9d5ff;
                 border-radius: 999px;
-                padding: 6px 10px;
+                padding: 5px 8px;
                 font-weight: 800;
-                font-size: 13px;
+                font-size: 12px;
                 color: #374151;
                 cursor: pointer;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.06);
@@ -320,9 +328,9 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
                 background: #fff7ed;
                 border: 1px solid #fed7aa;
                 border-radius: 999px;
-                padding: 6px 10px;
+                padding: 5px 8px;
                 font-weight: 800;
-                font-size: 13px;
+                font-size: 12px;
                 color: #9a3412;
                 cursor: pointer;
                 box-shadow: 0 2px 5px rgba(0,0,0,0.04);
@@ -452,7 +460,7 @@ def audio_button(label, text, key=None):
         text=text,
         repeat_count=20,
         pause_ms=1500,
-        height=48
+        height=42
     )
 
 
@@ -820,6 +828,55 @@ word_themes = {
     ],
 }
 
+
+# =========================
+# 단어별 이모지
+# =========================
+WORD_EMOJIS = {
+    "I": "🙋", "you": "👉", "he": "👦", "she": "👧", "we": "👥", "they": "👥",
+    "friend": "🤝", "teacher": "👩‍🏫", "student": "🧑‍🎓", "classmate": "👫", "family": "👨‍👩‍👧",
+    "father": "👨", "mother": "👩", "brother": "👦", "sister": "👧", "name": "🏷️",
+    "person": "🧍", "man": "👨", "woman": "👩", "child": "🧒",
+
+    "go": "➡️", "come": "⬅️", "walk": "🚶", "run": "🏃", "sit": "🪑", "stand": "🧍",
+    "stop": "🛑", "start": "▶️", "open": "📂", "close": "📕", "eat": "🍽️", "drink": "🥤",
+    "sleep": "😴", "study": "📚", "read": "📖", "write": "✏️", "listen": "👂", "speak": "🗣️",
+    "help": "🆘", "wait": "⏳",
+
+    "happy": "😊", "sad": "😢", "angry": "😠", "tired": "🥱", "hungry": "😋", "thirsty": "🥤",
+    "sick": "🤒", "okay": "👌", "fine": "🙂", "cold": "🥶", "hot": "🥵", "pain": "🤕",
+    "headache": "🤯", "stomachache": "🤢", "fever": "🌡️", "hurt": "🩹", "good": "👍", "bad": "👎",
+    "worried": "😟", "scared": "😨",
+
+    "food": "🍽️", "water": "💧", "rice": "🍚", "bread": "🍞", "milk": "🥛", "juice": "🧃",
+    "coffee": "☕", "tea": "🍵", "apple": "🍎", "banana": "🍌", "egg": "🥚", "meat": "🥩",
+    "chicken": "🍗", "fish": "🐟", "breakfast": "🍳", "lunch": "🍱", "dinner": "🍽️", "snack": "🍪",
+    "medicine": "💊", "hospital": "🏥",
+
+    "home": "🏠", "school": "🏫", "classroom": "🧑‍🏫", "bathroom": "🚻", "store": "🏪", "station": "🚉",
+    "bus": "🚌", "car": "🚗", "taxi": "🚕", "train": "🚆", "bike": "🚲", "road": "🛣️",
+    "street": "🏙️", "here": "📍", "there": "📌", "near": "↔️", "far": "🌁", "left": "⬅️", "right": "➡️",
+
+    "time": "⏰", "now": "🕒", "today": "📅", "tomorrow": "➡️📅", "yesterday": "⬅️📅",
+    "morning": "🌅", "afternoon": "☀️", "evening": "🌆", "night": "🌙", "early": "🐓", "late": "🌃",
+    "one": "1️⃣", "two": "2️⃣", "three": "3️⃣", "four": "4️⃣", "five": "5️⃣", "six": "6️⃣",
+    "seven": "7️⃣", "eight": "8️⃣", "ten": "🔟",
+
+    "bag": "🎒", "phone": "📱", "book": "📘", "notebook": "📓", "pen": "🖊️", "pencil": "✏️",
+    "desk": "🪑", "chair": "🪑", "door": "🚪", "window": "🪟", "key": "🔑", "money": "💵",
+    "card": "💳", "ticket": "🎫", "clothes": "👕", "shoes": "👟", "hat": "🧢", "watch": "⌚",
+    "cup": "☕", "bottle": "🍼",
+
+    "please": "🙏", "sorry": "🙇", "excuse me": "🙋", "again": "🔁", "slowly": "🐢",
+    "understand": "💡", "question": "❓", "problem": "⚠️", "need": "📌", "want": "✨",
+    "know": "🧠", "say": "💬", "tell": "📣", "ask": "❔", "answer": "✅",
+    "repeat": "🔁", "look": "👀",
+}
+
+
+def get_word_emoji(word):
+    return WORD_EMOJIS.get(word, "🌱")
+
 # =========================
 # 오늘의 생존 대화
 # =========================
@@ -1019,14 +1076,17 @@ def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        # 영어 단어 / 한국어 뜻 / 발음·중지 버튼 순서로 compact하게 배치
-        col1, col2, col3 = st.columns([1.45, 1.55, 1.65])
+        # 영어 단어 / 한국어 뜻 / 발음·중지 버튼이 최대한 붙어서 보이도록 배치
+        col1, col2, col3 = st.columns([1.85, 1.2, 1.15], gap="small")
+
+        emoji = get_word_emoji(item["word"])
 
         with col1:
             st.markdown(
                 f"""
                 <div class="word-row">
                     <div class="word-number">{idx + 1}</div>
+                    <div class="word-emoji">{emoji}</div>
                     <div class="word-text">{item['word']}</div>
                 </div>
                 """,
