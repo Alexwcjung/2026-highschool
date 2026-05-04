@@ -2718,16 +2718,6 @@ def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
     st.write("전체 단어를 처음부터 끝까지 테이프처럼 이어서 들을 수 있습니다.")
 
-    st.markdown(
-        """
-        <div class="cassette-box">
-            <div class="cassette-title">📼 전체 단어 테이프</div>
-            <div class="cassette-text">
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
     all_items = flatten_all_words()
 
