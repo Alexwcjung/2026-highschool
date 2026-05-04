@@ -675,6 +675,16 @@ if "mission_started" not in st.session_state:
 if "mission_finished" not in st.session_state:
     st.session_state.mission_finished = False
 
+if st.session_state.get("mission_started", False):
+    if "questions" in st.session_state and "total_questions" not in st.session_state:
+        st.session_state.total_questions = len(st.session_state.questions)
+
+    if "records" not in st.session_state:
+        st.session_state.records = []
+
+    if "current_index" not in st.session_state:
+        st.session_state.current_index = 0
+
 
 # =========================
 # 시작 화면
