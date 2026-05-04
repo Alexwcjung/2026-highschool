@@ -338,7 +338,7 @@ short_vowels = [
 ]
 
 long_vowels = [
-    {"pattern": "A a", "concept": "긴 모음", "sound_name": "Long a /eɪ/ (에이에 가까운 소리)", "sound_audio": repeat_sound("ay"), "word": "cake", "word_audio": "cake"},
+    {"pattern": "A a", "concept": "긴 모음", "sound_name": "Long a /eɪ/ (에이 소리)", "sound_audio": "cake. name. make.", "word": "cake", "word_audio": "cake"},    
     {"pattern": "E e", "concept": "긴 모음", "sound_name": "Long e /iː/ (긴 이 소리)", "sound_audio": repeat_sound("ee"), "word": "tree", "word_audio": "tree"},
     {"pattern": "I i", "concept": "긴 모음", "sound_name": "Long i /aɪ/ (아이 소리)", "sound_audio": repeat_sound("eye"), "word": "bike", "word_audio": "bike"},
     {"pattern": "O o", "concept": "긴 모음", "sound_name": "Long o /oʊ/ (오우에 가까운 소리)", "sound_audio": repeat_sound("oh"), "word": "rope", "word_audio": "rope"},
