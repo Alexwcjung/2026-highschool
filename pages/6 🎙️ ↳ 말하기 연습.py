@@ -20,47 +20,46 @@ PRACTICE_ITEMS = [{'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.'
 st.markdown(
     """
     <style>
-    .main-title-box {
-        background: linear-gradient(135deg, #dbeafe 0%, #fae8ff 35%, #fef3c7 70%, #dcfce7 100%);
-        border: 2px solid #c4b5fd;
-        border-radius: 34px;
-        padding: 28px 30px;
-        margin-bottom: 22px;
-        box-shadow: 0 10px 26px rgba(124,58,237,0.12);
-    }
-
-    .main-title-box h1 {
-        margin: 0 0 10px 0;
-        color: #1e1b4b;
-        font-size: 38px;
-        font-weight: 900;
-    }
-
-    .main-title-box p {
-        margin: 0;
-        color: #475569;
-        font-size: 18px;
-        line-height: 1.7;
-        font-weight: 700;
-    }
+    
 
     
-    </style>
+
+    
+
+    
+    
+    @media (max-width: 640px) {
+        #speaking-app {
+            padding: 14px !important;
+            border-radius: 24px !important;
+        }
+        #speaking-app #blankSentence {
+            font-size: 23px !important;
+            padding: 16px 14px !important;
+        }
+        #speaking-app #koPrompt {
+            font-size: 22px !important;
+            margin-bottom: 12px !important;
+        }
+        #speaking-app #transcriptBox {
+            font-size: 20px !important;
+        }
+        #speaking-app #micBtn {
+            width: 86px !important;
+            height: 86px !important;
+            font-size: 30px !important;
+        }
+        #speaking-app #hintBox {
+            font-size: 18px !important;
+        }
+    }
+
+</style>
     """,
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="main-title-box">
-        <h1>🎙️ 🌈 생존 단어 160개로 문장 말하기</h1>
-        <p>
-            한국어 상황을 보고, 영어 문장을 말해 보세요.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+
 
 
 
@@ -144,50 +143,57 @@ def speaking_practice_component(items):
             </div>
 
             <div style="
-                font-size: 30px;
+                font-size: 28px;
                 font-weight: 900;
                 color: #111827;
-                line-height: 1.45;
-                margin-bottom: 18px;
+                line-height: 1.4;
+                margin-bottom: 14px;
             " id="koPrompt">
                 한국어 상황
             </div>
 
             <div style="
-                background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
-                border: 1.5px solid #dbeafe;
-                border-radius: 22px;
-                padding: 22px 20px;
-                margin-bottom: 18px;
-                font-size: 34px;
+                background: linear-gradient(135deg, #ffffff 0%, #eff6ff 45%, #fdf4ff 100%);
+                border: 2px solid #c4b5fd;
+                border-radius: 24px;
+                padding: 18px 16px;
+                margin-bottom: 12px;
+                font-size: 30px;
                 font-weight: 900;
-                color: #0f172a;
-                line-height: 1.5;
+                color: #1f2937;
+                line-height: 1.45;
+                box-shadow: 0 6px 16px rgba(99,102,241,0.08);
+                word-break: break-word;
             " id="blankSentence">
                 I am ______.
             </div>
 
-            <div id="hintBox" style="
-                display:none;
-                background:#fffbeb;
-                border:1.5px solid #fde68a;
-                color:#92400e;
-                border-radius:18px;
+            <div style="
+                background:linear-gradient(135deg,#eef2ff,#fdf2f8);
+                border:1.5px solid #c4b5fd;
+                border-radius:20px;
                 padding:14px 16px;
-                margin-bottom:16px;
-                font-size:22px;
-                font-weight:900;
-            "></div>
+                margin-bottom:12px;
+                min-height:52px;
+                box-shadow: 0 4px 12px rgba(124,58,237,0.08);
+            ">
+                <div id="transcriptBox" style="
+                    font-size:24px;
+                    font-weight:900;
+                    color:#4c1d95;
+                    line-height:1.6;
+                    min-height:32px;
+                    word-break: break-word;
+                "></div>
+            </div>
 
-            <div id="answerBox" style="display:none;"></div>
-
-            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:14px;">
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:12px;">
                 <button id="hintBtn" style="
                     border:1.5px solid #fcd34d;
                     background:linear-gradient(135deg,#fef3c7,#fde68a);
                     color:#92400e;
                     border-radius:999px;
-                    padding:11px 18px;
+                    padding:10px 16px;
                     font-weight:900;
                     cursor:pointer;
                     box-shadow:0 4px 10px rgba(245,158,11,0.14);
@@ -198,12 +204,13 @@ def speaking_practice_component(items):
                     background: linear-gradient(135deg, #8b5cf6, #ec4899);
                     color:white;
                     border-radius:999px;
-                    width:108px;
-                    height:108px;
+                    width:100px;
+                    height:100px;
                     font-weight:900;
                     cursor:pointer;
-                    font-size:38px;
+                    font-size:36px;
                     box-shadow:0 12px 26px rgba(124,58,237,0.26);
+                    flex: 0 0 auto;
                 ">🎙️</button>
 
                 <button id="answerBtn" style="
@@ -212,7 +219,7 @@ def speaking_practice_component(items):
                     background:linear-gradient(135deg,#dcfce7,#f0fdf4);
                     color:#166534;
                     border-radius:999px;
-                    padding:11px 16px;
+                    padding:10px 16px;
                     font-weight:900;
                     cursor:pointer;
                     box-shadow:0 4px 10px rgba(34,197,94,0.12);
@@ -224,7 +231,7 @@ def speaking_practice_component(items):
                     background:linear-gradient(135deg,#dbeafe,#eff6ff);
                     color:#1d4ed8;
                     border-radius:999px;
-                    padding:11px 16px;
+                    padding:10px 16px;
                     font-weight:900;
                     cursor:pointer;
                     box-shadow:0 4px 10px rgba(59,130,246,0.12);
@@ -236,7 +243,7 @@ def speaking_practice_component(items):
                     background:linear-gradient(135deg,#ede9fe,#eef2ff);
                     color:#5b21b6;
                     border-radius:999px;
-                    padding:11px 18px;
+                    padding:10px 16px;
                     font-weight:900;
                     cursor:pointer;
                     font-size:16px;
@@ -250,31 +257,14 @@ def speaking_practice_component(items):
                 border:1.5px solid #fbbf24;
                 color:#92400e;
                 border-radius:18px;
-                padding:14px 16px;
-                margin-bottom:14px;
-                font-size:22px;
+                padding:12px 14px;
+                margin-bottom:10px;
+                font-size:21px;
                 font-weight:900;
                 box-shadow: 0 4px 12px rgba(251,191,36,0.12);
             "></div>
 
             <div id="answerBox" style="display:none;"></div>
-
-            <div style="
-                background:#f8fafc;
-                border:1.5px solid #e2e8f0;
-                border-radius:18px;
-                padding:14px 16px;
-                margin-bottom:16px;
-                min-height:52px;
-            ">
-                <div id="transcriptBox" style="
-                    font-size:24px;
-                    font-weight:900;
-                    color:#4c1d95;
-                    line-height:1.7;
-                    min-height:32px;
-                "></div>
-            </div>
 
             <div id="resultBox" style="
                 display:none;
@@ -754,7 +744,8 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=610)
+    components.html(html, height=760)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
+
