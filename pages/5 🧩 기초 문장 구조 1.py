@@ -261,7 +261,7 @@ tabs = st.tabs([
 
 
 # =========================================================
-# Tab 1: Be동사 / 일반동사
+# Tab 1: be동사 / 행동 표현
 # =========================================================
 with tabs[0]:
     st.subheader("🙋 나와 상태 말하기")
@@ -269,7 +269,7 @@ with tabs[0]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#f3f8ff,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: be동사 / 일반동사</span>
+            <span class="tool-label">오늘의 문장 도구: 나를 말하는 말 / 행동을 말하는 말</span>
             <h3 style="color:#1f4e79;">🙋 생존의 첫 문장: 나는 누구이고, 어떤 상태인가?</h3>
             <p>
                 낯선 상황에서 가장 먼저 필요한 말은 <b>나를 소개하고, 내 상태를 말하는 것</b>입니다.
@@ -286,7 +286,7 @@ with tabs[0]:
         unsafe_allow_html=True
     )
 
-    st.success("Be동사에는 am, are, is가 있습니다.")
+    st.success("be동사에는 am, are, is가 있습니다.")
 
     st.markdown("### ✅ 나와 상태를 말할 때 be동사 고르는 법")
 
@@ -325,13 +325,13 @@ with tabs[0]:
 
     st.markdown("---")
 
-    st.markdown("### ✅ 행동을 말할 때 쓰는 일반동사")
+    st.markdown("### ✅ 행동을 말할 때 쓰는 행동 표현")
 
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fffdf4,#ffffff);">
             <p>
-                <b>Be동사 am, are, is를 제외한 나머지 동작 표현</b>은 대부분 일반동사입니다.
+                <b>be동사 am, are, is를 제외한 나머지 동작 표현</b>은 대부분 행동 표현입니다.
             </p>
             <p>예를 들면 다음과 같습니다.</p>
             <span class="word-chip">do 하다</span>
@@ -355,14 +355,14 @@ with tabs[1]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff8e6,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: be동사 + 동사-ing</span>
+            <span class="tool-label">오늘의 문장 도구: 지금 하는 일을 말하는 모양</span>
             <h3 style="color:#8a5a00;">🏃 지금 무슨 일이 일어나고 있는지 말하기</h3>
             <p>
                 생존 상황에서는 “지금 기다리고 있어요”, “지금 먹고 있어요”, “지금 가고 있어요”처럼
                 <b>현재 상황</b>을 말할 수 있어야 합니다.
             </p>
             <div class="formula-box" style="color:#8a5a00;">
-                am / are / is + 동사-ing
+                am / are / is + 동사 + ing
             </div>
         </div>
         """,
@@ -374,7 +374,7 @@ with tabs[1]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>am / are / is + 동사ing</b></p>
+            <p><b>am / are / is + 동사 + ing</b></p>
         </div>
 
         <div class="example-box">
@@ -407,14 +407,14 @@ with tabs[2]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#ecfff1,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: will / be going to</span>
+            <span class="tool-label">오늘의 문장 도구: 앞으로 할 일을 말하는 모양</span>
             <h3 style="color:#247a3d;">🚀 앞으로 할 일 말하기</h3>
             <p>
                 약속을 잡거나 계획을 말할 때는 <b>앞으로 할 일</b>을 표현해야 합니다.
                 “갈 거예요”, “전화할게요”, “도와줄게요” 같은 말이 여기에 들어갑니다.
             </p>
             <div class="formula-box" style="color:#247a3d;">
-                will + 동사원형 / be going to + 동사원형
+                will + 동사 / be going to + 동사
             </div>
         </div>
         """,
@@ -426,8 +426,8 @@ with tabs[2]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>will + 동사원형</b></p>
-            <p>will 뒤에는 동사의 기본 모양을 씁니다.</p>
+            <p><b>will + 동사의 기본 모양</b></p>
+            <p>will 뒤에는 동사를 바로 씁니다.</p>
         </div>
 
         <div class="example-box">
@@ -455,7 +455,7 @@ with tabs[2]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>am / are / is + going to + 동사원형</b></p>
+            <p><b>am / are / is + going to + 동사의 기본 모양</b></p>
             <p><b>be going to</b>도 앞으로 할 일을 말할 때 씁니다.</p>
             <p>주어에 맞게 <b>am, are, is</b>를 골라 씁니다.</p>
         </div>
@@ -502,7 +502,7 @@ with tabs[2]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: will 뒤에도 동사원형, be going to 뒤에도 동사원형을 씁니다.")
+    st.info("Tip: will 뒤에도 동사, be going to 뒤에도 동사가 바로 옵니다.")
 
 # =========================================================
 # Tab 4: 과거형
@@ -513,7 +513,7 @@ with tabs[3]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff0f6,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: 과거형</span>
+            <span class="tool-label">오늘의 문장 도구: 지난 일을 말하는 모양</span>
             <h3 style="color:#9b2c5a;">🕰️ 이미 일어난 일 말하기</h3>
             <p>
                 무슨 일이 있었는지 설명하려면 <b>지난 일</b>을 말할 수 있어야 합니다.
@@ -591,7 +591,7 @@ with tabs[4]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fffbe6,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: 자주 쓰는 과거형 단어</span>
+            <span class="tool-label">오늘의 문장 도구: 지난 일을 말할 때 자주 쓰는 단어</span>
             <h3 style="color:#8a6d00;">🎲 지난 일을 말하려면 꼭 필요한 단어들</h3>
             <p>
                 “갔다”, “먹었다”, “봤다”, “샀다”처럼 자주 쓰는 말은 과거형 모양이 따로 바뀝니다.
@@ -814,7 +814,7 @@ with tabs[4]:
 
 
 # =========================================================
-# Tab 6: 부정문
+# Tab 6: 아니라고 말하는 문장
 # =========================================================
 with tabs[5]:
     st.subheader("❌ 아니라고 말하기")
@@ -822,14 +822,14 @@ with tabs[5]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#fff3f3,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: not</span>
+            <span class="tool-label">오늘의 문장 도구: 아니라고 말하는 not</span>
             <h3 style="color:#b23a3a;">❌ 아니라고 말하기</h3>
             <p>
                 생존 상황에서는 거절하거나, 모른다고 하거나, 아프지 않다고 말해야 할 때가 있습니다.
                 이때 필요한 것이 <b>not</b>입니다.
             </p>
             <div class="formula-box" style="color:#b23a3a;">
-                be동사 + not / do not + 동사원형
+                be동사 + not / do not + 동사의 기본 모양
             </div>
         </div>
         """,
@@ -841,7 +841,7 @@ with tabs[5]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>Be동사 + not</b></p>
+            <p><b>be동사 + not</b></p>
             <p>am, are, is 뒤에 <b>not</b>을 붙입니다.</p>
         </div>
 
@@ -870,8 +870,8 @@ with tabs[5]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>do not / does not / did not + 동사원형</b></p>
-            <p>일반동사는 바로 not을 붙이지 않고 <b>do, does, did</b>의 도움을 받습니다.</p>
+            <p><b>do not / does not / did not + 동사</b></p>
+            <p>행동 표현는 바로 not을 붙이지 않고 <b>do, does, did</b>의 도움을 받습니다.</p>
         </div>
 
         <div class="example-box">
@@ -892,11 +892,11 @@ with tabs[5]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: does not, did not 뒤에는 동사의 기본 모양을 씁니다. 예: does not plays ❌ / does not play ✅")
+    st.info("Tip: does not, did not 뒤에는 동사를 바로 씁니다. 예: does not plays ❌ / does not play ✅")
 
 
 # =========================================================
-# Tab 7: 의문문
+# Tab 7: 질문하는 문장
 # =========================================================
 with tabs[6]:
     st.subheader("❓ 간단히 물어보기")
@@ -904,14 +904,14 @@ with tabs[6]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#f3f0ff,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: Are / Do / Did</span>
+            <span class="tool-label">오늘의 문장 도구: 짧게 확인하는 질문</span>
             <h3 style="color:#5b3aa4;">❓ 간단히 물어보기</h3>
             <p>
                 “괜찮니?”, “필요하니?”, “먹었니?”처럼 짧게 확인하는 질문은 실제 대화에서 매우 자주 씁니다.
                 질문을 만들 때는 <b>문장 앞에 오는 단어</b>가 중요합니다.
             </p>
             <div class="formula-box" style="color:#5b3aa4;">
-                Be동사 + 주어? / Do, Does, Did + 주어 + 동사원형?
+                be동사 + 주어? / Do, Does, Did + 주어 + 동사의 기본 모양?
             </div>
         </div>
         """,
@@ -923,7 +923,7 @@ with tabs[6]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>Be동사 + 주어 ~ ?</b></p>
+            <p><b>be동사 + 주어 ~ ?</b></p>
             <p>am, are, is를 문장 앞으로 보냅니다.</p>
         </div>
 
@@ -958,8 +958,8 @@ with tabs[6]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>Do / Does / Did + 주어 + 동사원형 ~ ?</b></p>
-            <p>일반동사 의문문은 <b>Do, Does, Did</b>를 문장 앞에 씁니다.</p>
+            <p><b>Do / Does / Did + 주어 + 동사 ~ ?</b></p>
+            <p>행동 표현 질문하는 문장은 <b>Do, Does, Did</b>를 문장 앞에 씁니다.</p>
         </div>
 
         <div class="example-box">
@@ -986,9 +986,9 @@ with tabs[6]:
         unsafe_allow_html=True
     )
 
-    st.info("Tip: Does, Did가 앞에 오면 뒤의 동사는 기본 모양을 씁니다. 예: Does he plays? ❌ / Does he play? ✅")
+    st.info("Tip: Does, Did가 앞에 오면 뒤의 동사는 s나 ed를 붙이지 않습니다. 예: Does he plays? ❌ / Does he play? ✅")
 
-# Tab 7: 의문사 의문문
+# Tab 7: 자세한 질문
 # =========================================================
 with tabs[7]:
     st.subheader("🕵️ 자세히 물어보기")
@@ -996,7 +996,7 @@ with tabs[7]:
     st.markdown(
         """
         <div class="grammar-card" style="background:linear-gradient(135deg,#e0f7ff,#ffffff);">
-            <span class="tool-label">오늘의 문장 도구: What / When / Where / Who / Why / How</span>
+            <span class="tool-label">오늘의 문장 도구: 자세히 묻는 질문 단어</span>
             <h3 style="color:#0477a8;">🕵️ 자세히 물어보기</h3>
             <p>
                 단순히 yes/no로 끝나는 질문보다 더 중요한 질문도 있습니다.
@@ -1004,10 +1004,10 @@ with tabs[7]:
                 <b>자세한 정보를 묻는 문장</b>입니다.
             </p>
             <div class="formula-box" style="color:#0477a8;">
-                의문사 + 의문문
+                질문 단어 + 질문
             </div>
             <p style="margin-top:14px;">
-                쉽게 말하면, <b>이미 만든 의문문 앞에 What, When, Where, Who, Why, How를 붙이면 됩니다.</b>
+                쉽게 말하면, <b>이미 만든 질문하는 문장 앞에 What, When, Where, Who, Why, How를 붙이면 됩니다.</b>
             </p>
         </div>
         """,
@@ -1037,10 +1037,10 @@ with tabs[7]:
     st.markdown(
         """
         <div class="mini-card">
-            <p><b>의문사 + 의문문</b></p>
+            <p><b>질문 단어 + 질문</b></p>
             <p>
-                Be동사 의문문이든, 일반동사 의문문이든
-                <b>완성된 의문문 앞에 What, When, Where, Who, Why, How를 붙이면 됩니다.</b>
+                be동사 질문하는 문장이든, 행동 표현 질문하는 문장이든
+                <b>완성된 질문하는 문장 앞에 What, When, Where, Who, Why, How를 붙이면 됩니다.</b>
             </p>
         </div>
         """,
@@ -1154,5 +1154,5 @@ with tabs[7]:
     )
 
     st.info(
-        "Tip: 의문사 의문문은 어렵게 생각하지 말고, 이미 만든 의문문 앞에 What, When, Where, Who, Why, How 같은 말을 붙이면 됩니다."
+        "Tip: 자세한 질문은 어렵게 생각하지 말고, 이미 만든 질문하는 문장 앞에 What, When, Where, Who, Why, How 같은 말을 붙이면 됩니다."
     )
