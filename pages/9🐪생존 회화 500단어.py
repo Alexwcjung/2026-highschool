@@ -6,6 +6,7 @@ import base64
 import uuid
 import re
 import json
+import html
 import streamlit.components.v1 as components
 
 # =========================
@@ -876,6 +877,206 @@ WORD_EMOJIS = {
 
 def get_word_emoji(word):
     return WORD_EMOJIS.get(word, "🌱")
+
+
+# =========================
+# 단어 한 줄 compact 플레이어
+# =========================
+def compact_word_row_audio_player(number, word, meaning, emoji, repeat_count=20, pause_ms=1500, height=44):
+    """
+    한 줄에 번호 / 영어 / 한국어 / 이모지 / 듣기·중지 버튼을 모두 붙여서 보여줍니다.
+    """
+    audio_bytes = make_tts_audio(word)
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+    audio_id = f"audio_{uuid.uuid4().hex}"
+    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
+    status_id = f"status_{uuid.uuid4().hex}"
+    player_id = f"player_{uuid.uuid4().hex}"
+
+    safe_word_js = json.dumps(word)
+    safe_player_id = json.dumps(player_id)
+    safe_word_html = html.escape(str(word))
+    safe_meaning_html = html.escape(str(meaning))
+    safe_emoji_html = html.escape(str(emoji))
+
+    html_code = f"""
+    <div style="
+        font-family: Arial, sans-serif;
+        display:flex;
+        align-items:center;
+        gap:6px;
+        height:38px;
+        padding:3px 6px;
+        border:1px solid #e0f2fe;
+        border-radius:14px;
+        background:white;
+        box-shadow:0 2px 7px rgba(0,0,0,0.035);
+        overflow:hidden;
+    ">
+        <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
+
+        <span style="
+            min-width:26px;
+            background:#e0f2fe;
+            color:#0369a1;
+            border-radius:999px;
+            padding:3px 6px;
+            font-size:12px;
+            font-weight:900;
+            text-align:center;
+            line-height:20px;
+        ">{number}</span>
+
+        <span style="
+            min-width:86px;
+            max-width:132px;
+            font-size:20px;
+            font-weight:900;
+            color:#111827;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        ">{safe_word_html}</span>
+
+        <span style="
+            min-width:70px;
+            max-width:145px;
+            font-size:16px;
+            font-weight:800;
+            color:#374151;
+            white-space:nowrap;
+            overflow:hidden;
+            text-overflow:ellipsis;
+        ">{safe_meaning_html}</span>
+
+        <span style="
+            font-size:20px;
+            min-width:26px;
+            text-align:center;
+            line-height:22px;
+        ">{safe_emoji_html}</span>
+
+        <button id="{play_btn_id}" style="
+            background:linear-gradient(135deg, #fce7f3, #dbeafe);
+            border:1px solid #e9d5ff;
+            border-radius:999px;
+            padding:5px 8px;
+            font-weight:800;
+            font-size:12px;
+            color:#374151;
+            cursor:pointer;
+            white-space:nowrap;
+            line-height:16px;
+        ">🔊 듣기</button>
+
+        <button id="{stop_btn_id}" style="
+            background:#fff7ed;
+            border:1px solid #fed7aa;
+            border-radius:999px;
+            padding:5px 8px;
+            font-weight:800;
+            font-size:12px;
+            color:#9a3412;
+            cursor:pointer;
+            white-space:nowrap;
+            line-height:16px;
+        ">⏹ 중지</button>
+
+        <span id="{status_id}" style="
+            font-size:11px;
+            color:#075985;
+            font-weight:700;
+            white-space:nowrap;
+            min-width:28px;
+        "></span>
+
+        <script>
+        const audio = document.getElementById("{audio_id}");
+        const playBtn = document.getElementById("{play_btn_id}");
+        const stopBtn = document.getElementById("{stop_btn_id}");
+        const status = document.getElementById("{status_id}");
+
+        let count = 0;
+        let timer = null;
+        let isStopped = false;
+
+        const maxCount = {repeat_count};
+        const pauseMs = {pause_ms};
+        const wordText = {safe_word_js};
+        const playerId = {safe_player_id};
+        const channel = new BroadcastChannel("survival_english_audio_channel");
+
+        function stopThisAudio(showMessage = false) {{
+            isStopped = true;
+            if (timer) {{
+                clearTimeout(timer);
+                timer = null;
+            }}
+            audio.pause();
+            audio.currentTime = 0;
+            count = 0;
+            playBtn.disabled = false;
+            playBtn.innerText = "🔊 듣기";
+            status.innerText = showMessage ? "중지" : "";
+        }}
+
+        channel.onmessage = function(event) {{
+            if (!event.data) return;
+            if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                stopThisAudio(false);
+            }}
+        }};
+
+        function playOnce() {{
+            if (isStopped) return;
+            if (count >= maxCount) {{
+                status.innerText = "완료";
+                playBtn.disabled = false;
+                playBtn.innerText = "🔊 듣기";
+                return;
+            }}
+            audio.currentTime = 0;
+            audio.play().then(() => {{
+                count += 1;
+                status.innerText = count + "/" + maxCount;
+            }}).catch((error) => {{
+                status.innerText = "다시";
+                playBtn.disabled = false;
+                playBtn.innerText = "🔊 듣기";
+            }});
+        }}
+
+        audio.addEventListener("ended", function() {{
+            if (isStopped) return;
+            if (count < maxCount) {{
+                timer = setTimeout(playOnce, pauseMs);
+            }} else {{
+                status.innerText = "완료";
+                playBtn.disabled = false;
+                playBtn.innerText = "🔊 듣기";
+            }}
+        }});
+
+        playBtn.addEventListener("click", function() {{
+            channel.postMessage({{ type: "STOP_OTHERS", playerId: playerId }});
+            stopThisAudio(false);
+            isStopped = false;
+            count = 0;
+            playBtn.disabled = true;
+            playBtn.innerText = "재생중";
+            status.innerText = "시작";
+            playOnce();
+        }});
+
+        stopBtn.addEventListener("click", function() {{
+            stopThisAudio(true);
+        }});
+        </script>
+    </div>
+    """
+    components.html(html_code, height=height)
 
 # =========================
 # 오늘의 생존 대화
