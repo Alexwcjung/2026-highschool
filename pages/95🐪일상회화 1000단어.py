@@ -276,9 +276,9 @@ st.markdown(
             • 각 테마는 <b>오늘의 일상 대화</b>로 시작합니다.<br>
             • 대화를 듣고, 아래에서 핵심 단어를 익힙니다.<br>
             • 단어 발음은 <b>20번 반복</b>됩니다.<br>
-            • 맨 앞 <b>전체 카세트 듣기</b> 탭에서 전체 단어를 순서대로 복습할 수 있습니다.<br>
-            • gTTS 오류를 막기 위해 전체 단어를 <b>10개씩 나누어</b> 카세트로 만듭니다.<br>
-            • <b>중지 버튼</b>을 누르면 반복 발음이 바로 멈춥니다.<br>
+            • 맨 앞 <b>전체 카세트 듣기</b> 탭에서 전체 단어를 테이프처럼 이어서 들을 수 있습니다.<br>
+            • 전체 카세트는 별도 mp3 생성 없이 브라우저 음성으로 바로 재생되어 오류 가능성을 줄였습니다.<br>
+            • <b>재생 / 일시정지 / 이전 단어 / 다음 단어 / 중지 / 진행바 이동</b>이 가능합니다.<br>
             • 다른 단어 또는 대화 듣기를 누르면 <b>이전에 재생되던 소리는 자동으로 멈춥니다.</b><br>
             • 단어, 발음 버튼, 뜻이 한 줄에 가깝게 배치되어 빠르게 익힐 수 있습니다.
         </div>
@@ -1437,7 +1437,8 @@ theme_dialogues = {
 
 
 # =========================
-# 맨 앞 탭 전용 전체 카세트 듣기 기능
+# 맨 앞 탭 전용 전체 카세트 듣기
+# 브라우저 음성 엔진 사용: gTTS 긴 텍스트 오류 방지
 # =========================
 def flatten_all_words():
     all_items = []
@@ -1456,68 +1457,81 @@ def flatten_all_words():
     return all_items
 
 
-def split_all_words_for_cassette(all_items, chunk_size=10):
-    chunks = []
-
-    for i in range(0, len(all_items), chunk_size):
-        chunks.append(all_items[i:i + chunk_size])
-
-    return chunks
+def make_simple_example(word):
+    return f"I can say {word}."
 
 
-def make_all_words_cassette_text(chunk):
+def browser_cassette_player(all_items, height=260):
     """
-    gTTS 오류 방지를 위해 전체 단어 중 10개 정도만 짧게 만듭니다.
-    한국어 뜻은 화면에만 보여 주고, 음성은 영어만 재생합니다.
+    gTTS로 mp3를 만들지 않고, 브라우저 speechSynthesis로 전체 단어를 순서대로 읽습니다.
+    따라서 전체 카세트를 한 번에 보여도 gTTS 오류가 나지 않습니다.
     """
-    lines = []
-    lines.append("Daily English 1000.")
-    lines.append("Listen and repeat.")
-    lines.append("")
 
-    for item in chunk:
+    player_id = f"browser_cassette_{uuid.uuid4().hex}"
+    play_btn_id = f"play_{uuid.uuid4().hex}"
+    pause_btn_id = f"pause_{uuid.uuid4().hex}"
+    prev_btn_id = f"prev_{uuid.uuid4().hex}"
+    next_btn_id = f"next_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_{uuid.uuid4().hex}"
+    progress_id = f"progress_{uuid.uuid4().hex}"
+    status_id = f"status_{uuid.uuid4().hex}"
+    word_id = f"word_{uuid.uuid4().hex}"
+    meaning_id = f"meaning_{uuid.uuid4().hex}"
+
+    cassette_items = []
+    for item in all_items:
         word = item["word"]
-        lines.append(f"{word}.")
-        lines.append(f"{word}.")
-        lines.append("Repeat.")
-        lines.append("")
+        cassette_items.append({
+            "number": item["number"],
+            "theme": item["theme"],
+            "word": word,
+            "meaning": item["meaning"],
+            "example": make_simple_example(word),
+            "script": f'{word}. {word}. {make_simple_example(word)} Repeat after me. {word}.'
+        })
 
-    lines.append("Good job.")
-    lines.append("Keep practicing.")
-
-    return "\n".join(lines)
-
-
-def cassette_audio_player(label, audio_bytes, height=145):
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-
-    audio_id = f"cassette_audio_{uuid.uuid4().hex}"
-    play_btn_id = f"cassette_play_{uuid.uuid4().hex}"
-    pause_btn_id = f"cassette_pause_{uuid.uuid4().hex}"
-    rewind_btn_id = f"cassette_rewind_{uuid.uuid4().hex}"
-    forward_btn_id = f"cassette_forward_{uuid.uuid4().hex}"
-    stop_btn_id = f"cassette_stop_{uuid.uuid4().hex}"
-    status_id = f"cassette_status_{uuid.uuid4().hex}"
-    progress_id = f"cassette_progress_{uuid.uuid4().hex}"
-    player_id = f"cassette_player_{uuid.uuid4().hex}"
-
-    safe_label = json.dumps(label)
+    cassette_json = json.dumps(cassette_items, ensure_ascii=False)
     safe_player_id = json.dumps(player_id)
 
     components.html(
         f"""
         <div style="
             font-family: Arial, sans-serif;
-            padding: 14px 16px;
-            border-radius: 20px;
+            padding: 18px 18px;
+            border-radius: 22px;
             background: linear-gradient(135deg, #f0fdf4, #eff6ff, #fff7ed);
             border: 1px solid #bbf7d0;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
         ">
-            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
+            <div style="
+                font-size: 18px;
+                font-weight: 900;
+                color: #0f172a;
+                margin-bottom: 10px;
+            ">
+                📼 Daily English 1000 전체 테이프
+            </div>
+
+            <div id="{word_id}" style="
+                font-size: 32px;
+                font-weight: 900;
+                color: #111827;
+                margin-bottom: 6px;
+            ">
+                Ready
+            </div>
+
+            <div id="{meaning_id}" style="
+                font-size: 16px;
+                font-weight: 800;
+                color: #475569;
+                margin-bottom: 14px;
+            ">
+                재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
+            </div>
 
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button id="{rewind_btn_id}" style="
+                <button id="{prev_btn_id}" style="
                     background:#f8fafc;
                     border:1px solid #cbd5e1;
                     border-radius:999px;
@@ -1526,7 +1540,7 @@ def cassette_audio_player(label, audio_bytes, height=145):
                     font-size:14px;
                     color:#334155;
                     cursor:pointer;
-                ">⏪ 10초 전</button>
+                ">⏮ 이전 단어</button>
 
                 <button id="{play_btn_id}" style="
                     background: linear-gradient(135deg, #dcfce7, #dbeafe);
@@ -1538,9 +1552,7 @@ def cassette_audio_player(label, audio_bytes, height=145):
                     color: #1f2937;
                     cursor: pointer;
                     box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                ">
-                    {label}
-                </button>
+                ">▶️ 재생</button>
 
                 <button id="{pause_btn_id}" style="
                     background:#ecfeff;
@@ -1553,7 +1565,7 @@ def cassette_audio_player(label, audio_bytes, height=145):
                     cursor:pointer;
                 ">⏸ 일시정지</button>
 
-                <button id="{forward_btn_id}" style="
+                <button id="{next_btn_id}" style="
                     background:#f8fafc;
                     border:1px solid #cbd5e1;
                     border-radius:999px;
@@ -1562,7 +1574,7 @@ def cassette_audio_player(label, audio_bytes, height=145):
                     font-size:14px;
                     color:#334155;
                     cursor:pointer;
-                ">⏩ 10초 후</button>
+                ">⏭ 다음 단어</button>
 
                 <button id="{stop_btn_id}" style="
                     background: #fff7ed;
@@ -1574,9 +1586,7 @@ def cassette_audio_player(label, audio_bytes, height=145):
                     color: #9a3412;
                     cursor: pointer;
                     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-                ">
-                    ⏹ 중지
-                </button>
+                ">⏹ 중지</button>
 
                 <span id="{status_id}" style="
                     font-size: 13px;
@@ -1585,9 +1595,9 @@ def cassette_audio_player(label, audio_bytes, height=145):
                 "></span>
             </div>
 
-            <input id="{progress_id}" type="range" min="0" max="100" value="0" step="0.1" style="
+            <input id="{progress_id}" type="range" min="0" max="{max(len(cassette_items)-1, 0)}" value="0" step="1" style="
                 width:100%;
-                margin-top:14px;
+                margin-top:16px;
                 cursor:pointer;
             ">
 
@@ -1596,51 +1606,99 @@ def cassette_audio_player(label, audio_bytes, height=145):
                 font-size: 12px;
                 color: #64748b;
                 font-weight: 700;
+                line-height: 1.6;
             ">
-                ※ 진행 바를 움직여 원하는 부분으로 이동할 수 있습니다. 아래 단어 듣기나 대화 듣기를 누르면 이 카세트는 자동으로 중지됩니다.
+                ※ 진행 바를 움직여 원하는 단어로 이동할 수 있습니다.<br>
+                ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 테이프는 자동으로 중지됩니다.
             </div>
 
             <script>
-            const audio = document.getElementById("{audio_id}");
+            const cassetteItems = {cassette_json};
+
             const playBtn = document.getElementById("{play_btn_id}");
             const pauseBtn = document.getElementById("{pause_btn_id}");
-            const rewindBtn = document.getElementById("{rewind_btn_id}");
-            const forwardBtn = document.getElementById("{forward_btn_id}");
+            const prevBtn = document.getElementById("{prev_btn_id}");
+            const nextBtn = document.getElementById("{next_btn_id}");
             const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
             const progress = document.getElementById("{progress_id}");
+            const status = document.getElementById("{status_id}");
+            const wordBox = document.getElementById("{word_id}");
+            const meaningBox = document.getElementById("{meaning_id}");
 
-            const labelText = {safe_label};
             const playerId = {safe_player_id};
             const channel = new BroadcastChannel("daily_english_audio_channel");
 
-            function formatTime(seconds) {{
-                if (isNaN(seconds)) return "0:00";
-                const m = Math.floor(seconds / 60);
-                const s = Math.floor(seconds % 60).toString().padStart(2, "0");
-                return m + ":" + s;
+            let index = 0;
+            let isPlaying = false;
+            let isPaused = false;
+
+            function updateDisplay() {{
+                const item = cassetteItems[index];
+                if (!item) return;
+
+                progress.value = index;
+                wordBox.innerText = item.number + ". " + item.word;
+                meaningBox.innerText = item.meaning + "  |  " + item.theme;
+                status.innerText = (index + 1) + " / " + cassetteItems.length;
             }}
 
-            function updateStatus() {{
-                status.innerText = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
-            }}
-
-            function stopThisAudio(showMessage = false) {{
-                audio.pause();
-                audio.currentTime = 0;
-                progress.value = 0;
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-                status.innerText = showMessage ? "중지됨" : "";
+            function stopThisTape(showMessage = false) {{
+                window.speechSynthesis.cancel();
+                isPlaying = false;
+                isPaused = false;
+                playBtn.innerText = "▶️ 재생";
+                if (showMessage) {{
+                    status.innerText = "중지됨";
+                }}
             }}
 
             channel.onmessage = function(event) {{
                 if (!event.data) return;
 
                 if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
+                    stopThisTape(false);
                 }}
             }};
+
+            function speakCurrent() {{
+                if (!isPlaying) return;
+
+                const item = cassetteItems[index];
+                if (!item) {{
+                    stopThisTape(false);
+                    status.innerText = "완료";
+                    return;
+                }}
+
+                updateDisplay();
+
+                const utterance = new SpeechSynthesisUtterance(item.script);
+                utterance.lang = "en-US";
+                utterance.rate = 0.82;
+                utterance.pitch = 1.0;
+
+                utterance.onend = function() {{
+                    if (!isPlaying || isPaused) return;
+
+                    index += 1;
+
+                    if (index >= cassetteItems.length) {{
+                        stopThisTape(false);
+                        status.innerText = "전체 재생 완료";
+                        return;
+                    }}
+
+                    setTimeout(speakCurrent, 650);
+                }};
+
+                utterance.onerror = function() {{
+                    status.innerText = "음성 오류. 다시 눌러 주세요.";
+                    isPlaying = false;
+                    playBtn.innerText = "▶️ 재생";
+                }};
+
+                window.speechSynthesis.speak(utterance);
+            }}
 
             playBtn.addEventListener("click", function() {{
                 channel.postMessage({{
@@ -1648,61 +1706,68 @@ def cassette_audio_player(label, audio_bytes, height=145):
                     playerId: playerId
                 }});
 
-                playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
+                if (isPaused) {{
+                    window.speechSynthesis.resume();
+                    isPaused = false;
+                    isPlaying = true;
+                    playBtn.innerText = "재생 중...";
+                    status.innerText = (index + 1) + " / " + cassetteItems.length;
+                    return;
+                }}
 
-                audio.play().then(() => {{
-                    status.innerText = "카세트 재생 중";
-                }}).catch((error) => {{
-                    status.innerText = "다시 클릭";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
+                window.speechSynthesis.cancel();
+                isPlaying = true;
+                isPaused = false;
+                playBtn.innerText = "재생 중...";
+                updateDisplay();
+                speakCurrent();
             }});
 
             pauseBtn.addEventListener("click", function() {{
-                audio.pause();
-                playBtn.disabled = false;
-                playBtn.innerText = "▶️ 이어 듣기";
-                status.innerText = "일시정지 " + formatTime(audio.currentTime);
-            }});
-
-            rewindBtn.addEventListener("click", function() {{
-                audio.currentTime = Math.max(0, audio.currentTime - 10);
-                updateStatus();
-            }});
-
-            forwardBtn.addEventListener("click", function() {{
-                if (!isNaN(audio.duration)) {{
-                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-                    updateStatus();
+                if (window.speechSynthesis.speaking) {{
+                    window.speechSynthesis.pause();
+                    isPaused = true;
+                    isPlaying = true;
+                    playBtn.innerText = "▶️ 이어 듣기";
+                    status.innerText = "일시정지: " + (index + 1) + " / " + cassetteItems.length;
                 }}
             }});
 
             stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
+                stopThisTape(true);
             }});
 
-            audio.addEventListener("timeupdate", function() {{
-                if (!isNaN(audio.duration) && audio.duration > 0) {{
-                    progress.value = (audio.currentTime / audio.duration) * 100;
-                    updateStatus();
+            prevBtn.addEventListener("click", function() {{
+                index = Math.max(0, index - 1);
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying) {{
+                    setTimeout(speakCurrent, 200);
+                }}
+            }});
+
+            nextBtn.addEventListener("click", function() {{
+                index = Math.min(cassetteItems.length - 1, index + 1);
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying) {{
+                    setTimeout(speakCurrent, 200);
                 }}
             }});
 
             progress.addEventListener("input", function() {{
-                if (!isNaN(audio.duration) && audio.duration > 0) {{
-                    audio.currentTime = (progress.value / 100) * audio.duration;
-                    updateStatus();
+                index = parseInt(progress.value);
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying) {{
+                    setTimeout(speakCurrent, 200);
                 }}
             }});
 
-            audio.addEventListener("ended", function() {{
-                status.innerText = "완료";
-                progress.value = 100;
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-            }});
+            updateDisplay();
             </script>
         </div>
         """,
@@ -1712,16 +1777,16 @@ def cassette_audio_player(label, audio_bytes, height=145):
 
 def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
-    st.write("전체 단어를 처음부터 끝까지 순서대로 카세트처럼 복습합니다.")
+    st.write("전체 단어를 처음부터 끝까지 테이프처럼 이어서 들을 수 있습니다.")
 
     st.markdown(
         """
         <div class="cassette-box">
-            <div class="cassette-title">📼 전체 단어 카세트</div>
+            <div class="cassette-title">📼 전체 단어 테이프</div>
             <div class="cassette-text">
-                전체 1000개 단어를 순서대로 복습합니다.<br>
-                gTTS 오류를 막기 위해 한 번에 10개 단어씩만 카세트로 만듭니다.<br>
-                테마를 따로 고르지 않고, 전체 단어 순서대로 1~10번, 11~20번, 21~30번처럼 이어집니다.
+                구간 선택 없이 전체 단어가 처음부터 끝까지 순서대로 이어집니다.<br>
+                단어를 두 번 듣고, 짧은 문장 하나를 들은 뒤 다음 단어로 넘어갑니다.<br>
+                mp3를 생성하지 않기 때문에 gTTS 긴 텍스트 오류가 나지 않습니다.
             </div>
         </div>
         """,
@@ -1729,64 +1794,16 @@ def show_all_cassette_tab():
     )
 
     all_items = flatten_all_words()
-    chunks = split_all_words_for_cassette(all_items, chunk_size=10)
 
-    chunk_labels = []
-    for idx, chunk in enumerate(chunks, start=1):
-        start_num = chunk[0]["number"]
-        end_num = chunk[-1]["number"]
-        first_word = chunk[0]["word"]
-        last_word = chunk[-1]["word"]
-        chunk_labels.append(f"Part {idx}: {start_num}~{end_num}번 ({first_word} ~ {last_word})")
+    browser_cassette_player(all_items, height=270)
 
-    selected_chunk_label = st.selectbox(
-        "들을 구간을 선택하세요.",
-        chunk_labels,
-        key="all_cassette_chunk_select"
-    )
-
-    selected_chunk_index = chunk_labels.index(selected_chunk_label)
-    selected_chunk = chunks[selected_chunk_index]
-
-    st.markdown(f"### 🎧 {selected_chunk_label}")
-
-    with st.expander("📜 이 구간 단어 보기"):
-        for item in selected_chunk:
+    with st.expander("📜 전체 카세트 단어 목록 보기"):
+        for item in all_items:
             st.markdown(
                 f"**{item['number']}. {item['word']}** : {item['meaning']} "
                 f"<span style='color:#94a3b8;'>({item['theme']})</span>",
                 unsafe_allow_html=True
             )
-
-    button_key = f"make_all_cassette_part_{selected_chunk_index}"
-
-    if st.button("🎧 이 구간 카세트 만들기", key=button_key):
-        st.session_state["all_cassette_ready"] = True
-        st.session_state["all_cassette_chunk_index"] = selected_chunk_index
-
-    if (
-        st.session_state.get("all_cassette_ready", False)
-        and st.session_state.get("all_cassette_chunk_index") == selected_chunk_index
-    ):
-        cassette_text = make_all_words_cassette_text(selected_chunk)
-        cassette_audio = make_tts_audio(cassette_text, lang="en", tld="com")
-
-        cassette_audio_player(
-            "▶️ 전체 카세트 재생",
-            cassette_audio,
-            height=145
-        )
-
-        start_num = selected_chunk[0]["number"]
-        end_num = selected_chunk[-1]["number"]
-
-        st.download_button(
-            label="⬇️ mp3 다운로드",
-            data=cassette_audio,
-            file_name=f"daily_english_1000_words_{start_num}_{end_num}_cassette.mp3",
-            mime="audio/mp3",
-            key=f"all_cassette_download_{selected_chunk_index}"
-        )
 
 # =========================
 # 전체 뜻 목록 만들기
