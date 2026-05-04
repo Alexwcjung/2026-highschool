@@ -4,6 +4,7 @@ import io
 import random
 import base64
 import uuid
+import streamlit.components.v1 as components
 
 # =========================
 # 기본 설정
@@ -210,7 +211,7 @@ st.markdown(
         <div class="hero-text">
             • 단어를 <b>테마별</b>로 묶어 기억합니다.<br>
             • 먼저 <b>단어 익히기</b>에서 뜻과 발음을 확인합니다.<br>
-            • 발음 듣기 버튼을 누르면 단어가 <b>20번 반복</b>됩니다.<br>
+            • 발음 버튼을 누르면 단어가 <b>20번 반복</b>됩니다.<br>
             • 각 발음 사이에는 <b>1.5초 쉬는 시간</b>이 들어갑니다.<br>
             • 다음으로 <b>퀴즈 풀기</b>에서 영어 단어를 보고 알맞은 뜻을 고릅니다.<br>
             • 1차 제출 후 틀린 단어만 다시 풀고, 2차 제출 후 정답을 확인합니다.
@@ -237,57 +238,87 @@ def make_tts_audio(text, lang="en", tld="com"):
 
 def audio_button(label, text, key):
     """
-    버튼을 누르면 단어를 20번 반복 재생합니다.
-    각 발음 사이에는 브라우저에서 1.5초 간격을 줍니다.
-    pydub / ffmpeg 없이 작동합니다.
+    HTML 버튼을 누르면 단어를 20번 반복 재생합니다.
+    각 발음 사이에는 1.5초 간격을 줍니다.
+    Streamlit의 st.button 자동재생 문제를 피하기 위해 components.html 내부 버튼을 사용합니다.
     """
-    if st.button(label, key=key):
-        audio_bytes = make_tts_audio(text)
-        audio_base64 = base64.b64encode(audio_bytes).decode()
-        audio_id = f"audio_{uuid.uuid4().hex}"
+    audio_bytes = make_tts_audio(text)
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+    audio_id = f"audio_{uuid.uuid4().hex}"
+    btn_id = f"btn_{uuid.uuid4().hex}"
+    status_id = f"status_{uuid.uuid4().hex}"
 
-        st.markdown(
-            f"""
+    components.html(
+        f"""
+        <div style="font-family: Arial, sans-serif;">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
-            <div style="
-                background:#f0f9ff;
-                border:1px solid #bae6fd;
-                border-radius:16px;
-                padding:12px 14px;
-                margin-top:8px;
-                color:#075985;
-                font-weight:800;
-                font-size:14px;
+            <button id="{btn_id}" style="
+                background: linear-gradient(135deg, #fce7f3, #dbeafe);
+                border: 1px solid #e9d5ff;
+                border-radius: 999px;
+                padding: 9px 15px;
+                font-weight: 800;
+                font-size: 14px;
+                color: #374151;
+                cursor: pointer;
+                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
             ">
-                🔊 "{text}" 발음을 20번 반복 재생합니다. 각 발음 사이에 1.5초 쉽니다.
-            </div>
+                {label}
+            </button>
+
+            <div id="{status_id}" style="
+                margin-top: 8px;
+                font-size: 13px;
+                color: #075985;
+                font-weight: 700;
+            "></div>
 
             <script>
             const audio = document.getElementById("{audio_id}");
+            const btn = document.getElementById("{btn_id}");
+            const status = document.getElementById("{status_id}");
+
             let count = 0;
             const maxCount = 20;
             const pauseMs = 1500;
 
-            function playRepeatedly() {{
+            function playOnce() {{
                 if (count >= maxCount) {{
+                    status.innerText = "✅ 20번 반복 재생 완료";
+                    btn.disabled = false;
+                    btn.innerText = "{label}";
                     return;
                 }}
 
                 audio.currentTime = 0;
-                audio.play();
-                count += 1;
+
+                audio.play().then(() => {{
+                    count += 1;
+                    status.innerText = "🔊 {text} 재생 중: " + count + " / " + maxCount;
+                }}).catch((error) => {{
+                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
+                    btn.disabled = false;
+                    btn.innerText = "{label}";
+                }});
             }}
 
             audio.addEventListener("ended", function() {{
-                setTimeout(playRepeatedly, pauseMs);
+                setTimeout(playOnce, pauseMs);
             }});
 
-            playRepeatedly();
+            btn.addEventListener("click", function() {{
+                count = 0;
+                btn.disabled = true;
+                btn.innerText = "재생 중...";
+                status.innerText = "🔊 {text} 반복 재생을 시작합니다.";
+                playOnce();
+            }});
             </script>
-            """,
-            unsafe_allow_html=True
-        )
+        </div>
+        """,
+        height=80
+    )
 
 
 # =========================
