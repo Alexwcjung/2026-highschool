@@ -2282,10 +2282,39 @@ def show_all_cassette_tab():
     browser_cassette_player(all_items, height=270)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
+        st.write("카세트에서 실제로 들려주는 단어, 일상회화 문장, 한국어 뜻을 함께 확인할 수 있습니다.")
+
         for item in all_items:
+            example_sentence = make_daily_example(
+                item["word"],
+                item["meaning"],
+                item["theme"]
+            )
+
             st.markdown(
-                f"**{item['number']}. {item['word']}** : {item['meaning']} "
-                f"<span style='color:#94a3b8;'>({item['theme']})</span>",
+                f"""
+                <div style="
+                    background:white;
+                    border:1px solid #dcfce7;
+                    border-radius:16px;
+                    padding:12px 14px;
+                    margin-bottom:8px;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.035);
+                ">
+                    <div style="font-size:18px; font-weight:900; color:#111827;">
+                        {item['number']}. {item['word']}
+                    </div>
+                    <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
+                        뜻: {item['meaning']}
+                    </div>
+                    <div style="font-size:15px; font-weight:800; color:#0369a1; margin-top:4px;">
+                        문장: {example_sentence}
+                    </div>
+                    <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
+                        {item['theme']}
+                    </div>
+                </div>
+                """,
                 unsafe_allow_html=True
             )
 
