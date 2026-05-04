@@ -2396,7 +2396,7 @@ def browser_cassette_player(all_items, height=430):
                 color: #0f172a;
                 margin-bottom: 10px;
             ">
-                📼 Daily English 1000 전체 테이프
+                📼 Daily English 400 전체 테이프
             </div>
 
             <div id="{word_id}" style="
