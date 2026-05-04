@@ -61,11 +61,14 @@ st.markdown(
             font-size: 13px !important;
         }
         #speaking-app #hintBox {
-            font-size: 15px !important;
-            padding: 8px 10px !important;
-            line-height: 1.3 !important;
+            font-size: 13px !important;
+            padding: 6px 8px !important;
+            line-height: 1.2 !important;
             max-width: 100% !important;
             overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+            white-space: normal !important;
+            box-sizing: border-box !important;
         }
     }
 
@@ -158,11 +161,11 @@ def speaking_practice_component(items):
             </div>
 
             <div style="
-                font-size: 28px;
+                font-size: 26px;
                 font-weight: 900;
                 color: #111827;
-                line-height: 1.4;
-                margin-bottom: 14px;
+                line-height: 1.35;
+                margin-bottom: 10px;
             " id="koPrompt">
                 한국어 상황
             </div>
@@ -268,18 +271,22 @@ def speaking_practice_component(items):
 
             <div id="hintBox" style="
                 display:none;
-                background:linear-gradient(135deg,#fef3c7,#fffbeb);
+                background:linear-gradient(135deg,#fff7ed,#fffbeb);
                 border:1.5px solid #fbbf24;
                 color:#92400e;
-                border-radius:16px;
-                padding:10px 12px;
-                margin-bottom:10px;
-                font-size:18px;
+                border-radius:14px;
+                padding:7px 10px;
+                margin-top:6px;
+                margin-bottom:6px;
+                font-size:16px;
                 font-weight:900;
-                line-height:1.35;
+                line-height:1.25;
                 word-break:break-word;
+                overflow-wrap:anywhere;
                 white-space:normal;
-                box-shadow: 0 4px 12px rgba(251,191,36,0.12);
+                max-width:100%;
+                box-sizing:border-box;
+                box-shadow: 0 3px 8px rgba(251,191,36,0.10);
             "></div>
 
             <div id="answerBox" style="display:none;"></div>
@@ -781,7 +788,7 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=760)
+    components.html(html, height=840)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
