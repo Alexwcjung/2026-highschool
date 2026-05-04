@@ -610,13 +610,17 @@ AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
 # =========================
 # 카세트용 HTML 오디오 플레이어
 # =========================
-def cassette_audio_player(label, audio_bytes, height=92):
+def cassette_audio_player(label, audio_bytes, height=125):
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
     audio_id = f"cassette_audio_{uuid.uuid4().hex}"
     play_btn_id = f"cassette_play_{uuid.uuid4().hex}"
+    pause_btn_id = f"cassette_pause_{uuid.uuid4().hex}"
+    rewind_btn_id = f"cassette_rewind_{uuid.uuid4().hex}"
+    forward_btn_id = f"cassette_forward_{uuid.uuid4().hex}"
     stop_btn_id = f"cassette_stop_{uuid.uuid4().hex}"
     status_id = f"cassette_status_{uuid.uuid4().hex}"
+    progress_id = f"cassette_progress_{uuid.uuid4().hex}"
     player_id = f"cassette_player_{uuid.uuid4().hex}"
 
     safe_label = json.dumps(label)
@@ -635,14 +639,25 @@ def cassette_audio_player(label, audio_bytes, height=92):
         ">
             <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
 
-            <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button id="{rewind_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏪ 10초 전</button>
+
                 <button id="{play_btn_id}" style="
                     background: linear-gradient(135deg, #dbeafe, #fce7f3);
                     border: 1px solid #bfdbfe;
                     border-radius: 999px;
-                    padding: 10px 18px;
+                    padding: 9px 16px;
                     font-weight: 900;
-                    font-size: 15px;
+                    font-size: 14px;
                     color: #1f2937;
                     cursor: pointer;
                     box-shadow: 0 3px 8px rgba(0,0,0,0.08);
@@ -650,13 +665,35 @@ def cassette_audio_player(label, audio_bytes, height=92):
                     {label}
                 </button>
 
+                <button id="{pause_btn_id}" style="
+                    background:#ecfeff;
+                    border:1px solid #67e8f9;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#155e75;
+                    cursor:pointer;
+                ">⏸ 일시정지</button>
+
+                <button id="{forward_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 14px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏩ 10초 후</button>
+
                 <button id="{stop_btn_id}" style="
                     background: #fff7ed;
                     border: 1px solid #fed7aa;
                     border-radius: 999px;
-                    padding: 10px 18px;
+                    padding: 9px 14px;
                     font-weight: 900;
-                    font-size: 15px;
+                    font-size: 14px;
                     color: #9a3412;
                     cursor: pointer;
                     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
@@ -671,29 +708,51 @@ def cassette_audio_player(label, audio_bytes, height=92):
                 "></span>
             </div>
 
+            <input id="{progress_id}" type="range" min="0" max="100" value="0" step="0.1" style="
+                width:100%;
+                margin-top:14px;
+                cursor:pointer;
+            ">
+
             <div style="
-                margin-top: 8px;
+                margin-top: 6px;
                 font-size: 12px;
                 color: #64748b;
                 font-weight: 700;
             ">
-                ※ 아래 단어 듣기나 대화 듣기를 누르면 이 카세트는 자동으로 중지됩니다.
+                ※ 진행 바를 움직여 원하는 부분으로 이동할 수 있습니다. 아래 단어 듣기나 대화 듣기를 누르면 이 카세트는 자동으로 중지됩니다.
             </div>
 
             <script>
             const audio = document.getElementById("{audio_id}");
             const playBtn = document.getElementById("{play_btn_id}");
+            const pauseBtn = document.getElementById("{pause_btn_id}");
+            const rewindBtn = document.getElementById("{rewind_btn_id}");
+            const forwardBtn = document.getElementById("{forward_btn_id}");
             const stopBtn = document.getElementById("{stop_btn_id}");
             const status = document.getElementById("{status_id}");
+            const progress = document.getElementById("{progress_id}");
 
             const labelText = {safe_label};
             const playerId = {safe_player_id};
             const channelName = {safe_channel};
             const channel = new BroadcastChannel(channelName);
 
+            function formatTime(seconds) {{
+                if (isNaN(seconds)) return "0:00";
+                const m = Math.floor(seconds / 60);
+                const s = Math.floor(seconds % 60).toString().padStart(2, "0");
+                return m + ":" + s;
+            }}
+
+            function updateStatus() {{
+                status.innerText = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
+            }}
+
             function stopThisAudio(showMessage = false) {{
                 audio.pause();
                 audio.currentTime = 0;
+                progress.value = 0;
                 playBtn.disabled = false;
                 playBtn.innerText = labelText;
                 status.innerText = showMessage ? "중지됨" : "";
@@ -713,26 +772,60 @@ def cassette_audio_player(label, audio_bytes, height=92):
                     playerId: playerId
                 }});
 
-                audio.currentTime = 0;
                 playBtn.disabled = true;
                 playBtn.innerText = "재생 중...";
-                status.innerText = "카세트 재생 중";
 
-                audio.play().catch((error) => {{
+                audio.play().then(() => {{
+                    status.innerText = "카세트 재생 중";
+                }}).catch((error) => {{
                     status.innerText = "다시 클릭";
                     playBtn.disabled = false;
                     playBtn.innerText = labelText;
                 }});
             }});
 
-            audio.addEventListener("ended", function() {{
-                status.innerText = "완료";
+            pauseBtn.addEventListener("click", function() {{
+                audio.pause();
                 playBtn.disabled = false;
-                playBtn.innerText = labelText;
+                playBtn.innerText = "▶️ 이어 듣기";
+                status.innerText = "일시정지 " + formatTime(audio.currentTime);
+            }});
+
+            rewindBtn.addEventListener("click", function() {{
+                audio.currentTime = Math.max(0, audio.currentTime - 10);
+                updateStatus();
+            }});
+
+            forwardBtn.addEventListener("click", function() {{
+                if (!isNaN(audio.duration)) {{
+                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
+                    updateStatus();
+                }}
             }});
 
             stopBtn.addEventListener("click", function() {{
                 stopThisAudio(true);
+            }});
+
+            audio.addEventListener("timeupdate", function() {{
+                if (!isNaN(audio.duration) && audio.duration > 0) {{
+                    progress.value = (audio.currentTime / audio.duration) * 100;
+                    updateStatus();
+                }}
+            }});
+
+            progress.addEventListener("input", function() {{
+                if (!isNaN(audio.duration) && audio.duration > 0) {{
+                    audio.currentTime = (progress.value / 100) * audio.duration;
+                    updateStatus();
+                }}
+            }});
+
+            audio.addEventListener("ended", function() {{
+                status.innerText = "완료";
+                progress.value = 100;
+                playBtn.disabled = false;
+                playBtn.innerText = labelText;
             }});
             </script>
         </div>
@@ -1244,7 +1337,7 @@ def show_all_cassette_tab():
         unsafe_allow_html=True
     )
 
-    cassette_audio_player("▶️ 전체 카세트 재생", all_cassette_audio, height=98)
+    cassette_audio_player("▶️ 전체 카세트 재생", all_cassette_audio, height=135)
 
     st.download_button(
         label="⬇️ 전체 단어 카세트 mp3 다운로드",
