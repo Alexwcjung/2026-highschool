@@ -473,206 +473,189 @@ def audio_button(label, text, height=58):
 
 
 # =========================
-# Survival English 500 단어 데이터
+# 단어 데이터
+# 형식: 테마|영어|한국어|이모지
 # =========================
-word_themes = {
-    "🧍 나와 사람": [
-        {"word": "I", "meaning": "나", "emoji": "🙋"},
-        {"word": "you", "meaning": "너, 당신", "emoji": "👉"},
-        {"word": "he", "meaning": "그", "emoji": "👦"},
-        {"word": "she", "meaning": "그녀", "emoji": "👧"},
-        {"word": "we", "meaning": "우리", "emoji": "👥"},
-        {"word": "they", "meaning": "그들", "emoji": "👥"},
-        {"word": "friend", "meaning": "친구", "emoji": "🤝"},
-        {"word": "teacher", "meaning": "선생님", "emoji": "👩‍🏫"},
-        {"word": "student", "meaning": "학생", "emoji": "🧑‍🎓"},
-        {"word": "classmate", "meaning": "반 친구", "emoji": "👫"},
-        {"word": "family", "meaning": "가족", "emoji": "👨‍👩‍👧"},
-        {"word": "father", "meaning": "아버지", "emoji": "👨"},
-        {"word": "mother", "meaning": "어머니", "emoji": "👩"},
-        {"word": "brother", "meaning": "형제, 남자 형제", "emoji": "👦"},
-        {"word": "sister", "meaning": "자매, 여자 형제", "emoji": "👧"},
-        {"word": "name", "meaning": "이름", "emoji": "🏷️"},
-        {"word": "person", "meaning": "사람", "emoji": "🧍"},
-        {"word": "man", "meaning": "남자", "emoji": "👨"},
-        {"word": "woman", "meaning": "여자", "emoji": "👩"},
-        {"word": "child", "meaning": "아이", "emoji": "🧒"},
-    ],
-
-    "🏃 기본 동작": [
-        {"word": "go", "meaning": "가다", "emoji": "➡️"},
-        {"word": "come", "meaning": "오다", "emoji": "⬅️"},
-        {"word": "walk", "meaning": "걷다", "emoji": "🚶"},
-        {"word": "run", "meaning": "달리다", "emoji": "🏃"},
-        {"word": "sit", "meaning": "앉다", "emoji": "🪑"},
-        {"word": "stand", "meaning": "서다", "emoji": "🧍"},
-        {"word": "stop", "meaning": "멈추다", "emoji": "🛑"},
-        {"word": "start", "meaning": "시작하다", "emoji": "▶️"},
-        {"word": "open", "meaning": "열다", "emoji": "📖"},
-        {"word": "close", "meaning": "닫다", "emoji": "📕"},
-        {"word": "eat", "meaning": "먹다", "emoji": "🍽️"},
-        {"word": "drink", "meaning": "마시다", "emoji": "🥤"},
-        {"word": "sleep", "meaning": "자다", "emoji": "😴"},
-        {"word": "study", "meaning": "공부하다", "emoji": "📚"},
-        {"word": "read", "meaning": "읽다", "emoji": "📖"},
-        {"word": "write", "meaning": "쓰다", "emoji": "✏️"},
-        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
-        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
-        {"word": "help", "meaning": "돕다", "emoji": "🆘"},
-        {"word": "wait", "meaning": "기다리다", "emoji": "⏳"},
-    ],
-
-    "💖 감정·몸 상태": [
-        {"word": "happy", "meaning": "행복한", "emoji": "😊"},
-        {"word": "sad", "meaning": "슬픈", "emoji": "😢"},
-        {"word": "angry", "meaning": "화난", "emoji": "😡"},
-        {"word": "tired", "meaning": "피곤한", "emoji": "🥱"},
-        {"word": "hungry", "meaning": "배고픈", "emoji": "😋"},
-        {"word": "thirsty", "meaning": "목마른", "emoji": "💧"},
-        {"word": "sick", "meaning": "아픈", "emoji": "🤒"},
-        {"word": "okay", "meaning": "괜찮은", "emoji": "👌"},
-        {"word": "fine", "meaning": "괜찮은", "emoji": "🙂"},
-        {"word": "cold", "meaning": "추운, 차가운", "emoji": "🥶"},
-        {"word": "hot", "meaning": "더운, 뜨거운", "emoji": "🥵"},
-        {"word": "pain", "meaning": "통증", "emoji": "🤕"},
-        {"word": "headache", "meaning": "두통", "emoji": "🤯"},
-        {"word": "stomachache", "meaning": "복통", "emoji": "🤢"},
-        {"word": "fever", "meaning": "열", "emoji": "🌡️"},
-        {"word": "hurt", "meaning": "아프다, 다치다", "emoji": "🩹"},
-        {"word": "good", "meaning": "좋은", "emoji": "👍"},
-        {"word": "bad", "meaning": "나쁜", "emoji": "👎"},
-        {"word": "worried", "meaning": "걱정하는", "emoji": "😟"},
-        {"word": "scared", "meaning": "무서워하는", "emoji": "😨"},
-    ],
-
-    "🍎 음식·물": [
-        {"word": "food", "meaning": "음식", "emoji": "🍽️"},
-        {"word": "water", "meaning": "물", "emoji": "💧"},
-        {"word": "rice", "meaning": "밥, 쌀", "emoji": "🍚"},
-        {"word": "bread", "meaning": "빵", "emoji": "🍞"},
-        {"word": "milk", "meaning": "우유", "emoji": "🥛"},
-        {"word": "juice", "meaning": "주스", "emoji": "🧃"},
-        {"word": "coffee", "meaning": "커피", "emoji": "☕"},
-        {"word": "tea", "meaning": "차", "emoji": "🍵"},
-        {"word": "apple", "meaning": "사과", "emoji": "🍎"},
-        {"word": "banana", "meaning": "바나나", "emoji": "🍌"},
-        {"word": "egg", "meaning": "달걀", "emoji": "🥚"},
-        {"word": "meat", "meaning": "고기", "emoji": "🥩"},
-        {"word": "chicken", "meaning": "닭고기, 닭", "emoji": "🍗"},
-        {"word": "fish", "meaning": "생선, 물고기", "emoji": "🐟"},
-        {"word": "breakfast", "meaning": "아침 식사", "emoji": "🍳"},
-        {"word": "lunch", "meaning": "점심 식사", "emoji": "🍱"},
-        {"word": "dinner", "meaning": "저녁 식사", "emoji": "🍽️"},
-        {"word": "snack", "meaning": "간식", "emoji": "🍪"},
-        {"word": "medicine", "meaning": "약", "emoji": "💊"},
-        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
-    ],
-
-    "🚗 장소·이동": [
-        {"word": "home", "meaning": "집", "emoji": "🏠"},
-        {"word": "school", "meaning": "학교", "emoji": "🏫"},
-        {"word": "classroom", "meaning": "교실", "emoji": "🧑‍🏫"},
-        {"word": "bathroom", "meaning": "화장실", "emoji": "🚻"},
-        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
-        {"word": "store", "meaning": "가게", "emoji": "🏪"},
-        {"word": "station", "meaning": "역", "emoji": "🚉"},
-        {"word": "bus", "meaning": "버스", "emoji": "🚌"},
-        {"word": "car", "meaning": "자동차", "emoji": "🚗"},
-        {"word": "taxi", "meaning": "택시", "emoji": "🚕"},
-        {"word": "train", "meaning": "기차", "emoji": "🚆"},
-        {"word": "bike", "meaning": "자전거", "emoji": "🚲"},
-        {"word": "road", "meaning": "도로", "emoji": "🛣️"},
-        {"word": "street", "meaning": "거리", "emoji": "🏙️"},
-        {"word": "here", "meaning": "여기", "emoji": "📍"},
-        {"word": "there", "meaning": "거기", "emoji": "📌"},
-        {"word": "near", "meaning": "가까운", "emoji": "📍"},
-        {"word": "far", "meaning": "먼", "emoji": "🧭"},
-        {"word": "left", "meaning": "왼쪽", "emoji": "⬅️"},
-        {"word": "right", "meaning": "오른쪽, 맞는", "emoji": "➡️"},
-    ],
-
-    "⏰ 시간·숫자": [
-        {"word": "time", "meaning": "시간", "emoji": "⏰"},
-        {"word": "now", "meaning": "지금", "emoji": "🕒"},
-        {"word": "today", "meaning": "오늘", "emoji": "📅"},
-        {"word": "tomorrow", "meaning": "내일", "emoji": "➡️"},
-        {"word": "yesterday", "meaning": "어제", "emoji": "⬅️"},
-        {"word": "morning", "meaning": "아침", "emoji": "🌅"},
-        {"word": "afternoon", "meaning": "오후", "emoji": "☀️"},
-        {"word": "evening", "meaning": "저녁", "emoji": "🌆"},
-        {"word": "night", "meaning": "밤", "emoji": "🌙"},
-        {"word": "early", "meaning": "이른", "emoji": "🐓"},
-        {"word": "late", "meaning": "늦은", "emoji": "🌃"},
-        {"word": "one", "meaning": "하나", "emoji": "1️⃣"},
-        {"word": "two", "meaning": "둘", "emoji": "2️⃣"},
-        {"word": "three", "meaning": "셋", "emoji": "3️⃣"},
-        {"word": "four", "meaning": "넷", "emoji": "4️⃣"},
-        {"word": "five", "meaning": "다섯", "emoji": "5️⃣"},
-        {"word": "six", "meaning": "여섯", "emoji": "6️⃣"},
-        {"word": "seven", "meaning": "일곱", "emoji": "7️⃣"},
-        {"word": "eight", "meaning": "여덟", "emoji": "8️⃣"},
-        {"word": "ten", "meaning": "열", "emoji": "🔟"},
-    ],
-
-    "🎒 물건·돈": [
-        {"word": "bag", "meaning": "가방", "emoji": "🎒"},
-        {"word": "phone", "meaning": "전화기", "emoji": "📱"},
-        {"word": "book", "meaning": "책", "emoji": "📘"},
-        {"word": "notebook", "meaning": "공책", "emoji": "📓"},
-        {"word": "pen", "meaning": "펜", "emoji": "🖊️"},
-        {"word": "pencil", "meaning": "연필", "emoji": "✏️"},
-        {"word": "desk", "meaning": "책상", "emoji": "🪑"},
-        {"word": "chair", "meaning": "의자", "emoji": "🪑"},
-        {"word": "door", "meaning": "문", "emoji": "🚪"},
-        {"word": "window", "meaning": "창문", "emoji": "🪟"},
-        {"word": "key", "meaning": "열쇠", "emoji": "🔑"},
-        {"word": "money", "meaning": "돈", "emoji": "💰"},
-        {"word": "card", "meaning": "카드", "emoji": "💳"},
-        {"word": "ticket", "meaning": "표, 티켓", "emoji": "🎫"},
-        {"word": "clothes", "meaning": "옷", "emoji": "👕"},
-        {"word": "shoes", "meaning": "신발", "emoji": "👟"},
-        {"word": "hat", "meaning": "모자", "emoji": "🧢"},
-        {"word": "watch", "meaning": "시계", "emoji": "⌚"},
-        {"word": "cup", "meaning": "컵", "emoji": "🥤"},
-        {"word": "bottle", "meaning": "병", "emoji": "🍼"},
-    ],
-
-    "🆘 도움 요청": [
-        {"word": "help", "meaning": "도움, 돕다", "emoji": "🆘"},
-        {"word": "please", "meaning": "부디, 제발", "emoji": "🙏"},
-        {"word": "sorry", "meaning": "미안합니다", "emoji": "🙇"},
-        {"word": "excuse me", "meaning": "실례합니다", "emoji": "🙋"},
-        {"word": "again", "meaning": "다시", "emoji": "🔁"},
-        {"word": "slowly", "meaning": "천천히", "emoji": "🐢"},
-        {"word": "understand", "meaning": "이해하다", "emoji": "💡"},
-        {"word": "question", "meaning": "질문", "emoji": "❓"},
-        {"word": "problem", "meaning": "문제", "emoji": "⚠️"},
-        {"word": "need", "meaning": "필요하다", "emoji": "📌"},
-        {"word": "want", "meaning": "원하다", "emoji": "🙋"},
-        {"word": "know", "meaning": "알다", "emoji": "🧠"},
-        {"word": "say", "meaning": "말하다", "emoji": "💬"},
-        {"word": "tell", "meaning": "말하다, 알려주다", "emoji": "🗣️"},
-        {"word": "ask", "meaning": "묻다", "emoji": "❓"},
-        {"word": "answer", "meaning": "대답, 답", "emoji": "✅"},
-        {"word": "repeat", "meaning": "반복하다", "emoji": "🔁"},
-        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
-        {"word": "look", "meaning": "보다", "emoji": "👀"},
-        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
-    ],
-}
+DATA = """
+🧍 나와 사람|I|나|🙋
+🧍 나와 사람|you|너, 당신|👉
+🧍 나와 사람|he|그|👦
+🧍 나와 사람|she|그녀|👧
+🧍 나와 사람|we|우리|👥
+🧍 나와 사람|they|그들|👥
+🧍 나와 사람|friend|친구|🤝
+🧍 나와 사람|teacher|선생님|👩‍🏫
+🧍 나와 사람|student|학생|🧑‍🎓
+🧍 나와 사람|classmate|반 친구|👫
+🧍 나와 사람|family|가족|👨‍👩‍👧
+🧍 나와 사람|father|아버지|👨
+🧍 나와 사람|mother|어머니|👩
+🧍 나와 사람|brother|형제, 남자 형제|👦
+🧍 나와 사람|sister|자매, 여자 형제|👧
+🧍 나와 사람|name|이름|🏷️
+🧍 나와 사람|person|사람|🧍
+🧍 나와 사람|man|남자|👨
+🧍 나와 사람|woman|여자|👩
+🧍 나와 사람|child|아이|🧒
+🏃 기본 동작|go|가다|➡️
+🏃 기본 동작|come|오다|⬅️
+🏃 기본 동작|walk|걷다|🚶
+🏃 기본 동작|run|달리다|🏃
+🏃 기본 동작|sit|앉다|🪑
+🏃 기본 동작|stand|서다|🧍
+🏃 기본 동작|stop|멈추다|🛑
+🏃 기본 동작|start|시작하다|▶️
+🏃 기본 동작|open|열다|📖
+🏃 기본 동작|close|닫다|📕
+🏃 기본 동작|eat|먹다|🍽️
+🏃 기본 동작|drink|마시다|🥤
+🏃 기본 동작|sleep|자다|😴
+🏃 기본 동작|study|공부하다|📚
+🏃 기본 동작|read|읽다|📖
+🏃 기본 동작|write|쓰다|✏️
+🏃 기본 동작|listen|듣다|👂
+🏃 기본 동작|speak|말하다|🗣️
+🏃 기본 동작|help|돕다|🆘
+🏃 기본 동작|wait|기다리다|⏳
+💖 감정·몸 상태|happy|행복한|😊
+💖 감정·몸 상태|sad|슬픈|😢
+💖 감정·몸 상태|angry|화난|😡
+💖 감정·몸 상태|tired|피곤한|🥱
+💖 감정·몸 상태|hungry|배고픈|😋
+💖 감정·몸 상태|thirsty|목마른|💧
+💖 감정·몸 상태|sick|아픈|🤒
+💖 감정·몸 상태|okay|괜찮은|👌
+💖 감정·몸 상태|fine|괜찮은|🙂
+💖 감정·몸 상태|cold|추운, 차가운|🥶
+💖 감정·몸 상태|hot|더운, 뜨거운|🥵
+💖 감정·몸 상태|pain|통증|🤕
+💖 감정·몸 상태|headache|두통|🤯
+💖 감정·몸 상태|stomachache|복통|🤢
+💖 감정·몸 상태|fever|열|🌡️
+💖 감정·몸 상태|hurt|아프다, 다치다|🩹
+💖 감정·몸 상태|good|좋은|👍
+💖 감정·몸 상태|bad|나쁜|👎
+💖 감정·몸 상태|worried|걱정하는|😟
+💖 감정·몸 상태|scared|무서워하는|😨
+🍎 음식·물|food|음식|🍽️
+🍎 음식·물|water|물|💧
+🍎 음식·물|rice|밥, 쌀|🍚
+🍎 음식·물|bread|빵|🍞
+🍎 음식·물|milk|우유|🥛
+🍎 음식·물|juice|주스|🧃
+🍎 음식·물|coffee|커피|☕
+🍎 음식·물|tea|차|🍵
+🍎 음식·물|apple|사과|🍎
+🍎 음식·물|banana|바나나|🍌
+🍎 음식·물|egg|달걀|🥚
+🍎 음식·물|meat|고기|🥩
+🍎 음식·물|chicken|닭고기, 닭|🍗
+🍎 음식·물|fish|생선, 물고기|🐟
+🍎 음식·물|breakfast|아침 식사|🍳
+🍎 음식·물|lunch|점심 식사|🍱
+🍎 음식·물|dinner|저녁 식사|🍽️
+🍎 음식·물|snack|간식|🍪
+🍎 음식·물|medicine|약|💊
+🍎 음식·물|hospital|병원|🏥
+🚗 장소·이동|home|집|🏠
+🚗 장소·이동|school|학교|🏫
+🚗 장소·이동|classroom|교실|🧑‍🏫
+🚗 장소·이동|bathroom|화장실|🚻
+🚗 장소·이동|hospital|병원|🏥
+🚗 장소·이동|store|가게|🏪
+🚗 장소·이동|station|역|🚉
+🚗 장소·이동|bus|버스|🚌
+🚗 장소·이동|car|자동차|🚗
+🚗 장소·이동|taxi|택시|🚕
+🚗 장소·이동|train|기차|🚆
+🚗 장소·이동|bike|자전거|🚲
+🚗 장소·이동|road|도로|🛣️
+🚗 장소·이동|street|거리|🏙️
+🚗 장소·이동|here|여기|📍
+🚗 장소·이동|there|거기|📌
+🚗 장소·이동|near|가까운|📍
+🚗 장소·이동|far|먼|🧭
+🚗 장소·이동|left|왼쪽|⬅️
+🚗 장소·이동|right|오른쪽, 맞는|➡️
+⏰ 시간·숫자|time|시간|⏰
+⏰ 시간·숫자|now|지금|🕒
+⏰ 시간·숫자|today|오늘|📅
+⏰ 시간·숫자|tomorrow|내일|➡️
+⏰ 시간·숫자|yesterday|어제|⬅️
+⏰ 시간·숫자|morning|아침|🌅
+⏰ 시간·숫자|afternoon|오후|☀️
+⏰ 시간·숫자|evening|저녁|🌆
+⏰ 시간·숫자|night|밤|🌙
+⏰ 시간·숫자|early|이른|🐓
+⏰ 시간·숫자|late|늦은|🌃
+⏰ 시간·숫자|one|하나|1️⃣
+⏰ 시간·숫자|two|둘|2️⃣
+⏰ 시간·숫자|three|셋|3️⃣
+⏰ 시간·숫자|four|넷|4️⃣
+⏰ 시간·숫자|five|다섯|5️⃣
+⏰ 시간·숫자|six|여섯|6️⃣
+⏰ 시간·숫자|seven|일곱|7️⃣
+⏰ 시간·숫자|eight|여덟|8️⃣
+⏰ 시간·숫자|ten|열|🔟
+🎒 물건·돈|bag|가방|🎒
+🎒 물건·돈|phone|전화기|📱
+🎒 물건·돈|book|책|📘
+🎒 물건·돈|notebook|공책|📓
+🎒 물건·돈|pen|펜|🖊️
+🎒 물건·돈|pencil|연필|✏️
+🎒 물건·돈|desk|책상|🪑
+🎒 물건·돈|chair|의자|🪑
+🎒 물건·돈|door|문|🚪
+🎒 물건·돈|window|창문|🪟
+🎒 물건·돈|key|열쇠|🔑
+🎒 물건·돈|money|돈|💰
+🎒 물건·돈|card|카드|💳
+🎒 물건·돈|ticket|표, 티켓|🎫
+🎒 물건·돈|clothes|옷|👕
+🎒 물건·돈|shoes|신발|👟
+🎒 물건·돈|hat|모자|🧢
+🎒 물건·돈|watch|시계|⌚
+🎒 물건·돈|cup|컵|🥤
+🎒 물건·돈|bottle|병|🍼
+🆘 도움 요청|help|도움, 돕다|🆘
+🆘 도움 요청|please|부디, 제발|🙏
+🆘 도움 요청|sorry|미안합니다|🙇
+🆘 도움 요청|excuse me|실례합니다|🙋
+🆘 도움 요청|again|다시|🔁
+🆘 도움 요청|slowly|천천히|🐢
+🆘 도움 요청|understand|이해하다|💡
+🆘 도움 요청|question|질문|❓
+🆘 도움 요청|problem|문제|⚠️
+🆘 도움 요청|need|필요하다|📌
+🆘 도움 요청|want|원하다|🙋
+🆘 도움 요청|know|알다|🧠
+🆘 도움 요청|say|말하다|💬
+🆘 도움 요청|tell|말하다, 알려주다|🗣️
+🆘 도움 요청|ask|묻다|❓
+🆘 도움 요청|answer|대답, 답|✅
+🆘 도움 요청|repeat|반복하다|🔁
+🆘 도움 요청|speak|말하다|🗣️
+🆘 도움 요청|look|보다|👀
+🆘 도움 요청|listen|듣다|👂
+"""
 
 # =========================
 # 전체 단어 목록 만들기
 # =========================
 all_words = []
-for theme, words in word_themes.items():
-    for item in words:
-        new_item = item.copy()
-        new_item["theme"] = theme
-        all_words.append(new_item)
+
+for line in DATA.strip().splitlines():
+    theme, word, meaning, emoji = line.split("|")
+    all_words.append({
+        "theme": theme,
+        "word": word,
+        "meaning": meaning,
+        "emoji": emoji
+    })
+
 
 # =========================
-# 테스트 시작
+# 미션 시작 함수
 # =========================
 def start_new_mission():
     question_count = min(TOTAL_QUESTIONS, len(all_words))
@@ -692,6 +675,7 @@ if "mission_started" not in st.session_state:
 if "mission_finished" not in st.session_state:
     st.session_state.mission_finished = False
 
+
 # =========================
 # 시작 화면
 # =========================
@@ -702,6 +686,7 @@ if not st.session_state.mission_started:
     if st.button(f"🗣️ {TOTAL_QUESTIONS}개 말하기 미션 시작하기"):
         start_new_mission()
         st.rerun()
+
 
 # =========================
 # 미션 진행 화면
@@ -715,7 +700,6 @@ elif st.session_state.mission_started and not st.session_state.mission_finished:
     practice_now = sum(1 for r in st.session_state.records if r["status"] == "연습이 더 필요해요")
 
     progress_value = (idx + 1) / total
-
     st.progress(progress_value)
 
     st.markdown('<div class="mission-card">', unsafe_allow_html=True)
@@ -796,14 +780,15 @@ elif st.session_state.mission_started and not st.session_state.mission_finished:
     left_space, btn1_col, btn2_col, right_space = st.columns([2.8, 1.2, 1.2, 2.8], gap="small")
 
     with btn1_col:
-        if st.button("😊 잘 말했어요", key=f"good_{idx}", use_container_width=True):
+        if st.button("😊 잘 말했어요", key=f"good_{idx}"):
             save_record("잘 말했어요")
 
     with btn2_col:
-        if st.button("🔁 연습이 더 필요해요", key=f"practice_{idx}", use_container_width=True):
+        if st.button("🔁 연습이 더 필요해요", key=f"practice_{idx}"):
             save_record("연습이 더 필요해요")
 
     st.markdown('</div>', unsafe_allow_html=True)
+
 
 # =========================
 # 결과 화면
@@ -822,7 +807,7 @@ else:
             <div class="score-title">🏆 말하기 미션 결과</div>
             <div class="score-text">
                 총 말하기 단어: {total}개<br>
-                정답처럼 말한 비율: {percent}%
+                잘 말한 비율: {percent}%
             </div>
 
             <div class="result-grid">
