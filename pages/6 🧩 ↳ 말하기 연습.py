@@ -44,18 +44,7 @@ st.markdown(
         font-weight: 700;
     }
 
-    .guide-box {
-        background: white;
-        border: 1.5px solid #e0f2fe;
-        border-radius: 24px;
-        padding: 18px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.045);
-        color: #334155;
-        font-size: 17px;
-        line-height: 1.7;
-        font-weight: 700;
-    }
+    
     </style>
     """,
     unsafe_allow_html=True
@@ -66,24 +55,13 @@ st.markdown(
     <div class="main-title-box">
         <h1>🎙️ 생존 단어 160개로 문장 말하기</h1>
         <p>
-            한국어 상황과 빈칸 문장을 보고 <b>문장 전체를 영어로 말해 보세요.</b><br>
-            힌트는 정답 단어의 앞 두 글자만 보여 줍니다.
+            한국어 상황을 보고, 영어 문장을 말해 보세요.
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="guide-box">
-        <b>활동 순서</b><br>
-        1. 한국어 상황과 이모지를 봅니다. → 2. 영어 빈칸 문장을 봅니다. → 3. 필요하면 앞 두 글자 힌트를 봅니다.<br>
-        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 틀리면 정답 보기를 눌러 듣고 다시 말합니다.<br>6. 문장 전체가 정확히 맞게 인식되어야 다음 문제로 넘어갈 수 있습니다.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 
 # =========================================================
@@ -203,7 +181,7 @@ def speaking_practice_component(items):
 
             <div id="answerBox" style="display:none;"></div>
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:16px;">
                 <button id="hintBtn" style="
                     border:1.5px solid #fde68a;
                     background:#fffbeb;
@@ -212,18 +190,20 @@ def speaking_practice_component(items):
                     padding:11px 16px;
                     font-weight:900;
                     cursor:pointer;
-                ">💡 앞 두 글자 힌트</button>
+                ">💡 힌트</button>
 
-                <button id="listenBtn" style="
-                    display:none;
-                    border:1.5px solid #bfdbfe;
-                    background:#eff6ff;
-                    color:#1d4ed8;
+                <button id="micBtn" style="
+                    border:3px solid rgba(255,255,255,0.9);
+                    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+                    color:white;
                     border-radius:999px;
-                    padding:11px 16px;
+                    width:102px;
+                    height:102px;
                     font-weight:900;
                     cursor:pointer;
-                ">🔊 듣기</button>
+                    font-size:36px;
+                    box-shadow:0 10px 25px rgba(124,58,237,0.28);
+                ">🎙️</button>
 
                 <button id="answerBtn" style="
                     display:none;
@@ -236,18 +216,16 @@ def speaking_practice_component(items):
                     cursor:pointer;
                 ">👀 정답</button>
 
-                <button id="micBtn" style="
-                    border:3px solid rgba(255,255,255,0.9);
-                    background: linear-gradient(135deg, #a78bfa, #ec4899);
-                    color:white;
+                <button id="listenBtn" style="
+                    display:none;
+                    border:1.5px solid #bfdbfe;
+                    background:#eff6ff;
+                    color:#1d4ed8;
                     border-radius:999px;
-                    width:96px;
-                    height:96px;
+                    padding:11px 16px;
                     font-weight:900;
                     cursor:pointer;
-                    font-size:34px;
-                    box-shadow:0 10px 25px rgba(124,58,237,0.28);
-                ">🎙️</button>
+                ">🔊 듣기</button>
 
                 <button id="nextBtn" style="
                     display:none;
@@ -267,7 +245,7 @@ def speaking_practice_component(items):
                 border:1.5px solid #e2e8f0;
                 border-radius:18px;
                 padding:14px 16px;
-                margin-bottom:14px;
+                margin-bottom:16px;
                 min-height:52px;
             ">
                 <div id="transcriptBox" style="
@@ -275,7 +253,8 @@ def speaking_practice_component(items):
                     font-weight:900;
                     color:#334155;
                     line-height:1.7;
-                ">말하면 여기에 표시됩니다.</div>
+                    min-height:32px;
+                "></div>
             </div>
 
             <div id="resultBox" style="
@@ -581,7 +560,7 @@ def speaking_practice_component(items):
         answerBox.style.display = "none";
         hintBox.innerText = "";
         answerBox.innerText = "";
-        transcriptBox.innerText = "말하면 여기에 표시됩니다.";
+        transcriptBox.innerText = "";
 
         // 처음에는 힌트와 말하기 버튼만 보이게 함
         hintBtn.style.display = "inline-block";
@@ -654,7 +633,7 @@ def speaking_practice_component(items):
 
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
-        recognition.interimResults = false;
+        recognition.interimResults = true;
         recognition.continuous = false;
         recognition.maxAlternatives = 3;
 
@@ -663,22 +642,24 @@ def speaking_practice_component(items):
         resultBox.innerText = "";
 
         recognition.onresult = function(event) {
-            let bestTranscript = "";
-            let matched = false;
+            let spokenText = "";
+            let hasFinal = false;
 
-            for (let i = 0; i < event.results[0].length; i++) {
-                const transcript = event.results[0][i].transcript;
-                if (i === 0) bestTranscript = transcript;
-
-                if (isCorrectSpeech(transcript, currentItem.answer)) {
-                    bestTranscript = transcript;
-                    matched = true;
-                    break;
+            for (let i = 0; i < event.results.length; i++) {
+                const piece = event.results[i][0].transcript.trim();
+                if (piece) {
+                    spokenText += (spokenText ? " " : "") + piece;
+                }
+                if (event.results[i].isFinal) {
+                    hasFinal = true;
                 }
             }
 
-            transcriptBox.innerText = bestTranscript;
-            checkSpeech(bestTranscript);
+            transcriptBox.innerText = spokenText;
+
+            if (hasFinal) {
+                checkSpeech(spokenText);
+            }
         };
 
         recognition.onerror = function(event) {
@@ -754,7 +735,7 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=650)
+    components.html(html, height=620)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
