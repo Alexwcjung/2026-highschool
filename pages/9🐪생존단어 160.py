@@ -1109,149 +1109,1414 @@ def make_theme_cassette_items(theme_words, theme_name):
     return theme_items
 
 
+def browser_survival_cassette_player(all_items, height=900):
+    """
+    수정 핵심:
+    1. 큰 이동 줄 range input 추가
+    2. 드래그하면 바로 해당 단어로 이동
+    3. 재생 중 드래그하면 해당 단어부터 이어서 재생
+    4. 10개 전 / 10개 후 버튼 추가
+    5. 현재 위치가 몇 %인지 시각적으로 표시
+    """
 
-def browser_survival_cassette_player(all_items, height=700):
-    """
-    모바일 수정판 카세트 플레이어.
-    - 폰 화면에서 버튼 줄 깨짐 방지
-    - 재생 버튼 클릭 시 모바일 브라우저에서 바로 speechSynthesis 실행
-    - 전체 단어/테마 단어를 3회 반복 재생
-    """
-    player_id = f"survival_mobile_cassette_{uuid.uuid4().hex}"
-    play_btn_id = f"survival_mobile_play_{uuid.uuid4().hex}"
-    pause_btn_id = f"survival_mobile_pause_{uuid.uuid4().hex}"
-    stop_btn_id = f"survival_mobile_stop_{uuid.uuid4().hex}"
-    prev_btn_id = f"survival_mobile_prev_{uuid.uuid4().hex}"
-    next_btn_id = f"survival_mobile_next_{uuid.uuid4().hex}"
-    prev10_btn_id = f"survival_mobile_prev10_{uuid.uuid4().hex}"
-    next10_btn_id = f"survival_mobile_next10_{uuid.uuid4().hex}"
-    slow_btn_id = f"survival_mobile_slow_{uuid.uuid4().hex}"
-    mid_slow_btn_id = f"survival_mobile_midslow_{uuid.uuid4().hex}"
-    normal_btn_id = f"survival_mobile_normal_{uuid.uuid4().hex}"
-    mid_fast_btn_id = f"survival_mobile_midfast_{uuid.uuid4().hex}"
-    fast_btn_id = f"survival_mobile_fast_{uuid.uuid4().hex}"
-    speed_status_id = f"survival_mobile_speed_{uuid.uuid4().hex}"
-    progress_id = f"survival_mobile_progress_{uuid.uuid4().hex}"
-    visual_bar_id = f"survival_mobile_bar_{uuid.uuid4().hex}"
-    percent_id = f"survival_mobile_percent_{uuid.uuid4().hex}"
-    status_id = f"survival_mobile_status_{uuid.uuid4().hex}"
-    word_id = f"survival_mobile_word_{uuid.uuid4().hex}"
-    meaning_id = f"survival_mobile_meaning_{uuid.uuid4().hex}"
+    player_id = f"survival_browser_cassette_{uuid.uuid4().hex}"
+    play_btn_id = f"play_{uuid.uuid4().hex}"
+    pause_btn_id = f"pause_{uuid.uuid4().hex}"
+    prev_btn_id = f"prev_{uuid.uuid4().hex}"
+    next_btn_id = f"next_{uuid.uuid4().hex}"
+    slow_btn_id = f"slow_{uuid.uuid4().hex}"
+    mid_slow_btn_id = f"mid_slow_{uuid.uuid4().hex}"
+    normal_btn_id = f"normal_{uuid.uuid4().hex}"
+    mid_fast_btn_id = f"mid_fast_{uuid.uuid4().hex}"
+    fast_btn_id = f"fast_{uuid.uuid4().hex}"
+    speed_status_id = f"speed_status_{uuid.uuid4().hex}"
+    prev10_btn_id = f"prev10_{uuid.uuid4().hex}"
+    next10_btn_id = f"next10_{uuid.uuid4().hex}"
+    stop_btn_id = f"stop_{uuid.uuid4().hex}"
+    progress_id = f"progress_{uuid.uuid4().hex}"
+    visual_bar_id = f"visual_bar_{uuid.uuid4().hex}"
+    percent_id = f"percent_{uuid.uuid4().hex}"
+    status_id = f"status_{uuid.uuid4().hex}"
+    word_id = f"word_{uuid.uuid4().hex}"
+    meaning_id = f"meaning_{uuid.uuid4().hex}"
 
     cassette_json = json.dumps(all_items, ensure_ascii=False)
-    emoji_json = json.dumps(WORD_EMOJIS, ensure_ascii=False)
-    title_text = "Survival English 160 전체 카세트"
+    safe_player_id = json.dumps(player_id)
     max_index = max(len(all_items) - 1, 0)
-    total_len = len(all_items)
 
-    html_code = '\n        <div id="__PLAYER_ID__" class="cassette-wrap">\n            <style>\n                #__PLAYER_ID__ {\n                    box-sizing: border-box;\n                    width: 100%;\n                    max-width: 100%;\n                    overflow: hidden;\n                    font-family: Arial, sans-serif;\n                    padding: 16px;\n                    border-radius: 22px;\n                    background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);\n                    border: 1px solid #bfdbfe;\n                    box-shadow: 0 4px 14px rgba(0,0,0,0.08);\n                }\n                #__PLAYER_ID__ * { box-sizing: border-box; }\n                #__PLAYER_ID__ .cassette-title {\n                    font-size: 19px; font-weight: 900; color: #0f172a;\n                    margin-bottom: 10px; line-height: 1.35;\n                }\n                #__PLAYER_ID__ .cassette-word {\n                    font-size: 32px; font-weight: 900; color: #111827;\n                    margin-bottom: 8px; line-height: 1.15;\n                    word-break: keep-all; overflow-wrap: anywhere;\n                }\n                #__PLAYER_ID__ .cassette-meaning {\n                    font-size: 15px; font-weight: 800; color: #475569;\n                    margin-bottom: 12px; line-height: 1.6;\n                    background: rgba(255,255,255,0.78);\n                    border: 1px solid #dbeafe; border-radius: 18px; padding: 12px;\n                    word-break: keep-all; overflow-wrap: anywhere;\n                }\n                #__PLAYER_ID__ .progress-card {\n                    margin: 12px 0; background: rgba(255,255,255,0.86);\n                    border: 1px solid #bfdbfe; border-radius: 18px; padding: 12px;\n                }\n                #__PLAYER_ID__ .progress-top {\n                    display: flex; justify-content: space-between; align-items: center;\n                    gap: 8px; margin-bottom: 8px;\n                }\n                #__PLAYER_ID__ .progress-label { font-size: 14px; font-weight: 900; color: #075985; }\n                #__PLAYER_ID__ .percent-pill {\n                    font-size: 13px; font-weight: 900; color: #7c3aed;\n                    background: #f3e8ff; border-radius: 999px; padding: 5px 10px; flex-shrink: 0;\n                }\n                #__PLAYER_ID__ .visual-track {\n                    width: 100%; height: 11px; background: #e2e8f0;\n                    border-radius: 999px; overflow: hidden; margin-bottom: 8px;\n                }\n                #__PLAYER_ID__ .visual-bar {\n                    height: 100%; width: 0%;\n                    background: linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);\n                    border-radius: 999px;\n                }\n                #__PLAYER_ID__ input[type=range] {\n                    width: 100%; min-width: 0; height: 36px; cursor: pointer; accent-color: #8b5cf6;\n                }\n                #__PLAYER_ID__ .range-caption {\n                    display: flex; justify-content: space-between;\n                    font-size: 12px; color: #64748b; font-weight: 800;\n                }\n                #__PLAYER_ID__ .button-grid {\n                    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));\n                    gap: 8px; width: 100%; margin-top: 10px;\n                }\n                #__PLAYER_ID__ .speed-grid {\n                    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));\n                    gap: 8px; width: 100%; margin-top: 10px; align-items: center;\n                }\n                #__PLAYER_ID__ button {\n                    width: 100%; min-height: 42px; border-radius: 999px; padding: 8px 8px;\n                    font-weight: 900; font-size: 13px; cursor: pointer;\n                    touch-action: manipulation; -webkit-tap-highlight-color: transparent;\n                    border: 1px solid #cbd5e1; color: #334155; background: #f8fafc;\n                    white-space: nowrap;\n                }\n                #__PLAYER_ID__ button:active { transform: scale(0.98); }\n                #__PLAYER_ID__ .btn-play {\n                    background: linear-gradient(135deg, #dbeafe, #fce7f3);\n                    border-color: #bfdbfe; color: #1f2937; box-shadow: 0 3px 8px rgba(0,0,0,0.08);\n                }\n                #__PLAYER_ID__ .btn-pause { background: #ecfeff; border-color: #67e8f9; color: #155e75; }\n                #__PLAYER_ID__ .btn-stop { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }\n                #__PLAYER_ID__ .btn-prev10 { background: #fef3c7; border-color: #fde68a; color: #92400e; }\n                #__PLAYER_ID__ .btn-next10 { background: #dcfce7; border-color: #bbf7d0; color: #166534; }\n                #__PLAYER_ID__ .speed-label {\n                    grid-column: span 2; font-size: 13px; font-weight: 900; color: #475569;\n                    background: #f8fafc; border-radius: 999px; padding: 9px 10px;\n                    text-align: center; border: 1px dashed #c4b5fd;\n                }\n                #__PLAYER_ID__ .speed-status {\n                    grid-column: span 2; font-size: 13px; color: #7c3aed; font-weight: 900;\n                    background: #f3e8ff; border-radius: 999px; padding: 9px 10px; text-align: center;\n                }\n                #__PLAYER_ID__ .status-line {\n                    margin-top: 10px; min-height: 22px; font-size: 13px;\n                    color: #075985; font-weight: 900; line-height: 1.5; word-break: keep-all;\n                }\n                @media (max-width: 600px) {\n                    #__PLAYER_ID__ { padding: 12px; border-radius: 18px; }\n                    #__PLAYER_ID__ .cassette-title { font-size: 17px; }\n                    #__PLAYER_ID__ .cassette-word { font-size: 26px; }\n                    #__PLAYER_ID__ .cassette-meaning { font-size: 13.5px; padding: 10px; }\n                    #__PLAYER_ID__ .button-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }\n                    #__PLAYER_ID__ .speed-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }\n                    #__PLAYER_ID__ .speed-label, #__PLAYER_ID__ .speed-status { grid-column: span 3; }\n                    #__PLAYER_ID__ button { min-height: 42px; font-size: 12.5px; padding: 8px 6px; }\n                }\n            </style>\n\n            <div class="cassette-title">📼 __TITLE_TEXT__</div>\n            <div id="__WORD_ID__" class="cassette-word">Ready</div>\n            <div id="__MEANING_ID__" class="cassette-meaning">재생 버튼을 누르면 단어와 예문이 차례대로 재생됩니다.</div>\n\n            <div class="progress-card">\n                <div class="progress-top">\n                    <div class="progress-label">🎚️ 이동</div>\n                    <div id="__PERCENT_ID__" class="percent-pill">0%</div>\n                </div>\n                <div class="visual-track"><div id="__VISUAL_BAR_ID__" class="visual-bar"></div></div>\n                <input id="__PROGRESS_ID__" type="range" min="0" max="__MAX_INDEX__" value="0" step="1">\n                <div class="range-caption"><span>1번</span><span>__TOTAL_LEN__번</span></div>\n            </div>\n\n            <div class="button-grid">\n                <button type="button" id="__PREV10_BTN_ID__" class="btn-prev10">⏪ 10개 전</button>\n                <button type="button" id="__PREV_BTN_ID__">⏮ 이전</button>\n                <button type="button" id="__PLAY_BTN_ID__" class="btn-play">▶️ 재생</button>\n                <button type="button" id="__PAUSE_BTN_ID__" class="btn-pause">⏸ 일시정지</button>\n                <button type="button" id="__NEXT_BTN_ID__">⏭ 다음</button>\n                <button type="button" id="__NEXT10_BTN_ID__" class="btn-next10">⏩ 10개 후</button>\n                <button type="button" id="__STOP_BTN_ID__" class="btn-stop">⏹ 중지</button>\n            </div>\n\n            <div class="speed-grid">\n                <div class="speed-label">🎚️ 속도 조절</div>\n                <button type="button" id="__SLOW_BTN_ID__">0.5x</button>\n                <button type="button" id="__MID_SLOW_BTN_ID__">0.75x</button>\n                <button type="button" id="__NORMAL_BTN_ID__">1.0x</button>\n                <button type="button" id="__MID_FAST_BTN_ID__">1.25x</button>\n                <button type="button" id="__FAST_BTN_ID__">1.5x</button>\n                <div id="__SPEED_STATUS_ID__" class="speed-status">현재: 1.0x</div>\n            </div>\n\n            <div id="__STATUS_ID__" class="status-line"></div>\n\n            <script>\n            (function() {\n                const cassetteItems = __CASSETTE_JSON__;\n                const emojiMap = __EMOJI_JSON__;\n                const playBtn = document.getElementById("__PLAY_BTN_ID__");\n                const pauseBtn = document.getElementById("__PAUSE_BTN_ID__");\n                const stopBtn = document.getElementById("__STOP_BTN_ID__");\n                const prevBtn = document.getElementById("__PREV_BTN_ID__");\n                const nextBtn = document.getElementById("__NEXT_BTN_ID__");\n                const prev10Btn = document.getElementById("__PREV10_BTN_ID__");\n                const next10Btn = document.getElementById("__NEXT10_BTN_ID__");\n                const slowBtn = document.getElementById("__SLOW_BTN_ID__");\n                const midSlowBtn = document.getElementById("__MID_SLOW_BTN_ID__");\n                const normalBtn = document.getElementById("__NORMAL_BTN_ID__");\n                const midFastBtn = document.getElementById("__MID_FAST_BTN_ID__");\n                const fastBtn = document.getElementById("__FAST_BTN_ID__");\n                const speedStatus = document.getElementById("__SPEED_STATUS_ID__");\n                const progress = document.getElementById("__PROGRESS_ID__");\n                const visualBar = document.getElementById("__VISUAL_BAR_ID__");\n                const percentBox = document.getElementById("__PERCENT_ID__");\n                const status = document.getElementById("__STATUS_ID__");\n                const wordBox = document.getElementById("__WORD_ID__");\n                const meaningBox = document.getElementById("__MEANING_ID__");\n\n                let index = 0, isPlaying = false, isPaused = false, playToken = 0, repeatRound = 1;\n                const maxRepeatRound = 3;\n                let speechRate = 0.75, nextTimer = null, safetyTimer = null, cachedVoice = null;\n\n                function escapeHtml(text) {\n                    const div = document.createElement("div");\n                    div.innerText = String(text ?? "");\n                    return div.innerHTML;\n                }\n                function safeCancel() { try { window.speechSynthesis.cancel(); } catch(e) {} }\n                function clearTimers() {\n                    if (nextTimer) { clearTimeout(nextTimer); nextTimer = null; }\n                    if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }\n                }\n                function getEmoji(word) { return emojiMap[word] || "🌱"; }\n                function updateProgressVisual() {\n                    const max = Math.max(cassetteItems.length - 1, 1);\n                    const pct = Math.round((index / max) * 100);\n                    visualBar.style.width = pct + "%";\n                    percentBox.innerText = pct + "%";\n                }\n                function updateDisplay() {\n                    const item = cassetteItems[index];\n                    if (!item) return;\n                    progress.value = index;\n                    updateProgressVisual();\n                    wordBox.innerText = item.number + ". " + item.word + " " + getEmoji(item.word);\n                    meaningBox.innerHTML =\n                        "<div style=\'font-size:15px; color:#374151; font-weight:900;\'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +\n                        "<div style=\'font-size:15px; color:#0369a1; font-weight:900; margin-top:4px;\'>예문: " + escapeHtml(item.example) + "</div>" +\n                        "<div style=\'font-size:15px; color:#166534; font-weight:900; margin-top:4px;\'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +\n                        "<div style=\'font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;\'>" + escapeHtml(item.theme || "") + "</div>";\n                    status.innerText = "전체 반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;\n                }\n                function getEnglishVoice() {\n                    if (cachedVoice) return cachedVoice;\n                    let voices = [];\n                    try { voices = window.speechSynthesis.getVoices() || []; } catch(e) { voices = []; }\n                    cachedVoice = voices.find(v => /en-US/i.test(v.lang || "")) || voices.find(v => /^en/i.test(v.lang || "")) || null;\n                    return cachedVoice;\n                }\n                function makeUtterance(text) {\n                    const u = new SpeechSynthesisUtterance(text);\n                    u.lang = "en-US"; u.rate = speechRate; u.pitch = 1; u.volume = 1;\n                    const voice = getEnglishVoice();\n                    if (voice) u.voice = voice;\n                    return u;\n                }\n                function scheduleNext(tokenAtPlay) {\n                    if (!isPlaying || isPaused || tokenAtPlay !== playToken) return;\n                    index += 1;\n                    if (index >= cassetteItems.length) {\n                        if (repeatRound < maxRepeatRound) { repeatRound += 1; index = 0; }\n                        else {\n                            isPlaying = false; isPaused = false; playBtn.innerText = "▶️ 재생";\n                            status.innerText = "✅ 전체 3회 반복 재생 완료";\n                            safeCancel(); return;\n                        }\n                    }\n                    updateDisplay();\n                    nextTimer = setTimeout(function() { speakCurrent(tokenAtPlay); }, 650);\n                }\n                function speakCurrent(tokenAtPlay) {\n                    if (!isPlaying || isPaused || tokenAtPlay !== playToken) return;\n                    const item = cassetteItems[index];\n                    if (!item) return;\n                    clearTimers(); updateDisplay(); safeCancel();\n                    const script = item.script || (item.word + ". " + item.word + ". " + item.example + " " + item.word + ".");\n                    const utter = makeUtterance(script);\n                    let ended = false;\n                    utter.onend = function() { ended = true; scheduleNext(tokenAtPlay); };\n                    utter.onerror = function() {\n                        if (tokenAtPlay !== playToken) return;\n                        status.innerText = "⚠️ 재생이 막혔습니다. 재생 버튼을 한 번 더 눌러 주세요.";\n                        isPlaying = false; isPaused = false; playBtn.innerText = "▶️ 다시 재생";\n                    };\n                    try { window.speechSynthesis.speak(utter); }\n                    catch(e) {\n                        status.innerText = "⚠️ 이 브라우저에서는 음성 재생이 제한되었습니다.";\n                        isPlaying = false; isPaused = false; playBtn.innerText = "▶️ 재생"; return;\n                    }\n                    safetyTimer = setTimeout(function() {\n                        if (!ended && isPlaying && !isPaused && tokenAtPlay === playToken) {\n                            safeCancel(); scheduleNext(tokenAtPlay);\n                        }\n                    }, 9000);\n                }\n                function startFromCurrent() {\n                    if (!("speechSynthesis" in window)) {\n                        status.innerText = "⚠️ 이 브라우저는 음성 재생을 지원하지 않습니다."; return;\n                    }\n                    playToken += 1;\n                    const tokenAtPlay = playToken;\n                    clearTimers(); safeCancel();\n                    isPlaying = true; isPaused = false; playBtn.innerText = "재생 중...";\n                    updateDisplay();\n                    speakCurrent(tokenAtPlay);\n                }\n                function stopAll(message) {\n                    playToken += 1; clearTimers(); safeCancel();\n                    isPlaying = false; isPaused = false; repeatRound = 1; playBtn.innerText = "▶️ 재생";\n                    updateDisplay(); if (message) status.innerText = message;\n                }\n                function jumpTo(newIndex, autoPlay) {\n                    index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));\n                    repeatRound = 1; updateDisplay();\n                    if (autoPlay) startFromCurrent();\n                }\n                playBtn.addEventListener("click", function(e) {\n                    e.preventDefault();\n                    if (isPaused) {\n                        try {\n                            window.speechSynthesis.resume(); isPaused = false; isPlaying = true;\n                            playBtn.innerText = "재생 중...";\n                            status.innerText = "이어 듣기: " + (index + 1) + " / " + cassetteItems.length;\n                        } catch(err) { startFromCurrent(); }\n                        return;\n                    }\n                    startFromCurrent();\n                });\n                pauseBtn.addEventListener("click", function(e) {\n                    e.preventDefault();\n                    if (isPlaying && window.speechSynthesis.speaking) {\n                        try { window.speechSynthesis.pause(); } catch(err) {}\n                        isPaused = true; playBtn.innerText = "▶️ 이어 듣기";\n                        status.innerText = "일시정지: " + (index + 1) + " / " + cassetteItems.length;\n                    }\n                });\n                stopBtn.addEventListener("click", function(e) { e.preventDefault(); stopAll("⏹ 중지됨"); });\n                prevBtn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index - 1, isPlaying); });\n                nextBtn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index + 1, isPlaying); });\n                prev10Btn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index - 10, isPlaying); });\n                next10Btn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index + 10, isPlaying); });\n                function setSpeed(rate, label, bg, color) {\n                    speechRate = rate; speedStatus.innerText = "현재: " + label;\n                    speedStatus.style.background = bg; speedStatus.style.color = color;\n                    if (isPlaying && !isPaused) startFromCurrent();\n                }\n                slowBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.375, "0.5x", "#fef3c7", "#92400e"); });\n                midSlowBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.5625, "0.75x", "#fffbeb", "#92400e"); });\n                normalBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.75, "1.0x", "#f3e8ff", "#7c3aed"); });\n                midFastBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.9375, "1.25x", "#ecfdf5", "#166534"); });\n                fastBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(1.125, "1.5x", "#dcfce7", "#166534"); });\n                progress.addEventListener("input", function() { index = parseInt(progress.value || "0"); updateDisplay(); });\n                progress.addEventListener("change", function() { jumpTo(parseInt(progress.value || "0"), isPlaying); });\n                if (typeof speechSynthesis !== "undefined") {\n                    speechSynthesis.onvoiceschanged = function() { cachedVoice = null; getEnglishVoice(); };\n                    getEnglishVoice();\n                }\n                updateDisplay();\n            })();\n            </script>\n        </div>\n'
-    replacements = {
-        "__PLAYER_ID__": player_id,
-        "__PLAY_BTN_ID__": play_btn_id,
-        "__PAUSE_BTN_ID__": pause_btn_id,
-        "__STOP_BTN_ID__": stop_btn_id,
-        "__PREV_BTN_ID__": prev_btn_id,
-        "__NEXT_BTN_ID__": next_btn_id,
-        "__PREV10_BTN_ID__": prev10_btn_id,
-        "__NEXT10_BTN_ID__": next10_btn_id,
-        "__SLOW_BTN_ID__": slow_btn_id,
-        "__MID_SLOW_BTN_ID__": mid_slow_btn_id,
-        "__NORMAL_BTN_ID__": normal_btn_id,
-        "__MID_FAST_BTN_ID__": mid_fast_btn_id,
-        "__FAST_BTN_ID__": fast_btn_id,
-        "__SPEED_STATUS_ID__": speed_status_id,
-        "__PROGRESS_ID__": progress_id,
-        "__VISUAL_BAR_ID__": visual_bar_id,
-        "__PERCENT_ID__": percent_id,
-        "__STATUS_ID__": status_id,
-        "__WORD_ID__": word_id,
-        "__MEANING_ID__": meaning_id,
-        "__CASSETTE_JSON__": cassette_json,
-        "__EMOJI_JSON__": emoji_json,
-        "__TITLE_TEXT__": html.escape(title_text),
-        "__MAX_INDEX__": str(max_index),
-        "__TOTAL_LEN__": str(total_len),
-    }
-    for old, new in replacements.items():
-        html_code = html_code.replace(old, new)
+    components.html(
+        f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            padding: 20px 20px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);
+            border: 1px solid #bfdbfe;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+        ">
+            <div style="
+                font-size: 20px;
+                font-weight: 900;
+                color: #0f172a;
+                margin-bottom: 10px;
+            ">
+                📼 Survival English 160 전체 카세트
+            </div>
 
-    components.html(html_code, height=height)
+            <div id="{word_id}" style="
+                font-size: 36px;
+                font-weight: 900;
+                color: #111827;
+                margin-bottom: 8px;
+            ">
+                Ready
+            </div>
+
+            <div id="{meaning_id}" style="
+                font-size: 16px;
+                font-weight: 800;
+                color: #475569;
+                margin-bottom: 14px;
+                line-height: 1.7;
+                background: rgba(255,255,255,0.76);
+                border: 1px solid #dbeafe;
+                border-radius: 18px;
+                padding: 12px 14px;
+            ">
+                재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
+            </div>
+
+            <div style="
+                margin: 14px 0 12px 0;
+                background: rgba(255,255,255,0.82);
+                border: 1px solid #bfdbfe;
+                border-radius: 18px;
+                padding: 14px 14px 12px 14px;
+            ">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:8px;
+                    margin-bottom:8px;
+                    flex-wrap:wrap;
+                ">
+                    <div style="font-size:14px; font-weight:900; color:#075985;">
+                        🎚️ 빠른 이동 줄
+                    </div>
+                    <div id="{percent_id}" style="
+                        font-size:13px;
+                        font-weight:900;
+                        color:#7c3aed;
+                        background:#f3e8ff;
+                        border-radius:999px;
+                        padding:5px 10px;
+                    ">
+                        0%
+                    </div>
+                </div>
+
+                <div style="
+                    width:100%;
+                    height:12px;
+                    background:#e2e8f0;
+                    border-radius:999px;
+                    overflow:hidden;
+                    margin-bottom:8px;
+                ">
+                    <div id="{visual_bar_id}" style="
+                        height:100%;
+                        width:0%;
+                        background:linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);
+                        border-radius:999px;
+                    "></div>
+                </div>
+
+                <input id="{progress_id}" type="range" min="0" max="{max_index}" value="0" step="1" style="
+                    width:100%;
+                    cursor:pointer;
+                    height:34px;
+                    accent-color:#8b5cf6;
+                ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    font-size:12px;
+                    color:#64748b;
+                    font-weight:800;
+                    margin-top:2px;
+                ">
+                    <span>1번</span>
+                    <span></span>
+                    <span>{len(all_items)}번</span>
+                </div>
+            </div>
+
+            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button id="{prev10_btn_id}" style="
+                    background:#fef3c7;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">⏪ 10개 전</button>
+
+                <button id="{prev_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏮ 이전</button>
+
+                <button id="{play_btn_id}" style="
+                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
+                    border: 1px solid #bfdbfe;
+                    border-radius: 999px;
+                    padding: 9px 16px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #1f2937;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                ">▶️ 재생</button>
+
+                <button id="{pause_btn_id}" style="
+                    background:#ecfeff;
+                    border:1px solid #67e8f9;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#155e75;
+                    cursor:pointer;
+                ">⏸ 일시정지</button>
+
+                <button id="{next_btn_id}" style="
+                    background:#f8fafc;
+                    border:1px solid #cbd5e1;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#334155;
+                    cursor:pointer;
+                ">⏭ 다음</button>
+
+                <button id="{next10_btn_id}" style="
+                    background:#dcfce7;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#166534;
+                    cursor:pointer;
+                ">⏩ 10개 후</button>
+
+                <button id="{stop_btn_id}" style="
+                    background: #fff7ed;
+                    border: 1px solid #fed7aa;
+                    border-radius: 999px;
+                    padding: 9px 13px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #9a3412;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                ">⏹ 중지</button>
+
+                <span style="
+                    margin-left:28px;
+                    padding-left:20px;
+                    border-left:2px dashed #c4b5fd;
+                    font-size:13px;
+                    font-weight:900;
+                    color:#475569;
+                    background:#f8fafc;
+                    border-radius:999px;
+                    padding-top:6px;
+                    padding-bottom:6px;
+                    padding-right:10px;
+                ">🎚️ 속도 조절</span>
+
+                <button id="{slow_btn_id}" style="
+                    background:#fef3c7;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">0.5x</button>
+
+                <button id="{mid_slow_btn_id}" style="
+                    background:#fffbeb;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">0.75x</button>
+
+                <button id="{normal_btn_id}" style="
+                    background:#e0f2fe;
+                    border:1px solid #7dd3fc;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#075985;
+                    cursor:pointer;
+                ">1.0x</button>
+
+                <button id="{mid_fast_btn_id}" style="
+                    background:#ecfdf5;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#166534;
+                    cursor:pointer;
+                ">1.25x</button>
+
+                <button id="{fast_btn_id}" style="
+                    background:#dcfce7;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#166534;
+                    cursor:pointer;
+                ">1.5x</button>
+
+                <span id="{speed_status_id}" style="
+                    font-size: 13px;
+                    color: #7c3aed;
+                    font-weight: 900;
+                    background:#f3e8ff;
+                    border-radius:999px;
+                    padding:6px 11px;
+                ">현재: 1.0x</span>
+
+                <span id="{status_id}" style="
+                    font-size: 13px;
+                    color: #075985;
+                    font-weight: 800;
+                "></span>
+            </div>
+
+
+            <script>
+            const cassetteItems = {cassette_json};
+
+            const playBtn = document.getElementById("{play_btn_id}");
+            const pauseBtn = document.getElementById("{pause_btn_id}");
+            const prevBtn = document.getElementById("{prev_btn_id}");
+            const nextBtn = document.getElementById("{next_btn_id}");
+            const prev10Btn = document.getElementById("{prev10_btn_id}");
+            const next10Btn = document.getElementById("{next10_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
+            const slowBtn = document.getElementById("{slow_btn_id}");
+            const midSlowBtn = document.getElementById("{mid_slow_btn_id}");
+            const normalBtn = document.getElementById("{normal_btn_id}");
+            const midFastBtn = document.getElementById("{mid_fast_btn_id}");
+            const fastBtn = document.getElementById("{fast_btn_id}");
+            const speedStatus = document.getElementById("{speed_status_id}");
+            const progress = document.getElementById("{progress_id}");
+            const visualBar = document.getElementById("{visual_bar_id}");
+            const percentBox = document.getElementById("{percent_id}");
+            const status = document.getElementById("{status_id}");
+            const wordBox = document.getElementById("{word_id}");
+            const meaningBox = document.getElementById("{meaning_id}");
+
+            const playerId = {safe_player_id};
+            const channel = new BroadcastChannel("survival_english_audio_channel");
+
+            let index = 0;
+            let isPlaying = false;
+            let isPaused = false;
+            let jumpTimer = null;
+            let safetyTimer = null;
+            let playToken = 0;
+            let repeatRound = 1;
+            const maxRepeatRound = 3;
+            let speechRate = 0.75;
+
+            function escapeHtml(text) {{
+                const div = document.createElement("div");
+                div.innerText = text;
+                return div.innerHTML;
+            }}
+
+            function updateProgressVisual() {{
+                const max = Math.max(cassetteItems.length - 1, 1);
+                const pct = Math.round((index / max) * 100);
+                visualBar.style.width = pct + "%";
+                percentBox.innerText = pct + "%";
+            }}
+
+            function updateDisplay() {{
+                const item = cassetteItems[index];
+                if (!item) return;
+
+                progress.value = index;
+                updateProgressVisual();
+
+                wordBox.innerText = item.number + ". " + item.word + " " + getEmoji(item.word);
+
+                meaningBox.innerHTML =
+                    "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
+                    "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
+                    "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +
+                    "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + escapeHtml(item.theme) + "</div>";
+
+                status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
+            }}
+
+            function getEmoji(word) {{
+                const emojiMap = {{
+                    "I":"🙋","you":"👉","he":"👦","she":"👧","we":"👥","they":"👥","friend":"🤝","teacher":"👩‍🏫","student":"🧑‍🎓",
+                    "go":"➡️","come":"⬅️","walk":"🚶","run":"🏃","sit":"🪑","stand":"🧍","stop":"🛑","start":"▶️","open":"📂","close":"📕",
+                    "eat":"🍽️","drink":"🥤","sleep":"😴","study":"📚","read":"📖","write":"✏️","listen":"👂","speak":"🗣️","help":"🆘",
+                    "happy":"😊","sad":"😢","angry":"😠","tired":"🥱","hungry":"😋","thirsty":"🥤","sick":"🤒",
+                    "food":"🍽️","water":"💧","rice":"🍚","bread":"🍞","milk":"🥛","juice":"🧃","coffee":"☕","tea":"🍵",
+                    "home":"🏠","school":"🏫","bathroom":"🚻","hospital":"🏥","store":"🏪","bus":"🚌","car":"🚗","taxi":"🚕","train":"🚆","bike":"🚲",
+                    "time":"⏰","now":"🕒","today":"📅","tomorrow":"➡️📅","yesterday":"⬅️📅",
+                    "bag":"🎒","phone":"📱","book":"📘","money":"💵","card":"💳","ticket":"🎫",
+                    "please":"🙏","sorry":"🙇","excuse me":"🙋","again":"🔁","slowly":"🐢","question":"❓","answer":"✅"
+                }};
+                return emojiMap[word] || "🌱";
+            }}
+
+            function stopThisTape(showMessage = false) {{
+                playToken += 1;
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                    jumpTimer = null;
+                }}
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
+                window.speechSynthesis.cancel();
+                isPlaying = false;
+                isPaused = false;
+                playBtn.innerText = "▶️ 재생";
+                repeatRound = 1;
+                if (showMessage) {{
+                    status.innerText = "중지됨";
+                }}
+            }}
+
+            channel.onmessage = function(event) {{
+                if (!event.data) return;
+
+                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                    stopThisTape(false);
+                }}
+            }};
+
+            function getFemaleEnglishVoice() {{
+                const voices = window.speechSynthesis.getVoices();
+
+                const preferredNames = [
+                    "Samantha",
+                    "Google US English",
+                    "Microsoft Jenny",
+                    "Microsoft Aria",
+                    "Microsoft Zira",
+                    "Karen",
+                    "Moira",
+                    "Tessa",
+                    "Fiona",
+                    "Victoria"
+                ];
+
+                for (const name of preferredNames) {{
+                    const found = voices.find(v =>
+                        v.name && v.name.toLowerCase().includes(name.toLowerCase()) &&
+                        v.lang && v.lang.toLowerCase().startsWith("en")
+                    );
+                    if (found) return found;
+                }}
+
+                const femaleLike = voices.find(v =>
+                    v.lang && v.lang.toLowerCase().startsWith("en") &&
+                    v.name && /(female|woman|jenny|aria|zira|samantha|karen|moira|tessa|fiona|victoria)/i.test(v.name)
+                );
+                if (femaleLike) return femaleLike;
+
+                const englishVoice = voices.find(v =>
+                    v.lang && v.lang.toLowerCase().startsWith("en")
+                );
+                return englishVoice || null;
+            }}
+
+            function primeSpeechEngine(callback) {{
+                window.speechSynthesis.cancel();
+
+                const voices = window.speechSynthesis.getVoices();
+
+                if (voices && voices.length > 0) {{
+                    setTimeout(callback, 180);
+                    return;
+                }}
+
+                let tried = 0;
+                const voiceTimer = setInterval(function() {{
+                    tried += 1;
+                    const loadedVoices = window.speechSynthesis.getVoices();
+
+                    if ((loadedVoices && loadedVoices.length > 0) || tried >= 10) {{
+                        clearInterval(voiceTimer);
+                        setTimeout(callback, 180);
+                    }}
+                }}, 120);
+            }}
+
+            function speakCurrent(expectedToken = playToken) {{
+                if (!isPlaying || expectedToken !== playToken) return;
+
+                const item = cassetteItems[index];
+                if (!item) {{
+                    stopThisTape(false);
+                    status.innerText = "완료";
+                    return;
+                }}
+
+                updateDisplay();
+
+                const utterance = new SpeechSynthesisUtterance(item.script);
+                utterance.lang = "en-US";
+                utterance.rate = speechRate;
+                utterance.pitch = 1.08;
+
+                const femaleVoice = getFemaleEnglishVoice();
+                if (femaleVoice) {{
+                    utterance.voice = femaleVoice;
+                }}
+
+                let endedSafely = false;
+
+                function goNextAfterCurrent() {{
+                    if (endedSafely) return;
+                    endedSafely = true;
+
+                    if (!isPlaying || isPaused || expectedToken !== playToken) return;
+
+                    index += 1;
+
+                    if (index >= cassetteItems.length) {{
+                        if (repeatRound < maxRepeatRound) {{
+                            repeatRound += 1;
+                            index = 0;
+                            status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " 시작";
+                            setTimeout(function() {{
+                                speakCurrent(expectedToken);
+                            }}, 900);
+                            return;
+                        }}
+
+                        stopThisTape(false);
+                        status.innerText = "3회 반복 재생 완료";
+                        return;
+                    }}
+
+                    setTimeout(function() {{
+                        speakCurrent(expectedToken);
+                    }}, 650);
+                }}
+
+                utterance.onend = goNextAfterCurrent;
+
+                utterance.onerror = function() {{
+                    if (!isPlaying || isPaused) return;
+                    goNextAfterCurrent();
+                }};
+
+                window.speechSynthesis.cancel();
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
+                setTimeout(function() {{
+                    if (!isPlaying || isPaused || expectedToken !== playToken) return;
+
+                    try {{
+                        window.speechSynthesis.speak(utterance);
+                    }} catch (e) {{
+                        return;
+                    }}
+
+                    // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
+                    const estimatedMs = Math.max(2600, item.script.length * 125 / Math.max(speechRate, 0.375));
+                    safetyTimer = setTimeout(function() {{
+                        if (!endedSafely && isPlaying && !isPaused && expectedToken === playToken) {{
+                            goNextAfterCurrent();
+                        }}
+                    }}, estimatedMs);
+                }}, 80);
+            }}
+
+            function jumpTo(newIndex, keepPlaying = true) {{
+                playToken += 1;
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                    jumpTimer = null;
+                }}
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
+                index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
+                repeatRound = 1;
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (isPlaying && keepPlaying) {{
+                    const tokenAtJump = playToken;
+                    jumpTimer = setTimeout(function() {{
+                        if (tokenAtJump !== playToken) return;
+                        isPaused = false;
+                        speakCurrent(tokenAtJump);
+                    }}, 350);
+                }}
+            }}
+
+            playBtn.addEventListener("click", function() {{
+                channel.postMessage({{
+                    type: "STOP_OTHERS",
+                    playerId: playerId
+                }});
+
+                if (isPaused) {{
+                    window.speechSynthesis.resume();
+                    isPaused = false;
+                    isPlaying = true;
+                    playBtn.innerText = "재생 중...";
+                    status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
+                    return;
+                }}
+
+                playToken += 1;
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                    jumpTimer = null;
+                }}
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
+                window.speechSynthesis.cancel();
+                repeatRound = 1;
+                isPlaying = true;
+                isPaused = false;
+                playBtn.innerText = "재생 중...";
+                updateDisplay();
+                speakCurrent(playToken);
+            }});
+
+            pauseBtn.addEventListener("click", function() {{
+                if (window.speechSynthesis.speaking) {{
+                    window.speechSynthesis.pause();
+                    isPaused = true;
+                    isPlaying = true;
+                    playBtn.innerText = "▶️ 이어 듣기";
+                    status.innerText = "일시정지: " + (index + 1) + " / " + cassetteItems.length;
+                }}
+            }});
+
+            stopBtn.addEventListener("click", function() {{
+                stopThisTape(true);
+            }});
+
+            prevBtn.addEventListener("click", function() {{
+                jumpTo(index - 1, true);
+            }});
+
+            nextBtn.addEventListener("click", function() {{
+                jumpTo(index + 1, true);
+            }});
+
+            prev10Btn.addEventListener("click", function() {{
+                jumpTo(index - 10, true);
+            }});
+
+            next10Btn.addEventListener("click", function() {{
+                jumpTo(index + 10, true);
+            }});
+
+            slowBtn.addEventListener("click", function() {{
+                speechRate = 0.375;
+                speedStatus.innerText = "현재: 0.5x";
+                speedStatus.style.background = "#fef3c7";
+                speedStatus.style.color = "#92400e";
+            }});
+
+            midSlowBtn.addEventListener("click", function() {{
+                speechRate = 0.5625;
+                speedStatus.innerText = "현재: 0.75x";
+                speedStatus.style.background = "#fffbeb";
+                speedStatus.style.color = "#92400e";
+            }});
+
+            normalBtn.addEventListener("click", function() {{
+                speechRate = 0.75;
+                speedStatus.innerText = "현재: 1.0x";
+                speedStatus.style.background = "#f3e8ff";
+                speedStatus.style.color = "#7c3aed";
+            }});
+
+            midFastBtn.addEventListener("click", function() {{
+                speechRate = 0.9375;
+                speedStatus.innerText = "현재: 1.25x";
+                speedStatus.style.background = "#ecfdf5";
+                speedStatus.style.color = "#166534";
+            }});
+
+            fastBtn.addEventListener("click", function() {{
+                speechRate = 1.125;
+                speedStatus.innerText = "현재: 1.5x";
+                speedStatus.style.background = "#dcfce7";
+                speedStatus.style.color = "#166534";
+            }});
+
+            progress.addEventListener("input", function() {{
+                index = parseInt(progress.value);
+                updateDisplay();
+            }});
+
+            progress.addEventListener("change", function() {{
+                jumpTo(parseInt(progress.value), true);
+            }});
+
+            if (typeof speechSynthesis !== "undefined") {{
+                speechSynthesis.onvoiceschanged = function() {{
+                    getFemaleEnglishVoice();
+                }};
+            }}
+
+            updateDisplay();
+            </script>
+        </div>
+        """,
+        height=height
+    )
 
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=700):
+def browser_theme_cassette_player(theme_items, theme_name, height=550):
     """
-    모바일 수정판 카세트 플레이어.
-    - 폰 화면에서 버튼 줄 깨짐 방지
-    - 재생 버튼 클릭 시 모바일 브라우저에서 바로 speechSynthesis 실행
-    - 전체 단어/테마 단어를 3회 반복 재생
+    테마별 카세트 전용 플레이어.
+    전체 카세트 플레이어와 JS 변수명이 충돌하지 않도록 모든 변수명을 블록 스코프 안에 넣었습니다.
     """
-    player_id = f"theme_mobile_cassette_{uuid.uuid4().hex}"
-    play_btn_id = f"theme_mobile_play_{uuid.uuid4().hex}"
-    pause_btn_id = f"theme_mobile_pause_{uuid.uuid4().hex}"
-    stop_btn_id = f"theme_mobile_stop_{uuid.uuid4().hex}"
-    prev_btn_id = f"theme_mobile_prev_{uuid.uuid4().hex}"
-    next_btn_id = f"theme_mobile_next_{uuid.uuid4().hex}"
-    prev10_btn_id = f"theme_mobile_prev10_{uuid.uuid4().hex}"
-    next10_btn_id = f"theme_mobile_next10_{uuid.uuid4().hex}"
-    slow_btn_id = f"theme_mobile_slow_{uuid.uuid4().hex}"
-    mid_slow_btn_id = f"theme_mobile_midslow_{uuid.uuid4().hex}"
-    normal_btn_id = f"theme_mobile_normal_{uuid.uuid4().hex}"
-    mid_fast_btn_id = f"theme_mobile_midfast_{uuid.uuid4().hex}"
-    fast_btn_id = f"theme_mobile_fast_{uuid.uuid4().hex}"
-    speed_status_id = f"theme_mobile_speed_{uuid.uuid4().hex}"
-    progress_id = f"theme_mobile_progress_{uuid.uuid4().hex}"
-    visual_bar_id = f"theme_mobile_bar_{uuid.uuid4().hex}"
-    percent_id = f"theme_mobile_percent_{uuid.uuid4().hex}"
-    status_id = f"theme_mobile_status_{uuid.uuid4().hex}"
-    word_id = f"theme_mobile_word_{uuid.uuid4().hex}"
-    meaning_id = f"theme_mobile_meaning_{uuid.uuid4().hex}"
+
+    player_id = f"theme_browser_cassette_{uuid.uuid4().hex}"
+    play_btn_id = f"theme_play_{uuid.uuid4().hex}"
+    pause_btn_id = f"theme_pause_{uuid.uuid4().hex}"
+    prev_btn_id = f"theme_prev_{uuid.uuid4().hex}"
+    next_btn_id = f"theme_next_{uuid.uuid4().hex}"
+    slow_btn_id = f"theme_slow_{uuid.uuid4().hex}"
+    mid_slow_btn_id = f"theme_mid_slow_{uuid.uuid4().hex}"
+    normal_btn_id = f"theme_normal_{uuid.uuid4().hex}"
+    mid_fast_btn_id = f"theme_mid_fast_{uuid.uuid4().hex}"
+    fast_btn_id = f"theme_fast_{uuid.uuid4().hex}"
+    speed_status_id = f"theme_speed_status_{uuid.uuid4().hex}"
+    progress_id = f"theme_progress_{uuid.uuid4().hex}"
+    visual_bar_id = f"theme_visual_bar_{uuid.uuid4().hex}"
+    percent_id = f"theme_percent_{uuid.uuid4().hex}"
+    status_id = f"theme_status_{uuid.uuid4().hex}"
+    word_id = f"theme_word_{uuid.uuid4().hex}"
+    meaning_id = f"theme_meaning_{uuid.uuid4().hex}"
 
     cassette_json = json.dumps(theme_items, ensure_ascii=False)
-    emoji_json = json.dumps(WORD_EMOJIS, ensure_ascii=False)
-    title_text = f"{theme_name} 카세트 듣기"
+    safe_player_id = json.dumps(player_id)
+    safe_theme_name = json.dumps(theme_name, ensure_ascii=False)
     max_index = max(len(theme_items) - 1, 0)
-    total_len = len(theme_items)
 
-    html_code = '\n        <div id="__PLAYER_ID__" class="cassette-wrap">\n            <style>\n                #__PLAYER_ID__ {\n                    box-sizing: border-box;\n                    width: 100%;\n                    max-width: 100%;\n                    overflow: hidden;\n                    font-family: Arial, sans-serif;\n                    padding: 16px;\n                    border-radius: 22px;\n                    background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);\n                    border: 1px solid #bfdbfe;\n                    box-shadow: 0 4px 14px rgba(0,0,0,0.08);\n                }\n                #__PLAYER_ID__ * { box-sizing: border-box; }\n                #__PLAYER_ID__ .cassette-title {\n                    font-size: 19px; font-weight: 900; color: #0f172a;\n                    margin-bottom: 10px; line-height: 1.35;\n                }\n                #__PLAYER_ID__ .cassette-word {\n                    font-size: 32px; font-weight: 900; color: #111827;\n                    margin-bottom: 8px; line-height: 1.15;\n                    word-break: keep-all; overflow-wrap: anywhere;\n                }\n                #__PLAYER_ID__ .cassette-meaning {\n                    font-size: 15px; font-weight: 800; color: #475569;\n                    margin-bottom: 12px; line-height: 1.6;\n                    background: rgba(255,255,255,0.78);\n                    border: 1px solid #dbeafe; border-radius: 18px; padding: 12px;\n                    word-break: keep-all; overflow-wrap: anywhere;\n                }\n                #__PLAYER_ID__ .progress-card {\n                    margin: 12px 0; background: rgba(255,255,255,0.86);\n                    border: 1px solid #bfdbfe; border-radius: 18px; padding: 12px;\n                }\n                #__PLAYER_ID__ .progress-top {\n                    display: flex; justify-content: space-between; align-items: center;\n                    gap: 8px; margin-bottom: 8px;\n                }\n                #__PLAYER_ID__ .progress-label { font-size: 14px; font-weight: 900; color: #075985; }\n                #__PLAYER_ID__ .percent-pill {\n                    font-size: 13px; font-weight: 900; color: #7c3aed;\n                    background: #f3e8ff; border-radius: 999px; padding: 5px 10px; flex-shrink: 0;\n                }\n                #__PLAYER_ID__ .visual-track {\n                    width: 100%; height: 11px; background: #e2e8f0;\n                    border-radius: 999px; overflow: hidden; margin-bottom: 8px;\n                }\n                #__PLAYER_ID__ .visual-bar {\n                    height: 100%; width: 0%;\n                    background: linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);\n                    border-radius: 999px;\n                }\n                #__PLAYER_ID__ input[type=range] {\n                    width: 100%; min-width: 0; height: 36px; cursor: pointer; accent-color: #8b5cf6;\n                }\n                #__PLAYER_ID__ .range-caption {\n                    display: flex; justify-content: space-between;\n                    font-size: 12px; color: #64748b; font-weight: 800;\n                }\n                #__PLAYER_ID__ .button-grid {\n                    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));\n                    gap: 8px; width: 100%; margin-top: 10px;\n                }\n                #__PLAYER_ID__ .speed-grid {\n                    display: grid; grid-template-columns: repeat(6, minmax(0, 1fr));\n                    gap: 8px; width: 100%; margin-top: 10px; align-items: center;\n                }\n                #__PLAYER_ID__ button {\n                    width: 100%; min-height: 42px; border-radius: 999px; padding: 8px 8px;\n                    font-weight: 900; font-size: 13px; cursor: pointer;\n                    touch-action: manipulation; -webkit-tap-highlight-color: transparent;\n                    border: 1px solid #cbd5e1; color: #334155; background: #f8fafc;\n                    white-space: nowrap;\n                }\n                #__PLAYER_ID__ button:active { transform: scale(0.98); }\n                #__PLAYER_ID__ .btn-play {\n                    background: linear-gradient(135deg, #dbeafe, #fce7f3);\n                    border-color: #bfdbfe; color: #1f2937; box-shadow: 0 3px 8px rgba(0,0,0,0.08);\n                }\n                #__PLAYER_ID__ .btn-pause { background: #ecfeff; border-color: #67e8f9; color: #155e75; }\n                #__PLAYER_ID__ .btn-stop { background: #fff7ed; border-color: #fed7aa; color: #9a3412; }\n                #__PLAYER_ID__ .btn-prev10 { background: #fef3c7; border-color: #fde68a; color: #92400e; }\n                #__PLAYER_ID__ .btn-next10 { background: #dcfce7; border-color: #bbf7d0; color: #166534; }\n                #__PLAYER_ID__ .speed-label {\n                    grid-column: span 2; font-size: 13px; font-weight: 900; color: #475569;\n                    background: #f8fafc; border-radius: 999px; padding: 9px 10px;\n                    text-align: center; border: 1px dashed #c4b5fd;\n                }\n                #__PLAYER_ID__ .speed-status {\n                    grid-column: span 2; font-size: 13px; color: #7c3aed; font-weight: 900;\n                    background: #f3e8ff; border-radius: 999px; padding: 9px 10px; text-align: center;\n                }\n                #__PLAYER_ID__ .status-line {\n                    margin-top: 10px; min-height: 22px; font-size: 13px;\n                    color: #075985; font-weight: 900; line-height: 1.5; word-break: keep-all;\n                }\n                @media (max-width: 600px) {\n                    #__PLAYER_ID__ { padding: 12px; border-radius: 18px; }\n                    #__PLAYER_ID__ .cassette-title { font-size: 17px; }\n                    #__PLAYER_ID__ .cassette-word { font-size: 26px; }\n                    #__PLAYER_ID__ .cassette-meaning { font-size: 13.5px; padding: 10px; }\n                    #__PLAYER_ID__ .button-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }\n                    #__PLAYER_ID__ .speed-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px; }\n                    #__PLAYER_ID__ .speed-label, #__PLAYER_ID__ .speed-status { grid-column: span 3; }\n                    #__PLAYER_ID__ button { min-height: 42px; font-size: 12.5px; padding: 8px 6px; }\n                }\n            </style>\n\n            <div class="cassette-title">📼 __TITLE_TEXT__</div>\n            <div id="__WORD_ID__" class="cassette-word">Ready</div>\n            <div id="__MEANING_ID__" class="cassette-meaning">재생 버튼을 누르면 단어와 예문이 차례대로 재생됩니다.</div>\n\n            <div class="progress-card">\n                <div class="progress-top">\n                    <div class="progress-label">🎚️ 이동</div>\n                    <div id="__PERCENT_ID__" class="percent-pill">0%</div>\n                </div>\n                <div class="visual-track"><div id="__VISUAL_BAR_ID__" class="visual-bar"></div></div>\n                <input id="__PROGRESS_ID__" type="range" min="0" max="__MAX_INDEX__" value="0" step="1">\n                <div class="range-caption"><span>1번</span><span>__TOTAL_LEN__번</span></div>\n            </div>\n\n            <div class="button-grid">\n                <button type="button" id="__PREV10_BTN_ID__" class="btn-prev10">⏪ 10개 전</button>\n                <button type="button" id="__PREV_BTN_ID__">⏮ 이전</button>\n                <button type="button" id="__PLAY_BTN_ID__" class="btn-play">▶️ 재생</button>\n                <button type="button" id="__PAUSE_BTN_ID__" class="btn-pause">⏸ 일시정지</button>\n                <button type="button" id="__NEXT_BTN_ID__">⏭ 다음</button>\n                <button type="button" id="__NEXT10_BTN_ID__" class="btn-next10">⏩ 10개 후</button>\n                <button type="button" id="__STOP_BTN_ID__" class="btn-stop">⏹ 중지</button>\n            </div>\n\n            <div class="speed-grid">\n                <div class="speed-label">🎚️ 속도 조절</div>\n                <button type="button" id="__SLOW_BTN_ID__">0.5x</button>\n                <button type="button" id="__MID_SLOW_BTN_ID__">0.75x</button>\n                <button type="button" id="__NORMAL_BTN_ID__">1.0x</button>\n                <button type="button" id="__MID_FAST_BTN_ID__">1.25x</button>\n                <button type="button" id="__FAST_BTN_ID__">1.5x</button>\n                <div id="__SPEED_STATUS_ID__" class="speed-status">현재: 1.0x</div>\n            </div>\n\n            <div id="__STATUS_ID__" class="status-line"></div>\n\n            <script>\n            (function() {\n                const cassetteItems = __CASSETTE_JSON__;\n                const emojiMap = __EMOJI_JSON__;\n                const playBtn = document.getElementById("__PLAY_BTN_ID__");\n                const pauseBtn = document.getElementById("__PAUSE_BTN_ID__");\n                const stopBtn = document.getElementById("__STOP_BTN_ID__");\n                const prevBtn = document.getElementById("__PREV_BTN_ID__");\n                const nextBtn = document.getElementById("__NEXT_BTN_ID__");\n                const prev10Btn = document.getElementById("__PREV10_BTN_ID__");\n                const next10Btn = document.getElementById("__NEXT10_BTN_ID__");\n                const slowBtn = document.getElementById("__SLOW_BTN_ID__");\n                const midSlowBtn = document.getElementById("__MID_SLOW_BTN_ID__");\n                const normalBtn = document.getElementById("__NORMAL_BTN_ID__");\n                const midFastBtn = document.getElementById("__MID_FAST_BTN_ID__");\n                const fastBtn = document.getElementById("__FAST_BTN_ID__");\n                const speedStatus = document.getElementById("__SPEED_STATUS_ID__");\n                const progress = document.getElementById("__PROGRESS_ID__");\n                const visualBar = document.getElementById("__VISUAL_BAR_ID__");\n                const percentBox = document.getElementById("__PERCENT_ID__");\n                const status = document.getElementById("__STATUS_ID__");\n                const wordBox = document.getElementById("__WORD_ID__");\n                const meaningBox = document.getElementById("__MEANING_ID__");\n\n                let index = 0, isPlaying = false, isPaused = false, playToken = 0, repeatRound = 1;\n                const maxRepeatRound = 3;\n                let speechRate = 0.75, nextTimer = null, safetyTimer = null, cachedVoice = null;\n\n                function escapeHtml(text) {\n                    const div = document.createElement("div");\n                    div.innerText = String(text ?? "");\n                    return div.innerHTML;\n                }\n                function safeCancel() { try { window.speechSynthesis.cancel(); } catch(e) {} }\n                function clearTimers() {\n                    if (nextTimer) { clearTimeout(nextTimer); nextTimer = null; }\n                    if (safetyTimer) { clearTimeout(safetyTimer); safetyTimer = null; }\n                }\n                function getEmoji(word) { return emojiMap[word] || "🌱"; }\n                function updateProgressVisual() {\n                    const max = Math.max(cassetteItems.length - 1, 1);\n                    const pct = Math.round((index / max) * 100);\n                    visualBar.style.width = pct + "%";\n                    percentBox.innerText = pct + "%";\n                }\n                function updateDisplay() {\n                    const item = cassetteItems[index];\n                    if (!item) return;\n                    progress.value = index;\n                    updateProgressVisual();\n                    wordBox.innerText = item.number + ". " + item.word + " " + getEmoji(item.word);\n                    meaningBox.innerHTML =\n                        "<div style=\'font-size:15px; color:#374151; font-weight:900;\'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +\n                        "<div style=\'font-size:15px; color:#0369a1; font-weight:900; margin-top:4px;\'>예문: " + escapeHtml(item.example) + "</div>" +\n                        "<div style=\'font-size:15px; color:#166534; font-weight:900; margin-top:4px;\'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +\n                        "<div style=\'font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;\'>" + escapeHtml(item.theme || "") + "</div>";\n                    status.innerText = "전체 반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;\n                }\n                function getEnglishVoice() {\n                    if (cachedVoice) return cachedVoice;\n                    let voices = [];\n                    try { voices = window.speechSynthesis.getVoices() || []; } catch(e) { voices = []; }\n                    cachedVoice = voices.find(v => /en-US/i.test(v.lang || "")) || voices.find(v => /^en/i.test(v.lang || "")) || null;\n                    return cachedVoice;\n                }\n                function makeUtterance(text) {\n                    const u = new SpeechSynthesisUtterance(text);\n                    u.lang = "en-US"; u.rate = speechRate; u.pitch = 1; u.volume = 1;\n                    const voice = getEnglishVoice();\n                    if (voice) u.voice = voice;\n                    return u;\n                }\n                function scheduleNext(tokenAtPlay) {\n                    if (!isPlaying || isPaused || tokenAtPlay !== playToken) return;\n                    index += 1;\n                    if (index >= cassetteItems.length) {\n                        if (repeatRound < maxRepeatRound) { repeatRound += 1; index = 0; }\n                        else {\n                            isPlaying = false; isPaused = false; playBtn.innerText = "▶️ 재생";\n                            status.innerText = "✅ 전체 3회 반복 재생 완료";\n                            safeCancel(); return;\n                        }\n                    }\n                    updateDisplay();\n                    nextTimer = setTimeout(function() { speakCurrent(tokenAtPlay); }, 650);\n                }\n                function speakCurrent(tokenAtPlay) {\n                    if (!isPlaying || isPaused || tokenAtPlay !== playToken) return;\n                    const item = cassetteItems[index];\n                    if (!item) return;\n                    clearTimers(); updateDisplay(); safeCancel();\n                    const script = item.script || (item.word + ". " + item.word + ". " + item.example + " " + item.word + ".");\n                    const utter = makeUtterance(script);\n                    let ended = false;\n                    utter.onend = function() { ended = true; scheduleNext(tokenAtPlay); };\n                    utter.onerror = function() {\n                        if (tokenAtPlay !== playToken) return;\n                        status.innerText = "⚠️ 재생이 막혔습니다. 재생 버튼을 한 번 더 눌러 주세요.";\n                        isPlaying = false; isPaused = false; playBtn.innerText = "▶️ 다시 재생";\n                    };\n                    try { window.speechSynthesis.speak(utter); }\n                    catch(e) {\n                        status.innerText = "⚠️ 이 브라우저에서는 음성 재생이 제한되었습니다.";\n                        isPlaying = false; isPaused = false; playBtn.innerText = "▶️ 재생"; return;\n                    }\n                    safetyTimer = setTimeout(function() {\n                        if (!ended && isPlaying && !isPaused && tokenAtPlay === playToken) {\n                            safeCancel(); scheduleNext(tokenAtPlay);\n                        }\n                    }, 9000);\n                }\n                function startFromCurrent() {\n                    if (!("speechSynthesis" in window)) {\n                        status.innerText = "⚠️ 이 브라우저는 음성 재생을 지원하지 않습니다."; return;\n                    }\n                    playToken += 1;\n                    const tokenAtPlay = playToken;\n                    clearTimers(); safeCancel();\n                    isPlaying = true; isPaused = false; playBtn.innerText = "재생 중...";\n                    updateDisplay();\n                    speakCurrent(tokenAtPlay);\n                }\n                function stopAll(message) {\n                    playToken += 1; clearTimers(); safeCancel();\n                    isPlaying = false; isPaused = false; repeatRound = 1; playBtn.innerText = "▶️ 재생";\n                    updateDisplay(); if (message) status.innerText = message;\n                }\n                function jumpTo(newIndex, autoPlay) {\n                    index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));\n                    repeatRound = 1; updateDisplay();\n                    if (autoPlay) startFromCurrent();\n                }\n                playBtn.addEventListener("click", function(e) {\n                    e.preventDefault();\n                    if (isPaused) {\n                        try {\n                            window.speechSynthesis.resume(); isPaused = false; isPlaying = true;\n                            playBtn.innerText = "재생 중...";\n                            status.innerText = "이어 듣기: " + (index + 1) + " / " + cassetteItems.length;\n                        } catch(err) { startFromCurrent(); }\n                        return;\n                    }\n                    startFromCurrent();\n                });\n                pauseBtn.addEventListener("click", function(e) {\n                    e.preventDefault();\n                    if (isPlaying && window.speechSynthesis.speaking) {\n                        try { window.speechSynthesis.pause(); } catch(err) {}\n                        isPaused = true; playBtn.innerText = "▶️ 이어 듣기";\n                        status.innerText = "일시정지: " + (index + 1) + " / " + cassetteItems.length;\n                    }\n                });\n                stopBtn.addEventListener("click", function(e) { e.preventDefault(); stopAll("⏹ 중지됨"); });\n                prevBtn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index - 1, isPlaying); });\n                nextBtn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index + 1, isPlaying); });\n                prev10Btn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index - 10, isPlaying); });\n                next10Btn.addEventListener("click", function(e) { e.preventDefault(); jumpTo(index + 10, isPlaying); });\n                function setSpeed(rate, label, bg, color) {\n                    speechRate = rate; speedStatus.innerText = "현재: " + label;\n                    speedStatus.style.background = bg; speedStatus.style.color = color;\n                    if (isPlaying && !isPaused) startFromCurrent();\n                }\n                slowBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.375, "0.5x", "#fef3c7", "#92400e"); });\n                midSlowBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.5625, "0.75x", "#fffbeb", "#92400e"); });\n                normalBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.75, "1.0x", "#f3e8ff", "#7c3aed"); });\n                midFastBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(0.9375, "1.25x", "#ecfdf5", "#166534"); });\n                fastBtn.addEventListener("click", function(e) { e.preventDefault(); setSpeed(1.125, "1.5x", "#dcfce7", "#166534"); });\n                progress.addEventListener("input", function() { index = parseInt(progress.value || "0"); updateDisplay(); });\n                progress.addEventListener("change", function() { jumpTo(parseInt(progress.value || "0"), isPlaying); });\n                if (typeof speechSynthesis !== "undefined") {\n                    speechSynthesis.onvoiceschanged = function() { cachedVoice = null; getEnglishVoice(); };\n                    getEnglishVoice();\n                }\n                updateDisplay();\n            })();\n            </script>\n        </div>\n'
-    replacements = {
-        "__PLAYER_ID__": player_id,
-        "__PLAY_BTN_ID__": play_btn_id,
-        "__PAUSE_BTN_ID__": pause_btn_id,
-        "__STOP_BTN_ID__": stop_btn_id,
-        "__PREV_BTN_ID__": prev_btn_id,
-        "__NEXT_BTN_ID__": next_btn_id,
-        "__PREV10_BTN_ID__": prev10_btn_id,
-        "__NEXT10_BTN_ID__": next10_btn_id,
-        "__SLOW_BTN_ID__": slow_btn_id,
-        "__MID_SLOW_BTN_ID__": mid_slow_btn_id,
-        "__NORMAL_BTN_ID__": normal_btn_id,
-        "__MID_FAST_BTN_ID__": mid_fast_btn_id,
-        "__FAST_BTN_ID__": fast_btn_id,
-        "__SPEED_STATUS_ID__": speed_status_id,
-        "__PROGRESS_ID__": progress_id,
-        "__VISUAL_BAR_ID__": visual_bar_id,
-        "__PERCENT_ID__": percent_id,
-        "__STATUS_ID__": status_id,
-        "__WORD_ID__": word_id,
-        "__MEANING_ID__": meaning_id,
-        "__CASSETTE_JSON__": cassette_json,
-        "__EMOJI_JSON__": emoji_json,
-        "__TITLE_TEXT__": html.escape(title_text),
-        "__MAX_INDEX__": str(max_index),
-        "__TOTAL_LEN__": str(total_len),
-    }
-    for old, new in replacements.items():
-        html_code = html_code.replace(old, new)
+    components.html(
+        f"""
+        <div style="
+            font-family: Arial, sans-serif;
+            padding: 18px 18px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, #f0f9ff, #fff7ed, #fdf2f8);
+            border: 1px solid #bae6fd;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+            margin-bottom: 18px;
+        ">
+            <div style="
+                font-size: 19px;
+                font-weight: 900;
+                color: #0f172a;
+                margin-bottom: 10px;
+            ">
+                📼 {theme_name} 카세트 듣기
+            </div>
 
-    components.html(html_code, height=height)
+            <div id="{word_id}" style="
+                font-size: 32px;
+                font-weight: 900;
+                color: #111827;
+                margin-bottom: 8px;
+            ">
+                Ready
+            </div>
+
+            <div id="{meaning_id}" style="
+                font-size: 16px;
+                font-weight: 800;
+                color: #475569;
+                margin-bottom: 12px;
+                line-height: 1.7;
+                background: rgba(255,255,255,0.76);
+                border: 1px solid #dbeafe;
+                border-radius: 16px;
+                padding: 11px 13px;
+            ">
+                재생 버튼을 누르면 이 테마 단어가 차례대로 재생됩니다.
+            </div>
+
+            <div style="
+                margin: 12px 0 12px 0;
+                background: rgba(255,255,255,0.82);
+                border: 1px solid #bfdbfe;
+                border-radius: 16px;
+                padding: 12px 13px 10px 13px;
+            ">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:8px;
+                    margin-bottom:8px;
+                    flex-wrap:wrap;
+                ">
+                    <div style="font-size:14px; font-weight:900; color:#075985;">
+                        🎚️ 빠른 이동 줄
+                    </div>
+                    <div id="{percent_id}" style="
+                        font-size:13px;
+                        font-weight:900;
+                        color:#7c3aed;
+                        background:#f3e8ff;
+                        border-radius:999px;
+                        padding:5px 10px;
+                    ">
+                        0%
+                    </div>
+                </div>
+
+                <div style="
+                    width:100%;
+                    height:10px;
+                    background:#e2e8f0;
+                    border-radius:999px;
+                    overflow:hidden;
+                    margin-bottom:8px;
+                ">
+                    <div id="{visual_bar_id}" style="
+                        height:100%;
+                        width:0%;
+                        background:linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);
+                        border-radius:999px;
+                    "></div>
+                </div>
+
+                <input id="{progress_id}" type="range" min="0" max="{max_index}" value="0" step="1" style="
+                    width:100%;
+                    cursor:pointer;
+                    height:32px;
+                    accent-color:#8b5cf6;
+                ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    font-size:12px;
+                    color:#64748b;
+                    font-weight:800;
+                    margin-top:2px;
+                ">
+                    <span>1번</span>
+                    <span></span>
+                    <span>{len(theme_items)}번</span>
+                </div>
+            </div>
+
+            <div style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:18px;
+                flex-wrap:wrap;
+                margin-top:8px;
+            ">
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    flex-wrap:wrap;
+                ">
+                    <button id="{play_btn_id}" style="
+                        background: linear-gradient(135deg, #dbeafe, #fce7f3);
+                        border: 1px solid #bfdbfe;
+                        border-radius: 999px;
+                        padding: 9px 17px;
+                        font-weight: 900;
+                        font-size: 14px;
+                        color: #1f2937;
+                        cursor: pointer;
+                        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                    ">▶️ 재생</button>
+
+                    <button id="{pause_btn_id}" style="
+                        background:#ecfeff;
+                        border:1px solid #67e8f9;
+                        border-radius:999px;
+                        padding:9px 14px;
+                        font-weight:900;
+                        font-size:14px;
+                        color:#155e75;
+                        cursor:pointer;
+                    ">⏸ 일시정지</button>
+
+                    <button id="{prev_btn_id}" style="
+                        background:#f8fafc;
+                        border:1px solid #cbd5e1;
+                        border-radius:999px;
+                        padding:9px 14px;
+                        font-weight:900;
+                        font-size:14px;
+                        color:#334155;
+                        cursor:pointer;
+                    ">⏮ 이전</button>
+
+                    <button id="{next_btn_id}" style="
+                        background:#f8fafc;
+                        border:1px solid #cbd5e1;
+                        border-radius:999px;
+                        padding:9px 14px;
+                        font-weight:900;
+                        font-size:14px;
+                        color:#334155;
+                        cursor:pointer;
+                    ">⏭ 다음</button>
+                </div>
+
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    flex-wrap:wrap;
+                    margin-left:34px;
+                    padding-left:22px;
+                    border-left:2px dashed #c4b5fd;
+                ">
+                    <span style="
+                        font-size:13px;
+                        font-weight:900;
+                        color:#475569;
+                        background:#f8fafc;
+                        border:1px solid #e2e8f0;
+                        border-radius:999px;
+                        padding:6px 10px;
+                    ">🎚️ 속도 조절</span>
+
+                    <button id="{slow_btn_id}" style="
+                        background:#fef3c7;
+                        border:1px solid #fde68a;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#92400e;
+                        cursor:pointer;
+                    ">0.5x</button>
+
+                    <button id="{mid_slow_btn_id}" style="
+                        background:#fffbeb;
+                        border:1px solid #fde68a;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#92400e;
+                        cursor:pointer;
+                    ">0.75x</button>
+
+                    <button id="{normal_btn_id}" style="
+                        background:#e0f2fe;
+                        border:1px solid #7dd3fc;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#075985;
+                        cursor:pointer;
+                    ">1.0x</button>
+
+                    <button id="{mid_fast_btn_id}" style="
+                        background:#ecfdf5;
+                        border:1px solid #bbf7d0;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#166534;
+                        cursor:pointer;
+                    ">1.25x</button>
+
+                    <button id="{fast_btn_id}" style="
+                        background:#dcfce7;
+                        border:1px solid #bbf7d0;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#166534;
+                        cursor:pointer;
+                    ">1.5x</button>
+
+                    <span id="{speed_status_id}" style="
+                        font-size: 13px;
+                        color: #7c3aed;
+                        font-weight: 900;
+                        background:#f3e8ff;
+                        border-radius:999px;
+                        padding:6px 11px;
+                    ">현재: 1.0x</span>
+                </div>
+
+                <span id="{status_id}" style="
+                    font-size: 13px;
+                    color: #075985;
+                    font-weight: 800;
+                    min-width:70px;
+                "></span>
+            </div>
+
+            <div style="
+                margin-top: 10px;
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 700;
+                line-height: 1.6;
+            ">
+                ※ 1번부터 마지막 단어까지 전체 흐름을 총 3번 반복 재생합니다.<br>※ 현재 표시되는 1.0x는 이전 0.75x 정도의 느린 속도를 기준으로 조정했습니다.<br>
+                ※ 이동 줄을 놓으면 해당 단어부터 자동 재생됩니다.
+            </div>
+
+            <script>
+            (() => {{
+                const cassetteItems = {cassette_json};
+
+                const playBtn = document.getElementById("{play_btn_id}");
+                const pauseBtn = document.getElementById("{pause_btn_id}");
+                const prevBtn = document.getElementById("{prev_btn_id}");
+                const nextBtn = document.getElementById("{next_btn_id}");
+                const slowBtn = document.getElementById("{slow_btn_id}");
+                const midSlowBtn = document.getElementById("{mid_slow_btn_id}");
+                const normalBtn = document.getElementById("{normal_btn_id}");
+                const midFastBtn = document.getElementById("{mid_fast_btn_id}");
+                const fastBtn = document.getElementById("{fast_btn_id}");
+                const speedStatus = document.getElementById("{speed_status_id}");
+                const progress = document.getElementById("{progress_id}");
+                const visualBar = document.getElementById("{visual_bar_id}");
+                const percentBox = document.getElementById("{percent_id}");
+                const status = document.getElementById("{status_id}");
+                const wordBox = document.getElementById("{word_id}");
+                const meaningBox = document.getElementById("{meaning_id}");
+
+                const playerId = {safe_player_id};
+                const channel = new BroadcastChannel("survival_english_audio_channel");
+
+                let index = 0;
+                let isPlaying = false;
+                let isPaused = false;
+                let jumpTimer = null;
+                let safetyTimer = null;
+                let playToken = 0;
+                let speechRate = 0.75;
+                let repeatRound = 1;
+                const maxRepeatRound = 3;
+
+                function escapeHtml(text) {{
+                    const div = document.createElement("div");
+                    div.innerText = text;
+                    return div.innerHTML;
+                }}
+
+                function updateProgressVisual() {{
+                    const max = Math.max(cassetteItems.length - 1, 1);
+                    const pct = Math.round((index / max) * 100);
+                    visualBar.style.width = pct + "%";
+                    percentBox.innerText = pct + "%";
+                }}
+
+                function updateDisplay() {{
+                    const item = cassetteItems[index];
+                    if (!item) return;
+
+                    progress.value = index;
+                    updateProgressVisual();
+
+                    wordBox.innerText = item.number + ". " + item.word;
+
+                    meaningBox.innerHTML =
+                        "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
+                        "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
+                        "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>";
+
+                    status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
+                }}
+
+                function stopThisTape(showMessage = false) {{
+                    playToken += 1;
+
+                    if (jumpTimer) {{
+                        clearTimeout(jumpTimer);
+                        jumpTimer = null;
+                    }}
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
+                    window.speechSynthesis.cancel();
+                    isPlaying = false;
+                    isPaused = false;
+                    playBtn.innerText = "▶️ 재생";
+                    repeatRound = 1;
+                    if (showMessage) {{
+                        status.innerText = "중지됨";
+                    }}
+                }}
+
+                channel.onmessage = function(event) {{
+                    if (!event.data) return;
+
+                    if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
+                        stopThisTape(false);
+                    }}
+                }};
+
+                function getEnglishVoice() {{
+                    const voices = window.speechSynthesis.getVoices();
+
+                    const preferredNames = [
+                        "Samantha",
+                        "Google US English",
+                        "Microsoft Jenny",
+                        "Microsoft Aria",
+                        "Microsoft Zira",
+                        "Karen",
+                        "Moira",
+                        "Tessa",
+                        "Fiona",
+                        "Victoria"
+                    ];
+
+                    for (const name of preferredNames) {{
+                        const found = voices.find(v =>
+                            v.name && v.name.toLowerCase().includes(name.toLowerCase()) &&
+                            v.lang && v.lang.toLowerCase().startsWith("en")
+                        );
+                        if (found) return found;
+                    }}
+
+                    const englishVoice = voices.find(v =>
+                        v.lang && v.lang.toLowerCase().startsWith("en")
+                    );
+                    return englishVoice || null;
+                }}
+
+                function primeSpeechEngine(callback) {{
+                    window.speechSynthesis.cancel();
+
+                    const voices = window.speechSynthesis.getVoices();
+
+                    if (voices && voices.length > 0) {{
+                        setTimeout(callback, 180);
+                        return;
+                    }}
+
+                    let tried = 0;
+                    const voiceTimer = setInterval(function() {{
+                        tried += 1;
+                        const loadedVoices = window.speechSynthesis.getVoices();
+
+                        if ((loadedVoices && loadedVoices.length > 0) || tried >= 10) {{
+                            clearInterval(voiceTimer);
+                            setTimeout(callback, 180);
+                        }}
+                    }}, 120);
+                }}
+
+                function speakCurrent(expectedToken = playToken) {{
+                    if (!isPlaying || expectedToken !== playToken) return;
+
+                    const item = cassetteItems[index];
+                    if (!item) {{
+                        stopThisTape(false);
+                        status.innerText = "완료";
+                        return;
+                    }}
+
+                    updateDisplay();
+
+                    const utterance = new SpeechSynthesisUtterance(item.script);
+                    utterance.lang = "en-US";
+                    utterance.rate = speechRate;
+                    utterance.pitch = 1.08;
+
+                    const voice = getEnglishVoice();
+                    if (voice) {{
+                        utterance.voice = voice;
+                    }}
+
+                    let endedSafely = false;
+
+                    function goNextAfterCurrent() {{
+                        if (endedSafely) return;
+                        endedSafely = true;
+
+                        if (!isPlaying || isPaused || expectedToken !== playToken) return;
+
+                        index += 1;
+
+                        if (index >= cassetteItems.length) {{
+                            if (repeatRound < maxRepeatRound) {{
+                                repeatRound += 1;
+                                index = 0;
+                                status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " 시작";
+                                setTimeout(function() {{
+                                    speakCurrent(expectedToken);
+                                }}, 900);
+                                return;
+                            }}
+
+                            stopThisTape(false);
+                            status.innerText = "3회 반복 재생 완료";
+                            return;
+                        }}
+
+                        setTimeout(function() {{
+                            speakCurrent(expectedToken);
+                        }}, 650);
+                    }}
+
+                    utterance.onend = goNextAfterCurrent;
+
+                    utterance.onerror = function() {{
+                        if (!isPlaying || isPaused) return;
+                        goNextAfterCurrent();
+                    }};
+
+                    window.speechSynthesis.cancel();
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
+                    setTimeout(function() {{
+                        if (!isPlaying || isPaused || expectedToken !== playToken) return;
+
+                        try {{
+                            window.speechSynthesis.speak(utterance);
+                        }} catch (e) {{
+                            return;
+                        }}
+
+                        // 일부 모바일/브라우저에서 onend가 씹히는 경우를 대비한 안전장치
+                        const estimatedMs = Math.max(2600, item.script.length * 125 / Math.max(speechRate, 0.375));
+                        safetyTimer = setTimeout(function() {{
+                            if (!endedSafely && isPlaying && !isPaused && expectedToken === playToken) {{
+                                goNextAfterCurrent();
+                            }}
+                        }}, estimatedMs);
+                    }}, 80);
+                }}
+
+                function jumpTo(newIndex, autoPlay = true) {{
+                    playToken += 1;
+
+                    if (jumpTimer) {{
+                        clearTimeout(jumpTimer);
+                        jumpTimer = null;
+                    }}
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
+                    index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
+                    repeatRound = 1;
+                    window.speechSynthesis.cancel();
+                    updateDisplay();
+
+                    if (autoPlay) {{
+                        isPlaying = true;
+                        isPaused = false;
+                        playBtn.innerText = "재생 중...";
+                        const tokenAtJump = playToken;
+                        jumpTimer = setTimeout(function() {{
+                            if (tokenAtJump !== playToken) return;
+                            if (!isPlaying || isPaused) return;
+                            speakCurrent(tokenAtJump);
+                        }}, 350);
+                    }}
+                }}
+
+                playBtn.addEventListener("click", function() {{
+                    channel.postMessage({{
+                        type: "STOP_OTHERS",
+                        playerId: playerId
+                    }});
+
+                    if (isPaused) {{
+                        window.speechSynthesis.resume();
+                        isPaused = false;
+                        isPlaying = true;
+                        playBtn.innerText = "재생 중...";
+                        status.innerText = (index + 1) + " / " + cassetteItems.length;
+                        return;
+                    }}
+
+                    repeatRound = 1;
+                    isPlaying = true;
+                    isPaused = false;
+                    playBtn.innerText = "재생 중...";
+                    updateDisplay();
+
+                    playToken += 1;
+                    const tokenAtPlay = playToken;
+
+                    if (jumpTimer) {{
+                        clearTimeout(jumpTimer);
+                        jumpTimer = null;
+                    }}
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
+                    primeSpeechEngine(function() {{
+                        if (!isPlaying || isPaused || tokenAtPlay !== playToken) return;
+                        speakCurrent(tokenAtPlay);
+                    }});
+                }});
+
+                pauseBtn.addEventListener("click", function() {{
+                    if (window.speechSynthesis.speaking) {{
+                        window.speechSynthesis.pause();
+                        isPaused = true;
+                        isPlaying = true;
+                        playBtn.innerText = "▶️ 이어 듣기";
+                        status.innerText = "일시정지: " + (index + 1) + " / " + cassetteItems.length;
+                    }}
+                }});
+
+                prevBtn.addEventListener("click", function() {{
+                    jumpTo(index - 1, true);
+                }});
+
+                nextBtn.addEventListener("click", function() {{
+                    jumpTo(index + 1, true);
+                }});
+
+                slowBtn.addEventListener("click", function() {{
+                    speechRate = 0.375;
+                speedStatus.innerText = "현재: 0.5x";
+                    speedStatus.style.background = "#fef3c7";
+                    speedStatus.style.color = "#92400e";
+                }});
+
+                midSlowBtn.addEventListener("click", function() {{
+                    speechRate = 0.5625;
+                speedStatus.innerText = "현재: 0.75x";
+                    speedStatus.style.background = "#fffbeb";
+                    speedStatus.style.color = "#92400e";
+                }});
+
+                normalBtn.addEventListener("click", function() {{
+                    speechRate = 0.75;
+                speedStatus.innerText = "현재: 1.0x";
+                    speedStatus.style.background = "#f3e8ff";
+                    speedStatus.style.color = "#7c3aed";
+                }});
+
+                midFastBtn.addEventListener("click", function() {{
+                    speechRate = 0.9375;
+                speedStatus.innerText = "현재: 1.25x";
+                    speedStatus.style.background = "#ecfdf5";
+                    speedStatus.style.color = "#166534";
+                }});
+
+                fastBtn.addEventListener("click", function() {{
+                    speechRate = 1.125;
+                speedStatus.innerText = "현재: 1.5x";
+                    speedStatus.style.background = "#dcfce7";
+                    speedStatus.style.color = "#166534";
+                }});
+
+                progress.addEventListener("input", function() {{
+                    index = parseInt(progress.value);
+                    updateDisplay();
+                }});
+
+                progress.addEventListener("change", function() {{
+                    jumpTo(parseInt(progress.value), true);
+                }});
+
+                if (typeof speechSynthesis !== "undefined") {{
+                    speechSynthesis.onvoiceschanged = function() {{
+                        getEnglishVoice();
+                    }};
+                }}
+
+                updateDisplay();
+            }})();
+            </script>
+        </div>
+        """,
+        height=height
+    )
 
 
 def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
 
     all_items = flatten_survival_words()
-    browser_survival_cassette_player(all_items, height=700)
+    browser_survival_cassette_player(all_items, height=520)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
         st.write("카세트에서 실제로 들려주는 단어, 예문, 예문 뜻을 함께 확인할 수 있습니다.")
@@ -1296,7 +2561,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=700
+        height=550
     )
 
 
