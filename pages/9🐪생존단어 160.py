@@ -250,7 +250,7 @@ st.markdown(
         <div class="hero-title">🌟 오늘의 학습 방식</div>
         <div class="hero-text">
             • 이 단어 160개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
-            • 전체 카세트 듣기와 테마별 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
+            • 전체 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
             • 카세트 듣기에는 크게 움직일 수 있는 이동 줄과 10개씩 이동 버튼이 있습니다.<br>
             • 카세트 듣기 중 아래 단어 듣기를 누르면 카세트가 자동으로 멈춥니다.
         </div>
@@ -1092,28 +1092,7 @@ def flatten_survival_words():
     return all_items
 
 
-def make_theme_cassette_items(theme_words, theme_name):
-    theme_items = []
-
-    for idx, item in enumerate(theme_words, start=1):
-        word = item["word"]
-        example = get_example_sentence(word)
-        example_ko = get_example_sentence_ko(word)
-
-        theme_items.append({
-            "number": idx,
-            "theme": theme_name,
-            "word": word,
-            "meaning": item["meaning"],
-            "example": example,
-            "example_ko": example_ko,
-            "script": f"{word}. {word}. {example} {word}."
-        })
-
-    return theme_items
-
-
-def browser_survival_cassette_player(all_items, height=520, title="📼 Survival English 160 전체 카세트"):
+def browser_survival_cassette_player(all_items, height=520):
     """
     수정 핵심:
     1. 큰 이동 줄 range input 추가
@@ -1140,7 +1119,6 @@ def browser_survival_cassette_player(all_items, height=520, title="📼 Survival
 
     cassette_json = json.dumps(all_items, ensure_ascii=False)
     safe_player_id = json.dumps(player_id)
-    safe_title = json.dumps(title, ensure_ascii=False)
     max_index = max(len(all_items) - 1, 0)
 
     components.html(
@@ -1159,7 +1137,7 @@ def browser_survival_cassette_player(all_items, height=520, title="📼 Survival
                 color: #0f172a;
                 margin-bottom: 10px;
             ">
-                {title}
+                📼 Survival English 160 전체 카세트
             </div>
 
             <div id="{word_id}" style="
@@ -1620,11 +1598,7 @@ def show_all_cassette_tab():
     st.info("🎚️ 긴 이동 줄을 끌면 원하는 단어로 바로 이동합니다. 재생 중에도 이동할 수 있습니다.")
 
     all_items = flatten_survival_words()
-    browser_survival_cassette_player(
-        all_items,
-        height=520,
-        title="📼 Survival English 160 전체 카세트"
-    )
+    browser_survival_cassette_player(all_items, height=520)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
         st.write("카세트에서 실제로 들려주는 단어, 예문, 예문 뜻을 함께 확인할 수 있습니다.")
@@ -1662,16 +1636,7 @@ def show_all_cassette_tab():
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 테마 카세트 듣기")
-    st.write("이 테마의 단어만 카세트처럼 차례대로 들을 수 있습니다.")
-
-    theme_items = make_theme_cassette_items(theme_words, theme_name)
-
-    browser_survival_cassette_player(
-        theme_items,
-        height=520,
-        title=f"📼 {theme_name} 카세트 듣기"
-    )
+    return
 
 
 # =========================
