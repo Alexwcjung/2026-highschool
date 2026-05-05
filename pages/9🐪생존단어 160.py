@@ -251,7 +251,7 @@ st.markdown(
         <div class="hero-text">
             • 이 단어 160개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
             • 전체 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
-            • 카세트 듣기에는 크게 움직일 수 있는 이동 줄이 있습니다.<br>
+            • 카세트 듣기에는 크게 움직일 수 있는 이동 줄과 10개씩 이동 버튼이 있습니다.<br>
             • 카세트 듣기 중 아래 단어 듣기를 누르면 카세트가 자동으로 멈춥니다.
         </div>
     </div>
@@ -692,6 +692,7 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
             <script>
             const audio = document.getElementById("{audio_id}");
             const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
             const status = document.getElementById("{status_id}");
 
             let count = 0;
@@ -877,6 +878,7 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
             <script>
             const audio = document.getElementById("{audio_id}");
             const playBtn = document.getElementById("{play_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
             const status = document.getElementById("{status_id}");
 
             const dialogueAudios = {audio_json};
@@ -1096,7 +1098,7 @@ def browser_survival_cassette_player(all_items, height=520):
     1. 큰 이동 줄 range input 추가
     2. 드래그하면 바로 해당 단어로 이동
     3. 재생 중 드래그하면 해당 단어부터 이어서 재생
-    4. 이동 줄을 놓으면 해당 단어부터 자동 재생
+    4. 10개 전 / 10개 후 버튼 추가
     5. 현재 위치가 몇 %인지 시각적으로 표시
     """
 
@@ -1105,6 +1107,8 @@ def browser_survival_cassette_player(all_items, height=520):
     pause_btn_id = f"pause_{uuid.uuid4().hex}"
     prev_btn_id = f"prev_{uuid.uuid4().hex}"
     next_btn_id = f"next_{uuid.uuid4().hex}"
+    prev10_btn_id = f"prev10_{uuid.uuid4().hex}"
+    next10_btn_id = f"next10_{uuid.uuid4().hex}"
     stop_btn_id = f"stop_{uuid.uuid4().hex}"
     progress_id = f"progress_{uuid.uuid4().hex}"
     visual_bar_id = f"visual_bar_{uuid.uuid4().hex}"
@@ -1227,17 +1231,16 @@ def browser_survival_cassette_player(all_items, height=520):
             </div>
 
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button id="{play_btn_id}" style="
-                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                    border: 1px solid #bfdbfe;
-                    border-radius: 999px;
-                    padding: 9px 16px;
-                    font-weight: 900;
-                    font-size: 14px;
-                    color: #1f2937;
-                    cursor: pointer;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                ">▶️ 재생</button>
+                <button id="{prev10_btn_id}" style="
+                    background:#fef3c7;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">⏪ 10개 전</button>
 
                 <button id="{prev_btn_id}" style="
                     background:#f8fafc;
@@ -1249,6 +1252,18 @@ def browser_survival_cassette_player(all_items, height=520):
                     color:#334155;
                     cursor:pointer;
                 ">⏮ 이전</button>
+
+                <button id="{play_btn_id}" style="
+                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
+                    border: 1px solid #bfdbfe;
+                    border-radius: 999px;
+                    padding: 9px 16px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #1f2937;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                ">▶️ 재생</button>
 
                 <button id="{pause_btn_id}" style="
                     background:#ecfeff;
@@ -1272,6 +1287,29 @@ def browser_survival_cassette_player(all_items, height=520):
                     cursor:pointer;
                 ">⏭ 다음</button>
 
+                <button id="{next10_btn_id}" style="
+                    background:#dcfce7;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#166534;
+                    cursor:pointer;
+                ">⏩ 10개 후</button>
+
+                <button id="{stop_btn_id}" style="
+                    background: #fff7ed;
+                    border: 1px solid #fed7aa;
+                    border-radius: 999px;
+                    padding: 9px 13px;
+                    font-weight: 900;
+                    font-size: 14px;
+                    color: #9a3412;
+                    cursor: pointer;
+                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+                ">⏹ 중지</button>
+
                 <span id="{status_id}" style="
                     font-size: 13px;
                     color: #075985;
@@ -1287,7 +1325,7 @@ def browser_survival_cassette_player(all_items, height=520):
                 line-height: 1.6;
             ">
                 ※ 위의 긴 줄을 손가락이나 마우스로 끌면 원하는 단어로 바로 이동합니다.<br>
-                ※ 이동 줄을 놓으면 해당 단어부터 자동으로 다시 재생됩니다.<br>
+                ※ 재생 중에도 줄을 움직이면 해당 단어부터 다시 이어집니다.<br>
                 ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 카세트는 자동으로 중지됩니다.
             </div>
 
@@ -1298,6 +1336,9 @@ def browser_survival_cassette_player(all_items, height=520):
             const pauseBtn = document.getElementById("{pause_btn_id}");
             const prevBtn = document.getElementById("{prev_btn_id}");
             const nextBtn = document.getElementById("{next_btn_id}");
+            const prev10Btn = document.getElementById("{prev10_btn_id}");
+            const next10Btn = document.getElementById("{next10_btn_id}");
+            const stopBtn = document.getElementById("{stop_btn_id}");
             const progress = document.getElementById("{progress_id}");
             const visualBar = document.getElementById("{visual_bar_id}");
             const percentBox = document.getElementById("{percent_id}");
@@ -1534,14 +1575,7 @@ def browser_survival_cassette_player(all_items, height=520):
             }});
 
             progress.addEventListener("change", function() {{
-                index = parseInt(progress.value);
-                window.speechSynthesis.cancel();
-                updateDisplay();
-
-                isPlaying = true;
-                isPaused = false;
-                playBtn.innerText = "재생 중...";
-                setTimeout(speakCurrent, 250);
+                jumpTo(parseInt(progress.value), true);
             }});
 
             if (typeof speechSynthesis !== "undefined") {{
