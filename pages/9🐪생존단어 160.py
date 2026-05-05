@@ -1,3 +1,4 @@
+
 import streamlit as st
 from gtts import gTTS
 import io
@@ -218,34 +219,6 @@ st.markdown(
         margin-bottom: 16px;
     }
 
-    .cassette-box {
-        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1px solid #bae6fd;
-        border-radius: 24px;
-        padding: 22px 24px;
-        margin: 18px 0 18px 0;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    }
-
-    .cassette-title {
-        font-size: 25px;
-        font-weight: 900;
-        color: #0f172a;
-        margin-bottom: 8px;
-    }
-
-    .cassette-text {
-        font-size: 15px;
-        color: #475569;
-        line-height: 1.7;
-        margin-bottom: 14px;
-    }
-
-    div[data-testid="stRadio"] > label {
-        font-weight: 800;
-        color: #374151;
-    }
-
     .stButton > button {
         border-radius: 999px;
         font-weight: 800;
@@ -278,6 +251,7 @@ st.markdown(
         <div class="hero-text">
             • 이 단어 160개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
             • 전체 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
+            • 카세트 듣기에는 크게 움직일 수 있는 이동 줄과 10개씩 이동 버튼이 있습니다.<br>
             • 카세트 듣기 중 아래 단어 듣기를 누르면 카세트가 자동으로 멈춥니다.
         </div>
     </div>
@@ -306,7 +280,7 @@ def make_dialogue_tts_text(dialogue):
 
 
 # =========================
-# 생존 회화 500 테마별 단어
+# 생존 회화 160 테마별 단어
 # =========================
 word_themes = {
     "🧍 나와 사람": [
@@ -548,6 +522,65 @@ CASSETTE_EXAMPLES = {
     "repeat": "Please repeat.", "look": "Look at this.",
 }
 
+CASSETTE_EXAMPLES_KO = {
+    "I": "나는 학생입니다.", "you": "너는 나의 친구입니다.", "he": "그는 나의 친구입니다.", "she": "그녀는 학생입니다.",
+    "we": "우리는 행복합니다.", "they": "그들은 학생들입니다.", "friend": "그는 나의 친구입니다.", "teacher": "그녀는 나의 선생님입니다.",
+    "student": "나는 학생입니다.", "classmate": "그는 나의 반 친구입니다.", "family": "이것은 나의 가족입니다.",
+    "father": "그는 나의 아버지입니다.", "mother": "그녀는 나의 어머니입니다.", "brother": "그는 나의 남자 형제입니다.",
+    "sister": "그녀는 나의 여자 형제입니다.", "name": "내 이름은 Alex입니다.", "person": "그는 좋은 사람입니다.",
+    "man": "그는 남자입니다.", "woman": "그녀는 여자입니다.", "child": "그는 아이입니다.",
+
+    "go": "나는 학교에 갑니다.", "come": "이리 와 주세요.", "walk": "나는 걸어서 학교에 갑니다.", "run": "나는 달릴 수 있습니다.",
+    "sit": "앉아 주세요.", "stand": "일어나 주세요.", "stop": "멈춰 주세요.", "start": "시작합시다.",
+    "open": "문을 여세요.", "close": "문을 닫으세요.", "eat": "나는 점심을 먹습니다.", "drink": "나는 물을 마십니다.",
+    "sleep": "나는 밤에 잡니다.", "study": "나는 영어를 공부합니다.", "read": "나는 책을 읽습니다.", "write": "나는 내 이름을 씁니다.",
+    "listen": "주의 깊게 들으세요.", "speak": "천천히 말해 주세요.", "help": "나를 도와줄 수 있나요?", "wait": "기다려 주세요.",
+
+    "happy": "나는 행복합니다.", "sad": "나는 슬픕니다.", "angry": "나는 화가 났습니다.", "tired": "나는 피곤합니다.",
+    "hungry": "나는 배고픕니다.", "thirsty": "나는 목마릅니다.", "sick": "나는 아픕니다.", "okay": "나는 괜찮습니다.",
+    "fine": "나는 괜찮습니다.", "cold": "나는 춥습니다.", "hot": "날씨가 덥습니다.", "pain": "나는 통증이 있습니다.",
+    "headache": "나는 두통이 있습니다.", "stomachache": "나는 복통이 있습니다.", "fever": "나는 열이 있습니다.",
+    "hurt": "내 다리가 아픕니다.", "good": "그것은 좋습니다.", "bad": "그것은 나쁩니다.", "worried": "나는 걱정됩니다.",
+    "scared": "나는 무섭습니다.",
+
+    "food": "나는 음식이 필요합니다.", "water": "나는 물이 필요합니다.", "rice": "나는 밥을 먹습니다.", "bread": "나는 빵을 먹습니다.",
+    "milk": "나는 우유를 마십니다.", "juice": "나는 주스를 마십니다.", "coffee": "나는 커피를 마십니다.", "tea": "나는 차를 마십니다.",
+    "apple": "나는 사과를 좋아합니다.", "banana": "나는 바나나를 좋아합니다.", "egg": "나는 달걀 하나를 먹습니다.",
+    "meat": "나는 고기를 먹습니다.", "chicken": "나는 닭고기를 좋아합니다.", "fish": "나는 생선을 먹습니다.",
+    "breakfast": "나는 아침 식사를 먹습니다.", "lunch": "나는 점심을 먹습니다.", "dinner": "나는 저녁을 먹습니다.",
+    "snack": "나는 간식을 원합니다.", "medicine": "나는 약이 필요합니다.", "hospital": "나는 병원이 필요합니다.",
+
+    "home": "나는 집에 갑니다.", "school": "나는 학교에 갑니다.", "classroom": "여기는 나의 교실입니다.",
+    "bathroom": "화장실이 어디에 있나요?", "store": "나는 가게에 갑니다.", "station": "역은 어디에 있나요?",
+    "bus": "나는 버스를 탑니다.", "car": "이것은 나의 차입니다.", "taxi": "나는 택시가 필요합니다.",
+    "train": "나는 기차를 탑니다.", "bike": "나는 자전거를 탑니다.", "road": "이 도로는 깁니다.",
+    "street": "이 거리는 붐빕니다.", "here": "여기로 오세요.", "there": "그곳으로 가세요.",
+    "near": "그것은 여기 근처에 있습니다.", "far": "그것은 멉니다.", "left": "왼쪽으로 도세요.", "right": "오른쪽으로 도세요.",
+
+    "time": "지금 몇 시인가요?", "now": "나는 지금 여기에 있습니다.", "today": "오늘은 월요일입니다.",
+    "tomorrow": "내일 봅시다.", "yesterday": "나는 어제 공부했습니다.", "morning": "좋은 아침입니다.",
+    "afternoon": "좋은 오후입니다.", "evening": "좋은 저녁입니다.", "night": "안녕히 주무세요.",
+    "early": "이릅니다.", "late": "늦었습니다.", "one": "나는 책 한 권이 있습니다.",
+    "two": "나는 책 두 권이 있습니다.", "three": "나는 책 세 권이 있습니다.", "four": "나는 책 네 권이 있습니다.",
+    "five": "나는 책 다섯 권이 있습니다.", "six": "나는 책 여섯 권이 있습니다.", "seven": "나는 책 일곱 권이 있습니다.",
+    "eight": "나는 책 여덟 권이 있습니다.", "ten": "나는 책 열 권이 있습니다.",
+
+    "bag": "이것은 나의 가방입니다.", "phone": "이것은 나의 전화기입니다.", "book": "이것은 나의 책입니다.",
+    "notebook": "이것은 나의 공책입니다.", "pen": "나는 펜이 있습니다.", "pencil": "나는 연필이 있습니다.",
+    "desk": "이것은 나의 책상입니다.", "chair": "이것은 나의 의자입니다.", "door": "문을 여세요.",
+    "window": "창문을 닫으세요.", "key": "나는 열쇠가 필요합니다.", "money": "나는 돈이 필요합니다.",
+    "card": "나는 카드가 있습니다.", "ticket": "나는 표가 필요합니다.", "clothes": "이것들은 나의 옷입니다.",
+    "shoes": "이것들은 나의 신발입니다.", "hat": "이것은 나의 모자입니다.", "watch": "이것은 나의 시계입니다.",
+    "cup": "이것은 나의 컵입니다.", "bottle": "이것은 나의 병입니다.",
+
+    "please": "제발 나를 도와주세요.", "sorry": "미안합니다.", "excuse me": "실례합니다.",
+    "again": "다시 말해 주세요.", "slowly": "천천히 말해 주세요.", "understand": "나는 이해합니다.",
+    "question": "나는 질문이 있습니다.", "problem": "나는 문제가 있습니다.", "need": "나는 도움이 필요합니다.",
+    "want": "나는 물을 원합니다.", "know": "나는 압니다.", "say": "다시 말해 주세요.",
+    "tell": "나에게 말해 주세요.", "ask": "질문해도 될까요?", "answer": "이것이 답입니다.",
+    "repeat": "반복해 주세요.", "look": "이것을 보세요.",
+}
+
 # =========================
 # 단어별 이모지
 # =========================
@@ -556,36 +589,29 @@ WORD_EMOJIS = {
     "friend": "🤝", "teacher": "👩‍🏫", "student": "🧑‍🎓", "classmate": "👫", "family": "👨‍👩‍👧",
     "father": "👨", "mother": "👩", "brother": "👦", "sister": "👧", "name": "🏷️",
     "person": "🧍", "man": "👨", "woman": "👩", "child": "🧒",
-
     "go": "➡️", "come": "⬅️", "walk": "🚶", "run": "🏃", "sit": "🪑", "stand": "🧍",
     "stop": "🛑", "start": "▶️", "open": "📂", "close": "📕", "eat": "🍽️", "drink": "🥤",
     "sleep": "😴", "study": "📚", "read": "📖", "write": "✏️", "listen": "👂", "speak": "🗣️",
     "help": "🆘", "wait": "⏳",
-
     "happy": "😊", "sad": "😢", "angry": "😠", "tired": "🥱", "hungry": "😋", "thirsty": "🥤",
     "sick": "🤒", "okay": "👌", "fine": "🙂", "cold": "🥶", "hot": "🥵", "pain": "🤕",
     "headache": "🤯", "stomachache": "🤢", "fever": "🌡️", "hurt": "🩹", "good": "👍", "bad": "👎",
     "worried": "😟", "scared": "😨",
-
     "food": "🍽️", "water": "💧", "rice": "🍚", "bread": "🍞", "milk": "🥛", "juice": "🧃",
     "coffee": "☕", "tea": "🍵", "apple": "🍎", "banana": "🍌", "egg": "🥚", "meat": "🥩",
     "chicken": "🍗", "fish": "🐟", "breakfast": "🍳", "lunch": "🍱", "dinner": "🍽️", "snack": "🍪",
     "medicine": "💊", "hospital": "🏥",
-
     "home": "🏠", "school": "🏫", "classroom": "🧑‍🏫", "bathroom": "🚻", "store": "🏪", "station": "🚉",
     "bus": "🚌", "car": "🚗", "taxi": "🚕", "train": "🚆", "bike": "🚲", "road": "🛣️",
     "street": "🏙️", "here": "📍", "there": "📌", "near": "↔️", "far": "🌁", "left": "⬅️", "right": "➡️",
-
     "time": "⏰", "now": "🕒", "today": "📅", "tomorrow": "➡️📅", "yesterday": "⬅️📅",
     "morning": "🌅", "afternoon": "☀️", "evening": "🌆", "night": "🌙", "early": "🐓", "late": "🌃",
     "one": "1️⃣", "two": "2️⃣", "three": "3️⃣", "four": "4️⃣", "five": "5️⃣", "six": "6️⃣",
     "seven": "7️⃣", "eight": "8️⃣", "ten": "🔟",
-
     "bag": "🎒", "phone": "📱", "book": "📘", "notebook": "📓", "pen": "🖊️", "pencil": "✏️",
     "desk": "🪑", "chair": "🪑", "door": "🚪", "window": "🪟", "key": "🔑", "money": "💵",
     "card": "💳", "ticket": "🎫", "clothes": "👕", "shoes": "👟", "hat": "🧢", "watch": "⌚",
     "cup": "☕", "bottle": "🍼",
-
     "please": "🙏", "sorry": "🙇", "excuse me": "🙋", "again": "🔁", "slowly": "🐢",
     "understand": "💡", "question": "❓", "problem": "⚠️", "need": "📌", "want": "✨",
     "know": "🧠", "say": "💬", "tell": "📣", "ask": "❔", "answer": "✅",
@@ -598,240 +624,9 @@ def get_word_emoji(word):
 
 
 # =========================
-# 모든 오디오 공통 중지 채널 사용
-# 핵심:
-# - 카세트 재생 버튼 클릭 시 다른 오디오 중지
-# - 단어 듣기 버튼 클릭 시 카세트 자동 중지
-# - 대화 듣기 버튼 클릭 시 카세트 자동 중지
+# 오디오 공통 중지 채널
 # =========================
 AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
-
-
-# =========================
-# 카세트용 HTML 오디오 플레이어
-# =========================
-def cassette_audio_player(label, audio_bytes, height=125):
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-
-    audio_id = f"cassette_audio_{uuid.uuid4().hex}"
-    play_btn_id = f"cassette_play_{uuid.uuid4().hex}"
-    pause_btn_id = f"cassette_pause_{uuid.uuid4().hex}"
-    rewind_btn_id = f"cassette_rewind_{uuid.uuid4().hex}"
-    forward_btn_id = f"cassette_forward_{uuid.uuid4().hex}"
-    stop_btn_id = f"cassette_stop_{uuid.uuid4().hex}"
-    status_id = f"cassette_status_{uuid.uuid4().hex}"
-    progress_id = f"cassette_progress_{uuid.uuid4().hex}"
-    player_id = f"cassette_player_{uuid.uuid4().hex}"
-
-    safe_label = json.dumps(label)
-    safe_player_id = json.dumps(player_id)
-    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
-
-    components.html(
-        f"""
-        <div style="
-            font-family: Arial, sans-serif;
-            padding: 14px 16px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #eff6ff, #fff7ed);
-            border: 1px solid #bfdbfe;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        ">
-            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
-
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button id="{rewind_btn_id}" style="
-                    background:#f8fafc;
-                    border:1px solid #cbd5e1;
-                    border-radius:999px;
-                    padding:9px 14px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#334155;
-                    cursor:pointer;
-                ">⏪ 10초 전</button>
-
-                <button id="{play_btn_id}" style="
-                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                    border: 1px solid #bfdbfe;
-                    border-radius: 999px;
-                    padding: 9px 16px;
-                    font-weight: 900;
-                    font-size: 14px;
-                    color: #1f2937;
-                    cursor: pointer;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                ">
-                    {label}
-                </button>
-
-                <button id="{pause_btn_id}" style="
-                    background:#ecfeff;
-                    border:1px solid #67e8f9;
-                    border-radius:999px;
-                    padding:9px 14px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#155e75;
-                    cursor:pointer;
-                ">⏸ 일시정지</button>
-
-                <button id="{forward_btn_id}" style="
-                    background:#f8fafc;
-                    border:1px solid #cbd5e1;
-                    border-radius:999px;
-                    padding:9px 14px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#334155;
-                    cursor:pointer;
-                ">⏩ 10초 후</button>
-
-                <button id="{stop_btn_id}" style="
-                    background: #fff7ed;
-                    border: 1px solid #fed7aa;
-                    border-radius: 999px;
-                    padding: 9px 14px;
-                    font-weight: 900;
-                    font-size: 14px;
-                    color: #9a3412;
-                    cursor: pointer;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-                ">
-                    ⏹ 중지
-                </button>
-
-                <span id="{status_id}" style="
-                    font-size: 13px;
-                    color: #075985;
-                    font-weight: 800;
-                "></span>
-            </div>
-
-            <input id="{progress_id}" type="range" min="0" max="100" value="0" step="0.1" style="
-                width:100%;
-                margin-top:14px;
-                cursor:pointer;
-            ">
-
-            <div style="
-                margin-top: 6px;
-                font-size: 12px;
-                color: #64748b;
-                font-weight: 700;
-            ">
-                ※ 진행 바를 움직여 원하는 부분으로 이동할 수 있습니다. 아래 단어 듣기나 대화 듣기를 누르면 이 카세트는 자동으로 중지됩니다.
-            </div>
-
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const pauseBtn = document.getElementById("{pause_btn_id}");
-            const rewindBtn = document.getElementById("{rewind_btn_id}");
-            const forwardBtn = document.getElementById("{forward_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-            const progress = document.getElementById("{progress_id}");
-
-            const labelText = {safe_label};
-            const playerId = {safe_player_id};
-            const channelName = {safe_channel};
-            const channel = new BroadcastChannel(channelName);
-
-            function formatTime(seconds) {{
-                if (isNaN(seconds)) return "0:00";
-                const m = Math.floor(seconds / 60);
-                const s = Math.floor(seconds % 60).toString().padStart(2, "0");
-                return m + ":" + s;
-            }}
-
-            function updateStatus() {{
-                status.innerText = formatTime(audio.currentTime) + " / " + formatTime(audio.duration);
-            }}
-
-            function stopThisAudio(showMessage = false) {{
-                audio.pause();
-                audio.currentTime = 0;
-                progress.value = 0;
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-                status.innerText = showMessage ? "중지됨" : "";
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
-                }}
-            }};
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
-
-                audio.play().then(() => {{
-                    status.innerText = "카세트 재생 중";
-                }}).catch((error) => {{
-                    status.innerText = "다시 클릭";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }});
-
-            pauseBtn.addEventListener("click", function() {{
-                audio.pause();
-                playBtn.disabled = false;
-                playBtn.innerText = "▶️ 이어 듣기";
-                status.innerText = "일시정지 " + formatTime(audio.currentTime);
-            }});
-
-            rewindBtn.addEventListener("click", function() {{
-                audio.currentTime = Math.max(0, audio.currentTime - 10);
-                updateStatus();
-            }});
-
-            forwardBtn.addEventListener("click", function() {{
-                if (!isNaN(audio.duration)) {{
-                    audio.currentTime = Math.min(audio.duration, audio.currentTime + 10);
-                    updateStatus();
-                }}
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
-            }});
-
-            audio.addEventListener("timeupdate", function() {{
-                if (!isNaN(audio.duration) && audio.duration > 0) {{
-                    progress.value = (audio.currentTime / audio.duration) * 100;
-                    updateStatus();
-                }}
-            }});
-
-            progress.addEventListener("input", function() {{
-                if (!isNaN(audio.duration) && audio.duration > 0) {{
-                    audio.currentTime = (progress.value / 100) * audio.duration;
-                    updateStatus();
-                }}
-            }});
-
-            audio.addEventListener("ended", function() {{
-                status.innerText = "완료";
-                progress.value = 100;
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-            }});
-            </script>
-        </div>
-        """,
-        height=height
-    )
 
 
 # =========================
@@ -1260,181 +1055,11 @@ theme_dialogues = {
     ],
 }
 
+
 # =========================
 # 전체 카세트 듣기 기능
-# 브라우저 음성 엔진 사용: 긴 gTTS 오류 방지
+# 브라우저 음성 엔진 사용
 # =========================
-def clean_theme_title(theme_name):
-    return re.sub(r"^[^\w가-힣]+", "", theme_name).strip()
-
-
-CASSETTE_EXAMPLES_KO = {
-    "I": "나는 학생입니다.",
-    "you": "너는 나의 친구입니다.",
-    "he": "그는 나의 친구입니다.",
-    "she": "그녀는 학생입니다.",
-    "we": "우리는 행복합니다.",
-    "they": "그들은 학생들입니다.",
-    "friend": "그는 나의 친구입니다.",
-    "teacher": "그녀는 나의 선생님입니다.",
-    "student": "나는 학생입니다.",
-    "classmate": "그는 나의 반 친구입니다.",
-    "family": "이것은 나의 가족입니다.",
-    "father": "그는 나의 아버지입니다.",
-    "mother": "그녀는 나의 어머니입니다.",
-    "brother": "그는 나의 남자 형제입니다.",
-    "sister": "그녀는 나의 여자 형제입니다.",
-    "name": "내 이름은 Alex입니다.",
-    "person": "그는 좋은 사람입니다.",
-    "man": "그는 남자입니다.",
-    "woman": "그녀는 여자입니다.",
-    "child": "그는 아이입니다.",
-
-    "go": "나는 학교에 갑니다.",
-    "come": "이리 와 주세요.",
-    "walk": "나는 걸어서 학교에 갑니다.",
-    "run": "나는 달릴 수 있습니다.",
-    "sit": "앉아 주세요.",
-    "stand": "일어나 주세요.",
-    "stop": "멈춰 주세요.",
-    "start": "시작합시다.",
-    "open": "문을 여세요.",
-    "close": "문을 닫으세요.",
-    "eat": "나는 점심을 먹습니다.",
-    "drink": "나는 물을 마십니다.",
-    "sleep": "나는 밤에 잡니다.",
-    "study": "나는 영어를 공부합니다.",
-    "read": "나는 책을 읽습니다.",
-    "write": "나는 내 이름을 씁니다.",
-    "listen": "주의 깊게 들으세요.",
-    "speak": "천천히 말해 주세요.",
-    "help": "나를 도와줄 수 있나요?",
-    "wait": "기다려 주세요.",
-
-    "happy": "나는 행복합니다.",
-    "sad": "나는 슬픕니다.",
-    "angry": "나는 화가 났습니다.",
-    "tired": "나는 피곤합니다.",
-    "hungry": "나는 배고픕니다.",
-    "thirsty": "나는 목마릅니다.",
-    "sick": "나는 아픕니다.",
-    "okay": "나는 괜찮습니다.",
-    "fine": "나는 괜찮습니다.",
-    "cold": "나는 춥습니다.",
-    "hot": "날씨가 덥습니다.",
-    "pain": "나는 통증이 있습니다.",
-    "headache": "나는 두통이 있습니다.",
-    "stomachache": "나는 복통이 있습니다.",
-    "fever": "나는 열이 있습니다.",
-    "hurt": "내 다리가 아픕니다.",
-    "good": "그것은 좋습니다.",
-    "bad": "그것은 나쁩니다.",
-    "worried": "나는 걱정됩니다.",
-    "scared": "나는 무섭습니다.",
-
-    "food": "나는 음식이 필요합니다.",
-    "water": "나는 물이 필요합니다.",
-    "rice": "나는 밥을 먹습니다.",
-    "bread": "나는 빵을 먹습니다.",
-    "milk": "나는 우유를 마십니다.",
-    "juice": "나는 주스를 마십니다.",
-    "coffee": "나는 커피를 마십니다.",
-    "tea": "나는 차를 마십니다.",
-    "apple": "나는 사과를 좋아합니다.",
-    "banana": "나는 바나나를 좋아합니다.",
-    "egg": "나는 달걀 하나를 먹습니다.",
-    "meat": "나는 고기를 먹습니다.",
-    "chicken": "나는 닭고기를 좋아합니다.",
-    "fish": "나는 생선을 먹습니다.",
-    "breakfast": "나는 아침 식사를 먹습니다.",
-    "lunch": "나는 점심을 먹습니다.",
-    "dinner": "나는 저녁을 먹습니다.",
-    "snack": "나는 간식을 원합니다.",
-    "medicine": "나는 약이 필요합니다.",
-    "hospital": "나는 병원이 필요합니다.",
-
-    "home": "나는 집에 갑니다.",
-    "school": "나는 학교에 갑니다.",
-    "classroom": "여기는 나의 교실입니다.",
-    "bathroom": "화장실이 어디에 있나요?",
-    "store": "나는 가게에 갑니다.",
-    "station": "역은 어디에 있나요?",
-    "bus": "나는 버스를 탑니다.",
-    "car": "이것은 나의 차입니다.",
-    "taxi": "나는 택시가 필요합니다.",
-    "train": "나는 기차를 탑니다.",
-    "bike": "나는 자전거를 탑니다.",
-    "road": "이 도로는 깁니다.",
-    "street": "이 거리는 붐빕니다.",
-    "here": "여기로 오세요.",
-    "there": "그곳으로 가세요.",
-    "near": "그것은 여기 근처에 있습니다.",
-    "far": "그것은 멉니다.",
-    "left": "왼쪽으로 도세요.",
-    "right": "오른쪽으로 도세요.",
-
-    "time": "지금 몇 시인가요?",
-    "now": "나는 지금 여기에 있습니다.",
-    "today": "오늘은 월요일입니다.",
-    "tomorrow": "내일 봅시다.",
-    "yesterday": "나는 어제 공부했습니다.",
-    "morning": "좋은 아침입니다.",
-    "afternoon": "좋은 오후입니다.",
-    "evening": "좋은 저녁입니다.",
-    "night": "안녕히 주무세요.",
-    "early": "이릅니다.",
-    "late": "늦었습니다.",
-    "one": "나는 책 한 권이 있습니다.",
-    "two": "나는 책 두 권이 있습니다.",
-    "three": "나는 책 세 권이 있습니다.",
-    "four": "나는 책 네 권이 있습니다.",
-    "five": "나는 책 다섯 권이 있습니다.",
-    "six": "나는 책 여섯 권이 있습니다.",
-    "seven": "나는 책 일곱 권이 있습니다.",
-    "eight": "나는 책 여덟 권이 있습니다.",
-    "ten": "나는 책 열 권이 있습니다.",
-
-    "bag": "이것은 나의 가방입니다.",
-    "phone": "이것은 나의 전화기입니다.",
-    "book": "이것은 나의 책입니다.",
-    "notebook": "이것은 나의 공책입니다.",
-    "pen": "나는 펜이 있습니다.",
-    "pencil": "나는 연필이 있습니다.",
-    "desk": "이것은 나의 책상입니다.",
-    "chair": "이것은 나의 의자입니다.",
-    "door": "문을 여세요.",
-    "window": "창문을 닫으세요.",
-    "key": "나는 열쇠가 필요합니다.",
-    "money": "나는 돈이 필요합니다.",
-    "card": "나는 카드가 있습니다.",
-    "ticket": "나는 표가 필요합니다.",
-    "clothes": "이것들은 나의 옷입니다.",
-    "shoes": "이것들은 나의 신발입니다.",
-    "hat": "이것은 나의 모자입니다.",
-    "watch": "이것은 나의 시계입니다.",
-    "cup": "이것은 나의 컵입니다.",
-    "bottle": "이것은 나의 병입니다.",
-
-    "please": "제발 나를 도와주세요.",
-    "sorry": "미안합니다.",
-    "excuse me": "실례합니다.",
-    "again": "다시 말해 주세요.",
-    "slowly": "천천히 말해 주세요.",
-    "understand": "나는 이해합니다.",
-    "question": "나는 질문이 있습니다.",
-    "problem": "나는 문제가 있습니다.",
-    "need": "나는 도움이 필요합니다.",
-    "want": "나는 물을 원합니다.",
-    "know": "나는 압니다.",
-    "say": "다시 말해 주세요.",
-    "tell": "나에게 말해 주세요.",
-    "ask": "질문해도 될까요?",
-    "answer": "이것이 답입니다.",
-    "repeat": "반복해 주세요.",
-    "look": "이것을 보세요.",
-}
-
-
 def get_example_sentence(word):
     return CASSETTE_EXAMPLES.get(word, f"This is {word}.")
 
@@ -1467,33 +1092,47 @@ def flatten_survival_words():
     return all_items
 
 
-def browser_survival_cassette_player(all_items, height=430):
+def browser_survival_cassette_player(all_items, height=520):
+    """
+    수정 핵심:
+    1. 큰 이동 줄 range input 추가
+    2. 드래그하면 바로 해당 단어로 이동
+    3. 재생 중 드래그하면 해당 단어부터 이어서 재생
+    4. 10개 전 / 10개 후 버튼 추가
+    5. 현재 위치가 몇 %인지 시각적으로 표시
+    """
+
     player_id = f"survival_browser_cassette_{uuid.uuid4().hex}"
     play_btn_id = f"play_{uuid.uuid4().hex}"
     pause_btn_id = f"pause_{uuid.uuid4().hex}"
     prev_btn_id = f"prev_{uuid.uuid4().hex}"
     next_btn_id = f"next_{uuid.uuid4().hex}"
+    prev10_btn_id = f"prev10_{uuid.uuid4().hex}"
+    next10_btn_id = f"next10_{uuid.uuid4().hex}"
     stop_btn_id = f"stop_{uuid.uuid4().hex}"
     progress_id = f"progress_{uuid.uuid4().hex}"
+    visual_bar_id = f"visual_bar_{uuid.uuid4().hex}"
+    percent_id = f"percent_{uuid.uuid4().hex}"
     status_id = f"status_{uuid.uuid4().hex}"
     word_id = f"word_{uuid.uuid4().hex}"
     meaning_id = f"meaning_{uuid.uuid4().hex}"
 
     cassette_json = json.dumps(all_items, ensure_ascii=False)
     safe_player_id = json.dumps(player_id)
+    max_index = max(len(all_items) - 1, 0)
 
     components.html(
         f"""
         <div style="
             font-family: Arial, sans-serif;
-            padding: 18px 18px;
-            border-radius: 22px;
+            padding: 20px 20px;
+            border-radius: 24px;
             background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);
             border: 1px solid #bfdbfe;
             box-shadow: 0 4px 14px rgba(0,0,0,0.08);
         ">
             <div style="
-                font-size: 18px;
+                font-size: 20px;
                 font-weight: 900;
                 color: #0f172a;
                 margin-bottom: 10px;
@@ -1502,7 +1141,7 @@ def browser_survival_cassette_player(all_items, height=430):
             </div>
 
             <div id="{word_id}" style="
-                font-size: 32px;
+                font-size: 36px;
                 font-weight: 900;
                 color: #111827;
                 margin-bottom: 8px;
@@ -1516,25 +1155,103 @@ def browser_survival_cassette_player(all_items, height=430):
                 color: #475569;
                 margin-bottom: 14px;
                 line-height: 1.7;
-                background: rgba(255,255,255,0.72);
+                background: rgba(255,255,255,0.76);
                 border: 1px solid #dbeafe;
-                border-radius: 16px;
+                border-radius: 18px;
                 padding: 12px 14px;
             ">
                 재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
             </div>
 
+            <div style="
+                margin: 14px 0 12px 0;
+                background: rgba(255,255,255,0.82);
+                border: 1px solid #bfdbfe;
+                border-radius: 18px;
+                padding: 14px 14px 12px 14px;
+            ">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:8px;
+                    margin-bottom:8px;
+                    flex-wrap:wrap;
+                ">
+                    <div style="font-size:14px; font-weight:900; color:#075985;">
+                        🎚️ 빠른 이동 줄
+                    </div>
+                    <div id="{percent_id}" style="
+                        font-size:13px;
+                        font-weight:900;
+                        color:#7c3aed;
+                        background:#f3e8ff;
+                        border-radius:999px;
+                        padding:5px 10px;
+                    ">
+                        0%
+                    </div>
+                </div>
+
+                <div style="
+                    width:100%;
+                    height:12px;
+                    background:#e2e8f0;
+                    border-radius:999px;
+                    overflow:hidden;
+                    margin-bottom:8px;
+                ">
+                    <div id="{visual_bar_id}" style="
+                        height:100%;
+                        width:0%;
+                        background:linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);
+                        border-radius:999px;
+                    "></div>
+                </div>
+
+                <input id="{progress_id}" type="range" min="0" max="{max_index}" value="0" step="1" style="
+                    width:100%;
+                    cursor:pointer;
+                    height:34px;
+                    accent-color:#8b5cf6;
+                ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    font-size:12px;
+                    color:#64748b;
+                    font-weight:800;
+                    margin-top:2px;
+                ">
+                    <span>1번</span>
+                    <span>가운데로 끌면 중간 단어로 바로 이동</span>
+                    <span>{len(all_items)}번</span>
+                </div>
+            </div>
+
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                <button id="{prev10_btn_id}" style="
+                    background:#fef3c7;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">⏪ 10개 전</button>
+
                 <button id="{prev_btn_id}" style="
                     background:#f8fafc;
                     border:1px solid #cbd5e1;
                     border-radius:999px;
-                    padding:9px 14px;
+                    padding:9px 13px;
                     font-weight:900;
                     font-size:14px;
                     color:#334155;
                     cursor:pointer;
-                ">⏮ 이전 단어</button>
+                ">⏮ 이전</button>
 
                 <button id="{play_btn_id}" style="
                     background: linear-gradient(135deg, #dbeafe, #fce7f3);
@@ -1552,7 +1269,7 @@ def browser_survival_cassette_player(all_items, height=430):
                     background:#ecfeff;
                     border:1px solid #67e8f9;
                     border-radius:999px;
-                    padding:9px 14px;
+                    padding:9px 13px;
                     font-weight:900;
                     font-size:14px;
                     color:#155e75;
@@ -1563,18 +1280,29 @@ def browser_survival_cassette_player(all_items, height=430):
                     background:#f8fafc;
                     border:1px solid #cbd5e1;
                     border-radius:999px;
-                    padding:9px 14px;
+                    padding:9px 13px;
                     font-weight:900;
                     font-size:14px;
                     color:#334155;
                     cursor:pointer;
-                ">⏭ 다음 단어</button>
+                ">⏭ 다음</button>
+
+                <button id="{next10_btn_id}" style="
+                    background:#dcfce7;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:9px 13px;
+                    font-weight:900;
+                    font-size:14px;
+                    color:#166534;
+                    cursor:pointer;
+                ">⏩ 10개 후</button>
 
                 <button id="{stop_btn_id}" style="
                     background: #fff7ed;
                     border: 1px solid #fed7aa;
                     border-radius: 999px;
-                    padding: 9px 14px;
+                    padding: 9px 13px;
                     font-weight: 900;
                     font-size: 14px;
                     color: #9a3412;
@@ -1589,21 +1317,15 @@ def browser_survival_cassette_player(all_items, height=430):
                 "></span>
             </div>
 
-            <input id="{progress_id}" type="range" min="0" max="{max(len(all_items)-1, 0)}" value="0" step="1" style="
-                width:100%;
-                margin-top:16px;
-                cursor:pointer;
-            ">
-
             <div style="
-                margin-top: 6px;
+                margin-top: 10px;
                 font-size: 12px;
                 color: #64748b;
                 font-weight: 700;
                 line-height: 1.6;
             ">
-                ※ 진행 바를 움직여 원하는 단어로 이동할 수 있습니다.<br>
-                ※ 단어 뜻, 예문, 예문 뜻이 위에 표시됩니다.<br>
+                ※ 위의 긴 줄을 손가락이나 마우스로 끌면 원하는 단어로 바로 이동합니다.<br>
+                ※ 재생 중에도 줄을 움직이면 해당 단어부터 다시 이어집니다.<br>
                 ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 카세트는 자동으로 중지됩니다.
             </div>
 
@@ -1614,8 +1336,12 @@ def browser_survival_cassette_player(all_items, height=430):
             const pauseBtn = document.getElementById("{pause_btn_id}");
             const prevBtn = document.getElementById("{prev_btn_id}");
             const nextBtn = document.getElementById("{next_btn_id}");
+            const prev10Btn = document.getElementById("{prev10_btn_id}");
+            const next10Btn = document.getElementById("{next10_btn_id}");
             const stopBtn = document.getElementById("{stop_btn_id}");
             const progress = document.getElementById("{progress_id}");
+            const visualBar = document.getElementById("{visual_bar_id}");
+            const percentBox = document.getElementById("{percent_id}");
             const status = document.getElementById("{status_id}");
             const wordBox = document.getElementById("{word_id}");
             const meaningBox = document.getElementById("{meaning_id}");
@@ -1626,21 +1352,52 @@ def browser_survival_cassette_player(all_items, height=430):
             let index = 0;
             let isPlaying = false;
             let isPaused = false;
+            let jumpTimer = null;
+
+            function escapeHtml(text) {{
+                const div = document.createElement("div");
+                div.innerText = text;
+                return div.innerHTML;
+            }}
+
+            function updateProgressVisual() {{
+                const max = Math.max(cassetteItems.length - 1, 1);
+                const pct = Math.round((index / max) * 100);
+                visualBar.style.width = pct + "%";
+                percentBox.innerText = pct + "%";
+            }}
 
             function updateDisplay() {{
                 const item = cassetteItems[index];
                 if (!item) return;
 
                 progress.value = index;
-                wordBox.innerText = item.number + ". " + item.word;
+                updateProgressVisual();
+
+                wordBox.innerText = item.number + ". " + item.word + " " + getEmoji(item.word);
 
                 meaningBox.innerHTML =
-                    "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + item.meaning + "</div>" +
-                    "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + item.example + "</div>" +
-                    "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + item.example_ko + "</div>" +
-                    "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + item.theme + "</div>";
+                    "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
+                    "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
+                    "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +
+                    "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + escapeHtml(item.theme) + "</div>";
 
                 status.innerText = (index + 1) + " / " + cassetteItems.length;
+            }}
+
+            function getEmoji(word) {{
+                const emojiMap = {{
+                    "I":"🙋","you":"👉","he":"👦","she":"👧","we":"👥","they":"👥","friend":"🤝","teacher":"👩‍🏫","student":"🧑‍🎓",
+                    "go":"➡️","come":"⬅️","walk":"🚶","run":"🏃","sit":"🪑","stand":"🧍","stop":"🛑","start":"▶️","open":"📂","close":"📕",
+                    "eat":"🍽️","drink":"🥤","sleep":"😴","study":"📚","read":"📖","write":"✏️","listen":"👂","speak":"🗣️","help":"🆘",
+                    "happy":"😊","sad":"😢","angry":"😠","tired":"🥱","hungry":"😋","thirsty":"🥤","sick":"🤒",
+                    "food":"🍽️","water":"💧","rice":"🍚","bread":"🍞","milk":"🥛","juice":"🧃","coffee":"☕","tea":"🍵",
+                    "home":"🏠","school":"🏫","bathroom":"🚻","hospital":"🏥","store":"🏪","bus":"🚌","car":"🚗","taxi":"🚕","train":"🚆","bike":"🚲",
+                    "time":"⏰","now":"🕒","today":"📅","tomorrow":"➡️📅","yesterday":"⬅️📅",
+                    "bag":"🎒","phone":"📱","book":"📘","money":"💵","card":"💳","ticket":"🎫",
+                    "please":"🙏","sorry":"🙇","excuse me":"🙋","again":"🔁","slowly":"🐢","question":"❓","answer":"✅"
+                }};
+                return emojiMap[word] || "🌱";
             }}
 
             function stopThisTape(showMessage = false) {{
@@ -1742,6 +1499,23 @@ def browser_survival_cassette_player(all_items, height=430):
                 window.speechSynthesis.speak(utterance);
             }}
 
+            function jumpTo(newIndex, keepPlaying = true) {{
+                index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
+                window.speechSynthesis.cancel();
+                updateDisplay();
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                }}
+
+                if (isPlaying && keepPlaying) {{
+                    jumpTimer = setTimeout(function() {{
+                        isPaused = false;
+                        speakCurrent();
+                    }}, 250);
+                }}
+            }}
+
             playBtn.addEventListener("click", function() {{
                 channel.postMessage({{
                     type: "STOP_OTHERS",
@@ -1780,33 +1554,28 @@ def browser_survival_cassette_player(all_items, height=430):
             }});
 
             prevBtn.addEventListener("click", function() {{
-                index = Math.max(0, index - 1);
-                window.speechSynthesis.cancel();
-                updateDisplay();
-
-                if (isPlaying) {{
-                    setTimeout(speakCurrent, 200);
-                }}
+                jumpTo(index - 1, true);
             }});
 
             nextBtn.addEventListener("click", function() {{
-                index = Math.min(cassetteItems.length - 1, index + 1);
-                window.speechSynthesis.cancel();
-                updateDisplay();
+                jumpTo(index + 1, true);
+            }});
 
-                if (isPlaying) {{
-                    setTimeout(speakCurrent, 200);
-                }}
+            prev10Btn.addEventListener("click", function() {{
+                jumpTo(index - 10, true);
+            }});
+
+            next10Btn.addEventListener("click", function() {{
+                jumpTo(index + 10, true);
             }});
 
             progress.addEventListener("input", function() {{
                 index = parseInt(progress.value);
-                window.speechSynthesis.cancel();
                 updateDisplay();
+            }});
 
-                if (isPlaying) {{
-                    setTimeout(speakCurrent, 200);
-                }}
+            progress.addEventListener("change", function() {{
+                jumpTo(parseInt(progress.value), true);
             }});
 
             if (typeof speechSynthesis !== "undefined") {{
@@ -1826,11 +1595,10 @@ def browser_survival_cassette_player(all_items, height=430):
 def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
     st.write("전체 160개 단어를 처음부터 끝까지 카세트처럼 이어서 들을 수 있습니다.")
-
-
+    st.info("🎚️ 긴 이동 줄을 끌면 원하는 단어로 바로 이동합니다. 재생 중에도 이동할 수 있습니다.")
 
     all_items = flatten_survival_words()
-    browser_survival_cassette_player(all_items, height=430)
+    browser_survival_cassette_player(all_items, height=520)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
         st.write("카세트에서 실제로 들려주는 단어, 예문, 예문 뜻을 함께 확인할 수 있습니다.")
@@ -1868,8 +1636,8 @@ def show_all_cassette_tab():
 
 
 def show_cassette_player(theme_words, theme_name):
-    # 테마별 카세트는 만들지 않고, 맨 앞 전체 카세트 듣기 탭에만 카세트 기능을 둡니다.
     return
+
 
 # =========================
 # 전체 뜻 목록 만들기
@@ -1879,6 +1647,7 @@ for theme_words in word_themes.values():
     all_words.extend(theme_words)
 
 all_meanings = [item["meaning"] for item in all_words]
+
 
 # =========================
 # 보기 고정 랜덤 섞기
