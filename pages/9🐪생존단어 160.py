@@ -1475,6 +1475,28 @@ def browser_survival_cassette_player(all_items, height=520):
                 return englishVoice || null;
             }}
 
+            function primeSpeechEngine(callback) {{
+                window.speechSynthesis.cancel();
+
+                const voices = window.speechSynthesis.getVoices();
+
+                if (voices && voices.length > 0) {{
+                    setTimeout(callback, 180);
+                    return;
+                }}
+
+                let tried = 0;
+                const voiceTimer = setInterval(function() {{
+                    tried += 1;
+                    const loadedVoices = window.speechSynthesis.getVoices();
+
+                    if ((loadedVoices && loadedVoices.length > 0) || tried >= 10) {{
+                        clearInterval(voiceTimer);
+                        setTimeout(callback, 180);
+                    }}
+                }}, 120);
+            }}
+
             function speakCurrent() {{
                 if (!isPlaying) return;
 
@@ -1497,7 +1519,12 @@ def browser_survival_cassette_player(all_items, height=520):
                     utterance.voice = femaleVoice;
                 }}
 
-                utterance.onend = function() {{
+                let endedSafely = false;
+
+                function goNextAfterCurrent() {{
+                    if (endedSafely) return;
+                    endedSafely = true;
+
                     if (!isPlaying || isPaused) return;
 
                     index += 1;
@@ -1509,15 +1536,28 @@ def browser_survival_cassette_player(all_items, height=520):
                     }}
 
                     setTimeout(speakCurrent, 650);
-                }};
+                }}
+
+                utterance.onend = goNextAfterCurrent;
 
                 utterance.onerror = function() {{
-                    status.innerText = "음성 오류. 다시 눌러 주세요.";
-                    isPlaying = false;
-                    playBtn.innerText = "▶️ 재생";
+                    if (!isPlaying || isPaused) return;
+                    goNextAfterCurrent();
                 }};
 
-                window.speechSynthesis.speak(utterance);
+                window.speechSynthesis.cancel();
+                setTimeout(function() {{
+                    if (!isPlaying || isPaused) return;
+                    window.speechSynthesis.speak(utterance);
+
+                    // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
+                    const estimatedMs = Math.max(1600, item.script.length * 95);
+                    setTimeout(function() {{
+                        if (!endedSafely && isPlaying && !isPaused) {{
+                            goNextAfterCurrent();
+                        }}
+                    }}, estimatedMs);
+                }}, 80);
             }}
 
             function jumpTo(newIndex, keepPlaying = true) {{
@@ -1901,6 +1941,28 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                     return englishVoice || null;
                 }}
 
+                function primeSpeechEngine(callback) {{
+                    window.speechSynthesis.cancel();
+
+                    const voices = window.speechSynthesis.getVoices();
+
+                    if (voices && voices.length > 0) {{
+                        setTimeout(callback, 180);
+                        return;
+                    }}
+
+                    let tried = 0;
+                    const voiceTimer = setInterval(function() {{
+                        tried += 1;
+                        const loadedVoices = window.speechSynthesis.getVoices();
+
+                        if ((loadedVoices && loadedVoices.length > 0) || tried >= 10) {{
+                            clearInterval(voiceTimer);
+                            setTimeout(callback, 180);
+                        }}
+                    }}, 120);
+                }}
+
                 function speakCurrent() {{
                     if (!isPlaying) return;
 
@@ -1923,7 +1985,12 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                         utterance.voice = voice;
                     }}
 
-                    utterance.onend = function() {{
+                    let endedSafely = false;
+
+                    function goNextAfterCurrent() {{
+                        if (endedSafely) return;
+                        endedSafely = true;
+
                         if (!isPlaying || isPaused) return;
 
                         index += 1;
@@ -1935,15 +2002,28 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                         }}
 
                         setTimeout(speakCurrent, 650);
-                    }};
+                    }}
+
+                    utterance.onend = goNextAfterCurrent;
 
                     utterance.onerror = function() {{
-                        status.innerText = "음성 오류. 다시 눌러 주세요.";
-                        isPlaying = false;
-                        playBtn.innerText = "▶️ 재생";
+                        if (!isPlaying || isPaused) return;
+                        goNextAfterCurrent();
                     }};
 
-                    window.speechSynthesis.speak(utterance);
+                    window.speechSynthesis.cancel();
+                    setTimeout(function() {{
+                        if (!isPlaying || isPaused) return;
+                        window.speechSynthesis.speak(utterance);
+
+                        // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
+                        const estimatedMs = Math.max(1600, item.script.length * 95);
+                        setTimeout(function() {{
+                            if (!endedSafely && isPlaying && !isPaused) {{
+                                goNextAfterCurrent();
+                            }}
+                        }}, estimatedMs);
+                    }}, 80);
                 }}
 
                 function jumpTo(newIndex, autoPlay = true) {{
@@ -1959,7 +2039,10 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                         isPlaying = true;
                         isPaused = false;
                         playBtn.innerText = "재생 중...";
-                        jumpTimer = setTimeout(speakCurrent, 250);
+                        jumpTimer = setTimeout(function() {{
+                            if (!isPlaying || isPaused) return;
+                            speakCurrent();
+                        }}, 250);
                     }}
                 }}
 
@@ -1978,12 +2061,15 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                         return;
                     }}
 
-                    window.speechSynthesis.cancel();
                     isPlaying = true;
                     isPaused = false;
                     playBtn.innerText = "재생 중...";
                     updateDisplay();
-                    speakCurrent();
+
+                    primeSpeechEngine(function() {{
+                        if (!isPlaying || isPaused) return;
+                        speakCurrent();
+                    }});
                 }});
 
                 pauseBtn.addEventListener("click", function() {{
@@ -2188,18 +2274,6 @@ def show_dialogue(theme_name):
         height=105
     )
 
-    dialogue_text = make_dialogue_tts_text(dialogue)
-    dialogue_audio_bytes = make_tts_audio(dialogue_text)
-
-    safe_file_name = re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", theme_name)
-
-    st.download_button(
-        label="⬇️ 대화 듣기 파일 다운로드",
-        data=dialogue_audio_bytes,
-        file_name=f"{safe_file_name}_dialogue.mp3",
-        mime="audio/mp3",
-        key=f"{theme_name}_dialogue_download"
-    )
 
 
 # =========================
