@@ -40,10 +40,10 @@ st.markdown(
 
     .hero-box {
         background: linear-gradient(135deg, #ecfeff 0%, #fef3c7 50%, #fce7f3 100%);
-        border-radius: 26px;
-        padding: 28px 30px;
-        margin-bottom: 28px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        border-radius: 22px;
+        padding: 18px 22px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
         border: 1px solid rgba(255,255,255,0.8);
     }
 
@@ -247,12 +247,8 @@ st.markdown(
 st.markdown(
     """
     <div class="hero-box">
-        <div class="hero-title">🌟 오늘의 학습 방식</div>
-        <div class="hero-text">
-            • 이 단어 160개만 외우면 미국에서 생존이 가능합니다. 힘내봅시다.<br>
-            • 전체 카세트 듣기와 테마별 카세트 듣기로 틀어놓고 복습할 수 있습니다.<br>
-            • 카세트 듣기에는 크게 움직일 수 있는 이동 줄과 10개씩 이동 버튼이 있습니다.<br>
-            • 카세트 듣기 중 아래 단어 듣기를 누르면 카세트가 자동으로 멈춥니다.
+        <div class="hero-text" style="font-size:18px; font-weight:900; color:#374151;">
+            이 단어 160개만 외우면 미국에서 생존이 가능합니다.
         </div>
     </div>
     """,
@@ -1113,7 +1109,7 @@ def make_theme_cassette_items(theme_words, theme_name):
     return theme_items
 
 
-def browser_survival_cassette_player(all_items, height=630):
+def browser_survival_cassette_player(all_items, height=590):
     """
     수정 핵심:
     1. 큰 이동 줄 range input 추가
@@ -1252,7 +1248,7 @@ def browser_survival_cassette_player(all_items, height=630):
                     margin-top:2px;
                 ">
                     <span>1번</span>
-                    <span>가운데로 끌면 중간 단어로 바로 이동</span>
+                    <span></span>
                     <span>{len(all_items)}번</span>
                 </div>
             </div>
@@ -1422,17 +1418,6 @@ def browser_survival_cassette_player(all_items, height=630):
                 "></span>
             </div>
 
-            <div style="
-                margin-top: 10px;
-                font-size: 12px;
-                color: #64748b;
-                font-weight: 700;
-                line-height: 1.6;
-            ">
-                ※ 위의 긴 줄을 손가락이나 마우스로 끌면 원하는 단어로 바로 이동합니다.<br>
-                ※ 재생 중에도 줄을 움직이면 해당 단어부터 다시 이어집니다.<br>※ 줄을 옮기면 선택한 단어부터 다시 재생됩니다. 이후 끝까지 가면 다음 회차는 1번부터 재생됩니다.<br>※ 전체 카세트도 속도 조절이 가능합니다.<br>
-                ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 카세트는 자동으로 중지됩니다.
-            </div>
 
             <script>
             const cassetteItems = {cassette_json};
@@ -1844,7 +1829,7 @@ def browser_survival_cassette_player(all_items, height=630):
 
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=590):
+def browser_theme_cassette_player(theme_items, theme_name, height=550):
     """
     테마별 카세트 전용 플레이어.
     전체 카세트 플레이어와 JS 변수명이 충돌하지 않도록 모든 변수명을 블록 스코프 안에 넣었습니다.
@@ -1978,7 +1963,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=590):
                     margin-top:2px;
                 ">
                     <span>1번</span>
-                    <span>선택 위치부터 재생 후 다음 회차는 1번부터</span>
+                    <span></span>
                     <span>{len(theme_items)}번</span>
                 </div>
             </div>
@@ -2529,8 +2514,6 @@ def browser_theme_cassette_player(theme_items, theme_name, height=590):
 
 def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
-    st.write("전체 160개 단어를 처음부터 끝까지 카세트처럼 이어서 들을 수 있습니다.")
-    st.info("🎚️ 긴 이동 줄을 끌면 원하는 단어로 바로 이동합니다. 재생 중에도 이동할 수 있습니다.")
 
     all_items = flatten_survival_words()
     browser_survival_cassette_player(all_items, height=520)
@@ -2572,14 +2555,13 @@ def show_all_cassette_tab():
 
 def show_cassette_player(theme_words, theme_name):
     st.markdown("### 🎧 이 테마 카세트 듣기")
-    st.write("이 테마의 단어만 카세트처럼 차례대로 들을 수 있습니다.")
 
     theme_items = make_theme_cassette_items(theme_words, theme_name)
 
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=590
+        height=550
     )
 
 
