@@ -1113,7 +1113,7 @@ def make_theme_cassette_items(theme_words, theme_name):
     return theme_items
 
 
-def browser_survival_cassette_player(all_items, height=520):
+def browser_survival_cassette_player(all_items, height=630):
     """
     수정 핵심:
     1. 큰 이동 줄 range input 추가
@@ -1128,6 +1128,12 @@ def browser_survival_cassette_player(all_items, height=520):
     pause_btn_id = f"pause_{uuid.uuid4().hex}"
     prev_btn_id = f"prev_{uuid.uuid4().hex}"
     next_btn_id = f"next_{uuid.uuid4().hex}"
+    slow_btn_id = f"slow_{uuid.uuid4().hex}"
+    mid_slow_btn_id = f"mid_slow_{uuid.uuid4().hex}"
+    normal_btn_id = f"normal_{uuid.uuid4().hex}"
+    mid_fast_btn_id = f"mid_fast_{uuid.uuid4().hex}"
+    fast_btn_id = f"fast_{uuid.uuid4().hex}"
+    speed_status_id = f"speed_status_{uuid.uuid4().hex}"
     prev10_btn_id = f"prev10_{uuid.uuid4().hex}"
     next10_btn_id = f"next10_{uuid.uuid4().hex}"
     stop_btn_id = f"stop_{uuid.uuid4().hex}"
@@ -1331,6 +1337,84 @@ def browser_survival_cassette_player(all_items, height=520):
                     box-shadow: 0 3px 8px rgba(0,0,0,0.05);
                 ">⏹ 중지</button>
 
+                <span style="
+                    margin-left:28px;
+                    padding-left:20px;
+                    border-left:2px dashed #c4b5fd;
+                    font-size:13px;
+                    font-weight:900;
+                    color:#475569;
+                    background:#f8fafc;
+                    border-radius:999px;
+                    padding-top:6px;
+                    padding-bottom:6px;
+                    padding-right:10px;
+                ">🎚️ 속도 조절</span>
+
+                <button id="{slow_btn_id}" style="
+                    background:#fef3c7;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">0.5x</button>
+
+                <button id="{mid_slow_btn_id}" style="
+                    background:#fffbeb;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">0.75x</button>
+
+                <button id="{normal_btn_id}" style="
+                    background:#e0f2fe;
+                    border:1px solid #7dd3fc;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#075985;
+                    cursor:pointer;
+                ">1.0x</button>
+
+                <button id="{mid_fast_btn_id}" style="
+                    background:#ecfdf5;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#166534;
+                    cursor:pointer;
+                ">1.25x</button>
+
+                <button id="{fast_btn_id}" style="
+                    background:#dcfce7;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#166534;
+                    cursor:pointer;
+                ">1.5x</button>
+
+                <span id="{speed_status_id}" style="
+                    font-size: 13px;
+                    color: #7c3aed;
+                    font-weight: 900;
+                    background:#f3e8ff;
+                    border-radius:999px;
+                    padding:6px 11px;
+                ">현재: 1.0x</span>
+
                 <span id="{status_id}" style="
                     font-size: 13px;
                     color: #075985;
@@ -1346,7 +1430,7 @@ def browser_survival_cassette_player(all_items, height=520):
                 line-height: 1.6;
             ">
                 ※ 위의 긴 줄을 손가락이나 마우스로 끌면 원하는 단어로 바로 이동합니다.<br>
-                ※ 재생 중에도 줄을 움직이면 해당 단어부터 다시 이어집니다.<br>
+                ※ 재생 중에도 줄을 움직이면 해당 단어부터 다시 이어집니다.<br>※ 줄을 옮기면 선택한 단어부터 다시 재생됩니다. 이후 끝까지 가면 다음 회차는 1번부터 재생됩니다.<br>※ 전체 카세트도 속도 조절이 가능합니다.<br>
                 ※ 다른 단어 듣기나 대화 듣기를 누르면 이 전체 카세트는 자동으로 중지됩니다.
             </div>
 
@@ -1360,6 +1444,12 @@ def browser_survival_cassette_player(all_items, height=520):
             const prev10Btn = document.getElementById("{prev10_btn_id}");
             const next10Btn = document.getElementById("{next10_btn_id}");
             const stopBtn = document.getElementById("{stop_btn_id}");
+            const slowBtn = document.getElementById("{slow_btn_id}");
+            const midSlowBtn = document.getElementById("{mid_slow_btn_id}");
+            const normalBtn = document.getElementById("{normal_btn_id}");
+            const midFastBtn = document.getElementById("{mid_fast_btn_id}");
+            const fastBtn = document.getElementById("{fast_btn_id}");
+            const speedStatus = document.getElementById("{speed_status_id}");
             const progress = document.getElementById("{progress_id}");
             const visualBar = document.getElementById("{visual_bar_id}");
             const percentBox = document.getElementById("{percent_id}");
@@ -1374,8 +1464,11 @@ def browser_survival_cassette_player(all_items, height=520):
             let isPlaying = false;
             let isPaused = false;
             let jumpTimer = null;
+            let safetyTimer = null;
+            let playToken = 0;
             let repeatRound = 1;
             const maxRepeatRound = 3;
+            let speechRate = 0.75;
 
             function escapeHtml(text) {{
                 const div = document.createElement("div");
@@ -1424,6 +1517,18 @@ def browser_survival_cassette_player(all_items, height=520):
             }}
 
             function stopThisTape(showMessage = false) {{
+                playToken += 1;
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                    jumpTimer = null;
+                }}
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
                 window.speechSynthesis.cancel();
                 isPlaying = false;
                 isPaused = false;
@@ -1500,8 +1605,8 @@ def browser_survival_cassette_player(all_items, height=520):
                 }}, 120);
             }}
 
-            function speakCurrent() {{
-                if (!isPlaying) return;
+            function speakCurrent(expectedToken = playToken) {{
+                if (!isPlaying || expectedToken !== playToken) return;
 
                 const item = cassetteItems[index];
                 if (!item) {{
@@ -1514,7 +1619,7 @@ def browser_survival_cassette_player(all_items, height=520):
 
                 const utterance = new SpeechSynthesisUtterance(item.script);
                 utterance.lang = "en-US";
-                utterance.rate = 0.82;
+                utterance.rate = speechRate;
                 utterance.pitch = 1.08;
 
                 const femaleVoice = getFemaleEnglishVoice();
@@ -1528,7 +1633,7 @@ def browser_survival_cassette_player(all_items, height=520):
                     if (endedSafely) return;
                     endedSafely = true;
 
-                    if (!isPlaying || isPaused) return;
+                    if (!isPlaying || isPaused || expectedToken !== playToken) return;
 
                     index += 1;
 
@@ -1537,7 +1642,9 @@ def browser_survival_cassette_player(all_items, height=520):
                             repeatRound += 1;
                             index = 0;
                             status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " 시작";
-                            setTimeout(speakCurrent, 900);
+                            setTimeout(function() {{
+                                speakCurrent(expectedToken);
+                            }}, 900);
                             return;
                         }}
 
@@ -1546,7 +1653,9 @@ def browser_survival_cassette_player(all_items, height=520):
                         return;
                     }}
 
-                    setTimeout(speakCurrent, 650);
+                    setTimeout(function() {{
+                        speakCurrent(expectedToken);
+                    }}, 650);
                 }}
 
                 utterance.onend = goNextAfterCurrent;
@@ -1557,14 +1666,25 @@ def browser_survival_cassette_player(all_items, height=520):
                 }};
 
                 window.speechSynthesis.cancel();
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
                 setTimeout(function() {{
-                    if (!isPlaying || isPaused) return;
-                    window.speechSynthesis.speak(utterance);
+                    if (!isPlaying || isPaused || expectedToken !== playToken) return;
+
+                    try {{
+                        window.speechSynthesis.speak(utterance);
+                    }} catch (e) {{
+                        return;
+                    }}
 
                     // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
-                    const estimatedMs = Math.max(1600, item.script.length * 95);
-                    setTimeout(function() {{
-                        if (!endedSafely && isPlaying && !isPaused) {{
+                    const estimatedMs = Math.max(2600, item.script.length * 125 / Math.max(speechRate, 0.375));
+                    safetyTimer = setTimeout(function() {{
+                        if (!endedSafely && isPlaying && !isPaused && expectedToken === playToken) {{
                             goNextAfterCurrent();
                         }}
                     }}, estimatedMs);
@@ -1572,20 +1692,30 @@ def browser_survival_cassette_player(all_items, height=520):
             }}
 
             function jumpTo(newIndex, keepPlaying = true) {{
+                playToken += 1;
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                    jumpTimer = null;
+                }}
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
                 index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
                 repeatRound = 1;
                 window.speechSynthesis.cancel();
                 updateDisplay();
 
-                if (jumpTimer) {{
-                    clearTimeout(jumpTimer);
-                }}
-
                 if (isPlaying && keepPlaying) {{
+                    const tokenAtJump = playToken;
                     jumpTimer = setTimeout(function() {{
+                        if (tokenAtJump !== playToken) return;
                         isPaused = false;
-                        speakCurrent();
-                    }}, 250);
+                        speakCurrent(tokenAtJump);
+                    }}, 350);
                 }}
             }}
 
@@ -1604,13 +1734,25 @@ def browser_survival_cassette_player(all_items, height=520):
                     return;
                 }}
 
+                playToken += 1;
+
+                if (jumpTimer) {{
+                    clearTimeout(jumpTimer);
+                    jumpTimer = null;
+                }}
+
+                if (safetyTimer) {{
+                    clearTimeout(safetyTimer);
+                    safetyTimer = null;
+                }}
+
                 window.speechSynthesis.cancel();
                 repeatRound = 1;
                 isPlaying = true;
                 isPaused = false;
                 playBtn.innerText = "재생 중...";
                 updateDisplay();
-                speakCurrent();
+                speakCurrent(playToken);
             }});
 
             pauseBtn.addEventListener("click", function() {{
@@ -1643,6 +1785,41 @@ def browser_survival_cassette_player(all_items, height=520):
                 jumpTo(index + 10, true);
             }});
 
+            slowBtn.addEventListener("click", function() {{
+                speechRate = 0.375;
+                speedStatus.innerText = "현재: 0.5x";
+                speedStatus.style.background = "#fef3c7";
+                speedStatus.style.color = "#92400e";
+            }});
+
+            midSlowBtn.addEventListener("click", function() {{
+                speechRate = 0.5625;
+                speedStatus.innerText = "현재: 0.75x";
+                speedStatus.style.background = "#fffbeb";
+                speedStatus.style.color = "#92400e";
+            }});
+
+            normalBtn.addEventListener("click", function() {{
+                speechRate = 0.75;
+                speedStatus.innerText = "현재: 1.0x";
+                speedStatus.style.background = "#f3e8ff";
+                speedStatus.style.color = "#7c3aed";
+            }});
+
+            midFastBtn.addEventListener("click", function() {{
+                speechRate = 0.9375;
+                speedStatus.innerText = "현재: 1.25x";
+                speedStatus.style.background = "#ecfdf5";
+                speedStatus.style.color = "#166534";
+            }});
+
+            fastBtn.addEventListener("click", function() {{
+                speechRate = 1.125;
+                speedStatus.innerText = "현재: 1.5x";
+                speedStatus.style.background = "#dcfce7";
+                speedStatus.style.color = "#166534";
+            }});
+
             progress.addEventListener("input", function() {{
                 index = parseInt(progress.value);
                 updateDisplay();
@@ -1667,7 +1844,7 @@ def browser_survival_cassette_player(all_items, height=520):
 
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=565):
+def browser_theme_cassette_player(theme_items, theme_name, height=590):
     """
     테마별 카세트 전용 플레이어.
     전체 카세트 플레이어와 JS 변수명이 충돌하지 않도록 모든 변수명을 블록 스코프 안에 넣었습니다.
@@ -1801,7 +1978,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                     margin-top:2px;
                 ">
                     <span>1번</span>
-                    <span>선택한 위치부터 3회 반복 재생</span>
+                    <span>선택 위치부터 재생 후 다음 회차는 1번부터</span>
                     <span>{len(theme_items)}번</span>
                 </div>
             </div>
@@ -1997,6 +2174,8 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                 let isPlaying = false;
                 let isPaused = false;
                 let jumpTimer = null;
+                let safetyTimer = null;
+                let playToken = 0;
                 let speechRate = 0.75;
                 let repeatRound = 1;
                 const maxRepeatRound = 3;
@@ -2028,10 +2207,22 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                         "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
                         "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>";
 
-                    status.innerText = (index + 1) + " / " + cassetteItems.length;
+                    status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
                 }}
 
                 function stopThisTape(showMessage = false) {{
+                    playToken += 1;
+
+                    if (jumpTimer) {{
+                        clearTimeout(jumpTimer);
+                        jumpTimer = null;
+                    }}
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
                     window.speechSynthesis.cancel();
                     isPlaying = false;
                     isPaused = false;
@@ -2102,8 +2293,8 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                     }}, 120);
                 }}
 
-                function speakCurrent() {{
-                    if (!isPlaying) return;
+                function speakCurrent(expectedToken = playToken) {{
+                    if (!isPlaying || expectedToken !== playToken) return;
 
                     const item = cassetteItems[index];
                     if (!item) {{
@@ -2130,7 +2321,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                         if (endedSafely) return;
                         endedSafely = true;
 
-                        if (!isPlaying || isPaused) return;
+                        if (!isPlaying || isPaused || expectedToken !== playToken) return;
 
                         index += 1;
 
@@ -2139,7 +2330,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                                 repeatRound += 1;
                                 index = 0;
                                 status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " 시작";
-                                setTimeout(speakCurrent, 900);
+                                setTimeout(function() {{
+                                    speakCurrent(expectedToken);
+                                }}, 900);
                                 return;
                             }}
 
@@ -2148,7 +2341,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                             return;
                         }}
 
-                        setTimeout(speakCurrent, 650);
+                        setTimeout(function() {{
+                            speakCurrent(expectedToken);
+                        }}, 650);
                     }}
 
                     utterance.onend = goNextAfterCurrent;
@@ -2159,16 +2354,25 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                     }};
 
                     window.speechSynthesis.cancel();
-                    setTimeout(function() {{
-                        if (!isPlaying || isPaused) return;
-                        window.speechSynthesis.speak(utterance);
 
-                        // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
-                        // 첫 단어가 너무 빨리 넘어가지 않도록 안전 타이머를 넉넉하게 둡니다.
-                        // 실제 onend가 정상 작동하면 이 타이머는 중복 실행되지 않습니다.
-                        const estimatedMs = Math.max(2600, item.script.length * 125 / Math.max(speechRate, 0.5));
-                        setTimeout(function() {{
-                            if (!endedSafely && isPlaying && !isPaused) {{
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
+                    setTimeout(function() {{
+                        if (!isPlaying || isPaused || expectedToken !== playToken) return;
+
+                        try {{
+                            window.speechSynthesis.speak(utterance);
+                        }} catch (e) {{
+                            return;
+                        }}
+
+                        // 일부 모바일/브라우저에서 onend가 씹히는 경우를 대비한 안전장치
+                        const estimatedMs = Math.max(2600, item.script.length * 125 / Math.max(speechRate, 0.375));
+                        safetyTimer = setTimeout(function() {{
+                            if (!endedSafely && isPlaying && !isPaused && expectedToken === playToken) {{
                                 goNextAfterCurrent();
                             }}
                         }}, estimatedMs);
@@ -2176,23 +2380,33 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                 }}
 
                 function jumpTo(newIndex, autoPlay = true) {{
+                    playToken += 1;
+
+                    if (jumpTimer) {{
+                        clearTimeout(jumpTimer);
+                        jumpTimer = null;
+                    }}
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
                     index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
                     repeatRound = 1;
                     window.speechSynthesis.cancel();
                     updateDisplay();
 
-                    if (jumpTimer) {{
-                        clearTimeout(jumpTimer);
-                    }}
-
                     if (autoPlay) {{
                         isPlaying = true;
                         isPaused = false;
                         playBtn.innerText = "재생 중...";
+                        const tokenAtJump = playToken;
                         jumpTimer = setTimeout(function() {{
+                            if (tokenAtJump !== playToken) return;
                             if (!isPlaying || isPaused) return;
-                            speakCurrent();
-                        }}, 250);
+                            speakCurrent(tokenAtJump);
+                        }}, 350);
                     }}
                 }}
 
@@ -2217,9 +2431,22 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                     playBtn.innerText = "재생 중...";
                     updateDisplay();
 
+                    playToken += 1;
+                    const tokenAtPlay = playToken;
+
+                    if (jumpTimer) {{
+                        clearTimeout(jumpTimer);
+                        jumpTimer = null;
+                    }}
+
+                    if (safetyTimer) {{
+                        clearTimeout(safetyTimer);
+                        safetyTimer = null;
+                    }}
+
                     primeSpeechEngine(function() {{
-                        if (!isPlaying || isPaused) return;
-                        speakCurrent();
+                        if (!isPlaying || isPaused || tokenAtPlay !== playToken) return;
+                        speakCurrent(tokenAtPlay);
                     }});
                 }});
 
@@ -2242,36 +2469,36 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                 }});
 
                 slowBtn.addEventListener("click", function() {{
-                    speechRate = 0.5;
-                    speedStatus.innerText = "현재: 0.5x";
+                    speechRate = 0.375;
+                speedStatus.innerText = "현재: 0.5x";
                     speedStatus.style.background = "#fef3c7";
                     speedStatus.style.color = "#92400e";
                 }});
 
                 midSlowBtn.addEventListener("click", function() {{
-                    speechRate = 0.75;
-                    speedStatus.innerText = "현재: 0.75x";
+                    speechRate = 0.5625;
+                speedStatus.innerText = "현재: 0.75x";
                     speedStatus.style.background = "#fffbeb";
                     speedStatus.style.color = "#92400e";
                 }});
 
                 normalBtn.addEventListener("click", function() {{
-                    speechRate = 1.0;
-                    speedStatus.innerText = "현재: 1.0x";
+                    speechRate = 0.75;
+                speedStatus.innerText = "현재: 1.0x";
                     speedStatus.style.background = "#f3e8ff";
                     speedStatus.style.color = "#7c3aed";
                 }});
 
                 midFastBtn.addEventListener("click", function() {{
-                    speechRate = 1.25;
-                    speedStatus.innerText = "현재: 1.25x";
+                    speechRate = 0.9375;
+                speedStatus.innerText = "현재: 1.25x";
                     speedStatus.style.background = "#ecfdf5";
                     speedStatus.style.color = "#166534";
                 }});
 
                 fastBtn.addEventListener("click", function() {{
-                    speechRate = 1.5;
-                    speedStatus.innerText = "현재: 1.5x";
+                    speechRate = 1.125;
+                speedStatus.innerText = "현재: 1.5x";
                     speedStatus.style.background = "#dcfce7";
                     speedStatus.style.color = "#166534";
                 }});
@@ -2352,7 +2579,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=565
+        height=590
     )
 
 
