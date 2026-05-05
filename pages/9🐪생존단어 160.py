@@ -1374,6 +1374,8 @@ def browser_survival_cassette_player(all_items, height=520):
             let isPlaying = false;
             let isPaused = false;
             let jumpTimer = null;
+            let repeatRound = 1;
+            const maxRepeatRound = 3;
 
             function escapeHtml(text) {{
                 const div = document.createElement("div");
@@ -1403,7 +1405,7 @@ def browser_survival_cassette_player(all_items, height=520):
                     "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +
                     "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + escapeHtml(item.theme) + "</div>";
 
-                status.innerText = (index + 1) + " / " + cassetteItems.length;
+                status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
             }}
 
             function getEmoji(word) {{
@@ -1426,6 +1428,7 @@ def browser_survival_cassette_player(all_items, height=520):
                 isPlaying = false;
                 isPaused = false;
                 playBtn.innerText = "▶️ 재생";
+                repeatRound = 1;
                 if (showMessage) {{
                     status.innerText = "중지됨";
                 }}
@@ -1530,8 +1533,16 @@ def browser_survival_cassette_player(all_items, height=520):
                     index += 1;
 
                     if (index >= cassetteItems.length) {{
+                        if (repeatRound < maxRepeatRound) {{
+                            repeatRound += 1;
+                            index = 0;
+                            status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " 시작";
+                            setTimeout(speakCurrent, 900);
+                            return;
+                        }}
+
                         stopThisTape(false);
-                        status.innerText = "전체 재생 완료";
+                        status.innerText = "3회 반복 재생 완료";
                         return;
                     }}
 
@@ -1562,6 +1573,7 @@ def browser_survival_cassette_player(all_items, height=520):
 
             function jumpTo(newIndex, keepPlaying = true) {{
                 index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
+                repeatRound = 1;
                 window.speechSynthesis.cancel();
                 updateDisplay();
 
@@ -1588,11 +1600,12 @@ def browser_survival_cassette_player(all_items, height=520):
                     isPaused = false;
                     isPlaying = true;
                     playBtn.innerText = "재생 중...";
-                    status.innerText = (index + 1) + " / " + cassetteItems.length;
+                    status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
                     return;
                 }}
 
                 window.speechSynthesis.cancel();
+                repeatRound = 1;
                 isPlaying = true;
                 isPaused = false;
                 playBtn.innerText = "재생 중...";
@@ -1654,7 +1667,7 @@ def browser_survival_cassette_player(all_items, height=520):
 
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=545):
+def browser_theme_cassette_player(theme_items, theme_name, height=565):
     """
     테마별 카세트 전용 플레이어.
     전체 카세트 플레이어와 JS 변수명이 충돌하지 않도록 모든 변수명을 블록 스코프 안에 넣었습니다.
@@ -1666,7 +1679,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
     prev_btn_id = f"theme_prev_{uuid.uuid4().hex}"
     next_btn_id = f"theme_next_{uuid.uuid4().hex}"
     slow_btn_id = f"theme_slow_{uuid.uuid4().hex}"
+    mid_slow_btn_id = f"theme_mid_slow_{uuid.uuid4().hex}"
     normal_btn_id = f"theme_normal_{uuid.uuid4().hex}"
+    mid_fast_btn_id = f"theme_mid_fast_{uuid.uuid4().hex}"
     fast_btn_id = f"theme_fast_{uuid.uuid4().hex}"
     speed_status_id = f"theme_speed_status_{uuid.uuid4().hex}"
     progress_id = f"theme_progress_{uuid.uuid4().hex}"
@@ -1786,7 +1801,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                     margin-top:2px;
                 ">
                     <span>1번</span>
-                    <span>줄을 놓으면 해당 단어부터 자동 재생</span>
+                    <span>선택한 위치부터 3회 반복 재생</span>
                     <span>{len(theme_items)}번</span>
                 </div>
             </div>
@@ -1874,29 +1889,51 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                         background:#fef3c7;
                         border:1px solid #fde68a;
                         border-radius:999px;
-                        padding:8px 13px;
+                        padding:8px 12px;
                         font-weight:900;
                         font-size:13px;
                         color:#92400e;
                         cursor:pointer;
                     ">0.5x</button>
 
+                    <button id="{mid_slow_btn_id}" style="
+                        background:#fffbeb;
+                        border:1px solid #fde68a;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#92400e;
+                        cursor:pointer;
+                    ">0.75x</button>
+
                     <button id="{normal_btn_id}" style="
                         background:#e0f2fe;
                         border:1px solid #7dd3fc;
                         border-radius:999px;
-                        padding:8px 13px;
+                        padding:8px 12px;
                         font-weight:900;
                         font-size:13px;
                         color:#075985;
                         cursor:pointer;
                     ">1.0x</button>
 
+                    <button id="{mid_fast_btn_id}" style="
+                        background:#ecfdf5;
+                        border:1px solid #bbf7d0;
+                        border-radius:999px;
+                        padding:8px 12px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#166534;
+                        cursor:pointer;
+                    ">1.25x</button>
+
                     <button id="{fast_btn_id}" style="
                         background:#dcfce7;
                         border:1px solid #bbf7d0;
                         border-radius:999px;
-                        padding:8px 13px;
+                        padding:8px 12px;
                         font-weight:900;
                         font-size:13px;
                         color:#166534;
@@ -1928,7 +1965,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                 font-weight: 700;
                 line-height: 1.6;
             ">
-                ※ 속도 버튼은 유튜브처럼 읽는 속도만 바꿉니다. 단어 위치는 이동하지 않습니다.<br>
+                ※ 1번부터 마지막 단어까지 전체 흐름을 총 3번 반복 재생합니다.<br>※ 속도 버튼은 유튜브처럼 읽는 속도만 바꿉니다. 단어 위치는 이동하지 않습니다.<br>
                 ※ 이동 줄을 놓으면 해당 단어부터 자동 재생됩니다.
             </div>
 
@@ -1941,7 +1978,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                 const prevBtn = document.getElementById("{prev_btn_id}");
                 const nextBtn = document.getElementById("{next_btn_id}");
                 const slowBtn = document.getElementById("{slow_btn_id}");
+                const midSlowBtn = document.getElementById("{mid_slow_btn_id}");
                 const normalBtn = document.getElementById("{normal_btn_id}");
+                const midFastBtn = document.getElementById("{mid_fast_btn_id}");
                 const fastBtn = document.getElementById("{fast_btn_id}");
                 const speedStatus = document.getElementById("{speed_status_id}");
                 const progress = document.getElementById("{progress_id}");
@@ -1959,6 +1998,8 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                 let isPaused = false;
                 let jumpTimer = null;
                 let speechRate = 1.0;
+                let repeatRound = 1;
+                const maxRepeatRound = 3;
 
                 function escapeHtml(text) {{
                     const div = document.createElement("div");
@@ -1995,6 +2036,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                     isPlaying = false;
                     isPaused = false;
                     playBtn.innerText = "▶️ 재생";
+                    repeatRound = 1;
                     if (showMessage) {{
                         status.innerText = "중지됨";
                     }}
@@ -2093,8 +2135,16 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                         index += 1;
 
                         if (index >= cassetteItems.length) {{
+                            if (repeatRound < maxRepeatRound) {{
+                                repeatRound += 1;
+                                index = 0;
+                                status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " 시작";
+                                setTimeout(speakCurrent, 900);
+                                return;
+                            }}
+
                             stopThisTape(false);
-                            status.innerText = "테마 재생 완료";
+                            status.innerText = "3회 반복 재생 완료";
                             return;
                         }}
 
@@ -2127,6 +2177,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
 
                 function jumpTo(newIndex, autoPlay = true) {{
                     index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
+                    repeatRound = 1;
                     window.speechSynthesis.cancel();
                     updateDisplay();
 
@@ -2160,6 +2211,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                         return;
                     }}
 
+                    repeatRound = 1;
                     isPlaying = true;
                     isPaused = false;
                     playBtn.innerText = "재생 중...";
@@ -2196,11 +2248,25 @@ def browser_theme_cassette_player(theme_items, theme_name, height=545):
                     speedStatus.style.color = "#92400e";
                 }});
 
+                midSlowBtn.addEventListener("click", function() {{
+                    speechRate = 0.75;
+                    speedStatus.innerText = "현재: 0.75x";
+                    speedStatus.style.background = "#fffbeb";
+                    speedStatus.style.color = "#92400e";
+                }});
+
                 normalBtn.addEventListener("click", function() {{
                     speechRate = 1.0;
                     speedStatus.innerText = "현재: 1.0x";
                     speedStatus.style.background = "#f3e8ff";
                     speedStatus.style.color = "#7c3aed";
+                }});
+
+                midFastBtn.addEventListener("click", function() {{
+                    speechRate = 1.25;
+                    speedStatus.innerText = "현재: 1.25x";
+                    speedStatus.style.background = "#ecfdf5";
+                    speedStatus.style.color = "#166534";
                 }});
 
                 fastBtn.addEventListener("click", function() {{
@@ -2286,7 +2352,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=545
+        height=565
     )
 
 
