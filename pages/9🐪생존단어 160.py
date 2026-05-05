@@ -1654,7 +1654,7 @@ def browser_survival_cassette_player(all_items, height=520):
 
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=430):
+def browser_theme_cassette_player(theme_items, theme_name, height=520):
     """
     테마별 카세트 전용 플레이어.
     전체 카세트 플레이어와 JS 변수명이 충돌하지 않도록 모든 변수명을 블록 스코프 안에 넣었습니다.
@@ -1665,6 +1665,10 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
     pause_btn_id = f"theme_pause_{uuid.uuid4().hex}"
     prev_btn_id = f"theme_prev_{uuid.uuid4().hex}"
     next_btn_id = f"theme_next_{uuid.uuid4().hex}"
+    slow_btn_id = f"theme_slow_{uuid.uuid4().hex}"
+    normal_btn_id = f"theme_normal_{uuid.uuid4().hex}"
+    fast_btn_id = f"theme_fast_{uuid.uuid4().hex}"
+    speed_status_id = f"theme_speed_status_{uuid.uuid4().hex}"
     progress_id = f"theme_progress_{uuid.uuid4().hex}"
     visual_bar_id = f"theme_visual_bar_{uuid.uuid4().hex}"
     percent_id = f"theme_percent_{uuid.uuid4().hex}"
@@ -1833,11 +1837,64 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                     cursor:pointer;
                 ">⏭ 다음</button>
 
+                <button id="{slow_btn_id}" style="
+                    background:#fef3c7;
+                    border:1px solid #fde68a;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#92400e;
+                    cursor:pointer;
+                ">🐢 천천히</button>
+
+                <button id="{normal_btn_id}" style="
+                    background:#e0f2fe;
+                    border:1px solid #7dd3fc;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#075985;
+                    cursor:pointer;
+                ">🙂 보통</button>
+
+                <button id="{fast_btn_id}" style="
+                    background:#dcfce7;
+                    border:1px solid #bbf7d0;
+                    border-radius:999px;
+                    padding:8px 12px;
+                    font-weight:900;
+                    font-size:13px;
+                    color:#166534;
+                    cursor:pointer;
+                ">🚀 빠르게</button>
+
+                <span id="{speed_status_id}" style="
+                    font-size: 13px;
+                    color: #7c3aed;
+                    font-weight: 900;
+                    background:#f3e8ff;
+                    border-radius:999px;
+                    padding:5px 10px;
+                ">속도: 보통</span>
+
                 <span id="{status_id}" style="
                     font-size: 13px;
                     color: #075985;
                     font-weight: 800;
                 "></span>
+            </div>
+
+            <div style="
+                margin-top: 10px;
+                font-size: 12px;
+                color: #64748b;
+                font-weight: 700;
+                line-height: 1.6;
+            ">
+                ※ 속도 버튼을 누르면 현재 단어부터 선택한 속도로 다시 재생됩니다.<br>
+                ※ 이동 줄을 놓으면 해당 단어부터 자동 재생됩니다.
             </div>
 
             <script>
@@ -1848,6 +1905,10 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                 const pauseBtn = document.getElementById("{pause_btn_id}");
                 const prevBtn = document.getElementById("{prev_btn_id}");
                 const nextBtn = document.getElementById("{next_btn_id}");
+                const slowBtn = document.getElementById("{slow_btn_id}");
+                const normalBtn = document.getElementById("{normal_btn_id}");
+                const fastBtn = document.getElementById("{fast_btn_id}");
+                const speedStatus = document.getElementById("{speed_status_id}");
                 const progress = document.getElementById("{progress_id}");
                 const visualBar = document.getElementById("{visual_bar_id}");
                 const percentBox = document.getElementById("{percent_id}");
@@ -1862,6 +1923,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                 let isPlaying = false;
                 let isPaused = false;
                 let jumpTimer = null;
+                let speechRate = 0.82;
 
                 function escapeHtml(text) {{
                     const div = document.createElement("div");
@@ -1977,7 +2039,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
 
                     const utterance = new SpeechSynthesisUtterance(item.script);
                     utterance.lang = "en-US";
-                    utterance.rate = 0.82;
+                    utterance.rate = speechRate;
                     utterance.pitch = 1.08;
 
                     const voice = getEnglishVoice();
@@ -2017,7 +2079,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
                         window.speechSynthesis.speak(utterance);
 
                         // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
-                        const estimatedMs = Math.max(1600, item.script.length * 95);
+                        // 첫 단어가 너무 빨리 넘어가지 않도록 안전 타이머를 넉넉하게 둡니다.
+                        // 실제 onend가 정상 작동하면 이 타이머는 중복 실행되지 않습니다.
+                        const estimatedMs = Math.max(3200, item.script.length * 145 / Math.max(speechRate, 0.65));
                         setTimeout(function() {{
                             if (!endedSafely && isPlaying && !isPaused) {{
                                 goNextAfterCurrent();
@@ -2088,6 +2152,39 @@ def browser_theme_cassette_player(theme_items, theme_name, height=430):
 
                 nextBtn.addEventListener("click", function() {{
                     jumpTo(index + 1, true);
+                }});
+
+                slowBtn.addEventListener("click", function() {{
+                    speechRate = 0.68;
+                    speedStatus.innerText = "속도: 천천히";
+                    speedStatus.style.background = "#fef3c7";
+                    speedStatus.style.color = "#92400e";
+
+                    if (isPlaying) {{
+                        jumpTo(index, true);
+                    }}
+                }});
+
+                normalBtn.addEventListener("click", function() {{
+                    speechRate = 0.82;
+                    speedStatus.innerText = "속도: 보통";
+                    speedStatus.style.background = "#f3e8ff";
+                    speedStatus.style.color = "#7c3aed";
+
+                    if (isPlaying) {{
+                        jumpTo(index, true);
+                    }}
+                }});
+
+                fastBtn.addEventListener("click", function() {{
+                    speechRate = 1.0;
+                    speedStatus.innerText = "속도: 빠르게";
+                    speedStatus.style.background = "#dcfce7";
+                    speedStatus.style.color = "#166534";
+
+                    if (isPlaying) {{
+                        jumpTo(index, true);
+                    }}
                 }});
 
                 progress.addEventListener("input", function() {{
@@ -2166,7 +2263,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=430
+        height=520
     )
 
 
