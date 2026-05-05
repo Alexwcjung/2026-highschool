@@ -1654,7 +1654,7 @@ def browser_survival_cassette_player(all_items, height=520):
 
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=520):
+def browser_theme_cassette_player(theme_items, theme_name, height=545):
     """
     테마별 카세트 전용 플레이어.
     전체 카세트 플레이어와 JS 변수명이 충돌하지 않도록 모든 변수명을 블록 스코프 안에 넣었습니다.
@@ -1791,98 +1791,133 @@ def browser_theme_cassette_player(theme_items, theme_name, height=520):
                 </div>
             </div>
 
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button id="{play_btn_id}" style="
-                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                    border: 1px solid #bfdbfe;
-                    border-radius: 999px;
-                    padding: 9px 16px;
-                    font-weight: 900;
-                    font-size: 14px;
-                    color: #1f2937;
-                    cursor: pointer;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                ">▶️ 재생</button>
+            <div style="
+                display:flex;
+                align-items:center;
+                justify-content:space-between;
+                gap:18px;
+                flex-wrap:wrap;
+                margin-top:8px;
+            ">
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    flex-wrap:wrap;
+                ">
+                    <button id="{play_btn_id}" style="
+                        background: linear-gradient(135deg, #dbeafe, #fce7f3);
+                        border: 1px solid #bfdbfe;
+                        border-radius: 999px;
+                        padding: 9px 17px;
+                        font-weight: 900;
+                        font-size: 14px;
+                        color: #1f2937;
+                        cursor: pointer;
+                        box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+                    ">▶️ 재생</button>
 
-                <button id="{prev_btn_id}" style="
-                    background:#f8fafc;
-                    border:1px solid #cbd5e1;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#334155;
-                    cursor:pointer;
-                ">⏮ 이전</button>
+                    <button id="{pause_btn_id}" style="
+                        background:#ecfeff;
+                        border:1px solid #67e8f9;
+                        border-radius:999px;
+                        padding:9px 14px;
+                        font-weight:900;
+                        font-size:14px;
+                        color:#155e75;
+                        cursor:pointer;
+                    ">⏸ 일시정지</button>
 
-                <button id="{pause_btn_id}" style="
-                    background:#ecfeff;
-                    border:1px solid #67e8f9;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#155e75;
-                    cursor:pointer;
-                ">⏸ 일시정지</button>
+                    <button id="{prev_btn_id}" style="
+                        background:#f8fafc;
+                        border:1px solid #cbd5e1;
+                        border-radius:999px;
+                        padding:9px 14px;
+                        font-weight:900;
+                        font-size:14px;
+                        color:#334155;
+                        cursor:pointer;
+                    ">⏮ 이전</button>
 
-                <button id="{next_btn_id}" style="
-                    background:#f8fafc;
-                    border:1px solid #cbd5e1;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#334155;
-                    cursor:pointer;
-                ">⏭ 다음</button>
+                    <button id="{next_btn_id}" style="
+                        background:#f8fafc;
+                        border:1px solid #cbd5e1;
+                        border-radius:999px;
+                        padding:9px 14px;
+                        font-weight:900;
+                        font-size:14px;
+                        color:#334155;
+                        cursor:pointer;
+                    ">⏭ 다음</button>
+                </div>
 
-                <button id="{slow_btn_id}" style="
-                    background:#fef3c7;
-                    border:1px solid #fde68a;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#92400e;
-                    cursor:pointer;
-                ">🐢 천천히</button>
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:8px;
+                    flex-wrap:wrap;
+                    margin-left:34px;
+                    padding-left:22px;
+                    border-left:2px dashed #c4b5fd;
+                ">
+                    <span style="
+                        font-size:13px;
+                        font-weight:900;
+                        color:#475569;
+                        background:#f8fafc;
+                        border:1px solid #e2e8f0;
+                        border-radius:999px;
+                        padding:6px 10px;
+                    ">🎚️ 속도 조절</span>
 
-                <button id="{normal_btn_id}" style="
-                    background:#e0f2fe;
-                    border:1px solid #7dd3fc;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#075985;
-                    cursor:pointer;
-                ">🙂 보통</button>
+                    <button id="{slow_btn_id}" style="
+                        background:#fef3c7;
+                        border:1px solid #fde68a;
+                        border-radius:999px;
+                        padding:8px 13px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#92400e;
+                        cursor:pointer;
+                    ">0.5x</button>
 
-                <button id="{fast_btn_id}" style="
-                    background:#dcfce7;
-                    border:1px solid #bbf7d0;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#166534;
-                    cursor:pointer;
-                ">🚀 빠르게</button>
+                    <button id="{normal_btn_id}" style="
+                        background:#e0f2fe;
+                        border:1px solid #7dd3fc;
+                        border-radius:999px;
+                        padding:8px 13px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#075985;
+                        cursor:pointer;
+                    ">1.0x</button>
 
-                <span id="{speed_status_id}" style="
-                    font-size: 13px;
-                    color: #7c3aed;
-                    font-weight: 900;
-                    background:#f3e8ff;
-                    border-radius:999px;
-                    padding:5px 10px;
-                ">속도: 보통</span>
+                    <button id="{fast_btn_id}" style="
+                        background:#dcfce7;
+                        border:1px solid #bbf7d0;
+                        border-radius:999px;
+                        padding:8px 13px;
+                        font-weight:900;
+                        font-size:13px;
+                        color:#166534;
+                        cursor:pointer;
+                    ">1.5x</button>
+
+                    <span id="{speed_status_id}" style="
+                        font-size: 13px;
+                        color: #7c3aed;
+                        font-weight: 900;
+                        background:#f3e8ff;
+                        border-radius:999px;
+                        padding:6px 11px;
+                    ">현재: 1.0x</span>
+                </div>
 
                 <span id="{status_id}" style="
                     font-size: 13px;
                     color: #075985;
                     font-weight: 800;
+                    min-width:70px;
                 "></span>
             </div>
 
@@ -1893,7 +1928,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=520):
                 font-weight: 700;
                 line-height: 1.6;
             ">
-                ※ 속도 버튼을 누르면 현재 단어부터 선택한 속도로 다시 재생됩니다.<br>
+                ※ 속도 버튼은 유튜브처럼 읽는 속도만 바꿉니다. 단어 위치는 이동하지 않습니다.<br>
                 ※ 이동 줄을 놓으면 해당 단어부터 자동 재생됩니다.
             </div>
 
@@ -1923,7 +1958,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=520):
                 let isPlaying = false;
                 let isPaused = false;
                 let jumpTimer = null;
-                let speechRate = 0.82;
+                let speechRate = 1.0;
 
                 function escapeHtml(text) {{
                     const div = document.createElement("div");
@@ -2081,7 +2116,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=520):
                         // 일부 모바일/브라우저에서 첫 단어의 onend가 씹히는 경우를 대비한 안전장치
                         // 첫 단어가 너무 빨리 넘어가지 않도록 안전 타이머를 넉넉하게 둡니다.
                         // 실제 onend가 정상 작동하면 이 타이머는 중복 실행되지 않습니다.
-                        const estimatedMs = Math.max(3200, item.script.length * 145 / Math.max(speechRate, 0.65));
+                        const estimatedMs = Math.max(2600, item.script.length * 125 / Math.max(speechRate, 0.5));
                         setTimeout(function() {{
                             if (!endedSafely && isPlaying && !isPaused) {{
                                 goNextAfterCurrent();
@@ -2155,36 +2190,24 @@ def browser_theme_cassette_player(theme_items, theme_name, height=520):
                 }});
 
                 slowBtn.addEventListener("click", function() {{
-                    speechRate = 0.68;
-                    speedStatus.innerText = "속도: 천천히";
+                    speechRate = 0.5;
+                    speedStatus.innerText = "현재: 0.5x";
                     speedStatus.style.background = "#fef3c7";
                     speedStatus.style.color = "#92400e";
-
-                    if (isPlaying) {{
-                        jumpTo(index, true);
-                    }}
                 }});
 
                 normalBtn.addEventListener("click", function() {{
-                    speechRate = 0.82;
-                    speedStatus.innerText = "속도: 보통";
+                    speechRate = 1.0;
+                    speedStatus.innerText = "현재: 1.0x";
                     speedStatus.style.background = "#f3e8ff";
                     speedStatus.style.color = "#7c3aed";
-
-                    if (isPlaying) {{
-                        jumpTo(index, true);
-                    }}
                 }});
 
                 fastBtn.addEventListener("click", function() {{
-                    speechRate = 1.0;
-                    speedStatus.innerText = "속도: 빠르게";
+                    speechRate = 1.5;
+                    speedStatus.innerText = "현재: 1.5x";
                     speedStatus.style.background = "#dcfce7";
                     speedStatus.style.color = "#166534";
-
-                    if (isPlaying) {{
-                        jumpTo(index, true);
-                    }}
                 }});
 
                 progress.addEventListener("input", function() {{
@@ -2263,7 +2286,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=520
+        height=545
     )
 
 
