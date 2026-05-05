@@ -1109,13 +1109,13 @@ def make_theme_cassette_items(theme_words, theme_name):
     return theme_items
 
 
-def browser_survival_cassette_player(all_items, height=900):
+def browser_survival_cassette_player(all_items, height=760):
     """
     수정 핵심:
     1. 큰 이동 줄 range input 추가
     2. 드래그하면 바로 해당 단어로 이동
     3. 재생 중 드래그하면 해당 단어부터 이어서 재생
-    4. 10개 전 / 10개 후 버튼 추가
+    4. 모바일 화면에서 잘리지 않도록 버튼 수와 크기 축소
     5. 현재 위치가 몇 %인지 시각적으로 표시
     """
 
@@ -1130,8 +1130,6 @@ def browser_survival_cassette_player(all_items, height=900):
     mid_fast_btn_id = f"mid_fast_{uuid.uuid4().hex}"
     fast_btn_id = f"fast_{uuid.uuid4().hex}"
     speed_status_id = f"speed_status_{uuid.uuid4().hex}"
-    prev10_btn_id = f"prev10_{uuid.uuid4().hex}"
-    next10_btn_id = f"next10_{uuid.uuid4().hex}"
     stop_btn_id = f"stop_{uuid.uuid4().hex}"
     progress_id = f"progress_{uuid.uuid4().hex}"
     visual_bar_id = f"visual_bar_{uuid.uuid4().hex}"
@@ -1146,53 +1144,114 @@ def browser_survival_cassette_player(all_items, height=900):
 
     components.html(
         f"""
-        <div style="
-            font-family: Arial, sans-serif;
-            padding: 20px 20px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);
-            border: 1px solid #bfdbfe;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-        ">
-            <div style="
-                font-size: 20px;
+        <style>
+            .cassette-wrap {{
+                font-family: Arial, sans-serif;
+                padding: 16px 16px;
+                border-radius: 22px;
+                background: linear-gradient(135deg, #eff6ff, #fff7ed, #fdf2f8);
+                border: 1px solid #bfdbfe;
+                box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+                box-sizing: border-box;
+                width: 100%;
+                max-width: 100%;
+                overflow: hidden;
+            }}
+            .cassette-title {{
+                font-size: 19px;
                 font-weight: 900;
                 color: #0f172a;
-                margin-bottom: 10px;
-            ">
-                📼 Survival English 160 전체 카세트
-            </div>
-
-            <div id="{word_id}" style="
-                font-size: 36px;
+                margin-bottom: 8px;
+            }}
+            .cassette-word {{
+                font-size: 32px;
                 font-weight: 900;
                 color: #111827;
                 margin-bottom: 8px;
-            ">
-                Ready
-            </div>
-
-            <div id="{meaning_id}" style="
+                line-height: 1.12;
+                word-break: break-word;
+            }}
+            .cassette-info {{
                 font-size: 16px;
                 font-weight: 800;
                 color: #475569;
-                margin-bottom: 14px;
-                line-height: 1.7;
+                margin-bottom: 12px;
+                line-height: 1.55;
                 background: rgba(255,255,255,0.76);
                 border: 1px solid #dbeafe;
-                border-radius: 18px;
-                padding: 12px 14px;
-            ">
+                border-radius: 16px;
+                padding: 11px 12px;
+                box-sizing: border-box;
+            }}
+            .cassette-slider {{
+                margin: 12px 0 10px 0;
+                background: rgba(255,255,255,0.82);
+                border: 1px solid #bfdbfe;
+                border-radius: 16px;
+                padding: 12px 12px 10px 12px;
+                box-sizing: border-box;
+            }}
+            .cassette-controls {{
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 7px;
+                align-items: stretch;
+                width: 100%;
+                box-sizing: border-box;
+            }}
+            .cassette-speed {{
+                display: grid;
+                grid-template-columns: repeat(6, minmax(0, 1fr));
+                gap: 6px;
+                align-items: stretch;
+                width: 100%;
+                margin-top: 8px;
+                box-sizing: border-box;
+            }}
+            .cassette-btn {{
+                border-radius: 999px;
+                padding: 8px 8px;
+                font-weight: 900;
+                font-size: 13px;
+                cursor: pointer;
+                white-space: nowrap;
+                min-height: 38px;
+                box-sizing: border-box;
+                width: 100%;
+            }}
+            .cassette-status-row {{
+                margin-top: 8px;
+                display:flex;
+                gap: 6px;
+                flex-wrap: wrap;
+                align-items:center;
+            }}
+            @media (max-width: 480px) {{
+                .cassette-wrap {{ padding: 12px 10px; border-radius: 18px; }}
+                .cassette-title {{ font-size: 16px; margin-bottom: 6px; }}
+                .cassette-word {{ font-size: 26px; margin-bottom: 6px; }}
+                .cassette-info {{ font-size: 13px; line-height: 1.42; padding: 9px 10px; margin-bottom: 8px; }}
+                .cassette-slider {{ padding: 9px 10px 8px 10px; margin: 8px 0; }}
+                .cassette-controls {{ grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }}
+                .cassette-speed {{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; margin-top: 6px; }}
+                .cassette-btn {{ font-size: 11px; padding: 7px 4px; min-height: 34px; }}
+                input[type=range] {{ height: 28px !important; }}
+            }}
+        </style>
+        <div class="cassette-wrap">
+            <div class="cassette-title">
+                📼 Survival English 160 전체 카세트
+            </div>
+
+            <div id="{word_id}" class="cassette-word">
+                Ready
+            </div>
+
+            <div id="{meaning_id}" class="cassette-info">
                 재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
             </div>
 
-            <div style="
-                margin: 14px 0 12px 0;
-                background: rgba(255,255,255,0.82);
-                border: 1px solid #bfdbfe;
-                border-radius: 18px;
-                padding: 14px 14px 12px 14px;
-            ">
+            <div class="cassette-slider">
                 <div style="
                     display:flex;
                     justify-content:space-between;
@@ -1253,166 +1312,45 @@ def browser_survival_cassette_player(all_items, height=900):
                 </div>
             </div>
 
-            <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
-                <button id="{prev10_btn_id}" style="
-                    background:#fef3c7;
-                    border:1px solid #fde68a;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#92400e;
-                    cursor:pointer;
-                ">⏪ 10개 전</button>
+            <div class="cassette-controls">
 
-                <button id="{prev_btn_id}" style="
-                    background:#f8fafc;
-                    border:1px solid #cbd5e1;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#334155;
-                    cursor:pointer;
-                ">⏮ 이전</button>
+                <button id="{prev_btn_id}" class="cassette-btn" style="background:#f8fafc; border:1px solid #cbd5e1; color:#334155;">⏮ 이전</button>
 
-                <button id="{play_btn_id}" style="
-                    background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                    border: 1px solid #bfdbfe;
-                    border-radius: 999px;
-                    padding: 9px 16px;
-                    font-weight: 900;
-                    font-size: 14px;
-                    color: #1f2937;
-                    cursor: pointer;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                ">▶️ 재생</button>
+                <button id="{play_btn_id}" class="cassette-btn" style="background:linear-gradient(135deg, #dbeafe, #fce7f3); border:1px solid #bfdbfe; color:#1f2937;">▶️ 재생</button>
 
-                <button id="{pause_btn_id}" style="
-                    background:#ecfeff;
-                    border:1px solid #67e8f9;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#155e75;
-                    cursor:pointer;
-                ">⏸ 일시정지</button>
+                <button id="{pause_btn_id}" class="cassette-btn" style="background:#ecfeff; border:1px solid #67e8f9; color:#155e75;">⏸ 일시정지</button>
 
-                <button id="{next_btn_id}" style="
-                    background:#f8fafc;
-                    border:1px solid #cbd5e1;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#334155;
-                    cursor:pointer;
-                ">⏭ 다음</button>
+                <button id="{next_btn_id}" class="cassette-btn" style="background:#f8fafc; border:1px solid #cbd5e1; color:#334155;">⏭ 다음</button>
 
-                <button id="{next10_btn_id}" style="
-                    background:#dcfce7;
-                    border:1px solid #bbf7d0;
-                    border-radius:999px;
-                    padding:9px 13px;
-                    font-weight:900;
-                    font-size:14px;
-                    color:#166534;
-                    cursor:pointer;
-                ">⏩ 10개 후</button>
+                <button id="{stop_btn_id}" class="cassette-btn" style="background:#fff7ed; border:1px solid #fed7aa; color:#9a3412;">⏹ 중지</button>
+            </div>
 
-                <button id="{stop_btn_id}" style="
-                    background: #fff7ed;
-                    border: 1px solid #fed7aa;
-                    border-radius: 999px;
-                    padding: 9px 13px;
-                    font-weight: 900;
-                    font-size: 14px;
-                    color: #9a3412;
-                    cursor: pointer;
-                    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-                ">⏹ 중지</button>
+            <div class="cassette-speed">
 
-                <span style="
-                    margin-left:28px;
-                    padding-left:20px;
-                    border-left:2px dashed #c4b5fd;
-                    font-size:13px;
-                    font-weight:900;
-                    color:#475569;
-                    background:#f8fafc;
-                    border-radius:999px;
-                    padding-top:6px;
-                    padding-bottom:6px;
-                    padding-right:10px;
-                ">🎚️ 속도 조절</span>
+                <button id="{slow_btn_id}" class="cassette-btn" style="background:#fef3c7; border:1px solid #fde68a; color:#92400e;">0.5x</button>
 
-                <button id="{slow_btn_id}" style="
-                    background:#fef3c7;
-                    border:1px solid #fde68a;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#92400e;
-                    cursor:pointer;
-                ">0.5x</button>
+                <button id="{mid_slow_btn_id}" class="cassette-btn" style="background:#fffbeb; border:1px solid #fde68a; color:#92400e;">0.75x</button>
 
-                <button id="{mid_slow_btn_id}" style="
-                    background:#fffbeb;
-                    border:1px solid #fde68a;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#92400e;
-                    cursor:pointer;
-                ">0.75x</button>
+                <button id="{normal_btn_id}" class="cassette-btn" style="background:#e0f2fe; border:1px solid #7dd3fc; color:#075985;">1.0x</button>
 
-                <button id="{normal_btn_id}" style="
-                    background:#e0f2fe;
-                    border:1px solid #7dd3fc;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#075985;
-                    cursor:pointer;
-                ">1.0x</button>
+                <button id="{mid_fast_btn_id}" class="cassette-btn" style="background:#ecfdf5; border:1px solid #bbf7d0; color:#166534;">1.25x</button>
 
-                <button id="{mid_fast_btn_id}" style="
-                    background:#ecfdf5;
-                    border:1px solid #bbf7d0;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#166534;
-                    cursor:pointer;
-                ">1.25x</button>
+                <button id="{fast_btn_id}" class="cassette-btn" style="background:#dcfce7; border:1px solid #bbf7d0; color:#166534;">1.5x</button>
 
-                <button id="{fast_btn_id}" style="
-                    background:#dcfce7;
-                    border:1px solid #bbf7d0;
-                    border-radius:999px;
-                    padding:8px 12px;
-                    font-weight:900;
-                    font-size:13px;
-                    color:#166534;
-                    cursor:pointer;
-                ">1.5x</button>
+            </div>
 
+            <div class="cassette-status-row">
                 <span id="{speed_status_id}" style="
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #7c3aed;
                     font-weight: 900;
                     background:#f3e8ff;
                     border-radius:999px;
-                    padding:6px 11px;
+                    padding:5px 9px;
                 ">현재: 1.0x</span>
 
                 <span id="{status_id}" style="
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #075985;
                     font-weight: 800;
                 "></span>
@@ -1426,8 +1364,6 @@ def browser_survival_cassette_player(all_items, height=900):
             const pauseBtn = document.getElementById("{pause_btn_id}");
             const prevBtn = document.getElementById("{prev_btn_id}");
             const nextBtn = document.getElementById("{next_btn_id}");
-            const prev10Btn = document.getElementById("{prev10_btn_id}");
-            const next10Btn = document.getElementById("{next10_btn_id}");
             const stopBtn = document.getElementById("{stop_btn_id}");
             const slowBtn = document.getElementById("{slow_btn_id}");
             const midSlowBtn = document.getElementById("{mid_slow_btn_id}");
@@ -1478,9 +1414,9 @@ def browser_survival_cassette_player(all_items, height=900):
                 wordBox.innerText = item.number + ". " + item.word + " " + getEmoji(item.word);
 
                 meaningBox.innerHTML =
-                    "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
-                    "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
-                    "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +
+                    "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
+                    "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
+                    "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +
                     "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + escapeHtml(item.theme) + "</div>";
 
                 status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
@@ -1760,14 +1696,6 @@ def browser_survival_cassette_player(all_items, height=900):
 
             nextBtn.addEventListener("click", function() {{
                 jumpTo(index + 1, true);
-            }});
-
-            prev10Btn.addEventListener("click", function() {{
-                jumpTo(index - 10, true);
-            }});
-
-            next10Btn.addEventListener("click", function() {{
-                jumpTo(index + 10, true);
             }});
 
             slowBtn.addEventListener("click", function() {{
@@ -2188,9 +2116,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=550):
                     wordBox.innerText = item.number + ". " + item.word;
 
                     meaningBox.innerHTML =
-                        "<div style='font-size:16px; color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
-                        "<div style='font-size:16px; color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
-                        "<div style='font-size:16px; color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>";
+                        "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
+                        "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
+                        "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>";
 
                     status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
                 }}
@@ -2516,7 +2444,7 @@ def show_all_cassette_tab():
     st.markdown("## 🎧 전체 카세트 듣기")
 
     all_items = flatten_survival_words()
-    browser_survival_cassette_player(all_items, height=520)
+    browser_survival_cassette_player(all_items, height=760)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
         st.write("카세트에서 실제로 들려주는 단어, 예문, 예문 뜻을 함께 확인할 수 있습니다.")
@@ -2561,7 +2489,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=550
+        height=680
     )
 
 
