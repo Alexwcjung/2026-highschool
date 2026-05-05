@@ -1965,7 +1965,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                 font-weight: 700;
                 line-height: 1.6;
             ">
-                ※ 1번부터 마지막 단어까지 전체 흐름을 총 3번 반복 재생합니다.<br>※ 속도 버튼은 유튜브처럼 읽는 속도만 바꿉니다. 단어 위치는 이동하지 않습니다.<br>
+                ※ 1번부터 마지막 단어까지 전체 흐름을 총 3번 반복 재생합니다.<br>※ 속도 버튼은 읽는 속도만 바꿉니다. 단어 위치는 이동하지 않습니다. 0.75x 버튼은 실제로 1.0x 속도로 재생됩니다.<br>
                 ※ 이동 줄을 놓으면 해당 단어부터 자동 재생됩니다.
             </div>
 
@@ -2249,7 +2249,8 @@ def browser_theme_cassette_player(theme_items, theme_name, height=565):
                 }});
 
                 midSlowBtn.addEventListener("click", function() {{
-                    speechRate = 0.75;
+                    // 0.75x 버튼이지만 실제 읽는 속도는 1.0x로 설정
+                    speechRate = 1.0;
                     speedStatus.innerText = "현재: 0.75x";
                     speedStatus.style.background = "#fffbeb";
                     speedStatus.style.color = "#92400e";
