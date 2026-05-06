@@ -11,6 +11,12 @@ import io
 from streamlit_drawable_canvas import st_canvas
 import random
 
+st.set_page_config(
+    page_title="Classroom Tools",
+    page_icon="🧰",
+    layout="wide"
+)
+
 # Function to create word cloud
 def create_wordcloud(text):
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
@@ -18,8 +24,15 @@ def create_wordcloud(text):
 
 # Streamlit tabs
 tabs = st.tabs([
-    "✏️Blackboard", "🎨Drawing", "🔳QR code", "⏳Timer",
-    "☁️WordCloud", "😀Emoji", "🔊Multi-TTS", "👥Grouping"
+    "✏️Blackboard",
+    "🎨Drawing",
+    "🔳QR code",
+    "⏳Timer",
+    "☁️WordCloud",
+    "😀Emoji",
+    "🔊Multi-TTS",
+    "👥Grouping",
+    "🌐Translation"
 ])
 
 # --- Tab 0: Blackboard ---
@@ -370,43 +383,15 @@ with tabs[5]:
 
     emoji_tabs = st.tabs(list(EMOJI_CATEGORIES.keys()))
 
-    st.markdown(
-        """
-        <style>
-        .emoji-copy-box {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border: 1.5px solid #e2e8f0;
-            border-radius: 22px;
-            padding: 20px 22px;
-            margin: 12px 0 20px 0;
-            font-size: 34px;
-            line-height: 1.9;
-            word-spacing: 10px;
-            box-shadow: 0 5px 14px rgba(0,0,0,0.05);
-            user-select: text;
-        }
-        @media (max-width: 768px) {
-            .emoji-copy-box {
-                font-size: 28px;
-                line-height: 1.8;
-                padding: 16px;
-            }
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-
     for tab, (category, emojis) in zip(emoji_tabs, EMOJI_CATEGORIES.items()):
         with tab:
             st.markdown(f"### {category}")
-            st.markdown(
-                f"""
-                <div class="emoji-copy-box">
-                    {emojis}
-                </div>
-                """,
-                unsafe_allow_html=True
+            st.text_area(
+                label="",
+                value=emojis.strip(),
+                height=260,
+                key=f"emoji_area_{category}",
+                label_visibility="collapsed"
             )
 
 # --- Tab 6: TTS ---
@@ -599,4 +584,91 @@ with tabs[7]:
                     )
 
     else:
-        st.error("The file must contain both `Course` and `Names` columns.")
+        st.error("The file must contain both `Course`, `Names` columns.")
+
+# --- Tab 8: Translation ---
+with tabs[8]:
+    st.subheader("🌐 Translation Tool")
+    st.caption("학생들이 영어 지문을 넣으면 한국어나 다른 언어로 번역할 수 있습니다.")
+
+    lang_options = {
+        "한국어 Korean": "ko",
+        "영어 English": "en",
+        "일본어 Japanese": "ja",
+        "중국어 Chinese Simplified": "zh-CN",
+        "스페인어 Spanish": "es",
+        "프랑스어 French": "fr",
+        "독일어 German": "de",
+        "러시아어 Russian": "ru",
+        "베트남어 Vietnamese": "vi",
+        "태국어 Thai": "th",
+        "인도네시아어 Indonesian": "id",
+        "아랍어 Arabic": "ar",
+        "힌디어 Hindi": "hi",
+        "이탈리아어 Italian": "it",
+        "포르투갈어 Portuguese": "pt",
+    }
+
+    c1, c2 = st.columns(2)
+    with c1:
+        source_lang_label = st.selectbox(
+            "원문 언어",
+            ["자동 감지 Auto"] + list(lang_options.keys()),
+            index=0
+        )
+    with c2:
+        target_lang_label = st.selectbox(
+            "번역할 언어",
+            list(lang_options.keys()),
+            index=0
+        )
+
+    source_text = st.text_area(
+        "번역할 지문을 입력하세요",
+        height=240,
+        placeholder="Paste or type English text here..."
+    )
+
+    translate_btn = st.button("🌐 번역하기", use_container_width=True)
+
+    if translate_btn:
+        if not source_text.strip():
+            st.warning("번역할 문장을 먼저 입력하세요.")
+        else:
+            try:
+                from deep_translator import GoogleTranslator
+
+                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
+                target_code = lang_options[target_lang_label]
+
+                translated = GoogleTranslator(
+                    source=source_code,
+                    target=target_code
+                ).translate(source_text)
+
+                st.markdown("### ✅ 번역 결과")
+                st.text_area(
+                    "복사해서 사용하세요",
+                    value=translated,
+                    height=240,
+                    key="translation_result"
+                )
+
+            except ModuleNotFoundError:
+                st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
+                st.code("pip install deep-translator", language="bash")
+                st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
+
+            except Exception as e:
+                st.error("번역 중 오류가 발생했습니다.")
+                st.write(e)
+
+    st.markdown("---")
+    st.markdown("### 📌 사용 안내")
+    st.markdown(
+        """
+        - 영어 지문을 한국어로 번역할 때는 원문 언어를 `자동 감지 Auto`, 번역할 언어를 `한국어 Korean`으로 두면 됩니다.
+        - 학생용으로는 어려운 지문을 먼저 번역해 보고, 핵심 단어를 확인한 뒤 다시 영어 원문을 읽게 하면 좋습니다.
+        - 번역 품질은 문맥에 따라 달라질 수 있으므로, 중요한 자료는 교사가 한 번 확인하는 것이 좋습니다.
+        """
+    )
