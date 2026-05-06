@@ -11,7 +11,71 @@ st.set_page_config(
 # =========================================================
 # 데이터
 # =========================================================
-PRACTICE_ITEMS = [{'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.', 'blank': 'I am ______.', 'answer': 'I am hungry.', 'hint': 'hungry', 'emoji': '🍽️'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 목말라.', 'blank': 'I am ______.', 'answer': 'I am thirsty.', 'hint': 'thirsty', 'emoji': '💧'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 피곤해.', 'blank': 'I am ______.', 'answer': 'I am tired.', 'hint': 'tired', 'emoji': '😴'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 아파.', 'blank': 'I am ______.', 'answer': 'I am sick.', 'hint': 'sick', 'emoji': '🤒'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 괜찮아.', 'blank': 'I am ______.', 'answer': 'I am okay.', 'hint': 'okay', 'emoji': '🙂'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 추워.', 'blank': 'I am ______.', 'answer': 'I am cold.', 'hint': 'cold', 'emoji': '🥶'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 걱정돼.', 'blank': 'I am ______.', 'answer': 'I am worried.', 'hint': 'worried', 'emoji': '😟'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 무서워.', 'blank': 'I am ______.', 'answer': 'I am scared.', 'hint': 'scared', 'emoji': '😨'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 물이 필요해.', 'blank': 'I need ______.', 'answer': 'I need water.', 'hint': 'water', 'emoji': '💧'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 음식이 필요해.', 'blank': 'I need ______.', 'answer': 'I need food.', 'hint': 'food', 'emoji': '🍽️'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 도움이 필요해.', 'blank': 'I need ______.', 'answer': 'I need help.', 'hint': 'help', 'emoji': '🆘'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 약이 필요해.', 'blank': 'I need ______.', 'answer': 'I need medicine.', 'hint': 'medicine', 'emoji': '💊'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 병원이 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a hospital.', 'hint': 'hospital', 'emoji': '🏥'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 택시가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a taxi.', 'hint': 'taxi', 'emoji': '🚕'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 표가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a ticket.', 'hint': 'ticket', 'emoji': '🎫'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 열쇠가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a key.', 'hint': 'key', 'emoji': '🔑'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 음식을 원해.', 'blank': 'I want ______.', 'answer': 'I want food.', 'hint': 'food', 'emoji': '🍽️'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 물을 원해.', 'blank': 'I want ______.', 'answer': 'I want water.', 'hint': 'water', 'emoji': '💧'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 밥을 원해.', 'blank': 'I want ______.', 'answer': 'I want rice.', 'hint': 'rice', 'emoji': '🍚'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 빵을 원해.', 'blank': 'I want ______.', 'answer': 'I want bread.', 'hint': 'bread', 'emoji': '🍞'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 우유를 원해.', 'blank': 'I want ______.', 'answer': 'I want milk.', 'hint': 'milk', 'emoji': '🥛'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 주스를 원해.', 'blank': 'I want ______.', 'answer': 'I want juice.', 'hint': 'juice', 'emoji': '🧃'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 커피를 원해.', 'blank': 'I want ______.', 'answer': 'I want coffee.', 'hint': 'coffee', 'emoji': '☕'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 간식을 원해.', 'blank': 'I want a ______.', 'answer': 'I want a snack.', 'hint': 'snack', 'emoji': '🍪'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 먹고 있어.', 'blank': 'I am ______.', 'answer': 'I am eating.', 'hint': 'eating', 'emoji': '🍽️'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 마시고 있어.', 'blank': 'I am ______.', 'answer': 'I am drinking.', 'hint': 'drinking', 'emoji': '🥤'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 기다리고 있어.', 'blank': 'I am ______.', 'answer': 'I am waiting.', 'hint': 'waiting', 'emoji': '⏳'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 공부하고 있어.', 'blank': 'I am ______.', 'answer': 'I am studying.', 'hint': 'studying', 'emoji': '📚'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 읽고 있어.', 'blank': 'I am ______.', 'answer': 'I am reading.', 'hint': 'reading', 'emoji': '📖'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 쓰고 있어.', 'blank': 'I am ______.', 'answer': 'I am writing.', 'hint': 'writing', 'emoji': '✏️'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 걷고 있어.', 'blank': 'I am ______.', 'answer': 'I am walking.', 'hint': 'walking', 'emoji': '🚶'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 듣고 있어.', 'blank': 'I am ______.', 'answer': 'I am listening.', 'hint': 'listening', 'emoji': '👂'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 집에 갈 거야.', 'blank': 'I will ______ home.', 'answer': 'I will go home.', 'hint': 'go', 'emoji': '🏠'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 기다릴 거야.', 'blank': 'I will ______.', 'answer': 'I will wait.', 'hint': 'wait', 'emoji': '⏳'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 너를 도와줄 거야.', 'blank': 'I will ______ you.', 'answer': 'I will help you.', 'hint': 'help', 'emoji': '🤝'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 영어를 공부할 거야.', 'blank': 'I will ______ English.', 'answer': 'I will study English.', 'hint': 'study', 'emoji': '📚'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 점심을 먹을 거야.', 'blank': 'I will ______ lunch.', 'answer': 'I will eat lunch.', 'hint': 'eat', 'emoji': '🍱'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 물을 마실 거야.', 'blank': 'I will ______ water.', 'answer': 'I will drink water.', 'hint': 'drink', 'emoji': '💧'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 아프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not sick.', 'hint': 'sick', 'emoji': '🙂'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 배고프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not hungry.', 'hint': 'hungry', 'emoji': '🙅🍽️'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 괜찮지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not okay.', 'hint': 'okay', 'emoji': '😟'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 몰라.', 'blank': 'I do not ______.', 'answer': 'I do not know.', 'hint': 'know', 'emoji': '🤷'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 이해하지 못해.', 'blank': 'I do not ______.', 'answer': 'I do not understand.', 'hint': 'understand', 'emoji': '❓'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 그것을 원하지 않아.', 'blank': 'I do not ______ it.', 'answer': 'I do not want it.', 'hint': 'want', 'emoji': '🙅'}, {'cat': '❓ 간단히 물어보기', 'ko': '괜찮니?', 'blank': 'Are you ______?', 'answer': 'Are you okay?', 'hint': 'okay', 'emoji': '🙂'}, {'cat': '❓ 간단히 물어보기', 'ko': '아프니?', 'blank': 'Are you ______?', 'answer': 'Are you sick?', 'hint': 'sick', 'emoji': '🤒'}, {'cat': '❓ 간단히 물어보기', 'ko': '배고프니?', 'blank': 'Are you ______?', 'answer': 'Are you hungry?', 'hint': 'hungry', 'emoji': '🍽️'}, {'cat': '❓ 간단히 물어보기', 'ko': '목마르니?', 'blank': 'Are you ______?', 'answer': 'Are you thirsty?', 'hint': 'thirsty', 'emoji': '💧'}, {'cat': '❓ 간단히 물어보기', 'ko': '도움이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need help?', 'hint': 'help', 'emoji': '🆘'}, {'cat': '❓ 간단히 물어보기', 'ko': '물이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need water?', 'hint': 'water', 'emoji': '💧'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '화장실은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the bathroom?', 'hint': 'bathroom', 'emoji': '🚻'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '병원은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the hospital?', 'hint': 'hospital', 'emoji': '🏥'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '가게는 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the store?', 'hint': 'store', 'emoji': '🏪'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '역은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the station?', 'hint': 'station', 'emoji': '🚉'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '지금 몇 시인가요?', 'blank': 'What ______ is it?', 'answer': 'What time is it?', 'hint': 'time', 'emoji': '⏰'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '이름이 무엇인가요?', 'blank': 'What is your ______?', 'answer': 'What is your name?', 'hint': 'name', 'emoji': '🏷️'}]
+PRACTICE_ITEMS = [
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.', 'blank': 'I am ______.', 'answer': 'I am hungry.', 'hint': 'hungry', 'emoji': '🍽️'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 목말라.', 'blank': 'I am ______.', 'answer': 'I am thirsty.', 'hint': 'thirsty', 'emoji': '💧'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 피곤해.', 'blank': 'I am ______.', 'answer': 'I am tired.', 'hint': 'tired', 'emoji': '😴'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 아파.', 'blank': 'I am ______.', 'answer': 'I am sick.', 'hint': 'sick', 'emoji': '🤒'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 괜찮아.', 'blank': 'I am ______.', 'answer': 'I am okay.', 'hint': 'okay', 'emoji': '🙂'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 추워.', 'blank': 'I am ______.', 'answer': 'I am cold.', 'hint': 'cold', 'emoji': '🥶'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 걱정돼.', 'blank': 'I am ______.', 'answer': 'I am worried.', 'hint': 'worried', 'emoji': '😟'},
+    {'cat': '🙋 내 상태 말하기', 'ko': '나는 무서워.', 'blank': 'I am ______.', 'answer': 'I am scared.', 'hint': 'scared', 'emoji': '😨'},
+
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 물이 필요해.', 'blank': 'I need ______.', 'answer': 'I need water.', 'hint': 'water', 'emoji': '💧'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 음식이 필요해.', 'blank': 'I need ______.', 'answer': 'I need food.', 'hint': 'food', 'emoji': '🍽️'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 도움이 필요해.', 'blank': 'I need ______.', 'answer': 'I need help.', 'hint': 'help', 'emoji': '🆘'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 약이 필요해.', 'blank': 'I need ______.', 'answer': 'I need medicine.', 'hint': 'medicine', 'emoji': '💊'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 병원이 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a hospital.', 'hint': 'hospital', 'emoji': '🏥'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 택시가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a taxi.', 'hint': 'taxi', 'emoji': '🚕'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 표가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a ticket.', 'hint': 'ticket', 'emoji': '🎫'},
+    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 열쇠가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a key.', 'hint': 'key', 'emoji': '🔑'},
+
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 음식을 원해.', 'blank': 'I want ______.', 'answer': 'I want food.', 'hint': 'food', 'emoji': '🍽️'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 물을 원해.', 'blank': 'I want ______.', 'answer': 'I want water.', 'hint': 'water', 'emoji': '💧'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 밥을 원해.', 'blank': 'I want ______.', 'answer': 'I want rice.', 'hint': 'rice', 'emoji': '🍚'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 빵을 원해.', 'blank': 'I want ______.', 'answer': 'I want bread.', 'hint': 'bread', 'emoji': '🍞'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 우유를 원해.', 'blank': 'I want ______.', 'answer': 'I want milk.', 'hint': 'milk', 'emoji': '🥛'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 주스를 원해.', 'blank': 'I want ______.', 'answer': 'I want juice.', 'hint': 'juice', 'emoji': '🧃'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 커피를 원해.', 'blank': 'I want ______.', 'answer': 'I want coffee.', 'hint': 'coffee', 'emoji': '☕'},
+    {'cat': '💭 원하는 것 말하기', 'ko': '나는 간식을 원해.', 'blank': 'I want a ______.', 'answer': 'I want a snack.', 'hint': 'snack', 'emoji': '🍪'},
+
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 먹고 있어.', 'blank': 'I am ______.', 'answer': 'I am eating.', 'hint': 'eating', 'emoji': '🍽️'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 마시고 있어.', 'blank': 'I am ______.', 'answer': 'I am drinking.', 'hint': 'drinking', 'emoji': '🥤'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 기다리고 있어.', 'blank': 'I am ______.', 'answer': 'I am waiting.', 'hint': 'waiting', 'emoji': '⏳'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 공부하고 있어.', 'blank': 'I am ______.', 'answer': 'I am studying.', 'hint': 'studying', 'emoji': '📚'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 읽고 있어.', 'blank': 'I am ______.', 'answer': 'I am reading.', 'hint': 'reading', 'emoji': '📖'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 쓰고 있어.', 'blank': 'I am ______.', 'answer': 'I am writing.', 'hint': 'writing', 'emoji': '✏️'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 걷고 있어.', 'blank': 'I am ______.', 'answer': 'I am walking.', 'hint': 'walking', 'emoji': '🚶'},
+    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 듣고 있어.', 'blank': 'I am ______.', 'answer': 'I am listening.', 'hint': 'listening', 'emoji': '👂'},
+
+    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 집에 갈 거야.', 'blank': 'I will ______ home.', 'answer': 'I will go home.', 'hint': 'go', 'emoji': '🏠'},
+    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 기다릴 거야.', 'blank': 'I will ______.', 'answer': 'I will wait.', 'hint': 'wait', 'emoji': '⏳'},
+    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 너를 도와줄 거야.', 'blank': 'I will ______ you.', 'answer': 'I will help you.', 'hint': 'help', 'emoji': '🤝'},
+    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 영어를 공부할 거야.', 'blank': 'I will ______ English.', 'answer': 'I will study English.', 'hint': 'study', 'emoji': '📚'},
+    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 점심을 먹을 거야.', 'blank': 'I will ______ lunch.', 'answer': 'I will eat lunch.', 'hint': 'eat', 'emoji': '🍱'},
+    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 물을 마실 거야.', 'blank': 'I will ______ water.', 'answer': 'I will drink water.', 'hint': 'drink', 'emoji': '💧'},
+
+    {'cat': '❌ 아니라고 말하기', 'ko': '나는 아프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not sick.', 'hint': 'sick', 'emoji': '🙂'},
+    {'cat': '❌ 아니라고 말하기', 'ko': '나는 배고프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not hungry.', 'hint': 'hungry', 'emoji': '🙅🍽️'},
+    {'cat': '❌ 아니라고 말하기', 'ko': '나는 괜찮지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not okay.', 'hint': 'okay', 'emoji': '😟'},
+    {'cat': '❌ 아니라고 말하기', 'ko': '나는 몰라.', 'blank': 'I do not ______.', 'answer': 'I do not know.', 'hint': 'know', 'emoji': '🤷'},
+    {'cat': '❌ 아니라고 말하기', 'ko': '나는 이해하지 못해.', 'blank': 'I do not ______.', 'answer': 'I do not understand.', 'hint': 'understand', 'emoji': '❓'},
+    {'cat': '❌ 아니라고 말하기', 'ko': '나는 그것을 원하지 않아.', 'blank': 'I do not ______ it.', 'answer': 'I do not want it.', 'hint': 'want', 'emoji': '🙅'},
+
+    {'cat': '❓ 간단히 물어보기', 'ko': '괜찮니?', 'blank': 'Are you ______?', 'answer': 'Are you okay?', 'hint': 'okay', 'emoji': '🙂'},
+    {'cat': '❓ 간단히 물어보기', 'ko': '아프니?', 'blank': 'Are you ______?', 'answer': 'Are you sick?', 'hint': 'sick', 'emoji': '🤒'},
+    {'cat': '❓ 간단히 물어보기', 'ko': '배고프니?', 'blank': 'Are you ______?', 'answer': 'Are you hungry?', 'hint': 'hungry', 'emoji': '🍽️'},
+    {'cat': '❓ 간단히 물어보기', 'ko': '목마르니?', 'blank': 'Are you ______?', 'answer': 'Are you thirsty?', 'hint': 'thirsty', 'emoji': '💧'},
+    {'cat': '❓ 간단히 물어보기', 'ko': '도움이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need help?', 'hint': 'help', 'emoji': '🆘'},
+    {'cat': '❓ 간단히 물어보기', 'ko': '물이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need water?', 'hint': 'water', 'emoji': '💧'},
+
+    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '화장실은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the bathroom?', 'hint': 'bathroom', 'emoji': '🚻'},
+    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '병원은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the hospital?', 'hint': 'hospital', 'emoji': '🏥'},
+    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '가게는 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the store?', 'hint': 'store', 'emoji': '🏪'},
+    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '역은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the station?', 'hint': 'station', 'emoji': '🚉'},
+    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '지금 몇 시인가요?', 'blank': 'What ______ is it?', 'answer': 'What time is it?', 'hint': 'time', 'emoji': '⏰'},
+    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '이름이 무엇인가요?', 'blank': 'What is your ______?', 'answer': 'What is your name?', 'hint': 'name', 'emoji': '🏷️'},
+]
 
 
 # =========================================================
@@ -55,6 +119,26 @@ st.markdown(
         font-size: 17px;
         line-height: 1.7;
         font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .main-title-box {
+            padding: 20px 18px;
+            border-radius: 22px;
+        }
+
+        .main-title-box h1 {
+            font-size: 27px;
+        }
+
+        .main-title-box p {
+            font-size: 15px;
+        }
+
+        .guide-box {
+            font-size: 14px;
+            padding: 15px 16px;
+        }
     }
     </style>
     """,
@@ -100,8 +184,92 @@ def speaking_practice_component(items):
         border-radius: 30px;
         padding: 24px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
     ">
-        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
+        <style>
+            #speaking-app * {
+                box-sizing: border-box;
+            }
+
+            #speaking-app button {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+
+            #speaking-app select {
+                max-width: 100%;
+            }
+
+            @media (max-width: 768px) {
+                #speaking-app {
+                    padding: 14px !important;
+                    border-radius: 22px !important;
+                }
+
+                #categorySelect {
+                    width: 100%;
+                    font-size: 14px !important;
+                }
+
+                #topControlBox {
+                    gap: 8px !important;
+                }
+
+                #topControlBox button {
+                    flex: 1 1 45%;
+                    font-size: 14px !important;
+                    padding: 10px 10px !important;
+                }
+
+                #questionCard {
+                    padding: 16px !important;
+                    border-radius: 20px !important;
+                }
+
+                #koPrompt {
+                    font-size: 23px !important;
+                    line-height: 1.35 !important;
+                }
+
+                #blankSentence {
+                    font-size: 25px !important;
+                    padding: 16px 14px !important;
+                    line-height: 1.35 !important;
+                }
+
+                #hintBox,
+                #answerBox {
+                    font-size: 18px !important;
+                    padding: 12px 13px !important;
+                    word-break: break-word;
+                }
+
+                #buttonBox button {
+                    flex: 1 1 45%;
+                    font-size: 14px !important;
+                    padding: 11px 10px !important;
+                }
+
+                #micBtn,
+                #nextBtn {
+                    flex: 1 1 100% !important;
+                    font-size: 16px !important;
+                    padding: 13px 12px !important;
+                }
+
+                #transcriptBox {
+                    font-size: 18px !important;
+                }
+
+                #resultBox {
+                    font-size: 17px !important;
+                }
+            }
+        </style>
+
+        <div id="topControlBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
             <label style="font-weight:900; color:#334155;">문장 구조 선택</label>
             <select id="categorySelect" style="
                 padding: 10px 14px;
@@ -131,10 +299,10 @@ def speaking_practice_component(items):
                 padding: 10px 15px;
                 font-weight: 900;
                 cursor: pointer;
-            ">🔄 점수 초기화</button>
+            ">🔄 현재 테마 점수 초기화</button>
         </div>
 
-        <div style="
+        <div id="questionCard" style="
             background:white;
             border-radius:26px;
             padding:24px;
@@ -162,7 +330,7 @@ def speaking_practice_component(items):
                     font-size:15px;
                     font-weight:900;
                     border:1px solid #bbf7d0;
-                ">0 / 0</div>
+                ">현재 테마 정답 0 / 0</div>
             </div>
 
             <div style="
@@ -185,6 +353,7 @@ def speaking_practice_component(items):
                 font-weight: 900;
                 color: #0f172a;
                 line-height: 1.5;
+                word-break: break-word;
             " id="blankSentence">
                 I am ______.
             </div>
@@ -213,7 +382,7 @@ def speaking_practice_component(items):
                 font-weight:900;
             "></div>
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
+            <div id="buttonBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
                 <button id="hintBtn" style="
                     border:1.5px solid #fde68a;
                     background:#fffbeb;
@@ -310,8 +479,9 @@ def speaking_practice_component(items):
     let currentList = [];
     let currentIndex = 0;
     let currentItem = null;
-    let score = 0;
-    let attempts = 0;
+
+    // 정답 기록: 문제별로 한 번 맞히면 true 저장
+    let correctMap = {};
     let alreadyCorrect = false;
 
     const categorySelect = document.getElementById("categorySelect");
@@ -333,6 +503,10 @@ def speaking_practice_component(items):
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
+
+    function getItemKey(item) {
+        return item.cat + "||" + item.ko + "||" + item.answer;
+    }
 
     function uniqueCategories() {
         const cats = ["전체"];
@@ -410,26 +584,6 @@ def speaking_practice_component(items):
             .filter(w => w.length > 0);
     }
 
-    function editDistance(a, b) {
-        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-
-        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-
-        for (let i = 1; i <= a.length; i++) {
-            for (let j = 1; j <= b.length; j++) {
-                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-                dp[i][j] = Math.min(
-                    dp[i - 1][j] + 1,
-                    dp[i][j - 1] + 1,
-                    dp[i - 1][j - 1] + cost
-                );
-            }
-        }
-
-        return dp[a.length][b.length];
-    }
-
     function isCloseEnough(spoken, answer) {
         const s = normalizeText(spoken);
         const a = normalizeText(answer);
@@ -440,7 +594,6 @@ def speaking_practice_component(items):
         const aWords = wordsOnly(a);
 
         // 1) 축약형을 푼 뒤 완전 일치하면 정답
-        // 예: "I'm hungry" → "I am hungry"
         if (s === a) return true;
 
         // 2) 음성 인식이 정답 앞뒤에 짧은 말을 붙이는 경우만 허용
@@ -453,18 +606,15 @@ def speaking_practice_component(items):
         }
 
         // 3) 핵심 정답 단어는 반드시 들어가야 함
-        // 빈칸 정답 단어 currentItem.hint가 빠지면 오답
         const keyWords = normalizeText(currentItem.hint || "").split(" ").filter(w => w.length > 0);
         const hasAllKeyWords = keyWords.every(w => sWords.includes(w));
         if (!hasAllKeyWords) return false;
 
         // 4) 정답 단어 수와 말한 단어 수가 너무 다르면 오답
-        // 예: "water"만 말했는데 "I need water" 정답 처리되는 것 방지
         if (sWords.length < aWords.length) return false;
         if (sWords.length > aWords.length + 2) return false;
 
         // 5) 정답 문장의 각 단어가 순서대로 거의 들어 있는지 확인
-        // 핵심 단어는 위에서 이미 확인했고, i/am/do 같은 짧은 기능어는 약간만 허용
         let matchedCount = 0;
         let searchStart = 0;
 
@@ -497,8 +647,17 @@ def speaking_practice_component(items):
         return isCloseEnough(spoken, answer);
     }
 
+    // 현재 선택한 테마 기준으로 정답 수 / 전체 문항 수 표시
     function updateScore() {
-        scoreLabel.innerText = score + " / " + attempts;
+        const list = getFilteredItems();
+        let correctCount = 0;
+
+        list.forEach(item => {
+            const key = getItemKey(item);
+            if (correctMap[key]) correctCount += 1;
+        });
+
+        scoreLabel.innerText = "현재 테마 정답 " + correctCount + " / " + list.length;
     }
 
     function loadQuestion(index = 0) {
@@ -511,23 +670,40 @@ def speaking_practice_component(items):
 
         currentIndex = index;
         currentItem = currentList[currentIndex];
-        alreadyCorrect = false;
+
+        // 이미 맞힌 문제인지 확인
+        alreadyCorrect = !!correctMap[getItemKey(currentItem)];
 
         categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
+
         const emoji = currentItem.emoji || "🛟";
         koPrompt.innerHTML =
             "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
             "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
+
         blankSentence.innerText = currentItem.blank;
+
         hintBox.style.display = "none";
         answerBox.style.display = "none";
         hintBox.innerText = "";
         answerBox.innerText = "";
         transcriptBox.innerText = "아직 말하지 않았습니다.";
-        resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형은 괜찮습니다.";
-        resultBox.style.background = "#f1f5f9";
-        resultBox.style.borderColor = "#e2e8f0";
-        resultBox.style.color = "#334155";
+
+        if (alreadyCorrect) {
+            resultBox.innerHTML =
+                "✅ 이미 맞힌 문제입니다.<br>" +
+                "<span style='font-size:17px;'>다시 연습해도 점수는 중복으로 올라가지 않습니다.</span>";
+            resultBox.style.background = "#ecfdf5";
+            resultBox.style.borderColor = "#bbf7d0";
+            resultBox.style.color = "#166534";
+        } else {
+            resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형은 괜찮습니다.";
+            resultBox.style.background = "#f1f5f9";
+            resultBox.style.borderColor = "#e2e8f0";
+            resultBox.style.color = "#334155";
+        }
+
+        updateScore();
     }
 
     function speak(text) {
@@ -549,15 +725,18 @@ def speaking_practice_component(items):
     }
 
     function checkSpeech(spokenText) {
-        attempts += 1;
+        const itemKey = getItemKey(currentItem);
 
         if (isCorrectSpeech(spokenText, currentItem.answer)) {
-            if (!alreadyCorrect) {
-                score += 1;
+            if (!correctMap[itemKey]) {
+                correctMap[itemKey] = true;
                 alreadyCorrect = true;
             }
 
-            resultBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:17px;'>잘 말했어요: " + currentItem.answer + "</span>";
+            resultBox.innerHTML =
+                "✅ 정답입니다!<br>" +
+                "<span style='font-size:17px;'>잘 말했어요: " + currentItem.answer + "</span>";
+
             resultBox.style.background = "#ecfdf5";
             resultBox.style.borderColor = "#bbf7d0";
             resultBox.style.color = "#166534";
@@ -567,6 +746,7 @@ def speaking_practice_component(items):
             resultBox.innerHTML =
                 "🍊 문장 전체가 정확히 맞아야 해요. 다시 말해 보세요.<br>" +
                 "<span style='font-size:17px;'>목표 문장: " + currentItem.answer + "</span>";
+
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
             resultBox.style.color = "#9a3412";
@@ -600,7 +780,6 @@ def speaking_practice_component(items):
 
         recognition.onresult = function(event) {
             let bestTranscript = "";
-            let matched = false;
 
             for (let i = 0; i < event.results[0].length; i++) {
                 const transcript = event.results[0][i].transcript;
@@ -608,7 +787,6 @@ def speaking_practice_component(items):
 
                 if (isCorrectSpeech(transcript, currentItem.answer)) {
                     bestTranscript = transcript;
-                    matched = true;
                     break;
                 }
             }
@@ -618,7 +796,17 @@ def speaking_practice_component(items):
         };
 
         recognition.onerror = function(event) {
-            resultBox.innerText = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
+            let message = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
+
+            if (event.error === "not-allowed") {
+                message = "마이크 권한이 차단되었습니다. 브라우저 주소창 옆 마이크 권한을 허용해 주세요.";
+            } else if (event.error === "no-speech") {
+                message = "말소리가 인식되지 않았습니다. 버튼을 다시 누르고 조금 더 크게 말해 주세요.";
+            } else if (event.error === "audio-capture") {
+                message = "마이크를 찾을 수 없습니다. 기기의 마이크 설정을 확인해 주세요.";
+            }
+
+            resultBox.innerText = message;
             resultBox.style.background = "#fef2f2";
             resultBox.style.borderColor = "#fecaca";
             resultBox.style.color = "#991b1b";
@@ -636,19 +824,30 @@ def speaking_practice_component(items):
         currentList = getFilteredItems();
         currentIndex = 0;
         loadQuestion(0);
+        updateScore();
     });
 
     randomBtn.addEventListener("click", function() {
         currentList = shuffleArray(getFilteredItems());
         loadQuestion(0);
+        updateScore();
     });
 
     resetBtn.addEventListener("click", function() {
-        score = 0;
-        attempts = 0;
+        const list = getFilteredItems();
+
+        list.forEach(item => {
+            const key = getItemKey(item);
+            delete correctMap[key];
+        });
+
         alreadyCorrect = false;
         updateScore();
-        resultBox.innerText = "점수를 초기화했습니다.";
+
+        resultBox.innerText = "현재 테마 점수를 초기화했습니다.";
+        resultBox.style.background = "#f1f5f9";
+        resultBox.style.borderColor = "#e2e8f0";
+        resultBox.style.color = "#334155";
     });
 
     hintBtn.addEventListener("click", function() {
@@ -679,7 +878,7 @@ def speaking_practice_component(items):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=760)
+    components.html(html, height=790)
 
 
 speaking_practice_component(PRACTICE_ITEMS)
