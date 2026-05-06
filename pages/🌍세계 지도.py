@@ -5,6 +5,7 @@ import pandas as pd
 import os
 import json
 import random
+import streamlit.components.v1 as components
 
 try:
     import countryinfo
@@ -108,45 +109,45 @@ RIVERS = [
 # 퀴즈용 나라 데이터
 # =====================================================
 QUIZ_COUNTRIES = [
-    {"ko": "대한민국", "en": "South Korea", "iso": "KOR", "continent": "아시아"},
-    {"ko": "일본", "en": "Japan", "iso": "JPN", "continent": "아시아"},
-    {"ko": "중국", "en": "China", "iso": "CHN", "continent": "아시아"},
-    {"ko": "인도", "en": "India", "iso": "IND", "continent": "아시아"},
-    {"ko": "태국", "en": "Thailand", "iso": "THA", "continent": "아시아"},
-    {"ko": "베트남", "en": "Vietnam", "iso": "VNM", "continent": "아시아"},
-    {"ko": "필리핀", "en": "Philippines", "iso": "PHL", "continent": "아시아"},
-    {"ko": "인도네시아", "en": "Indonesia", "iso": "IDN", "continent": "아시아"},
-    {"ko": "사우디아라비아", "en": "Saudi Arabia", "iso": "SAU", "continent": "아시아"},
-    {"ko": "튀르키예", "en": "Turkey", "iso": "TUR", "continent": "아시아/유럽"},
+    {"ko": "대한민국", "en": "South Korea", "iso": "KOR", "continent": "아시아", "flag": "🇰🇷"},
+    {"ko": "일본", "en": "Japan", "iso": "JPN", "continent": "아시아", "flag": "🇯🇵"},
+    {"ko": "중국", "en": "China", "iso": "CHN", "continent": "아시아", "flag": "🇨🇳"},
+    {"ko": "인도", "en": "India", "iso": "IND", "continent": "아시아", "flag": "🇮🇳"},
+    {"ko": "태국", "en": "Thailand", "iso": "THA", "continent": "아시아", "flag": "🇹🇭"},
+    {"ko": "베트남", "en": "Vietnam", "iso": "VNM", "continent": "아시아", "flag": "🇻🇳"},
+    {"ko": "필리핀", "en": "Philippines", "iso": "PHL", "continent": "아시아", "flag": "🇵🇭"},
+    {"ko": "인도네시아", "en": "Indonesia", "iso": "IDN", "continent": "아시아", "flag": "🇮🇩"},
+    {"ko": "사우디아라비아", "en": "Saudi Arabia", "iso": "SAU", "continent": "아시아", "flag": "🇸🇦"},
+    {"ko": "튀르키예", "en": "Turkey", "iso": "TUR", "continent": "아시아/유럽", "flag": "🇹🇷"},
 
-    {"ko": "영국", "en": "United Kingdom", "iso": "GBR", "continent": "유럽"},
-    {"ko": "프랑스", "en": "France", "iso": "FRA", "continent": "유럽"},
-    {"ko": "독일", "en": "Germany", "iso": "DEU", "continent": "유럽"},
-    {"ko": "이탈리아", "en": "Italy", "iso": "ITA", "continent": "유럽"},
-    {"ko": "스페인", "en": "Spain", "iso": "ESP", "continent": "유럽"},
-    {"ko": "포르투갈", "en": "Portugal", "iso": "PRT", "continent": "유럽"},
-    {"ko": "그리스", "en": "Greece", "iso": "GRC", "continent": "유럽"},
-    {"ko": "러시아", "en": "Russia", "iso": "RUS", "continent": "유럽/아시아"},
+    {"ko": "영국", "en": "United Kingdom", "iso": "GBR", "continent": "유럽", "flag": "🇬🇧"},
+    {"ko": "프랑스", "en": "France", "iso": "FRA", "continent": "유럽", "flag": "🇫🇷"},
+    {"ko": "독일", "en": "Germany", "iso": "DEU", "continent": "유럽", "flag": "🇩🇪"},
+    {"ko": "이탈리아", "en": "Italy", "iso": "ITA", "continent": "유럽", "flag": "🇮🇹"},
+    {"ko": "스페인", "en": "Spain", "iso": "ESP", "continent": "유럽", "flag": "🇪🇸"},
+    {"ko": "포르투갈", "en": "Portugal", "iso": "PRT", "continent": "유럽", "flag": "🇵🇹"},
+    {"ko": "그리스", "en": "Greece", "iso": "GRC", "continent": "유럽", "flag": "🇬🇷"},
+    {"ko": "러시아", "en": "Russia", "iso": "RUS", "continent": "유럽/아시아", "flag": "🇷🇺"},
 
-    {"ko": "미국", "en": "United States", "iso": "USA", "continent": "북아메리카"},
-    {"ko": "캐나다", "en": "Canada", "iso": "CAN", "continent": "북아메리카"},
-    {"ko": "멕시코", "en": "Mexico", "iso": "MEX", "continent": "북아메리카"},
-    {"ko": "쿠바", "en": "Cuba", "iso": "CUB", "continent": "북아메리카"},
+    {"ko": "미국", "en": "United States", "iso": "USA", "continent": "북아메리카", "flag": "🇺🇸"},
+    {"ko": "캐나다", "en": "Canada", "iso": "CAN", "continent": "북아메리카", "flag": "🇨🇦"},
+    {"ko": "멕시코", "en": "Mexico", "iso": "MEX", "continent": "북아메리카", "flag": "🇲🇽"},
+    {"ko": "쿠바", "en": "Cuba", "iso": "CUB", "continent": "북아메리카", "flag": "🇨🇺"},
 
-    {"ko": "브라질", "en": "Brazil", "iso": "BRA", "continent": "남아메리카"},
-    {"ko": "아르헨티나", "en": "Argentina", "iso": "ARG", "continent": "남아메리카"},
-    {"ko": "칠레", "en": "Chile", "iso": "CHL", "continent": "남아메리카"},
-    {"ko": "페루", "en": "Peru", "iso": "PER", "continent": "남아메리카"},
-    {"ko": "콜롬비아", "en": "Colombia", "iso": "COL", "continent": "남아메리카"},
+    {"ko": "브라질", "en": "Brazil", "iso": "BRA", "continent": "남아메리카", "flag": "🇧🇷"},
+    {"ko": "아르헨티나", "en": "Argentina", "iso": "ARG", "continent": "남아메리카", "flag": "🇦🇷"},
+    {"ko": "칠레", "en": "Chile", "iso": "CHL", "continent": "남아메리카", "flag": "🇨🇱"},
+    {"ko": "페루", "en": "Peru", "iso": "PER", "continent": "남아메리카", "flag": "🇵🇪"},
+    {"ko": "콜롬비아", "en": "Colombia", "iso": "COL", "continent": "남아메리카", "flag": "🇨🇴"},
 
-    {"ko": "이집트", "en": "Egypt", "iso": "EGY", "continent": "아프리카"},
-    {"ko": "남아프리카공화국", "en": "South Africa", "iso": "ZAF", "continent": "아프리카"},
-    {"ko": "케냐", "en": "Kenya", "iso": "KEN", "continent": "아프리카"},
-    {"ko": "나이지리아", "en": "Nigeria", "iso": "NGA", "continent": "아프리카"},
-    {"ko": "모로코", "en": "Morocco", "iso": "MAR", "continent": "아프리카"},
+    {"ko": "이집트", "en": "Egypt", "iso": "EGY", "continent": "아프리카", "flag": "🇪🇬"},
+    {"ko": "남아프리카공화국", "en": "South Africa", "iso": "ZAF", "continent": "아프리카", "flag": "🇿🇦"},
+    {"ko": "케냐", "en": "Kenya", "iso": "KEN", "continent": "아프리카", "flag": "🇰🇪"},
+    {"ko": "나이지리아", "en": "Nigeria", "iso": "NGA", "continent": "아프리카", "flag": "🇳🇬"},
+    {"ko": "모로코", "en": "Morocco", "iso": "MAR", "continent": "아프리카", "flag": "🇲🇦"},
 
-    {"ko": "호주", "en": "Australia", "iso": "AUS", "continent": "오세아니아"},
-    {"ko": "뉴질랜드", "en": "New Zealand", "iso": "NZL", "continent": "오세아니아"},
+    {"ko": "호주", "en": "Australia", "iso": "AUS", "continent": "오세아니아", "flag": "🇦🇺"},
+    {"ko": "뉴질랜드", "en": "New Zealand", "iso": "NZL", "continent": "오세아니아", "flag": "🇳🇿"},
 ]
 
 # =====================================================
@@ -190,10 +191,9 @@ def load_all_countries():
             df = df.drop_duplicates(subset=["iso"]).sort_values("name").reset_index(drop=True)
             return df
 
-    # countryinfo가 없을 때 퀴즈용 나라만 표시
     return pd.DataFrame([
         {
-            "name": f"{c['ko']} / {c['en']}",
+            "name": f"{c['flag']} {c['ko']} / {c['en']}",
             "iso": c["iso"],
             "lat": 0,
             "lon": 0,
@@ -227,6 +227,8 @@ def make_quiz_question():
     st.session_state.quiz_options = options
     st.session_state.quiz_answered = False
     st.session_state.quiz_result = ""
+    st.session_state.quiz_celebrate = False
+    st.session_state.quiz_correct_flag = False
 
 if "quiz_score" not in st.session_state:
     st.session_state.quiz_score = 0
@@ -236,6 +238,10 @@ if "quiz_level" not in st.session_state:
     st.session_state.quiz_level = "전체"
 if "quiz_current" not in st.session_state:
     make_quiz_question()
+if "quiz_celebrate" not in st.session_state:
+    st.session_state.quiz_celebrate = False
+if "quiz_correct_flag" not in st.session_state:
+    st.session_state.quiz_correct_flag = False
 
 def reset_quiz():
     st.session_state.quiz_score = 0
@@ -252,9 +258,46 @@ def check_quiz_answer(option):
     correct = st.session_state.quiz_current
     if option["iso"] == correct["iso"]:
         st.session_state.quiz_score += 1
-        st.session_state.quiz_result = f"✅ 정답입니다! {correct['ko']} / {correct['en']}"
+        st.session_state.quiz_result = f"✅ 정답입니다! {correct['flag']} {correct['ko']} / {correct['en']}"
+        st.session_state.quiz_celebrate = True
+        st.session_state.quiz_correct_flag = True
     else:
-        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct['ko']} / {correct['en']}입니다."
+        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct['flag']} {correct['ko']} / {correct['en']}입니다."
+        st.session_state.quiz_celebrate = False
+        st.session_state.quiz_correct_flag = False
+
+def celebration_effect():
+    st.balloons()
+    components.html(
+        """
+        <div id="celebration-wrap" style="position:relative;width:100%;height:0;"></div>
+        <script>
+        const wrap = window.parent.document.body;
+        for (let i = 0; i < 40; i++) {
+            const s = document.createElement('div');
+            s.innerHTML = ['✨','🌟','💥','🎉','⭐'][Math.floor(Math.random()*5)];
+            s.style.position = 'fixed';
+            s.style.left = (Math.random()*100) + 'vw';
+            s.style.top = '-20px';
+            s.style.fontSize = (20 + Math.random()*22) + 'px';
+            s.style.zIndex = 9999;
+            s.style.pointerEvents = 'none';
+            s.style.transition = 'transform 1.8s ease-out, top 1.8s ease-out, opacity 1.8s ease-out';
+            s.style.opacity = '1';
+            wrap.appendChild(s);
+
+            setTimeout(() => {
+                s.style.top = (55 + Math.random()*35) + 'vh';
+                s.style.transform = 'translateY(0) rotate(' + (-180 + Math.random()*360) + 'deg)';
+                s.style.opacity = '0';
+            }, 50);
+
+            setTimeout(() => s.remove(), 2200);
+        }
+        </script>
+        """,
+        height=0,
+    )
 
 # =====================================================
 # 스타일
@@ -359,15 +402,27 @@ st.markdown(
         border-radius: 22px;
         padding: 17px 20px;
         margin-top: 14px;
-        font-size: 21px;
+        font-size: 25px;
         font-weight: 900;
         text-align: center;
         color: #334155;
     }
     div.stButton > button {
-        border-radius: 16px;
-        font-weight: 850;
-        min-height: 48px;
+        border-radius: 20px;
+        font-weight: 950;
+        min-height: 78px;
+        font-size: 1.35rem;
+        line-height: 1.35;
+        border: 2px solid #bfdbfe;
+        background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+        color: #0f172a;
+        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+    }
+    div.stButton > button:hover {
+        border: 2px solid #2563eb;
+        background: linear-gradient(135deg, #dbeafe 0%, #f0f9ff 100%);
+        color: #1e3a8a;
+        transform: translateY(-1px);
     }
     @media (max-width: 768px) {
         .title-box { padding: 20px 18px; border-radius: 22px; }
@@ -532,7 +587,7 @@ with tab_quiz:
             <h2>🎮 세계 지도 나라 맞추기</h2>
             <p>
                 지도에서 색칠된 나라를 보고 정답을 골라 보세요.<br>
-                학생들이 대륙과 나라 위치를 자연스럽게 익히는 활동입니다.
+                이제 4지선다 보기마다 국기가 함께 표시됩니다.
             </p>
         </div>
         """,
@@ -630,14 +685,14 @@ with tab_quiz:
 
     st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
 
-    st.markdown("### 🧩 정답을 골라 보세요")
+    st.markdown("### 🧩 정답을 골라 보세요 — 국기를 보고 함께 익혀요")
 
     option_cols = st.columns(2)
     option_labels = ["A", "B", "C", "D"]
 
     for i, option in enumerate(st.session_state.quiz_options):
         with option_cols[i % 2]:
-            button_label = f"{option_labels[i]}. {option['ko']} / {option['en']}"
+            button_label = f"{option_labels[i]}.  {option['flag']}   {option['ko']}  /  {option['en']}"
             if st.button(
                 button_label,
                 key=f"quiz_option_{i}_{option['iso']}_{st.session_state.quiz_total}",
@@ -648,11 +703,17 @@ with tab_quiz:
                 st.rerun()
 
     if st.session_state.quiz_result:
+        if st.session_state.quiz_correct_flag and st.session_state.quiz_celebrate:
+            celebration_effect()
+            st.session_state.quiz_celebrate = False
+
+        extra_msg = "🎉 반짝! 정답입니다!" if st.session_state.quiz_correct_flag else "다음 문제에서 다시 도전해 봅시다!"
         st.markdown(
             f"""
             <div class="result-card">
+                {extra_msg}<br>
                 {st.session_state.quiz_result}<br>
-                <span style="font-size:16px; color:#64748b;">대륙: {current['continent']}</span>
+                <span style="font-size:18px; color:#64748b;">대륙: {current['continent']}</span>
             </div>
             """,
             unsafe_allow_html=True
@@ -711,8 +772,8 @@ with tab_summary:
         """
         - 먼저 `세계 지도 학습` 탭에서 대륙과 바다 이름을 함께 확인합니다.
         - 이후 `나라 맞추기 퀴즈` 탭에서 대륙별로 나라 위치를 맞혀 봅니다.
-        - 학생들이 나라 이름을 잘 모르면 영어 이름보다 한국어 이름 중심으로 먼저 진행하면 좋습니다.
-        - 수업 후반에는 대륙 선택을 바꾸어 복습 퀴즈로 활용할 수 있습니다.
+        - 보기마다 국기가 함께 나와서 학생들이 나라와 국기를 같이 익힐 수 있습니다.
+        - 정답을 맞히면 반짝이는 축하 효과와 함께 복습 동기를 높일 수 있습니다.
         """
     )
 
