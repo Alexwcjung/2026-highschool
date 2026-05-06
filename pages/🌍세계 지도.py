@@ -233,6 +233,32 @@ if "quiz_level" not in st.session_state:
 if "quiz_current" not in st.session_state:
     make_quiz_question()
 
+# 이전 버전의 세션 상태가 남아 있으면 4지선다에서 오류가 날 수 있으므로 자동 초기화
+def quiz_state_is_valid():
+    try:
+        current = st.session_state.get("quiz_current")
+        options = st.session_state.get("quiz_options")
+        if not isinstance(current, dict):
+            return False
+        if not isinstance(options, list) or len(options) != 4:
+            return False
+        required = ["ko", "en", "iso", "continent", "flag"]
+        for key in required:
+            if key not in current:
+                return False
+        for opt in options:
+            if not isinstance(opt, dict):
+                return False
+            for key in required:
+                if key not in opt:
+                    return False
+        return True
+    except Exception:
+        return False
+
+if not quiz_state_is_valid():
+    make_quiz_question()
+
 def reset_quiz():
     st.session_state.quiz_score = 0
     st.session_state.quiz_total = 0
@@ -246,12 +272,12 @@ def check_quiz_answer(option):
     st.session_state.quiz_total += 1
 
     correct = st.session_state.quiz_current
-    if option["iso"] == correct["iso"]:
+    if option.get("iso") == correct.get("iso"):
         st.session_state.quiz_score += 1
-        st.session_state.quiz_result = f"✅ 정답입니다! {correct['flag']} {correct['ko']} / {correct['en']}"
+        st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('flag', '🏳️')} {correct.get('ko', '')} / {correct.get('en', '')}"
         st.session_state.quiz_correct_flag = True
     else:
-        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct['flag']} {correct['ko']} / {correct['en']}입니다."
+        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('flag', '🏳️')} {correct.get('ko', '')} / {correct.get('en', '')}입니다."
         st.session_state.quiz_correct_flag = False
 
 # =====================================================
@@ -674,10 +700,14 @@ with tab_quiz:
 
     for i, option in enumerate(st.session_state.quiz_options):
         with option_cols[i % 2]:
-            button_label = f"{option_labels[i]}.  {option['flag']}   {option['ko']}  /  {option['en']}"
+            flag = option.get("flag", "🏳️")
+            ko_name = option.get("ko", "")
+            en_name = option.get("en", "")
+            iso_code = option.get("iso", str(i))
+            button_label = f"{option_labels[i]}.  {flag}   {ko_name}  /  {en_name}"
             if st.button(
                 button_label,
-                key=f"quiz_option_{i}_{option['iso']}_{st.session_state.quiz_total}",
+                key=f"quiz_option_{i}_{iso_code}_{st.session_state.quiz_total}",
                 use_container_width=True,
                 disabled=st.session_state.quiz_answered
             ):
@@ -693,7 +723,7 @@ with tab_quiz:
                     <div class="sparkle-line">✨ 🎉 💥 🌟 ✨</div>
                     반짝! 정답입니다!<br>
                     {st.session_state.quiz_result}<br>
-                    <span style="font-size:20px; color:#15803d;">대륙: {current['continent']}</span>
+                    <span style="font-size:20px; color:#15803d;">대륙: {current.get('continent', '')}</span>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -704,7 +734,7 @@ with tab_quiz:
                 <div class="result-card">
                     다음 문제에서 다시 도전해 봅시다!<br>
                     {st.session_state.quiz_result}<br>
-                    <span style="font-size:18px; color:#64748b;">대륙: {current['continent']}</span>
+                    <span style="font-size:18px; color:#64748b;">대륙: {current.get('continent', '')}</span>
                 </div>
                 """,
                 unsafe_allow_html=True
