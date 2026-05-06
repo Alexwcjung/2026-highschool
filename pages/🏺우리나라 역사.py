@@ -1,5 +1,4 @@
 import streamlit as st
-import plotly.graph_objects as go
 import random
 
 st.set_page_config(
@@ -12,13 +11,48 @@ st.set_page_config(
 # 전체 흐름
 # =====================================================
 HISTORY_FLOW = [
-    {"name": "선사", "emoji": "🪨", "one": "도구와 농경의 시작"},
-    {"name": "고조선", "emoji": "🐻", "one": "우리 역사상 첫 국가"},
-    {"name": "삼국", "emoji": "⚔️", "one": "고구려·백제·신라 경쟁"},
-    {"name": "남북국", "emoji": "🌅", "one": "통일 신라와 발해"},
-    {"name": "고려", "emoji": "📜", "one": "불교 문화와 금속활자"},
-    {"name": "조선", "emoji": "👑", "one": "유교 정치와 훈민정음"},
-    {"name": "근현대", "emoji": "🇰🇷", "one": "독립·전쟁·산업화·민주화"},
+    {
+        "name": "선사",
+        "emoji": "🪨",
+        "years": "문자 사용 이전",
+        "one": "도구와 농경의 시작",
+    },
+    {
+        "name": "고조선",
+        "emoji": "🐻",
+        "years": "기원전 2333년 전설적 건국 ~ 기원전 108년",
+        "one": "우리 역사상 첫 국가",
+    },
+    {
+        "name": "삼국",
+        "emoji": "⚔️",
+        "years": "기원전 1세기경 ~ 668년",
+        "one": "고구려·백제·신라 경쟁",
+    },
+    {
+        "name": "남북국",
+        "emoji": "🌅",
+        "years": "7세기 후반 ~ 10세기",
+        "one": "통일 신라와 발해",
+    },
+    {
+        "name": "고려",
+        "emoji": "📜",
+        "years": "918년 ~ 1392년",
+        "one": "불교 문화와 금속활자",
+    },
+    {
+        "name": "조선",
+        "emoji": "👑",
+        "years": "1392년 ~ 1897년",
+        "one": "유교 정치와 훈민정음",
+    },
+    {
+        "name": "근현대",
+        "emoji": "🇰🇷",
+        "years": "1876년 개항 이후 ~ 현재",
+        "one": "독립·전쟁·산업화·민주화",
+    },
 ]
 
 # =====================================================
@@ -28,6 +62,7 @@ PREMODERN_PERIODS = [
     {
         "name": "고조선",
         "emoji": "🐻",
+        "years": "기원전 2333년 전설적 건국 ~ 기원전 108년",
         "period": "우리 역사상 첫 국가",
         "core": "청동기 문화를 바탕으로 성장한 우리나라 최초의 국가입니다.",
         "details": [
@@ -41,6 +76,7 @@ PREMODERN_PERIODS = [
     {
         "name": "삼국 시대",
         "emoji": "⚔️",
+        "years": "기원전 1세기경 ~ 668년",
         "period": "고구려 · 백제 · 신라",
         "core": "세 나라가 한반도와 만주 일대에서 서로 경쟁하며 성장한 시대입니다.",
         "details": [
@@ -54,6 +90,7 @@ PREMODERN_PERIODS = [
     {
         "name": "남북국 시대",
         "emoji": "🌅",
+        "years": "7세기 후반 ~ 10세기",
         "period": "통일 신라 · 발해",
         "core": "남쪽에는 통일 신라, 북쪽에는 고구려를 계승한 발해가 있던 시대입니다.",
         "details": [
@@ -67,7 +104,8 @@ PREMODERN_PERIODS = [
     {
         "name": "고려",
         "emoji": "📜",
-        "period": "918년 ~ 1392년",
+        "years": "918년 ~ 1392년",
+        "period": "왕건 건국",
         "core": "왕건이 세운 나라로, 불교 문화와 인쇄술이 크게 발달했습니다.",
         "details": [
             "후삼국을 통일하고 새 왕조를 열었습니다.",
@@ -80,7 +118,8 @@ PREMODERN_PERIODS = [
     {
         "name": "조선",
         "emoji": "👑",
-        "period": "1392년 ~ 1897년",
+        "years": "1392년 ~ 1897년",
+        "period": "이성계 건국",
         "core": "유교를 바탕으로 나라를 운영했고, 훈민정음이 창제되었습니다.",
         "details": [
             "이성계가 세운 나라입니다.",
@@ -99,7 +138,7 @@ PREMODERN_PERIODS = [
 MODERN_STEPS = [
     {
         "title": "개항과 근대화의 시작",
-        "period": "1876년 이후",
+        "years": "1876년 이후",
         "emoji": "🚢",
         "summary": "강화도 조약 이후 조선은 외국과 본격적으로 관계를 맺기 시작했습니다.",
         "details": [
@@ -111,7 +150,7 @@ MODERN_STEPS = [
     },
     {
         "title": "대한제국",
-        "period": "1897~1910",
+        "years": "1897년 ~ 1910년",
         "emoji": "🦅",
         "summary": "고종은 대한제국을 선포하고 자주 독립 국가와 근대 국가를 지향했습니다.",
         "details": [
@@ -123,7 +162,7 @@ MODERN_STEPS = [
     },
     {
         "title": "일제 강점기",
-        "period": "1910~1945",
+        "years": "1910년 ~ 1945년",
         "emoji": "🕯️",
         "summary": "일본의 식민 지배를 받았지만, 국내외에서 독립운동이 계속되었습니다.",
         "details": [
@@ -135,7 +174,7 @@ MODERN_STEPS = [
     },
     {
         "title": "광복과 정부 수립",
-        "period": "1945~1948",
+        "years": "1945년 ~ 1948년",
         "emoji": "🌅",
         "summary": "1945년 광복을 맞았고, 1948년 대한민국 정부가 수립되었습니다.",
         "details": [
@@ -147,7 +186,7 @@ MODERN_STEPS = [
     },
     {
         "title": "6·25 전쟁",
-        "period": "1950~1953",
+        "years": "1950년 ~ 1953년",
         "emoji": "🪖",
         "summary": "전쟁으로 큰 피해를 입었고, 휴전 이후 분단이 계속되었습니다.",
         "details": [
@@ -159,7 +198,7 @@ MODERN_STEPS = [
     },
     {
         "title": "산업화",
-        "period": "1960~1980년대",
+        "years": "1960년대 ~ 1980년대",
         "emoji": "🏭",
         "summary": "수출과 제조업 중심으로 경제가 빠르게 성장했습니다.",
         "details": [
@@ -171,7 +210,7 @@ MODERN_STEPS = [
     },
     {
         "title": "민주화",
-        "period": "1980~1990년대",
+        "years": "1980년대 ~ 1990년대",
         "emoji": "🗳️",
         "summary": "시민들의 노력으로 민주주의가 발전했습니다.",
         "details": [
@@ -183,7 +222,7 @@ MODERN_STEPS = [
     },
     {
         "title": "오늘날 대한민국",
-        "period": "2000년대 이후",
+        "years": "2000년대 이후",
         "emoji": "🌐",
         "summary": "민주주의, 경제, 기술, 문화가 발전하며 세계와 활발히 연결되고 있습니다.",
         "details": [
@@ -197,13 +236,12 @@ MODERN_STEPS = [
 
 # =====================================================
 # 대한민국 역대 대통령
-# 2026년 현재 기준: 제21대 이재명 대통령까지 포함
 # =====================================================
 PRESIDENTS = [
     {
         "order": "1~3대",
         "name": "이승만",
-        "term": "1948~1960",
+        "years": "1948년 ~ 1960년",
         "main": "대한민국 초대 대통령",
         "points": ["대한민국 정부 수립", "6·25 전쟁 시기 국정 운영", "반공 체제 강화"],
         "note": "장기 집권과 3·15 부정선거 이후 4·19 혁명으로 하야"
@@ -211,7 +249,7 @@ PRESIDENTS = [
     {
         "order": "4대",
         "name": "윤보선",
-        "term": "1960~1962",
+        "years": "1960년 ~ 1962년",
         "main": "제2공화국 대통령",
         "points": ["4·19 혁명 이후 대통령", "의원내각제 시기 대통령"],
         "note": "5·16 군사정변 이후 정치적 영향력 약화"
@@ -219,7 +257,7 @@ PRESIDENTS = [
     {
         "order": "5~9대",
         "name": "박정희",
-        "term": "1963~1979",
+        "years": "1963년 ~ 1979년",
         "main": "산업화와 경제 개발 추진",
         "points": ["경제 개발 5개년 계획", "수출 중심 산업화", "새마을운동", "경부고속도로 건설"],
         "note": "유신 체제와 장기 집권, 민주주의 억압에 대한 비판"
@@ -227,7 +265,7 @@ PRESIDENTS = [
     {
         "order": "10대",
         "name": "최규하",
-        "term": "1979~1980",
+        "years": "1979년 ~ 1980년",
         "main": "과도기 대통령",
         "points": ["박정희 사망 이후 과도기 국정 운영", "서울의 봄 시기 대통령"],
         "note": "신군부 등장 이후 짧은 기간 재임"
@@ -235,7 +273,7 @@ PRESIDENTS = [
     {
         "order": "11~12대",
         "name": "전두환",
-        "term": "1980~1988",
+        "years": "1980년 ~ 1988년",
         "main": "제5공화국 대통령",
         "points": ["제5공화국 출범", "1986 아시안게임 개최", "1988 서울올림픽 준비"],
         "note": "5·18 민주화운동 유혈 진압과 권위주의 통치에 대한 비판"
@@ -243,7 +281,7 @@ PRESIDENTS = [
     {
         "order": "13대",
         "name": "노태우",
-        "term": "1988~1993",
+        "years": "1988년 ~ 1993년",
         "main": "직선제 개헌 이후 첫 대통령",
         "points": ["1988 서울올림픽 개최", "북방외교", "남북 기본합의서 채택"],
         "note": "군사정권 출신이라는 점과 정치자금 문제에 대한 비판"
@@ -251,7 +289,7 @@ PRESIDENTS = [
     {
         "order": "14대",
         "name": "김영삼",
-        "term": "1993~1998",
+        "years": "1993년 ~ 1998년",
         "main": "문민정부 출범",
         "points": ["금융실명제", "하나회 해체", "지방자치 확대"],
         "note": "임기 말 외환위기 발생"
@@ -259,7 +297,7 @@ PRESIDENTS = [
     {
         "order": "15대",
         "name": "김대중",
-        "term": "1998~2003",
+        "years": "1998년 ~ 2003년",
         "main": "외환위기 극복과 남북 화해 추진",
         "points": ["외환위기 극복 노력", "햇볕정책", "남북정상회담", "노벨평화상 수상"],
         "note": "대북 정책 평가를 둘러싼 논쟁"
@@ -267,7 +305,7 @@ PRESIDENTS = [
     {
         "order": "16대",
         "name": "노무현",
-        "term": "2003~2008",
+        "years": "2003년 ~ 2008년",
         "main": "참여정부와 권위주의 문화 완화",
         "points": ["권위주의 완화", "지방분권 추진", "전자정부 발전", "한미 FTA 추진"],
         "note": "정책 추진 방식과 정치 갈등에 대한 논쟁"
@@ -275,7 +313,7 @@ PRESIDENTS = [
     {
         "order": "17대",
         "name": "이명박",
-        "term": "2008~2013",
+        "years": "2008년 ~ 2013년",
         "main": "경제 성장과 인프라 사업 강조",
         "points": ["글로벌 금융위기 대응", "G20 서울 정상회의", "4대강 사업"],
         "note": "4대강 사업과 자원외교 등에 대한 논쟁"
@@ -283,7 +321,7 @@ PRESIDENTS = [
     {
         "order": "18대",
         "name": "박근혜",
-        "term": "2013~2017",
+        "years": "2013년 ~ 2017년",
         "main": "첫 여성 대통령",
         "points": ["문화융성 정책", "창조경제 정책", "복지 정책 확대 시도"],
         "note": "국정농단 사건으로 탄핵 및 파면"
@@ -291,7 +329,7 @@ PRESIDENTS = [
     {
         "order": "19대",
         "name": "문재인",
-        "term": "2017~2022",
+        "years": "2017년 ~ 2022년",
         "main": "촛불 이후 정부 출범",
         "points": ["남북정상회담", "코로나19 대응", "검찰개혁 추진"],
         "note": "부동산 정책과 경제 정책 평가를 둘러싼 논쟁"
@@ -299,7 +337,7 @@ PRESIDENTS = [
     {
         "order": "20대",
         "name": "윤석열",
-        "term": "2022~2025",
+        "years": "2022년 ~ 2025년",
         "main": "검찰총장 출신 대통령",
         "points": ["한미일 안보 협력 강화", "노동·연금·교육 개혁 추진", "원전 정책 전환"],
         "note": "2024년 비상계엄 사태 이후 탄핵 및 파면"
@@ -307,7 +345,7 @@ PRESIDENTS = [
     {
         "order": "21대",
         "name": "이재명",
-        "term": "2025~현재",
+        "years": "2025년 ~ 현재",
         "main": "조기 대선 이후 출범",
         "points": ["정치 위기 이후 국정 안정 과제", "민생 경제 회복 강조", "불평등 완화와 개혁 과제 제시"],
         "note": "현재 재임 중이므로 평가는 진행 중"
@@ -315,7 +353,7 @@ PRESIDENTS = [
 ]
 
 # =====================================================
-# 세션 상태와 퀴즈 함수
+# 퀴즈
 # =====================================================
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -346,6 +384,17 @@ def make_quiz():
         if correct not in options:
             options[0] = correct
 
+    elif mode == "연도 맞추기":
+        all_items = PREMODERN_PERIODS + MODERN_STEPS + PRESIDENTS
+        item = random.choice(all_items)
+        item_name = item.get("name", item.get("title", ""))
+        question = f"{item_name}의 시기 또는 재임 기간은?"
+        correct = item["years"]
+        options = [x["years"] for x in all_items]
+        options = random.sample(options, 4)
+        if correct not in options:
+            options[0] = correct
+
     elif mode == "근현대사 맞추기":
         item = random.choice(MODERN_STEPS)
         question = f"다음 설명에 해당하는 근현대사 단계는?<br><br>{item['summary']}"
@@ -368,8 +417,8 @@ def make_quiz():
     else:
         item = random.choice(PRESIDENTS)
         question = f"{item['name']} 대통령의 재임 시기는?"
-        correct = item["term"]
-        options = [x["term"] for x in PRESIDENTS]
+        correct = item["years"]
+        options = [x["years"] for x in PRESIDENTS]
         options = random.sample(options, 4)
         if correct not in options:
             options[0] = correct
@@ -393,7 +442,7 @@ def reset_score():
 # 화면
 # =====================================================
 st.title("🇰🇷 우리나라 역사와 근현대사")
-st.caption("큰 흐름은 간단하게, 고조선~조선은 핵심 설명을, 근현대사는 조금 더 자세히 정리했습니다.")
+st.caption("각 시대와 단계마다 연도/시기를 함께 표시했습니다.")
 
 tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🧭 큰 흐름",
@@ -404,35 +453,28 @@ tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🎮 확인 퀴즈"
 ])
 
-# =====================================================
-# 큰 흐름
-# =====================================================
 with tab1:
     st.subheader("🧭 우리나라 역사 큰 흐름")
 
     cols = st.columns(len(HISTORY_FLOW))
     for i, item in enumerate(HISTORY_FLOW):
         with cols[i]:
-            st.container(border=True).markdown(
-                f"""
-                ### {item['emoji']}
-                **{item['name']}**  
-                {item['one']}
-                """
-            )
+            with st.container(border=True):
+                st.markdown(f"### {item['emoji']}")
+                st.markdown(f"**{item['name']}**")
+                st.caption(item["years"])
+                st.markdown(item["one"])
 
     st.info("암기 순서: 선사 → 고조선 → 삼국 → 남북국 → 고려 → 조선 → 근현대")
 
-# =====================================================
-# 고조선~조선
-# =====================================================
 with tab2:
     st.subheader("🏛️ 고조선부터 조선까지")
 
     for item in PREMODERN_PERIODS:
         with st.container(border=True):
             st.markdown(f"## {item['emoji']} {item['name']}")
-            st.markdown(f"**시기/구분:** {item['period']}")
+            st.caption(item["years"])
+            st.markdown(f"**구분:** {item['period']}")
             st.markdown(f"**핵심:** {item['core']}")
 
             st.markdown("**설명**")
@@ -442,9 +484,6 @@ with tab2:
             st.markdown("**키워드**")
             st.write(" · ".join(item["keywords"]))
 
-# =====================================================
-# 근현대사
-# =====================================================
 with tab3:
     st.subheader("🇰🇷 근현대사 조금 더 자세히")
 
@@ -453,15 +492,12 @@ with tab3:
         with cols[i % 4]:
             with st.container(border=True):
                 st.markdown(f"### {item['emoji']} {item['title']}")
-                st.markdown(f"**시기:** {item['period']}")
+                st.caption(item["years"])
                 st.markdown(item["summary"])
                 for d in item["details"]:
                     st.markdown(f"- {d}")
                 st.caption(" · ".join(item["keywords"]))
 
-# =====================================================
-# 대통령 정리
-# =====================================================
 with tab4:
     st.subheader("👤 대한민국 역대 대통령 주요 내용")
     st.warning("대통령별 내용은 수업용 요약입니다. 특정 인물 평가가 아니라 주요 정책·사건·쟁점을 함께 보는 것이 목적입니다.")
@@ -471,16 +507,13 @@ with tab4:
         with cols[i % 3]:
             with st.container(border=True):
                 st.markdown(f"### {p['order']} {p['name']}")
-                st.markdown(f"**재임:** {p['term']}")
+                st.caption(p["years"])
                 st.markdown(f"**핵심:** {p['main']}")
                 st.markdown("**주요 내용**")
                 for point in p["points"]:
                     st.markdown(f"- {point}")
                 st.markdown(f"**함께 볼 점:** {p['note']}")
 
-# =====================================================
-# 한눈에 정리
-# =====================================================
 with tab5:
     st.subheader("📌 한눈에 정리")
 
@@ -489,6 +522,7 @@ with tab5:
         [
             {
                 "시대": x["name"],
+                "연도/시기": x["years"],
                 "구분": x["period"],
                 "핵심": x["core"],
                 "키워드": ", ".join(x["keywords"])
@@ -504,7 +538,7 @@ with tab5:
         [
             {
                 "단계": x["title"],
-                "시기": x["period"],
+                "연도/시기": x["years"],
                 "핵심 설명": x["summary"],
                 "키워드": ", ".join(x["keywords"])
             }
@@ -520,7 +554,7 @@ with tab5:
             {
                 "대수": p["order"],
                 "대통령": p["name"],
-                "재임": p["term"],
+                "재임 기간": p["years"],
                 "핵심": p["main"]
             }
             for p in PRESIDENTS
@@ -529,9 +563,6 @@ with tab5:
         hide_index=True
     )
 
-# =====================================================
-# 확인 퀴즈
-# =====================================================
 with tab6:
     st.subheader("🎮 우리나라 역사 확인 퀴즈")
 
@@ -548,9 +579,9 @@ with tab6:
 
     selected_mode = st.radio(
         "퀴즈 유형",
-        ["흐름 맞추기", "시대 설명 맞추기", "근현대사 맞추기", "대통령 맞추기", "재임 시기 맞추기"],
+        ["흐름 맞추기", "시대 설명 맞추기", "연도 맞추기", "근현대사 맞추기", "대통령 맞추기", "재임 시기 맞추기"],
         horizontal=True,
-        key="history_quiz_radio_v2"
+        key="history_quiz_radio_v3"
     )
 
     if selected_mode != st.session_state.quiz_mode:
@@ -565,7 +596,7 @@ with tab6:
         with cols[i % 2]:
             if st.button(
                 option,
-                key=f"history_quiz_v2_{i}_{st.session_state.total}",
+                key=f"history_quiz_v3_{i}_{st.session_state.total}",
                 use_container_width=True,
                 disabled=st.session_state.quiz_answered
             ):
@@ -590,4 +621,4 @@ with tab6:
         make_quiz()
         st.rerun()
 
-st.caption("필요 패키지: streamlit, plotly")
+st.caption("필요 패키지: streamlit")
