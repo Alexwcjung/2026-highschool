@@ -284,7 +284,7 @@ with tabs[4]:
 # --- Tab 5: Emoji ---
 with tabs[5]:
     st.subheader("😀 Emoji Board")
-    st.caption("필요한 이모지를 아래 미리보기에서 복사해서 수업 자료, 칠판, 활동지에 붙여 넣으세요.")
+    st.caption("필요한 이모지를 드래그해서 복사한 뒤 수업 자료, 칠판, 활동지에 붙여 넣으세요.")
 
     EMOJI_CATEGORIES = {
         "😀 감정/표정": """
@@ -408,9 +408,6 @@ with tabs[5]:
                 """,
                 unsafe_allow_html=True
             )
-
-            st.markdown("#### 📋 복사용 텍스트")
-            st.code(emojis.strip(), language=None)
 
 # --- Tab 6: TTS ---
 with tabs[6]:
