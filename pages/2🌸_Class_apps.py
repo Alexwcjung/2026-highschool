@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import qrcode
 from PIL import Image
 from wordcloud import WordCloud
-import streamlit.components.v1 as components  # For embedding YouTube videos / iframe
+import streamlit.components.v1 as components
 from gtts import gTTS
 import io
 from streamlit_drawable_canvas import st_canvas
@@ -52,7 +52,7 @@ with tabs[0]:
         unsafe_allow_html=True,
     )
 
-# ---- Tab2 Drawing
+# --- Tab 1: Drawing ---
 with tabs[1]:
     st.caption("Use the canvas below to draw freely. You can change the stroke width and color.")
 
@@ -81,8 +81,8 @@ with tabs[1]:
     if st.button("🗑️ Clear Canvas"):
         st.session_state["clear_canvas"] = not st.session_state["clear_canvas"]
         st.rerun()
-        
-# --- Tab 3: QR ---
+
+# --- Tab 2: QR ---
 with tabs[2]:
     st.caption("QR code generator")
 
@@ -108,10 +108,7 @@ with tabs[2]:
         qr_img = qr.make_image(fill='black', back_color='white').convert('RGB').resize((600, 600))
         st.image(qr_img, caption=caption if caption else "Generate", use_container_width=False, width=400)
 
-# ---
-
-
-# --- Tab 4: Timer ---
+# --- Tab 3: Timer ---
 with tabs[3]:
     st.subheader("⏳ Classroom Timer")
     st.caption("Set the time and click Start.")
@@ -221,7 +218,7 @@ with tabs[3]:
                     clearInterval(timerInterval);
                     timerInterval = null;
                     document.getElementById("message").innerHTML = "Time's up!";
-                    
+
                     let audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
                     audio.play();
                 }}
@@ -247,7 +244,7 @@ with tabs[3]:
 
     components.html(timer_html, height=450)
 
-# --- Tab 3: ✅ NEW WordCloud ---
+# --- Tab 4: WordCloud ---
 with tabs[4]:
     st.subheader("☁️ WordCloud Generator")
     st.caption("Paste text below and generate a word cloud.")
@@ -259,7 +256,6 @@ with tabs[4]:
         key="wc_text"
     )
 
-    # Optional controls (safe defaults)
     c1, c2, c3 = st.columns([1, 1, 1])
     with c1:
         max_words = st.slider("Max words", 30, 300, 120, 10)
@@ -285,162 +281,136 @@ with tabs[4]:
             ax.axis("off")
             st.pyplot(fig)
 
-
 # --- Tab 5: Emoji ---
 with tabs[5]:
     st.subheader("😀 Emoji Board")
-    st.caption("수업 자료, 칠판, 활동지에 바로 붙여 넣을 수 있는 이모지 모음입니다.")
+    st.caption("필요한 이모지를 아래 미리보기에서 복사해서 수업 자료, 칠판, 활동지에 붙여 넣으세요.")
 
     EMOJI_CATEGORIES = {
-        "😀 감정/표정": [
-            "😀", "😃", "😄", "😁", "😆", "😊", "🙂", "😉", "😍", "🥰",
-            "😎", "🤔", "😮", "😲", "😅", "😂", "😭", "😢", "😡", "😴",
-            "👍", "👏", "🙌", "🙏", "💪", "👌", "✌️", "👀", "🗣️", "💬"
-        ],
-        "📚 수업/학습": [
-            "📚", "📖", "📕", "📘", "📗", "📙", "📒", "📝", "✏️", "🖊️",
-            "🖍️", "📌", "📍", "📎", "📋", "📄", "🧾", "🗂️", "🗒️", "🔖",
-            "🎓", "🏫", "🧑‍🏫", "👩‍🏫", "👨‍🏫", "🧑‍🎓", "👩‍🎓", "👨‍🎓", "💡", "🔍"
-        ],
-        "🎯 활동/평가": [
-            "🎯", "✅", "☑️", "✔️", "❌", "⭕", "⭐", "🌟", "💯", "🏆",
-            "🥇", "🥈", "🥉", "🎲", "🎮", "🧩", "🃏", "🔔", "⏰", "⏳",
-            "🚀", "🔥", "🎉", "🎊", "👏", "💬", "🗯️", "❓", "❗", "📢"
-        ],
-        "🌍 장소/세계": [
-            "🌍", "🌎", "🌏", "🗺️", "🧭", "🏠", "🏫", "🏥", "🏦", "🏢",
-            "🏭", "🏛️", "🏰", "⛪", "🕌", "🛕", "🗽", "🌉", "⛰️", "🏖️",
-            "🇰🇷", "🇺🇸", "🇬🇧", "🇯🇵", "🇨🇳", "🇫🇷", "🇩🇪", "🇪🇸", "🇮🇹", "🇨🇦"
-        ],
-        "🚗 교통/여행": [
-            "🚗", "🚕", "🚌", "🚎", "🏎️", "🚓", "🚑", "🚒", "🚚", "🚜",
-            "🚲", "🛴", "🏍️", "🚆", "🚇", "🚊", "✈️", "🚁", "🚢", "⛵",
-            "🧳", "🎒", "🛣️", "🛤️", "⛽", "🚦", "🚧", "🛑", "🅿️", "🎫"
-        ],
-        "🍎 음식/생활": [
-            "🍎", "🍌", "🍇", "🍓", "🍉", "🍊", "🍋", "🍕", "🍔", "🍟",
-            "🌭", "🥪", "🍞", "🥐", "🥚", "🍗", "🍖", "🍜", "🍝", "🍚",
-            "🍱", "🍣", "🍰", "🍪", "🍫", "☕", "🥤", "🧃", "🍽️", "🥢"
-        ],
-        "🌱 자연/날씨": [
-            "☀️", "🌤️", "⛅", "☁️", "🌧️", "⛈️", "❄️", "🌈", "🌊", "🔥",
-            "🌳", "🌲", "🌴", "🌵", "🌷", "🌹", "🌻", "🍀", "🍁", "🍂",
-            "🐶", "🐱", "🐭", "🐰", "🐻", "🐼", "🐯", "🦁", "🐵", "🐦"
-        ],
-        "🏺 역사/사회": [
-            "🏺", "🪨", "⚔️", "🛡️", "👑", "🏛️", "📜", "🕯️", "🪖", "🗳️",
-            "🇰🇷", "🐻", "🌅", "🦅", "🚢", "🏭", "🌐", "🤝", "⚖️", "🕊️"
-        ],
-        "🔢 숫자/기호": [
-            "0️⃣", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣", "🔟",
-            "⬅️", "➡️", "⬆️", "⬇️", "↔️", "↕️", "🔄", "➕", "➖", "✖️", "➗",
-            "🔴", "🟠", "🟡", "🟢", "🔵", "🟣", "⚫", "⚪", "🔶", "🔷"
-        ],
+        "😀 감정/표정": """
+😀 😃 😄 😁 😆 😅 😂 🤣 🙂 🙃 😉 😊 😇
+😍 🥰 😘 😗 😙 😚 😋 😛 😜 🤪 😝 🤑
+🤗 🤭 🤫 🤔 🤨 😐 😑 😶 🙄 😏 😒 😬
+😮 😯 😲 😳 🥺 😦 😧 😨 😰 😥 😢 😭
+😱 😖 😣 😞 😓 😩 😫 🥱 😴 😌 😎 🤓 🧐
+😕 😟 🙁 ☹️ 😮‍💨 😤 😡 😠 🤯 🫢 🫣
+👍 👎 👏 🙌 👐 🤲 🙏 👌 ✌️ 🤞 🤟 🤘 💪
+👀 👂 👃 👄 👅 🧠 🗣️ 👤 👥
+🧑 👨 👩 👦 👧 👶 👴 👵
+👨‍🏫 👩‍🏫 🧑‍🏫 👨‍🎓 👩‍🎓 🧑‍🎓
+        """,
+
+        "📚 수업/학습": """
+📚 📖 📕 📗 📘 📙 📔 📒 📓 📝 ✏️
+🖊️ 🖋️ 🖍️ 📐 📏 📌 📍 📎 🖇️ ✂️
+🗂️ 📁 📂 🗒️ 📋 📊 📈 📉 🧾 📰
+🎓 🏫 🧑‍🏫 👩‍🏫 👨‍🏫 🧑‍🎓 👩‍🎓 👨‍🎓
+💡 🔍 🔎 🧪 🔬 🔭 🧲
+💻 🖥️ ⌨️ 🖱️ 🖨️ 📱 📲
+🎤 🎧 🎼 🎹 🎸 🥁
+        """,
+
+        "🎯 활동/평가": """
+🎯 ✅ ☑️ ✔️ ❌ ❎ ⭕ ⭐ 🌟 💯 🏆
+🥇 🥈 🥉 🎲 🎮 🧩 🃏 🔔 ⏰ ⏳
+🚀 🔥 🎉 🎊 👏 💬 🗯️ ❓ ❗ 📢 📣
+📝 📋 📌 📍 🔖 🎁 🎈
+        """,
+
+        "🌍 장소/세계": """
+🌍 🌎 🌏 🗺️ 🧭
+🏠 🏡 🏫 🏢 🏥 🏦 🏪 🏬 🏭 🏛️
+🏰 🏯 🗼 🗽 ⛪ 🕌 🛕 🕍 ⛩️
+🌉 🌁 🌃 🌆 🌇 🏞️ 🏝️ 🏖️ 🏜️ ⛰️
+🇰🇷 🇺🇸 🇬🇧 🇯🇵 🇨🇳 🇫🇷 🇩🇪 🇪🇸 🇮🇹 🇨🇦
+        """,
+
+        "🚗 교통/여행": """
+🚗 🚕 🚙 🚌 🚎 🏎️ 🚓 🚑 🚒 🚐 🚚 🚛
+🚜 🛵 🏍️ 🚲 🛴
+🚂 🚆 🚇 🚊 🚉 🚝 🚄
+✈️ 🛫 🛬 🚁 🚀 🛸
+⛵ 🚤 🛳️ 🚢 ⚓
+🧳 🎒 🛣️ 🛤️ ⛽ 🚦 🚧 🛑 🅿️ 🎫
+        """,
+
+        "🍎 음식/생활": """
+🍎 🍏 🍊 🍋 🍌 🍉 🍇 🍓 🍒 🍑 🍍 🥭
+🍕 🍔 🍟 🌭 🥪 🍞 🥐 🥚 🍗 🍖
+🍜 🍝 🍚 🍱 🍣 🍰 🍪 🍫 🍬 🍭
+☕ 🥤 🧃 🍽️ 🥢 🥄
+        """,
+
+        "🌱 자연/날씨": """
+☀️ 🌤️ ⛅ 🌥️ ☁️ 🌧️ ⛈️ 🌩️ 🌨️ ❄️
+🌈 💧 💦 🌊 🔥 ⭐ 🌟 ✨ ⚡ 🌙
+🌳 🌲 🌴 🌵 🌾 🌱 🌿 🍀 🍁 🍂 🍃
+🌹 🌷 🌻 🌼 🌸 🌺 🍄
+🐶 🐱 🐭 🐰 🐻 🐼 🐯 🦁 🐵 🐦
+🐔 🐧 🐸 🐴 🐮 🐷 🐝 🦋 🐢 🐍
+🐙 🦑 🦐 🦀 🐠 🐟 🐬 🐳 🐋
+        """,
+
+        "🏺 역사/사회": """
+🏺 🪨 ⚔️ 🛡️ 👑 🏛️ 📜 🕯️ 🪖 🗳️
+🇰🇷 🐻 🌅 🦅 🚢 🏭 🌐 🤝 ⚖️ 🕊️
+📚 📖 📝 🔍 🗺️ 🧭 ⏳
+        """,
+
+        "🔢 숫자/기호": """
+0️⃣ 1️⃣ 2️⃣ 3️⃣ 4️⃣ 5️⃣ 6️⃣ 7️⃣ 8️⃣ 9️⃣ 🔟
+⬅️ ➡️ ⬆️ ⬇️ ↗️ ↘️ ↙️ ↖️ ↔️ ↕️
+🔁 🔄 🔃 ▶️ ⏸️ ⏹️ ⏭️ ⏮️ ⏪ ⏩
+➕ ➖ ✖️ ➗
+🔴 🟠 🟡 🟢 🔵 🟣 ⚫ ⚪
+🟥 🟧 🟨 🟩 🟦 🟪 ⬛ ⬜
+🅰️ 🅱️ 🆎 🅾️ 🆕 🆗 🆙 🆒 🆓 🆘
+        """,
     }
 
-    if "emoji_text" not in st.session_state:
-        st.session_state.emoji_text = ""
+    emoji_tabs = st.tabs(list(EMOJI_CATEGORIES.keys()))
 
-    top_col1, top_col2 = st.columns([1, 2])
-    with top_col1:
-        selected_category = st.selectbox("카테고리", list(EMOJI_CATEGORIES.keys()))
-    with top_col2:
-        emoji_search = st.text_input("검색 또는 직접 입력", placeholder="예: 🇰🇷, 📚, happy, flag 등")
-
-    emojis = EMOJI_CATEGORIES[selected_category]
-
-    # 간단 검색: 실제 이모지를 입력하면 전체 목록에서 해당 문자 포함 항목만 보여줌
-    if emoji_search.strip():
-        all_emojis = []
-        for items in EMOJI_CATEGORIES.values():
-            all_emojis.extend(items)
-        seen = []
-        for e in all_emojis:
-            if e not in seen:
-                seen.append(e)
-        emojis = [e for e in seen if emoji_search.strip() in e]
-        if not emojis:
-            st.info("검색 결과가 없으면 아래 직접 추가 칸에 원하는 이모지를 붙여 넣으세요.")
-
-    st.markdown("### 🧩 클릭해서 이모지 추가")
-
-    for start in range(0, len(emojis), 10):
-        cols = st.columns(10)
-        for idx, emoji in enumerate(emojis[start:start+10]):
-            with cols[idx]:
-                if st.button(emoji, key=f"emoji_btn_{selected_category}_{start}_{idx}", use_container_width=True):
-                    st.session_state.emoji_text += emoji + " "
-                    st.rerun()
-
-    st.markdown("---")
-    st.markdown("### ✍️ 선택한 이모지")
-
-    st.session_state.emoji_text = st.text_area(
-        "필요한 이모지를 모아 두세요. 복사해서 칠판, 활동지, 문제, 제목에 붙여 넣으면 됩니다.",
-        value=st.session_state.emoji_text,
-        height=120,
-        key="emoji_text_area"
+    st.markdown(
+        """
+        <style>
+        .emoji-copy-box {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1.5px solid #e2e8f0;
+            border-radius: 22px;
+            padding: 20px 22px;
+            margin: 12px 0 20px 0;
+            font-size: 34px;
+            line-height: 1.9;
+            word-spacing: 10px;
+            box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+            user-select: text;
+        }
+        @media (max-width: 768px) {
+            .emoji-copy-box {
+                font-size: 28px;
+                line-height: 1.8;
+                padding: 16px;
+            }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
     )
 
-    b1, b2, b3 = st.columns(3)
-    with b1:
-        if st.button("🧹 비우기", use_container_width=True):
-            st.session_state.emoji_text = ""
-            st.rerun()
-    with b2:
-        custom_emoji = st.text_input("직접 추가", placeholder="예: 🇰🇷 태극기")
-    with b3:
-        st.write("")
-        st.write("")
-        if st.button("➕ 직접 추가", use_container_width=True):
-            if custom_emoji.strip():
-                st.session_state.emoji_text += custom_emoji.strip() + " "
-                st.rerun()
+    for tab, (category, emojis) in zip(emoji_tabs, EMOJI_CATEGORIES.items()):
+        with tab:
+            st.markdown(f"### {category}")
+            st.markdown(
+                f"""
+                <div class="emoji-copy-box">
+                    {emojis}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
-    # 브라우저 복사용 버튼
-    safe_text = st.session_state.emoji_text.replace('`', '\\`').replace('\\', '\\\\')
-    copy_html = f"""
-    <div style="
-        margin-top: 10px;
-        padding: 18px;
-        border-radius: 18px;
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        font-family: Arial, sans-serif;
-    ">
-        <div style="font-size: 20px; font-weight: 800; margin-bottom: 10px;">📋 복사용 미리보기</div>
-        <div id="emojiPreview" style="font-size: 34px; line-height: 1.7; word-break: break-word;">{st.session_state.emoji_text}</div>
-        <button onclick="navigator.clipboard.writeText(`{safe_text}`); this.innerText='✅ Copied!';" style="
-            margin-top: 14px;
-            font-size: 18px;
-            padding: 10px 18px;
-            border: none;
-            border-radius: 12px;
-            background: #2563eb;
-            color: white;
-            cursor: pointer;
-            font-weight: 700;
-        ">📋 Copy Emojis</button>
-    </div>
-    """
-    components.html(copy_html, height=220)
-
-    st.markdown("### 📌 자주 쓰는 조합")
-    quick_sets = {
-        "수업 제목": "📚 ✏️ 🎯 ✅",
-        "칭찬": "👍 👏 🌟 💯 🎉",
-        "퀴즈": "🎮 🎲 ❓ ✅ ❌",
-        "세계/역사": "🌍 🗺️ 🏺 👑 📜",
-        "한국": "🇰🇷 🐻 👑 📜 🕯️",
-        "말하기": "🗣️ 💬 👂 🎤 ⭐",
-    }
-    qcols = st.columns(3)
-    for i, (label, value) in enumerate(quick_sets.items()):
-        with qcols[i % 3]:
-            if st.button(f"{label}: {value}", key=f"emoji_set_{label}", use_container_width=True):
-                st.session_state.emoji_text += value + " "
-                st.rerun()
-
+            st.markdown("#### 📋 복사용 텍스트")
+            st.code(emojis.strip(), language=None)
 
 # --- Tab 6: TTS ---
 with tabs[6]:
@@ -477,21 +447,12 @@ with tabs[6]:
 
     st.markdown("---")
 
-# --- Tab 6: (was tabs[5]) Drawing ---
-
-
-# --- Tab 7: (was tabs[6]) Grouping ---
 # --- Tab 7: Grouping ---
 with tabs[7]:
-
     st.subheader("👥 Grouping Tool")
     st.caption("CSV를 올리지 않아도 기본 명단으로 조 편성을 할 수 있습니다.")
     st.caption("CSV를 올릴 경우, 반드시 `Course`, `Names` 열이 있어야 합니다.")
 
-    # ---------------------------
-    # 기본 명단 데이터
-    # CSV를 아직 안 올렸을 때 사용됨
-    # ---------------------------
     default_data = pd.DataFrame({
         "Course": [
             "Class 1", "Class 1", "Class 1", "Class 1", "Class 1",
@@ -516,19 +477,13 @@ with tabs[7]:
         df = default_data
         source_label = "📂 Using default sample data"
 
-    # ---------------------------
-    # 데이터 확인
-    # ---------------------------
     if all(col in df.columns for col in ["Course", "Names"]):
-
         st.markdown("### 📋 Current Student List")
         st.dataframe(df, use_container_width=True)
 
-        # Step 2: Select Course
         course_list = df["Course"].dropna().unique().tolist()
         selected_course = st.selectbox("🌱 Step 2: Select Course for Grouping", course_list)
 
-        # 코스별 데이터 필터링 및 인원수 계산
         course_df = df[df["Course"] == selected_course]
         names = course_df["Names"].dropna().tolist()
         total_students = len(names)
@@ -538,7 +493,6 @@ with tabs[7]:
             f"Total **{total_students}** students available for grouping."
         )
 
-        # Step 3: Group size input
         st.markdown("##### 🌱 Step 3: Group Settings")
 
         col_in1, col_in2 = st.columns(2)
@@ -567,9 +521,7 @@ with tabs[7]:
         if needed_students > total_students:
             st.warning("설정한 조 인원 수가 현재 학생 수보다 많습니다. 조 개수를 줄여 주세요.")
 
-        # Step 4: Generate Groups
         if st.button("🌱 Step 4: Generate Groups"):
-
             if total_students == 0:
                 st.warning("No students available for grouping.")
 
@@ -584,7 +536,6 @@ with tabs[7]:
                 group_num = 1
                 assigned_count = 0
 
-                # 1. 3인 그룹 생성
                 for _ in range(num_group3):
                     if len(names_for_grouping) >= 3:
                         members = names_for_grouping[:3]
@@ -598,7 +549,6 @@ with tabs[7]:
                         group_num += 1
                         assigned_count += 3
 
-                # 2. 4인 그룹 생성
                 for _ in range(num_group4):
                     if len(names_for_grouping) >= 4:
                         members = names_for_grouping[:4]
@@ -612,7 +562,6 @@ with tabs[7]:
                         group_num += 1
                         assigned_count += 4
 
-                # 3. 남은 인원 처리
                 remaining_count = len(names_for_grouping)
 
                 if remaining_count > 0:
@@ -642,7 +591,6 @@ with tabs[7]:
 
                     st.dataframe(grouped_df, use_container_width=True)
 
-                    # 다운로드 버튼
                     csv_text = grouped_df.to_csv(index=False)
                     csv_bytes = csv_text.encode("utf-8-sig")
 
