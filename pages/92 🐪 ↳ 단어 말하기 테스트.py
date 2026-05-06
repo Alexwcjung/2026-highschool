@@ -3,83 +3,195 @@ import streamlit.components.v1 as components
 import json
 
 st.set_page_config(
-    page_title="생존 문장 말하기 훈련",
-    page_icon="🎙️",
+    page_title="단어 카드 말하기 게임",
+    page_icon="🃏",
     layout="wide"
 )
 
 # =========================================================
-# 데이터
+# 생존 단어 160개
 # =========================================================
-PRACTICE_ITEMS = [
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.', 'blank': 'I am ______.', 'answer': 'I am hungry.', 'hint': 'hungry', 'emoji': '🍽️'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 목말라.', 'blank': 'I am ______.', 'answer': 'I am thirsty.', 'hint': 'thirsty', 'emoji': '💧'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 피곤해.', 'blank': 'I am ______.', 'answer': 'I am tired.', 'hint': 'tired', 'emoji': '😴'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 아파.', 'blank': 'I am ______.', 'answer': 'I am sick.', 'hint': 'sick', 'emoji': '🤒'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 괜찮아.', 'blank': 'I am ______.', 'answer': 'I am okay.', 'hint': 'okay', 'emoji': '🙂'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 추워.', 'blank': 'I am ______.', 'answer': 'I am cold.', 'hint': 'cold', 'emoji': '🥶'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 걱정돼.', 'blank': 'I am ______.', 'answer': 'I am worried.', 'hint': 'worried', 'emoji': '😟'},
-    {'cat': '🙋 내 상태 말하기', 'ko': '나는 무서워.', 'blank': 'I am ______.', 'answer': 'I am scared.', 'hint': 'scared', 'emoji': '😨'},
-
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 물이 필요해.', 'blank': 'I need ______.', 'answer': 'I need water.', 'hint': 'water', 'emoji': '💧'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 음식이 필요해.', 'blank': 'I need ______.', 'answer': 'I need food.', 'hint': 'food', 'emoji': '🍽️'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 도움이 필요해.', 'blank': 'I need ______.', 'answer': 'I need help.', 'hint': 'help', 'emoji': '🆘'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 약이 필요해.', 'blank': 'I need ______.', 'answer': 'I need medicine.', 'hint': 'medicine', 'emoji': '💊'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 병원이 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a hospital.', 'hint': 'hospital', 'emoji': '🏥'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 택시가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a taxi.', 'hint': 'taxi', 'emoji': '🚕'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 표가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a ticket.', 'hint': 'ticket', 'emoji': '🎫'},
-    {'cat': '🆘 필요한 것 말하기', 'ko': '나는 열쇠가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a key.', 'hint': 'key', 'emoji': '🔑'},
-
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 음식을 원해.', 'blank': 'I want ______.', 'answer': 'I want food.', 'hint': 'food', 'emoji': '🍽️'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 물을 원해.', 'blank': 'I want ______.', 'answer': 'I want water.', 'hint': 'water', 'emoji': '💧'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 밥을 원해.', 'blank': 'I want ______.', 'answer': 'I want rice.', 'hint': 'rice', 'emoji': '🍚'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 빵을 원해.', 'blank': 'I want ______.', 'answer': 'I want bread.', 'hint': 'bread', 'emoji': '🍞'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 우유를 원해.', 'blank': 'I want ______.', 'answer': 'I want milk.', 'hint': 'milk', 'emoji': '🥛'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 주스를 원해.', 'blank': 'I want ______.', 'answer': 'I want juice.', 'hint': 'juice', 'emoji': '🧃'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 커피를 원해.', 'blank': 'I want ______.', 'answer': 'I want coffee.', 'hint': 'coffee', 'emoji': '☕'},
-    {'cat': '💭 원하는 것 말하기', 'ko': '나는 간식을 원해.', 'blank': 'I want a ______.', 'answer': 'I want a snack.', 'hint': 'snack', 'emoji': '🍪'},
-
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 먹고 있어.', 'blank': 'I am ______.', 'answer': 'I am eating.', 'hint': 'eating', 'emoji': '🍽️'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 마시고 있어.', 'blank': 'I am ______.', 'answer': 'I am drinking.', 'hint': 'drinking', 'emoji': '🥤'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 기다리고 있어.', 'blank': 'I am ______.', 'answer': 'I am waiting.', 'hint': 'waiting', 'emoji': '⏳'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 공부하고 있어.', 'blank': 'I am ______.', 'answer': 'I am studying.', 'hint': 'studying', 'emoji': '📚'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 읽고 있어.', 'blank': 'I am ______.', 'answer': 'I am reading.', 'hint': 'reading', 'emoji': '📖'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 쓰고 있어.', 'blank': 'I am ______.', 'answer': 'I am writing.', 'hint': 'writing', 'emoji': '✏️'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 걷고 있어.', 'blank': 'I am ______.', 'answer': 'I am walking.', 'hint': 'walking', 'emoji': '🚶'},
-    {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 듣고 있어.', 'blank': 'I am ______.', 'answer': 'I am listening.', 'hint': 'listening', 'emoji': '👂'},
-
-    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 집에 갈 거야.', 'blank': 'I will ______ home.', 'answer': 'I will go home.', 'hint': 'go', 'emoji': '🏠'},
-    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 기다릴 거야.', 'blank': 'I will ______.', 'answer': 'I will wait.', 'hint': 'wait', 'emoji': '⏳'},
-    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 너를 도와줄 거야.', 'blank': 'I will ______ you.', 'answer': 'I will help you.', 'hint': 'help', 'emoji': '🤝'},
-    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 영어를 공부할 거야.', 'blank': 'I will ______ English.', 'answer': 'I will study English.', 'hint': 'study', 'emoji': '📚'},
-    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 점심을 먹을 거야.', 'blank': 'I will ______ lunch.', 'answer': 'I will eat lunch.', 'hint': 'eat', 'emoji': '🍱'},
-    {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 물을 마실 거야.', 'blank': 'I will ______ water.', 'answer': 'I will drink water.', 'hint': 'drink', 'emoji': '💧'},
-
-    {'cat': '❌ 아니라고 말하기', 'ko': '나는 아프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not sick.', 'hint': 'sick', 'emoji': '🙂'},
-    {'cat': '❌ 아니라고 말하기', 'ko': '나는 배고프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not hungry.', 'hint': 'hungry', 'emoji': '🙅🍽️'},
-    {'cat': '❌ 아니라고 말하기', 'ko': '나는 괜찮지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not okay.', 'hint': 'okay', 'emoji': '😟'},
-    {'cat': '❌ 아니라고 말하기', 'ko': '나는 몰라.', 'blank': 'I do not ______.', 'answer': 'I do not know.', 'hint': 'know', 'emoji': '🤷'},
-    {'cat': '❌ 아니라고 말하기', 'ko': '나는 이해하지 못해.', 'blank': 'I do not ______.', 'answer': 'I do not understand.', 'hint': 'understand', 'emoji': '❓'},
-    {'cat': '❌ 아니라고 말하기', 'ko': '나는 그것을 원하지 않아.', 'blank': 'I do not ______ it.', 'answer': 'I do not want it.', 'hint': 'want', 'emoji': '🙅'},
-
-    {'cat': '❓ 간단히 물어보기', 'ko': '괜찮니?', 'blank': 'Are you ______?', 'answer': 'Are you okay?', 'hint': 'okay', 'emoji': '🙂'},
-    {'cat': '❓ 간단히 물어보기', 'ko': '아프니?', 'blank': 'Are you ______?', 'answer': 'Are you sick?', 'hint': 'sick', 'emoji': '🤒'},
-    {'cat': '❓ 간단히 물어보기', 'ko': '배고프니?', 'blank': 'Are you ______?', 'answer': 'Are you hungry?', 'hint': 'hungry', 'emoji': '🍽️'},
-    {'cat': '❓ 간단히 물어보기', 'ko': '목마르니?', 'blank': 'Are you ______?', 'answer': 'Are you thirsty?', 'hint': 'thirsty', 'emoji': '💧'},
-    {'cat': '❓ 간단히 물어보기', 'ko': '도움이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need help?', 'hint': 'help', 'emoji': '🆘'},
-    {'cat': '❓ 간단히 물어보기', 'ko': '물이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need water?', 'hint': 'water', 'emoji': '💧'},
-
-    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '화장실은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the bathroom?', 'hint': 'bathroom', 'emoji': '🚻'},
-    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '병원은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the hospital?', 'hint': 'hospital', 'emoji': '🏥'},
-    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '가게는 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the store?', 'hint': 'store', 'emoji': '🏪'},
-    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '역은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the station?', 'hint': 'station', 'emoji': '🚉'},
-    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '지금 몇 시인가요?', 'blank': 'What ______ is it?', 'answer': 'What time is it?', 'hint': 'time', 'emoji': '⏰'},
-    {'cat': '🕵️ 필요한 정보 묻기', 'ko': '이름이 무엇인가요?', 'blank': 'What is your ______?', 'answer': 'What is your name?', 'hint': 'name', 'emoji': '🏷️'},
-]
-
+WORD_THEMES = {
+    "🧍 나와 사람": [
+        {"word": "I", "meaning": "나", "emoji": "🙋"},
+        {"word": "you", "meaning": "너, 당신", "emoji": "👉"},
+        {"word": "he", "meaning": "그", "emoji": "👦"},
+        {"word": "she", "meaning": "그녀", "emoji": "👧"},
+        {"word": "we", "meaning": "우리", "emoji": "👥"},
+        {"word": "they", "meaning": "그들", "emoji": "👥"},
+        {"word": "friend", "meaning": "친구", "emoji": "🤝"},
+        {"word": "teacher", "meaning": "선생님", "emoji": "👩‍🏫"},
+        {"word": "student", "meaning": "학생", "emoji": "🧑‍🎓"},
+        {"word": "classmate", "meaning": "반 친구", "emoji": "👫"},
+        {"word": "family", "meaning": "가족", "emoji": "👨‍👩‍👧"},
+        {"word": "father", "meaning": "아버지", "emoji": "👨"},
+        {"word": "mother", "meaning": "어머니", "emoji": "👩"},
+        {"word": "brother", "meaning": "형제, 남자 형제", "emoji": "👦"},
+        {"word": "sister", "meaning": "자매, 여자 형제", "emoji": "👧"},
+        {"word": "name", "meaning": "이름", "emoji": "🏷️"},
+        {"word": "person", "meaning": "사람", "emoji": "🧍"},
+        {"word": "man", "meaning": "남자", "emoji": "👨"},
+        {"word": "woman", "meaning": "여자", "emoji": "👩"},
+        {"word": "child", "meaning": "아이", "emoji": "🧒"},
+    ],
+    "🏃 기본 동작": [
+        {"word": "go", "meaning": "가다", "emoji": "➡️"},
+        {"word": "come", "meaning": "오다", "emoji": "⬅️"},
+        {"word": "walk", "meaning": "걷다", "emoji": "🚶"},
+        {"word": "run", "meaning": "달리다", "emoji": "🏃"},
+        {"word": "sit", "meaning": "앉다", "emoji": "🪑"},
+        {"word": "stand", "meaning": "서다", "emoji": "🧍"},
+        {"word": "stop", "meaning": "멈추다", "emoji": "🛑"},
+        {"word": "start", "meaning": "시작하다", "emoji": "▶️"},
+        {"word": "open", "meaning": "열다", "emoji": "📂"},
+        {"word": "close", "meaning": "닫다", "emoji": "📕"},
+        {"word": "eat", "meaning": "먹다", "emoji": "🍽️"},
+        {"word": "drink", "meaning": "마시다", "emoji": "🥤"},
+        {"word": "sleep", "meaning": "자다", "emoji": "😴"},
+        {"word": "study", "meaning": "공부하다", "emoji": "📚"},
+        {"word": "read", "meaning": "읽다", "emoji": "📖"},
+        {"word": "write", "meaning": "쓰다", "emoji": "✏️"},
+        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
+        {"word": "help", "meaning": "돕다", "emoji": "🆘"},
+        {"word": "wait", "meaning": "기다리다", "emoji": "⏳"},
+    ],
+    "💖 감정·몸 상태": [
+        {"word": "happy", "meaning": "행복한", "emoji": "😊"},
+        {"word": "sad", "meaning": "슬픈", "emoji": "😢"},
+        {"word": "angry", "meaning": "화난", "emoji": "😠"},
+        {"word": "tired", "meaning": "피곤한", "emoji": "🥱"},
+        {"word": "hungry", "meaning": "배고픈", "emoji": "😋"},
+        {"word": "thirsty", "meaning": "목마른", "emoji": "🥤"},
+        {"word": "sick", "meaning": "아픈", "emoji": "🤒"},
+        {"word": "okay", "meaning": "괜찮은", "emoji": "👌"},
+        {"word": "fine", "meaning": "괜찮은", "emoji": "🙂"},
+        {"word": "cold", "meaning": "추운, 차가운", "emoji": "🥶"},
+        {"word": "hot", "meaning": "더운, 뜨거운", "emoji": "🥵"},
+        {"word": "pain", "meaning": "통증", "emoji": "🤕"},
+        {"word": "headache", "meaning": "두통", "emoji": "🤯"},
+        {"word": "stomachache", "meaning": "복통", "emoji": "🤢"},
+        {"word": "fever", "meaning": "열", "emoji": "🌡️"},
+        {"word": "hurt", "meaning": "아프다, 다치다", "emoji": "🩹"},
+        {"word": "good", "meaning": "좋은", "emoji": "👍"},
+        {"word": "bad", "meaning": "나쁜", "emoji": "👎"},
+        {"word": "worried", "meaning": "걱정하는", "emoji": "😟"},
+        {"word": "scared", "meaning": "무서워하는", "emoji": "😨"},
+    ],
+    "🍎 음식·물": [
+        {"word": "food", "meaning": "음식", "emoji": "🍽️"},
+        {"word": "water", "meaning": "물", "emoji": "💧"},
+        {"word": "rice", "meaning": "밥, 쌀", "emoji": "🍚"},
+        {"word": "bread", "meaning": "빵", "emoji": "🍞"},
+        {"word": "milk", "meaning": "우유", "emoji": "🥛"},
+        {"word": "juice", "meaning": "주스", "emoji": "🧃"},
+        {"word": "coffee", "meaning": "커피", "emoji": "☕"},
+        {"word": "tea", "meaning": "차", "emoji": "🍵"},
+        {"word": "apple", "meaning": "사과", "emoji": "🍎"},
+        {"word": "banana", "meaning": "바나나", "emoji": "🍌"},
+        {"word": "egg", "meaning": "달걀", "emoji": "🥚"},
+        {"word": "meat", "meaning": "고기", "emoji": "🥩"},
+        {"word": "chicken", "meaning": "닭고기, 닭", "emoji": "🍗"},
+        {"word": "fish", "meaning": "생선, 물고기", "emoji": "🐟"},
+        {"word": "breakfast", "meaning": "아침 식사", "emoji": "🍳"},
+        {"word": "lunch", "meaning": "점심 식사", "emoji": "🍱"},
+        {"word": "dinner", "meaning": "저녁 식사", "emoji": "🍽️"},
+        {"word": "snack", "meaning": "간식", "emoji": "🍪"},
+        {"word": "medicine", "meaning": "약", "emoji": "💊"},
+        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+    ],
+    "🚗 장소·이동": [
+        {"word": "home", "meaning": "집", "emoji": "🏠"},
+        {"word": "school", "meaning": "학교", "emoji": "🏫"},
+        {"word": "classroom", "meaning": "교실", "emoji": "🧑‍🏫"},
+        {"word": "bathroom", "meaning": "화장실", "emoji": "🚻"},
+        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+        {"word": "store", "meaning": "가게", "emoji": "🏪"},
+        {"word": "station", "meaning": "역", "emoji": "🚉"},
+        {"word": "bus", "meaning": "버스", "emoji": "🚌"},
+        {"word": "car", "meaning": "자동차", "emoji": "🚗"},
+        {"word": "taxi", "meaning": "택시", "emoji": "🚕"},
+        {"word": "train", "meaning": "기차", "emoji": "🚆"},
+        {"word": "bike", "meaning": "자전거", "emoji": "🚲"},
+        {"word": "road", "meaning": "도로", "emoji": "🛣️"},
+        {"word": "street", "meaning": "거리", "emoji": "🏙️"},
+        {"word": "here", "meaning": "여기", "emoji": "📍"},
+        {"word": "there", "meaning": "거기", "emoji": "📌"},
+        {"word": "near", "meaning": "가까운", "emoji": "↔️"},
+        {"word": "far", "meaning": "먼", "emoji": "🌁"},
+        {"word": "left", "meaning": "왼쪽", "emoji": "⬅️"},
+        {"word": "right", "meaning": "오른쪽, 맞는", "emoji": "➡️"},
+    ],
+    "⏰ 시간·숫자": [
+        {"word": "time", "meaning": "시간", "emoji": "⏰"},
+        {"word": "now", "meaning": "지금", "emoji": "🕒"},
+        {"word": "today", "meaning": "오늘", "emoji": "📅"},
+        {"word": "tomorrow", "meaning": "내일", "emoji": "➡️📅"},
+        {"word": "yesterday", "meaning": "어제", "emoji": "⬅️📅"},
+        {"word": "morning", "meaning": "아침", "emoji": "🌅"},
+        {"word": "afternoon", "meaning": "오후", "emoji": "☀️"},
+        {"word": "evening", "meaning": "저녁", "emoji": "🌆"},
+        {"word": "night", "meaning": "밤", "emoji": "🌙"},
+        {"word": "early", "meaning": "이른", "emoji": "🐓"},
+        {"word": "late", "meaning": "늦은", "emoji": "🌃"},
+        {"word": "one", "meaning": "하나", "emoji": "1️⃣"},
+        {"word": "two", "meaning": "둘", "emoji": "2️⃣"},
+        {"word": "three", "meaning": "셋", "emoji": "3️⃣"},
+        {"word": "four", "meaning": "넷", "emoji": "4️⃣"},
+        {"word": "five", "meaning": "다섯", "emoji": "5️⃣"},
+        {"word": "six", "meaning": "여섯", "emoji": "6️⃣"},
+        {"word": "seven", "meaning": "일곱", "emoji": "7️⃣"},
+        {"word": "eight", "meaning": "여덟", "emoji": "8️⃣"},
+        {"word": "ten", "meaning": "열", "emoji": "🔟"},
+    ],
+    "🎒 물건·돈": [
+        {"word": "bag", "meaning": "가방", "emoji": "🎒"},
+        {"word": "phone", "meaning": "전화기", "emoji": "📱"},
+        {"word": "book", "meaning": "책", "emoji": "📘"},
+        {"word": "notebook", "meaning": "공책", "emoji": "📓"},
+        {"word": "pen", "meaning": "펜", "emoji": "🖊️"},
+        {"word": "pencil", "meaning": "연필", "emoji": "✏️"},
+        {"word": "desk", "meaning": "책상", "emoji": "🪑"},
+        {"word": "chair", "meaning": "의자", "emoji": "🪑"},
+        {"word": "door", "meaning": "문", "emoji": "🚪"},
+        {"word": "window", "meaning": "창문", "emoji": "🪟"},
+        {"word": "key", "meaning": "열쇠", "emoji": "🔑"},
+        {"word": "money", "meaning": "돈", "emoji": "💵"},
+        {"word": "card", "meaning": "카드", "emoji": "💳"},
+        {"word": "ticket", "meaning": "표, 티켓", "emoji": "🎫"},
+        {"word": "clothes", "meaning": "옷", "emoji": "👕"},
+        {"word": "shoes", "meaning": "신발", "emoji": "👟"},
+        {"word": "hat", "meaning": "모자", "emoji": "🧢"},
+        {"word": "watch", "meaning": "시계", "emoji": "⌚"},
+        {"word": "cup", "meaning": "컵", "emoji": "☕"},
+        {"word": "bottle", "meaning": "병", "emoji": "🍼"},
+    ],
+    "🆘 도움 요청": [
+        {"word": "help", "meaning": "도움, 돕다", "emoji": "🆘"},
+        {"word": "please", "meaning": "부디, 제발", "emoji": "🙏"},
+        {"word": "sorry", "meaning": "미안합니다", "emoji": "🙇"},
+        {"word": "excuse me", "meaning": "실례합니다", "emoji": "🙋"},
+        {"word": "again", "meaning": "다시", "emoji": "🔁"},
+        {"word": "slowly", "meaning": "천천히", "emoji": "🐢"},
+        {"word": "understand", "meaning": "이해하다", "emoji": "💡"},
+        {"word": "question", "meaning": "질문", "emoji": "❓"},
+        {"word": "problem", "meaning": "문제", "emoji": "⚠️"},
+        {"word": "need", "meaning": "필요하다", "emoji": "📌"},
+        {"word": "want", "meaning": "원하다", "emoji": "✨"},
+        {"word": "know", "meaning": "알다", "emoji": "🧠"},
+        {"word": "say", "meaning": "말하다", "emoji": "💬"},
+        {"word": "tell", "meaning": "말하다, 알려주다", "emoji": "📣"},
+        {"word": "ask", "meaning": "묻다", "emoji": "❔"},
+        {"word": "answer", "meaning": "대답, 답", "emoji": "✅"},
+        {"word": "repeat", "meaning": "반복하다", "emoji": "🔁"},
+        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
+        {"word": "look", "meaning": "보다", "emoji": "👀"},
+        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+    ],
+}
 
 # =========================================================
-# 디자인
+# 상단 디자인
 # =========================================================
 st.markdown(
     """
@@ -148,10 +260,10 @@ st.markdown(
 st.markdown(
     """
     <div class="main-title-box">
-        <h1>🎙️ 생존 단어 160개로 문장 말하기</h1>
+        <h1>🃏 생존 단어 카드 말하기 게임</h1>
         <p>
-            한국어 상황과 이모지를 보고, 빈칸에 들어갈 말을 떠올린 뒤 <b>문장 전체를 영어로 말해 보세요.</b><br>
-            힌트는 정답 단어의 앞 두 글자만 보여 줍니다.
+            한국말 뜻과 이모지를 보고 <b>영어 단어 한 단어</b>를 말해 보세요.<br>
+            음성 인식으로 정답이면 자동으로 다음 카드로 넘어갑니다.
         </p>
     </div>
     """,
@@ -162,22 +274,28 @@ st.markdown(
     """
     <div class="guide-box">
         <b>활동 순서</b><br>
-        1. 한국어 상황과 이모지를 봅니다. → 2. 영어 빈칸 문장을 봅니다. → 3. 필요하면 앞 두 글자 힌트를 봅니다.<br>
-        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 테마가 끝나면 정답 개수를 확인하고 다시 풀 수 있습니다.
+        1. 테마를 선택합니다. → 2. 한국말 뜻을 봅니다. → 3. 마이크 버튼을 누릅니다.<br>
+        4. 영어 단어를 한 단어로 말합니다. → 5. 맞으면 자동으로 다음 카드로 넘어갑니다.
     </div>
     """,
     unsafe_allow_html=True
 )
 
+# =========================================================
+# 말하기 카드 게임 컴포넌트
+# =========================================================
+def word_card_speaking_game(word_themes):
+    items = []
+    for cat, words in word_themes.items():
+        for item in words:
+            new_item = dict(item)
+            new_item["cat"] = cat
+            items.append(new_item)
 
-# =========================================================
-# 말하기 훈련 컴포넌트
-# =========================================================
-def speaking_practice_component(items):
     items_json = json.dumps(items, ensure_ascii=False)
 
     html = r"""
-    <div id="speaking-app" style="
+    <div id="word-card-app" style="
         font-family: Arial, sans-serif;
         background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
         border: 1.5px solid #dbeafe;
@@ -189,21 +307,31 @@ def speaking_practice_component(items):
         box-sizing: border-box;
     ">
         <style>
-            #speaking-app * {
+            #word-card-app * {
                 box-sizing: border-box;
             }
 
-            #speaking-app button {
+            #word-card-app button {
                 -webkit-tap-highlight-color: transparent;
                 touch-action: manipulation;
             }
 
-            #speaking-app select {
+            #word-card-app select {
                 max-width: 100%;
             }
 
+            .bounce-card {
+                animation: cardBounce 0.42s ease;
+            }
+
+            @keyframes cardBounce {
+                0% { transform: scale(1); }
+                40% { transform: scale(1.035); }
+                100% { transform: scale(1); }
+            }
+
             @media (max-width: 768px) {
-                #speaking-app {
+                #word-card-app {
                     padding: 14px !important;
                     border-radius: 22px !important;
                 }
@@ -223,44 +351,34 @@ def speaking_practice_component(items):
                     padding: 10px 10px !important;
                 }
 
-                #questionCard {
-                    padding: 16px !important;
-                    border-radius: 20px !important;
+                #cardBox {
+                    padding: 18px 14px !important;
+                    border-radius: 24px !important;
                 }
 
-                #koPrompt {
-                    font-size: 23px !important;
-                    line-height: 1.35 !important;
+                #emojiBox {
+                    font-size: 72px !important;
                 }
 
-                #blankSentence {
-                    font-size: 25px !important;
-                    padding: 16px 14px !important;
-                    line-height: 1.35 !important;
+                #meaningBox {
+                    font-size: 32px !important;
+                    line-height: 1.25 !important;
                 }
 
-                #hintBox,
                 #answerBox {
-                    font-size: 18px !important;
-                    padding: 12px 13px !important;
+                    font-size: 27px !important;
+                    padding: 14px 12px !important;
                     word-break: break-word;
                 }
 
                 #buttonBox button {
-                    flex: 1 1 45%;
-                    font-size: 14px !important;
-                    padding: 11px 10px !important;
-                }
-
-                #micBtn,
-                #nextBtn {
-                    flex: 1 1 100% !important;
+                    flex: 1 1 100%;
                     font-size: 16px !important;
                     padding: 13px 12px !important;
                 }
 
                 #transcriptBox {
-                    font-size: 18px !important;
+                    font-size: 19px !important;
                 }
 
                 #resultBox {
@@ -270,7 +388,7 @@ def speaking_practice_component(items):
         </style>
 
         <div id="topControlBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
-            <label style="font-weight:900; color:#334155;">문장 구조 선택</label>
+            <label style="font-weight:900; color:#334155;">단어 테마 선택</label>
             <select id="categorySelect" style="
                 padding: 10px 14px;
                 border-radius: 999px;
@@ -289,7 +407,7 @@ def speaking_practice_component(items):
                 padding: 10px 15px;
                 font-weight: 900;
                 cursor: pointer;
-            ">🎲 랜덤</button>
+            ">🎲 섞어서 풀기</button>
 
             <button id="resetBtn" style="
                 border: 1.5px solid #fed7aa;
@@ -299,16 +417,10 @@ def speaking_practice_component(items):
                 padding: 10px 15px;
                 font-weight: 900;
                 cursor: pointer;
-            ">🔄 현재 테마 점수 초기화</button>
+            ">🔄 현재 테마 다시 시작</button>
         </div>
 
-        <div id="questionCard" style="
-            background:white;
-            border-radius:26px;
-            padding:24px;
-            border:1.5px solid #e0f2fe;
-            box-shadow:0 5px 16px rgba(0,0,0,0.055);
-        ">
+        <div id="gameArea">
             <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
                 <div id="categoryLabel" style="
                     display:inline-block;
@@ -333,74 +445,75 @@ def speaking_practice_component(items):
                 ">현재 테마 정답 0 / 0</div>
             </div>
 
-            <div style="
-                font-size: 30px;
-                font-weight: 900;
-                color: #111827;
-                line-height: 1.45;
-                margin-bottom: 18px;
-            " id="koPrompt">
-                한국어 상황
+            <div id="cardBox" style="
+                background:white;
+                border-radius:32px;
+                padding:30px 24px;
+                border:1.5px solid #e0f2fe;
+                box-shadow:0 8px 24px rgba(0,0,0,0.07);
+                text-align:center;
+                margin-bottom:18px;
+            ">
+                <div id="emojiBox" style="
+                    font-size: 96px;
+                    line-height: 1.1;
+                    margin-bottom: 14px;
+                ">🃏</div>
+
+                <div style="
+                    display:inline-block;
+                    background:#fef3c7;
+                    color:#92400e;
+                    border:1.5px solid #fde68a;
+                    border-radius:999px;
+                    padding:7px 14px;
+                    font-size:14px;
+                    font-weight:900;
+                    margin-bottom:14px;
+                ">한국말 뜻</div>
+
+                <div id="meaningBox" style="
+                    font-size: 44px;
+                    font-weight: 900;
+                    color: #111827;
+                    line-height: 1.35;
+                    margin-bottom: 16px;
+                ">뜻</div>
+
+                <div id="answerBox" style="
+                    display:none;
+                    background:#ecfdf5;
+                    border:1.5px solid #bbf7d0;
+                    color:#166534;
+                    border-radius:20px;
+                    padding:16px 18px;
+                    font-size:34px;
+                    font-weight:900;
+                    margin-top:18px;
+                ">answer</div>
             </div>
-
-            <div style="
-                background: linear-gradient(135deg, #ffffff 0%, #f8fbff 100%);
-                border: 1.5px solid #dbeafe;
-                border-radius: 22px;
-                padding: 22px 20px;
-                margin-bottom: 18px;
-                font-size: 34px;
-                font-weight: 900;
-                color: #0f172a;
-                line-height: 1.5;
-                word-break: break-word;
-            " id="blankSentence">
-                I am ______.
-            </div>
-
-            <div id="hintBox" style="
-                display:none;
-                background:#fffbeb;
-                border:1.5px solid #fde68a;
-                color:#92400e;
-                border-radius:18px;
-                padding:14px 16px;
-                margin-bottom:16px;
-                font-size:22px;
-                font-weight:900;
-            "></div>
-
-            <div id="answerBox" style="
-                display:none;
-                background:#ecfdf5;
-                border:1.5px solid #bbf7d0;
-                color:#166534;
-                border-radius:18px;
-                padding:14px 16px;
-                margin-bottom:16px;
-                font-size:22px;
-                font-weight:900;
-            "></div>
 
             <div id="buttonBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
-                <button id="hintBtn" style="
-                    border:1.5px solid #fde68a;
-                    background:#fffbeb;
-                    color:#92400e;
+                <button id="micBtn" style="
+                    border:1.5px solid #fecaca;
+                    background:#fff1f2;
+                    color:#be123c;
                     border-radius:999px;
-                    padding:11px 16px;
+                    padding:13px 20px;
                     font-weight:900;
                     cursor:pointer;
-                ">💡 앞 두 글자 힌트</button>
+                    font-size:17px;
+                ">🎙️ 영어 단어 말하기</button>
 
                 <button id="listenBtn" style="
                     border:1.5px solid #bfdbfe;
                     background:#eff6ff;
                     color:#1d4ed8;
                     border-radius:999px;
-                    padding:11px 16px;
+                    padding:13px 20px;
                     font-weight:900;
                     cursor:pointer;
+                    font-size:17px;
                 ">🔊 정답 듣기</button>
 
                 <button id="answerBtn" style="
@@ -408,44 +521,22 @@ def speaking_practice_component(items):
                     background:#f0fdf4;
                     color:#166534;
                     border-radius:999px;
-                    padding:11px 16px;
+                    padding:13px 20px;
                     font-weight:900;
                     cursor:pointer;
+                    font-size:17px;
                 ">👀 정답 보기</button>
 
-                <button id="micBtn" style="
-                    border:1.5px solid #fecaca;
-                    background:#fff1f2;
-                    color:#be123c;
-                    border-radius:999px;
-                    padding:11px 18px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:16px;
-                ">🎙️ 말하기 시작</button>
-
-                <button id="nextBtn" style="
+                <button id="skipBtn" style="
                     border:1.5px solid #c7d2fe;
                     background:#eef2ff;
                     color:#3730a3;
                     border-radius:999px;
-                    padding:11px 18px;
+                    padding:13px 20px;
                     font-weight:900;
                     cursor:pointer;
-                    font-size:16px;
-                ">➡️ 다음 문제</button>
-
-                <button id="retryBtn" style="
-                    display:none;
-                    border:1.5px solid #a7f3d0;
-                    background:#ecfdf5;
-                    color:#047857;
-                    border-radius:999px;
-                    padding:11px 18px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:16px;
-                ">🔁 다시 풀기</button>
+                    font-size:17px;
+                ">➡️ 넘기기</button>
             </div>
 
             <div style="
@@ -456,7 +547,7 @@ def speaking_practice_component(items):
                 margin-bottom:14px;
                 min-height:54px;
             ">
-                <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 문장</div>
+                <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 단어</div>
                 <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155;">아직 말하지 않았습니다.</div>
             </div>
 
@@ -469,8 +560,43 @@ def speaking_practice_component(items):
                 font-weight:900;
                 color:#334155;
             ">
-                마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형은 괜찮습니다.
+                마이크 버튼을 누르고 영어 단어 한 단어를 말해 보세요.
             </div>
+        </div>
+
+        <div id="finishBox" style="
+            display:none;
+            background:white;
+            border-radius:30px;
+            padding:30px 24px;
+            border:1.5px solid #bbf7d0;
+            box-shadow:0 8px 24px rgba(0,0,0,0.07);
+            text-align:center;
+            margin-top:16px;
+        ">
+            <div style="font-size:64px; margin-bottom:10px;">🎉</div>
+            <div style="
+                font-size:34px;
+                font-weight:900;
+                color:#14532d;
+                margin-bottom:10px;
+            ">테마 완료!</div>
+            <div id="finishScore" style="
+                font-size:24px;
+                font-weight:900;
+                color:#166534;
+                margin-bottom:18px;
+            ">정답 개수 0 / 0</div>
+            <button id="finishRetryBtn" style="
+                border:1.5px solid #a7f3d0;
+                background:#ecfdf5;
+                color:#047857;
+                border-radius:999px;
+                padding:13px 22px;
+                font-weight:900;
+                cursor:pointer;
+                font-size:17px;
+            ">🔁 다시 풀기</button>
         </div>
 
         <div style="
@@ -481,7 +607,7 @@ def speaking_practice_component(items):
             font-weight:700;
         ">
             ※ Chrome 계열 브라우저에서 음성 인식이 가장 잘 작동합니다.<br>
-            ※ 마이크 권한 요청이 나오면 허용을 눌러 주세요.
+            ※ 휴대폰에서는 마이크 권한을 허용해야 합니다.
         </div>
     </div>
 
@@ -491,35 +617,35 @@ def speaking_practice_component(items):
     let currentList = [];
     let currentIndex = 0;
     let currentItem = null;
-
-    // 정답 기록: 문제별로 한 번 맞히면 true 저장
     let correctMap = {};
-    let alreadyCorrect = false;
+    let finished = false;
 
     const categorySelect = document.getElementById("categorySelect");
     const randomBtn = document.getElementById("randomBtn");
     const resetBtn = document.getElementById("resetBtn");
+
+    const gameArea = document.getElementById("gameArea");
+    const finishBox = document.getElementById("finishBox");
+    const finishScore = document.getElementById("finishScore");
+    const finishRetryBtn = document.getElementById("finishRetryBtn");
+
     const categoryLabel = document.getElementById("categoryLabel");
     const scoreLabel = document.getElementById("scoreLabel");
-    const koPrompt = document.getElementById("koPrompt");
-    const blankSentence = document.getElementById("blankSentence");
-    const hintBox = document.getElementById("hintBox");
+    const cardBox = document.getElementById("cardBox");
+    const emojiBox = document.getElementById("emojiBox");
+    const meaningBox = document.getElementById("meaningBox");
     const answerBox = document.getElementById("answerBox");
-    const hintBtn = document.getElementById("hintBtn");
+
+    const micBtn = document.getElementById("micBtn");
     const listenBtn = document.getElementById("listenBtn");
     const answerBtn = document.getElementById("answerBtn");
-    const micBtn = document.getElementById("micBtn");
-    const nextBtn = document.getElementById("nextBtn");
-    const retryBtn = document.getElementById("retryBtn");
+    const skipBtn = document.getElementById("skipBtn");
+
     const transcriptBox = document.getElementById("transcriptBox");
     const resultBox = document.getElementById("resultBox");
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
-
-    function getItemKey(item) {
-        return item.cat + "||" + item.ko + "||" + item.answer;
-    }
 
     function uniqueCategories() {
         const cats = ["전체"];
@@ -546,6 +672,10 @@ def speaking_practice_component(items):
         return ITEMS.filter(item => item.cat === selected);
     }
 
+    function getItemKey(item) {
+        return item.cat + "||" + item.meaning + "||" + item.word;
+    }
+
     function shuffleArray(arr) {
         const copied = arr.slice();
         for (let i = copied.length - 1; i > 0; i--) {
@@ -555,239 +685,50 @@ def speaking_practice_component(items):
         return copied;
     }
 
-    function makeTwoLetterHint(answerWord) {
-        if (!answerWord) return "";
-
-        return answerWord.split(" ").map(word => {
-            const clean = word.trim();
-            if (clean.length <= 2) return clean;
-            return clean.slice(0, 2) + "_".repeat(clean.length - 2);
-        }).join(" ");
-    }
-
     function normalizeText(text) {
-        return text
+        return String(text || "")
             .toLowerCase()
-            // 축약형을 먼저 풀어 줌
-            .replace(/\bi'm\b/g, "i am")
-            .replace(/\bim\b/g, "i am")
-            .replace(/\byou're\b/g, "you are")
-            .replace(/\bhe's\b/g, "he is")
-            .replace(/\bshe's\b/g, "she is")
-            .replace(/\bit's\b/g, "it is")
-            .replace(/\bwe're\b/g, "we are")
-            .replace(/\bthey're\b/g, "they are")
-            .replace(/\bdon't\b/g, "do not")
-            .replace(/\bdoesn't\b/g, "does not")
-            .replace(/\bdidn't\b/g, "did not")
-            .replace(/\bcan't\b/g, "cannot")
-            .replace(/\bcant\b/g, "cannot")
-            .replace(/\bi'll\b/g, "i will")
-            .replace(/\byou'll\b/g, "you will")
-            .replace(/\bhe'll\b/g, "he will")
-            .replace(/\bshe'll\b/g, "she will")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/\s+/g, " ")
             .trim();
     }
 
-    function wordsOnly(text) {
-        return normalizeText(text)
-            .split(" ")
-            .filter(w => w.length > 0);
-    }
-
-    function isCloseEnough(spoken, answer) {
+    function isCorrectSpeech(spoken, answer) {
         const s = normalizeText(spoken);
         const a = normalizeText(answer);
 
         if (!s || !a) return false;
 
-        const sWords = wordsOnly(s);
-        const aWords = wordsOnly(a);
-
-        // 1) 축약형을 푼 뒤 완전 일치하면 정답
         if (s === a) return true;
 
-        // 2) 음성 인식이 정답 앞뒤에 짧은 말을 붙이는 경우만 허용
-        // 예: "um i am hungry" / "i am hungry please"
-        if (sWords.length <= aWords.length + 2) {
-            for (let i = 0; i <= sWords.length - aWords.length; i++) {
-                const slice = sWords.slice(i, i + aWords.length).join(" ");
-                if (slice === a) return true;
-            }
+        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우 허용
+        // 예: "the word water" / "water please"
+        const words = s.split(" ").filter(Boolean);
+        if (!a.includes(" ") && words.includes(a)) return true;
+
+        // excuse me처럼 두 단어 단어도 처리
+        if (a.includes(" ")) {
+            return s.includes(a);
         }
 
-        // 3) 핵심 정답 단어는 반드시 들어가야 함
-        const keyWords = normalizeText(currentItem.hint || "").split(" ").filter(w => w.length > 0);
-        const hasAllKeyWords = keyWords.every(w => sWords.includes(w));
-        if (!hasAllKeyWords) return false;
-
-        // 4) 정답 단어 수와 말한 단어 수가 너무 다르면 오답
-        if (sWords.length < aWords.length) return false;
-        if (sWords.length > aWords.length + 2) return false;
-
-        // 5) 정답 문장의 각 단어가 순서대로 거의 들어 있는지 확인
-        let matchedCount = 0;
-        let searchStart = 0;
-
-        for (const aw of aWords) {
-            let foundIndex = -1;
-
-            for (let i = searchStart; i < sWords.length; i++) {
-                if (sWords[i] === aw) {
-                    foundIndex = i;
-                    break;
-                }
-            }
-
-            if (foundIndex !== -1) {
-                matchedCount += 1;
-                searchStart = foundIndex + 1;
-            }
-        }
-
-        // 짧은 문장은 거의 완전 일치해야 함
-        if (aWords.length <= 3) {
-            return matchedCount === aWords.length;
-        }
-
-        // 긴 문장도 한 단어 이상 빠지면 오답에 가깝게 처리
-        return matchedCount >= aWords.length - 1;
+        return false;
     }
 
-    function isCorrectSpeech(spoken, answer) {
-        return isCloseEnough(spoken, answer);
-    }
-
-    // 현재 선택한 테마 기준으로 정답 수 / 전체 문항 수 표시
-    function getCorrectCount(list) {
-        let correctCount = 0;
+    function countCorrectInCurrentTheme() {
+        const list = getFilteredItems();
+        let count = 0;
 
         list.forEach(item => {
-            const key = getItemKey(item);
-            if (correctMap[key]) correctCount += 1;
+            if (correctMap[getItemKey(item)]) count += 1;
         });
 
-        return correctCount;
+        return count;
     }
 
     function updateScore() {
         const list = getFilteredItems();
-        const correctCount = getCorrectCount(list);
+        const correctCount = countCorrectInCurrentTheme();
         scoreLabel.innerText = "현재 테마 정답 " + correctCount + " / " + list.length;
-    }
-
-    function loadQuestion(index = 0) {
-        if (currentList.length === 0) {
-            currentList = getFilteredItems();
-        }
-
-        if (index >= currentList.length) {
-            showCompletionScreen();
-            return;
-        }
-        if (index < 0) index = 0;
-
-        currentIndex = index;
-        currentItem = currentList[currentIndex];
-
-        hintBtn.style.display = "inline-block";
-        listenBtn.style.display = "inline-block";
-        answerBtn.style.display = "inline-block";
-        micBtn.style.display = "inline-block";
-        nextBtn.style.display = "inline-block";
-        retryBtn.style.display = "none";
-
-        nextBtn.innerText = currentIndex === currentList.length - 1 ? "🏁 결과 보기" : "➡️ 다음 문제";
-
-        // 이미 맞힌 문제인지 확인
-        alreadyCorrect = !!correctMap[getItemKey(currentItem)];
-
-        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
-
-        const emoji = currentItem.emoji || "🛟";
-        koPrompt.innerHTML =
-            "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
-            "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
-
-        blankSentence.innerText = currentItem.blank;
-
-        hintBox.style.display = "none";
-        answerBox.style.display = "none";
-        hintBox.innerText = "";
-        answerBox.innerText = "";
-        transcriptBox.innerText = "아직 말하지 않았습니다.";
-
-        if (alreadyCorrect) {
-            resultBox.innerHTML =
-                "✅ 이미 맞힌 문제입니다.<br>" +
-                "<span style='font-size:17px;'>다시 연습해도 점수는 중복으로 올라가지 않습니다.</span>";
-            resultBox.style.background = "#ecfdf5";
-            resultBox.style.borderColor = "#bbf7d0";
-            resultBox.style.color = "#166534";
-        } else {
-            resultBox.innerText = "마이크 버튼을 누르고 문장 전체를 말해 보세요. I'm, don't 같은 자연스러운 축약형은 괜찮습니다.";
-            resultBox.style.background = "#f1f5f9";
-            resultBox.style.borderColor = "#e2e8f0";
-            resultBox.style.color = "#334155";
-        }
-
-        updateScore();
-    }
-
-    function showCompletionScreen() {
-        const list = getFilteredItems();
-        const correctCount = getCorrectCount(list);
-        const totalCount = list.length;
-        const selectedCat = categorySelect.value === "전체" ? "전체 테마" : categorySelect.value;
-        const percent = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
-
-        categoryLabel.innerText = selectedCat + " · 학습 완료";
-        scoreLabel.innerText = "최종 정답 " + correctCount + " / " + totalCount;
-
-        koPrompt.innerHTML =
-            "<span style='font-size:46px; margin-right:10px; vertical-align:middle;'>🎉</span>" +
-            "<span style='vertical-align:middle;'>테마 학습이 끝났습니다!</span>";
-
-        blankSentence.innerHTML =
-            "<div style='font-size:32px; line-height:1.5;'>" +
-            "정답 개수: <span style='color:#166534;'>" + correctCount + " / " + totalCount + "</span>" +
-            "<br><span style='font-size:22px; color:#475569;'>정답률 " + percent + "%</span>" +
-            "</div>";
-
-        hintBox.style.display = "none";
-        answerBox.style.display = "none";
-        transcriptBox.innerText = "학습 완료";
-
-        resultBox.innerHTML =
-            "🏁 결과를 확인했습니다.<br>" +
-            "<span style='font-size:17px;'>같은 테마를 다시 연습하려면 아래 <b>다시 풀기</b>를 눌러 주세요.</span>";
-        resultBox.style.background = "#ecfdf5";
-        resultBox.style.borderColor = "#bbf7d0";
-        resultBox.style.color = "#166534";
-
-        hintBtn.style.display = "none";
-        listenBtn.style.display = "none";
-        answerBtn.style.display = "none";
-        micBtn.style.display = "none";
-        nextBtn.style.display = "none";
-        retryBtn.style.display = "inline-block";
-    }
-
-    function restartCurrentTheme() {
-        const list = getFilteredItems();
-
-        list.forEach(item => {
-            const key = getItemKey(item);
-            delete correctMap[key];
-        });
-
-        currentList = getFilteredItems();
-        currentIndex = 0;
-        alreadyCorrect = false;
-        updateScore();
-        loadQuestion(0);
     }
 
     function speak(text) {
@@ -808,35 +749,97 @@ def speaking_practice_component(items):
         window.speechSynthesis.speak(utterance);
     }
 
-    function checkSpeech(spokenText) {
-        const itemKey = getItemKey(currentItem);
+    function showGameArea() {
+        gameArea.style.display = "block";
+        finishBox.style.display = "none";
+        finished = false;
+    }
 
-        if (isCorrectSpeech(spokenText, currentItem.answer)) {
-            if (!correctMap[itemKey]) {
-                correctMap[itemKey] = true;
-                alreadyCorrect = true;
-            }
+    function showFinishScreen() {
+        finished = true;
+        const list = getFilteredItems();
+        const correctCount = countCorrectInCurrentTheme();
+
+        finishScore.innerText = "정답 개수 " + correctCount + " / " + list.length;
+
+        gameArea.style.display = "none";
+        finishBox.style.display = "block";
+    }
+
+    function loadQuestion(index = 0) {
+        if (currentList.length === 0) {
+            currentList = getFilteredItems();
+        }
+
+        if (index >= currentList.length) {
+            showFinishScreen();
+            return;
+        }
+
+        if (index < 0) index = 0;
+
+        showGameArea();
+
+        currentIndex = index;
+        currentItem = currentList[currentIndex];
+
+        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
+        emojiBox.innerText = currentItem.emoji || "🃏";
+        meaningBox.innerText = currentItem.meaning;
+
+        answerBox.style.display = "none";
+        answerBox.innerText = "정답: " + currentItem.word;
+
+        transcriptBox.innerText = "아직 말하지 않았습니다.";
+        resultBox.innerText = "마이크 버튼을 누르고 영어 단어 한 단어를 말해 보세요.";
+        resultBox.style.background = "#f1f5f9";
+        resultBox.style.borderColor = "#e2e8f0";
+        resultBox.style.color = "#334155";
+
+        cardBox.classList.remove("bounce-card");
+        void cardBox.offsetWidth;
+        cardBox.classList.add("bounce-card");
+
+        updateScore();
+    }
+
+    function goNextCard() {
+        if (currentIndex + 1 >= currentList.length) {
+            showFinishScreen();
+        } else {
+            loadQuestion(currentIndex + 1);
+        }
+    }
+
+    function checkSpeech(spokenText) {
+        if (!currentItem) return;
+
+        if (isCorrectSpeech(spokenText, currentItem.word)) {
+            correctMap[getItemKey(currentItem)] = true;
+            updateScore();
 
             resultBox.innerHTML =
                 "✅ 정답입니다!<br>" +
-                "<span style='font-size:17px;'>잘 말했어요: " + currentItem.answer + "</span>";
+                "<span style='font-size:17px;'>잘 말했어요: " + currentItem.word + "</span>";
 
             resultBox.style.background = "#ecfdf5";
             resultBox.style.borderColor = "#bbf7d0";
             resultBox.style.color = "#166534";
 
-            speak(currentItem.answer);
+            speak(currentItem.word);
+
+            setTimeout(function() {
+                goNextCard();
+            }, 900);
         } else {
             resultBox.innerHTML =
-                "🍊 문장 전체가 정확히 맞아야 해요. 다시 말해 보세요.<br>" +
-                "<span style='font-size:17px;'>목표 문장: " + currentItem.answer + "</span>";
+                "🍊 다시 말해 보세요.<br>" +
+                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 한 단어만 말하면 됩니다.</span>";
 
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
             resultBox.style.color = "#9a3412";
         }
-
-        updateScore();
     }
 
     function startRecognition() {
@@ -848,6 +851,8 @@ def speaking_practice_component(items):
             return;
         }
 
+        if (finished) return;
+
         window.speechSynthesis.cancel();
 
         recognition = new SpeechRecognition();
@@ -857,7 +862,7 @@ def speaking_practice_component(items):
         recognition.maxAlternatives = 3;
 
         micBtn.innerText = "🎙️ 듣는 중...";
-        resultBox.innerText = "지금 말해 보세요.";
+        resultBox.innerText = "지금 영어 단어를 말해 보세요.";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
         resultBox.style.color = "#1d4ed8";
@@ -869,7 +874,7 @@ def speaking_practice_component(items):
                 const transcript = event.results[0][i].transcript;
                 if (i === 0) bestTranscript = transcript;
 
-                if (isCorrectSpeech(transcript, currentItem.answer)) {
+                if (isCorrectSpeech(transcript, currentItem.word)) {
                     bestTranscript = transcript;
                     break;
                 }
@@ -880,28 +885,31 @@ def speaking_practice_component(items):
         };
 
         recognition.onerror = function(event) {
-            let message = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
-
-            if (event.error === "not-allowed") {
-                message = "마이크 권한이 차단되었습니다. 브라우저 주소창 옆 마이크 권한을 허용해 주세요.";
-            } else if (event.error === "no-speech") {
-                message = "말소리가 인식되지 않았습니다. 버튼을 다시 누르고 조금 더 크게 말해 주세요.";
-            } else if (event.error === "audio-capture") {
-                message = "마이크를 찾을 수 없습니다. 기기의 마이크 설정을 확인해 주세요.";
-            }
-
-            resultBox.innerText = message;
+            resultBox.innerText = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
             resultBox.style.background = "#fef2f2";
             resultBox.style.borderColor = "#fecaca";
             resultBox.style.color = "#991b1b";
-            micBtn.innerText = "🎙️ 말하기 시작";
+            micBtn.innerText = "🎙️ 영어 단어 말하기";
         };
 
         recognition.onend = function() {
-            micBtn.innerText = "🎙️ 말하기 시작";
+            micBtn.innerText = "🎙️ 영어 단어 말하기";
         };
 
         recognition.start();
+    }
+
+    function resetCurrentTheme() {
+        const list = getFilteredItems();
+
+        list.forEach(item => {
+            delete correctMap[getItemKey(item)];
+        });
+
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        loadQuestion(0);
+        updateScore();
     }
 
     categorySelect.addEventListener("change", function() {
@@ -913,67 +921,40 @@ def speaking_practice_component(items):
 
     randomBtn.addEventListener("click", function() {
         currentList = shuffleArray(getFilteredItems());
+        currentIndex = 0;
         loadQuestion(0);
         updateScore();
     });
 
-    resetBtn.addEventListener("click", function() {
-        const list = getFilteredItems();
-
-        list.forEach(item => {
-            const key = getItemKey(item);
-            delete correctMap[key];
-        });
-
-        alreadyCorrect = false;
-        updateScore();
-
-        resultBox.innerText = "현재 테마 점수를 초기화했습니다.";
-        resultBox.style.background = "#f1f5f9";
-        resultBox.style.borderColor = "#e2e8f0";
-        resultBox.style.color = "#334155";
-
-        currentList = getFilteredItems();
-        loadQuestion(0);
-    });
-
-    hintBtn.addEventListener("click", function() {
-        hintBox.style.display = "block";
-        hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
-    });
-
-    listenBtn.addEventListener("click", function() {
-        speak(currentItem.answer);
-    });
-
-    answerBtn.addEventListener("click", function() {
-        answerBox.style.display = "block";
-        answerBox.innerText = "정답: " + currentItem.answer;
-    });
+    resetBtn.addEventListener("click", resetCurrentTheme);
+    finishRetryBtn.addEventListener("click", resetCurrentTheme);
 
     micBtn.addEventListener("click", startRecognition);
 
-    nextBtn.addEventListener("click", function() {
-        if (currentIndex >= currentList.length - 1) {
-            showCompletionScreen();
-        } else {
-            loadQuestion(currentIndex + 1);
-        }
+    listenBtn.addEventListener("click", function() {
+        if (currentItem) speak(currentItem.word);
     });
 
-    retryBtn.addEventListener("click", function() {
-        restartCurrentTheme();
+    answerBtn.addEventListener("click", function() {
+        if (!currentItem) return;
+        answerBox.style.display = "block";
+        answerBox.innerText = "정답: " + currentItem.word;
+    });
+
+    skipBtn.addEventListener("click", function() {
+        goNextCard();
     });
 
     initCategories();
     currentList = getFilteredItems();
-    updateScore();
     loadQuestion(0);
+    updateScore();
     </script>
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-    components.html(html, height=790)
+
+    components.html(html, height=800, scrolling=True)
 
 
-speaking_practice_component(PRACTICE_ITEMS)
+word_card_speaking_game(WORD_THEMES)
