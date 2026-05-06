@@ -20,4 +20,4 @@ seaborn
 streamlit-mic-recorder
 SpeechRecognition
 countryinfo
-plotly.graph_objects
+plotly
