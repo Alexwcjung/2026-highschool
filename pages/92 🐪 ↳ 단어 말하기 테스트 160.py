@@ -289,14 +289,60 @@ def word_card_speaking_game(word_themes):
                 max-width: 100%;
             }
 
-            .bounce-card {
-                animation: cardBounce 0.42s ease;
+            #cardBox {
+                position: relative;
+                transform-style: preserve-3d;
+                perspective: 1200px;
+                transform-origin: left center;
             }
 
-            @keyframes cardBounce {
-                0% { transform: scale(1); }
-                40% { transform: scale(1.035); }
-                100% { transform: scale(1); }
+            #cardBox::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border-radius: 32px;
+                pointer-events: none;
+                background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(15,23,42,0.10));
+                opacity: 0;
+            }
+
+            .page-flip-card {
+                animation: pageFlip 0.62s ease-in-out;
+            }
+
+            .page-flip-card::after {
+                animation: pageShadow 0.62s ease-in-out;
+            }
+
+            @keyframes pageFlip {
+                0% {
+                    transform: rotateY(0deg) translateX(0);
+                    opacity: 1;
+                }
+                35% {
+                    transform: rotateY(-18deg) translateX(-6px);
+                    opacity: 0.92;
+                }
+                70% {
+                    transform: rotateY(7deg) translateX(3px);
+                    opacity: 1;
+                }
+                100% {
+                    transform: rotateY(0deg) translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes pageShadow {
+                0% {
+                    opacity: 0;
+                }
+                35% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
             }
 
             @media (max-width: 768px) {
@@ -756,9 +802,9 @@ def word_card_speaking_game(word_themes):
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
 
-        cardBox.classList.remove("bounce-card");
+        cardBox.classList.remove("page-flip-card");
         void cardBox.offsetWidth;
-        cardBox.classList.add("bounce-card");
+        cardBox.classList.add("page-flip-card");
 
         updateScore();
     }
@@ -791,7 +837,7 @@ def word_card_speaking_game(word_themes):
 
             setTimeout(function() {
                 goNextCard();
-            }, 900);
+            }, 650);
         } else {
             resultBox.innerHTML =
                 "🍊 다시 말해 보세요.<br>" +
