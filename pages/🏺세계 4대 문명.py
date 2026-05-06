@@ -82,6 +82,39 @@ RIVERS = [
     {"name": "황허강\nYellow River", "lat": 35.5, "lon": 110.0},
 ]
 
+CIVILIZATION_STANDARDS = [
+    {
+        "title": "농업",
+        "emoji": "🌾",
+        "short": "강 주변에서 농사를 짓고 식량이 늘어남",
+        "detail": "강은 물과 비옥한 땅을 제공했습니다. 농업이 발달하면서 식량이 남고, 사람들은 한곳에 정착할 수 있었습니다."
+    },
+    {
+        "title": "도시",
+        "emoji": "🏙️",
+        "short": "사람들이 모여 큰 마을과 도시를 만듦",
+        "detail": "식량이 남자 모든 사람이 농사만 짓지 않아도 되었습니다. 장인, 상인, 관리, 군인 등이 생기면서 도시가 발달했습니다."
+    },
+    {
+        "title": "국가와 지배자",
+        "emoji": "👑",
+        "short": "왕, 관리, 군대, 법 같은 조직이 생김",
+        "detail": "사람이 많이 모이면 물 관리, 세금, 다툼 해결이 필요합니다. 그래서 왕과 관리, 법, 군대 같은 정치 조직이 나타났습니다."
+    },
+    {
+        "title": "문자",
+        "emoji": "✍️",
+        "short": "세금, 거래, 법, 제사를 기록하기 위해 문자를 사용함",
+        "detail": "문자는 문명의 중요한 기준입니다. 물자와 세금을 기록하고, 법과 종교 의식을 남기기 위해 문자가 발달했습니다."
+    },
+    {
+        "title": "기술과 문화",
+        "emoji": "🛠️",
+        "short": "건축, 청동기, 달력, 수학, 종교 등이 발달함",
+        "detail": "문명은 단순히 먹고사는 수준을 넘어 건축, 도구, 종교, 예술, 과학 지식 같은 복잡한 문화를 만들어 냅니다."
+    },
+]
+
 # =====================================================
 # 세션 상태
 # =====================================================
@@ -139,6 +172,54 @@ st.markdown(
         color: #334155;
         font-weight: 700;
         line-height: 1.6;
+    }
+    .definition-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
+        border: 1.5px solid #bfdbfe;
+        border-radius: 26px;
+        padding: 22px 24px;
+        margin-bottom: 18px;
+        box-shadow: 0 5px 16px rgba(0,0,0,0.05);
+    }
+    .definition-box h2 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+        color: #1e3a8a;
+        font-weight: 900;
+    }
+    .definition-box p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.7;
+        color: #334155;
+        font-weight: 750;
+    }
+    .standard-card {
+        background: white;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 22px;
+        padding: 17px 18px;
+        min-height: 190px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        margin-bottom: 14px;
+    }
+    .standard-card h3 {
+        margin: 0 0 8px 0;
+        font-size: 22px;
+        font-weight: 900;
+        color: #111827;
+    }
+    .standard-card .short {
+        font-size: 16px;
+        font-weight: 900;
+        color: #9a3412;
+        margin-bottom: 8px;
+    }
+    .standard-card p {
+        font-size: 15px;
+        color: #334155;
+        line-height: 1.6;
+        font-weight: 650;
     }
     .civil-card {
         background: white;
@@ -205,7 +286,13 @@ st.markdown(
         .title-box p {
             font-size: 15px;
         }
-        .civil-card {
+        .definition-box h2 {
+            font-size: 23px;
+        }
+        .definition-box p {
+            font-size: 15px;
+        }
+        .civil-card, .standard-card {
             min-height: auto;
         }
     }
@@ -219,8 +306,8 @@ st.markdown(
     <div class="title-box">
         <h1>🏺 세계 4대 문명 학습 자료</h1>
         <p>
-            메소포타미아, 이집트, 인더스, 중국 문명을 지도와 카드로 익혀 봅시다.<br>
-            핵심은 <b>큰 강 주변에서 농업과 도시가 발달했다</b>는 점입니다.
+            문명의 기준을 먼저 이해하고, 메소포타미아·이집트·인더스·중국 문명을 지도와 카드로 익혀 봅시다.<br>
+            핵심은 <b>큰 강 주변에서 농업과 도시, 국가, 문자, 기술과 문화가 발달했다</b>는 점입니다.
         </p>
     </div>
     """,
@@ -230,12 +317,68 @@ st.markdown(
 # =====================================================
 # 탭 구성
 # =====================================================
-tab1, tab2, tab3, tab4 = st.tabs([
+tab0, tab1, tab2, tab3, tab4 = st.tabs([
+    "📘 문명이란?",
     "🗺️ 지도 보기",
     "🏺 문명 카드",
     "🕰️ 비교 정리",
     "🎮 확인 퀴즈"
 ])
+
+# =====================================================
+# 탭 0 문명이란?
+# =====================================================
+with tab0:
+    st.markdown(
+        """
+        <div class="definition-box">
+            <h2>📘 문명이라 함은?</h2>
+            <p>
+                문명은 사람들이 단순히 흩어져 사는 단계를 넘어, <b>조직화된 사회</b>를 이루고 
+                <b>도시, 문자, 정치, 법, 종교, 기술, 계급</b> 등이 발달한 상태를 말합니다.<br><br>
+                쉽게 말하면, <b>문명 = 사람들이 모여 살면서 고도로 발달한 생활 체계를 만든 사회</b>입니다.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### ✅ 문명을 판단하는 기본 기준")
+
+    cols = st.columns(3)
+    for i, item in enumerate(CIVILIZATION_STANDARDS):
+        with cols[i % 3]:
+            st.markdown(
+                f"""
+                <div class="standard-card">
+                    <h3>{item['emoji']} {item['title']}</h3>
+                    <div class="short">{item['short']}</div>
+                    <p>{item['detail']}</p>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    st.markdown("### 🧒 학생용 한 줄 정리")
+    st.markdown(
+        """
+        <div class="mini-box">
+        사람들이 <b>강 주변</b>에 모여 <b>농사</b>를 짓고, <b>도시</b>를 만들고, 
+        <b>왕과 법</b>이 생기고, <b>문자</b>를 사용하기 시작하면 문명이라고 부를 수 있습니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("### 🔑 암기 공식")
+    st.markdown(
+        """
+        <div class="mini-box">
+        <b>문명의 기준 = 농업 + 도시 + 국가 + 문자 + 기술과 문화</b>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 # =====================================================
 # 탭 1 지도 보기
@@ -399,6 +542,7 @@ with tab3:
         - 왜 옛날 사람들은 강 주변에 모여 살았을까?
         - 강이 농업에 어떤 도움을 주었을까?
         - 문명이 생기려면 어떤 조건이 필요할까?
+        - 문명과 단순한 마을의 차이는 무엇일까?
         - 오늘날에도 큰 강 주변에 큰 도시가 많을까?
         """
     )
@@ -422,7 +566,7 @@ with tab4:
             reset_score()
             st.rerun()
 
-    quiz_modes = ["강 이름 맞추기", "문명 이름 맞추기", "현재 지역 맞추기"]
+    quiz_modes = ["강 이름 맞추기", "문명 이름 맞추기", "현재 지역 맞추기", "문명의 기준 맞추기"]
     quiz_mode = st.radio("퀴즈 유형", quiz_modes, horizontal=True)
 
     item = st.session_state.quiz_item
@@ -437,10 +581,20 @@ with tab4:
         correct_answer = item["name_ko"]
         options = [c["name_ko"] for c in CIVILIZATIONS]
 
-    else:
+    elif quiz_mode == "현재 지역 맞추기":
         question = f"{item['emoji']} {item['name_ko']}의 현재 지역은 어디일까요?"
         correct_answer = item["modern"]
         options = [c["modern"] for c in CIVILIZATIONS]
+
+    else:
+        question = "다음 중 문명을 판단하는 기본 기준으로 보기 어려운 것은 무엇일까요?"
+        correct_answer = "단순히 사람이 적게 흩어져 사는 것"
+        options = [
+            "농업의 발달",
+            "도시의 형성",
+            "문자의 사용",
+            "단순히 사람이 적게 흩어져 사는 것"
+        ]
 
     st.markdown(
         f"""
@@ -464,7 +618,10 @@ with tab4:
 
                 if option == correct_answer:
                     st.session_state.score += 1
-                    st.session_state.quiz_result = f"✅ 정답입니다! {item['name_ko']} — {item['easy']}"
+                    if quiz_mode == "문명의 기준 맞추기":
+                        st.session_state.quiz_result = "✅ 정답입니다! 문명은 농업, 도시, 국가, 문자, 기술과 문화가 발달한 사회입니다."
+                    else:
+                        st.session_state.quiz_result = f"✅ 정답입니다! {item['name_ko']} — {item['easy']}"
                 else:
                     st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 `{correct_answer}`입니다."
 
