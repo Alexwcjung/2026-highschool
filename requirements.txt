@@ -20,3 +20,4 @@ seaborn
 streamlit-mic-recorder
 SpeechRecognition
 countryinfo
+deep-translator
