@@ -1,9 +1,16 @@
 import streamlit as st
 import plotly.graph_objects as go
+import plotly.express as px
 import pandas as pd
 import os
 import json
-import countryinfo
+import random
+
+try:
+    import countryinfo
+    COUNTRYINFO_AVAILABLE = True
+except Exception:
+    COUNTRYINFO_AVAILABLE = False
 
 st.set_page_config(
     page_title="세계 지도 학습 자료",
@@ -98,47 +105,156 @@ RIVERS = [
 ]
 
 # =====================================================
+# 퀴즈용 나라 데이터
+# =====================================================
+QUIZ_COUNTRIES = [
+    {"ko": "대한민국", "en": "South Korea", "iso": "KOR", "continent": "아시아"},
+    {"ko": "일본", "en": "Japan", "iso": "JPN", "continent": "아시아"},
+    {"ko": "중국", "en": "China", "iso": "CHN", "continent": "아시아"},
+    {"ko": "인도", "en": "India", "iso": "IND", "continent": "아시아"},
+    {"ko": "태국", "en": "Thailand", "iso": "THA", "continent": "아시아"},
+    {"ko": "베트남", "en": "Vietnam", "iso": "VNM", "continent": "아시아"},
+    {"ko": "필리핀", "en": "Philippines", "iso": "PHL", "continent": "아시아"},
+    {"ko": "인도네시아", "en": "Indonesia", "iso": "IDN", "continent": "아시아"},
+    {"ko": "사우디아라비아", "en": "Saudi Arabia", "iso": "SAU", "continent": "아시아"},
+    {"ko": "튀르키예", "en": "Turkey", "iso": "TUR", "continent": "아시아/유럽"},
+
+    {"ko": "영국", "en": "United Kingdom", "iso": "GBR", "continent": "유럽"},
+    {"ko": "프랑스", "en": "France", "iso": "FRA", "continent": "유럽"},
+    {"ko": "독일", "en": "Germany", "iso": "DEU", "continent": "유럽"},
+    {"ko": "이탈리아", "en": "Italy", "iso": "ITA", "continent": "유럽"},
+    {"ko": "스페인", "en": "Spain", "iso": "ESP", "continent": "유럽"},
+    {"ko": "포르투갈", "en": "Portugal", "iso": "PRT", "continent": "유럽"},
+    {"ko": "그리스", "en": "Greece", "iso": "GRC", "continent": "유럽"},
+    {"ko": "러시아", "en": "Russia", "iso": "RUS", "continent": "유럽/아시아"},
+
+    {"ko": "미국", "en": "United States", "iso": "USA", "continent": "북아메리카"},
+    {"ko": "캐나다", "en": "Canada", "iso": "CAN", "continent": "북아메리카"},
+    {"ko": "멕시코", "en": "Mexico", "iso": "MEX", "continent": "북아메리카"},
+    {"ko": "쿠바", "en": "Cuba", "iso": "CUB", "continent": "북아메리카"},
+
+    {"ko": "브라질", "en": "Brazil", "iso": "BRA", "continent": "남아메리카"},
+    {"ko": "아르헨티나", "en": "Argentina", "iso": "ARG", "continent": "남아메리카"},
+    {"ko": "칠레", "en": "Chile", "iso": "CHL", "continent": "남아메리카"},
+    {"ko": "페루", "en": "Peru", "iso": "PER", "continent": "남아메리카"},
+    {"ko": "콜롬비아", "en": "Colombia", "iso": "COL", "continent": "남아메리카"},
+
+    {"ko": "이집트", "en": "Egypt", "iso": "EGY", "continent": "아프리카"},
+    {"ko": "남아프리카공화국", "en": "South Africa", "iso": "ZAF", "continent": "아프리카"},
+    {"ko": "케냐", "en": "Kenya", "iso": "KEN", "continent": "아프리카"},
+    {"ko": "나이지리아", "en": "Nigeria", "iso": "NGA", "continent": "아프리카"},
+    {"ko": "모로코", "en": "Morocco", "iso": "MAR", "continent": "아프리카"},
+
+    {"ko": "호주", "en": "Australia", "iso": "AUS", "continent": "오세아니아"},
+    {"ko": "뉴질랜드", "en": "New Zealand", "iso": "NZL", "continent": "오세아니아"},
+]
+
+# =====================================================
 # 전체 나라 이름 불러오기
-# countryinfo 패키지 내부 데이터 사용 (오프라인 가능)
 # =====================================================
 @st.cache_data
 def load_all_countries():
-    data_dir = os.path.join(os.path.dirname(countryinfo.__file__), "data")
-    rows = []
+    if COUNTRYINFO_AVAILABLE:
+        data_dir = os.path.join(os.path.dirname(countryinfo.__file__), "data")
+        rows = []
 
-    for filename in os.listdir(data_dir):
-        if not filename.endswith('.json'):
-            continue
+        for filename in os.listdir(data_dir):
+            if not filename.endswith(".json"):
+                continue
 
-        path = os.path.join(data_dir, filename)
-        try:
-            with open(path, encoding='utf-8') as f:
-                data = json.load(f)
+            path = os.path.join(data_dir, filename)
+            try:
+                with open(path, encoding="utf-8") as f:
+                    data = json.load(f)
 
-            name = data.get('name')
-            iso = (data.get('ISO') or {}).get('alpha3')
-            latlng = data.get('latlng')
-            region = data.get('region', '')
-            capital = data.get('capital', '')
+                name = data.get("name")
+                iso = (data.get("ISO") or {}).get("alpha3")
+                latlng = data.get("latlng")
+                region = data.get("region", "")
+                capital = data.get("capital", "")
 
-            if name and iso and isinstance(latlng, list) and len(latlng) >= 2:
-                rows.append({
-                    "name": name,
-                    "iso": iso,
-                    "lat": float(latlng[0]),
-                    "lon": float(latlng[1]),
-                    "region": region,
-                    "capital": capital,
-                })
-        except Exception:
-            continue
+                if name and iso and isinstance(latlng, list) and len(latlng) >= 2:
+                    rows.append({
+                        "name": name,
+                        "iso": iso,
+                        "lat": float(latlng[0]),
+                        "lon": float(latlng[1]),
+                        "region": region,
+                        "capital": capital,
+                    })
+            except Exception:
+                continue
 
-    df = pd.DataFrame(rows)
-    if not df.empty:
-        df = df.drop_duplicates(subset=["iso"]).sort_values("name").reset_index(drop=True)
-    return df
+        df = pd.DataFrame(rows)
+        if not df.empty:
+            df = df.drop_duplicates(subset=["iso"]).sort_values("name").reset_index(drop=True)
+            return df
+
+    # countryinfo가 없을 때 퀴즈용 나라만 표시
+    return pd.DataFrame([
+        {
+            "name": f"{c['ko']} / {c['en']}",
+            "iso": c["iso"],
+            "lat": 0,
+            "lon": 0,
+            "region": c["continent"],
+            "capital": ""
+        }
+        for c in QUIZ_COUNTRIES
+    ])
 
 countries_df = load_all_countries()
+
+# =====================================================
+# 퀴즈 세션 상태
+# =====================================================
+def make_quiz_question():
+    level = st.session_state.get("quiz_level", "전체")
+    if level == "전체":
+        pool = QUIZ_COUNTRIES
+    else:
+        pool = [c for c in QUIZ_COUNTRIES if level in c["continent"]]
+        if len(pool) < 4:
+            pool = QUIZ_COUNTRIES
+
+    correct = random.choice(pool)
+    wrong_pool = [c for c in QUIZ_COUNTRIES if c["iso"] != correct["iso"]]
+    wrongs = random.sample(wrong_pool, 3)
+    options = wrongs + [correct]
+    random.shuffle(options)
+
+    st.session_state.quiz_current = correct
+    st.session_state.quiz_options = options
+    st.session_state.quiz_answered = False
+    st.session_state.quiz_result = ""
+
+if "quiz_score" not in st.session_state:
+    st.session_state.quiz_score = 0
+if "quiz_total" not in st.session_state:
+    st.session_state.quiz_total = 0
+if "quiz_level" not in st.session_state:
+    st.session_state.quiz_level = "전체"
+if "quiz_current" not in st.session_state:
+    make_quiz_question()
+
+def reset_quiz():
+    st.session_state.quiz_score = 0
+    st.session_state.quiz_total = 0
+    make_quiz_question()
+
+def check_quiz_answer(option):
+    if st.session_state.quiz_answered:
+        return
+
+    st.session_state.quiz_answered = True
+    st.session_state.quiz_total += 1
+
+    correct = st.session_state.quiz_current
+    if option["iso"] == correct["iso"]:
+        st.session_state.quiz_score += 1
+        st.session_state.quiz_result = f"✅ 정답입니다! {correct['ko']} / {correct['en']}"
+    else:
+        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct['ko']} / {correct['en']}입니다."
 
 # =====================================================
 # 스타일
@@ -177,6 +293,89 @@ st.markdown(
         font-weight: 700;
         color: #334155;
     }
+    .quiz-hero {
+        background: linear-gradient(135deg, #f0f9ff 0%, #ecfeff 45%, #fff7ed 100%);
+        border: 1.5px solid #bae6fd;
+        border-radius: 30px;
+        padding: 26px 28px;
+        margin-bottom: 18px;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+    .quiz-hero h2 {
+        margin: 0;
+        font-size: 34px;
+        font-weight: 950;
+        color: #0f172a;
+    }
+    .quiz-hero p {
+        margin-top: 10px;
+        font-size: 17px;
+        color: #334155;
+        font-weight: 750;
+        line-height: 1.6;
+    }
+    .score-card {
+        background: white;
+        border: 1.5px solid #dbeafe;
+        border-radius: 22px;
+        padding: 18px 20px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        text-align: center;
+    }
+    .score-label {
+        font-size: 15px;
+        color: #64748b;
+        font-weight: 800;
+    }
+    .score-value {
+        font-size: 28px;
+        color: #1e3a8a;
+        font-weight: 950;
+        margin-top: 5px;
+    }
+    .question-card {
+        background: linear-gradient(135deg, #fff7ed 0%, #fffbeb 100%);
+        border: 1.5px solid #fed7aa;
+        border-radius: 26px;
+        padding: 20px 22px;
+        margin: 14px 0;
+        text-align: center;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+    }
+    .question-card .small {
+        color: #9a3412;
+        font-size: 16px;
+        font-weight: 850;
+    }
+    .question-card .big {
+        color: #7c2d12;
+        font-size: 28px;
+        font-weight: 950;
+        margin-top: 6px;
+    }
+    .result-card {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 22px;
+        padding: 17px 20px;
+        margin-top: 14px;
+        font-size: 21px;
+        font-weight: 900;
+        text-align: center;
+        color: #334155;
+    }
+    div.stButton > button {
+        border-radius: 16px;
+        font-weight: 850;
+        min-height: 48px;
+    }
+    @media (max-width: 768px) {
+        .title-box { padding: 20px 18px; border-radius: 22px; }
+        .title-box h1 { font-size: 28px; }
+        .title-box p { font-size: 15px; }
+        .quiz-hero h2 { font-size: 26px; }
+        .question-card .big { font-size: 23px; }
+    }
     </style>
     """,
     unsafe_allow_html=True
@@ -188,187 +387,332 @@ st.markdown(
         <h1>🌍 세계 지도 학습 자료</h1>
         <p>
             대륙 이름, 세부 바다 이름, 강 이름, 나라 이름을 한 지도에서 함께 볼 수 있습니다.<br>
-            체크박스로 원하는 정보만 켜고 끌 수 있습니다.
+            두 번째 탭에서는 지도에서 색칠된 나라를 맞히는 퀴즈를 풀 수 있습니다.
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-# =====================================================
-# 옵션
-# =====================================================
-row1 = st.columns(4)
-with row1[0]:
-    show_continents = st.checkbox("대륙 이름 보기", value=True)
-with row1[1]:
-    show_seas = st.checkbox("바다 이름 보기", value=True)
-with row1[2]:
-    show_rivers = st.checkbox("강 이름 보기", value=False)
-with row1[3]:
-    show_countries = st.checkbox("나라 이름 보기", value=False)
-
-row2 = st.columns(4)
-with row2[0]:
-    country_font = st.slider("나라 이름 크기", 6, 18, 8)
-with row2[1]:
-    sea_font = st.slider("바다 이름 크기", 10, 24, 16)
-with row2[2]:
-    river_font = st.slider("강 이름 크기", 8, 20, 12)
-with row2[3]:
-    continent_font = st.slider("대륙 이름 크기", 14, 30, 22)
-
-st.markdown(
-    f"""
-    <div class="info-box">
-    ✅ <b>나라 이름</b>은 countryinfo 데이터 기준으로 <b>{len(countries_df)}개</b>를 불러옵니다.<br>
-    ✅ 지도는 마우스로 확대/축소할 수 있고, 확대하면 나라 이름을 더 자세히 볼 수 있습니다.<br>
-    ✅ Plotly 범례(legend)에서도 레이어를 클릭해서 보이기/숨기기를 할 수 있습니다.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+tab_map, tab_quiz, tab_summary = st.tabs(["🗺️ 세계 지도 학습", "🎮 나라 맞추기 퀴즈", "📌 수업용 정리"])
 
 # =====================================================
-# 지도 생성
+# 1번 탭: 세계 지도 학습
 # =====================================================
-fig = go.Figure()
+with tab_map:
+    row1 = st.columns(4)
+    with row1[0]:
+        show_continents = st.checkbox("대륙 이름 보기", value=True)
+    with row1[1]:
+        show_seas = st.checkbox("바다 이름 보기", value=True)
+    with row1[2]:
+        show_rivers = st.checkbox("강 이름 보기", value=False)
+    with row1[3]:
+        show_countries = st.checkbox("나라 이름 보기", value=False)
 
-# 대륙
-fig.add_trace(go.Scattergeo(
-    lon=[c["lon"] for c in CONTINENTS],
-    lat=[c["lat"] for c in CONTINENTS],
-    mode="text",
-    text=[c["name"] for c in CONTINENTS],
-    textfont=dict(size=continent_font, color="#7c2d12"),
-    textposition="middle center",
-    name="대륙",
-    hoverinfo="skip",
-    visible=show_continents
-))
+    row2 = st.columns(4)
+    with row2[0]:
+        country_font = st.slider("나라 이름 크기", 6, 18, 8)
+    with row2[1]:
+        sea_font = st.slider("바다 이름 크기", 10, 24, 16)
+    with row2[2]:
+        river_font = st.slider("강 이름 크기", 8, 20, 12)
+    with row2[3]:
+        continent_font = st.slider("대륙 이름 크기", 14, 30, 22)
 
-# 바다
-fig.add_trace(go.Scattergeo(
-    lon=[s["lon"] for s in SEAS],
-    lat=[s["lat"] for s in SEAS],
-    mode="text",
-    text=[s["name"] for s in SEAS],
-    textfont=dict(size=sea_font, color="#0369a1"),
-    textposition="middle center",
-    name="바다",
-    hoverinfo="skip",
-    visible=show_seas
-))
+    st.markdown(
+        f"""
+        <div class="info-box">
+        ✅ <b>나라 이름</b>은 사용 환경에 따라 전체 또는 기본 데이터로 표시됩니다. 현재 표시 가능 데이터: <b>{len(countries_df)}개</b><br>
+        ✅ 지도는 마우스로 확대/축소할 수 있고, 확대하면 나라 이름을 더 자세히 볼 수 있습니다.<br>
+        ✅ Plotly 범례에서도 레이어를 클릭해서 보이기/숨기기를 할 수 있습니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-# 강
-fig.add_trace(go.Scattergeo(
-    lon=[r["lon"] for r in RIVERS],
-    lat=[r["lat"] for r in RIVERS],
-    mode="markers+text",
-    text=[r["name"] for r in RIVERS],
-    textfont=dict(size=river_font, color="#1d4ed8"),
-    textposition="top center",
-    marker=dict(size=4, color="#60a5fa", opacity=0.7),
-    name="강",
-    hoverinfo="skip",
-    visible=show_rivers
-))
+    fig = go.Figure()
 
-# 나라
-if not countries_df.empty:
     fig.add_trace(go.Scattergeo(
-        lon=countries_df["lon"],
-        lat=countries_df["lat"],
-        mode="markers+text",
-        text=countries_df["name"],
-        textfont=dict(size=country_font, color="#111827"),
-        textposition="top center",
-        marker=dict(size=3, color="#ef4444", opacity=0.65),
-        name="나라",
-        hovertext=[
-            f"{row['name']}<br>Region: {row['region']}<br>Capital: {row['capital']}" if row['capital'] else f"{row['name']}<br>Region: {row['region']}"
-            for _, row in countries_df.iterrows()
-        ],
-        hoverinfo="text",
-        visible=show_countries
+        lon=[c["lon"] for c in CONTINENTS],
+        lat=[c["lat"] for c in CONTINENTS],
+        mode="text",
+        text=[c["name"] for c in CONTINENTS],
+        textfont=dict(size=continent_font, color="#7c2d12"),
+        textposition="middle center",
+        name="대륙",
+        hoverinfo="skip",
+        visible=show_continents
     ))
 
-fig.update_layout(
-    height=780,
-    margin=dict(l=0, r=0, t=0, b=0),
-    legend=dict(
-        orientation="h",
-        yanchor="bottom",
-        y=0.01,
-        xanchor="left",
-        x=0.01,
-        bgcolor="rgba(255,255,255,0.75)"
-    ),
-    geo=dict(
-        projection_type="natural earth",
-        showland=True,
-        landcolor="#f8fafc",
-        showocean=True,
-        oceancolor="#dbeafe",
-        showcountries=True,
-        countrycolor="#94a3b8",
-        coastlinecolor="#475569",
-        showcoastlines=True,
-        showframe=False,
-        lataxis=dict(showgrid=True, gridcolor="#e2e8f0"),
-        lonaxis=dict(showgrid=True, gridcolor="#e2e8f0"),
-        resolution=50,
-    )
-)
+    fig.add_trace(go.Scattergeo(
+        lon=[s["lon"] for s in SEAS],
+        lat=[s["lat"] for s in SEAS],
+        mode="text",
+        text=[s["name"] for s in SEAS],
+        textfont=dict(size=sea_font, color="#0369a1"),
+        textposition="middle center",
+        name="바다",
+        hoverinfo="skip",
+        visible=show_seas
+    ))
 
-st.plotly_chart(
-    fig,
-    use_container_width=True,
-    config={
-        "scrollZoom": True,
-        "displaylogo": False
-    }
-)
+    fig.add_trace(go.Scattergeo(
+        lon=[r["lon"] for r in RIVERS],
+        lat=[r["lat"] for r in RIVERS],
+        mode="markers+text",
+        text=[r["name"] for r in RIVERS],
+        textfont=dict(size=river_font, color="#1d4ed8"),
+        textposition="top center",
+        marker=dict(size=4, color="#60a5fa", opacity=0.7),
+        name="강",
+        hoverinfo="skip",
+        visible=show_rivers
+    ))
+
+    if not countries_df.empty:
+        fig.add_trace(go.Scattergeo(
+            lon=countries_df["lon"],
+            lat=countries_df["lat"],
+            mode="markers+text",
+            text=countries_df["name"],
+            textfont=dict(size=country_font, color="#111827"),
+            textposition="top center",
+            marker=dict(size=3, color="#ef4444", opacity=0.65),
+            name="나라",
+            hovertext=[
+                f"{row['name']}<br>Region: {row['region']}<br>Capital: {row['capital']}" if row.get("capital") else f"{row['name']}<br>Region: {row['region']}"
+                for _, row in countries_df.iterrows()
+            ],
+            hoverinfo="text",
+            visible=show_countries
+        ))
+
+    fig.update_layout(
+        height=780,
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=0.01,
+            xanchor="left",
+            x=0.01,
+            bgcolor="rgba(255,255,255,0.75)"
+        ),
+        geo=dict(
+            projection_type="natural earth",
+            showland=True,
+            landcolor="#f8fafc",
+            showocean=True,
+            oceancolor="#dbeafe",
+            showcountries=True,
+            countrycolor="#94a3b8",
+            coastlinecolor="#475569",
+            showcoastlines=True,
+            showframe=False,
+            lataxis=dict(showgrid=True, gridcolor="#e2e8f0"),
+            lonaxis=dict(showgrid=True, gridcolor="#e2e8f0"),
+            resolution=50,
+        )
+    )
+
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config={"scrollZoom": True, "displaylogo": False}
+    )
 
 # =====================================================
-# 수업용 정리
+# 2번 탭: 나라 맞추기 퀴즈
 # =====================================================
-st.markdown("---")
-st.markdown("## 📌 수업용 빠른 정리")
-
-c1, c2 = st.columns(2)
-
-with c1:
+with tab_quiz:
     st.markdown(
         """
-        ### 🌎 7대륙
-        - 아시아 / Asia
-        - 유럽 / Europe
-        - 아프리카 / Africa
-        - 북아메리카 / North America
-        - 남아메리카 / South America
-        - 오세아니아 / Oceania
-        - 남극 / Antarctica
-        """
+        <div class="quiz-hero">
+            <h2>🎮 세계 지도 나라 맞추기</h2>
+            <p>
+                지도에서 색칠된 나라를 보고 정답을 골라 보세요.<br>
+                학생들이 대륙과 나라 위치를 자연스럽게 익히는 활동입니다.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-with c2:
+    qcol1, qcol2, qcol3, qcol4 = st.columns([1, 1, 1, 1])
+    with qcol1:
+        st.markdown(
+            f"""
+            <div class="score-card">
+                <div class="score-label">점수</div>
+                <div class="score-value">{st.session_state.quiz_score} / {st.session_state.quiz_total}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with qcol2:
+        accuracy = round(st.session_state.quiz_score / st.session_state.quiz_total * 100) if st.session_state.quiz_total > 0 else 0
+        st.markdown(
+            f"""
+            <div class="score-card">
+                <div class="score-label">정답률</div>
+                <div class="score-value">{accuracy}%</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with qcol3:
+        selected_level = st.selectbox(
+            "대륙 선택",
+            ["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"],
+            index=["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"].index(st.session_state.quiz_level)
+        )
+        if selected_level != st.session_state.quiz_level:
+            st.session_state.quiz_level = selected_level
+            make_quiz_question()
+            st.rerun()
+
+    with qcol4:
+        st.write("")
+        st.write("")
+        if st.button("🔄 처음부터 다시", use_container_width=True):
+            reset_quiz()
+            st.rerun()
+
+    current = st.session_state.quiz_current
+
+    st.markdown(
+        f"""
+        <div class="question-card">
+            <div class="small">색칠된 나라는 어디일까요?</div>
+            <div class="big">🌍 지도 속 파란 나라를 찾아보세요</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    map_data = pd.DataFrame([
+        {
+            "iso_alpha": current["iso"],
+            "country": current["ko"],
+            "value": 1
+        }
+    ])
+
+    qfig = px.choropleth(
+        map_data,
+        locations="iso_alpha",
+        color="value",
+        hover_name="country",
+        color_continuous_scale=[[0, "#93c5fd"], [1, "#1d4ed8"]],
+        projection="natural earth"
+    )
+
+    qfig.update_layout(
+        height=520,
+        margin=dict(l=0, r=0, t=0, b=0),
+        coloraxis_showscale=False,
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            coastlinecolor="#475569",
+            showcountries=True,
+            countrycolor="#cbd5e1",
+            showland=True,
+            landcolor="#f8fafc",
+            showocean=True,
+            oceancolor="#e0f2fe",
+            projection_type="natural earth"
+        )
+    )
+
+    st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
+
+    st.markdown("### 🧩 정답을 골라 보세요")
+
+    option_cols = st.columns(2)
+    option_labels = ["A", "B", "C", "D"]
+
+    for i, option in enumerate(st.session_state.quiz_options):
+        with option_cols[i % 2]:
+            button_label = f"{option_labels[i]}. {option['ko']} / {option['en']}"
+            if st.button(
+                button_label,
+                key=f"quiz_option_{i}_{option['iso']}_{st.session_state.quiz_total}",
+                use_container_width=True,
+                disabled=st.session_state.quiz_answered
+            ):
+                check_quiz_answer(option)
+                st.rerun()
+
+    if st.session_state.quiz_result:
+        st.markdown(
+            f"""
+            <div class="result-card">
+                {st.session_state.quiz_result}<br>
+                <span style="font-size:16px; color:#64748b;">대륙: {current['continent']}</span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    if st.session_state.quiz_answered:
+        if st.button("➡️ 다음 나라", use_container_width=True):
+            make_quiz_question()
+            st.rerun()
+
+# =====================================================
+# 3번 탭: 수업용 정리
+# =====================================================
+with tab_summary:
+    st.markdown("## 📌 수업용 빠른 정리")
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.markdown(
+            """
+            ### 🌎 7대륙
+            - 아시아 / Asia
+            - 유럽 / Europe
+            - 아프리카 / Africa
+            - 북아메리카 / North America
+            - 남아메리카 / South America
+            - 오세아니아 / Oceania
+            - 남극 / Antarctica
+            """
+        )
+
+    with c2:
+        st.markdown(
+            """
+            ### 🌊 주요 바다 / 강 예시
+            **바다**
+            - 태평양 / Pacific Ocean
+            - 대서양 / Atlantic Ocean
+            - 인도양 / Indian Ocean
+            - 홍해 / Red Sea
+            - 지중해 / Mediterranean Sea
+
+            **강**
+            - 나일강 / Nile
+            - 아마존강 / Amazon
+            - 미시시피강 / Mississippi
+            - 양쯔강 / Yangtze
+            - 메콩강 / Mekong
+            """
+        )
+
+    st.markdown("---")
+    st.markdown("### 🎮 나라 맞추기 퀴즈 활용 방법")
     st.markdown(
         """
-        ### 🌊 주요 바다 / 강 예시
-        **바다**
-        - 태평양 / Pacific Ocean
-        - 대서양 / Atlantic Ocean
-        - 인도양 / Indian Ocean
-        - 홍해 / Red Sea
-        - 지중해 / Mediterranean Sea
-
-        **강**
-        - 나일강 / Nile
-        - 아마존강 / Amazon
-        - 미시시피강 / Mississippi
-        - 양쯔강 / Yangtze
-        - 메콩강 / Mekong
+        - 먼저 `세계 지도 학습` 탭에서 대륙과 바다 이름을 함께 확인합니다.
+        - 이후 `나라 맞추기 퀴즈` 탭에서 대륙별로 나라 위치를 맞혀 봅니다.
+        - 학생들이 나라 이름을 잘 모르면 영어 이름보다 한국어 이름 중심으로 먼저 진행하면 좋습니다.
+        - 수업 후반에는 대륙 선택을 바꾸어 복습 퀴즈로 활용할 수 있습니다.
         """
     )
 
