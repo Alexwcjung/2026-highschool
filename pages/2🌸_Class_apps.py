@@ -10,6 +10,7 @@ from gtts import gTTS
 import io
 from streamlit_drawable_canvas import st_canvas
 import random
+import html
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -297,7 +298,7 @@ with tabs[4]:
 # --- Tab 5: Emoji ---
 with tabs[5]:
     st.subheader("😀 Emoji Board")
-    st.caption("필요한 이모지를 드래그해서 복사한 뒤 수업 자료, 칠판, 활동지에 붙여 넣으세요.")
+    st.caption("큰 이모지 박스에서 필요한 부분을 드래그해서 복사한 뒤 수업 자료, 칠판, 활동지에 붙여 넣으세요.")
 
     EMOJI_CATEGORIES = {
         "😀 감정/표정": """
@@ -383,16 +384,53 @@ with tabs[5]:
 
     emoji_tabs = st.tabs(list(EMOJI_CATEGORIES.keys()))
 
+    def show_big_emoji_box(emojis, height=360):
+        safe_emojis = html.escape(emojis.strip())
+        emoji_html = f"""
+        <html>
+        <head>
+        <style>
+            body {{
+                margin: 0;
+                padding: 0;
+                background: transparent;
+                font-family: Arial, sans-serif;
+            }}
+            .emoji-box {{
+                background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+                border: 2px solid #e2e8f0;
+                border-radius: 22px;
+                padding: 22px 24px;
+                font-size: 38px;
+                line-height: 1.85;
+                word-spacing: 12px;
+                box-shadow: 0 5px 14px rgba(0,0,0,0.06);
+                user-select: text;
+                white-space: pre-wrap;
+                overflow-y: auto;
+                height: {height - 40}px;
+                box-sizing: border-box;
+            }}
+            @media (max-width: 768px) {{
+                .emoji-box {{
+                    font-size: 32px;
+                    line-height: 1.8;
+                    padding: 18px;
+                }}
+            }}
+        </style>
+        </head>
+        <body>
+            <div class="emoji-box">{safe_emojis}</div>
+        </body>
+        </html>
+        """
+        components.html(emoji_html, height=height, scrolling=False)
+
     for tab, (category, emojis) in zip(emoji_tabs, EMOJI_CATEGORIES.items()):
         with tab:
             st.markdown(f"### {category}")
-            st.text_area(
-                label="",
-                value=emojis.strip(),
-                height=260,
-                key=f"emoji_area_{category}",
-                label_visibility="collapsed"
-            )
+            show_big_emoji_box(emojis, height=390)
 
 # --- Tab 6: TTS ---
 with tabs[6]:
@@ -629,39 +667,38 @@ with tabs[8]:
         placeholder="Paste or type English text here..."
     )
 
-    translate_btn = st.button("🌐 번역하기", use_container_width=True)
+    # 버튼 없이 자동 번역
+    # 학생이 지문을 입력하거나 언어를 바꾸면 Streamlit이 자동으로 다시 실행되며 번역 결과가 갱신됩니다.
+    if source_text.strip():
+        try:
+            from deep_translator import GoogleTranslator
 
-    if translate_btn:
-        if not source_text.strip():
-            st.warning("번역할 문장을 먼저 입력하세요.")
-        else:
-            try:
-                from deep_translator import GoogleTranslator
+            source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
+            target_code = lang_options[target_lang_label]
 
-                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
-                target_code = lang_options[target_lang_label]
+            translated = GoogleTranslator(
+                source=source_code,
+                target=target_code
+            ).translate(source_text)
 
-                translated = GoogleTranslator(
-                    source=source_code,
-                    target=target_code
-                ).translate(source_text)
+            st.markdown("### ✅ 자동 번역 결과")
+            st.text_area(
+                "복사해서 사용하세요",
+                value=translated,
+                height=240,
+                key="translation_result"
+            )
 
-                st.markdown("### ✅ 번역 결과")
-                st.text_area(
-                    "복사해서 사용하세요",
-                    value=translated,
-                    height=240,
-                    key="translation_result"
-                )
+        except ModuleNotFoundError:
+            st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
+            st.code("pip install deep-translator", language="bash")
+            st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
 
-            except ModuleNotFoundError:
-                st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
-                st.code("pip install deep-translator", language="bash")
-                st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
-
-            except Exception as e:
-                st.error("번역 중 오류가 발생했습니다.")
-                st.write(e)
+        except Exception as e:
+            st.error("번역 중 오류가 발생했습니다.")
+            st.write(e)
+    else:
+        st.info("번역할 지문을 입력하면 자동으로 번역됩니다.")
 
     st.markdown("---")
     st.markdown("### 📌 사용 안내")
