@@ -163,7 +163,7 @@ st.markdown(
     <div class="guide-box">
         <b>활동 순서</b><br>
         1. 한국어 상황과 이모지를 봅니다. → 2. 영어 빈칸 문장을 봅니다. → 3. 필요하면 앞 두 글자 힌트를 봅니다.<br>
-        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 문장 전체가 맞게 인식되면 정답으로 인정됩니다.
+        4. 마이크 버튼을 누르고 <b>문장 전체</b>를 말합니다. → 5. 테마가 끝나면 정답 개수를 확인하고 다시 풀 수 있습니다.
     </div>
     """,
     unsafe_allow_html=True
@@ -434,6 +434,18 @@ def speaking_practice_component(items):
                     cursor:pointer;
                     font-size:16px;
                 ">➡️ 다음 문제</button>
+
+                <button id="retryBtn" style="
+                    display:none;
+                    border:1.5px solid #a7f3d0;
+                    background:#ecfdf5;
+                    color:#047857;
+                    border-radius:999px;
+                    padding:11px 18px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:16px;
+                ">🔁 다시 풀기</button>
             </div>
 
             <div style="
@@ -498,6 +510,7 @@ def speaking_practice_component(items):
     const answerBtn = document.getElementById("answerBtn");
     const micBtn = document.getElementById("micBtn");
     const nextBtn = document.getElementById("nextBtn");
+    const retryBtn = document.getElementById("retryBtn");
     const transcriptBox = document.getElementById("transcriptBox");
     const resultBox = document.getElementById("resultBox");
 
@@ -648,8 +661,7 @@ def speaking_practice_component(items):
     }
 
     // 현재 선택한 테마 기준으로 정답 수 / 전체 문항 수 표시
-    function updateScore() {
-        const list = getFilteredItems();
+    function getCorrectCount(list) {
         let correctCount = 0;
 
         list.forEach(item => {
@@ -657,6 +669,12 @@ def speaking_practice_component(items):
             if (correctMap[key]) correctCount += 1;
         });
 
+        return correctCount;
+    }
+
+    function updateScore() {
+        const list = getFilteredItems();
+        const correctCount = getCorrectCount(list);
         scoreLabel.innerText = "현재 테마 정답 " + correctCount + " / " + list.length;
     }
 
@@ -665,11 +683,23 @@ def speaking_practice_component(items):
             currentList = getFilteredItems();
         }
 
-        if (index >= currentList.length) index = 0;
-        if (index < 0) index = currentList.length - 1;
+        if (index >= currentList.length) {
+            showCompletionScreen();
+            return;
+        }
+        if (index < 0) index = 0;
 
         currentIndex = index;
         currentItem = currentList[currentIndex];
+
+        hintBtn.style.display = "inline-block";
+        listenBtn.style.display = "inline-block";
+        answerBtn.style.display = "inline-block";
+        micBtn.style.display = "inline-block";
+        nextBtn.style.display = "inline-block";
+        retryBtn.style.display = "none";
+
+        nextBtn.innerText = currentIndex === currentList.length - 1 ? "🏁 결과 보기" : "➡️ 다음 문제";
 
         // 이미 맞힌 문제인지 확인
         alreadyCorrect = !!correctMap[getItemKey(currentItem)];
@@ -704,6 +734,60 @@ def speaking_practice_component(items):
         }
 
         updateScore();
+    }
+
+    function showCompletionScreen() {
+        const list = getFilteredItems();
+        const correctCount = getCorrectCount(list);
+        const totalCount = list.length;
+        const selectedCat = categorySelect.value === "전체" ? "전체 테마" : categorySelect.value;
+        const percent = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+
+        categoryLabel.innerText = selectedCat + " · 학습 완료";
+        scoreLabel.innerText = "최종 정답 " + correctCount + " / " + totalCount;
+
+        koPrompt.innerHTML =
+            "<span style='font-size:46px; margin-right:10px; vertical-align:middle;'>🎉</span>" +
+            "<span style='vertical-align:middle;'>테마 학습이 끝났습니다!</span>";
+
+        blankSentence.innerHTML =
+            "<div style='font-size:32px; line-height:1.5;'>" +
+            "정답 개수: <span style='color:#166534;'>" + correctCount + " / " + totalCount + "</span>" +
+            "<br><span style='font-size:22px; color:#475569;'>정답률 " + percent + "%</span>" +
+            "</div>";
+
+        hintBox.style.display = "none";
+        answerBox.style.display = "none";
+        transcriptBox.innerText = "학습 완료";
+
+        resultBox.innerHTML =
+            "🏁 결과를 확인했습니다.<br>" +
+            "<span style='font-size:17px;'>같은 테마를 다시 연습하려면 아래 <b>다시 풀기</b>를 눌러 주세요.</span>";
+        resultBox.style.background = "#ecfdf5";
+        resultBox.style.borderColor = "#bbf7d0";
+        resultBox.style.color = "#166534";
+
+        hintBtn.style.display = "none";
+        listenBtn.style.display = "none";
+        answerBtn.style.display = "none";
+        micBtn.style.display = "none";
+        nextBtn.style.display = "none";
+        retryBtn.style.display = "inline-block";
+    }
+
+    function restartCurrentTheme() {
+        const list = getFilteredItems();
+
+        list.forEach(item => {
+            const key = getItemKey(item);
+            delete correctMap[key];
+        });
+
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        alreadyCorrect = false;
+        updateScore();
+        loadQuestion(0);
     }
 
     function speak(text) {
@@ -848,6 +932,9 @@ def speaking_practice_component(items):
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
+
+        currentList = getFilteredItems();
+        loadQuestion(0);
     });
 
     hintBtn.addEventListener("click", function() {
@@ -867,7 +954,15 @@ def speaking_practice_component(items):
     micBtn.addEventListener("click", startRecognition);
 
     nextBtn.addEventListener("click", function() {
-        loadQuestion(currentIndex + 1);
+        if (currentIndex >= currentList.length - 1) {
+            showCompletionScreen();
+        } else {
+            loadQuestion(currentIndex + 1);
+        }
+    });
+
+    retryBtn.addEventListener("click", function() {
+        restartCurrentTheme();
     });
 
     initCategories();
