@@ -401,9 +401,9 @@ with tabs[5]:
                 border: 2px solid #e2e8f0;
                 border-radius: 22px;
                 padding: 22px 24px;
-                font-size: 38px;
-                line-height: 1.85;
-                word-spacing: 12px;
+                font-size: 34px;
+                line-height: 1.75;
+                word-spacing: 9px;
                 box-shadow: 0 5px 14px rgba(0,0,0,0.06);
                 user-select: text;
                 white-space: pre-wrap;
@@ -413,8 +413,8 @@ with tabs[5]:
             }}
             @media (max-width: 768px) {{
                 .emoji-box {{
-                    font-size: 32px;
-                    line-height: 1.8;
+                    font-size: 28px;
+                    line-height: 1.7;
                     padding: 18px;
                 }}
             }}
@@ -667,38 +667,39 @@ with tabs[8]:
         placeholder="Paste or type English text here..."
     )
 
-    # 버튼 없이 자동 번역
-    # 학생이 지문을 입력하거나 언어를 바꾸면 Streamlit이 자동으로 다시 실행되며 번역 결과가 갱신됩니다.
-    if source_text.strip():
-        try:
-            from deep_translator import GoogleTranslator
+    translate_btn = st.button("🌐 번역하기", use_container_width=True)
 
-            source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
-            target_code = lang_options[target_lang_label]
+    if translate_btn:
+        if not source_text.strip():
+            st.warning("번역할 문장을 먼저 입력하세요.")
+        else:
+            try:
+                from deep_translator import GoogleTranslator
 
-            translated = GoogleTranslator(
-                source=source_code,
-                target=target_code
-            ).translate(source_text)
+                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
+                target_code = lang_options[target_lang_label]
 
-            st.markdown("### ✅ 자동 번역 결과")
-            st.text_area(
-                "복사해서 사용하세요",
-                value=translated,
-                height=240,
-                key="translation_result"
-            )
+                translated = GoogleTranslator(
+                    source=source_code,
+                    target=target_code
+                ).translate(source_text)
 
-        except ModuleNotFoundError:
-            st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
-            st.code("pip install deep-translator", language="bash")
-            st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
+                st.markdown("### ✅ 번역 결과")
+                st.text_area(
+                    "복사해서 사용하세요",
+                    value=translated,
+                    height=240,
+                    key="translation_result"
+                )
 
-        except Exception as e:
-            st.error("번역 중 오류가 발생했습니다.")
-            st.write(e)
-    else:
-        st.info("번역할 지문을 입력하면 자동으로 번역됩니다.")
+            except ModuleNotFoundError:
+                st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
+                st.code("pip install deep-translator", language="bash")
+                st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
+
+            except Exception as e:
+                st.error("번역 중 오류가 발생했습니다.")
+                st.write(e)
 
     st.markdown("---")
     st.markdown("### 📌 사용 안내")
