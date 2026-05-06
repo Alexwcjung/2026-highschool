@@ -63,21 +63,25 @@ st.markdown(
     .theme-header {
         background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 50%, #ec4899 100%);
         color: white;
-        padding: 22px 26px;
-        border-radius: 24px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 20px rgba(14,165,233,0.25);
+        padding: 30px 32px;
+        border-radius: 28px;
+        margin-bottom: 26px;
+        box-shadow: 0 10px 24px rgba(14,165,233,0.28);
     }
 
     .theme-title {
-        font-size: 27px;
-        font-weight: 900;
-        margin-bottom: 6px;
+        font-size: 40px;
+        font-weight: 1000;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+        line-height: 1.15;
     }
 
     .theme-desc {
-        font-size: 15px;
-        opacity: 0.95;
+        font-size: 19px;
+        font-weight: 800;
+        opacity: 0.98;
+        line-height: 1.55;
     }
 
     .dialogue-box {
@@ -230,6 +234,70 @@ st.markdown(
         border-color: #0ea5e9;
         color: #0ea5e9;
     }
+
+
+    /* 카테고리 탭 글자 크게 */
+    div[data-baseweb="tab-list"] {
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    button[data-baseweb="tab"] {
+        min-height: 58px;
+        padding: 12px 18px;
+        border-radius: 18px 18px 0 0;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        margin-right: 4px;
+    }
+
+    button[data-baseweb="tab"] p {
+        font-size: 21px !important;
+        font-weight: 1000 !important;
+        color: #111827 !important;
+        line-height: 1.25 !important;
+        white-space: nowrap;
+    }
+
+    button[data-baseweb="tab"][aria-selected="true"] {
+        background: linear-gradient(135deg, #dbeafe, #fce7f3);
+        border-bottom: 4px solid #8b5cf6;
+    }
+
+    /* 학습 모드 선택 글자도 조금 크게 */
+    div[role="radiogroup"] label p {
+        font-size: 18px !important;
+        font-weight: 900 !important;
+    }
+
+    @media (max-width: 600px) {
+        .main-title {
+            font-size: 34px;
+        }
+
+        .theme-header {
+            padding: 24px 22px;
+            border-radius: 24px;
+        }
+
+        .theme-title {
+            font-size: 33px;
+        }
+
+        .theme-desc {
+            font-size: 16px;
+        }
+
+        button[data-baseweb="tab"] {
+            min-height: 52px;
+            padding: 10px 14px;
+        }
+
+        button[data-baseweb="tab"] p {
+            font-size: 18px !important;
+        }
+    }
+
     </style>
     """,
     unsafe_allow_html=True
