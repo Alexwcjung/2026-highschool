@@ -467,7 +467,7 @@ word_themes = {
         {"word": "afternoon", "meaning": "오후"},
         {"word": "evening", "meaning": "저녁"},
         {"word": "night", "meaning": "밤"},
-        {"word": "early", "meaning": "이른"},
+        {"word": "nine", "meaning": "아홉"},
         {"word": "late", "meaning": "늦은"},
         {"word": "one", "meaning": "하나"},
         {"word": "two", "meaning": "둘"},
@@ -568,7 +568,7 @@ CASSETTE_EXAMPLES = {
     "early": "It is early.", "late": "It is late.", "one": "I have one book.", "two": "I have two books.",
     "three": "I have three books.", "four": "I have four books.", "five": "I have five books.",
     "six": "I have six books.", "seven": "I have seven books.", "eight": "I have eight books.",
-    "ten": "I have ten books.",
+    "nine": "I have nine books.", "ten": "I have ten books.",
 
     "bag": "This is my bag.", "phone": "This is my phone.", "book": "This is my book.",
     "notebook": "This is my notebook.", "pen": "I have a pen.", "pencil": "I have a pencil.",
@@ -627,7 +627,7 @@ CASSETTE_EXAMPLES_KO = {
     "early": "이릅니다.", "late": "늦었습니다.", "one": "나는 책 한 권이 있습니다.",
     "two": "나는 책 두 권이 있습니다.", "three": "나는 책 세 권이 있습니다.", "four": "나는 책 네 권이 있습니다.",
     "five": "나는 책 다섯 권이 있습니다.", "six": "나는 책 여섯 권이 있습니다.", "seven": "나는 책 일곱 권이 있습니다.",
-    "eight": "나는 책 여덟 권이 있습니다.", "ten": "나는 책 열 권이 있습니다.",
+    "eight": "나는 책 여덟 권이 있습니다.", "nine": "나는 책 아홉 권이 있습니다.", "ten": "나는 책 열 권이 있습니다.",
 
     "bag": "이것은 나의 가방입니다.", "phone": "이것은 나의 전화기입니다.", "book": "이것은 나의 책입니다.",
     "notebook": "이것은 나의 공책입니다.", "pen": "나는 펜이 있습니다.", "pencil": "나는 연필이 있습니다.",
@@ -671,7 +671,7 @@ WORD_EMOJIS = {
     "time": "⏰", "now": "🕒", "today": "📅", "tomorrow": "➡️📅", "yesterday": "⬅️📅",
     "morning": "🌅", "afternoon": "☀️", "evening": "🌆", "night": "🌙", "early": "🐓", "late": "🌃",
     "one": "1️⃣", "two": "2️⃣", "three": "3️⃣", "four": "4️⃣", "five": "5️⃣", "six": "6️⃣",
-    "seven": "7️⃣", "eight": "8️⃣", "ten": "🔟",
+    "seven": "7️⃣", "eight": "8️⃣", "nine": "9️⃣", "ten": "🔟",
     "bag": "🎒", "phone": "📱", "book": "📘", "notebook": "📓", "pen": "🖊️", "pencil": "✏️",
     "desk": "🪑", "chair": "🪑", "door": "🚪", "window": "🪟", "key": "🔑", "money": "💵",
     "card": "💳", "ticket": "🎫", "clothes": "👕", "shoes": "👟", "hat": "🧢", "watch": "⌚",
@@ -1149,7 +1149,7 @@ def flatten_survival_words():
                 "meaning": item["meaning"],
                 "example": example,
                 "example_ko": example_ko,
-                "script": f"{word}. {word}. {example} {word}."
+                "script": f"{word}. {word}. {word}."
             })
             number += 1
 
@@ -1171,7 +1171,7 @@ def make_theme_cassette_items(theme_words, theme_name):
             "meaning": item["meaning"],
             "example": example,
             "example_ko": example_ko,
-            "script": f"{word}. {word}. {example} {word}."
+            "script": f"{word}. {word}. {word}."
         })
 
     return theme_items
@@ -1316,7 +1316,7 @@ def browser_survival_cassette_player(all_items, height=760):
             </div>
 
             <div id="{meaning_id}" class="cassette-info">
-                재생 버튼을 누르면 전체 단어가 처음부터 차례대로 재생됩니다.
+                재생 버튼을 누르면 단어만 처음부터 차례대로 재생됩니다.
             </div>
 
             <div class="cassette-slider">
@@ -1482,9 +1482,7 @@ def browser_survival_cassette_player(all_items, height=760):
                 wordBox.innerText = item.number + ". " + item.word + " " + getEmoji(item.word);
 
                 meaningBox.innerHTML =
-                    "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
-                    "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
-                    "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>" +
+                    "<div style='font-size:clamp(14px, 3.8vw, 18px); color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
                     "<div style='font-size:12px; color:#94a3b8; font-weight:800; margin-top:6px;'>" + escapeHtml(item.theme) + "</div>";
 
                 status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
@@ -2184,9 +2182,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=550):
                     wordBox.innerText = item.number + ". " + item.word;
 
                     meaningBox.innerHTML =
-                        "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>" +
-                        "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#0369a1; font-weight:900; margin-top:4px;'>예문: " + escapeHtml(item.example) + "</div>" +
-                        "<div style='font-size:clamp(13px, 3.5vw, 16px); color:#166534; font-weight:900; margin-top:4px;'>예문 뜻: " + escapeHtml(item.example_ko) + "</div>";
+                        "<div style='font-size:clamp(14px, 3.8vw, 18px); color:#374151; font-weight:900;'>단어 뜻: " + escapeHtml(item.meaning) + "</div>";
 
                     status.innerText = "반복 " + repeatRound + "/" + maxRepeatRound + " · " + (index + 1) + " / " + cassetteItems.length;
                 }}
@@ -2509,13 +2505,13 @@ def browser_theme_cassette_player(theme_items, theme_name, height=550):
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 카세트 듣기")
+    st.markdown("## 🎧 전체 단어만 카세트 듣기")
 
     all_items = flatten_survival_words()
     browser_survival_cassette_player(all_items, height=760)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
-        st.write("카세트에서 실제로 들려주는 단어, 예문, 예문 뜻을 함께 확인할 수 있습니다.")
+        st.write("카세트에서 실제로 들려주는 단어와 뜻을 확인할 수 있습니다.")
 
         for item in all_items:
             st.markdown(
@@ -2534,12 +2530,6 @@ def show_all_cassette_tab():
                     <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
                         단어 뜻: {item['meaning']}
                     </div>
-                    <div style="font-size:15px; font-weight:800; color:#0369a1; margin-top:4px;">
-                        예문: {item['example']}
-                    </div>
-                    <div style="font-size:15px; font-weight:800; color:#166534; margin-top:4px;">
-                        예문 뜻: {item['example_ko']}
-                    </div>
                     <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
                         {item['theme']}
                     </div>
@@ -2550,7 +2540,7 @@ def show_all_cassette_tab():
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 테마 카세트 듣기")
+    st.markdown("### 🎧 이 테마 단어만 카세트 듣기")
 
     theme_items = make_theme_cassette_items(theme_words, theme_name)
 
