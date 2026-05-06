@@ -1205,6 +1205,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
     theme_id = f"theme_{uuid.uuid4().hex}"
     speed_select_id = f"speed_{uuid.uuid4().hex}"
     repeat_select_id = f"repeat_{uuid.uuid4().hex}"
+    wrap_id = f"wrap_{uuid.uuid4().hex}"
 
     cassette_json = json.dumps(all_items, ensure_ascii=False)
     safe_player_id = json.dumps(player_id)
@@ -1392,7 +1393,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
             }}
         </style>
 
-        <div class="easy-cassette-wrap">
+        <div id="{wrap_id}" class="easy-cassette-wrap">
             <div class="easy-cassette-top">
                 <div class="easy-cassette-title">{safe_title}</div>
                 <div id="{count_id}" class="easy-cassette-small">1 / {len(all_items)}</div>
@@ -1470,6 +1471,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 const themeBox = document.getElementById("{theme_id}");
                 const speedSelect = document.getElementById("{speed_select_id}");
                 const repeatSelect = document.getElementById("{repeat_select_id}");
+                const wrap = document.getElementById("{wrap_id}");
                 const playerId = {safe_player_id};
                 const channel = new BroadcastChannel("survival_english_audio_channel");
 
@@ -1548,10 +1550,60 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
 
                 channel.onmessage = function(event) {{
                     if (!event.data) return;
+
+                    // 다른 카테고리/다른 카세트가 시작되거나,
+                    // 탭/챕터 이동 신호가 오면 현재 듣기를 자동으로 중지합니다.
+                    if (event.data.type === "STOP_ALL") {{
+                        stopTape(false, false);
+                    }}
+
                     if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
                         stopTape(false, false);
                     }}
                 }};
+
+                function broadcastStopAll() {{
+                    try {{
+                        channel.postMessage({{ type: "STOP_ALL", playerId: playerId }});
+                    }} catch (e) {{}}
+                }}
+
+                // Streamlit 페이지 이동, 새로고침, 브라우저 탭 이동 시 자동 중지
+                window.addEventListener("pagehide", function() {{ stopTape(false, false); }});
+                window.addEventListener("beforeunload", function() {{ stopTape(false, false); }});
+                document.addEventListener("visibilitychange", function() {{
+                    if (document.hidden) stopTape(false, false);
+                }});
+
+                // 카세트 영역이 화면에서 사라지면 자동 중지
+                if ("IntersectionObserver" in window && wrap) {{
+                    const observer = new IntersectionObserver(function(entries) {{
+                        entries.forEach(function(entry) {{
+                            if (!entry.isIntersecting && (isPlaying || isPaused || window.speechSynthesis.speaking)) {{
+                                stopTape(false, false);
+                            }}
+                        }});
+                    }}, {{ threshold: 0.05 }});
+                    observer.observe(wrap);
+                }}
+
+                // Streamlit의 상단 탭이나 왼쪽 페이지 메뉴를 누르면 모든 카세트 중지
+                try {{
+                    const parentDoc = window.parent && window.parent.document;
+                    if (parentDoc && !window.parent.__survivalCassetteAutoStopBound) {{
+                        window.parent.__survivalCassetteAutoStopBound = true;
+                        parentDoc.addEventListener("click", function(e) {{
+                            const target = e.target;
+                            if (!target) return;
+                            const clickedTab = target.closest('[role="tab"]');
+                            const clickedSidebarLink = target.closest('section[data-testid="stSidebar"] a');
+                            const clickedPageLink = target.closest('a[href]');
+                            if (clickedTab || clickedSidebarLink || clickedPageLink) {{
+                                setTimeout(broadcastStopAll, 10);
+                            }}
+                        }}, true);
+                    }}
+                }} catch (e) {{}}
 
                 function speakItem(item, onDone, token) {{
                     if (!item || token !== playToken) return;
