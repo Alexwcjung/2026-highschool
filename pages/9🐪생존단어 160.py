@@ -2644,6 +2644,10 @@ def show_word_cards(theme_words, theme_name):
         st.markdown('</div>', unsafe_allow_html=True)
 
 
+    st.markdown('---')
+    show_cassette_player(theme_words, theme_name)
+
+
 # =========================
 # 퀴즈 풀기
 # =========================
@@ -2816,13 +2820,11 @@ def show_quiz(theme_words, theme_name):
 # =========================
 # 탭 구성
 # =========================
-tab_names = ["🎧 전체 카세트 듣기"] + list(word_themes.keys())
+# 전체 카세트 듣기는 제일 마지막 탭에 배치
+tab_names = list(word_themes.keys()) + ["🎧 전체 카세트 듣기"]
 tabs = st.tabs(tab_names)
 
-with tabs[0]:
-    show_all_cassette_tab()
-
-for tab, theme_name in zip(tabs[1:], word_themes.keys()):
+for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
     with tab:
         theme_words = word_themes[theme_name]
 
@@ -2830,15 +2832,11 @@ for tab, theme_name in zip(tabs[1:], word_themes.keys()):
             f"""
             <div class="theme-header">
                 <div class="theme-title">{theme_name}</div>
-                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 생존 단어가 있습니다. 먼저 대화를 듣고, 핵심 단어를 익혀 봅시다.</div>
+                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 생존 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div>
             </div>
             """,
             unsafe_allow_html=True
         )
-
-        show_dialogue(theme_name)
-
-        show_cassette_player(theme_words, theme_name)
 
         mode = st.radio(
             "학습 모드를 선택하세요.",
@@ -2851,3 +2849,6 @@ for tab, theme_name in zip(tabs[1:], word_themes.keys()):
             show_word_cards(theme_words, theme_name)
         else:
             show_quiz(theme_words, theme_name)
+
+with tabs[-1]:
+    show_all_cassette_tab()
