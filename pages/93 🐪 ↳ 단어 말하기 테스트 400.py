@@ -1684,19 +1684,6 @@ st.markdown(
         font-weight: 700;
     }
 
-    .guide-box {
-        background: white;
-        border: 1.5px solid #dcfce7;
-        border-radius: 24px;
-        padding: 18px 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.045);
-        color: #334155;
-        font-size: 17px;
-        line-height: 1.7;
-        font-weight: 700;
-    }
-
     @media (max-width: 768px) {
         .main-title-box {
             padding: 20px 18px;
@@ -1709,11 +1696,6 @@ st.markdown(
 
         .main-title-box p {
             font-size: 15px;
-        }
-
-        .guide-box {
-            font-size: 14px;
-            padding: 15px 16px;
         }
     }
     </style>
@@ -1734,17 +1716,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="guide-box">
-        <b>활동 순서</b><br>
-        1. 테마를 선택합니다. → 2. 한국말 뜻을 봅니다. → 3. 마이크 버튼을 누릅니다.<br>
-        4. 영어 단어를 말합니다. → 5. 맞으면 자동으로 다음 카드로 넘어갑니다.<br>
-        ※ <b>take notes, bus stop</b>처럼 두 단어로 된 표현은 전체 표현을 말하면 정답 처리됩니다.
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 # =========================================================
 # 말하기 카드 게임 컴포넌트
@@ -1884,7 +1855,7 @@ def daily_word_card_speaking_game(word_themes):
                 padding: 10px 15px;
                 font-weight: 900;
                 cursor: pointer;
-            ">🔄 현재 테마 다시 시작</button>
+            ">🔄 다시 시작</button>
         </div>
 
         <div id="gameArea">
@@ -1909,7 +1880,7 @@ def daily_word_card_speaking_game(word_themes):
                     font-size:15px;
                     font-weight:900;
                     border:1px solid #bbf7d0;
-                ">현재 테마 정답 0 / 0</div>
+                ">정답 0 / 0 · 못 말한 단어 0</div>
             </div>
 
             <div id="cardBox" style="
@@ -1970,9 +1941,9 @@ def daily_word_card_speaking_game(word_themes):
                     font-weight:900;
                     cursor:pointer;
                     font-size:17px;
-                ">🎙️ 영어 단어 말하기</button>
+                ">🎙️ 말하기</button>
 
-                <button id="listenBtn" style="
+                <button id="answerBtn" style="
                     border:1.5px solid #bfdbfe;
                     background:#eff6ff;
                     color:#1d4ed8;
@@ -1981,18 +1952,7 @@ def daily_word_card_speaking_game(word_themes):
                     font-weight:900;
                     cursor:pointer;
                     font-size:17px;
-                ">🔊 정답 듣기</button>
-
-                <button id="answerBtn" style="
-                    border:1.5px solid #bbf7d0;
-                    background:#f0fdf4;
-                    color:#166534;
-                    border-radius:999px;
-                    padding:13px 20px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:17px;
-                ">👀 정답 보기</button>
+                ">🔊 정답 듣기/보기</button>
 
                 <button id="skipBtn" style="
                     border:1.5px solid #c7d2fe;
@@ -2003,7 +1963,7 @@ def daily_word_card_speaking_game(word_themes):
                     font-weight:900;
                     cursor:pointer;
                     font-size:17px;
-                ">➡️ 넘기기</button>
+                ">➡️ 몰라요</button>
             </div>
 
             <div style="
@@ -2015,7 +1975,7 @@ def daily_word_card_speaking_game(word_themes):
                 min-height:54px;
             ">
                 <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 단어</div>
-                <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155;">아직 말하지 않았습니다.</div>
+                <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155;"></div>
             </div>
 
             <div id="resultBox" style="
@@ -2053,7 +2013,7 @@ def daily_word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#166534;
                 margin-bottom:18px;
-            ">정답 개수 0 / 0</div>
+            ">정답 0 / 0 · 못 말한 단어 0</div>
             <button id="finishRetryBtn" style="
                 border:1.5px solid #a7f3d0;
                 background:#ecfdf5;
@@ -2065,17 +2025,6 @@ def daily_word_card_speaking_game(word_themes):
                 font-size:17px;
             ">🔁 다시 풀기</button>
         </div>
-
-        <div style="
-            margin-top:14px;
-            color:#64748b;
-            font-size:13px;
-            line-height:1.6;
-            font-weight:700;
-        ">
-            ※ Chrome 계열 브라우저에서 음성 인식이 가장 잘 작동합니다.<br>
-            ※ 휴대폰에서는 마이크 권한을 허용해야 합니다.
-        </div>
     </div>
 
     <script>
@@ -2085,6 +2034,7 @@ def daily_word_card_speaking_game(word_themes):
     let currentIndex = 0;
     let currentItem = null;
     let correctMap = {};
+    let missedMap = {};
     let finished = false;
 
     const categorySelect = document.getElementById("categorySelect");
@@ -2104,7 +2054,6 @@ def daily_word_card_speaking_game(word_themes):
     const answerBox = document.getElementById("answerBox");
 
     const micBtn = document.getElementById("micBtn");
-    const listenBtn = document.getElementById("listenBtn");
     const answerBtn = document.getElementById("answerBtn");
     const skipBtn = document.getElementById("skipBtn");
 
@@ -2202,10 +2151,22 @@ def daily_word_card_speaking_game(word_themes):
         return count;
     }
 
+    function countMissedInCurrentTheme() {
+        const list = getFilteredItems();
+        let count = 0;
+
+        list.forEach(item => {
+            if (missedMap[getItemKey(item)]) count += 1;
+        });
+
+        return count;
+    }
+
     function updateScore() {
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
-        scoreLabel.innerText = "현재 테마 정답 " + correctCount + " / " + list.length;
+        const missedCount = countMissedInCurrentTheme();
+        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
     }
 
     function speak(text) {
@@ -2236,8 +2197,9 @@ def daily_word_card_speaking_game(word_themes):
         finished = true;
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
+        const missedCount = countMissedInCurrentTheme();
 
-        finishScore.innerText = "정답 개수 " + correctCount + " / " + list.length;
+        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
 
         gameArea.style.display = "none";
         finishBox.style.display = "block";
@@ -2267,7 +2229,7 @@ def daily_word_card_speaking_game(word_themes):
         answerBox.style.display = "none";
         answerBox.innerText = "정답: " + currentItem.word;
 
-        transcriptBox.innerText = "아직 말하지 않았습니다.";
+        transcriptBox.innerText = "";
         resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
@@ -2293,6 +2255,7 @@ def daily_word_card_speaking_game(word_themes):
 
         if (isCorrectSpeech(spokenText, currentItem.word)) {
             correctMap[getItemKey(currentItem)] = true;
+            delete missedMap[getItemKey(currentItem)];
             updateScore();
 
             resultBox.innerHTML =
@@ -2339,7 +2302,7 @@ def daily_word_card_speaking_game(word_themes):
         recognition.maxAlternatives = 3;
 
         micBtn.innerText = "🎙️ 듣는 중...";
-        resultBox.innerText = "지금 영어 단어를 말해 보세요.";
+        resultBox.innerText = "말해 보세요.";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
         resultBox.style.color = "#1d4ed8";
@@ -2362,15 +2325,15 @@ def daily_word_card_speaking_game(word_themes):
         };
 
         recognition.onerror = function(event) {
-            resultBox.innerText = "음성 인식 오류가 났습니다. 다시 눌러 주세요.";
+            resultBox.innerText = "다시 눌러 주세요.";
             resultBox.style.background = "#fef2f2";
             resultBox.style.borderColor = "#fecaca";
             resultBox.style.color = "#991b1b";
-            micBtn.innerText = "🎙️ 영어 단어 말하기";
+            micBtn.innerText = "🎙️ 말하기";
         };
 
         recognition.onend = function() {
-            micBtn.innerText = "🎙️ 영어 단어 말하기";
+            micBtn.innerText = "🎙️ 말하기";
         };
 
         recognition.start();
@@ -2381,6 +2344,7 @@ def daily_word_card_speaking_game(word_themes):
 
         list.forEach(item => {
             delete correctMap[getItemKey(item)];
+            delete missedMap[getItemKey(item)];
         });
 
         currentList = getFilteredItems();
@@ -2408,17 +2372,18 @@ def daily_word_card_speaking_game(word_themes):
 
     micBtn.addEventListener("click", startRecognition);
 
-    listenBtn.addEventListener("click", function() {
-        if (currentItem) speak(currentItem.word);
-    });
-
     answerBtn.addEventListener("click", function() {
         if (!currentItem) return;
         answerBox.style.display = "block";
         answerBox.innerText = "정답: " + currentItem.word;
+        speak(currentItem.word);
     });
 
     skipBtn.addEventListener("click", function() {
+        if (currentItem && !correctMap[getItemKey(currentItem)]) {
+            missedMap[getItemKey(currentItem)] = true;
+            updateScore();
+        }
         goNextCard();
     });
 
