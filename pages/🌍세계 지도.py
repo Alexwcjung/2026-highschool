@@ -274,10 +274,10 @@ def check_quiz_answer(option):
     correct = st.session_state.quiz_current
     if option.get("iso") == correct.get("iso"):
         st.session_state.quiz_score += 1
-        st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('flag', '🏳️')} {correct.get('ko', '')} / {correct.get('en', '')}"
+        st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('ko', '')} / {correct.get('en', '')}"
         st.session_state.quiz_correct_flag = True
     else:
-        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('flag', '🏳️')} {correct.get('ko', '')} / {correct.get('en', '')}입니다."
+        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('ko', '')} / {correct.get('en', '')}입니다."
         st.session_state.quiz_correct_flag = False
 
 # =====================================================
@@ -352,7 +352,7 @@ st.markdown(
         font-weight: 800;
     }
     .score-value {
-        font-size: 28px;
+        font-size: 34px;
         color: #1e3a8a;
         font-weight: 950;
         margin-top: 5px;
@@ -373,7 +373,7 @@ st.markdown(
     }
     .question-card .big {
         color: #7c2d12;
-        font-size: 28px;
+        font-size: 34px;
         font-weight: 950;
         margin-top: 6px;
     }
@@ -383,7 +383,7 @@ st.markdown(
         border-radius: 22px;
         padding: 17px 20px;
         margin-top: 14px;
-        font-size: 25px;
+        font-size: 30px;
         font-weight: 950;
         text-align: center;
         color: #334155;
@@ -391,18 +391,18 @@ st.markdown(
 
     /* 모든 버튼 기본 모양 */
     div.stButton > button {
-        border-radius: 20px;
-        font-weight: 950;
-        min-height: 78px;
-        font-size: 1.35rem;
+        border-radius: 24px;
+        font-weight: 1000;
+        min-height: 92px;
+        font-size: 1.65rem;
         line-height: 1.35;
-        border: 2px solid #bfdbfe;
-        background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+        border: 3px solid #93c5fd;
+        background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
         color: #0f172a;
-        box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+        box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
     }
     div.stButton > button:hover {
-        border: 2px solid #2563eb;
+        border: 3px solid #2563eb;
         background: linear-gradient(135deg, #dbeafe 0%, #f0f9ff 100%);
         color: #1e3a8a;
         transform: translateY(-1px);
@@ -433,11 +433,11 @@ st.markdown(
 
     @media (max-width: 768px) {
         .title-box { padding: 20px 18px; border-radius: 22px; }
-        .title-box h1 { font-size: 28px; }
+        .title-box h1 { font-size: 34px; }
         .title-box p { font-size: 15px; }
         .quiz-hero h2 { font-size: 26px; }
         .question-card .big { font-size: 23px; }
-        div.stButton > button { font-size: 1.05rem; min-height: 70px; }
+        div.stButton > button { font-size: 1.25rem; min-height: 78px; }
     }
     </style>
     """,
@@ -595,53 +595,23 @@ with tab_quiz:
             <h2>🎮 세계 지도 나라 맞추기</h2>
             <p>
                 지도에서 색칠된 나라를 보고 정답을 골라 보세요.<br>
-                4지선다 보기마다 국기가 함께 표시됩니다.
+                선택지를 크게 보고 색칠된 나라의 이름을 골라 보세요.
             </p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    qcol1, qcol2, qcol3, qcol4 = st.columns([1, 1, 1, 1])
-    with qcol1:
-        st.markdown(
-            f"""
-            <div class="score-card">
-                <div class="score-label">점수</div>
-                <div class="score-value">{st.session_state.quiz_score} / {st.session_state.quiz_total}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with qcol2:
-        accuracy = round(st.session_state.quiz_score / st.session_state.quiz_total * 100) if st.session_state.quiz_total > 0 else 0
-        st.markdown(
-            f"""
-            <div class="score-card">
-                <div class="score-label">정답률</div>
-                <div class="score-value">{accuracy}%</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with qcol3:
+    level_box = st.container(border=True)
+    with level_box:
         selected_level = st.selectbox(
-            "대륙 선택",
+            "🌎 대륙 선택",
             ["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"],
             index=["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"].index(st.session_state.quiz_level)
         )
         if selected_level != st.session_state.quiz_level:
             st.session_state.quiz_level = selected_level
             make_quiz_question()
-            st.rerun()
-
-    with qcol4:
-        st.write("")
-        st.write("")
-        if st.button("🔄 처음부터 다시", use_container_width=True):
-            reset_quiz()
             st.rerun()
 
     current = st.session_state.quiz_current
@@ -693,18 +663,17 @@ with tab_quiz:
 
     st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
 
-    st.markdown("### 🧩 정답을 골라 보세요 — 국기를 보고 함께 익혀요")
+    st.markdown("### 🧩 정답을 골라 보세요 ")
 
     option_cols = st.columns(2)
     option_labels = ["A", "B", "C", "D"]
 
     for i, option in enumerate(st.session_state.quiz_options):
         with option_cols[i % 2]:
-            flag = option.get("flag", "🏳️")
             ko_name = option.get("ko", "")
             en_name = option.get("en", "")
             iso_code = option.get("iso", str(i))
-            button_label = f"{option_labels[i]}.  {flag}   {ko_name}  /  {en_name}"
+            button_label = f"{option_labels[i]}.  {ko_name}  /  {en_name}"
             if st.button(
                 button_label,
                 key=f"quiz_option_{i}_{iso_code}_{st.session_state.quiz_total}",
@@ -793,8 +762,7 @@ with tab_summary:
         """
         - 먼저 `세계 지도 학습` 탭에서 대륙과 바다 이름을 함께 확인합니다.
         - 이후 `나라 맞추기 퀴즈` 탭에서 대륙별로 나라 위치를 맞혀 봅니다.
-        - 보기마다 국기가 함께 나와서 학생들이 나라와 국기를 같이 익힐 수 있습니다.
-        - 정답을 맞히면 풍선과 반짝이는 축하 효과가 나옵니다.
+                - 정답을 맞히면 풍선과 반짝이는 축하 효과가 나옵니다.
         """
     )
 
