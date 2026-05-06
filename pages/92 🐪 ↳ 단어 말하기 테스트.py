@@ -272,11 +272,6 @@ st.markdown(
 
 st.markdown(
     """
-    <div class="guide-box">
-        <b>활동 순서</b><br>
-        1. 테마를 선택합니다. → 2. 한국말 뜻을 봅니다. → 3. 마이크 버튼을 누릅니다.<br>
-        4. 영어 단어를 한 단어로 말합니다. → 5. 맞으면 자동으로 다음 카드로 넘어갑니다.
-    </div>
     """,
     unsafe_allow_html=True
 )
