@@ -145,6 +145,45 @@ QUIZ_COUNTRIES = [
     {"ko": "뉴질랜드", "en": "New Zealand", "iso": "NZL", "continent": "오세아니아", "flag": "🇳🇿"},
 ]
 
+# 지도에 표시할 주요 국가 한국어 이름
+KOREAN_NAME_BY_ISO = {
+    "KOR": "대한민국", "PRK": "북한", "JPN": "일본", "CHN": "중국", "MNG": "몽골",
+    "TWN": "대만", "HKG": "홍콩", "SGP": "싱가포르", "VNM": "베트남", "THA": "태국",
+    "PHL": "필리핀", "IDN": "인도네시아", "MYS": "말레이시아", "KHM": "캄보디아",
+    "LAO": "라오스", "MMR": "미얀마", "IND": "인도", "PAK": "파키스탄",
+    "BGD": "방글라데시", "NPL": "네팔", "LKA": "스리랑카", "AFG": "아프가니스탄",
+    "IRN": "이란", "IRQ": "이라크", "SAU": "사우디아라비아", "TUR": "튀르키예",
+    "ISR": "이스라엘", "JOR": "요르단", "SYR": "시리아", "LBN": "레바논",
+    "ARE": "아랍에미리트", "QAT": "카타르", "KWT": "쿠웨이트", "OMN": "오만",
+    "YEM": "예멘",
+
+    "USA": "미국", "CAN": "캐나다", "MEX": "멕시코", "CUB": "쿠바",
+    "GTM": "과테말라", "PAN": "파나마", "CRI": "코스타리카", "HND": "온두라스",
+    "SLV": "엘살바도르", "NIC": "니카라과", "DOM": "도미니카공화국", "HTI": "아이티",
+
+    "BRA": "브라질", "ARG": "아르헨티나", "CHL": "칠레", "PER": "페루",
+    "COL": "콜롬비아", "VEN": "베네수엘라", "ECU": "에콰도르", "BOL": "볼리비아",
+    "PRY": "파라과이", "URY": "우루과이",
+
+    "GBR": "영국", "IRL": "아일랜드", "FRA": "프랑스", "DEU": "독일",
+    "ITA": "이탈리아", "ESP": "스페인", "PRT": "포르투갈", "NLD": "네덜란드",
+    "BEL": "벨기에", "CHE": "스위스", "AUT": "오스트리아", "POL": "폴란드",
+    "CZE": "체코", "SVK": "슬로바키아", "HUN": "헝가리", "ROU": "루마니아",
+    "BGR": "불가리아", "GRC": "그리스", "SWE": "스웨덴", "NOR": "노르웨이",
+    "FIN": "핀란드", "DNK": "덴마크", "ISL": "아이슬란드", "RUS": "러시아",
+    "UKR": "우크라이나", "BLR": "벨라루스", "EST": "에스토니아", "LVA": "라트비아",
+    "LTU": "리투아니아", "SRB": "세르비아", "HRV": "크로아티아", "SVN": "슬로베니아",
+
+    "EGY": "이집트", "MAR": "모로코", "DZA": "알제리", "TUN": "튀니지",
+    "LBY": "리비아", "SDN": "수단", "ETH": "에티오피아", "KEN": "케냐",
+    "TZA": "탄자니아", "UGA": "우간다", "NGA": "나이지리아", "GHA": "가나",
+    "CMR": "카메룬", "COD": "콩고민주공화국", "COG": "콩고공화국", "ZAF": "남아프리카공화국",
+    "ZWE": "짐바브웨", "AGO": "앙골라", "MOZ": "모잠비크", "MDG": "마다가스카르",
+
+    "AUS": "호주", "NZL": "뉴질랜드", "PNG": "파푸아뉴기니", "FJI": "피지"
+}
+
+
 # =====================================================
 # 전체 나라 이름 불러오기
 # =====================================================
@@ -170,8 +209,13 @@ def load_all_countries():
                 capital = data.get("capital", "")
 
                 if name and iso and isinstance(latlng, list) and len(latlng) >= 2:
+                    ko_name = KOREAN_NAME_BY_ISO.get(iso)
+                    display_name = f"{ko_name} / {name}" if ko_name else name
+
                     rows.append({
-                        "name": name,
+                        "name": display_name,
+                        "ko_name": ko_name if ko_name else "",
+                        "en_name": name,
                         "iso": iso,
                         "lat": float(latlng[0]),
                         "lon": float(latlng[1]),
@@ -188,7 +232,9 @@ def load_all_countries():
 
     return pd.DataFrame([
         {
-            "name": f"{c['flag']} {c['ko']} / {c['en']}",
+            "name": f"{c['ko']} / {c['en']}",
+            "ko_name": c["ko"],
+            "en_name": c["en"],
             "iso": c["iso"],
             "lat": 0,
             "lon": 0,
@@ -203,82 +249,99 @@ countries_df = load_all_countries()
 # =====================================================
 # 퀴즈 세션 상태
 # =====================================================
-def make_quiz_question():
+QUIZ_LENGTH = 10
+
+def get_quiz_pool():
     level = st.session_state.get("quiz_level", "전체")
+
     if level == "전체":
         pool = QUIZ_COUNTRIES
     else:
         pool = [c for c in QUIZ_COUNTRIES if level in c["continent"]]
-        if len(pool) < 4:
-            pool = QUIZ_COUNTRIES
 
-    correct = random.choice(pool)
-    wrong_pool = [c for c in QUIZ_COUNTRIES if c["iso"] != correct["iso"]]
+    if len(pool) < 4:
+        pool = QUIZ_COUNTRIES
+
+    return pool
+
+def start_new_quiz():
+    pool = get_quiz_pool()
+
+    if len(pool) >= QUIZ_LENGTH:
+        quiz_list = random.sample(pool, QUIZ_LENGTH)
+    else:
+        quiz_list = random.choices(pool, k=QUIZ_LENGTH)
+
+    st.session_state.quiz_list = quiz_list
+    st.session_state.quiz_index = 0
+    st.session_state.quiz_correct_count = 0
+    st.session_state.quiz_answered = False
+    st.session_state.quiz_result = ""
+    st.session_state.quiz_correct_flag = False
+    make_current_options()
+
+def make_current_options():
+    current = st.session_state.quiz_list[st.session_state.quiz_index]
+
+    wrong_pool = [c for c in QUIZ_COUNTRIES if c["iso"] != current["iso"]]
     wrongs = random.sample(wrong_pool, 3)
-    options = wrongs + [correct]
+
+    options = wrongs + [current]
     random.shuffle(options)
 
-    st.session_state.quiz_current = correct
+    st.session_state.quiz_current = current
     st.session_state.quiz_options = options
     st.session_state.quiz_answered = False
     st.session_state.quiz_result = ""
     st.session_state.quiz_correct_flag = False
 
-if "quiz_score" not in st.session_state:
-    st.session_state.quiz_score = 0
-if "quiz_total" not in st.session_state:
-    st.session_state.quiz_total = 0
-if "quiz_level" not in st.session_state:
-    st.session_state.quiz_level = "전체"
-if "quiz_current" not in st.session_state:
-    make_quiz_question()
-
-# 이전 버전의 세션 상태가 남아 있으면 4지선다에서 오류가 날 수 있으므로 자동 초기화
-def quiz_state_is_valid():
-    try:
-        current = st.session_state.get("quiz_current")
-        options = st.session_state.get("quiz_options")
-        if not isinstance(current, dict):
-            return False
-        if not isinstance(options, list) or len(options) != 4:
-            return False
-        required = ["ko", "en", "iso", "continent", "flag"]
-        for key in required:
-            if key not in current:
-                return False
-        for opt in options:
-            if not isinstance(opt, dict):
-                return False
-            for key in required:
-                if key not in opt:
-                    return False
-        return True
-    except Exception:
-        return False
-
-if not quiz_state_is_valid():
-    make_quiz_question()
-
-def reset_quiz():
-    st.session_state.quiz_score = 0
-    st.session_state.quiz_total = 0
-    make_quiz_question()
+def next_quiz_question():
+    if st.session_state.quiz_index < QUIZ_LENGTH - 1:
+        st.session_state.quiz_index += 1
+        make_current_options()
+    else:
+        st.session_state.quiz_finished = True
 
 def check_quiz_answer(option):
     if st.session_state.quiz_answered:
         return
 
     st.session_state.quiz_answered = True
-    st.session_state.quiz_total += 1
 
     correct = st.session_state.quiz_current
+
     if option.get("iso") == correct.get("iso"):
-        st.session_state.quiz_score += 1
+        st.session_state.quiz_correct_count += 1
         st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('ko', '')} / {correct.get('en', '')}"
         st.session_state.quiz_correct_flag = True
     else:
         st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('ko', '')} / {correct.get('en', '')}입니다."
         st.session_state.quiz_correct_flag = False
+
+if "quiz_level" not in st.session_state:
+    st.session_state.quiz_level = "전체"
+
+if "quiz_finished" not in st.session_state:
+    st.session_state.quiz_finished = False
+
+if "quiz_list" not in st.session_state:
+    start_new_quiz()
+
+# 이전 버전 세션값이 남아 있을 경우 자동 초기화
+try:
+    valid_state = (
+        isinstance(st.session_state.quiz_list, list)
+        and len(st.session_state.quiz_list) == QUIZ_LENGTH
+        and isinstance(st.session_state.quiz_index, int)
+        and 0 <= st.session_state.quiz_index < QUIZ_LENGTH
+        and isinstance(st.session_state.quiz_options, list)
+        and len(st.session_state.quiz_options) == 4
+    )
+except Exception:
+    valid_state = False
+
+if not valid_state:
+    start_new_quiz()
 
 # =====================================================
 # 스타일
@@ -486,7 +549,7 @@ with tab_map:
     st.markdown(
         f"""
         <div class="info-box">
-        ✅ <b>나라 이름</b>은 사용 환경에 따라 전체 또는 기본 데이터로 표시됩니다. 현재 표시 가능 데이터: <b>{len(countries_df)}개</b><br>
+        ✅ <b>나라 이름</b>은 가능한 경우 <b>한국어 / 영어</b>로 함께 표시됩니다. 현재 표시 가능 데이터: <b>{len(countries_df)}개</b><br>
         ✅ 지도는 마우스로 확대/축소할 수 있고, 확대하면 나라 이름을 더 자세히 볼 수 있습니다.<br>
         ✅ Plotly 범례에서도 레이어를 클릭해서 보이기/숨기기를 할 수 있습니다.
         </div>
@@ -544,7 +607,11 @@ with tab_map:
             marker=dict(size=3, color="#ef4444", opacity=0.65),
             name="나라",
             hovertext=[
-                f"{row['name']}<br>Region: {row['region']}<br>Capital: {row['capital']}" if row.get("capital") else f"{row['name']}<br>Region: {row['region']}"
+                (
+                    f"{row['name']}<br>Region: {row['region']}<br>Capital: {row['capital']}"
+                    if row.get("capital")
+                    else f"{row['name']}<br>Region: {row['region']}"
+                )
                 for _, row in countries_df.iterrows()
             ],
             hoverinfo="text",
@@ -595,15 +662,16 @@ with tab_quiz:
             <h2>🎮 세계 지도 나라 맞추기</h2>
             <p>
                 지도에서 색칠된 나라를 보고 정답을 골라 보세요.<br>
-                선택지를 크게 보고 색칠된 나라의 이름을 골라 보세요.
+                대륙을 선택하고, 랜덤으로 나오는 10문제를 풀어 보세요.
             </p>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    level_box = st.container(border=True)
-    with level_box:
+    top1, top2 = st.columns([1.2, 2.8])
+
+    with top1:
         selected_level = st.selectbox(
             "🌎 대륙 선택",
             ["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"],
@@ -611,8 +679,40 @@ with tab_quiz:
         )
         if selected_level != st.session_state.quiz_level:
             st.session_state.quiz_level = selected_level
-            make_quiz_question()
+            st.session_state.quiz_finished = False
+            start_new_quiz()
             st.rerun()
+
+    with top2:
+        current_number = st.session_state.quiz_index + 1
+        st.markdown(
+            f"""
+            <div class="score-card">
+                <div class="score-label">현재 퀴즈</div>
+                <div class="score-value">{current_number} / {QUIZ_LENGTH} &nbsp;&nbsp; | &nbsp;&nbsp; 정답 {st.session_state.quiz_correct_count}개</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    if st.session_state.quiz_finished:
+        st.markdown(
+            f"""
+            <div class="sparkle-box">
+                <div class="sparkle-line">🎉 🌍 🎉</div>
+                퀴즈 완료!<br>
+                최종 정답: {st.session_state.quiz_correct_count} / {QUIZ_LENGTH}
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if st.button("🔁 10문제 다시 풀기", use_container_width=True):
+            st.session_state.quiz_finished = False
+            start_new_quiz()
+            st.rerun()
+
+        st.stop()
 
     current = st.session_state.quiz_current
 
@@ -629,7 +729,7 @@ with tab_quiz:
     map_data = pd.DataFrame([
         {
             "iso_alpha": current["iso"],
-            "country": current["ko"],
+            "country": f"{current['ko']} / {current['en']}",
             "value": 1
         }
     ])
@@ -663,7 +763,7 @@ with tab_quiz:
 
     st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
 
-    st.markdown("### 🧩 정답을 골라 보세요 ")
+    st.markdown("### 🧩 정답을 골라 보세요")
 
     option_cols = st.columns(2)
     option_labels = ["A", "B", "C", "D"]
@@ -710,8 +810,9 @@ with tab_quiz:
             )
 
     if st.session_state.quiz_answered:
-        if st.button("➡️ 다음 나라", use_container_width=True):
-            make_quiz_question()
+        next_label = "➡️ 다음 나라" if st.session_state.quiz_index < QUIZ_LENGTH - 1 else "🏁 결과 보기"
+        if st.button(next_label, use_container_width=True):
+            next_quiz_question()
             st.rerun()
 
 # =====================================================
