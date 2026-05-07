@@ -1,859 +1,1237 @@
 import streamlit as st
-import random
-import json
-import html
-import uuid
 import streamlit.components.v1 as components
+import json
 
 st.set_page_config(
-    page_title="Survival English 160",
-    page_icon="🛟",
+    page_title="생존 단어 카드 말하기 게임",
+    page_icon="🃏",
     layout="wide"
 )
 
-st.markdown("""
-<style>
-.main-title {{font-size:44px;font-weight:900;color:#1f2937;margin-bottom:4px;}}
-.sub-title {{font-size:17px;color:#6b7280;margin-bottom:24px;}}
-.hero-box {{background:linear-gradient(135deg,#ecfeff 0%,#fef3c7 50%,#fce7f3 100%);border-radius:22px;padding:18px 22px;margin-bottom:24px;box-shadow:0 6px 18px rgba(0,0,0,.06);border:1px solid rgba(255,255,255,.8);}}
-.theme-header {{background:linear-gradient(135deg,#0ea5e9 0%,#8b5cf6 50%,#ec4899 100%);color:white;padding:30px 32px;border-radius:28px;margin-bottom:26px;box-shadow:0 10px 24px rgba(14,165,233,.28);}}
-.theme-title {{font-size:40px;font-weight:1000;margin-bottom:10px;letter-spacing:-.5px;line-height:1.15;}}
-.theme-desc {{font-size:19px;font-weight:800;opacity:.98;line-height:1.55;}}
-.word-card {{background:white;border-radius:18px;padding:10px 14px;margin-bottom:8px;border:1px solid #e0f2fe;box-shadow:0 3px 10px rgba(0,0,0,.04);}}
-.word-row {{display:flex;align-items:center;gap:10px;}}
-.word-number {{min-width:38px;font-size:13px;font-weight:900;color:#0369a1;background:#e0f2fe;border-radius:999px;padding:5px 9px;text-align:center;}}
-.word-text {{min-width:170px;font-size:25px;font-weight:900;color:#111827;white-space:nowrap;}}
-.meaning-text {{font-size:19px;font-weight:800;color:#374151;margin-left:8px;white-space:nowrap;line-height:42px;}}
-.emoji-text {{font-size:25px;line-height:1;text-align:center;padding-top:2px;}}
-.quiz-card {{background:#fff;border-radius:24px;padding:22px 24px;margin-bottom:18px;border:1px solid #e9d5ff;box-shadow:0 5px 18px rgba(0,0,0,.06);}}
-.quiz-number {{display:inline-block;background:#dcfce7;color:#166534;padding:6px 12px;border-radius:999px;font-weight:900;font-size:13px;margin-bottom:10px;}}
-.quiz-word {{font-size:34px;font-weight:900;color:#111827;margin-bottom:8px;}}
-.score-box {{background:linear-gradient(135deg,#dcfce7 0%,#dbeafe 50%,#fce7f3 100%);border-radius:24px;padding:24px 26px;margin:20px 0;border:1px solid #bbf7d0;box-shadow:0 6px 18px rgba(0,0,0,.06);}}
-.score-title {{font-size:27px;font-weight:900;color:#14532d;}}
-.wrong-box {{background:#fff7ed;border-left:6px solid #fb923c;border-radius:18px;padding:16px 18px;margin:18px 0;color:#7c2d12;font-weight:700;}}
-.answer-box {{background:#f8fafc;border-radius:20px;padding:18px 20px;border:1px solid #e2e8f0;margin-bottom:16px;}}
-.stButton > button {{border-radius:999px;font-weight:800;border:1px solid #d1d5db;padding:.45rem 1rem;}}
-.stButton > button:hover {{border-color:#0ea5e9;color:#0ea5e9;}}
-div[data-baseweb="tab-list"] {{gap:10px;flex-wrap:wrap;}}
-button[data-baseweb="tab"] {{min-height:58px;padding:12px 18px;border-radius:18px 18px 0 0;background:#f8fafc;border:1px solid #e5e7eb;margin-right:4px;}}
-button[data-baseweb="tab"] p {{font-size:21px!important;font-weight:1000!important;color:#111827!important;line-height:1.25!important;white-space:nowrap;}}
-button[data-baseweb="tab"][aria-selected="true"] {{background:linear-gradient(135deg,#dbeafe,#fce7f3);border-bottom:4px solid #8b5cf6;}}
-div[role="radiogroup"] label p {{font-size:18px!important;font-weight:900!important;}}
-@media(max-width:600px){{.main-title{{font-size:34px;}}.theme-header{{padding:24px 22px;border-radius:24px;}}.theme-title{{font-size:33px;}}.theme-desc{{font-size:16px;}}button[data-baseweb="tab"]{{min-height:52px;padding:10px 14px;}}button[data-baseweb="tab"] p{{font-size:18px!important;}}}}
-</style>
-""", unsafe_allow_html=True)
+# =========================================================
+# 생존 단어 160개
+# =========================================================
+WORD_THEMES = {
+    "🧍 나와 사람": [
+        {"word": "I", "meaning": "나", "emoji": "🙋"},
+        {"word": "you", "meaning": "너, 당신", "emoji": "👉"},
+        {"word": "he", "meaning": "그", "emoji": "👦"},
+        {"word": "she", "meaning": "그녀", "emoji": "👧"},
+        {"word": "we", "meaning": "우리", "emoji": "👥"},
+        {"word": "they", "meaning": "그들", "emoji": "👥"},
+        {"word": "friend", "meaning": "친구", "emoji": "🤝"},
+        {"word": "teacher", "meaning": "선생님", "emoji": "👩‍🏫"},
+        {"word": "student", "meaning": "학생", "emoji": "🧑‍🎓"},
+        {"word": "classmate", "meaning": "반 친구", "emoji": "👫"},
+        {"word": "family", "meaning": "가족", "emoji": "👨‍👩‍👧"},
+        {"word": "father", "meaning": "아버지", "emoji": "👨"},
+        {"word": "mother", "meaning": "어머니", "emoji": "👩"},
+        {"word": "brother", "meaning": "형제, 남자 형제", "emoji": "👦"},
+        {"word": "sister", "meaning": "자매, 여자 형제", "emoji": "👧"},
+        {"word": "name", "meaning": "이름", "emoji": "🏷️"},
+        {"word": "person", "meaning": "사람", "emoji": "🧍"},
+        {"word": "man", "meaning": "남자", "emoji": "👨"},
+        {"word": "woman", "meaning": "여자", "emoji": "👩"},
+        {"word": "child", "meaning": "아이", "emoji": "🧒"},
+    ],
+    "🏃 기본 동작": [
+        {"word": "go", "meaning": "가다", "emoji": "➡️"},
+        {"word": "come", "meaning": "오다", "emoji": "⬅️"},
+        {"word": "walk", "meaning": "걷다", "emoji": "🚶"},
+        {"word": "run", "meaning": "달리다", "emoji": "🏃"},
+        {"word": "sit", "meaning": "앉다", "emoji": "🪑"},
+        {"word": "stand", "meaning": "서다", "emoji": "🧍"},
+        {"word": "stop", "meaning": "멈추다", "emoji": "🛑"},
+        {"word": "start", "meaning": "시작하다", "emoji": "▶️"},
+        {"word": "open", "meaning": "열다", "emoji": "📂"},
+        {"word": "close", "meaning": "닫다", "emoji": "📕"},
+        {"word": "eat", "meaning": "먹다", "emoji": "🍽️"},
+        {"word": "drink", "meaning": "마시다", "emoji": "🥤"},
+        {"word": "sleep", "meaning": "자다", "emoji": "😴"},
+        {"word": "study", "meaning": "공부하다", "emoji": "📚"},
+        {"word": "read", "meaning": "읽다", "emoji": "📖"},
+        {"word": "write", "meaning": "쓰다", "emoji": "✏️"},
+        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
+        {"word": "help", "meaning": "돕다", "emoji": "🆘"},
+        {"word": "wait", "meaning": "기다리다", "emoji": "⏳"},
+    ],
+    "💖 감정·몸 상태": [
+        {"word": "happy", "meaning": "행복한", "emoji": "😊"},
+        {"word": "sad", "meaning": "슬픈", "emoji": "😢"},
+        {"word": "angry", "meaning": "화난", "emoji": "😠"},
+        {"word": "tired", "meaning": "피곤한", "emoji": "🥱"},
+        {"word": "hungry", "meaning": "배고픈", "emoji": "😋"},
+        {"word": "thirsty", "meaning": "목마른", "emoji": "🥤"},
+        {"word": "sick", "meaning": "아픈", "emoji": "🤒"},
+        {"word": "okay", "meaning": "괜찮은", "emoji": "👌"},
+        {"word": "fine", "meaning": "괜찮은", "emoji": "🙂"},
+        {"word": "cold", "meaning": "추운, 차가운", "emoji": "🥶"},
+        {"word": "hot", "meaning": "더운, 뜨거운", "emoji": "🥵"},
+        {"word": "pain", "meaning": "통증", "emoji": "🤕"},
+        {"word": "headache", "meaning": "두통", "emoji": "🤯"},
+        {"word": "stomachache", "meaning": "복통", "emoji": "🤢"},
+        {"word": "fever", "meaning": "열", "emoji": "🌡️"},
+        {"word": "hurt", "meaning": "아프다, 다치다", "emoji": "🩹"},
+        {"word": "good", "meaning": "좋은", "emoji": "👍"},
+        {"word": "bad", "meaning": "나쁜", "emoji": "👎"},
+        {"word": "worried", "meaning": "걱정하는", "emoji": "😟"},
+        {"word": "scared", "meaning": "무서워하는", "emoji": "😨"},
+    ],
+    "🍎 음식·물": [
+        {"word": "food", "meaning": "음식", "emoji": "🍽️"},
+        {"word": "water", "meaning": "물", "emoji": "💧"},
+        {"word": "rice", "meaning": "밥, 쌀", "emoji": "🍚"},
+        {"word": "bread", "meaning": "빵", "emoji": "🍞"},
+        {"word": "milk", "meaning": "우유", "emoji": "🥛"},
+        {"word": "juice", "meaning": "주스", "emoji": "🧃"},
+        {"word": "coffee", "meaning": "커피", "emoji": "☕"},
+        {"word": "tea", "meaning": "차", "emoji": "🍵"},
+        {"word": "apple", "meaning": "사과", "emoji": "🍎"},
+        {"word": "banana", "meaning": "바나나", "emoji": "🍌"},
+        {"word": "egg", "meaning": "달걀", "emoji": "🥚"},
+        {"word": "meat", "meaning": "고기", "emoji": "🥩"},
+        {"word": "chicken", "meaning": "닭고기, 닭", "emoji": "🍗"},
+        {"word": "fish", "meaning": "생선, 물고기", "emoji": "🐟"},
+        {"word": "breakfast", "meaning": "아침 식사", "emoji": "🍳"},
+        {"word": "lunch", "meaning": "점심 식사", "emoji": "🍱"},
+        {"word": "dinner", "meaning": "저녁 식사", "emoji": "🍽️"},
+        {"word": "snack", "meaning": "간식", "emoji": "🍪"},
+        {"word": "medicine", "meaning": "약", "emoji": "💊"},
+        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+    ],
+    "🚗 장소·이동": [
+        {"word": "home", "meaning": "집", "emoji": "🏠"},
+        {"word": "school", "meaning": "학교", "emoji": "🏫"},
+        {"word": "classroom", "meaning": "교실", "emoji": "🧑‍🏫"},
+        {"word": "bathroom", "meaning": "화장실", "emoji": "🚻"},
+        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+        {"word": "store", "meaning": "가게", "emoji": "🏪"},
+        {"word": "station", "meaning": "역", "emoji": "🚉"},
+        {"word": "bus", "meaning": "버스", "emoji": "🚌"},
+        {"word": "car", "meaning": "자동차", "emoji": "🚗"},
+        {"word": "taxi", "meaning": "택시", "emoji": "🚕"},
+        {"word": "train", "meaning": "기차", "emoji": "🚆"},
+        {"word": "bike", "meaning": "자전거", "emoji": "🚲"},
+        {"word": "road", "meaning": "도로", "emoji": "🛣️"},
+        {"word": "street", "meaning": "거리", "emoji": "🏙️"},
+        {"word": "here", "meaning": "여기", "emoji": "📍"},
+        {"word": "there", "meaning": "거기", "emoji": "📌"},
+        {"word": "near", "meaning": "가까운", "emoji": "↔️"},
+        {"word": "far", "meaning": "먼", "emoji": "🌁"},
+        {"word": "left", "meaning": "왼쪽", "emoji": "⬅️"},
+        {"word": "right", "meaning": "오른쪽, 맞는", "emoji": "➡️"},
+    ],
+    "⏰ 시간·숫자": [
+        {"word": "time", "meaning": "시간", "emoji": "⏰"},
+        {"word": "now", "meaning": "지금", "emoji": "🕒"},
+        {"word": "today", "meaning": "오늘", "emoji": "📅"},
+        {"word": "tomorrow", "meaning": "내일", "emoji": "➡️📅"},
+        {"word": "yesterday", "meaning": "어제", "emoji": "⬅️📅"},
+        {"word": "morning", "meaning": "아침", "emoji": "🌅"},
+        {"word": "afternoon", "meaning": "오후", "emoji": "☀️"},
+        {"word": "evening", "meaning": "저녁", "emoji": "🌆"},
+        {"word": "night", "meaning": "밤", "emoji": "🌙"},
+        {"word": "early", "meaning": "이른", "emoji": "🐓"},
+        {"word": "late", "meaning": "늦은", "emoji": "🌃"},
+        {"word": "one", "meaning": "하나", "emoji": "1️⃣"},
+        {"word": "two", "meaning": "둘", "emoji": "2️⃣"},
+        {"word": "three", "meaning": "셋", "emoji": "3️⃣"},
+        {"word": "four", "meaning": "넷", "emoji": "4️⃣"},
+        {"word": "five", "meaning": "다섯", "emoji": "5️⃣"},
+        {"word": "six", "meaning": "여섯", "emoji": "6️⃣"},
+        {"word": "seven", "meaning": "일곱", "emoji": "7️⃣"},
+        {"word": "eight", "meaning": "여덟", "emoji": "8️⃣"},
+        {"word": "ten", "meaning": "열", "emoji": "🔟"},
+    ],
+    "🎒 물건·돈": [
+        {"word": "bag", "meaning": "가방", "emoji": "🎒"},
+        {"word": "phone", "meaning": "전화기", "emoji": "📱"},
+        {"word": "book", "meaning": "책", "emoji": "📘"},
+        {"word": "notebook", "meaning": "공책", "emoji": "📓"},
+        {"word": "pen", "meaning": "펜", "emoji": "🖊️"},
+        {"word": "pencil", "meaning": "연필", "emoji": "✏️"},
+        {"word": "desk", "meaning": "책상", "emoji": "🪑"},
+        {"word": "chair", "meaning": "의자", "emoji": "🪑"},
+        {"word": "door", "meaning": "문", "emoji": "🚪"},
+        {"word": "window", "meaning": "창문", "emoji": "🪟"},
+        {"word": "key", "meaning": "열쇠", "emoji": "🔑"},
+        {"word": "money", "meaning": "돈", "emoji": "💵"},
+        {"word": "card", "meaning": "카드", "emoji": "💳"},
+        {"word": "ticket", "meaning": "표, 티켓", "emoji": "🎫"},
+        {"word": "clothes", "meaning": "옷", "emoji": "👕"},
+        {"word": "shoes", "meaning": "신발", "emoji": "👟"},
+        {"word": "hat", "meaning": "모자", "emoji": "🧢"},
+        {"word": "watch", "meaning": "시계", "emoji": "⌚"},
+        {"word": "cup", "meaning": "컵", "emoji": "☕"},
+        {"word": "bottle", "meaning": "병", "emoji": "🍼"},
+    ],
+    "🆘 도움 요청": [
+        {"word": "help", "meaning": "도움, 돕다", "emoji": "🆘"},
+        {"word": "please", "meaning": "부디, 제발", "emoji": "🙏"},
+        {"word": "sorry", "meaning": "미안합니다", "emoji": "🙇"},
+        {"word": "excuse me", "meaning": "실례합니다", "emoji": "🙋"},
+        {"word": "again", "meaning": "다시", "emoji": "🔁"},
+        {"word": "slowly", "meaning": "천천히", "emoji": "🐢"},
+        {"word": "understand", "meaning": "이해하다", "emoji": "💡"},
+        {"word": "question", "meaning": "질문", "emoji": "❓"},
+        {"word": "problem", "meaning": "문제", "emoji": "⚠️"},
+        {"word": "need", "meaning": "필요하다", "emoji": "📌"},
+        {"word": "want", "meaning": "원하다", "emoji": "✨"},
+        {"word": "know", "meaning": "알다", "emoji": "🧠"},
+        {"word": "say", "meaning": "말하다", "emoji": "💬"},
+        {"word": "tell", "meaning": "말하다, 알려주다", "emoji": "📣"},
+        {"word": "ask", "meaning": "묻다", "emoji": "❔"},
+        {"word": "answer", "meaning": "대답, 답", "emoji": "✅"},
+        {"word": "repeat", "meaning": "반복하다", "emoji": "🔁"},
+        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
+        {"word": "look", "meaning": "보다", "emoji": "👀"},
+        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+    ],
+}
 
-st.markdown("<div class='main-title'>🛟 Survival English 160</div>", unsafe_allow_html=True)
-st.markdown("<div class='sub-title'>생존 회화에 꼭 필요한 문장과 단어를 듣고, 따라 하고, 퀴즈로 익혀 봅시다.</div>", unsafe_allow_html=True)
-st.markdown("""
-<div class="hero-box"><div style="font-size:18px;font-weight:900;color:#374151;">이 단어 160개만 외우면 미국에서 생존이 가능합니다.</div></div>
-""", unsafe_allow_html=True)
-
-word_themes = {'🧍 나와 사람': [{'word': 'I', 'meaning': '나'},
-             {'word': 'you', 'meaning': '너, 당신'},
-             {'word': 'he', 'meaning': '그'},
-             {'word': 'she', 'meaning': '그녀'},
-             {'word': 'we', 'meaning': '우리'},
-             {'word': 'they', 'meaning': '그들'},
-             {'word': 'friend', 'meaning': '친구'},
-             {'word': 'teacher', 'meaning': '선생님'},
-             {'word': 'student', 'meaning': '학생'},
-             {'word': 'classmate', 'meaning': '반 친구'},
-             {'word': 'family', 'meaning': '가족'},
-             {'word': 'father', 'meaning': '아버지'},
-             {'word': 'mother', 'meaning': '어머니'},
-             {'word': 'brother', 'meaning': '형제, 남자 형제'},
-             {'word': 'sister', 'meaning': '자매, 여자 형제'},
-             {'word': 'name', 'meaning': '이름'},
-             {'word': 'person', 'meaning': '사람'},
-             {'word': 'man', 'meaning': '남자'},
-             {'word': 'woman', 'meaning': '여자'},
-             {'word': 'child', 'meaning': '아이'}],
- '🏃 기본 동작': [{'word': 'go', 'meaning': '가다'},
-             {'word': 'come', 'meaning': '오다'},
-             {'word': 'walk', 'meaning': '걷다'},
-             {'word': 'run', 'meaning': '달리다'},
-             {'word': 'sit', 'meaning': '앉다'},
-             {'word': 'stand', 'meaning': '서다'},
-             {'word': 'stop', 'meaning': '멈추다'},
-             {'word': 'start', 'meaning': '시작하다'},
-             {'word': 'open', 'meaning': '열다'},
-             {'word': 'close', 'meaning': '닫다'},
-             {'word': 'eat', 'meaning': '먹다'},
-             {'word': 'drink', 'meaning': '마시다'},
-             {'word': 'sleep', 'meaning': '자다'},
-             {'word': 'study', 'meaning': '공부하다'},
-             {'word': 'read', 'meaning': '읽다'},
-             {'word': 'write', 'meaning': '쓰다'},
-             {'word': 'listen', 'meaning': '듣다'},
-             {'word': 'speak', 'meaning': '말하다'},
-             {'word': 'help', 'meaning': '돕다'},
-             {'word': 'wait', 'meaning': '기다리다'}],
- '💖 감정·몸 상태': [{'word': 'happy', 'meaning': '행복한'},
-               {'word': 'sad', 'meaning': '슬픈'},
-               {'word': 'angry', 'meaning': '화난'},
-               {'word': 'tired', 'meaning': '피곤한'},
-               {'word': 'hungry', 'meaning': '배고픈'},
-               {'word': 'thirsty', 'meaning': '목마른'},
-               {'word': 'sick', 'meaning': '아픈'},
-               {'word': 'okay', 'meaning': '괜찮은'},
-               {'word': 'fine', 'meaning': '괜찮은'},
-               {'word': 'cold', 'meaning': '추운, 차가운'},
-               {'word': 'hot', 'meaning': '더운, 뜨거운'},
-               {'word': 'pain', 'meaning': '통증'},
-               {'word': 'headache', 'meaning': '두통'},
-               {'word': 'stomachache', 'meaning': '복통'},
-               {'word': 'fever', 'meaning': '열'},
-               {'word': 'hurt', 'meaning': '아프다, 다치다'},
-               {'word': 'good', 'meaning': '좋은'},
-               {'word': 'bad', 'meaning': '나쁜'},
-               {'word': 'worried', 'meaning': '걱정하는'},
-               {'word': 'scared', 'meaning': '무서워하는'}],
- '🍎 음식·물': [{'word': 'food', 'meaning': '음식'},
-            {'word': 'water', 'meaning': '물'},
-            {'word': 'rice', 'meaning': '밥, 쌀'},
-            {'word': 'bread', 'meaning': '빵'},
-            {'word': 'milk', 'meaning': '우유'},
-            {'word': 'juice', 'meaning': '주스'},
-            {'word': 'coffee', 'meaning': '커피'},
-            {'word': 'tea', 'meaning': '차'},
-            {'word': 'apple', 'meaning': '사과'},
-            {'word': 'banana', 'meaning': '바나나'},
-            {'word': 'egg', 'meaning': '달걀'},
-            {'word': 'meat', 'meaning': '고기'},
-            {'word': 'chicken', 'meaning': '닭고기, 닭'},
-            {'word': 'fish', 'meaning': '생선, 물고기'},
-            {'word': 'breakfast', 'meaning': '아침 식사'},
-            {'word': 'lunch', 'meaning': '점심 식사'},
-            {'word': 'dinner', 'meaning': '저녁 식사'},
-            {'word': 'snack', 'meaning': '간식'},
-            {'word': 'medicine', 'meaning': '약'},
-            {'word': 'hospital', 'meaning': '병원'}],
- '🚗 장소·이동': [{'word': 'home', 'meaning': '집'},
-             {'word': 'school', 'meaning': '학교'},
-             {'word': 'classroom', 'meaning': '교실'},
-             {'word': 'bathroom', 'meaning': '화장실'},
-             {'word': 'hospital', 'meaning': '병원'},
-             {'word': 'store', 'meaning': '가게'},
-             {'word': 'station', 'meaning': '역'},
-             {'word': 'bus', 'meaning': '버스'},
-             {'word': 'car', 'meaning': '자동차'},
-             {'word': 'taxi', 'meaning': '택시'},
-             {'word': 'train', 'meaning': '기차'},
-             {'word': 'bike', 'meaning': '자전거'},
-             {'word': 'road', 'meaning': '도로'},
-             {'word': 'street', 'meaning': '거리'},
-             {'word': 'here', 'meaning': '여기'},
-             {'word': 'there', 'meaning': '거기'},
-             {'word': 'near', 'meaning': '가까운'},
-             {'word': 'far', 'meaning': '먼'},
-             {'word': 'left', 'meaning': '왼쪽'},
-             {'word': 'right', 'meaning': '오른쪽, 맞는'}],
- '⏰ 시간·숫자': [{'word': 'time', 'meaning': '시간'},
-             {'word': 'now', 'meaning': '지금'},
-             {'word': 'today', 'meaning': '오늘'},
-             {'word': 'tomorrow', 'meaning': '내일'},
-             {'word': 'yesterday', 'meaning': '어제'},
-             {'word': 'morning', 'meaning': '아침'},
-             {'word': 'afternoon', 'meaning': '오후'},
-             {'word': 'evening', 'meaning': '저녁'},
-             {'word': 'night', 'meaning': '밤'},
-             {'word': 'nine', 'meaning': '아홉'},
-             {'word': 'late', 'meaning': '늦은'},
-             {'word': 'one', 'meaning': '하나'},
-             {'word': 'two', 'meaning': '둘'},
-             {'word': 'three', 'meaning': '셋'},
-             {'word': 'four', 'meaning': '넷'},
-             {'word': 'five', 'meaning': '다섯'},
-             {'word': 'six', 'meaning': '여섯'},
-             {'word': 'seven', 'meaning': '일곱'},
-             {'word': 'eight', 'meaning': '여덟'},
-             {'word': 'ten', 'meaning': '열'}],
- '🎒 물건·돈': [{'word': 'bag', 'meaning': '가방'},
-            {'word': 'phone', 'meaning': '전화기'},
-            {'word': 'book', 'meaning': '책'},
-            {'word': 'notebook', 'meaning': '공책'},
-            {'word': 'pen', 'meaning': '펜'},
-            {'word': 'pencil', 'meaning': '연필'},
-            {'word': 'desk', 'meaning': '책상'},
-            {'word': 'chair', 'meaning': '의자'},
-            {'word': 'door', 'meaning': '문'},
-            {'word': 'window', 'meaning': '창문'},
-            {'word': 'key', 'meaning': '열쇠'},
-            {'word': 'money', 'meaning': '돈'},
-            {'word': 'card', 'meaning': '카드'},
-            {'word': 'ticket', 'meaning': '표, 티켓'},
-            {'word': 'clothes', 'meaning': '옷'},
-            {'word': 'shoes', 'meaning': '신발'},
-            {'word': 'hat', 'meaning': '모자'},
-            {'word': 'watch', 'meaning': '시계'},
-            {'word': 'cup', 'meaning': '컵'},
-            {'word': 'bottle', 'meaning': '병'}],
- '🆘 도움 요청': [{'word': 'help', 'meaning': '도움, 돕다'},
-             {'word': 'please', 'meaning': '부디, 제발'},
-             {'word': 'sorry', 'meaning': '미안합니다'},
-             {'word': 'excuse me', 'meaning': '실례합니다'},
-             {'word': 'again', 'meaning': '다시'},
-             {'word': 'slowly', 'meaning': '천천히'},
-             {'word': 'understand', 'meaning': '이해하다'},
-             {'word': 'question', 'meaning': '질문'},
-             {'word': 'problem', 'meaning': '문제'},
-             {'word': 'need', 'meaning': '필요하다'},
-             {'word': 'want', 'meaning': '원하다'},
-             {'word': 'know', 'meaning': '알다'},
-             {'word': 'say', 'meaning': '말하다'},
-             {'word': 'tell', 'meaning': '말하다, 알려주다'},
-             {'word': 'ask', 'meaning': '묻다'},
-             {'word': 'answer', 'meaning': '대답, 답'},
-             {'word': 'repeat', 'meaning': '반복하다'},
-             {'word': 'speak', 'meaning': '말하다'},
-             {'word': 'look', 'meaning': '보다'},
-             {'word': 'listen', 'meaning': '듣다'}]}
-WORD_EMOJIS = {'I': '🙋',
- 'you': '👉',
- 'he': '👦',
- 'she': '👧',
- 'we': '👥',
- 'they': '👥',
- 'friend': '🤝',
- 'teacher': '👩\u200d🏫',
- 'student': '🧑\u200d🎓',
- 'classmate': '👫',
- 'family': '👨\u200d👩\u200d👧',
- 'father': '👨',
- 'mother': '👩',
- 'brother': '👦',
- 'sister': '👧',
- 'name': '🏷️',
- 'person': '🧍',
- 'man': '👨',
- 'woman': '👩',
- 'child': '🧒',
- 'go': '➡️',
- 'come': '⬅️',
- 'walk': '🚶',
- 'run': '🏃',
- 'sit': '🪑',
- 'stand': '🧍',
- 'stop': '🛑',
- 'start': '▶️',
- 'open': '📂',
- 'close': '📕',
- 'eat': '🍽️',
- 'drink': '🥤',
- 'sleep': '😴',
- 'study': '📚',
- 'read': '📖',
- 'write': '✏️',
- 'listen': '👂',
- 'speak': '🗣️',
- 'help': '🆘',
- 'wait': '⏳',
- 'happy': '😊',
- 'sad': '😢',
- 'angry': '😠',
- 'tired': '🥱',
- 'hungry': '😋',
- 'thirsty': '🥤',
- 'sick': '🤒',
- 'okay': '👌',
- 'fine': '🙂',
- 'cold': '🥶',
- 'hot': '🥵',
- 'pain': '🤕',
- 'headache': '🤯',
- 'stomachache': '🤢',
- 'fever': '🌡️',
- 'hurt': '🩹',
- 'good': '👍',
- 'bad': '👎',
- 'worried': '😟',
- 'scared': '😨',
- 'food': '🍽️',
- 'water': '💧',
- 'rice': '🍚',
- 'bread': '🍞',
- 'milk': '🥛',
- 'juice': '🧃',
- 'coffee': '☕',
- 'tea': '🍵',
- 'apple': '🍎',
- 'banana': '🍌',
- 'egg': '🥚',
- 'meat': '🥩',
- 'chicken': '🍗',
- 'fish': '🐟',
- 'breakfast': '🍳',
- 'lunch': '🍱',
- 'dinner': '🍽️',
- 'snack': '🍪',
- 'medicine': '💊',
- 'hospital': '🏥',
- 'home': '🏠',
- 'school': '🏫',
- 'classroom': '🧑\u200d🏫',
- 'bathroom': '🚻',
- 'store': '🏪',
- 'station': '🚉',
- 'bus': '🚌',
- 'car': '🚗',
- 'taxi': '🚕',
- 'train': '🚆',
- 'bike': '🚲',
- 'road': '🛣️',
- 'street': '🏙️',
- 'here': '📍',
- 'there': '📌',
- 'near': '↔️',
- 'far': '🌁',
- 'left': '⬅️',
- 'right': '➡️',
- 'time': '⏰',
- 'now': '🕒',
- 'today': '📅',
- 'tomorrow': '➡️📅',
- 'yesterday': '⬅️📅',
- 'morning': '🌅',
- 'afternoon': '☀️',
- 'evening': '🌆',
- 'night': '🌙',
- 'early': '🐓',
- 'late': '🌃',
- 'one': '1️⃣',
- 'two': '2️⃣',
- 'three': '3️⃣',
- 'four': '4️⃣',
- 'five': '5️⃣',
- 'six': '6️⃣',
- 'seven': '7️⃣',
- 'eight': '8️⃣',
- 'nine': '9️⃣',
- 'ten': '🔟',
- 'bag': '🎒',
- 'phone': '📱',
- 'book': '📘',
- 'notebook': '📓',
- 'pen': '🖊️',
- 'pencil': '✏️',
- 'desk': '🪑',
- 'chair': '🪑',
- 'door': '🚪',
- 'window': '🪟',
- 'key': '🔑',
- 'money': '💵',
- 'card': '💳',
- 'ticket': '🎫',
- 'clothes': '👕',
- 'shoes': '👟',
- 'hat': '🧢',
- 'watch': '⌚',
- 'cup': '☕',
- 'bottle': '🍼',
- 'please': '🙏',
- 'sorry': '🙇',
- 'excuse me': '🙋',
- 'again': '🔁',
- 'slowly': '🐢',
- 'understand': '💡',
- 'question': '❓',
- 'problem': '⚠️',
- 'need': '📌',
- 'want': '✨',
- 'know': '🧠',
- 'say': '💬',
- 'tell': '📣',
- 'ask': '❔',
- 'answer': '✅',
- 'repeat': '🔁',
- 'look': '👀'}
-
-AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
-
-
-def inject_global_audio_manager():
-    components.html(r"""
-    <script>
-    (function() {
-        const root = window.parent || window;
-        if (root.__survivalAudioManagerReady) return;
-        root.__survivalAudioManagerReady = true;
-
-        const script = root.document.createElement("script");
-        script.id = "survival-audio-manager-script";
-        script.textContent = `
-        (function() {
-            if (window.__survivalAudioManager) return;
-            window.__survivalAudioManager = {
-                token: 0,
-                timer: null,
-                state: { type: "idle", index: 0, round: 1, repeat: 1, word: "" },
-                channelName: "survival_english_audio_channel",
-                clearTimer: function() {
-                    if (this.timer) { clearTimeout(this.timer); this.timer = null; }
-                },
-                getVoice: function() {
-                    const voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
-                    const preferred = ["Samantha", "Google US English", "Microsoft Jenny", "Microsoft Aria", "Microsoft Zira", "Karen", "Victoria"];
-                    for (const name of preferred) {
-                        const v = voices.find(x => x.name && x.name.toLowerCase().includes(name.toLowerCase()) && x.lang && x.lang.toLowerCase().startsWith("en"));
-                        if (v) return v;
-                    }
-                    return voices.find(x => x.lang && x.lang.toLowerCase().startsWith("en")) || null;
-                },
-                broadcast: function(data) {
-                    try { new BroadcastChannel(this.channelName).postMessage(data); } catch(e) {}
-                },
-                stop: function() {
-                    this.token += 1;
-                    this.clearTimer();
-                    try { window.speechSynthesis.cancel(); } catch(e) {}
-                    this.state.type = "idle";
-                    this.broadcast({ type: "GLOBAL_AUDIO_STOPPED" });
-                },
-                speakOnce: function(text, rate, token, done) {
-                    if (token !== this.token) return;
-                    let u = new SpeechSynthesisUtterance(text || "");
-                    u.lang = "en-US";
-                    u.rate = rate || 0.75;
-                    u.pitch = 1.05;
-                    const voice = this.getVoice();
-                    if (voice) u.voice = voice;
-                    let finished = false;
-                    const finish = () => {
-                        if (finished) return;
-                        finished = true;
-                        if (token !== this.token) return;
-                        done && done();
-                    };
-                    u.onend = finish;
-                    u.onerror = finish;
-                    try { window.speechSynthesis.speak(u); } catch(e) { finish(); }
-                    const safeMs = Math.max(900, String(text || "").length * 145 / Math.max(rate || 0.75, 0.45));
-                    this.clearTimer();
-                    this.timer = setTimeout(finish, safeMs + 900);
-                },
-                speakSingle: function(text, opt) {
-                    opt = opt || {};
-                    this.stop();
-                    this.token += 1;
-                    const token = this.token;
-                    const repeat = opt.repeat || 1;
-                    const rate = opt.rate || 0.75;
-                    const pause = opt.pause || 450;
-                    let n = 0;
-                    this.state = { type: "single", index: 0, round: 1, repeat: repeat, word: text };
-                    const loop = () => {
-                        if (token !== this.token) return;
-                        if (n >= repeat) { this.broadcast({ type: "GLOBAL_AUDIO_DONE" }); return; }
-                        n += 1;
-                        this.broadcast({ type: "GLOBAL_AUDIO_WORD", word: text, repeatNow: n, repeatTotal: repeat, mode: "single" });
-                        this.speakOnce(text, rate, token, () => { this.timer = setTimeout(loop, pause); });
-                    };
-                    loop();
-                },
-                playCassette: function(items, opt) {
-                    opt = opt || {};
-                    this.stop();
-                    this.token += 1;
-                    const token = this.token;
-                    const rate = opt.rate || 0.75;
-                    const repeatMax = opt.repeatMax || 1;
-                    const eachRepeat = opt.eachRepeat || 2;
-                    const pause = opt.pause || 500;
-                    let index = Math.max(0, Math.min(items.length - 1, opt.startIndex || 0));
-                    let round = 1;
-                    let each = 0;
-                    this.state = { type: "cassette", index: index, round: round, repeat: repeatMax, word: "" };
-                    const loop = () => {
-                        if (token !== this.token) return;
-                        if (!items || !items.length) return;
-                        if (index >= items.length) {
-                            if (round < repeatMax) { round += 1; index = 0; each = 0; }
-                            else {
-                                this.state = { type: "idle", index: items.length - 1, round: round, repeat: repeatMax, word: items[items.length - 1].word };
-                                this.broadcast({ type: "GLOBAL_AUDIO_DONE" });
-                                return;
-                            }
-                        }
-                        const item = items[index];
-                        each += 1;
-                        this.state = { type: "cassette", index: index, round: round, repeat: repeatMax, word: item.word };
-                        this.broadcast({ type: "GLOBAL_AUDIO_WORD", word: item.word, meaning: item.meaning, index: index, total: items.length, round: round, repeatTotal: repeatMax, each: each, eachTotal: eachRepeat, theme: item.theme, mode: "cassette" });
-                        this.speakOnce(item.word, rate, token, () => {
-                            if (token !== this.token) return;
-                            if (each < eachRepeat) {
-                                this.timer = setTimeout(loop, pause);
-                            } else {
-                                each = 0;
-                                index += 1;
-                                this.timer = setTimeout(loop, pause);
-                            }
-                        });
-                    };
-                    loop();
-                },
-                pause: function() { try { window.speechSynthesis.pause(); } catch(e) {} },
-                resume: function() { try { window.speechSynthesis.resume(); } catch(e) {} }
-            };
-        })();`;
-        root.document.head.appendChild(script);
-    })();
-    </script>
-    """, height=0)
-
-inject_global_audio_manager()
-
-
-def get_word_emoji(word):
-    return WORD_EMOJIS.get(word, "🌱")
-
-
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=42):
-    player_id = f"word_player_{{uuid.uuid4().hex}}"
-    safe_label = json.dumps(label, ensure_ascii=False)
-    safe_text = json.dumps(text, ensure_ascii=False)
-    safe_player_id = json.dumps(player_id)
-    components.html(f"""
-    <div style="font-family:Arial,sans-serif;display:flex;align-items:center;gap:6px;height:36px;">
-        <button id="play_{{player_id}}" style="background:linear-gradient(135deg,#fce7f3,#dbeafe);border:1px solid #e9d5ff;border-radius:999px;padding:5px 8px;font-weight:800;font-size:12px;color:#374151;cursor:pointer;white-space:nowrap;">{{label}}</button>
-        <button id="stop_{{player_id}}" style="background:#fff7ed;border:1px solid #fed7aa;border-radius:999px;padding:5px 8px;font-weight:800;font-size:12px;color:#9a3412;cursor:pointer;white-space:nowrap;">⏹ 중지</button>
-        <span id="status_{{player_id}}" style="font-size:12px;color:#075985;font-weight:700;white-space:nowrap;"></span>
-        <script>
-        (function() {{
-            const root = window.parent || window;
-            const playBtn = document.getElementById("play_{{player_id}}");
-            const stopBtn = document.getElementById("stop_{{player_id}}");
-            const status = document.getElementById("status_{{player_id}}");
-            const wordText = {{safe_text}};
-            const labelText = {{safe_label}};
-            const playerId = {{safe_player_id}};
-            let channel = null;
-            try {{ channel = new BroadcastChannel("survival_english_audio_channel"); }} catch(e) {{}}
-            if (channel) {{
-                channel.onmessage = function(event) {{
-                    if (!event.data) return;
-                    if (event.data.type === "GLOBAL_AUDIO_WORD" && event.data.mode === "single" && event.data.word === wordText) {{
-                        status.innerText = event.data.repeatNow + "/" + event.data.repeatTotal;
-                        playBtn.innerText = "재생중";
-                    }}
-                    if (event.data.type === "GLOBAL_AUDIO_DONE" || event.data.type === "GLOBAL_AUDIO_STOPPED") {{
-                        playBtn.innerText = labelText;
-                    }}
-                }};
-            }}
-            playBtn.addEventListener("click", function() {{
-                if (root.__survivalAudioManager) {{
-                    root.__survivalAudioManager.speakSingle(wordText, {{ repeat: {repeat_count}, rate: 0.75, pause: {pause_ms} }});
-                    status.innerText = "시작";
-                    playBtn.innerText = "재생중";
-                }} else {{ status.innerText = "다시 클릭"; }}
-            }});
-            stopBtn.addEventListener("click", function() {{
-                if (root.__survivalAudioManager) root.__survivalAudioManager.stop();
-                status.innerText = "중지됨";
-                playBtn.innerText = labelText;
-            }});
-        }})();
-        </script>
-    </div>
-    """, height=height)
-
-
-def audio_button(label, text, key=None):
-    html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=42)
-
-
-def flatten_survival_words():
-    all_items = []
-    number = 1
-    for theme_name, theme_words in word_themes.items():
-        for item in theme_words:
-            all_items.append({"number": number, "theme": theme_name, "word": item["word"], "meaning": item["meaning"]})
-            number += 1
-    return all_items
-
-
-def make_theme_cassette_items(theme_words, theme_name):
-    return [{"number": idx, "theme": theme_name, "word": item["word"], "meaning": item["meaning"]} for idx, item in enumerate(theme_words, start=1)]
-
-
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="재생 버튼을 누르면 단어가 차례대로 재생됩니다.", height=600):
-    player_id = f"cassette_{{uuid.uuid4().hex}}"
-    cassette_json = json.dumps(all_items, ensure_ascii=False)
-    safe_title = html.escape(title)
-    safe_intro = html.escape(intro)
-    max_index = max(len(all_items) - 1, 0)
-    components.html(f"""
+# =========================================================
+# 상단 디자인
+# =========================================================
+st.markdown(
+    """
     <style>
-    .easy-cassette-wrap{{font-family:Arial,sans-serif;width:100%;max-width:100%;box-sizing:border-box;overflow:hidden;border-radius:28px;padding:20px;background:linear-gradient(135deg,#eff6ff 0%,#fff7ed 48%,#fdf2f8 100%);border:1px solid #bae6fd;box-shadow:0 8px 22px rgba(15,23,42,.10);}}
-    .easy-cassette-top{{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px;}}
-    .easy-cassette-title{{font-size:24px;font-weight:900;color:#0f172a;line-height:1.25;}}
-    .easy-cassette-small{{font-size:13px;font-weight:900;color:#475569;background:rgba(255,255,255,.75);border:1px solid #dbeafe;border-radius:999px;padding:7px 12px;}}
-    .easy-now-card{{background:rgba(255,255,255,.86);border:1px solid #dbeafe;border-radius:24px;padding:18px;margin:12px 0;}}
-    .easy-theme{{display:inline-block;font-size:13px;font-weight:900;color:#7c3aed;background:#f3e8ff;border-radius:999px;padding:6px 11px;margin-bottom:9px;}}
-    .easy-word{{font-size:clamp(42px,9vw,72px);font-weight:900;color:#111827;line-height:1.05;word-break:break-word;letter-spacing:-1px;}}
-    .easy-meaning{{margin-top:8px;font-size:clamp(20px,5vw,31px);font-weight:900;color:#334155;line-height:1.25;word-break:keep-all;}}
-    .easy-progress-box{{background:rgba(255,255,255,.76);border:1px solid #dbeafe;border-radius:20px;padding:13px 14px;margin:12px 0;}}
-    .easy-bar-bg{{width:100%;height:14px;background:#e2e8f0;border-radius:999px;overflow:hidden;margin:8px 0 9px 0;}}
-    .easy-bar-fill{{height:100%;width:0%;background:linear-gradient(90deg,#38bdf8,#8b5cf6,#ec4899);border-radius:999px;}}
-    .easy-range{{width:100%;height:34px;accent-color:#8b5cf6;cursor:pointer;}}
-    .easy-control-grid{{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:9px;margin-top:12px;}}
-    .easy-sub-grid{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:8px;}}
-    .easy-btn{{width:100%;min-height:48px;border-radius:18px;border:1px solid #cbd5e1;font-size:16px;font-weight:900;cursor:pointer;box-sizing:border-box;white-space:nowrap;box-shadow:0 3px 9px rgba(15,23,42,.07);}}
-    .easy-btn-main{{min-height:58px;font-size:20px;background:linear-gradient(135deg,#dbeafe,#fce7f3);border-color:#c4b5fd;color:#111827;}}
-    .easy-select-row{{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px;}}
-    .easy-select-box{{background:rgba(255,255,255,.84);border:1px solid #dbeafe;border-radius:18px;padding:10px 12px;box-sizing:border-box;}}
-    .easy-label{{font-size:12px;font-weight:900;color:#64748b;margin-bottom:5px;}}
-    .easy-select{{width:100%;border:0;background:transparent;font-size:16px;font-weight:900;color:#0f172a;outline:none;}}
-    .easy-status{{margin-top:10px;font-size:14px;font-weight:900;color:#075985;min-height:20px;line-height:1.35;}}
-    @media(max-width:520px){{.easy-cassette-wrap{{padding:14px 11px;border-radius:22px;}}.easy-cassette-title{{font-size:19px;}}.easy-control-grid{{grid-template-columns:1fr;gap:7px;}}.easy-btn{{min-height:43px;font-size:13px;border-radius:15px;padding:7px 4px;}}.easy-btn-main{{min-height:52px;font-size:18px;}}}}
+    .main-title-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 30px;
+        padding: 28px 30px;
+        margin-bottom: 22px;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
+    }
+
+    .main-title-box h1 {
+        margin: 0 0 10px 0;
+        color: #0f172a;
+        font-size: 38px;
+        font-weight: 900;
+    }
+
+    .main-title-box p {
+        margin: 0;
+        color: #475569;
+        font-size: 18px;
+        line-height: 1.7;
+        font-weight: 700;
+    }
+
+    @media (max-width: 768px) {
+        .main-title-box {
+            padding: 20px 18px;
+            border-radius: 22px;
+        }
+
+        .main-title-box h1 {
+            font-size: 27px;
+        }
+
+        .main-title-box p {
+            font-size: 15px;
+        }
+    }
     </style>
-    <div class="easy-cassette-wrap">
-        <div class="easy-cassette-top"><div class="easy-cassette-title">{safe_title}</div><div id="count_{player_id}" class="easy-cassette-small">1 / {len(all_items)}</div></div>
-        <div style="font-size:14px;font-weight:800;color:#475569;line-height:1.5;margin-bottom:8px;">{safe_intro}</div>
-        <div class="easy-now-card"><div id="theme_{player_id}" class="easy-theme">Theme</div><div id="word_{player_id}" class="easy-word">Ready</div><div id="meaning_{player_id}" class="easy-meaning">재생 버튼을 눌러 주세요.</div></div>
-        <div class="easy-progress-box"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:13px;font-weight:900;color:#075985;">🎚️ 단어 위치</span><span id="percent_{player_id}" style="font-size:13px;font-weight:900;color:#7c3aed;">0%</span></div><div class="easy-bar-bg"><div id="bar_{player_id}" class="easy-bar-fill"></div></div><input id="progress_{player_id}" class="easy-range" type="range" min="0" max="{max_index}" value="0" step="1"></div>
-        <div class="easy-control-grid"><button id="play_{player_id}" class="easy-btn easy-btn-main">▶️ 듣기</button><button id="pause_{player_id}" class="easy-btn" style="background:#ecfeff;border-color:#67e8f9;color:#155e75;">⏸ 잠깐 멈춤</button><button id="replay_{player_id}" class="easy-btn" style="background:#fef3c7;border-color:#fde68a;color:#92400e;">🔁 현재 단어</button></div>
-        <div class="easy-sub-grid"><button id="prev_{player_id}" class="easy-btn" style="background:#f8fafc;color:#334155;">⏮ 이전</button><button id="stop_{player_id}" class="easy-btn" style="background:#fff7ed;border-color:#fed7aa;color:#9a3412;">⏹ 처음</button><button id="next_{player_id}" class="easy-btn" style="background:#f8fafc;color:#334155;">다음 ⏭</button></div>
-        <div class="easy-select-row"><div class="easy-select-box"><div class="easy-label">속도</div><select id="speed_{player_id}" class="easy-select"><option value="0.55">천천히</option><option value="0.75" selected>보통</option><option value="0.95">조금 빠르게</option><option value="1.15">빠르게</option></select></div><div class="easy-select-box"><div class="easy-label">전체 반복</div><select id="repeat_{player_id}" class="easy-select"><option value="1">1번</option><option value="2">2번</option><option value="3" selected>3번</option></select></div></div>
-        <div id="status_{player_id}" class="easy-status"></div>
+    """,
+    unsafe_allow_html=True
+)
+
+st.markdown(
+    """
+    <div class="main-title-box">
+        <h1>🃏 생존 단어 카드 말하기 게임</h1>
+        <p>한국말 뜻을 보고 영어 단어를 말해 보세요.</p>
     </div>
-    <script>
-    (function() {{
-        const root = window.parent || window;
-        const cassetteItems = {cassette_json};
-        const playBtn = document.getElementById("play_{player_id}");
-        const pauseBtn = document.getElementById("pause_{player_id}");
-        const replayBtn = document.getElementById("replay_{player_id}");
-        const prevBtn = document.getElementById("prev_{player_id}");
-        const nextBtn = document.getElementById("next_{player_id}");
-        const stopBtn = document.getElementById("stop_{player_id}");
-        const progress = document.getElementById("progress_{player_id}");
-        const visualBar = document.getElementById("bar_{player_id}");
-        const percentBox = document.getElementById("percent_{player_id}");
-        const status = document.getElementById("status_{player_id}");
-        const wordBox = document.getElementById("word_{player_id}");
-        const meaningBox = document.getElementById("meaning_{player_id}");
-        const countBox = document.getElementById("count_{player_id}");
-        const themeBox = document.getElementById("theme_{player_id}");
-        const speedSelect = document.getElementById("speed_{player_id}");
-        const repeatSelect = document.getElementById("repeat_{player_id}");
-        let index = 0;
-        let channel = null;
-        try {{ channel = new BroadcastChannel("survival_english_audio_channel"); }} catch(e) {{}}
-        function getEmoji(word) {{ const m = {"I": "🙋", "you": "👉", "he": "👦", "she": "👧", "we": "👥", "they": "👥", "friend": "🤝", "teacher": "👩‍🏫", "student": "🧑‍🎓", "classmate": "👫", "family": "👨‍👩‍👧", "father": "👨", "mother": "👩", "brother": "👦", "sister": "👧", "name": "🏷️", "person": "🧍", "man": "👨", "woman": "👩", "child": "🧒", "go": "➡️", "come": "⬅️", "walk": "🚶", "run": "🏃", "sit": "🪑", "stand": "🧍", "stop": "🛑", "start": "▶️", "open": "📂", "close": "📕", "eat": "🍽️", "drink": "🥤", "sleep": "😴", "study": "📚", "read": "📖", "write": "✏️", "listen": "👂", "speak": "🗣️", "help": "🆘", "wait": "⏳", "happy": "😊", "sad": "😢", "angry": "😠", "tired": "🥱", "hungry": "😋", "thirsty": "🥤", "sick": "🤒", "okay": "👌", "fine": "🙂", "cold": "🥶", "hot": "🥵", "pain": "🤕", "headache": "🤯", "stomachache": "🤢", "fever": "🌡️", "hurt": "🩹", "good": "👍", "bad": "👎", "worried": "😟", "scared": "😨", "food": "🍽️", "water": "💧", "rice": "🍚", "bread": "🍞", "milk": "🥛", "juice": "🧃", "coffee": "☕", "tea": "🍵", "apple": "🍎", "banana": "🍌", "egg": "🥚", "meat": "🥩", "chicken": "🍗", "fish": "🐟", "breakfast": "🍳", "lunch": "🍱", "dinner": "🍽️", "snack": "🍪", "medicine": "💊", "hospital": "🏥", "home": "🏠", "school": "🏫", "classroom": "🧑‍🏫", "bathroom": "🚻", "store": "🏪", "station": "🚉", "bus": "🚌", "car": "🚗", "taxi": "🚕", "train": "🚆", "bike": "🚲", "road": "🛣️", "street": "🏙️", "here": "📍", "there": "📌", "near": "↔️", "far": "🌁", "left": "⬅️", "right": "➡️", "time": "⏰", "now": "🕒", "today": "📅", "tomorrow": "➡️📅", "yesterday": "⬅️📅", "morning": "🌅", "afternoon": "☀️", "evening": "🌆", "night": "🌙", "early": "🐓", "late": "🌃", "one": "1️⃣", "two": "2️⃣", "three": "3️⃣", "four": "4️⃣", "five": "5️⃣", "six": "6️⃣", "seven": "7️⃣", "eight": "8️⃣", "nine": "9️⃣", "ten": "🔟", "bag": "🎒", "phone": "📱", "book": "📘", "notebook": "📓", "pen": "🖊️", "pencil": "✏️", "desk": "🪑", "chair": "🪑", "door": "🚪", "window": "🪟", "key": "🔑", "money": "💵", "card": "💳", "ticket": "🎫", "clothes": "👕", "shoes": "👟", "hat": "🧢", "watch": "⌚", "cup": "☕", "bottle": "🍼", "please": "🙏", "sorry": "🙇", "excuse me": "🙋", "again": "🔁", "slowly": "🐢", "understand": "💡", "question": "❓", "problem": "⚠️", "need": "📌", "want": "✨", "know": "🧠", "say": "💬", "tell": "📣", "ask": "❔", "answer": "✅", "repeat": "🔁", "look": "👀"}; return m[word] || "🌱"; }}
-        function updateDisplay(i) {{
-            if (typeof i === "number") index = Math.max(0, Math.min(cassetteItems.length - 1, i));
-            const item = cassetteItems[index]; if (!item) return;
-            const max = Math.max(cassetteItems.length - 1, 1); const pct = Math.round((index / max) * 100);
-            progress.value = index; visualBar.style.width = pct + "%"; percentBox.innerText = pct + "%"; countBox.innerText = (index + 1) + " / " + cassetteItems.length;
-            themeBox.innerText = item.theme || "Theme"; wordBox.innerText = item.word + " " + getEmoji(item.word); meaningBox.innerText = item.meaning || "";
-        }}
-        if (channel) {{
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-                if (event.data.type === "GLOBAL_AUDIO_WORD" && event.data.mode === "cassette") {{
-                    const idx = event.data.index;
-                    if (typeof idx === "number") updateDisplay(idx);
-                    status.innerText = "재생 중: " + (event.data.index + 1) + " / " + event.data.total + " · 단어 " + event.data.each + "/" + event.data.eachTotal + " · 전체 반복 " + event.data.round + "/" + event.data.repeatTotal;
-                    playBtn.innerText = "재생 중...";
-                }}
-                if (event.data.type === "GLOBAL_AUDIO_DONE") {{ status.innerText = "카세트 듣기 완료!"; playBtn.innerText = "▶️ 듣기"; }}
-                if (event.data.type === "GLOBAL_AUDIO_STOPPED") {{ playBtn.innerText = "▶️ 듣기"; }}
-            }};
-        }}
-        playBtn.addEventListener("click", function() {{
-            if (!root.__survivalAudioManager) {{ status.innerText = "다시 클릭해 주세요."; return; }}
-            root.__survivalAudioManager.playCassette(cassetteItems, {{ startIndex: index, rate: parseFloat(speedSelect.value || "0.75"), repeatMax: parseInt(repeatSelect.value || "1"), eachRepeat: 2, pause: 500 }});
-            playBtn.innerText = "재생 중..."; status.innerText = "카세트 듣기 시작";
-        }});
-        pauseBtn.addEventListener("click", function() {{ if(root.__survivalAudioManager) root.__survivalAudioManager.pause(); status.innerText="잠깐 멈춤"; }});
-        replayBtn.addEventListener("click", function() {{ if(root.__survivalAudioManager) root.__survivalAudioManager.speakSingle(cassetteItems[index].word, {{repeat:2, rate:parseFloat(speedSelect.value || "0.75"), pause:500}}); status.innerText="현재 단어 2번 듣기"; }});
-        prevBtn.addEventListener("click", function() {{ updateDisplay(index - 1); }});
-        nextBtn.addEventListener("click", function() {{ updateDisplay(index + 1); }});
-        stopBtn.addEventListener("click", function() {{ if(root.__survivalAudioManager) root.__survivalAudioManager.stop(); updateDisplay(0); status.innerText="처음으로 돌아갔습니다."; }});
-        progress.addEventListener("input", function() {{ updateDisplay(parseInt(progress.value)); }});
-        updateDisplay(0);
-    }})();
-    </script>
-    """, height=height)
+    """,
+    unsafe_allow_html=True
+)
 
 
-def browser_survival_cassette_player(all_items, height=620):
-    browser_easy_cassette_player(all_items, title="📼 전체 단어 카세트 듣기", intro="전체 단어를 단어만 차례대로 들을 수 있습니다. 각 단어는 2번씩 발음됩니다.", height=height)
+# =========================================================
+# 말하기 카드 게임 컴포넌트
+# =========================================================
+def word_card_speaking_game(word_themes):
+    items = []
+    for cat, words in word_themes.items():
+        for item in words:
+            new_item = dict(item)
+            new_item["cat"] = cat
+            items.append(new_item)
 
+    items_json = json.dumps(items, ensure_ascii=False)
 
-def browser_theme_cassette_player(theme_items, theme_name, height=580):
-    browser_easy_cassette_player(theme_items, title=f"📼 {{theme_name}} 단어 카세트 듣기", intro="이 테마 단어만 차례대로 들을 수 있습니다. 각 단어는 2번씩 발음됩니다.", height=height)
+    html = r"""
+    <div id="word-card-app" style="
+        font-family: Arial, sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
+        border: 1.5px solid #dbeafe;
+        border-radius: 30px;
+        padding: 24px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+        max-width: 100%;
+        overflow-x: hidden;
+        box-sizing: border-box;
+    ">
+        <style>
+            #word-card-app * {
+                box-sizing: border-box;
+            }
 
+            #word-card-app button {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
 
-def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어만 카세트 듣기")
-    all_items = flatten_survival_words()
-    browser_survival_cassette_player(all_items, height=760)
-    with st.expander("📜 전체 카세트 단어 목록 보기"):
-        for item in all_items:
-            st.markdown(f"""
-            <div style="background:white;border:1px solid #dbeafe;border-radius:16px;padding:12px 14px;margin-bottom:8px;box-shadow:0 2px 8px rgba(0,0,0,.035);">
-                <div style="font-size:18px;font-weight:900;color:#111827;">{{item['number']}}. {{item['word']}}</div>
-                <div style="font-size:15px;font-weight:800;color:#374151;margin-top:4px;">단어 뜻: {{item['meaning']}}</div>
-                <div style="font-size:12px;color:#94a3b8;margin-top:4px;">{{item['theme']}}</div>
+            #word-card-app select {
+                max-width: 100%;
+            }
+
+            #cardBox {
+                position: relative;
+                transform-style: preserve-3d;
+                perspective: 1200px;
+                transform-origin: left center;
+            }
+
+            #cardBox::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                border-radius: 32px;
+                pointer-events: none;
+                background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(15,23,42,0.10));
+                opacity: 0;
+            }
+
+            .page-flip-card {
+                animation: pageFlip 0.62s ease-in-out;
+            }
+
+            .page-flip-card::after {
+                animation: pageShadow 0.62s ease-in-out;
+            }
+
+            @keyframes pageFlip {
+                0% {
+                    transform: rotateY(0deg) translateX(0);
+                    opacity: 1;
+                }
+                35% {
+                    transform: rotateY(-18deg) translateX(-6px);
+                    opacity: 0.92;
+                }
+                70% {
+                    transform: rotateY(7deg) translateX(3px);
+                    opacity: 1;
+                }
+                100% {
+                    transform: rotateY(0deg) translateX(0);
+                    opacity: 1;
+                }
+            }
+
+            @keyframes pageShadow {
+                0% {
+                    opacity: 0;
+                }
+                35% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                }
+            }
+
+            @media (max-width: 768px) {
+                #word-card-app {
+                    padding: 14px !important;
+                    border-radius: 22px !important;
+                }
+
+                #categorySelect {
+                    width: 100%;
+                    font-size: 14px !important;
+                }
+
+                #topControlBox {
+                    gap: 8px !important;
+                }
+
+                #topControlBox button {
+                    flex: 1 1 45%;
+                    font-size: 14px !important;
+                    padding: 10px 10px !important;
+                }
+
+                #cardBox {
+                    padding: 18px 14px !important;
+                    border-radius: 24px !important;
+                }
+
+                #emojiBox {
+                    font-size: 72px !important;
+                }
+
+                #meaningBox {
+                    font-size: 32px !important;
+                    line-height: 1.25 !important;
+                }
+
+                #answerBox {
+                    font-size: 27px !important;
+                    padding: 14px 12px !important;
+                    word-break: break-word;
+                }
+
+                #buttonBox button {
+                    flex: 1 1 100%;
+                    font-size: 16px !important;
+                    padding: 13px 12px !important;
+                }
+
+                #transcriptBox {
+                    font-size: 19px !important;
+                }
+
+                #resultBox {
+                    font-size: 17px !important;
+                }
+            }
+        </style>
+
+        <div id="topControlBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
+            <label style="font-weight:900; color:#334155;">단어 테마 선택</label>
+            <select id="categorySelect" style="
+                padding: 10px 14px;
+                border-radius: 999px;
+                border: 1.5px solid #bae6fd;
+                font-size: 15px;
+                font-weight: 800;
+                color: #0f172a;
+                background: white;
+            "></select>
+
+            <button id="randomBtn" style="
+                border: 1.5px solid #c7d2fe;
+                background: white;
+                color: #3730a3;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🎲 섞어서 풀기</button>
+
+            <button id="resetBtn" style="
+                border: 1.5px solid #fed7aa;
+                background: #fff7ed;
+                color: #9a3412;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🔄 다시 시작</button>
+        </div>
+
+        <div id="cassetteControlBox" style="
+            background: linear-gradient(135deg, #ecfeff 0%, #f0fdf4 50%, #fff7ed 100%);
+            border: 1.5px solid #bae6fd;
+            border-radius: 24px;
+            padding: 16px 18px;
+            margin-bottom: 18px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.05);
+        ">
+            <div style="font-size:20px; font-weight:900; color:#0f172a; margin-bottom:6px;">📼 카세트테이프 듣기</div>
+            <div style="font-size:14px; font-weight:700; color:#475569; line-height:1.6; margin-bottom:12px;">
+                선택한 테마 또는 전체 단어를 들을 수 있습니다. 한 단어를 2번 들려준 뒤 다음 단어로 넘어갑니다.
             </div>
-            """, unsafe_allow_html=True)
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                <button id="themeCassetteBtn" style="
+                    border:1.5px solid #7dd3fc;
+                    background:#eff6ff;
+                    color:#0369a1;
+                    border-radius:999px;
+                    padding:12px 17px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:15px;
+                ">▶️ 이 테마 카세트 듣기</button>
+
+                <button id="allCassetteBtn" style="
+                    border:1.5px solid #86efac;
+                    background:#f0fdf4;
+                    color:#166534;
+                    border-radius:999px;
+                    padding:12px 17px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:15px;
+                ">▶️ 전체 카세트 듣기</button>
+
+                <button id="stopCassetteBtn" style="
+                    border:1.5px solid #fed7aa;
+                    background:#fff7ed;
+                    color:#9a3412;
+                    border-radius:999px;
+                    padding:12px 17px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:15px;
+                ">⏹ 듣기 중지</button>
+            </div>
+            <div id="cassetteStatus" style="
+                margin-top:10px;
+                font-size:14px;
+                font-weight:900;
+                color:#075985;
+                min-height:20px;
+            "></div>
+        </div>
+
+        <div id="gameArea">
+            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                <div id="categoryLabel" style="
+                    display:inline-block;
+                    background:#eef6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bfdbfe;
+                "></div>
+
+                <div id="scoreLabel" style="
+                    display:inline-block;
+                    background:#f0fdf4;
+                    color:#166534;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bbf7d0;
+                ">정답 0 / 0 · 못 말한 단어 0</div>
+            </div>
+
+            <div id="cardBox" style="
+                background:white;
+                border-radius:32px;
+                padding:30px 24px;
+                border:1.5px solid #e0f2fe;
+                box-shadow:0 8px 24px rgba(0,0,0,0.07);
+                text-align:center;
+                margin-bottom:18px;
+            ">
+                <div id="emojiBox" style="
+                    font-size: 96px;
+                    line-height: 1.1;
+                    margin-bottom: 14px;
+                ">🃏</div>
+
+                <div style="
+                    display:inline-block;
+                    background:#fef3c7;
+                    color:#92400e;
+                    border:1.5px solid #fde68a;
+                    border-radius:999px;
+                    padding:7px 14px;
+                    font-size:14px;
+                    font-weight:900;
+                    margin-bottom:14px;
+                ">한국말 뜻</div>
+
+                <div id="meaningBox" style="
+                    font-size: 44px;
+                    font-weight: 900;
+                    color: #111827;
+                    line-height: 1.35;
+                    margin-bottom: 16px;
+                ">뜻</div>
+
+                <div id="answerBox" style="
+                    display:none;
+                    background:#ecfdf5;
+                    border:1.5px solid #bbf7d0;
+                    color:#166534;
+                    border-radius:20px;
+                    padding:16px 18px;
+                    font-size:34px;
+                    font-weight:900;
+                    margin-top:18px;
+                ">answer</div>
+            </div>
+
+            <div id="buttonBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
+                <button id="micBtn" style="
+                    border:1.5px solid #fecaca;
+                    background:#fff1f2;
+                    color:#be123c;
+                    border-radius:999px;
+                    padding:13px 20px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:17px;
+                ">🎙️ 말하기</button>
+
+                <button id="answerBtn" style="
+                    border:1.5px solid #bfdbfe;
+                    background:#eff6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:13px 20px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:17px;
+                ">🔊 정답 듣기/보기</button>
+
+                <button id="skipBtn" style="
+                    border:1.5px solid #c7d2fe;
+                    background:#eef2ff;
+                    color:#3730a3;
+                    border-radius:999px;
+                    padding:13px 20px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:17px;
+                ">➡️ 다음 단어</button>
+            </div>
+
+            <div style="
+                background:#f8fafc;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                margin-bottom:14px;
+                min-height:54px;
+            ">
+                <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 단어</div>
+                <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155;"></div>
+            </div>
+
+            <div id="resultBox" style="
+                background:#f1f5f9;
+                border:1.5px solid #e2e8f0;
+                border-radius:18px;
+                padding:14px 16px;
+                font-size:20px;
+                font-weight:900;
+                color:#334155;
+            ">
+                마이크 버튼을 누르고 영어 단어 한 단어를 말해 보세요.
+            </div>
+        </div>
+
+        <div id="finishBox" style="
+            display:none;
+            background:white;
+            border-radius:30px;
+            padding:30px 24px;
+            border:1.5px solid #bbf7d0;
+            box-shadow:0 8px 24px rgba(0,0,0,0.07);
+            text-align:center;
+            margin-top:16px;
+        ">
+            <div style="font-size:64px; margin-bottom:10px;">🎉</div>
+            <div style="
+                font-size:34px;
+                font-weight:900;
+                color:#14532d;
+                margin-bottom:10px;
+            ">테마 완료!</div>
+            <div id="finishScore" style="
+                font-size:24px;
+                font-weight:900;
+                color:#166534;
+                margin-bottom:18px;
+            ">정답 0 / 0 · 못 말한 단어 0</div>
+            <button id="finishRetryBtn" style="
+                border:1.5px solid #a7f3d0;
+                background:#ecfdf5;
+                color:#047857;
+                border-radius:999px;
+                padding:13px 22px;
+                font-weight:900;
+                cursor:pointer;
+                font-size:17px;
+            ">🔁 다시 풀기</button>
+        </div>
+    </div>
+
+    <script>
+    const ITEMS = __ITEMS_JSON__;
+
+    let currentList = [];
+    let currentIndex = 0;
+    let currentItem = null;
+    let correctMap = {};
+    let missedMap = {};
+    let finished = false;
+
+    const categorySelect = document.getElementById("categorySelect");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const themeCassetteBtn = document.getElementById("themeCassetteBtn");
+    const allCassetteBtn = document.getElementById("allCassetteBtn");
+    const stopCassetteBtn = document.getElementById("stopCassetteBtn");
+    const cassetteStatus = document.getElementById("cassetteStatus");
+
+    const gameArea = document.getElementById("gameArea");
+    const finishBox = document.getElementById("finishBox");
+    const finishScore = document.getElementById("finishScore");
+    const finishRetryBtn = document.getElementById("finishRetryBtn");
+
+    const categoryLabel = document.getElementById("categoryLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const cardBox = document.getElementById("cardBox");
+    const emojiBox = document.getElementById("emojiBox");
+    const meaningBox = document.getElementById("meaningBox");
+    const answerBox = document.getElementById("answerBox");
+
+    const micBtn = document.getElementById("micBtn");
+    const answerBtn = document.getElementById("answerBtn");
+    const skipBtn = document.getElementById("skipBtn");
+
+    const transcriptBox = document.getElementById("transcriptBox");
+    const resultBox = document.getElementById("resultBox");
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+
+    function uniqueCategories() {
+        const cats = ["전체"];
+        ITEMS.forEach(item => {
+            if (!cats.includes(item.cat)) cats.push(item.cat);
+        });
+        return cats;
+    }
+
+    function initCategories() {
+        const cats = uniqueCategories();
+        categorySelect.innerHTML = "";
+        cats.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.innerText = cat;
+            categorySelect.appendChild(option);
+        });
+    }
+
+    function getFilteredItems() {
+        const selected = categorySelect.value;
+        if (selected === "전체") return ITEMS.slice();
+        return ITEMS.filter(item => item.cat === selected);
+    }
+
+    function getItemKey(item) {
+        return item.cat + "||" + item.meaning + "||" + item.word;
+    }
+
+    function shuffleArray(arr) {
+        const copied = arr.slice();
+        for (let i = copied.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copied[i], copied[j]] = [copied[j], copied[i]];
+        }
+        return copied;
+    }
+
+    function normalizeText(text) {
+        return String(text || "")
+            .toLowerCase()
+            .replace(/[.,!?;:'"’‘“”]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function isCorrectSpeech(spoken, answer) {
+        const s = normalizeText(spoken);
+        const a = normalizeText(answer);
+
+        if (!s || !a) return false;
+
+        if (s === a) return true;
+
+        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우 허용
+        // 예: "the word water" / "water please"
+        const words = s.split(" ").filter(Boolean);
+        if (!a.includes(" ") && words.includes(a)) return true;
+
+        // excuse me처럼 두 단어 단어도 처리
+        if (a.includes(" ")) {
+            return s.includes(a);
+        }
+
+        return false;
+    }
+
+    function countCorrectInCurrentTheme() {
+        const list = getFilteredItems();
+        let count = 0;
+
+        list.forEach(item => {
+            if (correctMap[getItemKey(item)]) count += 1;
+        });
+
+        return count;
+    }
+
+    function countMissedInCurrentTheme() {
+        const list = getFilteredItems();
+        let count = 0;
+
+        list.forEach(item => {
+            if (missedMap[getItemKey(item)]) count += 1;
+        });
+
+        return count;
+    }
+
+    function updateScore() {
+        const list = getFilteredItems();
+        const correctCount = countCorrectInCurrentTheme();
+        const missedCount = countMissedInCurrentTheme();
+        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
+    }
+
+    function getAudioHost() {
+        // 가능하면 Streamlit iframe 밖의 최상위 창에 오디오 매니저를 둡니다.
+        // 이렇게 해야 페이지를 잠깐 이동해도 듣기가 바로 끊기는 현상을 최대한 줄일 수 있습니다.
+        try {
+            if (window.top && window.top.speechSynthesis) return window.top;
+        } catch (e) {}
+        return window;
+    }
+
+    function getAudioManager() {
+        const host = getAudioHost();
+
+        if (!host.__SURVIVAL_ENGLISH_AUDIO_MANAGER__) {
+            host.__SURVIVAL_ENGLISH_AUDIO_MANAGER__ = {
+                mode: "idle",
+                list: [],
+                index: 0,
+                repeat: 0,
+                repeatEach: 2,
+                pauseMs: 700,
+                stopped: true,
+                currentWord: "",
+                timer: null,
+                statusCallback: null,
+
+                setStatusCallback: function(callback) {
+                    this.statusCallback = callback;
+                },
+
+                updateStatus: function(text) {
+                    this.currentStatus = text || "";
+                    try {
+                        if (this.statusCallback) this.statusCallback(this.currentStatus);
+                    } catch (e) {}
+                },
+
+                clearTimer: function() {
+                    if (this.timer) {
+                        host.clearTimeout(this.timer);
+                        this.timer = null;
+                    }
+                },
+
+                stop: function(message = "⏹ 듣기를 중지했습니다.") {
+                    this.stopped = true;
+                    this.mode = "idle";
+                    this.clearTimer();
+                    try { host.speechSynthesis.cancel(); } catch (e) {}
+                    try { host.localStorage.removeItem("SURVIVAL_ENGLISH_AUDIO_STATE"); } catch (e) {}
+                    this.updateStatus(message);
+                },
+
+                saveState: function() {
+                    try {
+                        host.localStorage.setItem("SURVIVAL_ENGLISH_AUDIO_STATE", JSON.stringify({
+                            mode: this.mode,
+                            list: this.list,
+                            index: this.index,
+                            repeat: this.repeat,
+                            repeatEach: this.repeatEach,
+                            pauseMs: this.pauseMs,
+                            stopped: this.stopped,
+                            currentWord: this.currentWord,
+                            savedAt: Date.now()
+                        }));
+                    } catch (e) {}
+                },
+
+                getVoice: function() {
+                    let voices = [];
+                    try { voices = host.speechSynthesis.getVoices(); } catch (e) {}
+                    return voices.find(v =>
+                        v.lang && v.lang.toLowerCase().startsWith("en") &&
+                        /(samantha|jenny|aria|zira|google us english|karen|victoria|female)/i.test(v.name)
+                    ) || voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en"));
+                },
+
+                makeUtterance: function(text) {
+                    const utterance = new host.SpeechSynthesisUtterance(text);
+                    utterance.lang = "en-US";
+                    utterance.rate = 0.82;
+                    utterance.pitch = 1.05;
+                    const preferred = this.getVoice();
+                    if (preferred) utterance.voice = preferred;
+                    return utterance;
+                },
+
+                playSingle: function(text) {
+                    // 다른 단어/카세트와 겹치지 않도록 기존 재생을 먼저 끊습니다.
+                    this.stop("");
+                    this.mode = "single";
+                    this.stopped = false;
+                    this.currentWord = text;
+                    this.updateStatus("🔊 정답 듣기: " + text);
+
+                    const utterance = this.makeUtterance(text);
+                    utterance.onend = () => {
+                        if (!this.stopped && this.mode === "single") {
+                            this.mode = "idle";
+                            this.updateStatus("✅ 정답 듣기 완료");
+                        }
+                    };
+                    try { host.speechSynthesis.speak(utterance); } catch (e) {}
+                },
+
+                playCassette: function(words, label = "카세트") {
+                    if (!words || words.length === 0) return;
+
+                    // 다른 카세트나 단어 듣기와 겹치지 않게 기존 소리를 먼저 끊습니다.
+                    this.stop("");
+                    this.mode = "cassette";
+                    this.list = words.slice();
+                    this.index = 0;
+                    this.repeat = 0;
+                    this.repeatEach = 2;
+                    this.pauseMs = 700;
+                    this.stopped = false;
+                    this.label = label;
+                    this.saveState();
+                    this.playCurrentCassetteWord();
+                },
+
+                playCurrentCassetteWord: function() {
+                    if (this.stopped || this.mode !== "cassette") return;
+
+                    if (this.index >= this.list.length) {
+                        this.stop("✅ 카세트 듣기 완료");
+                        return;
+                    }
+
+                    const word = this.list[this.index];
+                    this.currentWord = word;
+                    this.updateStatus(
+                        "📼 " + (this.label || "카세트") + " 재생 중 · " +
+                        (this.index + 1) + " / " + this.list.length +
+                        " · " + word + " (" + (this.repeat + 1) + "/" + this.repeatEach + ")"
+                    );
+
+                    this.saveState();
+
+                    const utterance = this.makeUtterance(word);
+                    utterance.onend = () => {
+                        if (this.stopped || this.mode !== "cassette") return;
+
+                        this.repeat += 1;
+
+                        if (this.repeat < this.repeatEach) {
+                            this.clearTimer();
+                            this.timer = host.setTimeout(() => this.playCurrentCassetteWord(), this.pauseMs);
+                        } else {
+                            this.repeat = 0;
+                            this.index += 1;
+                            this.clearTimer();
+                            this.timer = host.setTimeout(() => this.playCurrentCassetteWord(), this.pauseMs);
+                        }
+
+                        this.saveState();
+                    };
+
+                    try { host.speechSynthesis.speak(utterance); } catch (e) {}
+                },
+
+                resumeFromSavedState: function() {
+                    let saved = null;
+                    try {
+                        saved = JSON.parse(host.localStorage.getItem("SURVIVAL_ENGLISH_AUDIO_STATE") || "null");
+                    } catch (e) {}
+
+                    if (!saved || saved.stopped || saved.mode !== "cassette" || !Array.isArray(saved.list)) return;
+
+                    // 너무 오래 지난 자동 재개는 막습니다. 페이지 이동 직후 재개용입니다.
+                    if (Date.now() - (saved.savedAt || 0) > 60000) return;
+
+                    this.mode = "cassette";
+                    this.list = saved.list;
+                    this.index = saved.index || 0;
+                    this.repeat = saved.repeat || 0;
+                    this.repeatEach = saved.repeatEach || 2;
+                    this.pauseMs = saved.pauseMs || 700;
+                    this.stopped = false;
+                    this.label = saved.label || "카세트";
+
+                    this.clearTimer();
+                    this.timer = host.setTimeout(() => this.playCurrentCassetteWord(), 350);
+                }
+            };
+        }
+
+        return host.__SURVIVAL_ENGLISH_AUDIO_MANAGER__;
+    }
+
+    function setCassetteStatus(text) {
+        if (cassetteStatus) cassetteStatus.innerText = text || "";
+    }
+
+    const audioManager = getAudioManager();
+    audioManager.setStatusCallback(setCassetteStatus);
+    if (audioManager.currentStatus) setCassetteStatus(audioManager.currentStatus);
+
+    function speak(text) {
+        audioManager.playSingle(text);
+    }
+
+    function showGameArea() {
+        gameArea.style.display = "block";
+        finishBox.style.display = "none";
+        finished = false;
+    }
+
+    function showFinishScreen() {
+        finished = true;
+        const list = getFilteredItems();
+        const correctCount = countCorrectInCurrentTheme();
+        const missedCount = countMissedInCurrentTheme();
+
+        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
+
+        gameArea.style.display = "none";
+        finishBox.style.display = "block";
+    }
+
+    function loadQuestion(index = 0) {
+        if (currentList.length === 0) {
+            currentList = getFilteredItems();
+        }
+
+        if (index >= currentList.length) {
+            showFinishScreen();
+            return;
+        }
+
+        if (index < 0) index = 0;
+
+        showGameArea();
+
+        currentIndex = index;
+        currentItem = currentList[currentIndex];
+
+        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
+        emojiBox.innerText = currentItem.emoji || "🃏";
+        meaningBox.innerText = currentItem.meaning;
+
+        answerBox.style.display = "none";
+        answerBox.innerText = "정답: " + currentItem.word;
+
+        transcriptBox.innerText = "";
+        resultBox.innerText = "";
+        resultBox.style.background = "#f1f5f9";
+        resultBox.style.borderColor = "#e2e8f0";
+        resultBox.style.color = "#334155";
+
+        cardBox.classList.remove("page-flip-card");
+        void cardBox.offsetWidth;
+        cardBox.classList.add("page-flip-card");
+
+        updateScore();
+    }
+
+    function goNextCard() {
+        if (currentIndex + 1 >= currentList.length) {
+            showFinishScreen();
+        } else {
+            loadQuestion(currentIndex + 1);
+        }
+    }
+
+    function checkSpeech(spokenText) {
+        if (!currentItem) return;
+
+        if (isCorrectSpeech(spokenText, currentItem.word)) {
+            correctMap[getItemKey(currentItem)] = true;
+            delete missedMap[getItemKey(currentItem)];
+            updateScore();
+
+            resultBox.innerHTML =
+                "✅ 정답입니다!<br>" +
+                "<span style='font-size:17px;'>잘 말했어요: " + currentItem.word + "</span>";
+
+            resultBox.style.background = "#ecfdf5";
+            resultBox.style.borderColor = "#bbf7d0";
+            resultBox.style.color = "#166534";
+
+            speak(currentItem.word);
+
+            setTimeout(function() {
+                goNextCard();
+            }, 650);
+        } else {
+            resultBox.innerHTML =
+                "🍊 다시 말해 보세요.<br>" +
+                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 한 단어만 말하면 됩니다.</span>";
+
+            resultBox.style.background = "#fff7ed";
+            resultBox.style.borderColor = "#fed7aa";
+            resultBox.style.color = "#9a3412";
+        }
+    }
+
+    function startRecognition() {
+        if (!SpeechRecognition) {
+            resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
+            resultBox.style.background = "#fef2f2";
+            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.color = "#991b1b";
+            return;
+        }
+
+        if (finished) return;
+
+        window.speechSynthesis.cancel();
+
+        recognition = new SpeechRecognition();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.continuous = false;
+        recognition.maxAlternatives = 3;
+
+        micBtn.innerText = "🎙️ 듣는 중...";
+        resultBox.innerText = "말해 보세요.";
+        resultBox.style.background = "#eff6ff";
+        resultBox.style.borderColor = "#bfdbfe";
+        resultBox.style.color = "#1d4ed8";
+
+        recognition.onresult = function(event) {
+            let bestTranscript = "";
+
+            for (let i = 0; i < event.results[0].length; i++) {
+                const transcript = event.results[0][i].transcript;
+                if (i === 0) bestTranscript = transcript;
+
+                if (isCorrectSpeech(transcript, currentItem.word)) {
+                    bestTranscript = transcript;
+                    break;
+                }
+            }
+
+            transcriptBox.innerText = bestTranscript;
+            checkSpeech(bestTranscript);
+        };
+
+        recognition.onerror = function(event) {
+            resultBox.innerText = "다시 눌러 주세요.";
+            resultBox.style.background = "#fef2f2";
+            resultBox.style.borderColor = "#fecaca";
+            resultBox.style.color = "#991b1b";
+            micBtn.innerText = "🎙️ 말하기";
+        };
+
+        recognition.onend = function() {
+            micBtn.innerText = "🎙️ 말하기";
+        };
+
+        recognition.start();
+    }
+
+    function resetCurrentTheme() {
+        const list = getFilteredItems();
+
+        list.forEach(item => {
+            delete correctMap[getItemKey(item)];
+            delete missedMap[getItemKey(item)];
+        });
+
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        loadQuestion(0);
+        updateScore();
+    }
+
+    categorySelect.addEventListener("change", function() {
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        loadQuestion(0);
+        updateScore();
+    });
+
+    randomBtn.addEventListener("click", function() {
+        currentList = shuffleArray(getFilteredItems());
+        currentIndex = 0;
+        loadQuestion(0);
+        updateScore();
+    });
+
+    resetBtn.addEventListener("click", resetCurrentTheme);
+    finishRetryBtn.addEventListener("click", resetCurrentTheme);
+
+    micBtn.addEventListener("click", startRecognition);
+
+    answerBtn.addEventListener("click", function() {
+        if (!currentItem) return;
+        answerBox.style.display = "block";
+        answerBox.innerText = "정답: " + currentItem.word;
+        speak(currentItem.word);
+    });
+
+    skipBtn.addEventListener("click", function() {
+        if (currentItem && !correctMap[getItemKey(currentItem)]) {
+            missedMap[getItemKey(currentItem)] = true;
+            updateScore();
+        }
+        goNextCard();
+    });
+
+    function getWordsOnly(list) {
+        return list.map(item => item.word).filter(Boolean);
+    }
+
+    themeCassetteBtn.addEventListener("click", function() {
+        const selected = categorySelect.value;
+        const list = getFilteredItems();
+        const label = selected === "전체" ? "전체 카세트" : selected + " 카세트";
+        audioManager.playCassette(getWordsOnly(list), label);
+    });
+
+    allCassetteBtn.addEventListener("click", function() {
+        audioManager.playCassette(getWordsOnly(ITEMS), "전체 카세트");
+    });
+
+    stopCassetteBtn.addEventListener("click", function() {
+        audioManager.stop("⏹ 듣기를 중지했습니다.");
+    });
+
+    // 페이지 이동 직후 다시 이 컴포넌트가 나타나면, 이전 카세트 상태를 이어서 재생합니다.
+    // 단, Streamlit의 다른 페이지에 이 공통 오디오 매니저가 전혀 없으면 브라우저 구조상 재개할 수 없습니다.
+    audioManager.resumeFromSavedState();
+
+    initCategories();
+    currentList = getFilteredItems();
+    loadQuestion(0);
+    updateScore();
+    </script>
+    """
+
+    html = html.replace("__ITEMS_JSON__", items_json)
+
+    components.html(html, height=800, scrolling=True)
 
 
-def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 테마 단어만 카세트 듣기")
-    theme_items = make_theme_cassette_items(theme_words, theme_name)
-    browser_theme_cassette_player(theme_items, theme_name, height=680)
-
-
-all_words = []
-for theme_words in word_themes.values():
-    all_words.extend(theme_words)
-all_meanings = [item["meaning"] for item in all_words]
-
-
-def get_shuffled_options(theme_name, index, options):
-    key = f"{{theme_name}}_options_{{index}}"
-    if key not in st.session_state:
-        shuffled = options[:]
-        random.seed(f"{{theme_name}}_{{index}}")
-        random.shuffle(shuffled)
-        st.session_state[key] = shuffled
-    return st.session_state[key]
-
-
-def make_quiz_items(theme_words, theme_name):
-    quiz_items = []
-    for idx, item in enumerate(theme_words):
-        correct = item["meaning"]
-        distractors = [m for m in all_meanings if m != correct]
-        random.seed(f"{{theme_name}}_{{item['word']}}_{{idx}}")
-        wrong_options = random.sample(distractors, 3)
-        quiz_items.append({{"word": item["word"], "answer": correct, "options": [correct] + wrong_options}})
-    return quiz_items
-
-
-def init_state(theme_name):
-    st.session_state.setdefault(f"{{theme_name}}_submitted1", False)
-    st.session_state.setdefault(f"{{theme_name}}_submitted2", False)
-    st.session_state.setdefault(f"{{theme_name}}_wrong", [])
-
-
-def reset_theme(theme_name):
-    for key in list(st.session_state.keys()):
-        if key.startswith(theme_name):
-            del st.session_state[key]
-
-
-def show_word_cards(theme_words, theme_name):
-    st.markdown("### 🌱 핵심 단어 익히기")
-    st.write("생존 회화에 꼭 필요한 단어를 듣고 익혀 보세요.")
-    for idx, item in enumerate(theme_words):
-        st.markdown('<div class="word-card">', unsafe_allow_html=True)
-        col1, col2, col3, col4 = st.columns([1.25, 1.05, 0.35, 1.65])
-        with col1:
-            st.markdown(f"""<div class="word-row"><div class="word-number">{{idx + 1}}</div><div class="word-text">{{item['word']}}</div></div>""", unsafe_allow_html=True)
-        with col2:
-            st.markdown(f"<div class='meaning-text'>{{item['meaning']}}</div>", unsafe_allow_html=True)
-        with col3:
-            st.markdown(f"<div class='emoji-text'>{{get_word_emoji(item['word'])}}</div>", unsafe_allow_html=True)
-        with col4:
-            audio_button("🔊 듣기", item["word"], key=f"{{theme_name}}_learn_audio_{{idx}}")
-        st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('---')
-    show_cassette_player(theme_words, theme_name)
-
-
-def show_quiz(theme_words, theme_name):
-    init_state(theme_name)
-    quiz_items = make_quiz_items(theme_words, theme_name)
-    submitted1_key = f"{{theme_name}}_submitted1"
-    submitted2_key = f"{{theme_name}}_submitted2"
-    wrong_key = f"{{theme_name}}_wrong"
-    if not st.session_state[submitted1_key]:
-        st.markdown("### 🧸 1차 퀴즈")
-        st.write("영어 단어를 보고 알맞은 뜻을 고르세요.")
-        for i, q in enumerate(quiz_items):
-            st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
-            st.markdown(f"<div class='quiz-number'>🌟 Question {{i + 1}}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='quiz-word'>{{q['word']}}</div>", unsafe_allow_html=True)
-            audio_button("🔊 발음 듣기", q["word"], key=f"{{theme_name}}_quiz_audio1_{{i}}")
-            options = get_shuffled_options(theme_name, i, q["options"])
-            st.radio("뜻을 고르세요.", options, key=f"{{theme_name}}_q1_{{i}}")
-            st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("✅ 1차 제출하기", key=f"{{theme_name}}_submit1"):
-            wrong = []
-            for i, q in enumerate(quiz_items):
-                if st.session_state.get(f"{{theme_name}}_q1_{{i}}") != q["answer"]:
-                    wrong.append(i)
-            st.session_state[wrong_key] = wrong
-            st.session_state[submitted1_key] = True
-            st.rerun()
-    elif st.session_state[submitted1_key] and not st.session_state[submitted2_key]:
-        wrong = st.session_state[wrong_key]
-        score = len(quiz_items) - len(wrong)
-        st.markdown(f"""<div class="score-box"><div class="score-title">🎉 1차 결과: {{score}} / {{len(quiz_items)}}점</div></div>""", unsafe_allow_html=True)
-        if len(wrong) == 0:
-            st.balloons(); st.success("🌈 완벽합니다! 이 테마의 생존 단어를 모두 잘 기억하고 있습니다.")
-            if st.button("🔄 다시 풀기", key=f"{{theme_name}}_reset_all_correct"):
-                reset_theme(theme_name); st.rerun()
-        else:
-            st.markdown(f"""<div class="wrong-box">🍊 틀린 단어 {{len(wrong)}}개를 다시 풀어 봅시다.</div>""", unsafe_allow_html=True)
-            st.markdown("### 🔁 2차 퀴즈: 틀린 단어만 다시 풀기")
-            for i in wrong:
-                q = quiz_items[i]
-                st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
-                st.markdown(f"<div class='quiz-number'>🌟 Retry {{i + 1}}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='quiz-word'>{{q['word']}}</div>", unsafe_allow_html=True)
-                audio_button("🔊 발음 다시 듣기", q["word"], key=f"{{theme_name}}_quiz_audio2_{{i}}")
-                options = get_shuffled_options(theme_name, i, q["options"])
-                st.radio("뜻을 다시 고르세요.", options, key=f"{{theme_name}}_q2_{{i}}")
-                st.markdown('</div>', unsafe_allow_html=True)
-            if st.button("✅ 2차 제출하기", key=f"{{theme_name}}_submit2"):
-                st.session_state[submitted2_key] = True
-                st.rerun()
-    else:
-        wrong = st.session_state[wrong_key]
-        second_wrong = []
-        for i in wrong:
-            q = quiz_items[i]
-            if st.session_state.get(f"{{theme_name}}_q2_{{i}}") != q["answer"]:
-                second_wrong.append(i)
-        final_score = len(quiz_items) - len(second_wrong)
-        st.markdown(f"""<div class="score-box"><div class="score-title">🏆 최종 결과: {{final_score}} / {{len(quiz_items)}}점</div></div>""", unsafe_allow_html=True)
-        if len(second_wrong) == 0: st.balloons(); st.success("💖 좋습니다! 틀렸던 단어까지 모두 다시 확인했습니다.")
-        else: st.warning("🍊 아래 단어들은 다시 복습하면 좋습니다.")
-        st.markdown("### ✅ 정답 확인")
-        if len(wrong) == 0:
-            st.info("틀린 문제가 없습니다.")
-        else:
-            for i in wrong:
-                q = quiz_items[i]
-                user1 = st.session_state.get(f"{{theme_name}}_q1_{{i}}")
-                user2 = st.session_state.get(f"{{theme_name}}_q2_{{i}}")
-                st.markdown('<div class="answer-box">', unsafe_allow_html=True)
-                st.markdown(f"### 🌱 {{q['word']}}")
-                audio_button("🔊 발음 다시 듣기", q["word"], key=f"{{theme_name}}_answer_audio_{{i}}")
-                st.write(f"1차 선택: {{user1}}")
-                st.write(f"2차 선택: {{user2}}")
-                st.success(f"정답: {{q['answer']}}")
-                st.markdown('</div>', unsafe_allow_html=True)
-        if st.button("🔄 다시 풀기", key=f"{{theme_name}}_reset"):
-            reset_theme(theme_name); st.rerun()
-
-
-tab_names = list(word_themes.keys()) + ["🎧 전체 카세트 듣기"]
-tabs = st.tabs(tab_names)
-for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
-    with tab:
-        theme_words = word_themes[theme_name]
-        st.markdown(f"""
-        <div class="theme-header"><div class="theme-title">{{theme_name}}</div><div class="theme-desc">이 테마에는 {{len(theme_words)}}개의 생존 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div></div>
-        """, unsafe_allow_html=True)
-        mode = st.radio("학습 모드를 선택하세요.", ["🌱 핵심 단어 익히기", "🧸 퀴즈 풀기"], key=f"{{theme_name}}_mode", horizontal=True)
-        if mode == "🌱 핵심 단어 익히기": show_word_cards(theme_words, theme_name)
-        else: show_quiz(theme_words, theme_name)
-with tabs[-1]:
-    show_all_cassette_tab()
+word_card_speaking_game(WORD_THEMES)
