@@ -267,6 +267,9 @@ def get_quiz_pool():
 def start_new_quiz():
     pool = get_quiz_pool()
 
+    # 새 퀴즈가 시작될 때 버튼 key를 새로 만들기 위한 번호입니다.
+    st.session_state.quiz_total = st.session_state.get("quiz_total", 0) + 1
+
     if len(pool) >= QUIZ_LENGTH:
         quiz_list = random.sample(pool, QUIZ_LENGTH)
     else:
@@ -323,6 +326,11 @@ if "quiz_level" not in st.session_state:
 
 if "quiz_finished" not in st.session_state:
     st.session_state.quiz_finished = False
+
+# 버튼 key 생성용 값입니다.
+# 기존 코드에서 quiz_total을 사용했지만 초기화가 없어 오류가 났습니다.
+if "quiz_total" not in st.session_state:
+    st.session_state.quiz_total = 0
 
 if "quiz_list" not in st.session_state:
     start_new_quiz()
@@ -940,7 +948,7 @@ with tab_quiz:
             button_label = f"{option_labels[i]}.  {ko_name}  /  {en_name}"
             if st.button(
                 button_label,
-                key=f"quiz_option_{i}_{iso_code}_{st.session_state.quiz_total}",
+                key=f"quiz_option_{i}_{iso_code}_{st.session_state.get('quiz_total', 0)}",
                 use_container_width=True,
                 disabled=st.session_state.quiz_answered
             ):
