@@ -438,16 +438,97 @@ def speaking_practice_component(items):
         return dp[a.length][b.length];
     }
 
+    function wordSimilarity(a, b) {
+        if (!a || !b) return 0;
+        if (a === b) return 1;
+
+        const dist = editDistance(a, b);
+        const maxLen = Math.max(a.length, b.length);
+
+        return 1 - (dist / maxLen);
+    }
+
+    function isSmallRecognitionMistake(spokenWord, answerWord) {
+        if (!spokenWord || !answerWord) return false;
+        if (spokenWord === answerWord) return true;
+
+        const dist = editDistance(spokenWord, answerWord);
+        const maxLen = Math.max(spokenWord.length, answerWord.length);
+        const sim = wordSimilarity(spokenWord, answerWord);
+
+        // 아주 짧은 단어는 엄격하게 채점
+        // 예: I, a, am, go, do, is, it 등
+        if (answerWord.length <= 2) {
+            return dist === 0;
+        }
+
+        // 3~4글자 단어는 1글자 정도만 허용
+        // 예: sick → sik, cold → col 정도는 허용
+        // 하지만 완전히 다른 단어는 오답
+        if (answerWord.length <= 4) {
+            return dist <= 1 && sim >= 0.75;
+        }
+
+        // 5글자 이상 단어는 음성 인식 오류를 조금 더 허용
+        // 예: hungry → hungri, thirsty → thursty 정도 허용
+        if (answerWord.length >= 5) {
+            return dist <= 1 || sim >= 0.82;
+        }
+
+        return false;
+    }
+
     function isCloseEnough(spoken, answer) {
         const s = normalizeText(spoken);
         const a = normalizeText(answer);
 
         if (!s || !a) return false;
 
-        // 축약형을 푼 뒤 문장 전체가 정확히 같을 때만 정답
-        // 예: "I'm hungry" → "I am hungry" 이므로 정답
-        // 하지만 "hungry", "I hungry", "I am tired"는 오답
-        return s === a;
+        // 완전히 같으면 바로 정답
+        if (s === a) return true;
+
+        const spokenWords = wordsOnly(s);
+        const answerWords = wordsOnly(a);
+
+        // 단어 개수가 다르면 오답
+        // 예: "hungry"만 말함 → 오답
+        // 예: "I hungry" → 오답
+        if (spokenWords.length !== answerWords.length) {
+            return false;
+        }
+
+        let weakMatchCount = 0;
+
+        for (let i = 0; i < answerWords.length; i++) {
+            const sw = spokenWords[i];
+            const aw = answerWords[i];
+
+            if (sw === aw) {
+                continue;
+            }
+
+            if (isSmallRecognitionMistake(sw, aw)) {
+                weakMatchCount += 1;
+                continue;
+            }
+
+            // 한 단어라도 완전히 다르면 오답
+            // 예: I am tired ≠ I am hungry
+            return false;
+        }
+
+        // 짧은 문장에서 애매하게 맞은 단어가 너무 많으면 오답
+        // 예: 3~4단어 문장에서 2단어 이상이 부정확하면 오답
+        if (answerWords.length <= 4 && weakMatchCount >= 2) {
+            return false;
+        }
+
+        // 긴 문장에서도 절반 가까이 애매하면 오답
+        if (answerWords.length >= 5 && weakMatchCount >= Math.ceil(answerWords.length / 2)) {
+            return false;
+        }
+
+        return true;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -483,7 +564,7 @@ def speaking_practice_component(items):
             let color = "#991b1b";
             let border = "#fecaca";
 
-            if (norm === target) {
+            if (isSmallRecognitionMistake(norm, target)) {
                 bg = "#dcfce7";
                 color = "#166534";
                 border = "#bbf7d0";
@@ -538,7 +619,7 @@ def speaking_practice_component(items):
             let color = "#991b1b";
             let border = "#fecaca";
 
-            if (norm === target) {
+            if (isSmallRecognitionMistake(norm, target)) {
                 bg = "#dcfce7";
                 color = "#166534";
                 border = "#bbf7d0";
@@ -792,4 +873,3 @@ def speaking_practice_component(items):
 
 
 speaking_practice_component(PRACTICE_ITEMS)
-
