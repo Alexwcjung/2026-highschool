@@ -506,6 +506,18 @@ def word_card_speaking_game(word_themes):
                     font-weight:900;
                     margin-top:18px;
                 ">answer</div>
+
+                <div id="hintBox" style="
+                    display:none;
+                    background:#fff7ed;
+                    border:1.5px solid #fed7aa;
+                    color:#9a3412;
+                    border-radius:20px;
+                    padding:14px 16px;
+                    font-size:30px;
+                    font-weight:900;
+                    margin-top:14px;
+                ">hint</div>
             </div>
 
             <div id="buttonBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
@@ -530,6 +542,17 @@ def word_card_speaking_game(word_themes):
                     cursor:pointer;
                     font-size:17px;
                 ">🔊 정답 듣기/보기</button>
+
+                <button id="hintBtn" style="
+                    border:1.5px solid #fed7aa;
+                    background:#fff7ed;
+                    color:#9a3412;
+                    border-radius:999px;
+                    padding:13px 20px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:17px;
+                ">💡 힌트 보기</button>
 
                 <button id="skipBtn" style="
                     border:1.5px solid #c7d2fe;
@@ -629,9 +652,11 @@ def word_card_speaking_game(word_themes):
     const emojiBox = document.getElementById("emojiBox");
     const meaningBox = document.getElementById("meaningBox");
     const answerBox = document.getElementById("answerBox");
+    const hintBox = document.getElementById("hintBox");
 
     const micBtn = document.getElementById("micBtn");
     const answerBtn = document.getElementById("answerBtn");
+    const hintBtn = document.getElementById("hintBtn");
     const skipBtn = document.getElementById("skipBtn");
 
     const transcriptBox = document.getElementById("transcriptBox");
@@ -796,6 +821,9 @@ def word_card_speaking_game(word_themes):
         answerBox.style.display = "none";
         answerBox.innerText = "정답: " + currentItem.word;
 
+        hintBox.style.display = "none";
+        hintBox.innerText = "";
+
         transcriptBox.innerText = "";
         resultBox.innerText = "";
         resultBox.style.background = "#f1f5f9";
@@ -944,6 +972,17 @@ def word_card_speaking_game(word_themes):
         answerBox.style.display = "block";
         answerBox.innerText = "정답: " + currentItem.word;
         speak(currentItem.word);
+    });
+
+    hintBtn.addEventListener("click", function() {
+        if (!currentItem) return;
+
+        const cleanWord = String(currentItem.word || "").trim();
+        const noSpaceWord = cleanWord.replace(/\s+/g, "");
+        const firstTwo = noSpaceWord.length <= 2 ? noSpaceWord : noSpaceWord.slice(0, 2);
+
+        hintBox.style.display = "block";
+        hintBox.innerText = "힌트: " + firstTwo + "...";
     });
 
     skipBtn.addEventListener("click", function() {
