@@ -546,10 +546,19 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
             const audioSrc = {safe_src};
 
             const channel = new BroadcastChannel("daily_english_audio_channel");
-            const parentWin = window.parent || window;
 
-            // 부모 화면에 공용 단어 오디오 플레이어를 1개만 만듭니다.
-            // 이렇게 하면 Streamlit 탭/카테고리 화면을 바꿔도 단어 발음이 끊기지 않습니다.
+            // 중요: Streamlit components.html()은 작은 iframe 안에서 실행됩니다.
+            // window.parent에 오디오를 만들면 탭/화면 전환 때 iframe이 사라지면서 소리가 끊길 수 있습니다.
+            // 그래서 가능한 한 가장 바깥 브라우저 창(window.top)에 공용 오디오를 만들어 유지합니다.
+            let parentWin = window;
+            try {{
+                parentWin = window.top || window.parent || window;
+            }} catch (e) {{
+                parentWin = window.parent || window;
+            }}
+
+            // 가장 바깥 화면에 공용 단어 오디오 플레이어를 1개만 만듭니다.
+            // Streamlit 탭/카테고리 화면을 바꿔도 이 공용 오디오는 최대한 유지됩니다.
             if (!parentWin.__dailyEnglishWordPlayer) {{
                 const sharedAudio = new parentWin.Audio();
 
