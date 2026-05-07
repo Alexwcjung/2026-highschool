@@ -8,43 +8,1027 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("💥 단어 뜻 터뜨리기 게임")
-st.caption("위에서 떨어지는 영어 단어의 한국어 뜻을 입력하면 단어가 터집니다!")
+st.title("💥 Survival English 단어 뜻 터뜨리기 게임")
+st.caption("첫 번째 학습 단어에 맞춰, 위에서 떨어지는 영어 단어의 한국어 뜻을 입력하면 단어가 터집니다!")
 
 # -----------------------------
 # 단어 + 한국어 뜻 목록
 # -----------------------------
 word_data = [
-    {"word": "cat", "meanings": ["고양이"]},
-    {"word": "dog", "meanings": ["개"]},
-    {"word": "sun", "meanings": ["태양", "해"]},
-    {"word": "run", "meanings": ["달리다", "뛰다"]},
-    {"word": "sit", "meanings": ["앉다"]},
-    {"word": "big", "meanings": ["큰", "크다"]},
-    {"word": "red", "meanings": ["빨간", "빨간색"]},
-    {"word": "pen", "meanings": ["펜"]},
-    {"word": "box", "meanings": ["상자"]},
-    {"word": "cup", "meanings": ["컵"]},
-    {"word": "fish", "meanings": ["물고기", "생선"]},
-    {"word": "book", "meanings": ["책"]},
-    {"word": "milk", "meanings": ["우유"]},
-    {"word": "jump", "meanings": ["점프하다", "뛰다", "뛰어오르다"]},
-    {"word": "bed", "meanings": ["침대"]},
-    {"word": "apple", "meanings": ["사과"]},
-    {"word": "banana", "meanings": ["바나나"]},
-    {"word": "happy", "meanings": ["행복한", "기쁜"]},
-    {"word": "sad", "meanings": ["슬픈"]},
-    {"word": "school", "meanings": ["학교"]},
-    {"word": "teacher", "meanings": ["선생님", "교사"]},
-    {"word": "student", "meanings": ["학생"]},
-    {"word": "water", "meanings": ["물"]},
-    {"word": "chair", "meanings": ["의자"]},
-    {"word": "desk", "meanings": ["책상"]},
-    {"word": "phone", "meanings": ["전화기", "휴대폰", "폰"]},
-    {"word": "music", "meanings": ["음악"]},
-    {"word": "pizza", "meanings": ["피자"]},
-    {"word": "green", "meanings": ["초록색", "초록", "녹색"]},
-    {"word": "blue", "meanings": ["파란색", "파랑", "푸른"]},
+    {
+        "word": "I",
+        "meanings": [
+            "나"
+        ]
+    },
+    {
+        "word": "you",
+        "meanings": [
+            "너, 당신",
+            "너",
+            "당신"
+        ]
+    },
+    {
+        "word": "he",
+        "meanings": [
+            "그"
+        ]
+    },
+    {
+        "word": "she",
+        "meanings": [
+            "그녀"
+        ]
+    },
+    {
+        "word": "we",
+        "meanings": [
+            "우리"
+        ]
+    },
+    {
+        "word": "they",
+        "meanings": [
+            "그들",
+            "그녀들"
+        ]
+    },
+    {
+        "word": "friend",
+        "meanings": [
+            "친구"
+        ]
+    },
+    {
+        "word": "teacher",
+        "meanings": [
+            "선생님"
+        ]
+    },
+    {
+        "word": "student",
+        "meanings": [
+            "학생"
+        ]
+    },
+    {
+        "word": "classmate",
+        "meanings": [
+            "반 친구"
+        ]
+    },
+    {
+        "word": "family",
+        "meanings": [
+            "가족"
+        ]
+    },
+    {
+        "word": "father",
+        "meanings": [
+            "아버지"
+        ]
+    },
+    {
+        "word": "mother",
+        "meanings": [
+            "어머니"
+        ]
+    },
+    {
+        "word": "brother",
+        "meanings": [
+            "형제, 남자 형제",
+            "형제",
+            "남자 형제",
+            "남자형제",
+            "오빠",
+            "형",
+            "남동생"
+        ]
+    },
+    {
+        "word": "sister",
+        "meanings": [
+            "자매, 여자 형제",
+            "자매",
+            "여자 형제",
+            "여자형제",
+            "언니",
+            "누나",
+            "여동생"
+        ]
+    },
+    {
+        "word": "name",
+        "meanings": [
+            "이름"
+        ]
+    },
+    {
+        "word": "person",
+        "meanings": [
+            "사람"
+        ]
+    },
+    {
+        "word": "man",
+        "meanings": [
+            "남자"
+        ]
+    },
+    {
+        "word": "woman",
+        "meanings": [
+            "여자"
+        ]
+    },
+    {
+        "word": "child",
+        "meanings": [
+            "아이"
+        ]
+    },
+    {
+        "word": "go",
+        "meanings": [
+            "가다"
+        ]
+    },
+    {
+        "word": "come",
+        "meanings": [
+            "오다"
+        ]
+    },
+    {
+        "word": "walk",
+        "meanings": [
+            "걷다"
+        ]
+    },
+    {
+        "word": "run",
+        "meanings": [
+            "달리다"
+        ]
+    },
+    {
+        "word": "sit",
+        "meanings": [
+            "앉다"
+        ]
+    },
+    {
+        "word": "stand",
+        "meanings": [
+            "서다"
+        ]
+    },
+    {
+        "word": "stop",
+        "meanings": [
+            "멈추다"
+        ]
+    },
+    {
+        "word": "start",
+        "meanings": [
+            "시작하다"
+        ]
+    },
+    {
+        "word": "open",
+        "meanings": [
+            "열다"
+        ]
+    },
+    {
+        "word": "close",
+        "meanings": [
+            "닫다"
+        ]
+    },
+    {
+        "word": "eat",
+        "meanings": [
+            "먹다"
+        ]
+    },
+    {
+        "word": "drink",
+        "meanings": [
+            "마시다"
+        ]
+    },
+    {
+        "word": "sleep",
+        "meanings": [
+            "자다"
+        ]
+    },
+    {
+        "word": "study",
+        "meanings": [
+            "공부하다"
+        ]
+    },
+    {
+        "word": "read",
+        "meanings": [
+            "읽다"
+        ]
+    },
+    {
+        "word": "write",
+        "meanings": [
+            "쓰다"
+        ]
+    },
+    {
+        "word": "listen",
+        "meanings": [
+            "듣다"
+        ]
+    },
+    {
+        "word": "speak",
+        "meanings": [
+            "말하다"
+        ]
+    },
+    {
+        "word": "help",
+        "meanings": [
+            "돕다"
+        ]
+    },
+    {
+        "word": "wait",
+        "meanings": [
+            "기다리다"
+        ]
+    },
+    {
+        "word": "happy",
+        "meanings": [
+            "행복한"
+        ]
+    },
+    {
+        "word": "sad",
+        "meanings": [
+            "슬픈"
+        ]
+    },
+    {
+        "word": "angry",
+        "meanings": [
+            "화난"
+        ]
+    },
+    {
+        "word": "tired",
+        "meanings": [
+            "피곤한"
+        ]
+    },
+    {
+        "word": "hungry",
+        "meanings": [
+            "배고픈"
+        ]
+    },
+    {
+        "word": "thirsty",
+        "meanings": [
+            "목마른"
+        ]
+    },
+    {
+        "word": "sick",
+        "meanings": [
+            "아픈"
+        ]
+    },
+    {
+        "word": "okay",
+        "meanings": [
+            "괜찮은",
+            "괜찮다"
+        ]
+    },
+    {
+        "word": "fine",
+        "meanings": [
+            "괜찮은",
+            "괜찮다"
+        ]
+    },
+    {
+        "word": "cold",
+        "meanings": [
+            "추운, 차가운",
+            "추운",
+            "차가운",
+            "춥다",
+            "차갑다"
+        ]
+    },
+    {
+        "word": "hot",
+        "meanings": [
+            "더운, 뜨거운",
+            "더운",
+            "뜨거운",
+            "덥다",
+            "뜨겁다"
+        ]
+    },
+    {
+        "word": "pain",
+        "meanings": [
+            "통증"
+        ]
+    },
+    {
+        "word": "headache",
+        "meanings": [
+            "두통"
+        ]
+    },
+    {
+        "word": "stomachache",
+        "meanings": [
+            "복통"
+        ]
+    },
+    {
+        "word": "fever",
+        "meanings": [
+            "열"
+        ]
+    },
+    {
+        "word": "hurt",
+        "meanings": [
+            "아프다, 다치다",
+            "아프다",
+            "다치다",
+            "아픈"
+        ]
+    },
+    {
+        "word": "good",
+        "meanings": [
+            "좋은",
+            "좋다"
+        ]
+    },
+    {
+        "word": "bad",
+        "meanings": [
+            "나쁜",
+            "나쁘다"
+        ]
+    },
+    {
+        "word": "worried",
+        "meanings": [
+            "걱정하는",
+            "걱정되는"
+        ]
+    },
+    {
+        "word": "scared",
+        "meanings": [
+            "무서워하는",
+            "무서운"
+        ]
+    },
+    {
+        "word": "food",
+        "meanings": [
+            "음식"
+        ]
+    },
+    {
+        "word": "water",
+        "meanings": [
+            "물"
+        ]
+    },
+    {
+        "word": "rice",
+        "meanings": [
+            "밥, 쌀",
+            "밥",
+            "쌀"
+        ]
+    },
+    {
+        "word": "bread",
+        "meanings": [
+            "빵"
+        ]
+    },
+    {
+        "word": "milk",
+        "meanings": [
+            "우유"
+        ]
+    },
+    {
+        "word": "juice",
+        "meanings": [
+            "주스"
+        ]
+    },
+    {
+        "word": "coffee",
+        "meanings": [
+            "커피"
+        ]
+    },
+    {
+        "word": "tea",
+        "meanings": [
+            "차"
+        ]
+    },
+    {
+        "word": "apple",
+        "meanings": [
+            "사과"
+        ]
+    },
+    {
+        "word": "banana",
+        "meanings": [
+            "바나나"
+        ]
+    },
+    {
+        "word": "egg",
+        "meanings": [
+            "달걀"
+        ]
+    },
+    {
+        "word": "meat",
+        "meanings": [
+            "고기"
+        ]
+    },
+    {
+        "word": "chicken",
+        "meanings": [
+            "닭고기, 닭",
+            "닭고기",
+            "닭"
+        ]
+    },
+    {
+        "word": "fish",
+        "meanings": [
+            "생선, 물고기",
+            "생선",
+            "물고기"
+        ]
+    },
+    {
+        "word": "breakfast",
+        "meanings": [
+            "아침 식사"
+        ]
+    },
+    {
+        "word": "lunch",
+        "meanings": [
+            "점심 식사"
+        ]
+    },
+    {
+        "word": "dinner",
+        "meanings": [
+            "저녁 식사"
+        ]
+    },
+    {
+        "word": "snack",
+        "meanings": [
+            "간식"
+        ]
+    },
+    {
+        "word": "medicine",
+        "meanings": [
+            "약"
+        ]
+    },
+    {
+        "word": "hospital",
+        "meanings": [
+            "병원"
+        ]
+    },
+    {
+        "word": "home",
+        "meanings": [
+            "집"
+        ]
+    },
+    {
+        "word": "school",
+        "meanings": [
+            "학교"
+        ]
+    },
+    {
+        "word": "classroom",
+        "meanings": [
+            "교실"
+        ]
+    },
+    {
+        "word": "bathroom",
+        "meanings": [
+            "화장실"
+        ]
+    },
+    {
+        "word": "hospital",
+        "meanings": [
+            "병원"
+        ]
+    },
+    {
+        "word": "store",
+        "meanings": [
+            "가게"
+        ]
+    },
+    {
+        "word": "station",
+        "meanings": [
+            "역"
+        ]
+    },
+    {
+        "word": "bus",
+        "meanings": [
+            "버스"
+        ]
+    },
+    {
+        "word": "car",
+        "meanings": [
+            "자동차"
+        ]
+    },
+    {
+        "word": "taxi",
+        "meanings": [
+            "택시"
+        ]
+    },
+    {
+        "word": "train",
+        "meanings": [
+            "기차"
+        ]
+    },
+    {
+        "word": "bike",
+        "meanings": [
+            "자전거"
+        ]
+    },
+    {
+        "word": "road",
+        "meanings": [
+            "도로"
+        ]
+    },
+    {
+        "word": "street",
+        "meanings": [
+            "거리"
+        ]
+    },
+    {
+        "word": "here",
+        "meanings": [
+            "여기"
+        ]
+    },
+    {
+        "word": "there",
+        "meanings": [
+            "거기"
+        ]
+    },
+    {
+        "word": "near",
+        "meanings": [
+            "가까운",
+            "가깝다"
+        ]
+    },
+    {
+        "word": "far",
+        "meanings": [
+            "먼",
+            "멀다"
+        ]
+    },
+    {
+        "word": "left",
+        "meanings": [
+            "왼쪽"
+        ]
+    },
+    {
+        "word": "right",
+        "meanings": [
+            "오른쪽, 맞는",
+            "오른쪽",
+            "맞는",
+            "맞다"
+        ]
+    },
+    {
+        "word": "time",
+        "meanings": [
+            "시간"
+        ]
+    },
+    {
+        "word": "now",
+        "meanings": [
+            "지금"
+        ]
+    },
+    {
+        "word": "today",
+        "meanings": [
+            "오늘"
+        ]
+    },
+    {
+        "word": "tomorrow",
+        "meanings": [
+            "내일"
+        ]
+    },
+    {
+        "word": "yesterday",
+        "meanings": [
+            "어제"
+        ]
+    },
+    {
+        "word": "morning",
+        "meanings": [
+            "아침"
+        ]
+    },
+    {
+        "word": "afternoon",
+        "meanings": [
+            "오후"
+        ]
+    },
+    {
+        "word": "evening",
+        "meanings": [
+            "저녁"
+        ]
+    },
+    {
+        "word": "night",
+        "meanings": [
+            "밤"
+        ]
+    },
+    {
+        "word": "nine",
+        "meanings": [
+            "아홉"
+        ]
+    },
+    {
+        "word": "late",
+        "meanings": [
+            "늦은",
+            "늦다"
+        ]
+    },
+    {
+        "word": "one",
+        "meanings": [
+            "하나"
+        ]
+    },
+    {
+        "word": "two",
+        "meanings": [
+            "둘"
+        ]
+    },
+    {
+        "word": "three",
+        "meanings": [
+            "셋"
+        ]
+    },
+    {
+        "word": "four",
+        "meanings": [
+            "넷"
+        ]
+    },
+    {
+        "word": "five",
+        "meanings": [
+            "다섯"
+        ]
+    },
+    {
+        "word": "six",
+        "meanings": [
+            "여섯"
+        ]
+    },
+    {
+        "word": "seven",
+        "meanings": [
+            "일곱"
+        ]
+    },
+    {
+        "word": "eight",
+        "meanings": [
+            "여덟"
+        ]
+    },
+    {
+        "word": "ten",
+        "meanings": [
+            "열"
+        ]
+    },
+    {
+        "word": "bag",
+        "meanings": [
+            "가방"
+        ]
+    },
+    {
+        "word": "phone",
+        "meanings": [
+            "전화기"
+        ]
+    },
+    {
+        "word": "book",
+        "meanings": [
+            "책"
+        ]
+    },
+    {
+        "word": "notebook",
+        "meanings": [
+            "공책"
+        ]
+    },
+    {
+        "word": "pen",
+        "meanings": [
+            "펜"
+        ]
+    },
+    {
+        "word": "pencil",
+        "meanings": [
+            "연필"
+        ]
+    },
+    {
+        "word": "desk",
+        "meanings": [
+            "책상"
+        ]
+    },
+    {
+        "word": "chair",
+        "meanings": [
+            "의자"
+        ]
+    },
+    {
+        "word": "door",
+        "meanings": [
+            "문"
+        ]
+    },
+    {
+        "word": "window",
+        "meanings": [
+            "창문"
+        ]
+    },
+    {
+        "word": "key",
+        "meanings": [
+            "열쇠"
+        ]
+    },
+    {
+        "word": "money",
+        "meanings": [
+            "돈"
+        ]
+    },
+    {
+        "word": "card",
+        "meanings": [
+            "카드"
+        ]
+    },
+    {
+        "word": "ticket",
+        "meanings": [
+            "표, 티켓",
+            "표",
+            "티켓"
+        ]
+    },
+    {
+        "word": "clothes",
+        "meanings": [
+            "옷"
+        ]
+    },
+    {
+        "word": "shoes",
+        "meanings": [
+            "신발"
+        ]
+    },
+    {
+        "word": "hat",
+        "meanings": [
+            "모자"
+        ]
+    },
+    {
+        "word": "watch",
+        "meanings": [
+            "시계"
+        ]
+    },
+    {
+        "word": "cup",
+        "meanings": [
+            "컵"
+        ]
+    },
+    {
+        "word": "bottle",
+        "meanings": [
+            "병"
+        ]
+    },
+    {
+        "word": "help",
+        "meanings": [
+            "도움, 돕다",
+            "도움",
+            "돕다"
+        ]
+    },
+    {
+        "word": "please",
+        "meanings": [
+            "부디, 제발",
+            "부디",
+            "제발"
+        ]
+    },
+    {
+        "word": "sorry",
+        "meanings": [
+            "미안합니다"
+        ]
+    },
+    {
+        "word": "excuse me",
+        "meanings": [
+            "실례합니다"
+        ]
+    },
+    {
+        "word": "again",
+        "meanings": [
+            "다시"
+        ]
+    },
+    {
+        "word": "slowly",
+        "meanings": [
+            "천천히"
+        ]
+    },
+    {
+        "word": "understand",
+        "meanings": [
+            "이해하다"
+        ]
+    },
+    {
+        "word": "question",
+        "meanings": [
+            "질문"
+        ]
+    },
+    {
+        "word": "problem",
+        "meanings": [
+            "문제"
+        ]
+    },
+    {
+        "word": "need",
+        "meanings": [
+            "필요하다"
+        ]
+    },
+    {
+        "word": "want",
+        "meanings": [
+            "원하다"
+        ]
+    },
+    {
+        "word": "know",
+        "meanings": [
+            "알다"
+        ]
+    },
+    {
+        "word": "say",
+        "meanings": [
+            "말하다"
+        ]
+    },
+    {
+        "word": "tell",
+        "meanings": [
+            "말하다, 알려주다",
+            "말하다",
+            "알려주다"
+        ]
+    },
+    {
+        "word": "ask",
+        "meanings": [
+            "묻다"
+        ]
+    },
+    {
+        "word": "answer",
+        "meanings": [
+            "대답, 답",
+            "대답",
+            "답"
+        ]
+    },
+    {
+        "word": "repeat",
+        "meanings": [
+            "반복하다"
+        ]
+    },
+    {
+        "word": "speak",
+        "meanings": [
+            "말하다"
+        ]
+    },
+    {
+        "word": "look",
+        "meanings": [
+            "보다"
+        ]
+    },
+    {
+        "word": "listen",
+        "meanings": [
+            "듣다"
+        ]
+    }
 ]
 
 # -----------------------------
