@@ -483,7 +483,6 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
     audio_bytes = make_tts_audio(text)
     audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
-    audio_id = f"audio_{uuid.uuid4().hex}"
     play_btn_id = f"play_btn_{uuid.uuid4().hex}"
     stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
     status_id = f"status_{uuid.uuid4().hex}"
@@ -492,12 +491,11 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
     safe_label = json.dumps(label)
     safe_text = json.dumps(text)
     safe_player_id = json.dumps(player_id)
+    safe_src = json.dumps(f"data:audio/mp3;base64,{audio_base64}")
 
     components.html(
         f"""
         <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
-            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
-
             <button id="{play_btn_id}" style="
                 background: linear-gradient(135deg, #dcfce7, #dbeafe);
                 border: 1px solid #bbf7d0;
@@ -536,86 +534,153 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
             "></span>
 
             <script>
-            const audio = document.getElementById("{audio_id}");
             const playBtn = document.getElementById("{play_btn_id}");
             const stopBtn = document.getElementById("{stop_btn_id}");
             const status = document.getElementById("{status_id}");
-
-            let count = 0;
-            let timer = null;
-            let isStopped = false;
 
             const maxCount = {repeat_count};
             const pauseMs = {pause_ms};
             const labelText = {safe_label};
             const wordText = {safe_text};
             const playerId = {safe_player_id};
+            const audioSrc = {safe_src};
 
             const channel = new BroadcastChannel("daily_english_audio_channel");
+            const parentWin = window.parent || window;
 
-            function stopThisAudio(showMessage = false) {{
-                isStopped = true;
+            // 부모 화면에 공용 단어 오디오 플레이어를 1개만 만듭니다.
+            // 이렇게 하면 Streamlit 탭/카테고리 화면을 바꿔도 단어 발음이 끊기지 않습니다.
+            if (!parentWin.__dailyEnglishWordPlayer) {{
+                const sharedAudio = new parentWin.Audio();
 
-                if (timer) {{
-                    clearTimeout(timer);
-                    timer = null;
-                }}
+                parentWin.__dailyEnglishWordPlayer = {{
+                    audio: sharedAudio,
+                    timer: null,
+                    token: 0,
+                    count: 0,
+                    maxCount: 0,
+                    pauseMs: 0,
+                    currentPlayerId: null,
+                    labelText: "▶️ 발음",
+                    updateStatus: null,
+                    updateButton: null,
 
-                audio.pause();
-                audio.currentTime = 0;
-                count = 0;
+                    safeStatus(message) {{
+                        try {{
+                            if (typeof this.updateStatus === "function") this.updateStatus(message);
+                        }} catch (e) {{}}
+                    }},
 
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
+                    safeButton(text, disabled) {{
+                        try {{
+                            if (typeof this.updateButton === "function") this.updateButton(text, disabled);
+                        }} catch (e) {{}}
+                    }},
 
-                if (showMessage) {{
-                    status.innerText = "중지됨";
-                }} else {{
-                    status.innerText = "";
-                }}
+                    clearTimer() {{
+                        if (this.timer) {{
+                            parentWin.clearTimeout(this.timer);
+                            this.timer = null;
+                        }}
+                    }},
+
+                    stop(showMessage = false, requestedPlayerId = null) {{
+                        if (requestedPlayerId && this.currentPlayerId && requestedPlayerId !== this.currentPlayerId) return;
+
+                        this.token += 1;
+                        this.clearTimer();
+                        this.audio.pause();
+                        this.audio.currentTime = 0;
+                        this.count = 0;
+                        this.safeButton(this.labelText, false);
+                        this.safeStatus(showMessage ? "중지됨" : "");
+                        this.currentPlayerId = null;
+                    }},
+
+                    play(options) {{
+                        this.stop(false);
+
+                        this.token += 1;
+                        const myToken = this.token;
+
+                        this.currentPlayerId = options.playerId;
+                        this.labelText = options.labelText;
+                        this.maxCount = options.maxCount;
+                        this.pauseMs = options.pauseMs;
+                        this.updateStatus = options.updateStatus;
+                        this.updateButton = options.updateButton;
+                        this.count = 0;
+
+                        this.audio.src = options.src;
+                        this.safeButton("재생중", true);
+                        this.safeStatus("시작");
+
+                        const playOnce = () => {{
+                            if (myToken !== this.token) return;
+
+                            if (this.count >= this.maxCount) {{
+                                this.safeStatus("완료");
+                                this.safeButton(this.labelText, false);
+                                this.currentPlayerId = null;
+                                return;
+                            }}
+
+                            this.audio.currentTime = 0;
+                            this.audio.play().then(() => {{
+                                if (myToken !== this.token) return;
+                                this.count += 1;
+                                this.safeStatus(this.count + "/" + this.maxCount);
+                            }}).catch((error) => {{
+                                this.safeStatus("다시 클릭");
+                                this.safeButton(this.labelText, false);
+                            }});
+                        }};
+
+                        this.audio.onended = () => {{
+                            if (myToken !== this.token) return;
+
+                            if (this.count < this.maxCount) {{
+                                this.timer = parentWin.setTimeout(playOnce, this.pauseMs);
+                            }} else {{
+                                this.safeStatus("완료");
+                                this.safeButton(this.labelText, false);
+                                this.currentPlayerId = null;
+                            }}
+                        }};
+
+                        playOnce();
+                    }}
+                }};
+            }}
+
+            const sharedPlayer = parentWin.__dailyEnglishWordPlayer;
+
+            function setLocalButton(text, disabled) {{
+                playBtn.innerText = text;
+                playBtn.disabled = disabled;
+            }}
+
+            function setLocalStatus(message) {{
+                status.innerText = message;
+            }}
+
+            function resetLocalUi(message = "") {{
+                setLocalButton(labelText, false);
+                setLocalStatus(message);
             }}
 
             channel.onmessage = function(event) {{
                 if (!event.data) return;
 
+                // 다른 단어/카세트를 새로 누르면 현재 단어 발음은 멈춥니다.
+                // 단, 탭이나 페이지 이동만으로는 STOP_ALL을 받더라도 단어 발음을 끊지 않습니다.
                 if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
+                    if (sharedPlayer.currentPlayerId === playerId) {{
+                        sharedPlayer.stop(false, playerId);
+                    }}
+                    resetLocalUi("");
                 }}
             }};
-
-            function playOnce() {{
-                if (isStopped) return;
-
-                if (count >= maxCount) {{
-                    status.innerText = "완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                    return;
-                }}
-
-                audio.currentTime = 0;
-
-                audio.play().then(() => {{
-                    count += 1;
-                    status.innerText = count + "/" + maxCount;
-                }}).catch((error) => {{
-                    status.innerText = "다시 클릭";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }}
-
-            audio.addEventListener("ended", function() {{
-                if (isStopped) return;
-
-                if (count < maxCount) {{
-                    timer = setTimeout(playOnce, pauseMs);
-                }} else {{
-                    status.innerText = "완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }}
-            }});
 
             playBtn.addEventListener("click", function() {{
                 channel.postMessage({{
@@ -623,25 +688,27 @@ def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=4
                     playerId: playerId
                 }});
 
-                stopThisAudio(false);
-
-                isStopped = false;
-                count = 0;
-                playBtn.disabled = true;
-                playBtn.innerText = "재생중";
-                status.innerText = "시작";
-                playOnce();
+                sharedPlayer.play({{
+                    src: audioSrc,
+                    playerId: playerId,
+                    labelText: labelText,
+                    wordText: wordText,
+                    maxCount: maxCount,
+                    pauseMs: pauseMs,
+                    updateStatus: setLocalStatus,
+                    updateButton: setLocalButton
+                }});
             }});
 
             stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
+                sharedPlayer.stop(true, playerId);
+                resetLocalUi("중지됨");
             }});
             </script>
         </div>
         """,
         height=height
     )
-
 
 def audio_button(label, text, key=None):
     html_word_audio_player(
@@ -2406,7 +2473,7 @@ def make_daily_example_ko(word, meaning="", theme=""):
         f"이 문장은 '{meaning}'이라는 뜻의 단어를 사용한 일상 영어 문장입니다."
     )
 
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="재생 버튼을 누르면 단어가 차례대로 재생됩니다.", height=600):
+def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="재생 버튼을 누르면 단어가 차례대로 재생됩니다.", height=600, word_repeat_each=1):
     """
     보기 편한 카세트 플레이어.
     - 큰 재생 버튼
@@ -2440,6 +2507,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
     safe_title = html.escape(title)
     safe_intro = html.escape(intro)
     max_index = max(len(all_items) - 1, 0)
+    word_repeat_each = max(1, int(word_repeat_each))
 
     components.html(
         f"""
@@ -2708,6 +2776,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 let isPaused = false;
                 let playToken = 0;
                 let repeatRound = 1;
+                const wordRepeatEach = {word_repeat_each};
                 let safetyTimer = null;
                 let jumpTimer = null;
 
@@ -2858,13 +2927,24 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     safetyTimer = setTimeout(finish, estimatedMs);
                 }}
 
-                function speakCurrent(token = playToken) {{
+                function speakCurrent(token = playToken, wordRepeatCount = 1) {{
                     if (!isPlaying || isPaused || token !== playToken) return;
                     const item = cassetteItems[index];
                     if (!item) return;
                     updateDisplay();
+
+                    if (wordRepeatEach > 1) {{
+                        status.innerText = "현재 위치: " + (index + 1) + "번 · 단어 " + wordRepeatCount + "/" + wordRepeatEach + "회 · 전체 반복 " + repeatRound + "/" + repeatSelect.value;
+                    }}
+
                     speakItem(item, function() {{
                         if (!isPlaying || isPaused || token !== playToken) return;
+
+                        if (wordRepeatCount < wordRepeatEach) {{
+                            jumpTimer = setTimeout(function() {{ speakCurrent(token, wordRepeatCount + 1); }}, 650);
+                            return;
+                        }}
+
                         index += 1;
                         if (index >= cassetteItems.length) {{
                             const maxRepeat = parseInt(repeatSelect.value || "1");
@@ -2872,7 +2952,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                                 repeatRound += 1;
                                 index = 0;
                                 updateDisplay();
-                                jumpTimer = setTimeout(function() {{ speakCurrent(token); }}, 600);
+                                jumpTimer = setTimeout(function() {{ speakCurrent(token, 1); }}, 600);
                                 return;
                             }}
                             stopTape(false, false);
@@ -2882,7 +2962,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                             return;
                         }}
                         updateDisplay();
-                        jumpTimer = setTimeout(function() {{ speakCurrent(token); }}, 500);
+                        jumpTimer = setTimeout(function() {{ speakCurrent(token, 1); }}, 500);
                     }}, token);
                 }}
 
