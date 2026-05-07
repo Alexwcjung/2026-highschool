@@ -1,90 +1,86 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="Alex's Fun English",
-    page_icon="🌈",
+    page_title="Survival English",
+    page_icon="🌍",
     layout="wide"
 )
 
 # ---------------------------
 # Top Section
 # ---------------------------
-st.markdown("# 🌈 Alex의 영어교실")
-st.markdown("### 기초부터 말하기와 듣기를 익히는 영어 학습 공간")
+st.markdown("# 🌍 Survival English")
+st.markdown("### 기초부터 듣고 말하며 익히는 생활 영어 학습 공간")
 
 st.info(
     """
-    **Alex의 영어교실**은 영어가 낯설고 자신 없는 학습자도  
-    쉬운 단어와 문장을 듣고, 따라 말하며  
-    기초 영어 실력을 천천히 쌓을 수 있도록 만든 학습 앱입니다.
+    **Survival English**는 영어가 낯설고 자신 없는 학습자도  
+    쉬운 단어와 문장을 반복해서 듣고, 따라 말하며  
+    기초 영어 감각을 천천히 쌓을 수 있도록 만든 학습 앱입니다.
+
+    일상생활에서 자주 쓰는 표현을 중심으로  
+    **듣기 → 따라 말하기 → 퀴즈 → 복습**의 흐름으로 학습합니다.
     """
 )
 
 st.divider()
 
 # ---------------------------
-# Main Guide
+# App Focus
 # ---------------------------
-st.markdown("## 🌱 이 앱에서 할 수 있는 것")
+st.markdown("## 🌱 이 앱의 핵심")
 
-col1, col2, col3 = st.columns(3)
+st.markdown(
+    """
+    이 앱은 어려운 문법 설명보다 **소리와 말하기 경험**을 먼저 강조합니다.  
+    영어를 글자로만 외우는 것이 아니라, 실제로 듣고 따라 하면서  
+    영어 표현을 자연스럽게 익히는 것을 목표로 합니다.
+    """
+)
 
-with col1:
-    with st.container(border=True):
-        st.markdown("### 🔊 듣기")
-        st.write("단어와 문장을 반복해서 들으며 영어 소리에 익숙해집니다.")
-
-with col2:
-    with st.container(border=True):
-        st.markdown("### 🗣️ 따라 말하기")
-        st.write("들은 영어를 직접 소리 내어 말하며 표현을 익힙니다.")
-
-with col3:
-    with st.container(border=True):
-        st.markdown("### 📝 확인하기")
-        st.write("간단한 퀴즈와 활동으로 내가 익힌 내용을 확인합니다.")
+st.markdown(
+    """
+    - 🔊 **듣기**: 단어와 문장을 반복해서 들으며 영어 소리에 익숙해집니다.  
+    - 🗣️ **말하기**: 들은 표현을 직접 따라 말하며 입에 붙입니다.  
+    - 📝 **확인하기**: 간단한 퀴즈로 배운 내용을 점검합니다.  
+    - 🔁 **복습하기**: 반복 듣기와 다시 풀기를 통해 오래 기억합니다.
+    """
+)
 
 st.divider()
 
 # ---------------------------
 # Learning Flow
 # ---------------------------
-st.markdown("## 🪄 학습 순서")
+st.markdown("## 🪄 학습 흐름")
 
-step1, step2, step3, step4 = st.columns(4)
+flow1, flow2, flow3 = st.columns(3)
 
-with step1:
-    with st.container(border=True):
-        st.markdown("### 1️⃣ 보기")
-        st.write("오늘 배울 단어와 표현을 확인합니다.")
+with flow1:
+    st.markdown("### 1️⃣ 먼저 듣기")
+    st.write("영어 단어와 문장의 소리를 반복해서 들어 봅니다.")
 
-with step2:
-    with st.container(border=True):
-        st.markdown("### 2️⃣ 듣기")
-        st.write("영어 발음을 반복해서 들어 봅니다.")
+with flow2:
+    st.markdown("### 2️⃣ 따라 말하기")
+    st.write("들은 표현을 직접 소리 내어 따라 하며 익힙니다.")
 
-with step3:
-    with st.container(border=True):
-        st.markdown("### 3️⃣ 말하기")
-        st.write("소리 내어 따라 말해 봅니다.")
-
-with step4:
-    with st.container(border=True):
-        st.markdown("### 4️⃣ 복습")
-        st.write("퀴즈로 다시 확인합니다.")
+with flow3:
+    st.markdown("### 3️⃣ 퀴즈로 확인")
+    st.write("내가 기억한 단어와 표현을 간단한 활동으로 확인합니다.")
 
 st.divider()
 
 # ---------------------------
-# Closing Message
+# Message
 # ---------------------------
 st.success(
     """
-    🎯 **오늘의 한 걸음**
+    🎯 **Survival Message**
 
-    영어는 한 번에 잘하려고 하기보다  
-    매일 조금씩 듣고 말하면서 익숙해지는 것이 중요합니다.
+    영어는 처음부터 완벽하게 말하는 것이 아니라,  
+    쉬운 표현을 많이 듣고 자주 따라 하면서 익숙해지는 것입니다.
 
-    오늘도 한 단어, 한 문장씩 천천히 연습해 봅시다.
+    오늘도 한 단어, 한 문장씩  
+    천천히 듣고 말하며 영어에 가까워져 봅시다.
     """
 )
