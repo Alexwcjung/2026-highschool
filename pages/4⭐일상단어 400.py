@@ -3078,8 +3078,9 @@ def browser_daily_cassette_player(all_items, height=620):
     browser_easy_cassette_player(
         all_items,
         title="📼 전체 단어 카세트 듣기",
-        intro="전체 단어를 단어만 차례대로 들을 수 있습니다. 속도와 반복 횟수를 고른 뒤 듣기를 누르세요.",
-        height=height
+        intro="전체 단어를 단어당 2번씩 차례대로 들을 수 있습니다. 속도와 반복 횟수를 고른 뒤 듣기를 누르세요.",
+        height=height,
+        word_repeat_each=2
     )
 
 
@@ -3087,8 +3088,9 @@ def browser_theme_cassette_player(theme_items, theme_name, height=580):
     browser_easy_cassette_player(
         theme_items,
         title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="이 테마 단어만 차례대로 들을 수 있습니다. 현재 단어 다시 듣기와 이동 줄을 사용할 수 있습니다.",
-        height=height
+        intro="이 테마 단어를 단어당 2번씩 차례대로 들을 수 있습니다. 현재 단어 다시 듣기와 이동 줄을 사용할 수 있습니다.",
+        height=height,
+        word_repeat_each=2
     )
 
 
