@@ -110,7 +110,7 @@ st.markdown(
 
     .word-card {
         background: white;
-        border-radius: 14px;
+        border-radius: 18px;
         padding: 10px 14px;
         margin-bottom: 8px;
         border: 1px solid #dcfce7;
@@ -200,7 +200,7 @@ st.markdown(
     .wrong-box {
         background: #fff7ed;
         border-left: 6px solid #fb923c;
-        border-radius: 14px;
+        border-radius: 18px;
         padding: 16px 18px;
         margin: 18px 0;
         color: #7c2d12;
@@ -2529,8 +2529,8 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 overflow: hidden;
                 border-radius: 20px;
                 padding: 14px;
-                background: #ffffff;
-                border: 1px solid #dbeafe;
+                background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 48%, #fdf2f8 100%);
+                border: 1px solid #bae6fd;
                 box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
             }}
             .easy-cassette-top {{
@@ -2539,7 +2539,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 align-items: center;
                 gap: 12px;
                 flex-wrap: wrap;
-                margin-bottom: 8px;
+                margin-bottom: 12px;
             }}
             .easy-cassette-title {{
                 font-size: 16px;
@@ -2554,7 +2554,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 background: rgba(255,255,255,0.75);
                 border: 1px solid #dbeafe;
                 border-radius: 999px;
-                padding: 5px 10px;
+                padding: 7px 12px;
             }}
             .easy-now-card {{
                 background: rgba(255,255,255,0.86);
@@ -2583,7 +2583,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 letter-spacing: -1px;
             }}
             .easy-meaning {{
-                margin-top: 6px;
+                margin-top: 8px;
                 font-size: clamp(16px, 4vw, 22px);
                 font-weight: 900;
                 color: #334155;
@@ -2613,13 +2613,13 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
             }}
             .easy-range {{
                 width: 100%;
-                height: 28px;
+                height: 34px;
                 accent-color: #8b5cf6;
                 cursor: pointer;
             }}
             .easy-control-grid {{
                 display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-columns: 1.25fr 1fr 1fr;
                 gap: 9px;
                 margin-top: 12px;
             }}
@@ -2632,7 +2632,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
             .easy-btn {{
                 width: 100%;
                 min-height: 42px;
-                border-radius: 14px;
+                border-radius: 18px;
                 border: 1px solid #cbd5e1;
                 font-size: 14px;
                 font-weight: 900;
@@ -2657,8 +2657,8 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
             .easy-select-box {{
                 background: rgba(255,255,255,0.84);
                 border: 1px solid #dbeafe;
-                border-radius: 14px;
-                padding: 8px 10px;
+                border-radius: 18px;
+                padding: 10px 12px;
                 box-sizing: border-box;
             }}
             .easy-label {{
@@ -2677,24 +2677,24 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 outline: none;
             }}
             .easy-status {{
-                margin-top: 8px;
-                font-size: 12px;
+                margin-top: 10px;
+                font-size: 14px;
                 font-weight: 900;
                 color: #075985;
                 min-height: 20px;
                 line-height: 1.35;
             }}
             @media (max-width: 520px) {{
-                .easy-cassette-wrap { padding: 10px 8px; border-radius: 16px; }
-                .easy-cassette-title { font-size: 16px; }
-                .easy-cassette-small { font-size: 11px; padding: 4px 8px; }
-                .easy-now-card { padding: 10px 10px; border-radius: 14px; }
-                .easy-control-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
-                .easy-sub-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 5px; }
-                .easy-btn { min-height: 36px; font-size: 11px; border-radius: 12px; padding: 5px 2px; }
-                .easy-btn-main { min-height: 40px; font-size: 13px; }
-                .easy-select-row { grid-template-columns: 1fr 1fr; gap: 6px; }
-                .easy-select { font-size: 12px; }
+                .easy-cassette-wrap {{ padding: 10px 8px; border-radius: 16px; }}
+                .easy-cassette-title {{ font-size: 16px; }}
+                .easy-cassette-small {{ font-size: 12px; padding: 6px 9px; }}
+                .easy-now-card {{ padding: 10px 10px; border-radius: 14px; }}
+                .easy-control-grid {{ grid-template-columns: 1fr; gap: 7px; }}
+                .easy-sub-grid {{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }}
+                .easy-btn {{ min-height: 36px; font-size: 11px; border-radius: 12px; padding: 5px 2px; }}
+                .easy-btn-main {{ min-height: 40px; font-size: 13px; }}
+                .easy-select-row {{ grid-template-columns: 1fr 1fr; gap: 7px; }}
+                .easy-select {{ font-size: 12px; }}
             }}
         </style>
 
@@ -2725,8 +2725,8 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
 
             <div class="easy-control-grid">
                 <button id="{play_btn_id}" class="easy-btn easy-btn-main">▶️ 듣기</button>
-                <button id="{pause_btn_id}" class="easy-btn" style="background:#ecfeff; border-color:#67e8f9; color:#155e75;">⏸ 멈춤</button>
-                <button id="{replay_btn_id}" class="easy-btn" style="background:#fef3c7; border-color:#fde68a; color:#92400e;">🔁 현재</button>
+                <button id="{pause_btn_id}" class="easy-btn" style="background:#ecfeff; border-color:#67e8f9; color:#155e75;">⏸ 잠깐 멈춤</button>
+                <button id="{replay_btn_id}" class="easy-btn" style="background:#fef3c7; border-color:#fde68a; color:#92400e;">🔁 현재 단어</button>
             </div>
 
             <div class="easy-sub-grid">
@@ -2848,7 +2848,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     isPaused = false;
                     repeatRound = 1;
                     playBtn.innerText = "▶️ 듣기";
-                    pauseBtn.innerText = "⏸ 멈춤";
+                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
                     if (resetIndex) index = 0;
                     updateDisplay();
                     if (showMessage) status.innerText = "처음으로 돌아갔습니다.";
@@ -2983,7 +2983,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     isPlaying = true;
                     isPaused = false;
                     playBtn.innerText = "재생 중...";
-                    pauseBtn.innerText = "⏸ 멈춤";
+                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
                     const token = playToken;
                     speakCurrent(token);
                 }}
@@ -3007,7 +3007,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                         isPaused = false;
                         isPlaying = true;
                         playBtn.innerText = "재생 중...";
-                        pauseBtn.innerText = "⏸ 멈춤";
+                        pauseBtn.innerText = "⏸ 잠깐 멈춤";
                         status.innerText = "이어 듣는 중";
                         return;
                     }}
@@ -3032,7 +3032,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     isPlaying = false;
                     isPaused = false;
                     playBtn.innerText = "▶️ 듣기";
-                    pauseBtn.innerText = "⏸ 멈춤";
+                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
                     updateDisplay();
                     const token = playToken;
                     status.innerText = "현재 단어 다시 듣기";
@@ -3074,7 +3074,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
     )
 
 
-def browser_daily_cassette_player(all_items, height=560):
+def browser_daily_cassette_player(all_items, height=620):
     browser_easy_cassette_player(
         all_items,
         title="📼 전체 단어 카세트 듣기",
@@ -3084,11 +3084,11 @@ def browser_daily_cassette_player(all_items, height=560):
     )
 
 
-def browser_theme_cassette_player(theme_items, theme_name, height=540):
+def browser_theme_cassette_player(theme_items, theme_name, height=580):
     browser_easy_cassette_player(
         theme_items,
         title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="이 테마 단어만 차례대로 듣습니다. 한 단어를 2번씩 들려준 뒤 다음 단어로 넘어갑니다.",
+        intro="이 테마 단어를 차례대로 듣습니다. 한 단어를 2번씩 들려준 뒤 다음 단어로 넘어갑니다.",
         height=height,
         word_repeat_each=2
     )
@@ -3100,7 +3100,7 @@ def show_all_cassette_tab():
     st.markdown("## 🎧 전체 단어만 카세트 듣기")
 
     all_items = flatten_all_words()
-    browser_daily_cassette_player(all_items, height=620)
+    browser_daily_cassette_player(all_items, height=640)
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
         st.write("카세트에서 실제로 들려주는 단어와 뜻을 확인할 수 있습니다.")
@@ -3139,7 +3139,7 @@ def show_cassette_player(theme_words, theme_name):
     browser_theme_cassette_player(
         theme_items,
         theme_name,
-        height=600
+        height=620
     )
 
 # =========================
