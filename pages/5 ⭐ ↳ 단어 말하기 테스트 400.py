@@ -2235,7 +2235,12 @@ def daily_word_card_speaking_game(word_themes):
             "okay": ["okay", "ok", "kay"],
             "pe": ["pe", "pee", "p", "physicaleducation"],
             "wifi": ["wifi", "wi", "wifei"],
-            "tshirt": ["tshirt", "teeshirt", "t shirt", "tee shirt"]
+            "tshirt": ["tshirt", "teeshirt", "t shirt", "tee shirt"],
+            "math": ["math", "mat", "mass", "meth", "matt"],
+            "art": ["art", "heart", "at"],
+            "science": ["science", "sience", "signs"],
+            "history": ["history", "his story", "hisstory"],
+            "music": ["music", "musick"]
         };
 
         if (!aliases[aw]) return false;
@@ -2526,10 +2531,18 @@ def daily_word_card_speaking_game(word_themes):
         };
 
         recognition.onerror = function(event) {
-            resultBox.innerText = "다시 눌러 주세요.";
-            resultBox.style.background = "#fef2f2";
-            resultBox.style.borderColor = "#fecaca";
-            resultBox.style.color = "#991b1b";
+            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                resultBox.innerText = "마이크 권한을 허용해 주세요.";
+                resultBox.style.background = "#fef2f2";
+                resultBox.style.borderColor = "#fecaca";
+                resultBox.style.color = "#991b1b";
+            } else {
+                resultBox.innerText = "다시 눌러 주세요.";
+                resultBox.style.background = "#f8fafc";
+                resultBox.style.borderColor = "#e2e8f0";
+                resultBox.style.color = "#334155";
+            }
+
             micBtn.innerText = "🎙️ 말하기";
         };
 
@@ -2537,12 +2550,7 @@ def daily_word_card_speaking_game(word_themes):
             micBtn.innerText = "🎙️ 말하기";
         };
 
-        try {
-            recognition.start();
-        } catch (err) {
-            resultBox.innerText = "다시 눌러 주세요.";
-            micBtn.innerText = "🎙️ 말하기";
-        }
+        recognition.start();
     }
 
     function resetCurrentTheme() {
