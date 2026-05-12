@@ -988,6 +988,21 @@ def word_card_speaking_game(word_themes):
             "please": ["please", "plz"],
             "excuse": ["excuse", "excus"],
             "me": ["me"],
+            "go": ["go", "goal"],
+            "come": ["come", "com"],
+            "run": ["run", "ran"],
+            "sit": ["sit", "seat"],
+            "stand": ["stand", "stan"],
+            "stop": ["stop", "stap"],
+            "open": ["open", "opin"],
+            "close": ["close", "clothes", "cloze"],
+            "eat": ["eat", "it"],
+            "drink": ["drink", "dring"],
+            "sleep": ["sleep", "slip"],
+            "read": ["read", "reed"],
+            "write": ["write", "right"],
+            "help": ["help", "hell"],
+            "friend": ["friend", "freind"],
             "teacher": ["teacher", "techer"],
             "student": ["student", "studen"],
             "classmate": ["classmate", "class mate"],
@@ -1127,6 +1142,71 @@ def word_card_speaking_game(word_themes):
 
         return pos >= answerWords.length;
     }
+
+    function transcriptScore(transcript, answer) {
+        const spokenWords = wordsOnly(transcript);
+        const answerWords = wordsOnly(answer);
+
+        if (spokenWords.length === 0 || answerWords.length === 0) return 0;
+
+        let best = 0;
+
+        for (const sw of spokenWords) {
+            for (const aw of answerWords) {
+                if (isUnderstandableWord(sw, aw)) {
+                    best = Math.max(best, 1);
+                } else {
+                    best = Math.max(best, wordSimilarity(normalizeText(sw), normalizeText(aw)));
+                }
+            }
+        }
+
+        // 정확히 들어간 경우 가산점
+        const s = normalizeText(transcript);
+        const a = normalizeText(answer);
+        if (s.includes(a) || a.includes(s)) best += 0.2;
+
+        return best;
+    }
+
+    function pickBestTranscriptFromEvent(event, answer) {
+        let bestTranscript = "";
+        let bestScore = -1;
+        let anyFinal = false;
+
+        for (let i = 0; i < event.results.length; i++) {
+            if (event.results[i].isFinal) anyFinal = true;
+
+            for (let j = 0; j < event.results[i].length; j++) {
+                const candidate = event.results[i][j].transcript.trim();
+                if (!candidate) continue;
+
+                if (!bestTranscript) bestTranscript = candidate;
+
+                // 정답 판정이 되는 후보가 있으면 바로 선택
+                if (isCorrectSpeech(candidate, answer)) {
+                    return {
+                        transcript: candidate,
+                        hasFinal: anyFinal,
+                        isCorrectCandidate: true
+                    };
+                }
+
+                const score = transcriptScore(candidate, answer);
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestTranscript = candidate;
+                }
+            }
+        }
+
+        return {
+            transcript: bestTranscript,
+            hasFinal: anyFinal,
+            isCorrectCandidate: false
+        };
+    }
+
 
     function countCorrectInCurrentTheme() {
         const list = getFilteredItems();
@@ -1336,9 +1416,9 @@ def word_card_speaking_game(word_themes):
 
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
-        recognition.interimResults = false;
+        recognition.interimResults = true;
         recognition.continuous = false;
-        recognition.maxAlternatives = 10;
+        recognition.maxAlternatives = 20;
 
         isListening = true;
         micBtn.disabled = true;
@@ -1354,28 +1434,24 @@ def word_card_speaking_game(word_themes):
 
         recognition.onresult = function(event) {
             if (thisRunId !== recognitionRunId) return;
-            let bestTranscript = "";
 
             if (!event.results || !event.results[0]) {
                 resetMicButton();
                 return;
             }
 
-            for (let i = 0; i < event.results[0].length; i++) {
-                const transcript = event.results[0][i].transcript.trim();
-                if (i === 0) bestTranscript = transcript;
+            const picked = pickBestTranscriptFromEvent(event, currentItem.word);
+            const bestTranscript = picked.transcript || "";
 
-                if (isCorrectSpeech(transcript, currentItem.word)) {
-                    bestTranscript = transcript;
-                    break;
-                }
-            }
-
-            // 인식된 영어 단어는 먼저 그대로 보여 줍니다.
-            // 정답으로 판정되면 checkSpeech 안에서 정확한 정답 단어 + 정답 표시로 바뀝니다.
+            // 말하는 중에도 인식된 단어를 바로 보여 줍니다.
             transcriptBox.style.color = "#334155";
             transcriptBox.innerText = bestTranscript;
-            checkSpeech(bestTranscript);
+
+            // 정답 후보가 나오면 final을 기다리지 않고 바로 채점합니다.
+            // 아니면 final 결과가 왔을 때 채점합니다.
+            if (picked.isCorrectCandidate || picked.hasFinal) {
+                checkSpeech(bestTranscript);
+            }
         };
 
         recognition.onerror = function(event) {
@@ -1419,7 +1495,7 @@ def word_card_speaking_game(word_themes):
                 recognition = null;
                 resetMicButton();
             }
-        }, 9000);
+        }, 11000);
 
         try {
             recognition.start();
