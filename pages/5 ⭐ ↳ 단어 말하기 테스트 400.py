@@ -2188,6 +2188,15 @@ def daily_word_card_speaking_game(word_themes):
         return item.cat + "||" + item.meaning + "||" + item.word;
     }
 
+    function escapeHtml(text) {
+        return String(text || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
     function shuffleArray(arr) {
         const copied = arr.slice();
         for (let i = copied.length - 1; i > 0; i--) {
@@ -2703,11 +2712,13 @@ def daily_word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            // 화면을 단순하게 보이도록 별도 피드백 박스 대신
-            // 인식된 단어 칸에 정답 여부만 표시합니다.
+            // 인식된 영어 단어는 그대로 보여 주고,
+            // 바로 옆에 정답 표시만 붙입니다.
             cardFeedbackBox.style.display = "none";
-            transcriptBox.innerText = "✅ 정답입니다!";
-            transcriptBox.style.color = "#166534";
+            transcriptBox.innerHTML =
+                "<span style='color:#334155;'>" + escapeHtml(spokenText) + "</span>" +
+                " <span style='display:inline-block; margin-left:8px; padding:4px 9px; border-radius:999px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; font-size:0.82em; font-weight:900; vertical-align:middle;'>✅ 정답입니다</span>";
+            transcriptBox.style.color = "#334155";
 
             resultBox.innerText = "";
             resultBox.style.background = "#f8fafc";
