@@ -315,18 +315,7 @@ st.markdown(
 # =========================
 st.markdown("<div class='main-title'>🌱 Daily English 400</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고, 읽고, 퀴즈로 익혀 봅시다.</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div class="hero-box">
-        <div class="hero-title">🌟 오늘의 학습 방식</div>
-        <div class="hero-text">
-        </div>
-    </div>
-    """,
+    "<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고 읽어 봅시다.</div>",
     unsafe_allow_html=True
 )
 
@@ -928,8 +917,7 @@ word_themes = {
         {"word": "library", "meaning": "도서관"},
         {"word": "cafeteria", "meaning": "급식소, 식당"},
         {"word": "hallway", "meaning": "복도"},
-        {"word": "attendance", "meaning": "출석"},
-    ],
+        {"word": "attendance", "meaning": "출석"}],
 
     "✏️ 교실 활동": [
         {"word": "copy", "meaning": "베껴 쓰다"},
@@ -951,8 +939,7 @@ word_themes = {
         {"word": "present", "meaning": "발표하다"},
         {"word": "take notes", "meaning": "필기하다"},
         {"word": "turn in", "meaning": "제출하다"},
-        {"word": "hand out", "meaning": "나누어 주다"},
-    ],
+        {"word": "hand out", "meaning": "나누어 주다"}],
 
     "🏠 집과 생활": [
         {"word": "living room", "meaning": "거실"},
@@ -974,8 +961,7 @@ word_themes = {
         {"word": "soap", "meaning": "비누"},
         {"word": "mirror", "meaning": "거울"},
         {"word": "closet", "meaning": "옷장"},
-        {"word": "trash", "meaning": "쓰레기"},
-    ],
+        {"word": "trash", "meaning": "쓰레기"}],
 
     "🌅 하루 일과": [
         {"word": "routine", "meaning": "일과"},
@@ -997,8 +983,7 @@ word_themes = {
         {"word": "always", "meaning": "항상"},
         {"word": "never", "meaning": "절대 ~않다"},
         {"word": "habit", "meaning": "습관"},
-        {"word": "lifestyle", "meaning": "생활 방식"},
-    ],
+        {"word": "lifestyle", "meaning": "생활 방식"}],
 
     "🎮 취미와 여가": [
         {"word": "hobby", "meaning": "취미"},
@@ -1020,8 +1005,7 @@ word_themes = {
         {"word": "free time", "meaning": "여가 시간"},
         {"word": "favorite", "meaning": "가장 좋아하는"},
         {"word": "popular", "meaning": "인기 있는"},
-        {"word": "relaxing", "meaning": "편안한"},
-    ],
+        {"word": "relaxing", "meaning": "편안한"}],
 
     "⚽ 운동과 활동": [
         {"word": "soccer", "meaning": "축구"},
@@ -1043,8 +1027,7 @@ word_themes = {
         {"word": "coach", "meaning": "코치"},
         {"word": "match", "meaning": "경기"},
         {"word": "competition", "meaning": "대회"},
-        {"word": "medal", "meaning": "메달"},
-    ],
+        {"word": "medal", "meaning": "메달"}],
 
     "🌦️ 날씨와 계절": [
         {"word": "season", "meaning": "계절"},
@@ -1066,8 +1049,7 @@ word_themes = {
         {"word": "forecast", "meaning": "일기예보"},
         {"word": "umbrella", "meaning": "우산"},
         {"word": "raincoat", "meaning": "비옷"},
-        {"word": "rainbow", "meaning": "무지개"},
-    ],
+        {"word": "rainbow", "meaning": "무지개"}],
 
     "🌳 자연과 환경": [
         {"word": "nature", "meaning": "자연"},
@@ -1089,8 +1071,7 @@ word_themes = {
         {"word": "plastic", "meaning": "플라스틱"},
         {"word": "recycle", "meaning": "재활용하다"},
         {"word": "protect", "meaning": "보호하다"},
-        {"word": "pollution", "meaning": "오염"},
-    ],
+        {"word": "pollution", "meaning": "오염"}],
 
     "🍽️ 식당과 주문": [
         {"word": "restaurant", "meaning": "식당"},
@@ -1112,8 +1093,7 @@ word_themes = {
         {"word": "spicy", "meaning": "매운"},
         {"word": "sweet", "meaning": "단"},
         {"word": "bill", "meaning": "계산서"},
-        {"word": "receipt", "meaning": "영수증"},
-    ],
+        {"word": "receipt", "meaning": "영수증"}],
 
     "🛍️ 쇼핑과 가격": [
         {"word": "shop", "meaning": "가게"},
@@ -1135,8 +1115,7 @@ word_themes = {
         {"word": "color", "meaning": "색깔"},
         {"word": "brand", "meaning": "상표"},
         {"word": "exchange", "meaning": "교환하다"},
-        {"word": "refund", "meaning": "환불"},
-    ],
+        {"word": "refund", "meaning": "환불"}],
 
     "👕 옷과 외모": [
         {"word": "T-shirt", "meaning": "티셔츠"},
@@ -1158,8 +1137,7 @@ word_themes = {
         {"word": "gloves", "meaning": "장갑"},
         {"word": "belt", "meaning": "벨트"},
         {"word": "glasses", "meaning": "안경"},
-        {"word": "comfortable", "meaning": "편안한"},
-    ],
+        {"word": "comfortable", "meaning": "편안한"}],
 
     "🚇 교통과 길 찾기": [
         {"word": "bus stop", "meaning": "버스 정류장"},
@@ -1181,8 +1159,7 @@ word_themes = {
         {"word": "exit", "meaning": "출구"},
         {"word": "transfer", "meaning": "갈아타다"},
         {"word": "lost", "meaning": "길을 잃은"},
-        {"word": "guide", "meaning": "안내하다, 안내자"},
-    ],
+        {"word": "guide", "meaning": "안내하다, 안내자"}],
 
     "🧳 여행과 숙박": [
         {"word": "travel", "meaning": "여행하다"},
@@ -1204,8 +1181,7 @@ word_themes = {
         {"word": "souvenir", "meaning": "기념품"},
         {"word": "museum", "meaning": "박물관"},
         {"word": "famous", "meaning": "유명한"},
-        {"word": "local", "meaning": "현지의"},
-    ],
+        {"word": "local", "meaning": "현지의"}],
 
     "👥 친구 관계": [
         {"word": "friendship", "meaning": "우정"},
@@ -1227,8 +1203,7 @@ word_themes = {
         {"word": "joke", "meaning": "농담"},
         {"word": "together", "meaning": "함께"},
         {"word": "alone", "meaning": "혼자"},
-        {"word": "forgive", "meaning": "용서하다"},
-    ],
+        {"word": "forgive", "meaning": "용서하다"}],
 
     "😊 감정 표현 확장": [
         {"word": "excited", "meaning": "신난"},
@@ -1250,8 +1225,7 @@ word_themes = {
         {"word": "mood", "meaning": "기분"},
         {"word": "stress", "meaning": "스트레스"},
         {"word": "confidence", "meaning": "자신감"},
-        {"word": "courage", "meaning": "용기"},
-    ],
+        {"word": "courage", "meaning": "용기"}],
 
     "💭 생각과 의견": [
         {"word": "think", "meaning": "생각하다"},
@@ -1273,8 +1247,7 @@ word_themes = {
         {"word": "suggestion", "meaning": "제안"},
         {"word": "possible", "meaning": "가능한"},
         {"word": "impossible", "meaning": "불가능한"},
-        {"word": "confusing", "meaning": "혼란스러운"},
-    ],
+        {"word": "confusing", "meaning": "혼란스러운"}],
 
     "📅 계획과 약속": [
         {"word": "plan", "meaning": "계획"},
@@ -1296,8 +1269,7 @@ word_themes = {
         {"word": "cancel", "meaning": "취소하다"},
         {"word": "on time", "meaning": "시간 맞춰"},
         {"word": "available", "meaning": "시간이 되는, 이용 가능한"},
-        {"word": "reminder", "meaning": "알림"},
-    ],
+        {"word": "reminder", "meaning": "알림"}],
 
     "🩺 건강한 생활": [
         {"word": "health", "meaning": "건강"},
@@ -1319,8 +1291,7 @@ word_themes = {
         {"word": "diet", "meaning": "식단"},
         {"word": "cough", "meaning": "기침"},
         {"word": "flu", "meaning": "독감"},
-        {"word": "breathe", "meaning": "숨 쉬다"},
-    ],
+        {"word": "breathe", "meaning": "숨 쉬다"}],
 
     "📱 미디어와 스마트폰": [
         {"word": "smartphone", "meaning": "스마트폰"},
@@ -1342,8 +1313,7 @@ word_themes = {
         {"word": "search", "meaning": "검색하다"},
         {"word": "click", "meaning": "클릭하다"},
         {"word": "battery", "meaning": "배터리"},
-        {"word": "notification", "meaning": "알림"},
-    ],
+        {"word": "notification", "meaning": "알림"}],
 
     "🌈 직업과 미래": [
         {"word": "job", "meaning": "직업"},
@@ -1365,8 +1335,7 @@ word_themes = {
         {"word": "goal", "meaning": "목표"},
         {"word": "skill", "meaning": "기술, 능력"},
         {"word": "interview", "meaning": "면접"},
-        {"word": "experience", "meaning": "경험"},
-    ],
+        {"word": "experience", "meaning": "경험"}],
 }
 
 # =========================
@@ -1379,8 +1348,7 @@ theme_dialogues = {
         {"en": "A: Do you have homework today?", "ko": "A: 오늘 숙제 있니?"},
         {"en": "B: Yes, I have a report.", "ko": "B: 응, 보고서가 있어."},
         {"en": "A: When is the presentation?", "ko": "A: 발표는 언제니?"},
-        {"en": "B: It is next week.", "ko": "B: 다음 주야."},
-    ],
+        {"en": "B: It is next week.", "ko": "B: 다음 주야."}],
 
     "✏️ 교실 활동": [
         {"en": "A: Please underline this word.", "ko": "A: 이 단어에 밑줄을 그어 주세요."},
@@ -1388,8 +1356,7 @@ theme_dialogues = {
         {"en": "A: Can you repeat the sentence?", "ko": "A: 문장을 반복해 줄 수 있니?"},
         {"en": "B: Yes, I can repeat it.", "ko": "B: 네, 반복할 수 있어요."},
         {"en": "A: Please turn in your paper.", "ko": "A: 종이를 제출해 주세요."},
-        {"en": "B: Sure. Here it is.", "ko": "B: 네. 여기 있어요."},
-    ],
+        {"en": "B: Sure. Here it is.", "ko": "B: 네. 여기 있어요."}],
 
     "🏠 집과 생활": [
         {"en": "A: Where is your room?", "ko": "A: 네 방은 어디에 있니?"},
@@ -1397,8 +1364,7 @@ theme_dialogues = {
         {"en": "A: Is your room clean?", "ko": "A: 네 방은 깨끗하니?"},
         {"en": "B: No, it is a little messy.", "ko": "B: 아니, 조금 지저분해."},
         {"en": "A: Can you clean it?", "ko": "A: 청소할 수 있니?"},
-        {"en": "B: Yes, I can clean it today.", "ko": "B: 응, 오늘 청소할 수 있어."},
-    ],
+        {"en": "B: Yes, I can clean it today.", "ko": "B: 응, 오늘 청소할 수 있어."}],
 
     "🌅 하루 일과": [
         {"en": "A: What time do you get up?", "ko": "A: 너는 몇 시에 일어나니?"},
@@ -1406,8 +1372,7 @@ theme_dialogues = {
         {"en": "A: What do you do after school?", "ko": "A: 방과 후에 무엇을 하니?"},
         {"en": "B: I relax and watch videos.", "ko": "B: 쉬면서 영상을 봐."},
         {"en": "A: Do you sleep early?", "ko": "A: 너는 일찍 자니?"},
-        {"en": "B: No, I sometimes sleep late.", "ko": "B: 아니, 가끔 늦게 자."},
-    ],
+        {"en": "B: No, I sometimes sleep late.", "ko": "B: 아니, 가끔 늦게 자."}],
 
     "🎮 취미와 여가": [
         {"en": "A: What is your hobby?", "ko": "A: 네 취미는 뭐니?"},
@@ -1415,8 +1380,7 @@ theme_dialogues = {
         {"en": "A: Do you like music?", "ko": "A: 음악 좋아하니?"},
         {"en": "B: Yes, I like pop songs.", "ko": "B: 응, 나는 팝송을 좋아해."},
         {"en": "A: What do you do in your free time?", "ko": "A: 여가 시간에 무엇을 하니?"},
-        {"en": "B: I play games and read comics.", "ko": "B: 게임하고 만화를 읽어."},
-    ],
+        {"en": "B: I play games and read comics.", "ko": "B: 게임하고 만화를 읽어."}],
 
     "⚽ 운동과 활동": [
         {"en": "A: What sport do you like?", "ko": "A: 어떤 운동을 좋아하니?"},
@@ -1424,8 +1388,7 @@ theme_dialogues = {
         {"en": "A: Do you practice often?", "ko": "A: 자주 연습하니?"},
         {"en": "B: Yes, I practice after school.", "ko": "B: 응, 방과 후에 연습해."},
         {"en": "A: Did your team win?", "ko": "A: 너희 팀이 이겼니?"},
-        {"en": "B: Yes, we won the match.", "ko": "B: 응, 우리는 경기에서 이겼어."},
-    ],
+        {"en": "B: Yes, we won the match.", "ko": "B: 응, 우리는 경기에서 이겼어."}],
 
     "🌦️ 날씨와 계절": [
         {"en": "A: How is the weather today?", "ko": "A: 오늘 날씨가 어때?"},
@@ -1433,8 +1396,7 @@ theme_dialogues = {
         {"en": "A: Do you like winter?", "ko": "A: 겨울을 좋아하니?"},
         {"en": "B: No, I like spring.", "ko": "B: 아니, 나는 봄을 좋아해."},
         {"en": "A: Do you need an umbrella?", "ko": "A: 우산이 필요하니?"},
-        {"en": "B: Yes, it may rain.", "ko": "B: 응, 비가 올지도 몰라."},
-    ],
+        {"en": "B: Yes, it may rain.", "ko": "B: 응, 비가 올지도 몰라."}],
 
     "🌳 자연과 환경": [
         {"en": "A: Do you like nature?", "ko": "A: 자연을 좋아하니?"},
@@ -1442,8 +1404,7 @@ theme_dialogues = {
         {"en": "A: What can we do for the environment?", "ko": "A: 환경을 위해 무엇을 할 수 있을까?"},
         {"en": "B: We can recycle plastic.", "ko": "B: 플라스틱을 재활용할 수 있어."},
         {"en": "A: Is pollution a problem?", "ko": "A: 오염은 문제니?"},
-        {"en": "B: Yes, it is a big problem.", "ko": "B: 응, 큰 문제야."},
-    ],
+        {"en": "B: Yes, it is a big problem.", "ko": "B: 응, 큰 문제야."}],
 
     "🍽️ 식당과 주문": [
         {"en": "A: Are you ready to order?", "ko": "A: 주문할 준비가 되셨나요?"},
@@ -1451,8 +1412,7 @@ theme_dialogues = {
         {"en": "A: Do you want a drink?", "ko": "A: 음료도 원하시나요?"},
         {"en": "B: Yes, I want juice.", "ko": "B: 네, 주스 주세요."},
         {"en": "A: How is the food?", "ko": "A: 음식은 어때요?"},
-        {"en": "B: It is delicious.", "ko": "B: 맛있어요."},
-    ],
+        {"en": "B: It is delicious.", "ko": "B: 맛있어요."}],
 
     "🛍️ 쇼핑과 가격": [
         {"en": "A: Can I help you?", "ko": "A: 도와드릴까요?"},
@@ -1460,8 +1420,7 @@ theme_dialogues = {
         {"en": "A: What color do you want?", "ko": "A: 어떤 색을 원하세요?"},
         {"en": "B: I want a black one.", "ko": "B: 검은색을 원해요."},
         {"en": "A: It is on sale today.", "ko": "A: 오늘 할인 중이에요."},
-        {"en": "B: Great. I will buy it.", "ko": "B: 좋아요. 살게요."},
-    ],
+        {"en": "B: Great. I will buy it.", "ko": "B: 좋아요. 살게요."}],
 
     "👕 옷과 외모": [
         {"en": "A: Do you like this jacket?", "ko": "A: 이 재킷 마음에 드니?"},
@@ -1469,8 +1428,7 @@ theme_dialogues = {
         {"en": "A: What size do you need?", "ko": "A: 어떤 사이즈가 필요하니?"},
         {"en": "B: I need a medium size.", "ko": "B: 중간 사이즈가 필요해."},
         {"en": "A: Are these sneakers new?", "ko": "A: 이 운동화는 새거니?"},
-        {"en": "B: Yes, they are new.", "ko": "B: 응, 새거야."},
-    ],
+        {"en": "B: Yes, they are new.", "ko": "B: 응, 새거야."}],
 
     "🚇 교통과 길 찾기": [
         {"en": "A: Where is the bus stop?", "ko": "A: 버스 정류장이 어디에 있나요?"},
@@ -1478,8 +1436,7 @@ theme_dialogues = {
         {"en": "A: Is the subway station far?", "ko": "A: 지하철역은 먼가요?"},
         {"en": "B: No, it is near here.", "ko": "B: 아니요, 여기 근처에 있어요."},
         {"en": "A: I think I am lost.", "ko": "A: 길을 잃은 것 같아요."},
-        {"en": "B: I can help you.", "ko": "B: 제가 도와드릴 수 있어요."},
-    ],
+        {"en": "B: I can help you.", "ko": "B: 제가 도와드릴 수 있어요."}],
 
     "🧳 여행과 숙박": [
         {"en": "A: Do you have a reservation?", "ko": "A: 예약하셨나요?"},
@@ -1487,8 +1444,7 @@ theme_dialogues = {
         {"en": "A: May I see your passport?", "ko": "A: 여권을 볼 수 있을까요?"},
         {"en": "B: Sure. Here it is.", "ko": "B: 물론이죠. 여기 있어요."},
         {"en": "A: What time is check out?", "ko": "A: 체크아웃은 몇 시인가요?"},
-        {"en": "B: It is at eleven.", "ko": "B: 11시입니다."},
-    ],
+        {"en": "B: It is at eleven.", "ko": "B: 11시입니다."}],
 
     "👥 친구 관계": [
         {"en": "A: Do you want to hang out this weekend?", "ko": "A: 이번 주말에 같이 놀래?"},
@@ -1496,8 +1452,7 @@ theme_dialogues = {
         {"en": "A: Can I invite my friend?", "ko": "A: 내 친구도 초대해도 돼?"},
         {"en": "B: Sure. We can meet together.", "ko": "B: 물론이지. 같이 만날 수 있어."},
         {"en": "A: Thank you for helping me.", "ko": "A: 도와줘서 고마워."},
-        {"en": "B: No problem. We are friends.", "ko": "B: 괜찮아. 우리는 친구잖아."},
-    ],
+        {"en": "B: No problem. We are friends.", "ko": "B: 괜찮아. 우리는 친구잖아."}],
 
     "😊 감정 표현 확장": [
         {"en": "A: You look nervous.", "ko": "A: 너 긴장해 보여."},
@@ -1505,8 +1460,7 @@ theme_dialogues = {
         {"en": "A: Don't worry. You can do it.", "ko": "A: 걱정하지 마. 너는 할 수 있어."},
         {"en": "B: Thank you. I feel better.", "ko": "B: 고마워. 기분이 나아졌어."},
         {"en": "A: Are you proud of yourself?", "ko": "A: 너 자신이 자랑스럽니?"},
-        {"en": "B: Yes, I am proud.", "ko": "B: 응, 자랑스러워."},
-    ],
+        {"en": "B: Yes, I am proud.", "ko": "B: 응, 자랑스러워."}],
 
     "💭 생각과 의견": [
         {"en": "A: What do you think about this idea?", "ko": "A: 이 생각에 대해 어떻게 생각하니?"},
@@ -1514,8 +1468,7 @@ theme_dialogues = {
         {"en": "A: Do you agree with me?", "ko": "A: 내 말에 동의하니?"},
         {"en": "B: Yes, I agree.", "ko": "B: 응, 동의해."},
         {"en": "A: Can you give me a reason?", "ko": "A: 이유를 말해 줄 수 있니?"},
-        {"en": "B: Sure. It is simple and clear.", "ko": "B: 물론이지. 간단하고 명확해."},
-    ],
+        {"en": "B: Sure. It is simple and clear.", "ko": "B: 물론이지. 간단하고 명확해."}],
 
     "📅 계획과 약속": [
         {"en": "A: Do you have plans this weekend?", "ko": "A: 이번 주말에 계획 있니?"},
@@ -1523,8 +1476,7 @@ theme_dialogues = {
         {"en": "A: Are you available tomorrow?", "ko": "A: 내일 시간 돼?"},
         {"en": "B: Yes, I am free in the afternoon.", "ko": "B: 응, 오후에 시간이 있어."},
         {"en": "A: Can we change the time?", "ko": "A: 시간을 바꿀 수 있을까?"},
-        {"en": "B: Sure. No problem.", "ko": "B: 물론이지. 문제없어."},
-    ],
+        {"en": "B: Sure. No problem.", "ko": "B: 물론이지. 문제없어."}],
 
     "🩺 건강한 생활": [
         {"en": "A: You look tired.", "ko": "A: 너 피곤해 보여."},
@@ -1532,8 +1484,7 @@ theme_dialogues = {
         {"en": "A: You should rest.", "ko": "A: 쉬는 게 좋겠어."},
         {"en": "B: I know. I need more sleep.", "ko": "B: 알아. 잠이 더 필요해."},
         {"en": "A: Do you exercise often?", "ko": "A: 자주 운동하니?"},
-        {"en": "B: Sometimes. I want to be healthy.", "ko": "B: 가끔. 건강해지고 싶어."},
-    ],
+        {"en": "B: Sometimes. I want to be healthy.", "ko": "B: 가끔. 건강해지고 싶어."}],
 
     "📱 미디어와 스마트폰": [
         {"en": "A: What app do you use often?", "ko": "A: 어떤 앱을 자주 사용하니?"},
@@ -1541,8 +1492,7 @@ theme_dialogues = {
         {"en": "A: Can you send me the link?", "ko": "A: 링크를 보내줄 수 있니?"},
         {"en": "B: Sure. I will send it now.", "ko": "B: 물론이지. 지금 보낼게."},
         {"en": "A: Is your battery low?", "ko": "A: 배터리가 부족하니?"},
-        {"en": "B: Yes, I need to charge my phone.", "ko": "B: 응, 휴대폰을 충전해야 해."},
-    ],
+        {"en": "B: Yes, I need to charge my phone.", "ko": "B: 응, 휴대폰을 충전해야 해."}],
 
     "🌈 직업과 미래": [
         {"en": "A: What is your dream job?", "ko": "A: 네 꿈의 직업은 뭐니?"},
@@ -1550,17 +1500,15 @@ theme_dialogues = {
         {"en": "A: What skill do you need?", "ko": "A: 어떤 기술이 필요하니?"},
         {"en": "B: I need computer skills.", "ko": "B: 컴퓨터 기술이 필요해."},
         {"en": "A: Do you have a goal?", "ko": "A: 목표가 있니?"},
-        {"en": "B: Yes, I want to get a good job.", "ko": "B: 응, 좋은 직업을 얻고 싶어."},
-    ],
+        {"en": "B: Yes, I want to get a good job.", "ko": "B: 응, 좋은 직업을 얻고 싶어."}],
 }
-
 
 
 # =========================
 # 카테고리 통합
 # - 단어 400개와 대화 내용은 삭제하지 않습니다.
 # - 카테고리만 크게 묶습니다.
-# - 이 통합 결과가 단어 목록, 퀴즈, 카테고리별 카세트, 전체 카세트에 모두 적용됩니다.
+# - 이 통합 결과가 단어 목록, 카테고리별 카세트, 전체 카세트에 모두 적용됩니다.
 # =========================
 CATEGORY_MERGE_MAP = {
     # 1. 학교
@@ -1614,7 +1562,7 @@ def merge_categories(original_dict):
     return merged
 
 
-# 여기에서 먼저 통합해야 아래의 단어 목록, 퀴즈, 카세트가 모두 통합 카테고리 기준으로 작동합니다.
+# 여기에서 먼저 통합해야 아래의 단어 목록, 카세트가 모두 통합 카테고리 기준으로 작동합니다.
 word_themes = merge_categories(word_themes)
 theme_dialogues = merge_categories(theme_dialogues)
 
@@ -2546,7 +2494,7 @@ def make_daily_example_ko(word, meaning="", theme=""):
         f"이 문장은 '{meaning}'이라는 뜻의 단어를 사용한 일상 영어 문장입니다."
     )
 
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="재생 버튼을 누르면 단어가 차례대로 재생됩니다.", height=600, word_repeat_each=1):
+def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="", height=600, word_repeat_each=1):
     """
     보기 편한 카세트 플레이어.
     - 큰 재생 버튼
@@ -2557,10 +2505,8 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
     player_id = f"easy_cassette_{uuid.uuid4().hex}"
     play_btn_id = f"play_{uuid.uuid4().hex}"
     pause_btn_id = f"pause_{uuid.uuid4().hex}"
-    replay_btn_id = f"replay_{uuid.uuid4().hex}"
     prev_btn_id = f"prev_{uuid.uuid4().hex}"
     next_btn_id = f"next_{uuid.uuid4().hex}"
-    stop_btn_id = f"stop_{uuid.uuid4().hex}"
     progress_id = f"progress_{uuid.uuid4().hex}"
     visual_bar_id = f"bar_{uuid.uuid4().hex}"
     percent_id = f"percent_{uuid.uuid4().hex}"
@@ -3139,8 +3085,6 @@ def browser_theme_cassette_player(theme_items, theme_name, height=580):
     )
 
 
-
-
 def show_all_cassette_tab():
     st.markdown("## 🎧 전체 단어만 카세트 듣기")
 
@@ -3186,83 +3130,6 @@ def show_cassette_player(theme_words, theme_name):
         theme_name,
         height=620
     )
-
-# =========================
-# 전체 뜻 목록 만들기
-# =========================
-all_words = []
-for theme_words in word_themes.values():
-    all_words.extend(theme_words)
-
-all_meanings = [item["meaning"] for item in all_words]
-
-
-# =========================
-# 보기 고정 랜덤 섞기
-# =========================
-def get_shuffled_options(theme_name, index, options):
-    key = f"{theme_name}_options_{index}"
-
-    if key not in st.session_state:
-        shuffled = options[:]
-        random.seed(f"{theme_name}_{index}")
-        random.shuffle(shuffled)
-        st.session_state[key] = shuffled
-
-    return st.session_state[key]
-
-
-# =========================
-# 퀴즈 문항 만들기
-# =========================
-def make_quiz_items(theme_words, theme_name):
-    quiz_items = []
-
-    for idx, item in enumerate(theme_words):
-        correct = item["meaning"]
-        distractors = [m for m in all_meanings if m != correct]
-        random.seed(f"{theme_name}_{item['word']}_{idx}")
-
-        if len(distractors) >= 3:
-            wrong_options = random.sample(distractors, 3)
-        else:
-            wrong_options = distractors
-
-        options = [correct] + wrong_options
-
-        quiz_items.append({
-            "word": item["word"],
-            "answer": correct,
-            "options": options
-        })
-
-    return quiz_items
-
-
-# =========================
-# 상태 초기화
-# =========================
-def init_state(theme_name):
-    if f"{theme_name}_submitted1" not in st.session_state:
-        st.session_state[f"{theme_name}_submitted1"] = False
-
-    if f"{theme_name}_submitted2" not in st.session_state:
-        st.session_state[f"{theme_name}_submitted2"] = False
-
-    if f"{theme_name}_wrong" not in st.session_state:
-        st.session_state[f"{theme_name}_wrong"] = []
-
-
-def reset_theme(theme_name):
-    keys_to_delete = []
-
-    for key in st.session_state.keys():
-        if key.startswith(theme_name):
-            keys_to_delete.append(key)
-
-    for key in keys_to_delete:
-        del st.session_state[key]
-
 
 # =========================
 # 오늘의 일상 대화 보여주기
@@ -3313,13 +3180,9 @@ def show_dialogue(theme_name):
 # 단어 익히기
 # =========================
 def show_word_cards(theme_words, theme_name):
-    st.markdown("### 🌱 핵심 단어 익히기")
-    st.write("기초 일상대화에 꼭 필요한 단어를 듣고 익혀 보세요.")
-
     for idx, item in enumerate(theme_words):
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        # 기존 크기감은 유지하면서: 영어 → 한국어 → 이모지 → 듣기/중지 순서
         col1, col2, col3, col4 = st.columns([1.25, 1.05, 0.35, 1.65])
 
         with col1:
@@ -3354,183 +3217,15 @@ def show_word_cards(theme_words, theme_name):
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('---')
-    show_cassette_player(theme_words, theme_name)
-
 
 # =========================
-# 퀴즈 풀기
+# 
 # =========================
-def show_quiz(theme_words, theme_name):
-    init_state(theme_name)
-
-    quiz_items = make_quiz_items(theme_words, theme_name)
-
-    submitted1_key = f"{theme_name}_submitted1"
-    submitted2_key = f"{theme_name}_submitted2"
-    wrong_key = f"{theme_name}_wrong"
-
-    if not st.session_state[submitted1_key]:
-        st.markdown("### 🧸 1차 퀴즈")
-        st.write("영어 단어를 보고 알맞은 뜻을 고르세요.")
-
-        for i, q in enumerate(quiz_items):
-            st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
-
-            st.markdown(f"<div class='quiz-number'>🌟 Question {i + 1}</div>", unsafe_allow_html=True)
-            st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
-
-            audio_button(
-                "🔊 듣기",
-                q["word"],
-                key=f"{theme_name}_quiz_audio1_{i}"
-            )
-
-            options = get_shuffled_options(theme_name, i, q["options"])
-
-            st.radio(
-                "뜻을 고르세요.",
-                options,
-                key=f"{theme_name}_q1_{i}"
-            )
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        if st.button("✅ 1차 제출하기", key=f"{theme_name}_submit1"):
-            wrong = []
-
-            for i, q in enumerate(quiz_items):
-                user_answer = st.session_state.get(f"{theme_name}_q1_{i}")
-
-                if user_answer != q["answer"]:
-                    wrong.append(i)
-
-            st.session_state[wrong_key] = wrong
-            st.session_state[submitted1_key] = True
-            st.rerun()
-
-    elif st.session_state[submitted1_key] and not st.session_state[submitted2_key]:
-        wrong = st.session_state[wrong_key]
-        score = len(quiz_items) - len(wrong)
-
-        st.markdown(
-            f"""
-            <div class="score-box">
-                <div class="score-title">🎉 1차 결과: {score} / {len(quiz_items)}점</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        if len(wrong) == 0:
-            st.balloons()
-            st.success("🌈 완벽합니다! 이 테마의 일상 단어를 모두 잘 기억하고 있습니다.")
-
-            if st.button("🔄 다시 풀기", key=f"{theme_name}_reset_all_correct"):
-                reset_theme(theme_name)
-                st.rerun()
-
-        else:
-            st.markdown(
-                f"""
-                <div class="wrong-box">
-                    🍊 틀린 단어 {len(wrong)}개를 다시 풀어 봅시다.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            st.markdown("### 🔁 2차 퀴즈: 틀린 단어만 다시 풀기")
-
-            for i in wrong:
-                q = quiz_items[i]
-
-                st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
-
-                st.markdown(f"<div class='quiz-number'>🌟 Retry {i + 1}</div>", unsafe_allow_html=True)
-                st.markdown(f"<div class='quiz-word'>{q['word']}</div>", unsafe_allow_html=True)
-
-                audio_button(
-                    "🔊 듣기",
-                    q["word"],
-                    key=f"{theme_name}_quiz_audio2_{i}"
-                )
-
-                options = get_shuffled_options(theme_name, i, q["options"])
-
-                st.radio(
-                    "뜻을 다시 고르세요.",
-                    options,
-                    key=f"{theme_name}_q2_{i}"
-                )
-
-                st.markdown('</div>', unsafe_allow_html=True)
-
-            if st.button("✅ 2차 제출하기", key=f"{theme_name}_submit2"):
-                st.session_state[submitted2_key] = True
-                st.rerun()
-
-    else:
-        wrong = st.session_state[wrong_key]
-        second_wrong = []
-
-        for i in wrong:
-            q = quiz_items[i]
-            user_answer = st.session_state.get(f"{theme_name}_q2_{i}")
-
-            if user_answer != q["answer"]:
-                second_wrong.append(i)
-
-        final_score = len(quiz_items) - len(second_wrong)
-
-        st.markdown(
-            f"""
-            <div class="score-box">
-                <div class="score-title">🏆 최종 결과: {final_score} / {len(quiz_items)}점</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        if len(second_wrong) == 0:
-            st.balloons()
-            st.success("💖 좋습니다! 틀렸던 단어까지 모두 다시 확인했습니다.")
-        else:
-            st.warning("🍊 아래 단어들은 다시 복습하면 좋습니다.")
-
-        st.markdown("### ✅ 정답 확인")
-
-        if len(wrong) == 0:
-            st.info("틀린 문제가 없습니다.")
-        else:
-            for i in wrong:
-                q = quiz_items[i]
-                user1 = st.session_state.get(f"{theme_name}_q1_{i}")
-                user2 = st.session_state.get(f"{theme_name}_q2_{i}")
-
-                st.markdown('<div class="answer-box">', unsafe_allow_html=True)
-                st.markdown(f"### 🌱 {q['word']}")
-
-                audio_button(
-                    "🔊 듣기",
-                    q["word"],
-                    key=f"{theme_name}_answer_audio_{i}"
-                )
-
-                st.write(f"1차 선택: {user1}")
-                st.write(f"2차 선택: {user2}")
-                st.success(f"정답: {q['answer']}")
-                st.markdown('</div>', unsafe_allow_html=True)
-
-        if st.button("🔄 다시 풀기", key=f"{theme_name}_reset"):
-            reset_theme(theme_name)
-            st.rerun()
 
 
 # =========================
 # 탭 구성
 # =========================
-# 전체 카세트 듣기는 제일 마지막 탭에 배치
 tab_names = list(word_themes.keys()) + ["🎧 전체 카세트 듣기"]
 tabs = st.tabs(tab_names)
 
@@ -3542,23 +3237,14 @@ for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
             f"""
             <div class="theme-header">
                 <div class="theme-title">{theme_name}</div>
-                <div class="theme-desc">이 카테고리에는 {len(theme_words)}개의 일상 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div>
+                <div class="theme-desc">{len(theme_words)}개의 일상 단어를 듣고 익혀 봅시다.</div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        mode = st.radio(
-            "학습 모드를 선택하세요.",
-            ["🌱 핵심 단어 익히기", "🧸 퀴즈 풀기"],
-            key=f"{theme_name}_mode",
-            horizontal=True
-        )
-
-        if mode == "🌱 핵심 단어 익히기":
-            show_word_cards(theme_words, theme_name)
-        else:
-            show_quiz(theme_words, theme_name)
+        show_cassette_player(theme_words, theme_name)
+        show_word_cards(theme_words, theme_name)
 
 with tabs[-1]:
     show_all_cassette_tab()
