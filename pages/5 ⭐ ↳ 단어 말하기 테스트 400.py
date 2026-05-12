@@ -1861,7 +1861,7 @@ def daily_word_card_speaking_game(word_themes):
         </style>
 
         <div id="topControlBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
-            <label style="font-weight:900; color:#334155;">단어 테마 선택</label>
+            <label style="font-weight:900; color:#334155;">단어 범위 선택</label>
             <select id="categorySelect" style="
                 padding: 10px 14px;
                 border-radius: 999px;
@@ -1880,7 +1880,7 @@ def daily_word_card_speaking_game(word_themes):
                 padding: 10px 15px;
                 font-weight: 900;
                 cursor: pointer;
-            ">🎲 섞어서 풀기</button>
+            ">🎲 이 범위 섞기</button>
 
             <button id="resetBtn" style="
                 border: 1.5px solid #fed7aa;
@@ -2077,7 +2077,7 @@ def daily_word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#14532d;
                 margin-bottom:10px;
-            ">테마 완료!</div>
+            ">범위 완료!</div>
             <div id="finishScore" style="
                 font-size:24px;
                 font-weight:900;
@@ -2173,11 +2173,15 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function uniqueCategories() {
-        const cats = ["전체"];
-        ITEMS.forEach(item => {
-            if (!cats.includes(item.cat)) cats.push(item.cat);
-        });
-        return cats;
+        const ranges = [];
+        const chunkSize = 50;
+
+        for (let start = 0; start < ITEMS.length; start += chunkSize) {
+            const end = Math.min(start + chunkSize, ITEMS.length);
+            ranges.push((start + 1) + "~" + end);
+        }
+
+        return ranges;
     }
 
     function initCategories() {
@@ -2193,8 +2197,17 @@ def daily_word_card_speaking_game(word_themes):
 
     function getFilteredItems() {
         const selected = categorySelect.value;
-        if (selected === "전체") return ITEMS.slice();
-        return ITEMS.filter(item => item.cat === selected);
+        const chunkSize = 50;
+
+        if (!selected || selected.indexOf("~") === -1) {
+            return ITEMS.slice(0, chunkSize);
+        }
+
+        const parts = selected.split("~");
+        const start = parseInt(parts[0], 10) - 1;
+        const end = parseInt(parts[1], 10);
+
+        return ITEMS.slice(start, end);
     }
 
     function getItemKey(item) {
@@ -2599,7 +2612,7 @@ def daily_word_card_speaking_game(word_themes):
         return pos >= answerWords.length;
     }
 
-    function countCorrectInCurrentTheme() {
+    function countCorrectInCurrentRange() {
         const list = getFilteredItems();
         let count = 0;
 
@@ -2610,7 +2623,7 @@ def daily_word_card_speaking_game(word_themes):
         return count;
     }
 
-    function countMissedInCurrentTheme() {
+    function countMissedInCurrentRange() {
         const list = getFilteredItems();
         let count = 0;
 
@@ -2623,8 +2636,8 @@ def daily_word_card_speaking_game(word_themes):
 
     function updateScore() {
         const list = getFilteredItems();
-        const correctCount = countCorrectInCurrentTheme();
-        const missedCount = countMissedInCurrentTheme();
+        const correctCount = countCorrectInCurrentRange();
+        const missedCount = countMissedInCurrentRange();
         scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
     }
 
@@ -2656,8 +2669,8 @@ def daily_word_card_speaking_game(word_themes):
         cleanupRecognition();
         finished = true;
         const list = getFilteredItems();
-        const correctCount = countCorrectInCurrentTheme();
-        const missedCount = countMissedInCurrentTheme();
+        const correctCount = countCorrectInCurrentRange();
+        const missedCount = countMissedInCurrentRange();
 
         finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
 
@@ -2895,7 +2908,7 @@ def daily_word_card_speaking_game(word_themes):
         }
     }
 
-    function resetCurrentTheme() {
+    function resetCurrentRange() {
         const list = getFilteredItems();
 
         list.forEach(item => {
@@ -2923,8 +2936,8 @@ def daily_word_card_speaking_game(word_themes):
         updateScore();
     });
 
-    resetBtn.addEventListener("click", resetCurrentTheme);
-    finishRetryBtn.addEventListener("click", resetCurrentTheme);
+    resetBtn.addEventListener("click", resetCurrentRange);
+    finishRetryBtn.addEventListener("click", resetCurrentRange);
 
     micBtn.addEventListener("click", startRecognition);
 
