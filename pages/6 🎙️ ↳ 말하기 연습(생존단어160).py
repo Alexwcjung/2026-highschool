@@ -642,6 +642,29 @@ def speaking_practice_component(items):
         return html;
     }
 
+    function makeFilledBlankSentenceHtml(blankText, hintText) {
+        const answers = String(hintText || "")
+            .split("/")
+            .map(x => x.trim())
+            .filter(x => x.length > 0);
+
+        let blankIndex = 0;
+        const parts = String(blankText || "").split(/(______)/g);
+
+        return parts.map(part => {
+            if (part === "______") {
+                const fill = answers[blankIndex] || "";
+                blankIndex += 1;
+
+                return "<span style='display:inline-block; min-width:96px; vertical-align:middle; background:#dcfce7; color:#166534; border-radius:14px; margin:0 6px; padding:4px 12px; border:1.5px solid #86efac; font-weight:900; box-shadow:0 3px 8px rgba(34,197,94,0.10);'>"
+                    + escapeHtml(fill) +
+                    "</span>";
+            }
+
+            return escapeHtml(part);
+        }).join("");
+    }
+
     function makeAnswerSentenceHtml(answer) {
         return answer.split(/\s+/).map(word => {
             return "<span style='display:inline-block; margin:4px 5px; padding:6px 11px; border-radius:999px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; font-weight:900;'>" +
@@ -755,12 +778,12 @@ def speaking_practice_component(items):
 
             updateScore();
 
-            // 말해보카1 방식: 내가 말한 문장을 마이크 버튼 위에 띄우고, 빈칸에는 정답 문장을 채움
+            // 말해보카1 방식: 내가 말한 문장을 마이크 버튼 위에 띄우고, 빈칸에만 정답 단어를 채움
             transcriptBox.innerHTML =
                 "<span style='color:#4c1d95;'>" + escapeHtml(recognized || currentItem.answer) + "</span> " +
                 "<span style='color:#166534;'>✅ 정답입니다</span>";
 
-            blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
+            blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
 
             hintBox.style.display = "none";
             answerBox.style.display = "none";
@@ -922,7 +945,7 @@ def speaking_practice_component(items):
     answerBtn.addEventListener("click", function() {
         if (!currentItem) return;
         answerBox.style.display = "none";
-        blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
+        blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
         transcriptBox.innerHTML = "<span style='color:#166534;'>" + escapeHtml(currentItem.answer) + "</span>";
         listenBtn.style.display = "inline-block";
         nextBtn.style.display = "inline-block";
@@ -930,7 +953,7 @@ def speaking_practice_component(items):
 
         resultBox.style.display = "block";
         resultBox.style.color = "#166534";
-        resultBox.innerText = "정답을 듣고 다시 말하면 정답으로 인정됩니다.";
+        resultBox.innerText = "빈칸에 들어간 단어를 보고 다시 말하면 정답으로 인정됩니다.";
     });
 
     micBtn.addEventListener("click", startRecognition);
