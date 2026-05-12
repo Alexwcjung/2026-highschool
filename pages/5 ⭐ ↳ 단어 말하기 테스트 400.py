@@ -3,271 +3,1680 @@ import streamlit.components.v1 as components
 import json
 
 st.set_page_config(
-    page_title="생존 단어 카드 말하기 게임",
-    page_icon="🃏",
+    page_title="Daily English 400 단어 카드 말하기 게임",
+    page_icon="🌱",
     layout="wide"
 )
 
 # =========================================================
-# 생존 단어 160개
+# Daily English 400 단어 데이터
 # =========================================================
 WORD_THEMES = {
-    "🧍 나와 사람": [
-        {"word": "I", "meaning": "나", "emoji": "🙋"},
-        {"word": "you", "meaning": "너, 당신", "emoji": "👉"},
-        {"word": "he", "meaning": "그", "emoji": "👦"},
-        {"word": "she", "meaning": "그녀", "emoji": "👧"},
-        {"word": "we", "meaning": "우리", "emoji": "👥"},
-        {"word": "they", "meaning": "그들", "emoji": "👥"},
-        {"word": "friend", "meaning": "친구", "emoji": "🤝"},
-        {"word": "teacher", "meaning": "선생님", "emoji": "👩‍🏫"},
-        {"word": "student", "meaning": "학생", "emoji": "🧑‍🎓"},
-        {"word": "classmate", "meaning": "반 친구", "emoji": "👫"},
-        {"word": "family", "meaning": "가족", "emoji": "👨‍👩‍👧"},
-        {"word": "father", "meaning": "아버지", "emoji": "👨"},
-        {"word": "mother", "meaning": "어머니", "emoji": "👩"},
-        {"word": "brother", "meaning": "형제, 남자 형제", "emoji": "👦"},
-        {"word": "sister", "meaning": "자매, 여자 형제", "emoji": "👧"},
-        {"word": "name", "meaning": "이름", "emoji": "🏷️"},
-        {"word": "person", "meaning": "사람", "emoji": "🧍"},
-        {"word": "man", "meaning": "남자", "emoji": "👨"},
-        {"word": "woman", "meaning": "여자", "emoji": "👩"},
-        {"word": "child", "meaning": "아이", "emoji": "🧒"},
+    "🏫 학교생활": [
+        {
+            "word": "subject",
+            "meaning": "과목"
+        },
+        {
+            "word": "math",
+            "meaning": "수학"
+        },
+        {
+            "word": "science",
+            "meaning": "과학"
+        },
+        {
+            "word": "history",
+            "meaning": "역사"
+        },
+        {
+            "word": "music",
+            "meaning": "음악"
+        },
+        {
+            "word": "art",
+            "meaning": "미술"
+        },
+        {
+            "word": "P.E.",
+            "meaning": "체육"
+        },
+        {
+            "word": "club",
+            "meaning": "동아리"
+        },
+        {
+            "word": "schedule",
+            "meaning": "일정표"
+        },
+        {
+            "word": "semester",
+            "meaning": "학기"
+        },
+        {
+            "word": "assignment",
+            "meaning": "과제"
+        },
+        {
+            "word": "project",
+            "meaning": "프로젝트"
+        },
+        {
+            "word": "presentation",
+            "meaning": "발표"
+        },
+        {
+            "word": "report",
+            "meaning": "보고서"
+        },
+        {
+            "word": "textbook",
+            "meaning": "교과서"
+        },
+        {
+            "word": "workbook",
+            "meaning": "문제집"
+        },
+        {
+            "word": "library",
+            "meaning": "도서관"
+        },
+        {
+            "word": "cafeteria",
+            "meaning": "급식소, 식당"
+        },
+        {
+            "word": "hallway",
+            "meaning": "복도"
+        },
+        {
+            "word": "attendance",
+            "meaning": "출석"
+        }
     ],
-    "🏃 기본 동작": [
-        {"word": "go", "meaning": "가다", "emoji": "➡️"},
-        {"word": "come", "meaning": "오다", "emoji": "⬅️"},
-        {"word": "walk", "meaning": "걷다", "emoji": "🚶"},
-        {"word": "run", "meaning": "달리다", "emoji": "🏃"},
-        {"word": "sit", "meaning": "앉다", "emoji": "🪑"},
-        {"word": "stand", "meaning": "서다", "emoji": "🧍"},
-        {"word": "stop", "meaning": "멈추다", "emoji": "🛑"},
-        {"word": "start", "meaning": "시작하다", "emoji": "▶️"},
-        {"word": "open", "meaning": "열다", "emoji": "📂"},
-        {"word": "close", "meaning": "닫다", "emoji": "📕"},
-        {"word": "eat", "meaning": "먹다", "emoji": "🍽️"},
-        {"word": "drink", "meaning": "마시다", "emoji": "🥤"},
-        {"word": "sleep", "meaning": "자다", "emoji": "😴"},
-        {"word": "study", "meaning": "공부하다", "emoji": "📚"},
-        {"word": "read", "meaning": "읽다", "emoji": "📖"},
-        {"word": "write", "meaning": "쓰다", "emoji": "✏️"},
-        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
-        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
-        {"word": "help", "meaning": "돕다", "emoji": "🆘"},
-        {"word": "wait", "meaning": "기다리다", "emoji": "⏳"},
+    "✏️ 교실 활동": [
+        {
+            "word": "copy",
+            "meaning": "베껴 쓰다"
+        },
+        {
+            "word": "repeat",
+            "meaning": "반복하다"
+        },
+        {
+            "word": "underline",
+            "meaning": "밑줄 치다"
+        },
+        {
+            "word": "circle",
+            "meaning": "동그라미 치다"
+        },
+        {
+            "word": "choose",
+            "meaning": "고르다"
+        },
+        {
+            "word": "check",
+            "meaning": "확인하다"
+        },
+        {
+            "word": "match",
+            "meaning": "연결하다, 맞추다"
+        },
+        {
+            "word": "complete",
+            "meaning": "완성하다"
+        },
+        {
+            "word": "fill",
+            "meaning": "채우다"
+        },
+        {
+            "word": "spell",
+            "meaning": "철자를 말하다"
+        },
+        {
+            "word": "pronounce",
+            "meaning": "발음하다"
+        },
+        {
+            "word": "review",
+            "meaning": "복습하다"
+        },
+        {
+            "word": "explain",
+            "meaning": "설명하다"
+        },
+        {
+            "word": "describe",
+            "meaning": "묘사하다"
+        },
+        {
+            "word": "compare",
+            "meaning": "비교하다"
+        },
+        {
+            "word": "discuss",
+            "meaning": "토론하다"
+        },
+        {
+            "word": "present",
+            "meaning": "발표하다"
+        },
+        {
+            "word": "take notes",
+            "meaning": "필기하다"
+        },
+        {
+            "word": "turn in",
+            "meaning": "제출하다"
+        },
+        {
+            "word": "hand out",
+            "meaning": "나누어 주다"
+        }
     ],
-    "💖 감정·몸 상태": [
-        {"word": "happy", "meaning": "행복한", "emoji": "😊"},
-        {"word": "sad", "meaning": "슬픈", "emoji": "😢"},
-        {"word": "angry", "meaning": "화난", "emoji": "😠"},
-        {"word": "tired", "meaning": "피곤한", "emoji": "🥱"},
-        {"word": "hungry", "meaning": "배고픈", "emoji": "😋"},
-        {"word": "thirsty", "meaning": "목마른", "emoji": "🥤"},
-        {"word": "sick", "meaning": "아픈", "emoji": "🤒"},
-        {"word": "okay", "meaning": "괜찮은", "emoji": "👌"},
-        {"word": "fine", "meaning": "괜찮은", "emoji": "🙂"},
-        {"word": "cold", "meaning": "추운, 차가운", "emoji": "🥶"},
-        {"word": "hot", "meaning": "더운, 뜨거운", "emoji": "🥵"},
-        {"word": "pain", "meaning": "통증", "emoji": "🤕"},
-        {"word": "headache", "meaning": "두통", "emoji": "🤯"},
-        {"word": "stomachache", "meaning": "복통", "emoji": "🤢"},
-        {"word": "fever", "meaning": "열", "emoji": "🌡️"},
-        {"word": "hurt", "meaning": "아프다, 다치다", "emoji": "🩹"},
-        {"word": "good", "meaning": "좋은", "emoji": "👍"},
-        {"word": "bad", "meaning": "나쁜", "emoji": "👎"},
-        {"word": "worried", "meaning": "걱정하는", "emoji": "😟"},
-        {"word": "scared", "meaning": "무서워하는", "emoji": "😨"},
+    "🏠 집과 생활": [
+        {
+            "word": "living room",
+            "meaning": "거실"
+        },
+        {
+            "word": "bedroom",
+            "meaning": "침실"
+        },
+        {
+            "word": "kitchen",
+            "meaning": "부엌"
+        },
+        {
+            "word": "balcony",
+            "meaning": "발코니"
+        },
+        {
+            "word": "floor",
+            "meaning": "바닥, 층"
+        },
+        {
+            "word": "wall",
+            "meaning": "벽"
+        },
+        {
+            "word": "roof",
+            "meaning": "지붕"
+        },
+        {
+            "word": "garden",
+            "meaning": "정원"
+        },
+        {
+            "word": "yard",
+            "meaning": "마당"
+        },
+        {
+            "word": "sofa",
+            "meaning": "소파"
+        },
+        {
+            "word": "television",
+            "meaning": "텔레비전"
+        },
+        {
+            "word": "refrigerator",
+            "meaning": "냉장고"
+        },
+        {
+            "word": "microwave",
+            "meaning": "전자레인지"
+        },
+        {
+            "word": "blanket",
+            "meaning": "담요"
+        },
+        {
+            "word": "pillow",
+            "meaning": "베개"
+        },
+        {
+            "word": "towel",
+            "meaning": "수건"
+        },
+        {
+            "word": "soap",
+            "meaning": "비누"
+        },
+        {
+            "word": "mirror",
+            "meaning": "거울"
+        },
+        {
+            "word": "closet",
+            "meaning": "옷장"
+        },
+        {
+            "word": "trash",
+            "meaning": "쓰레기"
+        }
     ],
-    "🍎 음식·물": [
-        {"word": "food", "meaning": "음식", "emoji": "🍽️"},
-        {"word": "water", "meaning": "물", "emoji": "💧"},
-        {"word": "rice", "meaning": "밥, 쌀", "emoji": "🍚"},
-        {"word": "bread", "meaning": "빵", "emoji": "🍞"},
-        {"word": "milk", "meaning": "우유", "emoji": "🥛"},
-        {"word": "juice", "meaning": "주스", "emoji": "🧃"},
-        {"word": "coffee", "meaning": "커피", "emoji": "☕"},
-        {"word": "tea", "meaning": "차", "emoji": "🍵"},
-        {"word": "apple", "meaning": "사과", "emoji": "🍎"},
-        {"word": "banana", "meaning": "바나나", "emoji": "🍌"},
-        {"word": "egg", "meaning": "달걀", "emoji": "🥚"},
-        {"word": "meat", "meaning": "고기", "emoji": "🥩"},
-        {"word": "chicken", "meaning": "닭고기, 닭", "emoji": "🍗"},
-        {"word": "fish", "meaning": "생선, 물고기", "emoji": "🐟"},
-        {"word": "breakfast", "meaning": "아침 식사", "emoji": "🍳"},
-        {"word": "lunch", "meaning": "점심 식사", "emoji": "🍱"},
-        {"word": "dinner", "meaning": "저녁 식사", "emoji": "🍽️"},
-        {"word": "snack", "meaning": "간식", "emoji": "🍪"},
-        {"word": "medicine", "meaning": "약", "emoji": "💊"},
-        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
+    "🌅 하루 일과": [
+        {
+            "word": "routine",
+            "meaning": "일과"
+        },
+        {
+            "word": "wake up",
+            "meaning": "잠에서 깨다"
+        },
+        {
+            "word": "get up",
+            "meaning": "일어나다"
+        },
+        {
+            "word": "brush",
+            "meaning": "닦다"
+        },
+        {
+            "word": "shower",
+            "meaning": "샤워하다"
+        },
+        {
+            "word": "dress",
+            "meaning": "옷을 입다"
+        },
+        {
+            "word": "leave",
+            "meaning": "떠나다"
+        },
+        {
+            "word": "arrive",
+            "meaning": "도착하다"
+        },
+        {
+            "word": "return",
+            "meaning": "돌아오다"
+        },
+        {
+            "word": "finish",
+            "meaning": "끝내다"
+        },
+        {
+            "word": "relax",
+            "meaning": "쉬다"
+        },
+        {
+            "word": "weekday",
+            "meaning": "평일"
+        },
+        {
+            "word": "weekend",
+            "meaning": "주말"
+        },
+        {
+            "word": "usually",
+            "meaning": "보통"
+        },
+        {
+            "word": "often",
+            "meaning": "자주"
+        },
+        {
+            "word": "sometimes",
+            "meaning": "가끔"
+        },
+        {
+            "word": "always",
+            "meaning": "항상"
+        },
+        {
+            "word": "never",
+            "meaning": "절대 ~않다"
+        },
+        {
+            "word": "habit",
+            "meaning": "습관"
+        },
+        {
+            "word": "lifestyle",
+            "meaning": "생활 방식"
+        }
     ],
-    "🚗 장소·이동": [
-        {"word": "home", "meaning": "집", "emoji": "🏠"},
-        {"word": "school", "meaning": "학교", "emoji": "🏫"},
-        {"word": "classroom", "meaning": "교실", "emoji": "🧑‍🏫"},
-        {"word": "bathroom", "meaning": "화장실", "emoji": "🚻"},
-        {"word": "hospital", "meaning": "병원", "emoji": "🏥"},
-        {"word": "store", "meaning": "가게", "emoji": "🏪"},
-        {"word": "station", "meaning": "역", "emoji": "🚉"},
-        {"word": "bus", "meaning": "버스", "emoji": "🚌"},
-        {"word": "car", "meaning": "자동차", "emoji": "🚗"},
-        {"word": "taxi", "meaning": "택시", "emoji": "🚕"},
-        {"word": "train", "meaning": "기차", "emoji": "🚆"},
-        {"word": "bike", "meaning": "자전거", "emoji": "🚲"},
-        {"word": "road", "meaning": "도로", "emoji": "🛣️"},
-        {"word": "street", "meaning": "거리", "emoji": "🏙️"},
-        {"word": "here", "meaning": "여기", "emoji": "📍"},
-        {"word": "there", "meaning": "거기", "emoji": "📌"},
-        {"word": "near", "meaning": "가까운", "emoji": "↔️"},
-        {"word": "far", "meaning": "먼", "emoji": "🌁"},
-        {"word": "left", "meaning": "왼쪽", "emoji": "⬅️"},
-        {"word": "right", "meaning": "오른쪽, 맞는", "emoji": "➡️"},
+    "🎮 취미와 여가": [
+        {
+            "word": "hobby",
+            "meaning": "취미"
+        },
+        {
+            "word": "movie",
+            "meaning": "영화"
+        },
+        {
+            "word": "drama",
+            "meaning": "드라마"
+        },
+        {
+            "word": "song",
+            "meaning": "노래"
+        },
+        {
+            "word": "concert",
+            "meaning": "콘서트"
+        },
+        {
+            "word": "dance",
+            "meaning": "춤"
+        },
+        {
+            "word": "drawing",
+            "meaning": "그림 그리기"
+        },
+        {
+            "word": "painting",
+            "meaning": "그림, 회화"
+        },
+        {
+            "word": "comic",
+            "meaning": "만화"
+        },
+        {
+            "word": "novel",
+            "meaning": "소설"
+        },
+        {
+            "word": "photography",
+            "meaning": "사진 촬영"
+        },
+        {
+            "word": "cooking",
+            "meaning": "요리"
+        },
+        {
+            "word": "baking",
+            "meaning": "빵 굽기"
+        },
+        {
+            "word": "camping",
+            "meaning": "캠핑"
+        },
+        {
+            "word": "hiking",
+            "meaning": "하이킹"
+        },
+        {
+            "word": "fishing",
+            "meaning": "낚시"
+        },
+        {
+            "word": "free time",
+            "meaning": "여가 시간"
+        },
+        {
+            "word": "favorite",
+            "meaning": "가장 좋아하는"
+        },
+        {
+            "word": "popular",
+            "meaning": "인기 있는"
+        },
+        {
+            "word": "relaxing",
+            "meaning": "편안한"
+        }
     ],
-    "⏰ 시간·숫자": [
-        {"word": "time", "meaning": "시간", "emoji": "⏰"},
-        {"word": "now", "meaning": "지금", "emoji": "🕒"},
-        {"word": "today", "meaning": "오늘", "emoji": "📅"},
-        {"word": "tomorrow", "meaning": "내일", "emoji": "➡️📅"},
-        {"word": "yesterday", "meaning": "어제", "emoji": "⬅️📅"},
-        {"word": "morning", "meaning": "아침", "emoji": "🌅"},
-        {"word": "afternoon", "meaning": "오후", "emoji": "☀️"},
-        {"word": "evening", "meaning": "저녁", "emoji": "🌆"},
-        {"word": "night", "meaning": "밤", "emoji": "🌙"},
-        {"word": "early", "meaning": "이른", "emoji": "🐓"},
-        {"word": "late", "meaning": "늦은", "emoji": "🌃"},
-        {"word": "one", "meaning": "하나", "emoji": "1️⃣"},
-        {"word": "two", "meaning": "둘", "emoji": "2️⃣"},
-        {"word": "three", "meaning": "셋", "emoji": "3️⃣"},
-        {"word": "four", "meaning": "넷", "emoji": "4️⃣"},
-        {"word": "five", "meaning": "다섯", "emoji": "5️⃣"},
-        {"word": "six", "meaning": "여섯", "emoji": "6️⃣"},
-        {"word": "seven", "meaning": "일곱", "emoji": "7️⃣"},
-        {"word": "eight", "meaning": "여덟", "emoji": "8️⃣"},
-        {"word": "ten", "meaning": "열", "emoji": "🔟"},
+    "⚽ 운동과 활동": [
+        {
+            "word": "soccer",
+            "meaning": "축구"
+        },
+        {
+            "word": "baseball",
+            "meaning": "야구"
+        },
+        {
+            "word": "basketball",
+            "meaning": "농구"
+        },
+        {
+            "word": "volleyball",
+            "meaning": "배구"
+        },
+        {
+            "word": "tennis",
+            "meaning": "테니스"
+        },
+        {
+            "word": "badminton",
+            "meaning": "배드민턴"
+        },
+        {
+            "word": "swimming",
+            "meaning": "수영"
+        },
+        {
+            "word": "cycling",
+            "meaning": "자전거 타기"
+        },
+        {
+            "word": "skating",
+            "meaning": "스케이트 타기"
+        },
+        {
+            "word": "boxing",
+            "meaning": "복싱"
+        },
+        {
+            "word": "taekwondo",
+            "meaning": "태권도"
+        },
+        {
+            "word": "yoga",
+            "meaning": "요가"
+        },
+        {
+            "word": "fitness",
+            "meaning": "체력 운동"
+        },
+        {
+            "word": "field",
+            "meaning": "경기장, 들판"
+        },
+        {
+            "word": "court",
+            "meaning": "코트"
+        },
+        {
+            "word": "stadium",
+            "meaning": "경기장"
+        },
+        {
+            "word": "coach",
+            "meaning": "코치"
+        },
+        {
+            "word": "match",
+            "meaning": "경기"
+        },
+        {
+            "word": "competition",
+            "meaning": "대회"
+        },
+        {
+            "word": "medal",
+            "meaning": "메달"
+        }
     ],
-    "🎒 물건·돈": [
-        {"word": "bag", "meaning": "가방", "emoji": "🎒"},
-        {"word": "phone", "meaning": "전화기", "emoji": "📱"},
-        {"word": "book", "meaning": "책", "emoji": "📘"},
-        {"word": "notebook", "meaning": "공책", "emoji": "📓"},
-        {"word": "pen", "meaning": "펜", "emoji": "🖊️"},
-        {"word": "pencil", "meaning": "연필", "emoji": "✏️"},
-        {"word": "desk", "meaning": "책상", "emoji": "🪑"},
-        {"word": "chair", "meaning": "의자", "emoji": "🪑"},
-        {"word": "door", "meaning": "문", "emoji": "🚪"},
-        {"word": "window", "meaning": "창문", "emoji": "🪟"},
-        {"word": "key", "meaning": "열쇠", "emoji": "🔑"},
-        {"word": "money", "meaning": "돈", "emoji": "💵"},
-        {"word": "card", "meaning": "카드", "emoji": "💳"},
-        {"word": "ticket", "meaning": "표, 티켓", "emoji": "🎫"},
-        {"word": "clothes", "meaning": "옷", "emoji": "👕"},
-        {"word": "shoes", "meaning": "신발", "emoji": "👟"},
-        {"word": "hat", "meaning": "모자", "emoji": "🧢"},
-        {"word": "watch", "meaning": "시계", "emoji": "⌚"},
-        {"word": "cup", "meaning": "컵", "emoji": "☕"},
-        {"word": "bottle", "meaning": "병", "emoji": "🍼"},
+    "🌦️ 날씨와 계절": [
+        {
+            "word": "season",
+            "meaning": "계절"
+        },
+        {
+            "word": "spring",
+            "meaning": "봄"
+        },
+        {
+            "word": "summer",
+            "meaning": "여름"
+        },
+        {
+            "word": "fall",
+            "meaning": "가을"
+        },
+        {
+            "word": "winter",
+            "meaning": "겨울"
+        },
+        {
+            "word": "cloudy",
+            "meaning": "흐린"
+        },
+        {
+            "word": "rainy",
+            "meaning": "비 오는"
+        },
+        {
+            "word": "snowy",
+            "meaning": "눈 오는"
+        },
+        {
+            "word": "windy",
+            "meaning": "바람 부는"
+        },
+        {
+            "word": "stormy",
+            "meaning": "폭풍우 치는"
+        },
+        {
+            "word": "foggy",
+            "meaning": "안개 낀"
+        },
+        {
+            "word": "dry",
+            "meaning": "건조한"
+        },
+        {
+            "word": "wet",
+            "meaning": "젖은"
+        },
+        {
+            "word": "humid",
+            "meaning": "습한"
+        },
+        {
+            "word": "temperature",
+            "meaning": "온도"
+        },
+        {
+            "word": "degree",
+            "meaning": "도"
+        },
+        {
+            "word": "forecast",
+            "meaning": "일기예보"
+        },
+        {
+            "word": "umbrella",
+            "meaning": "우산"
+        },
+        {
+            "word": "raincoat",
+            "meaning": "비옷"
+        },
+        {
+            "word": "rainbow",
+            "meaning": "무지개"
+        }
     ],
-    "🆘 도움 요청": [
-        {"word": "help", "meaning": "도움, 돕다", "emoji": "🆘"},
-        {"word": "please", "meaning": "부디, 제발", "emoji": "🙏"},
-        {"word": "sorry", "meaning": "미안합니다", "emoji": "🙇"},
-        {"word": "excuse me", "meaning": "실례합니다", "emoji": "🙋"},
-        {"word": "again", "meaning": "다시", "emoji": "🔁"},
-        {"word": "slowly", "meaning": "천천히", "emoji": "🐢"},
-        {"word": "understand", "meaning": "이해하다", "emoji": "💡"},
-        {"word": "question", "meaning": "질문", "emoji": "❓"},
-        {"word": "problem", "meaning": "문제", "emoji": "⚠️"},
-        {"word": "need", "meaning": "필요하다", "emoji": "📌"},
-        {"word": "want", "meaning": "원하다", "emoji": "✨"},
-        {"word": "know", "meaning": "알다", "emoji": "🧠"},
-        {"word": "say", "meaning": "말하다", "emoji": "💬"},
-        {"word": "tell", "meaning": "말하다, 알려주다", "emoji": "📣"},
-        {"word": "ask", "meaning": "묻다", "emoji": "❔"},
-        {"word": "answer", "meaning": "대답, 답", "emoji": "✅"},
-        {"word": "repeat", "meaning": "반복하다", "emoji": "🔁"},
-        {"word": "speak", "meaning": "말하다", "emoji": "🗣️"},
-        {"word": "look", "meaning": "보다", "emoji": "👀"},
-        {"word": "listen", "meaning": "듣다", "emoji": "👂"},
+    "🌳 자연과 환경": [
+        {
+            "word": "nature",
+            "meaning": "자연"
+        },
+        {
+            "word": "environment",
+            "meaning": "환경"
+        },
+        {
+            "word": "plant",
+            "meaning": "식물"
+        },
+        {
+            "word": "forest",
+            "meaning": "숲"
+        },
+        {
+            "word": "lake",
+            "meaning": "호수"
+        },
+        {
+            "word": "ocean",
+            "meaning": "대양"
+        },
+        {
+            "word": "island",
+            "meaning": "섬"
+        },
+        {
+            "word": "desert",
+            "meaning": "사막"
+        },
+        {
+            "word": "field",
+            "meaning": "들판"
+        },
+        {
+            "word": "farm",
+            "meaning": "농장"
+        },
+        {
+            "word": "village",
+            "meaning": "마을"
+        },
+        {
+            "word": "leaf",
+            "meaning": "잎"
+        },
+        {
+            "word": "root",
+            "meaning": "뿌리"
+        },
+        {
+            "word": "stone",
+            "meaning": "돌"
+        },
+        {
+            "word": "sand",
+            "meaning": "모래"
+        },
+        {
+            "word": "soil",
+            "meaning": "흙"
+        },
+        {
+            "word": "plastic",
+            "meaning": "플라스틱"
+        },
+        {
+            "word": "recycle",
+            "meaning": "재활용하다"
+        },
+        {
+            "word": "protect",
+            "meaning": "보호하다"
+        },
+        {
+            "word": "pollution",
+            "meaning": "오염"
+        }
     ],
+    "🍽️ 식당과 주문": [
+        {
+            "word": "restaurant",
+            "meaning": "식당"
+        },
+        {
+            "word": "menu",
+            "meaning": "메뉴"
+        },
+        {
+            "word": "seat",
+            "meaning": "자리"
+        },
+        {
+            "word": "waiter",
+            "meaning": "남자 종업원"
+        },
+        {
+            "word": "waitress",
+            "meaning": "여자 종업원"
+        },
+        {
+            "word": "order",
+            "meaning": "주문하다"
+        },
+        {
+            "word": "dish",
+            "meaning": "요리, 접시"
+        },
+        {
+            "word": "meal",
+            "meaning": "식사"
+        },
+        {
+            "word": "soup",
+            "meaning": "수프"
+        },
+        {
+            "word": "salad",
+            "meaning": "샐러드"
+        },
+        {
+            "word": "steak",
+            "meaning": "스테이크"
+        },
+        {
+            "word": "pizza",
+            "meaning": "피자"
+        },
+        {
+            "word": "pasta",
+            "meaning": "파스타"
+        },
+        {
+            "word": "burger",
+            "meaning": "버거"
+        },
+        {
+            "word": "sandwich",
+            "meaning": "샌드위치"
+        },
+        {
+            "word": "dessert",
+            "meaning": "디저트"
+        },
+        {
+            "word": "spicy",
+            "meaning": "매운"
+        },
+        {
+            "word": "sweet",
+            "meaning": "단"
+        },
+        {
+            "word": "bill",
+            "meaning": "계산서"
+        },
+        {
+            "word": "receipt",
+            "meaning": "영수증"
+        }
+    ],
+    "🛍️ 쇼핑과 가격": [
+        {
+            "word": "shop",
+            "meaning": "가게"
+        },
+        {
+            "word": "market",
+            "meaning": "시장"
+        },
+        {
+            "word": "mall",
+            "meaning": "쇼핑몰"
+        },
+        {
+            "word": "supermarket",
+            "meaning": "슈퍼마켓"
+        },
+        {
+            "word": "cashier",
+            "meaning": "계산원"
+        },
+        {
+            "word": "customer",
+            "meaning": "손님"
+        },
+        {
+            "word": "price",
+            "meaning": "가격"
+        },
+        {
+            "word": "sale",
+            "meaning": "할인 판매"
+        },
+        {
+            "word": "discount",
+            "meaning": "할인"
+        },
+        {
+            "word": "coupon",
+            "meaning": "쿠폰"
+        },
+        {
+            "word": "change",
+            "meaning": "거스름돈"
+        },
+        {
+            "word": "coin",
+            "meaning": "동전"
+        },
+        {
+            "word": "bill",
+            "meaning": "지폐, 계산서"
+        },
+        {
+            "word": "expensive",
+            "meaning": "비싼"
+        },
+        {
+            "word": "cheap",
+            "meaning": "싼"
+        },
+        {
+            "word": "size",
+            "meaning": "크기"
+        },
+        {
+            "word": "color",
+            "meaning": "색깔"
+        },
+        {
+            "word": "brand",
+            "meaning": "상표"
+        },
+        {
+            "word": "exchange",
+            "meaning": "교환하다"
+        },
+        {
+            "word": "refund",
+            "meaning": "환불"
+        }
+    ],
+    "👕 옷과 외모": [
+        {
+            "word": "T-shirt",
+            "meaning": "티셔츠"
+        },
+        {
+            "word": "pants",
+            "meaning": "바지"
+        },
+        {
+            "word": "jeans",
+            "meaning": "청바지"
+        },
+        {
+            "word": "shorts",
+            "meaning": "반바지"
+        },
+        {
+            "word": "skirt",
+            "meaning": "치마"
+        },
+        {
+            "word": "dress",
+            "meaning": "드레스, 원피스"
+        },
+        {
+            "word": "jacket",
+            "meaning": "재킷"
+        },
+        {
+            "word": "coat",
+            "meaning": "코트"
+        },
+        {
+            "word": "sweater",
+            "meaning": "스웨터"
+        },
+        {
+            "word": "hoodie",
+            "meaning": "후드티"
+        },
+        {
+            "word": "uniform",
+            "meaning": "교복, 제복"
+        },
+        {
+            "word": "socks",
+            "meaning": "양말"
+        },
+        {
+            "word": "sneakers",
+            "meaning": "운동화"
+        },
+        {
+            "word": "boots",
+            "meaning": "부츠"
+        },
+        {
+            "word": "sandals",
+            "meaning": "샌들"
+        },
+        {
+            "word": "scarf",
+            "meaning": "목도리"
+        },
+        {
+            "word": "gloves",
+            "meaning": "장갑"
+        },
+        {
+            "word": "belt",
+            "meaning": "벨트"
+        },
+        {
+            "word": "glasses",
+            "meaning": "안경"
+        },
+        {
+            "word": "comfortable",
+            "meaning": "편안한"
+        }
+    ],
+    "🚇 교통과 길 찾기": [
+        {
+            "word": "bus stop",
+            "meaning": "버스 정류장"
+        },
+        {
+            "word": "subway",
+            "meaning": "지하철"
+        },
+        {
+            "word": "airport",
+            "meaning": "공항"
+        },
+        {
+            "word": "terminal",
+            "meaning": "터미널"
+        },
+        {
+            "word": "platform",
+            "meaning": "승강장"
+        },
+        {
+            "word": "route",
+            "meaning": "경로"
+        },
+        {
+            "word": "direction",
+            "meaning": "방향"
+        },
+        {
+            "word": "straight",
+            "meaning": "똑바로"
+        },
+        {
+            "word": "corner",
+            "meaning": "모퉁이"
+        },
+        {
+            "word": "block",
+            "meaning": "구역, 블록"
+        },
+        {
+            "word": "traffic",
+            "meaning": "교통"
+        },
+        {
+            "word": "crosswalk",
+            "meaning": "횡단보도"
+        },
+        {
+            "word": "sidewalk",
+            "meaning": "인도"
+        },
+        {
+            "word": "bridge",
+            "meaning": "다리"
+        },
+        {
+            "word": "tunnel",
+            "meaning": "터널"
+        },
+        {
+            "word": "entrance",
+            "meaning": "입구"
+        },
+        {
+            "word": "exit",
+            "meaning": "출구"
+        },
+        {
+            "word": "transfer",
+            "meaning": "갈아타다"
+        },
+        {
+            "word": "lost",
+            "meaning": "길을 잃은"
+        },
+        {
+            "word": "guide",
+            "meaning": "안내하다, 안내자"
+        }
+    ],
+    "🧳 여행과 숙박": [
+        {
+            "word": "travel",
+            "meaning": "여행하다"
+        },
+        {
+            "word": "trip",
+            "meaning": "여행"
+        },
+        {
+            "word": "vacation",
+            "meaning": "방학, 휴가"
+        },
+        {
+            "word": "tourist",
+            "meaning": "관광객"
+        },
+        {
+            "word": "guide",
+            "meaning": "안내자"
+        },
+        {
+            "word": "passport",
+            "meaning": "여권"
+        },
+        {
+            "word": "flight",
+            "meaning": "항공편"
+        },
+        {
+            "word": "hotel",
+            "meaning": "호텔"
+        },
+        {
+            "word": "motel",
+            "meaning": "모텔"
+        },
+        {
+            "word": "hostel",
+            "meaning": "호스텔"
+        },
+        {
+            "word": "reservation",
+            "meaning": "예약"
+        },
+        {
+            "word": "check in",
+            "meaning": "체크인하다"
+        },
+        {
+            "word": "check out",
+            "meaning": "체크아웃하다"
+        },
+        {
+            "word": "luggage",
+            "meaning": "짐"
+        },
+        {
+            "word": "suitcase",
+            "meaning": "여행 가방"
+        },
+        {
+            "word": "backpack",
+            "meaning": "배낭"
+        },
+        {
+            "word": "souvenir",
+            "meaning": "기념품"
+        },
+        {
+            "word": "museum",
+            "meaning": "박물관"
+        },
+        {
+            "word": "famous",
+            "meaning": "유명한"
+        },
+        {
+            "word": "local",
+            "meaning": "현지의"
+        }
+    ],
+    "👥 친구 관계": [
+        {
+            "word": "friendship",
+            "meaning": "우정"
+        },
+        {
+            "word": "best friend",
+            "meaning": "가장 친한 친구"
+        },
+        {
+            "word": "teammate",
+            "meaning": "팀 동료"
+        },
+        {
+            "word": "partner",
+            "meaning": "짝, 파트너"
+        },
+        {
+            "word": "message",
+            "meaning": "메시지"
+        },
+        {
+            "word": "call",
+            "meaning": "전화하다"
+        },
+        {
+            "word": "chat",
+            "meaning": "채팅하다"
+        },
+        {
+            "word": "invite",
+            "meaning": "초대하다"
+        },
+        {
+            "word": "visit",
+            "meaning": "방문하다"
+        },
+        {
+            "word": "meet",
+            "meaning": "만나다"
+        },
+        {
+            "word": "hang out",
+            "meaning": "어울려 놀다"
+        },
+        {
+            "word": "laugh",
+            "meaning": "웃다"
+        },
+        {
+            "word": "share",
+            "meaning": "나누다, 공유하다"
+        },
+        {
+            "word": "trust",
+            "meaning": "믿다"
+        },
+        {
+            "word": "promise",
+            "meaning": "약속"
+        },
+        {
+            "word": "secret",
+            "meaning": "비밀"
+        },
+        {
+            "word": "joke",
+            "meaning": "농담"
+        },
+        {
+            "word": "together",
+            "meaning": "함께"
+        },
+        {
+            "word": "alone",
+            "meaning": "혼자"
+        },
+        {
+            "word": "forgive",
+            "meaning": "용서하다"
+        }
+    ],
+    "😊 감정 표현 확장": [
+        {
+            "word": "excited",
+            "meaning": "신난"
+        },
+        {
+            "word": "nervous",
+            "meaning": "긴장한"
+        },
+        {
+            "word": "bored",
+            "meaning": "지루한"
+        },
+        {
+            "word": "surprised",
+            "meaning": "놀란"
+        },
+        {
+            "word": "confused",
+            "meaning": "혼란스러운"
+        },
+        {
+            "word": "embarrassed",
+            "meaning": "당황한"
+        },
+        {
+            "word": "proud",
+            "meaning": "자랑스러운"
+        },
+        {
+            "word": "disappointed",
+            "meaning": "실망한"
+        },
+        {
+            "word": "lonely",
+            "meaning": "외로운"
+        },
+        {
+            "word": "relaxed",
+            "meaning": "편안한"
+        },
+        {
+            "word": "calm",
+            "meaning": "차분한"
+        },
+        {
+            "word": "upset",
+            "meaning": "속상한"
+        },
+        {
+            "word": "interested",
+            "meaning": "관심 있는"
+        },
+        {
+            "word": "satisfied",
+            "meaning": "만족한"
+        },
+        {
+            "word": "thankful",
+            "meaning": "감사하는"
+        },
+        {
+            "word": "hopeful",
+            "meaning": "희망적인"
+        },
+        {
+            "word": "mood",
+            "meaning": "기분"
+        },
+        {
+            "word": "stress",
+            "meaning": "스트레스"
+        },
+        {
+            "word": "confidence",
+            "meaning": "자신감"
+        },
+        {
+            "word": "courage",
+            "meaning": "용기"
+        }
+    ],
+    "💭 생각과 의견": [
+        {
+            "word": "think",
+            "meaning": "생각하다"
+        },
+        {
+            "word": "believe",
+            "meaning": "믿다"
+        },
+        {
+            "word": "guess",
+            "meaning": "추측하다"
+        },
+        {
+            "word": "remember",
+            "meaning": "기억하다"
+        },
+        {
+            "word": "forget",
+            "meaning": "잊다"
+        },
+        {
+            "word": "mean",
+            "meaning": "의미하다"
+        },
+        {
+            "word": "agree",
+            "meaning": "동의하다"
+        },
+        {
+            "word": "disagree",
+            "meaning": "동의하지 않다"
+        },
+        {
+            "word": "opinion",
+            "meaning": "의견"
+        },
+        {
+            "word": "idea",
+            "meaning": "생각, 아이디어"
+        },
+        {
+            "word": "reason",
+            "meaning": "이유"
+        },
+        {
+            "word": "example",
+            "meaning": "예시"
+        },
+        {
+            "word": "fact",
+            "meaning": "사실"
+        },
+        {
+            "word": "choice",
+            "meaning": "선택"
+        },
+        {
+            "word": "decision",
+            "meaning": "결정"
+        },
+        {
+            "word": "advice",
+            "meaning": "조언"
+        },
+        {
+            "word": "suggestion",
+            "meaning": "제안"
+        },
+        {
+            "word": "possible",
+            "meaning": "가능한"
+        },
+        {
+            "word": "impossible",
+            "meaning": "불가능한"
+        },
+        {
+            "word": "confusing",
+            "meaning": "혼란스러운"
+        }
+    ],
+    "📅 계획과 약속": [
+        {
+            "word": "plan",
+            "meaning": "계획"
+        },
+        {
+            "word": "appointment",
+            "meaning": "약속, 예약"
+        },
+        {
+            "word": "promise",
+            "meaning": "약속"
+        },
+        {
+            "word": "meeting",
+            "meaning": "모임, 회의"
+        },
+        {
+            "word": "date",
+            "meaning": "날짜, 데이트"
+        },
+        {
+            "word": "event",
+            "meaning": "행사"
+        },
+        {
+            "word": "party",
+            "meaning": "파티"
+        },
+        {
+            "word": "festival",
+            "meaning": "축제"
+        },
+        {
+            "word": "deadline",
+            "meaning": "마감일"
+        },
+        {
+            "word": "calendar",
+            "meaning": "달력"
+        },
+        {
+            "word": "next week",
+            "meaning": "다음 주"
+        },
+        {
+            "word": "message",
+            "meaning": "메시지"
+        },
+        {
+            "word": "join",
+            "meaning": "참여하다"
+        },
+        {
+            "word": "prepare",
+            "meaning": "준비하다"
+        },
+        {
+            "word": "decide",
+            "meaning": "결정하다"
+        },
+        {
+            "word": "change",
+            "meaning": "바꾸다"
+        },
+        {
+            "word": "cancel",
+            "meaning": "취소하다"
+        },
+        {
+            "word": "on time",
+            "meaning": "시간 맞춰"
+        },
+        {
+            "word": "available",
+            "meaning": "시간이 되는, 이용 가능한"
+        },
+        {
+            "word": "reminder",
+            "meaning": "알림"
+        }
+    ],
+    "🩺 건강한 생활": [
+        {
+            "word": "health",
+            "meaning": "건강"
+        },
+        {
+            "word": "body",
+            "meaning": "몸"
+        },
+        {
+            "word": "eye",
+            "meaning": "눈"
+        },
+        {
+            "word": "ear",
+            "meaning": "귀"
+        },
+        {
+            "word": "nose",
+            "meaning": "코"
+        },
+        {
+            "word": "mouth",
+            "meaning": "입"
+        },
+        {
+            "word": "tooth",
+            "meaning": "이"
+        },
+        {
+            "word": "hand",
+            "meaning": "손"
+        },
+        {
+            "word": "arm",
+            "meaning": "팔"
+        },
+        {
+            "word": "leg",
+            "meaning": "다리"
+        },
+        {
+            "word": "foot",
+            "meaning": "발"
+        },
+        {
+            "word": "stomach",
+            "meaning": "배, 위"
+        },
+        {
+            "word": "back",
+            "meaning": "등, 허리"
+        },
+        {
+            "word": "heart",
+            "meaning": "심장"
+        },
+        {
+            "word": "clinic",
+            "meaning": "의원, 진료소"
+        },
+        {
+            "word": "vitamin",
+            "meaning": "비타민"
+        },
+        {
+            "word": "diet",
+            "meaning": "식단"
+        },
+        {
+            "word": "cough",
+            "meaning": "기침"
+        },
+        {
+            "word": "flu",
+            "meaning": "독감"
+        },
+        {
+            "word": "breathe",
+            "meaning": "숨 쉬다"
+        }
+    ],
+    "📱 미디어와 스마트폰": [
+        {
+            "word": "smartphone",
+            "meaning": "스마트폰"
+        },
+        {
+            "word": "screen",
+            "meaning": "화면"
+        },
+        {
+            "word": "app",
+            "meaning": "앱"
+        },
+        {
+            "word": "website",
+            "meaning": "웹사이트"
+        },
+        {
+            "word": "internet",
+            "meaning": "인터넷"
+        },
+        {
+            "word": "Wi-Fi",
+            "meaning": "와이파이"
+        },
+        {
+            "word": "password",
+            "meaning": "비밀번호"
+        },
+        {
+            "word": "text",
+            "meaning": "문자 메시지"
+        },
+        {
+            "word": "video call",
+            "meaning": "영상 통화"
+        },
+        {
+            "word": "gallery",
+            "meaning": "사진첩"
+        },
+        {
+            "word": "news",
+            "meaning": "뉴스"
+        },
+        {
+            "word": "channel",
+            "meaning": "채널"
+        },
+        {
+            "word": "post",
+            "meaning": "게시물"
+        },
+        {
+            "word": "comment",
+            "meaning": "댓글"
+        },
+        {
+            "word": "upload",
+            "meaning": "업로드하다"
+        },
+        {
+            "word": "download",
+            "meaning": "다운로드하다"
+        },
+        {
+            "word": "search",
+            "meaning": "검색하다"
+        },
+        {
+            "word": "click",
+            "meaning": "클릭하다"
+        },
+        {
+            "word": "battery",
+            "meaning": "배터리"
+        },
+        {
+            "word": "notification",
+            "meaning": "알림"
+        }
+    ],
+    "🌈 직업과 미래": [
+        {
+            "word": "job",
+            "meaning": "직업"
+        },
+        {
+            "word": "work",
+            "meaning": "일하다"
+        },
+        {
+            "word": "company",
+            "meaning": "회사"
+        },
+        {
+            "word": "office",
+            "meaning": "사무실"
+        },
+        {
+            "word": "factory",
+            "meaning": "공장"
+        },
+        {
+            "word": "engineer",
+            "meaning": "기술자, 엔지니어"
+        },
+        {
+            "word": "mechanic",
+            "meaning": "정비사"
+        },
+        {
+            "word": "chef",
+            "meaning": "요리사"
+        },
+        {
+            "word": "firefighter",
+            "meaning": "소방관"
+        },
+        {
+            "word": "farmer",
+            "meaning": "농부"
+        },
+        {
+            "word": "designer",
+            "meaning": "디자이너"
+        },
+        {
+            "word": "singer",
+            "meaning": "가수"
+        },
+        {
+            "word": "actor",
+            "meaning": "배우"
+        },
+        {
+            "word": "athlete",
+            "meaning": "운동선수"
+        },
+        {
+            "word": "dream",
+            "meaning": "꿈"
+        },
+        {
+            "word": "future",
+            "meaning": "미래"
+        },
+        {
+            "word": "goal",
+            "meaning": "목표"
+        },
+        {
+            "word": "skill",
+            "meaning": "기술, 능력"
+        },
+        {
+            "word": "interview",
+            "meaning": "면접"
+        },
+        {
+            "word": "experience",
+            "meaning": "경험"
+        }
+    ]
 }
 
 # =========================================================
 # 상단 디자인
 # =========================================================
-st.markdown(
-    """
-    <style>
-    .main-title-box {
-        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1.5px solid #dbeafe;
-        border-radius: 30px;
-        padding: 28px 30px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
-    }
-
-    .main-title-box h1 {
-        margin: 0 0 10px 0;
-        color: #0f172a;
-        font-size: 38px;
-        font-weight: 900;
-    }
-
-    .main-title-box p {
-        margin: 0;
-        color: #475569;
-        font-size: 18px;
-        line-height: 1.7;
-        font-weight: 700;
-    }
-
-    @media (max-width: 768px) {
-        .main-title-box {
-            padding: 20px 18px;
-            border-radius: 22px;
-        }
-
-        .main-title-box h1 {
-            font-size: 27px;
-        }
-
-        .main-title-box p {
-            font-size: 15px;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div class="main-title-box">
-        <h1>🃏 생존 단어 카드 말하기 게임</h1>
-        <p>한국말 뜻을 보고 영어 단어를 말해 보세요.</p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-
 # =========================================================
 # 말하기 카드 게임 컴포넌트
 # =========================================================
-def word_card_speaking_game(word_themes):
+def daily_word_card_speaking_game(word_themes):
     items = []
     for cat, words in word_themes.items():
+        cat_emoji = cat.split()[0] if cat else "🌱"
         for item in words:
             new_item = dict(item)
             new_item["cat"] = cat
+            new_item["emoji"] = cat_emoji
             items.append(new_item)
 
     items_json = json.dumps(items, ensure_ascii=False)
 
     html = r"""
-    <div id="word-card-app" style="
+    <div id="daily-word-card-app" style="
         font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1.5px solid #dbeafe;
+        background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #fff7ed 100%);
+        border: 1.5px solid #bbf7d0;
         border-radius: 30px;
         padding: 24px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.08);
@@ -276,129 +1685,31 @@ def word_card_speaking_game(word_themes):
         box-sizing: border-box;
     ">
         <style>
-            #word-card-app * {
+            #daily-word-card-app * {
                 box-sizing: border-box;
             }
 
-            #word-card-app button {
+            #daily-word-card-app button {
                 -webkit-tap-highlight-color: transparent;
                 touch-action: manipulation;
             }
 
-            #word-card-app select {
+            #daily-word-card-app select {
                 max-width: 100%;
             }
 
-            #cardBox {
-                position: relative;
-                overflow: hidden;
-                transform-origin: center center;
-                will-change: transform, opacity, filter;
+            .bounce-card {
+                animation: cardBounce 0.42s ease;
             }
 
-            /* 다음 단어로 바뀌는 것이 확실히 보이는 전환 효과 */
-            #cardBox::before {
-                content: "다음 단어";
-                position: absolute;
-                top: 18px;
-                left: 50%;
-                transform: translateX(-50%) translateY(-16px) scale(0.88);
-                background: linear-gradient(135deg, #2563eb, #7c3aed);
-                color: white;
-                border: 3px solid rgba(255,255,255,0.92);
-                border-radius: 999px;
-                padding: 10px 20px;
-                font-size: 18px;
-                font-weight: 900;
-                letter-spacing: -0.2px;
-                box-shadow: 0 12px 26px rgba(37,99,235,0.24);
-                opacity: 0;
-                z-index: 8;
-                pointer-events: none;
-                white-space: nowrap;
-            }
-
-            #cardBox::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                pointer-events: none;
-                background: linear-gradient(90deg,
-                    rgba(219,234,254,0) 0%,
-                    rgba(219,234,254,0.88) 34%,
-                    rgba(237,233,254,0.92) 50%,
-                    rgba(254,243,199,0.88) 66%,
-                    rgba(219,234,254,0) 100%);
-                transform: translateX(-115%);
-                opacity: 0;
-                z-index: 7;
-            }
-
-            .next-card-animate {
-                animation: nextCardSlide 0.58s cubic-bezier(.2,.8,.2,1);
-            }
-
-            .next-card-animate::before {
-                animation: nextBadgePop 0.58s cubic-bezier(.2,.8,.2,1);
-            }
-
-            .next-card-animate::after {
-                animation: nextLightSweep 0.58s ease-out;
-            }
-
-            @keyframes nextCardSlide {
-                0% {
-                    opacity: 0;
-                    transform: translateX(46px) scale(0.965);
-                    filter: blur(3px) brightness(1.05);
-                }
-                55% {
-                    opacity: 1;
-                    transform: translateX(-7px) scale(1.012);
-                    filter: blur(0) brightness(1.03);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateX(0) scale(1);
-                    filter: blur(0) brightness(1);
-                }
-            }
-
-            @keyframes nextBadgePop {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-18px) scale(0.86);
-                }
-                20% {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1.04);
-                }
-                62% {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-8px) scale(0.96);
-                }
-            }
-
-            @keyframes nextLightSweep {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-115%);
-                }
-                20% {
-                    opacity: 1;
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateX(115%);
-                }
+            @keyframes cardBounce {
+                0% { transform: scale(1); }
+                40% { transform: scale(1.035); }
+                100% { transform: scale(1); }
             }
 
             @media (max-width: 768px) {
-                #word-card-app {
+                #daily-word-card-app {
                     padding: 14px !important;
                     border-radius: 22px !important;
                 }
@@ -488,7 +1799,7 @@ def word_card_speaking_game(word_themes):
             <select id="categorySelect" style="
                 padding: 10px 14px;
                 border-radius: 999px;
-                border: 1.5px solid #bae6fd;
+                border: 1.5px solid #bbf7d0;
                 font-size: 15px;
                 font-weight: 800;
                 color: #0f172a;
@@ -534,7 +1845,7 @@ def word_card_speaking_game(word_themes):
                 background:white;
                 border-radius:32px;
                 padding:30px 24px;
-                border:1.5px solid #e0f2fe;
+                border:1.5px solid #dcfce7;
                 box-shadow:0 8px 24px rgba(0,0,0,0.07);
                 text-align:center;
                 margin-bottom:18px;
@@ -543,7 +1854,7 @@ def word_card_speaking_game(word_themes):
                     font-size: 96px;
                     line-height: 1.1;
                     margin-bottom: 14px;
-                ">🃏</div>
+                ">🌱</div>
 
                 <div style="
                     display:inline-block;
@@ -587,6 +1898,7 @@ def word_card_speaking_game(word_themes):
                     font-size:30px;
                     font-weight:900;
                     margin-top:14px;
+                    word-break:break-word;
                 ">hint</div>
             </div>
 
@@ -685,7 +1997,7 @@ def word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#334155;
             ">
-                마이크 버튼을 누르고 영어 단어 한 단어를 말해 보세요.
+                마이크 버튼을 누르고 영어 단어를 말해 보세요.
             </div>
         </div>
 
@@ -700,7 +2012,7 @@ def word_card_speaking_game(word_themes):
             margin-top:16px;
         ">
             <div style="font-size:64px; margin-bottom:10px;">🎉</div>
-            <div style="
+            <div id="finishTitle" style="
                 font-size:34px;
                 font-weight:900;
                 color:#14532d;
@@ -711,7 +2023,7 @@ def word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#166534;
                 margin-bottom:18px;
-            ">정답 0 / 0 · 못 말한 단어 0</div>
+            ">정답 0 / 0 · 연습 필요 단어 0</div>
             <button id="finishRetryBtn" style="
                 border:1.5px solid #a7f3d0;
                 background:#ecfdf5;
@@ -803,185 +2115,12 @@ def word_card_speaking_game(word_themes):
     function normalizeText(text) {
         return String(text || "")
             .toLowerCase()
-            // 축약형 처리
-            .replace(/\bi'm\b/g, "i am")
-            .replace(/\bim\b/g, "i am")
-            .replace(/\byou're\b/g, "you are")
-            .replace(/\bhe's\b/g, "he is")
-            .replace(/\bshe's\b/g, "she is")
-            .replace(/\bit's\b/g, "it is")
-            .replace(/\bwe're\b/g, "we are")
-            .replace(/\bthey're\b/g, "they are")
-            .replace(/\bdon't\b/g, "do not")
-            .replace(/\bdoesn't\b/g, "does not")
-            .replace(/\bdidn't\b/g, "did not")
-            .replace(/\bcan't\b/g, "cannot")
-            .replace(/\bcant\b/g, "cannot")
-            .replace(/\bi'll\b/g, "i will")
-            .replace(/\byou'll\b/g, "you will")
-            .replace(/\bhe'll\b/g, "he will")
-            .replace(/\bshe'll\b/g, "she will")
-            // 자주 잘못 인식되는 표현 보정
-            .replace(/\bok\b/g, "okay")
-            .replace(/\bo k\b/g, "okay")
+            .replace(/\bp\.?e\.?\b/g, "pe")
+            .replace(/\bt shirt\b/g, "t shirt")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
             .trim();
-    }
-
-    function wordsOnly(text) {
-        return normalizeText(text)
-            .split(" ")
-            .filter(w => w.length > 0);
-    }
-
-    function editDistance(a, b) {
-        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
-
-        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-
-        for (let i = 1; i <= a.length; i++) {
-            for (let j = 1; j <= b.length; j++) {
-                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-                dp[i][j] = Math.min(
-                    dp[i - 1][j] + 1,
-                    dp[i][j - 1] + 1,
-                    dp[i - 1][j - 1] + cost
-                );
-            }
-        }
-
-        return dp[a.length][b.length];
-    }
-
-    function wordSimilarity(a, b) {
-        if (!a || !b) return 0;
-        if (a === b) return 1;
-
-        const dist = editDistance(a, b);
-        const maxLen = Math.max(a.length, b.length);
-
-        return 1 - (dist / maxLen);
-    }
-
-    function normalizeForSound(word) {
-        return String(word || "")
-            .toLowerCase()
-            .replace(/[^a-z]/g, "")
-            // 끝소리, 복수형, 진행형 등 ASR이 흔히 다르게 잡는 부분 보정
-            .replace(/ies$/g, "y")
-            .replace(/es$/g, "")
-            .replace(/s$/g, "")
-            .replace(/ed$/g, "")
-            .replace(/ing$/g, "")
-            .trim();
-    }
-
-    function isKnownSpeechAlias(spokenWord, answerWord) {
-        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
-        const aw = normalizeText(answerWord).replace(/\s+/g, "");
-
-        const aliases = {
-            "i": ["i", "eye", "hi"],
-            "you": ["you", "u", "yew"],
-            "he": ["he"],
-            "she": ["she"],
-            "we": ["we"],
-            "they": ["they"],
-            "one": ["one", "won"],
-            "two": ["two", "to", "too"],
-            "three": ["three", "tree"],
-            "four": ["four", "for"],
-            "five": ["five"],
-            "six": ["six", "sex"],
-            "seven": ["seven"],
-            "eight": ["eight", "ate"],
-            "ten": ["ten"],
-            "here": ["here", "hear"],
-            "there": ["there", "their"],
-            "right": ["right", "write"],
-            "wait": ["wait", "weight"],
-            "know": ["know", "no"],
-            "night": ["night", "knight"],
-            "okay": ["okay", "ok", "kay"],
-            "phone": ["phone", "fone"],
-            "coffee": ["coffee", "coffe"],
-            "please": ["please", "plz"],
-            "excuse": ["excuse", "excus"],
-            "me": ["me"]
-        };
-
-        if (!aliases[aw]) return false;
-        return aliases[aw].includes(sw);
-    }
-
-    function startsSimilar(a, b) {
-        if (!a || !b) return false;
-        if (a[0] === b[0]) return true;
-
-        // 발음상 가까운 첫소리 묶음
-        const groups = [
-            ["c", "k", "q"],
-            ["s", "c", "z"],
-            ["f", "p"],
-            ["b", "v"],
-            ["g", "j"],
-            ["i", "e", "y"],
-            ["u", "o", "w"]
-        ];
-
-        return groups.some(group => group.includes(a[0]) && group.includes(b[0]));
-    }
-
-    function isUnderstandableWord(spokenWord, answerWord) {
-        if (!spokenWord || !answerWord) return false;
-
-        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
-        const aw = normalizeText(answerWord).replace(/\s+/g, "");
-
-        if (!sw || !aw) return false;
-        if (sw === aw) return true;
-
-        // 동음이의어·ASR 흔한 변환은 허용
-        if (isKnownSpeechAlias(sw, aw)) return true;
-
-        const soundSw = normalizeForSound(sw);
-        const soundAw = normalizeForSound(aw);
-
-        if (soundSw && soundAw && soundSw === soundAw) return true;
-
-        const dist = editDistance(sw, aw);
-        const sim = wordSimilarity(sw, aw);
-
-        // 아주 짧은 단어는 alias가 아니면 너무 위험하므로 보수적으로
-        if (aw.length <= 2) {
-            return false;
-        }
-
-        // 3글자 단어: 첫소리가 비슷하고 1글자 차이까지 허용
-        // 예: bad/bag 같은 실제 다른 단어는 일부 위험하지만, 수업용 ASR에서는 이해 가능성을 우선
-        if (aw.length === 3) {
-            return startsSimilar(sw, aw) && (dist <= 1 || sim >= 0.66);
-        }
-
-        // 4글자 단어: 첫소리가 비슷하면 2글자 차이까지 부분 허용
-        if (aw.length === 4) {
-            return startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.62);
-        }
-
-        // 5~6글자 단어: 상당히 관대하게
-        if (aw.length <= 6) {
-            return startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.58);
-        }
-
-        // 7글자 이상 긴 단어: ASR 오류를 더 넓게 허용
-        if (aw.length >= 7) {
-            return startsSimilar(sw, aw) && (dist <= 3 || sim >= 0.55);
-        }
-
-        return false;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -991,52 +2130,25 @@ def word_card_speaking_game(word_themes):
         if (!s || !a) return false;
         if (s === a) return true;
 
-        const spokenWords = wordsOnly(s);
-        const answerWords = wordsOnly(a);
+        const spokenWords = s.split(" ").filter(Boolean);
+        const answerWords = a.split(" ").filter(Boolean);
 
-        if (spokenWords.length === 0 || answerWords.length === 0) return false;
-
-        // 한 단어 정답:
-        // 음성 인식이 앞뒤에 잡음이나 짧은 말을 붙여도,
-        // 핵심 단어가 이해 가능하면 정답 처리
+        // 한 단어 정답: 앞뒤에 다른 말이 조금 붙어도 핵심 단어가 있으면 정답
         if (answerWords.length === 1) {
-            for (const sw of spokenWords) {
-                if (isUnderstandableWord(sw, answerWords[0])) {
-                    return true;
-                }
-            }
-            return false;
+            return spokenWords.includes(a);
         }
 
-        // 두 단어 이상 표현:
-        // 표현 전체가 그대로 들어오면 정답
+        // 두 단어 이상 표현: 표현 전체가 포함되면 정답
         if (s.includes(a)) return true;
 
-        // 정답 단어들이 순서대로 들어오면 정답
-        // 예: "please excuse me" -> excuse me 인정
+        // 표현 단어들이 순서대로 들어오면 정답
         let pos = 0;
-        let weakMatchCount = 0;
-
-        for (const sw of spokenWords) {
-            const target = answerWords[pos];
-            if (!target) break;
-
-            if (isUnderstandableWord(sw, target)) {
-                if (normalizeText(sw) !== normalizeText(target)) weakMatchCount += 1;
-                pos += 1;
-            }
-
-            if (pos >= answerWords.length) break;
+        for (const w of spokenWords) {
+            if (w === answerWords[pos]) pos += 1;
+            if (pos >= answerWords.length) return true;
         }
 
-        if (pos < answerWords.length) return false;
-
-        // 2단어 표현에서 둘 다 너무 애매하게만 맞은 경우는 오답 처리
-        if (answerWords.length <= 2 && weakMatchCount >= 2) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     function countCorrectInCurrentTheme() {
@@ -1121,7 +2233,7 @@ def word_card_speaking_game(word_themes):
         currentIndex = index;
         currentItem = currentList[currentIndex];
 
-        emojiBox.innerText = currentItem.emoji || "🃏";
+        emojiBox.innerText = currentItem.emoji || "🌱";
         meaningBox.innerText = currentItem.meaning;
 
         answerBox.style.display = "none";
@@ -1134,14 +2246,14 @@ def word_card_speaking_game(word_themes):
         hintBox.innerText = "";
 
         transcriptBox.innerText = "";
-        resultBox.innerText = "";
+        resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
 
-        cardBox.classList.remove("next-card-animate");
+        cardBox.classList.remove("bounce-card");
         void cardBox.offsetWidth;
-        cardBox.classList.add("next-card-animate");
+        cardBox.classList.add("bounce-card");
 
         updateScore();
     }
@@ -1183,7 +2295,7 @@ def word_card_speaking_game(word_themes):
         } else {
             resultBox.innerHTML =
                 "🍊 다시 말해 보세요.<br>" +
-                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 한 단어만 말하면 됩니다.</span>";
+                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 또는 표현을 말하면 됩니다.</span>";
 
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
@@ -1208,7 +2320,7 @@ def word_card_speaking_game(word_themes):
         recognition.lang = "en-US";
         recognition.interimResults = false;
         recognition.continuous = false;
-        recognition.maxAlternatives = 5;
+        recognition.maxAlternatives = 3;
 
         micBtn.innerText = "🎙️ 듣는 중...";
         resultBox.innerText = "말해 보세요.";
@@ -1284,34 +2396,31 @@ def word_card_speaking_game(word_themes):
     answerBtn.addEventListener("click", function() {
         if (!currentItem) return;
         answerBox.style.display = "block";
-        answerBox.style.background = "#ecfdf5";
-        answerBox.style.borderColor = "#bbf7d0";
-        answerBox.style.color = "#166534";
         answerBox.innerText = "정답: " + currentItem.word;
         speak(currentItem.word);
-
-        resultBox.innerHTML =
-            "🔊 정답을 듣고 다시 말해 보세요.<br>" +
-            "<span style='font-size:17px;'>다시 말해서 인식되면 정답으로 인정됩니다.</span>";
-        resultBox.style.background = "#eff6ff";
-        resultBox.style.borderColor = "#bfdbfe";
-        resultBox.style.color = "#1d4ed8";
     });
 
     hintBtn.addEventListener("click", function() {
         if (!currentItem) return;
 
         const cleanWord = String(currentItem.word || "").trim();
-        const noSpaceWord = cleanWord.replace(/\s+/g, "");
-        const firstTwo = noSpaceWord.length <= 2 ? noSpaceWord : noSpaceWord.slice(0, 2);
+        const words = cleanWord.split(/\s+/).filter(Boolean);
+
+        const hintText = words.map(function(word) {
+            const lettersOnly = word.replace(/[^a-zA-Z]/g, "");
+            if (lettersOnly.length <= 2) return word;
+
+            const firstTwo = lettersOnly.slice(0, 2);
+            const blanks = "_".repeat(Math.max(1, lettersOnly.length - 2));
+
+            return firstTwo + blanks;
+        }).join(" ");
 
         hintBox.style.display = "block";
-        hintBox.innerText = "힌트: " + firstTwo + "...";
+        hintBox.innerText = "힌트: " + hintText;
     });
 
     skipBtn.addEventListener("click", function() {
-        // 학생이 그냥 다음으로 넘길 때만 연습 필요 단어로 기록합니다.
-        // 틀리게 말한 것만으로는 기록하지 않고, 나중에 다시 말해서 맞히면 정답으로 바뀝니다.
         if (currentItem && !correctMap[getItemKey(currentItem)]) {
             missedMap[getItemKey(currentItem)] = true;
             updateScore();
@@ -1327,8 +2436,7 @@ def word_card_speaking_game(word_themes):
     """
 
     html = html.replace("__ITEMS_JSON__", items_json)
-
     components.html(html, height=800, scrolling=True)
 
 
-word_card_speaking_game(WORD_THEMES)
+daily_word_card_speaking_game(WORD_THEMES)
