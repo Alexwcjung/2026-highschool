@@ -3,1304 +3,1246 @@ import streamlit.components.v1 as components
 import json
 
 st.set_page_config(
-    page_title="말하면 터지는 문장 게임 2",
-    page_icon="💥",
-    layout="centered"
+    page_title="일상 문장구조 말하기 훈련",
+    page_icon="🎙️",
+    layout="wide"
 )
 
 # =========================================================
-# 제목
-# =========================================================
-st.markdown(
-    """
-    <div style="
-        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #f7fee7 100%);
-        padding: 30px 24px;
-        border-radius: 30px;
-        margin-bottom: 24px;
-        box-shadow: 0 10px 26px rgba(80, 80, 120, 0.12);
-        text-align: center;
-        border: 1.5px solid #e0f2fe;
-    ">
-        <h1 style="color:#334155; margin-bottom:10px; font-size:36px; font-weight:900;">
-            💥 말하면 터지는 문장 게임 2
-        </h1>
-        <p style="color:#64748b; font-size:19px; margin:0; line-height:1.7;">
-            한국어 상황을 보고 영어 문장으로 말해 보세요.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-st.info("사용 방법: 문법 선택 → 게임 시작 → 한국어 상황을 영어로 말하기 → 맞으면 카드가 터지고 정답과 발음이 나옵니다. 다음 문제는 직접 넘깁니다.")
-
-# =========================================================
-# 말하기 문제 데이터
+# 데이터
 # - 일상단어 400 느낌의 어휘를 활용
-# - 2문장 이상, 조금 더 길고 약간 복잡한 문장
+# - 2문장 이상 / 조금 더 길고 / 약간 복잡한 문장
+# - 기능은 생존 문장 말하기 훈련 형태
 # =========================================================
-speaking_questions = [
+PRACTICE_ITEMS = [
     {
-        "category": "🏫 학교생활",
-        "korean": "나는 오늘 수학 과제가 있어. 그래서 도서관에서 교과서와 공책을 사용할 거야.",
-        "sentence": "I have a math assignment today, so I will use my textbook and notebook in the library.",
-        "hint": "math / assignment / textbook / notebook / library"
+        "cat": "🏫 학교생활",
+        "ko": "나는 오늘 수학 과제가 있어. 그래서 도서관에서 교과서와 공책을 사용할 거야.",
+        "blank": "I have a ______ assignment today, so I will use my ______ and ______ in the ______.",
+        "answer": "I have a math assignment today, so I will use my textbook and notebook in the library.",
+        "hint": "math / textbook / notebook / library",
+        "emoji": "📚"
     },
     {
-        "category": "🏫 학교생활",
-        "korean": "우리 모둠은 과학 프로젝트를 준비하고 있어. 내일 발표가 있어서 조금 긴장돼.",
-        "sentence": "Our group is preparing a science project, and I am a little nervous because we have a presentation tomorrow.",
-        "hint": "science / project / nervous / presentation / tomorrow"
+        "cat": "🏫 학교생활",
+        "ko": "우리 모둠은 과학 프로젝트를 준비하고 있어. 내일 발표가 있어서 조금 긴장돼.",
+        "blank": "Our group is preparing a ______ project, and I am a little ______ because we have a ______ tomorrow.",
+        "answer": "Our group is preparing a science project, and I am a little nervous because we have a presentation tomorrow.",
+        "hint": "science / nervous / presentation",
+        "emoji": "🧪"
     },
     {
-        "category": "🏫 학교생활",
-        "korean": "나는 복도에서 친구를 만났어. 우리는 점심시간 전에 일정표를 확인했어.",
-        "sentence": "I met my friend in the hallway, and we checked the schedule before lunch time.",
-        "hint": "friend / hallway / schedule / lunch"
+        "cat": "🏫 학교생활",
+        "ko": "나는 복도에서 친구를 만났어. 우리는 점심시간 전에 일정표를 확인했어.",
+        "blank": "I met my ______ in the ______, and we checked the ______ before lunch time.",
+        "answer": "I met my friend in the hallway, and we checked the schedule before lunch time.",
+        "hint": "friend / hallway / schedule",
+        "emoji": "🏫"
     },
     {
-        "category": "✏️ 교실 활동",
-        "korean": "문장을 공책에 베껴 쓰고 중요한 단어에 밑줄을 치세요. 그런 다음 답을 확인하세요.",
-        "sentence": "Copy the sentence in your notebook and underline the important words. Then check your answer.",
-        "hint": "copy / notebook / underline / check"
+        "cat": "✏️ 교실 활동",
+        "ko": "문장을 공책에 베껴 쓰고 중요한 단어에 밑줄을 치세요. 그런 다음 답을 확인하세요.",
+        "blank": "______ the sentence in your notebook and ______ the important words. Then ______ your answer.",
+        "answer": "Copy the sentence in your notebook and underline the important words. Then check your answer.",
+        "hint": "Copy / underline / check",
+        "emoji": "✏️"
     },
     {
-        "category": "✏️ 교실 활동",
-        "korean": "선생님이 설명한 뒤에 우리는 예시를 비교했어. 그리고 짝과 답을 토론했어.",
-        "sentence": "After the teacher explained it, we compared the examples and discussed the answer with a partner.",
-        "hint": "teacher / explain / compare / discuss / partner"
+        "cat": "✏️ 교실 활동",
+        "ko": "선생님이 설명한 뒤에 우리는 예시를 비교했어. 그리고 짝과 답을 토론했어.",
+        "blank": "After the teacher ______ it, we ______ the examples and ______ the answer with a partner.",
+        "answer": "After the teacher explained it, we compared the examples and discussed the answer with a partner.",
+        "hint": "explained / compared / discussed",
+        "emoji": "🧑‍🏫"
     },
     {
-        "category": "✏️ 교실 활동",
-        "korean": "철자를 말하고 단어를 반복해 주세요. 발음이 어렵다면 천천히 다시 말해도 됩니다.",
-        "sentence": "Please spell the word and repeat it. If the pronunciation is difficult, you can say it slowly again.",
-        "hint": "spell / repeat / pronunciation / slowly / again"
+        "cat": "✏️ 교실 활동",
+        "ko": "철자를 말하고 단어를 반복해 주세요. 발음이 어렵다면 천천히 다시 말해도 됩니다.",
+        "blank": "Please ______ the word and ______ it. If the pronunciation is difficult, you can say it ______ again.",
+        "answer": "Please spell the word and repeat it. If the pronunciation is difficult, you can say it slowly again.",
+        "hint": "spell / repeat / slowly",
+        "emoji": "🔁"
     },
     {
-        "category": "🏠 집과 생활",
-        "korean": "나는 거실에서 텔레비전을 보고 있었어. 하지만 냉장고 안에 음식이 없어서 부엌으로 갔어.",
-        "sentence": "I was watching television in the living room, but there was no food in the refrigerator, so I went to the kitchen.",
-        "hint": "television / living room / refrigerator / kitchen"
+        "cat": "🏠 집과 생활",
+        "ko": "나는 거실에서 텔레비전을 보고 있었어. 하지만 냉장고 안에 음식이 없어서 부엌으로 갔어.",
+        "blank": "I was watching ______ in the living room, but there was no ______ in the refrigerator, so I went to the ______.",
+        "answer": "I was watching television in the living room, but there was no food in the refrigerator, so I went to the kitchen.",
+        "hint": "television / food / kitchen",
+        "emoji": "🏠"
     },
     {
-        "category": "🏠 집과 생활",
-        "korean": "내 방에는 담요와 베개가 있어. 나는 피곤해서 일찍 자고 싶어.",
-        "sentence": "There is a blanket and a pillow in my bedroom, and I want to sleep early because I am tired.",
-        "hint": "blanket / pillow / bedroom / sleep / tired"
+        "cat": "🏠 집과 생활",
+        "ko": "내 방에는 담요와 베개가 있어. 나는 피곤해서 일찍 자고 싶어.",
+        "blank": "There is a ______ and a ______ in my bedroom, and I want to sleep ______ because I am tired.",
+        "answer": "There is a blanket and a pillow in my bedroom, and I want to sleep early because I am tired.",
+        "hint": "blanket / pillow / early",
+        "emoji": "🛏️"
     },
     {
-        "category": "🏠 집과 생활",
-        "korean": "쓰레기를 버리고 손을 비누로 씻어 주세요. 그런 다음 수건으로 손을 말리세요.",
-        "sentence": "Please throw away the trash and wash your hands with soap. Then dry your hands with a towel.",
-        "hint": "trash / wash / soap / towel"
+        "cat": "🏠 집과 생활",
+        "ko": "쓰레기를 버리고 손을 비누로 씻어 주세요. 그런 다음 수건으로 손을 말리세요.",
+        "blank": "Please throw away the ______ and wash your hands with ______. Then dry your hands with a ______.",
+        "answer": "Please throw away the trash and wash your hands with soap. Then dry your hands with a towel.",
+        "hint": "trash / soap / towel",
+        "emoji": "🧼"
     },
     {
-        "category": "🌅 하루 일과",
-        "korean": "나는 보통 아침에 일찍 일어나. 학교에 가기 전에 샤워하고 옷을 입어.",
-        "sentence": "I usually get up early in the morning. I take a shower and get dressed before I go to school.",
-        "hint": "usually / get up / morning / shower / school"
+        "cat": "🌅 하루 일과",
+        "ko": "나는 보통 아침에 일찍 일어나. 학교에 가기 전에 샤워하고 옷을 입어.",
+        "blank": "I usually ______ early in the morning. I take a ______ and get dressed before I go to ______.",
+        "answer": "I usually get up early in the morning. I take a shower and get dressed before I go to school.",
+        "hint": "get up / shower / school",
+        "emoji": "🌅"
     },
     {
-        "category": "🌅 하루 일과",
-        "korean": "주말에는 늦게 일어나지만 평일에는 항상 일찍 출발해. 버스가 자주 붐비기 때문이야.",
-        "sentence": "I wake up late on weekends, but I always leave early on weekdays because the bus is often crowded.",
-        "hint": "weekend / always / leave / weekday / bus"
+        "cat": "🌅 하루 일과",
+        "ko": "주말에는 늦게 일어나지만 평일에는 항상 일찍 출발해. 버스가 자주 붐비기 때문이야.",
+        "blank": "I wake up late on ______, but I always leave early on ______ because the bus is often crowded.",
+        "answer": "I wake up late on weekends, but I always leave early on weekdays because the bus is often crowded.",
+        "hint": "weekends / weekdays",
+        "emoji": "🚌"
     },
     {
-        "category": "🌅 하루 일과",
-        "korean": "나는 숙제를 끝낸 뒤에 조금 쉬어. 가끔은 음악을 들으면서 긴장을 풀어.",
-        "sentence": "After I finish my homework, I relax for a while. Sometimes I listen to music to feel calm.",
-        "hint": "finish / homework / relax / music / calm"
+        "cat": "🌅 하루 일과",
+        "ko": "나는 숙제를 끝낸 뒤에 조금 쉬어. 가끔은 음악을 들으면서 긴장을 풀어.",
+        "blank": "After I finish my ______, I relax for a while. Sometimes I listen to ______ to feel ______.",
+        "answer": "After I finish my homework, I relax for a while. Sometimes I listen to music to feel calm.",
+        "hint": "homework / music / calm",
+        "emoji": "🎧"
     },
     {
-        "category": "🎮 취미와 여가",
-        "korean": "내 취미는 영화 보기야. 시간이 있으면 친구와 영화를 보고 감상에 대해 이야기해.",
-        "sentence": "My hobby is watching movies. If I have free time, I watch a movie with my friend and talk about it.",
-        "hint": "hobby / movie / free time / friend / talk"
+        "cat": "🎮 취미와 여가",
+        "ko": "내 취미는 영화 보기야. 시간이 있으면 친구와 영화를 보고 감상에 대해 이야기해.",
+        "blank": "My ______ is watching movies. If I have free time, I watch a movie with my ______ and talk about it.",
+        "answer": "My hobby is watching movies. If I have free time, I watch a movie with my friend and talk about it.",
+        "hint": "hobby / friend",
+        "emoji": "🎬"
     },
     {
-        "category": "🎮 취미와 여가",
-        "korean": "그녀는 사진 촬영을 좋아해. 그래서 주말마다 공원에서 사진을 찍어.",
-        "sentence": "She likes photography, so she takes pictures in the park every weekend.",
-        "hint": "photography / pictures / park / weekend"
+        "cat": "🎮 취미와 여가",
+        "ko": "그녀는 사진 촬영을 좋아해. 그래서 주말마다 공원에서 사진을 찍어.",
+        "blank": "She likes ______, so she takes pictures in the ______ every weekend.",
+        "answer": "She likes photography, so she takes pictures in the park every weekend.",
+        "hint": "photography / park",
+        "emoji": "📷"
     },
     {
-        "category": "🎮 취미와 여가",
-        "korean": "나는 캠핑을 좋아하지만 오늘은 날씨가 나빠. 그래서 집에서 소설을 읽을 거야.",
-        "sentence": "I like camping, but the weather is bad today, so I will read a novel at home.",
-        "hint": "camping / weather / bad / novel / home"
+        "cat": "🎮 취미와 여가",
+        "ko": "나는 캠핑을 좋아하지만 오늘은 날씨가 나빠. 그래서 집에서 소설을 읽을 거야.",
+        "blank": "I like ______, but the weather is bad today, so I will read a ______ at home.",
+        "answer": "I like camping, but the weather is bad today, so I will read a novel at home.",
+        "hint": "camping / novel",
+        "emoji": "🏕️"
     },
     {
-        "category": "⚽ 운동과 활동",
-        "korean": "우리는 방과 후에 축구를 할 거야. 경기장에 늦지 않도록 제시간에 도착해야 해.",
-        "sentence": "We will play soccer after school, and we should arrive at the field on time.",
-        "hint": "soccer / after school / field / on time"
+        "cat": "⚽ 운동과 활동",
+        "ko": "우리는 방과 후에 축구를 할 거야. 경기장에 늦지 않도록 제시간에 도착해야 해.",
+        "blank": "We will play ______ after school, and we should arrive at the ______ on time.",
+        "answer": "We will play soccer after school, and we should arrive at the field on time.",
+        "hint": "soccer / field",
+        "emoji": "⚽"
     },
     {
-        "category": "⚽ 운동과 활동",
-        "korean": "그는 농구 경기에 나가고 싶어 해. 하지만 무릎이 아파서 오늘은 쉬어야 해.",
-        "sentence": "He wants to join the basketball match, but his knee hurts, so he should rest today.",
-        "hint": "basketball / match / hurts / rest"
+        "cat": "⚽ 운동과 활동",
+        "ko": "그는 농구 경기에 나가고 싶어 해. 하지만 무릎이 아파서 오늘은 쉬어야 해.",
+        "blank": "He wants to join the ______ match, but his knee hurts, so he should ______ today.",
+        "answer": "He wants to join the basketball match, but his knee hurts, so he should rest today.",
+        "hint": "basketball / rest",
+        "emoji": "🏀"
     },
     {
-        "category": "⚽ 운동과 활동",
-        "korean": "코치가 운동장에서 우리에게 설명했어. 우리는 다음 대회를 위해 매일 연습할 거야.",
-        "sentence": "The coach explained it to us on the field, and we will practice every day for the next competition.",
-        "hint": "coach / field / practice / competition"
+        "cat": "⚽ 운동과 활동",
+        "ko": "코치가 운동장에서 우리에게 설명했어. 우리는 다음 대회를 위해 매일 연습할 거야.",
+        "blank": "The ______ explained it to us on the field, and we will ______ every day for the next competition.",
+        "answer": "The coach explained it to us on the field, and we will practice every day for the next competition.",
+        "hint": "coach / practice",
+        "emoji": "🏟️"
     },
     {
-        "category": "🌦️ 날씨와 계절",
-        "korean": "오늘은 비가 오고 바람이 불어. 그래서 우산과 비옷이 필요해.",
-        "sentence": "It is rainy and windy today, so I need an umbrella and a raincoat.",
-        "hint": "rainy / windy / umbrella / raincoat"
+        "cat": "🌦️ 날씨와 계절",
+        "ko": "오늘은 비가 오고 바람이 불어. 그래서 우산과 비옷이 필요해.",
+        "blank": "It is ______ and ______ today, so I need an umbrella and a raincoat.",
+        "answer": "It is rainy and windy today, so I need an umbrella and a raincoat.",
+        "hint": "rainy / windy",
+        "emoji": "🌧️"
     },
     {
-        "category": "🌦️ 날씨와 계절",
-        "korean": "겨울에는 날씨가 춥지만 나는 눈 오는 날을 좋아해. 눈사람을 만들 수 있기 때문이야.",
-        "sentence": "It is cold in winter, but I like snowy days because I can make a snowman.",
-        "hint": "winter / cold / snowy / because"
+        "cat": "🌦️ 날씨와 계절",
+        "ko": "겨울에는 날씨가 춥지만 나는 눈 오는 날을 좋아해. 눈사람을 만들 수 있기 때문이야.",
+        "blank": "It is cold in ______, but I like snowy days because I can make a ______.",
+        "answer": "It is cold in winter, but I like snowy days because I can make a snowman.",
+        "hint": "winter / snowman",
+        "emoji": "⛄"
     },
     {
-        "category": "🌦️ 날씨와 계절",
-        "korean": "일기예보를 확인해 주세요. 오후에는 폭풍우가 올 수 있어서 밖에 나가면 조심해야 해요.",
-        "sentence": "Please check the weather forecast. It may be stormy in the afternoon, so be careful outside.",
-        "hint": "forecast / stormy / afternoon / careful"
+        "cat": "🌦️ 날씨와 계절",
+        "ko": "일기예보를 확인해 주세요. 오후에는 폭풍우가 올 수 있어서 밖에 나가면 조심해야 해요.",
+        "blank": "Please check the weather ______. It may be ______ in the afternoon, so be careful outside.",
+        "answer": "Please check the weather forecast. It may be stormy in the afternoon, so be careful outside.",
+        "hint": "forecast / stormy",
+        "emoji": "🌩️"
     },
     {
-        "category": "🍽️ 식당과 주문",
-        "korean": "나는 식당에서 메뉴를 보고 있어. 매운 음식은 괜찮지만 너무 비싼 요리는 원하지 않아.",
-        "sentence": "I am looking at the menu in the restaurant. Spicy food is okay, but I do not want an expensive dish.",
-        "hint": "menu / restaurant / spicy / expensive / dish"
+        "cat": "🍽️ 식당과 주문",
+        "ko": "나는 식당에서 메뉴를 보고 있어. 매운 음식은 괜찮지만 너무 비싼 요리는 원하지 않아.",
+        "blank": "I am looking at the ______ in the restaurant. Spicy food is okay, but I do not want an expensive ______.",
+        "answer": "I am looking at the menu in the restaurant. Spicy food is okay, but I do not want an expensive dish.",
+        "hint": "menu / dish",
+        "emoji": "🍽️"
     },
     {
-        "category": "🍽️ 식당과 주문",
-        "korean": "계산서를 가져다 주세요. 영수증도 필요해요. 왜냐하면 비용을 확인해야 하기 때문이에요.",
-        "sentence": "Please bring the bill and the receipt because I need to check the price.",
-        "hint": "bill / receipt / check / price"
+        "cat": "🍽️ 식당과 주문",
+        "ko": "계산서를 가져다 주세요. 영수증도 필요해요. 왜냐하면 비용을 확인해야 하기 때문이에요.",
+        "blank": "Please bring the ______ and the ______ because I need to check the price.",
+        "answer": "Please bring the bill and the receipt because I need to check the price.",
+        "hint": "bill / receipt",
+        "emoji": "🧾"
     },
     {
-        "category": "🍽️ 식당과 주문",
-        "korean": "그녀는 샐러드를 주문했고 나는 수프를 주문했어. 우리는 식사 후에 디저트를 먹을 거야.",
-        "sentence": "She ordered a salad and I ordered soup. We will have dessert after the meal.",
-        "hint": "salad / soup / dessert / meal"
+        "cat": "🍽️ 식당과 주문",
+        "ko": "그녀는 샐러드를 주문했고 나는 수프를 주문했어. 우리는 식사 후에 디저트를 먹을 거야.",
+        "blank": "She ordered a ______ and I ordered soup. We will have ______ after the meal.",
+        "answer": "She ordered a salad and I ordered soup. We will have dessert after the meal.",
+        "hint": "salad / dessert",
+        "emoji": "🥗"
     },
     {
-        "category": "🛍️ 쇼핑과 가격",
-        "korean": "이 재킷은 너무 비싸. 할인 쿠폰이 있으면 나는 그것을 살 수 있어.",
-        "sentence": "This jacket is too expensive. If I have a discount coupon, I can buy it.",
-        "hint": "jacket / expensive / discount / coupon / buy"
+        "cat": "🛍️ 쇼핑과 가격",
+        "ko": "이 재킷은 너무 비싸. 할인 쿠폰이 있으면 나는 그것을 살 수 있어.",
+        "blank": "This jacket is too ______. If I have a discount ______, I can buy it.",
+        "answer": "This jacket is too expensive. If I have a discount coupon, I can buy it.",
+        "hint": "expensive / coupon",
+        "emoji": "🛍️"
     },
     {
-        "category": "🛍️ 쇼핑과 가격",
-        "korean": "계산원이 거스름돈을 줬어. 나는 영수증을 확인하고 가방에 넣었어.",
-        "sentence": "The cashier gave me change, and I checked the receipt before I put it in my bag.",
-        "hint": "cashier / change / receipt / bag"
+        "cat": "🛍️ 쇼핑과 가격",
+        "ko": "계산원이 거스름돈을 줬어. 나는 영수증을 확인하고 가방에 넣었어.",
+        "blank": "The ______ gave me change, and I checked the ______ before I put it in my bag.",
+        "answer": "The cashier gave me change, and I checked the receipt before I put it in my bag.",
+        "hint": "cashier / receipt",
+        "emoji": "💵"
     },
     {
-        "category": "🛍️ 쇼핑과 가격",
-        "korean": "색깔은 좋지만 사이즈가 맞지 않아. 그래서 교환이나 환불을 요청할 거야.",
-        "sentence": "The color is good, but the size is not right, so I will ask for an exchange or a refund.",
-        "hint": "color / size / exchange / refund"
+        "cat": "🛍️ 쇼핑과 가격",
+        "ko": "색깔은 좋지만 사이즈가 맞지 않아. 그래서 교환이나 환불을 요청할 거야.",
+        "blank": "The color is good, but the ______ is not right, so I will ask for an ______ or a refund.",
+        "answer": "The color is good, but the size is not right, so I will ask for an exchange or a refund.",
+        "hint": "size / exchange",
+        "emoji": "👕"
     },
     {
-        "category": "🚇 교통과 길 찾기",
-        "korean": "나는 길을 잃었어. 지하철역에 가려면 어느 방향으로 가야 하는지 알고 싶어.",
-        "sentence": "I am lost, and I want to know which direction I should go to get to the subway station.",
-        "hint": "lost / direction / subway station"
+        "cat": "🚇 교통과 길 찾기",
+        "ko": "나는 길을 잃었어. 지하철역에 가려면 어느 방향으로 가야 하는지 알고 싶어.",
+        "blank": "I am ______, and I want to know which direction I should go to get to the ______ station.",
+        "answer": "I am lost, and I want to know which direction I should go to get to the subway station.",
+        "hint": "lost / subway",
+        "emoji": "🚇"
     },
     {
-        "category": "🚇 교통과 길 찾기",
-        "korean": "버스 정류장은 모퉁이 근처에 있어. 횡단보도를 건넌 뒤에 오른쪽으로 가세요.",
-        "sentence": "The bus stop is near the corner. Cross the crosswalk and then go right.",
-        "hint": "bus stop / corner / crosswalk / right"
+        "cat": "🚇 교통과 길 찾기",
+        "ko": "버스 정류장은 모퉁이 근처에 있어. 횡단보도를 건넌 뒤에 오른쪽으로 가세요.",
+        "blank": "The bus stop is near the ______. Cross the crosswalk and then go ______.",
+        "answer": "The bus stop is near the corner. Cross the crosswalk and then go right.",
+        "hint": "corner / right",
+        "emoji": "🚏"
     },
     {
-        "category": "🚇 교통과 길 찾기",
-        "korean": "공항에 가려면 터미널에서 갈아타야 해. 시간이 없으니 빨리 움직여야 해.",
-        "sentence": "To get to the airport, you need to transfer at the terminal. We do not have much time, so we should move quickly.",
-        "hint": "airport / transfer / terminal / quickly"
+        "cat": "🚇 교통과 길 찾기",
+        "ko": "공항에 가려면 터미널에서 갈아타야 해. 시간이 없으니 빨리 움직여야 해.",
+        "blank": "To get to the ______, you need to transfer at the terminal. We do not have much time, so we should move ______.",
+        "answer": "To get to the airport, you need to transfer at the terminal. We do not have much time, so we should move quickly.",
+        "hint": "airport / quickly",
+        "emoji": "✈️"
     },
     {
-        "category": "🧳 여행과 숙박",
-        "korean": "나는 호텔 예약을 확인하고 싶어. 여권과 짐은 내 배낭 안에 있어.",
-        "sentence": "I want to check my hotel reservation. My passport and luggage are in my backpack.",
-        "hint": "hotel / reservation / passport / luggage / backpack"
+        "cat": "🧳 여행과 숙박",
+        "ko": "나는 호텔 예약을 확인하고 싶어. 여권과 짐은 내 배낭 안에 있어.",
+        "blank": "I want to check my hotel ______. My passport and luggage are in my ______.",
+        "answer": "I want to check my hotel reservation. My passport and luggage are in my backpack.",
+        "hint": "reservation / backpack",
+        "emoji": "🧳"
     },
     {
-        "category": "🧳 여행과 숙박",
-        "korean": "우리는 현지 박물관을 방문할 거야. 유명한 기념품도 사고 싶어.",
-        "sentence": "We will visit a local museum, and I also want to buy a famous souvenir.",
-        "hint": "local / museum / famous / souvenir"
+        "cat": "🧳 여행과 숙박",
+        "ko": "우리는 현지 박물관을 방문할 거야. 유명한 기념품도 사고 싶어.",
+        "blank": "We will visit a local ______, and I also want to buy a famous ______.",
+        "answer": "We will visit a local museum, and I also want to buy a famous souvenir.",
+        "hint": "museum / souvenir",
+        "emoji": "🏛️"
     },
     {
-        "category": "🧳 여행과 숙박",
-        "korean": "체크인 시간이 늦었지만 직원이 우리를 도와줬어. 그래서 우리는 방에 들어갈 수 있었어.",
-        "sentence": "The check-in time was late, but the staff helped us, so we could enter the room.",
-        "hint": "check in / late / staff / helped / room"
+        "cat": "🧳 여행과 숙박",
+        "ko": "체크인 시간이 늦었지만 직원이 우리를 도와줬어. 그래서 우리는 방에 들어갈 수 있었어.",
+        "blank": "The check-in time was ______, but the staff helped us, so we could enter the ______.",
+        "answer": "The check-in time was late, but the staff helped us, so we could enter the room.",
+        "hint": "late / room",
+        "emoji": "🏨"
     },
     {
-        "category": "😊 감정 표현",
-        "korean": "나는 발표 전에 긴장했지만 끝난 뒤에는 자랑스러웠어. 친구들이 내게 박수를 쳤기 때문이야.",
-        "sentence": "I was nervous before the presentation, but I felt proud after it because my friends clapped for me.",
-        "hint": "nervous / presentation / proud / friends"
+        "cat": "😊 감정 표현",
+        "ko": "나는 발표 전에 긴장했지만 끝난 뒤에는 자랑스러웠어. 친구들이 내게 박수를 쳤기 때문이야.",
+        "blank": "I was ______ before the presentation, but I felt ______ after it because my friends clapped for me.",
+        "answer": "I was nervous before the presentation, but I felt proud after it because my friends clapped for me.",
+        "hint": "nervous / proud",
+        "emoji": "👏"
     },
     {
-        "category": "😊 감정 표현",
-        "korean": "그는 시험 결과에 실망했어. 하지만 선생님의 조언을 듣고 다시 희망을 가졌어.",
-        "sentence": "He was disappointed with the test result, but he felt hopeful again after listening to the teacher's advice.",
-        "hint": "disappointed / test / hopeful / advice"
+        "cat": "😊 감정 표현",
+        "ko": "그는 시험 결과에 실망했어. 하지만 선생님의 조언을 듣고 다시 희망을 가졌어.",
+        "blank": "He was ______ with the test result, but he felt ______ again after listening to the teacher's advice.",
+        "answer": "He was disappointed with the test result, but he felt hopeful again after listening to the teacher's advice.",
+        "hint": "disappointed / hopeful",
+        "emoji": "😊"
     },
     {
-        "category": "😊 감정 표현",
-        "korean": "나는 혼자 있어서 외로웠어. 그래서 친구에게 메시지를 보내고 함께 산책했어.",
-        "sentence": "I felt lonely because I was alone, so I sent a message to my friend and walked together.",
-        "hint": "lonely / alone / message / friend / together"
+        "cat": "😊 감정 표현",
+        "ko": "나는 혼자 있어서 외로웠어. 그래서 친구에게 메시지를 보내고 함께 산책했어.",
+        "blank": "I felt ______ because I was alone, so I sent a ______ to my friend and walked together.",
+        "answer": "I felt lonely because I was alone, so I sent a message to my friend and walked together.",
+        "hint": "lonely / message",
+        "emoji": "💬"
     },
     {
-        "category": "📱 미디어와 스마트폰",
-        "korean": "내 스마트폰 배터리가 거의 없어. 와이파이 비밀번호를 찾으면 친구에게 메시지를 보낼 수 있어.",
-        "sentence": "My smartphone battery is almost dead. If I find the Wi-Fi password, I can send a message to my friend.",
-        "hint": "smartphone / battery / Wi-Fi / password / message"
+        "cat": "📱 미디어와 스마트폰",
+        "ko": "내 스마트폰 배터리가 거의 없어. 와이파이 비밀번호를 찾으면 친구에게 메시지를 보낼 수 있어.",
+        "blank": "My smartphone ______ is almost dead. If I find the Wi-Fi ______, I can send a message to my friend.",
+        "answer": "My smartphone battery is almost dead. If I find the Wi-Fi password, I can send a message to my friend.",
+        "hint": "battery / password",
+        "emoji": "📱"
     },
     {
-        "category": "📱 미디어와 스마트폰",
-        "korean": "나는 웹사이트에서 뉴스를 검색했어. 그런 다음 중요한 게시물에 댓글을 달았어.",
-        "sentence": "I searched for news on the website, and then I wrote a comment on an important post.",
-        "hint": "search / news / website / comment / post"
+        "cat": "📱 미디어와 스마트폰",
+        "ko": "나는 웹사이트에서 뉴스를 검색했어. 그런 다음 중요한 게시물에 댓글을 달았어.",
+        "blank": "I searched for ______ on the website, and then I wrote a ______ on an important post.",
+        "answer": "I searched for news on the website, and then I wrote a comment on an important post.",
+        "hint": "news / comment",
+        "emoji": "🌐"
     },
     {
-        "category": "📱 미디어와 스마트폰",
-        "korean": "영상 통화가 끊겼어. 화면이 멈췄고 인터넷 연결도 좋지 않았어.",
-        "sentence": "The video call stopped. The screen froze, and the internet connection was not good.",
-        "hint": "video call / screen / internet / connection"
+        "cat": "📱 미디어와 스마트폰",
+        "ko": "영상 통화가 끊겼어. 화면이 멈췄고 인터넷 연결도 좋지 않았어.",
+        "blank": "The video call stopped. The ______ froze, and the internet connection was not ______.",
+        "answer": "The video call stopped. The screen froze, and the internet connection was not good.",
+        "hint": "screen / good",
+        "emoji": "📹"
     },
     {
-        "category": "🌈 직업과 미래",
-        "korean": "나는 미래에 기술자가 되고 싶어. 그래서 공장에서 필요한 기술과 경험을 배우고 있어.",
-        "sentence": "I want to become an engineer in the future, so I am learning the skills and experience needed in a factory.",
-        "hint": "engineer / future / skills / experience / factory"
+        "cat": "🌈 직업과 미래",
+        "ko": "나는 미래에 기술자가 되고 싶어. 그래서 공장에서 필요한 기술과 경험을 배우고 있어.",
+        "blank": "I want to become an ______ in the future, so I am learning the skills and ______ needed in a factory.",
+        "answer": "I want to become an engineer in the future, so I am learning the skills and experience needed in a factory.",
+        "hint": "engineer / experience",
+        "emoji": "🛠️"
     },
     {
-        "category": "🌈 직업과 미래",
-        "korean": "그녀는 요리사가 되는 것이 꿈이야. 면접 전에 자신의 목표를 분명하게 설명하려고 해.",
-        "sentence": "Her dream is to become a chef, and she wants to explain her goal clearly before the interview.",
-        "hint": "dream / chef / goal / interview"
+        "cat": "🌈 직업과 미래",
+        "ko": "그녀는 요리사가 되는 것이 꿈이야. 면접 전에 자신의 목표를 분명하게 설명하려고 해.",
+        "blank": "Her dream is to become a ______, and she wants to explain her ______ clearly before the interview.",
+        "answer": "Her dream is to become a chef, and she wants to explain her goal clearly before the interview.",
+        "hint": "chef / goal",
+        "emoji": "👩‍🍳"
     },
     {
-        "category": "🌈 직업과 미래",
-        "korean": "나는 소방관을 존경해. 위험한 상황에서도 사람들을 돕기 때문이야.",
-        "sentence": "I respect firefighters because they help people even in dangerous situations.",
-        "hint": "firefighters / help / people / dangerous"
+        "cat": "🌈 직업과 미래",
+        "ko": "나는 소방관을 존경해. 위험한 상황에서도 사람들을 돕기 때문이야.",
+        "blank": "I respect ______ because they help people even in ______ situations.",
+        "answer": "I respect firefighters because they help people even in dangerous situations.",
+        "hint": "firefighters / dangerous",
+        "emoji": "🚒"
     },
 ]
 
 # =========================================================
-# 게임 설정
+# 디자인
 # =========================================================
-categories = ["전체"] + list(dict.fromkeys([q["category"] for q in speaking_questions]))
-
-selected_category = st.selectbox(
-    "연습할 문법 / 주제를 고르세요.",
-    categories
-)
-
-if selected_category == "전체":
-    filtered_questions = speaking_questions
-else:
-    filtered_questions = [q for q in speaking_questions if q["category"] == selected_category]
-
-col1, col2 = st.columns(2)
-
-with col1:
-    game_question_count = st.slider(
-        "🎯 게임 문제 개수",
-        min_value=1,
-        max_value=len(filtered_questions),
-        value=min(10, len(filtered_questions)),
-        step=1
-    )
-
-with col2:
-    pass_ratio = st.slider(
-        "✅ 정답 인정 기준",
-        min_value=45,
-        max_value=95,
-        value=65,
-        step=5,
-        help="낮을수록 학생 발음을 더 너그럽게 인정합니다. 기본값은 이전 코드보다 조금 관대하게 설정했습니다."
-    )
-
-show_first_hint = st.checkbox("처음부터 영어 첫 글자 힌트 보이기", value=False)
-auto_sound = st.checkbox("맞히면 원어민 발음 자동 재생", value=True)
-
-game_questions = filtered_questions[:game_question_count]
-
 st.markdown(
     """
-    <div style="
-        background: linear-gradient(135deg, #ffffff, #f8fbff);
-        border-radius: 24px;
-        padding: 20px 22px;
-        margin: 16px 0 22px 0;
-        box-shadow: 0 5px 16px rgba(0,0,0,0.055);
-        border: 1.5px solid #edf2ff;
-        font-size: 18px;
-        line-height: 1.7;
-        color: #374151;
-    ">
-        💡 <b>게임 시작</b>을 누른 뒤, 한국어 상황을 영어로 말하세요.<br>
-        맞으면 카드가 <b>팡!</b> 터지고 정답 문장과 발음 버튼이 나옵니다.<br>
-        틀리면 자동으로 힌트가 나타나며, 다음 문제는 직접 넘깁니다.
-    </div>
+    <style>
+    @media (max-width: 640px) {
+        #speaking-app {
+            padding: 10px !important;
+            border-radius: 20px !important;
+        }
+        #speaking-app #blankSentence {
+            font-size: 20px !important;
+            padding: 13px 12px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.45 !important;
+        }
+        #speaking-app #koPrompt {
+            font-size: 19px !important;
+            margin-bottom: 8px !important;
+            line-height: 1.35 !important;
+        }
+        #speaking-app #transcriptBox {
+            font-size: 17px !important;
+            line-height: 1.45 !important;
+        }
+        #speaking-app #micBtn {
+            width: 78px !important;
+            height: 78px !important;
+            font-size: 27px !important;
+        }
+        #speaking-app #hintBtn,
+        #speaking-app #answerBtn,
+        #speaking-app #listenBtn,
+        #speaking-app #nextBtn {
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+        }
+        #speaking-app #hintBox {
+            font-size: 13px !important;
+            padding: 6px 8px !important;
+            line-height: 1.25 !important;
+            max-width: 100% !important;
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
+            white-space: normal !important;
+            box-sizing: border-box !important;
+        }
+    }
+    </style>
     """,
     unsafe_allow_html=True
 )
 
-questions_json = json.dumps(game_questions, ensure_ascii=False)
-hint_js = "true" if show_first_hint else "false"
-auto_sound_js = "true" if auto_sound else "false"
 
 # =========================================================
-# 게임 HTML
+# 말하기 훈련 컴포넌트
 # =========================================================
-game_html = f"""
-<!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+def speaking_practice_component(items):
+    items_json = json.dumps(items, ensure_ascii=False)
 
-<style>
-    body {{
-        margin: 0;
+    html = r"""
+    <div id="speaking-app" style="
         font-family: Arial, sans-serif;
-        background: transparent;
-    }}
-
-    .game-wrap {{
-        width: 100%;
-        min-height: 700px;
-        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #f7fee7 100%);
-        border: 4px solid #bfdbfe;
-        border-radius: 32px;
-        box-shadow: 0 10px 28px rgba(0,0,0,0.12);
-        padding: 24px;
-        box-sizing: border-box;
-        position: relative;
-        overflow: hidden;
-    }}
-
-    .top-bar {{
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 18px;
-    }}
-
-    .badge {{
-        background: rgba(255,255,255,0.95);
-        border: 2px solid #dbeafe;
-        border-radius: 20px;
-        padding: 12px 8px;
-        text-align: center;
-        font-size: 19px;
-        font-weight: 900;
-        color: #334155;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        line-height: 1.4;
-    }}
-
-    .message {{
-        background: linear-gradient(135deg, #fef3c7, #fed7aa);
-        border: 3px solid #fb923c;
-        border-radius: 24px;
-        padding: 14px;
-        text-align: center;
-        font-size: 21px;
-        font-weight: 900;
-        color: #7c2d12;
-        margin-bottom: 18px;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-        min-height: 34px;
-        line-height: 1.4;
-    }}
-
-    .card-area {{
-        width: 100%;
-        min-height: 265px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: relative;
-    }}
-
-    .question-card {{
-        width: 90%;
-        min-height: 230px;
-        background: linear-gradient(135deg, #ffffff, #fff7ed);
-        border: 4px solid #fed7aa;
+        background: linear-gradient(135deg, #eff6ff 0%, #fdf4ff 35%, #fff7ed 68%, #f0fdf4 100%);
+        border: 2px solid #c4b5fd;
         border-radius: 34px;
-        box-shadow: 0 12px 26px rgba(0,0,0,0.14);
-        padding: 28px 24px;
-        box-sizing: border-box;
-        text-align: center;
-        transition: all 0.25s ease;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }}
+        padding: 24px;
+        box-shadow: 0 12px 28px rgba(124,58,237,0.12);
+    ">
+        <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
+            <label style="font-weight:900; color:#334155;">주제 선택</label>
+            <select id="categorySelect" style="
+                padding: 10px 14px;
+                border-radius: 999px;
+                border: 1.5px solid #bae6fd;
+                font-size: 15px;
+                font-weight: 800;
+                color: #0f172a;
+                background: white;
+            "></select>
 
-    .question-card.pop {{
-        animation: pop 0.55s forwards;
-    }}
+            <button id="randomBtn" style="
+                border: 1.5px solid #c7d2fe;
+                background: white;
+                color: #3730a3;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🎲 랜덤</button>
 
-    @keyframes pop {{
-        0% {{ transform: scale(1); opacity: 1; }}
-        45% {{ transform: scale(1.18) rotate(2deg); opacity: 0.92; }}
-        100% {{ transform: scale(0.08); opacity: 0; }}
-    }}
+            <button id="resetBtn" style="
+                border: 1.5px solid #fed7aa;
+                background: #fff7ed;
+                color: #9a3412;
+                border-radius: 999px;
+                padding: 10px 15px;
+                font-weight: 900;
+                cursor: pointer;
+            ">🔄 점수 초기화</button>
+        </div>
 
-    .category {{
-        font-size: 19px;
-        font-weight: 900;
-        color: #9a3412;
-        margin-bottom: 12px;
-    }}
+        <div style="
+            background:white;
+            border-radius:26px;
+            padding:24px;
+            border:1.5px solid #e0f2fe;
+            box-shadow:0 5px 16px rgba(0,0,0,0.055);
+        ">
+            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                <div id="categoryLabel" style="
+                    display:inline-block;
+                    background:linear-gradient(135deg,#dbeafe,#ede9fe);
+                    color:#3730a3;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1.5px solid #c4b5fd;
+                "></div>
 
-    .korean {{
-        font-size: 29px;
-        font-weight: 900;
-        color: #111827;
-        line-height: 1.5;
-        word-break: keep-all;
-    }}
+                <div id="scoreLabel" style="
+                    display:inline-block;
+                    background:linear-gradient(135deg,#dcfce7,#fef9c3);
+                    color:#166534;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1.5px solid #86efac;
+                ">정답 0개</div>
+            </div>
 
-    .hint {{
-        display: none;
-        margin-top: 14px;
-        font-size: 18px;
-        color: #92400e;
-        font-weight: 900;
-        background: #fff7ed;
-        border: 2px solid #fed7aa;
-        border-radius: 18px;
-        padding: 10px 12px;
-        line-height: 1.45;
-    }}
+            <div style="
+                font-size: 26px;
+                font-weight: 900;
+                color: #111827;
+                line-height: 1.35;
+                margin-bottom: 10px;
+            " id="koPrompt">
+                한국어 상황
+            </div>
 
-    .answer-area {{
-        display: none;
-        width: 90%;
-        margin: 18px auto 0 auto;
-        background: rgba(255,255,255,0.96);
-        border: 2px solid #dbeafe;
-        border-radius: 26px;
-        padding: 18px 20px;
-        text-align: center;
-        box-shadow: 0 6px 16px rgba(0,0,0,0.08);
-    }}
+            <div style="
+                background: linear-gradient(135deg, #ffffff 0%, #eff6ff 45%, #fdf4ff 100%);
+                border: 2px solid #c4b5fd;
+                border-radius: 24px;
+                padding: 18px 16px;
+                margin-bottom: 12px;
+                font-size: 28px;
+                font-weight: 900;
+                color: #1f2937;
+                line-height: 1.55;
+                box-shadow: 0 6px 16px rgba(99,102,241,0.08);
+                word-break: break-word;
+            " id="blankSentence">
+                I am ______.
+            </div>
 
-    .answer-label {{
-        font-size: 17px;
-        font-weight: 900;
-        color: #475569;
-        margin-bottom: 8px;
-    }}
+            <div style="
+                background:linear-gradient(135deg,#eef2ff,#fdf2f8);
+                border:1.5px solid #c4b5fd;
+                border-radius:20px;
+                padding:14px 16px;
+                margin-bottom:12px;
+                min-height:52px;
+                box-shadow: 0 4px 12px rgba(124,58,237,0.08);
+            ">
+                <div id="transcriptBox" style="
+                    font-size:23px;
+                    font-weight:900;
+                    color:#4c1d95;
+                    line-height:1.6;
+                    min-height:32px;
+                    word-break: break-word;
+                "></div>
+            </div>
 
-    .answer-sentence {{
-        font-size: 26px;
-        font-weight: 900;
-        color: #2563eb;
-        line-height: 1.45;
-        margin-bottom: 14px;
-    }}
+            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:12px;">
+                <button id="hintBtn" style="
+                    border:1.5px solid #fcd34d;
+                    background:linear-gradient(135deg,#fef3c7,#fde68a);
+                    color:#92400e;
+                    border-radius:999px;
+                    padding:10px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                    box-shadow:0 4px 10px rgba(245,158,11,0.14);
+                ">💡 힌트</button>
 
-    .recognized {{
-        width: 90%;
-        margin: 14px auto 0 auto;
-        text-align: center;
-        font-size: 18px;
-        font-weight: 900;
-        color: #475569;
-        min-height: 34px;
-        line-height: 1.5;
-        background: rgba(255,255,255,0.9);
-        border: 1.5px solid #e2e8f0;
-        border-radius: 18px;
-        padding: 10px 12px;
-        box-sizing: border-box;
-    }}
+                <button id="micBtn" style="
+                    border:4px solid rgba(255,255,255,0.95);
+                    background: linear-gradient(135deg, #8b5cf6, #ec4899);
+                    color:white;
+                    border-radius:999px;
+                    width:100px;
+                    height:100px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:36px;
+                    box-shadow:0 12px 26px rgba(124,58,237,0.26);
+                    flex: 0 0 auto;
+                ">🎙️</button>
 
-    .btn-row {{
-        display: flex;
-        justify-content: center;
-        flex-wrap: wrap;
-        gap: 10px;
-        margin-top: 18px;
-    }}
+                <button id="answerBtn" style="
+                    display:none;
+                    border:1.5px solid #86efac;
+                    background:linear-gradient(135deg,#dcfce7,#f0fdf4);
+                    color:#166534;
+                    border-radius:999px;
+                    padding:10px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                    box-shadow:0 4px 10px rgba(34,197,94,0.12);
+                ">👀 정답</button>
 
-    .btn {{
-        border: none;
-        border-radius: 999px;
-        padding: 13px 24px;
-        font-size: 19px;
-        font-weight: 900;
-        color: white;
-        background: linear-gradient(135deg, #ff7eb3, #ffb86c);
-        box-shadow: 0 8px 18px rgba(0,0,0,0.18);
-        cursor: pointer;
-    }}
+                <button id="listenBtn" style="
+                    display:none;
+                    border:1.5px solid #93c5fd;
+                    background:linear-gradient(135deg,#dbeafe,#eff6ff);
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:10px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                    box-shadow:0 4px 10px rgba(59,130,246,0.12);
+                ">🔊 듣기</button>
 
-    .sub-btn {{
-        background: linear-gradient(135deg, #60a5fa, #93c5fd);
-    }}
+                <button id="nextBtn" style="
+                    border:1.5px solid #c4b5fd;
+                    background:linear-gradient(135deg,#ede9fe,#eef2ff);
+                    color:#5b21b6;
+                    border-radius:999px;
+                    padding:10px 16px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:16px;
+                    box-shadow:0 4px 10px rgba(124,58,237,0.12);
+                ">➡️ 다음</button>
+            </div>
 
-    .sound-btn {{
-        background: linear-gradient(135deg, #34d399, #60a5fa);
-        font-size: 17px;
-        padding: 11px 20px;
-    }}
+            <div id="hintBox" style="
+                display:none;
+                background:linear-gradient(135deg,#fff7ed,#fffbeb);
+                border:1.5px solid #fbbf24;
+                color:#92400e;
+                border-radius:14px;
+                padding:7px 10px;
+                margin-top:6px;
+                margin-bottom:6px;
+                font-size:16px;
+                font-weight:900;
+                line-height:1.25;
+                word-break:break-word;
+                overflow-wrap:anywhere;
+                white-space:normal;
+                max-width:100%;
+                box-sizing:border-box;
+                box-shadow: 0 3px 8px rgba(251,191,36,0.10);
+            "></div>
 
-    .btn:active {{
-        transform: scale(0.96);
-    }}
+            <div id="resultBox" style="
+                display:none;
+                margin-top:8px;
+                font-size:15px;
+                font-weight:800;
+                color:#64748b;
+            "></div>
+        </div>
 
-    .effect {{
-        position: absolute;
-        font-size: 44px;
-        animation: floatUp 0.8s forwards;
-        pointer-events: none;
-        z-index: 30;
-    }}
-
-    @keyframes floatUp {{
-        0% {{ opacity: 1; transform: translateY(0) scale(1); }}
-        100% {{ opacity: 0; transform: translateY(-70px) scale(1.6); }}
-    }}
-
-    @media (max-width: 700px) {{
-        .game-wrap {{
-            padding: 12px;
-            min-height: 690px;
-            border-radius: 24px;
-            border-width: 3px;
-        }}
-
-        .top-bar {{
-            gap: 5px;
-            margin-bottom: 12px;
-        }}
-
-        .badge {{
-            font-size: 14px;
-            padding: 9px 4px;
-            border-radius: 14px;
-            line-height: 1.3;
-        }}
-
-        .message {{
-            font-size: 16px;
-            padding: 10px 8px;
-            border-radius: 18px;
-            margin-bottom: 12px;
-        }}
-
-        .card-area {{
-            min-height: 255px;
-        }}
-
-        .question-card {{
-            width: 96%;
-            min-height: 235px;
-            padding: 22px 14px;
-            border-radius: 24px;
-        }}
-
-        .category {{
-            font-size: 16px;
-        }}
-
-        .korean {{
-            font-size: 23px;
-            line-height: 1.5;
-        }}
-
-        .hint {{
-            font-size: 15px;
-            padding: 8px 10px;
-        }}
-
-        .answer-area {{
-            width: 96%;
-            padding: 14px 12px;
-            border-radius: 22px;
-        }}
-
-        .answer-sentence {{
-            font-size: 20px;
-        }}
-
-        .recognized {{
-            width: 96%;
-            font-size: 14px;
-            padding: 8px 10px;
-        }}
-
-        .btn {{
-            font-size: 14px;
-            padding: 10px 12px;
-        }}
-
-        .sound-btn {{
-            font-size: 14px;
-            padding: 10px 12px;
-        }}
-
-        .effect {{
-            font-size: 34px;
-        }}
-    }}
-</style>
-</head>
-
-<body>
-<div class="game-wrap">
-    <div class="top-bar">
-        <div class="badge">문제<br><span id="qNum">0</span> / <span id="total">0</span></div>
-        <div class="badge">정답<br><span id="score">0</span>개</div>
-        <div class="badge">상태<br><span id="state">대기</span></div>
-    </div>
-
-    <div id="message" class="message">
-        게임 시작을 누르고 한국어 상황을 영어로 말해 보세요!
-    </div>
-
-    <div class="card-area">
-        <div id="questionCard" class="question-card">
-            <div id="category" class="category">주제</div>
-            <div id="korean" class="korean">게임 시작을 눌러 주세요 🎮</div>
-            <div id="hint" class="hint"></div>
+        <div style="
+            margin-top:14px;
+            color:#64748b;
+            font-size:13px;
+            line-height:1.6;
+            font-weight:700;
+        ">
+            ※ Chrome 계열 브라우저에서 음성 인식이 가장 잘 작동합니다.<br>
+            ※ 마이크 권한 요청이 나오면 허용을 눌러 주세요.
         </div>
     </div>
 
-    <div id="recognized" class="recognized">
-        Chrome에서 마이크 권한을 허용해 주세요.
-    </div>
-
-    <div id="answerArea" class="answer-area">
-        <div class="answer-label">정답 문장</div>
-        <div id="answerSentence" class="answer-sentence"></div>
-        <button class="btn sound-btn" onclick="speakCurrentAnswer()">🔊 원어민 발음 듣기</button>
-    </div>
-
-    <div class="btn-row">
-        <button id="startBtn" class="btn" onclick="startGame()">🎤 게임 시작</button>
-        <button id="micBtn" class="btn" onclick="startOneRecognition()" style="display:none;">🎙️ 말하기</button>
-        <button class="btn sub-btn" onclick="showAnswer()">👀 정답 보기</button>
-        <button class="btn sub-btn" onclick="nextQuestion()">➡️ 다음</button>
-        <button class="btn sub-btn" onclick="resetGame()">🔄 다시 시작</button>
-    </div>
-</div>
-
-<script>
-const questions = {questions_json};
-const passRatio = {pass_ratio} / 100;
-const showFirstHint = {hint_js};
-const autoSound = {auto_sound_js};
-
-let currentIndex = 0;
-let score = 0;
-let gameStarted = false;
-let alreadyCorrect = false;
-let recognition = null;
-let isListening = false;
-
-const qNum = document.getElementById("qNum");
-const total = document.getElementById("total");
-const scoreBox = document.getElementById("score");
-const stateBox = document.getElementById("state");
-const messageBox = document.getElementById("message");
-const questionCard = document.getElementById("questionCard");
-const categoryBox = document.getElementById("category");
-const koreanBox = document.getElementById("korean");
-const hintBox = document.getElementById("hint");
-const answerArea = document.getElementById("answerArea");
-const answerSentence = document.getElementById("answerSentence");
-const recognizedBox = document.getElementById("recognized");
-const startBtn = document.getElementById("startBtn");
-const micBtn = document.getElementById("micBtn");
-
-total.innerText = questions.length;
-
-function normalizeText(text) {{
-    return String(text || "")
-        .toLowerCase()
-        .replace(/\\bi'm\\b/g, "i am")
-        .replace(/\\bim\\b/g, "i am")
-        .replace(/\\byou're\\b/g, "you are")
-        .replace(/\\bhe's\\b/g, "he is")
-        .replace(/\\bshe's\\b/g, "she is")
-        .replace(/\\bit's\\b/g, "it is")
-        .replace(/\\bwe're\\b/g, "we are")
-        .replace(/\\bthey're\\b/g, "they are")
-        .replace(/\\bdon't\\b/g, "do not")
-        .replace(/\\bdoesn't\\b/g, "does not")
-        .replace(/\\bdidn't\\b/g, "did not")
-        .replace(/\\bcan't\\b/g, "cannot")
-        .replace(/\\bcant\\b/g, "cannot")
-        .replace(/\\bi'll\\b/g, "i will")
-        .replace(/\\byou'll\\b/g, "you will")
-        .replace(/\\bhe'll\\b/g, "he will")
-        .replace(/\\bshe'll\\b/g, "she will")
-        .replace(/[.,!?;:'"’‘“”]/g, "")
-        .replace(/-/g, " ")
-        .replace(/\\s+/g, " ")
-        .trim();
-}}
-
-function wordsOnly(text) {{
-    return normalizeText(text).split(" ").filter(w => w.length > 0);
-}}
-
-function editDistance(a, b) {{
-    a = String(a || "");
-    b = String(b || "");
-    const dp = Array.from({{ length: a.length + 1 }}, () => Array(b.length + 1).fill(0));
-
-    for (let i = 0; i <= a.length; i++) dp[i][0] = i;
-    for (let j = 0; j <= b.length; j++) dp[0][j] = j;
-
-    for (let i = 1; i <= a.length; i++) {{
-        for (let j = 1; j <= b.length; j++) {{
-            const cost = a[i - 1] === b[j - 1] ? 0 : 1;
-            dp[i][j] = Math.min(
-                dp[i - 1][j] + 1,
-                dp[i][j - 1] + 1,
-                dp[i - 1][j - 1] + cost
-            );
-        }}
-    }}
-    return dp[a.length][b.length];
-}}
-
-function similarity(a, b) {{
-    if (!a || !b) return 0;
-    if (a === b) return 1;
-    const dist = editDistance(a, b);
-    return 1 - dist / Math.max(a.length, b.length);
-}}
-
-function soundKey(text) {{
-    return normalizeText(text)
-        .replace(/[^a-z]/g, "")
-        .replace(/tion/g, "shun")
-        .replace(/sion/g, "shun")
-        .replace(/th/g, "d")
-        .replace(/ph/g, "f")
-        .replace(/gh/g, "g")
-        .replace(/ck/g, "k")
-        .replace(/qu/g, "kw")
-        .replace(/x/g, "ks")
-        .replace(/c/g, "k")
-        .replace(/q/g, "k")
-        .replace(/z/g, "s")
-        .replace(/v/g, "b")
-        .replace(/r/g, "l")
-        .replace(/ee/g, "i")
-        .replace(/ea/g, "i")
-        .replace(/ie/g, "i")
-        .replace(/ei/g, "i")
-        .replace(/oo/g, "u")
-        .replace(/ou/g, "u")
-        .replace(/ow/g, "o")
-        .replace(/oa/g, "o")
-        .replace(/ai/g, "e")
-        .replace(/ay/g, "e")
-        .replace(/[aeiouy]/g, "")
-        .replace(/(.)\\1+/g, "$1");
-}}
-
-function aliasMatch(spokenWord, answerWord) {{
-    const sw = normalizeText(spokenWord).replace(/\\s+/g, "");
-    const aw = normalizeText(answerWord).replace(/\\s+/g, "");
-
-    const aliases = {{
-        "i": ["i", "eye", "ai"],
-        "you": ["you", "u", "yew"],
-        "he": ["he", "hi"],
-        "she": ["she", "see", "sea"],
-        "we": ["we", "wee"],
-        "they": ["they", "day"],
-        "one": ["one", "won"],
-        "two": ["two", "to", "too"],
-        "three": ["three", "tree"],
-        "four": ["four", "for"],
-        "eight": ["eight", "ate"],
-        "here": ["here", "hear"],
-        "there": ["there", "their"],
-        "right": ["right", "write"],
-        "wait": ["wait", "weight"],
-        "know": ["know", "no"],
-        "night": ["night", "knight"],
-        "okay": ["okay", "ok"],
-        "phone": ["phone", "fone"],
-        "coffee": ["coffee", "coffe"],
-        "please": ["please", "plz"]
-    }};
-
-    if (!aliases[aw]) return false;
-    return aliases[aw].includes(sw);
-}}
-
-function isUnderstandableWord(spokenWord, answerWord) {{
-    const sw = normalizeText(spokenWord).replace(/\\s+/g, "");
-    const aw = normalizeText(answerWord).replace(/\\s+/g, "");
-    if (!sw || !aw) return false;
-    if (sw === aw) return true;
-    if (aliasMatch(sw, aw)) return true;
-
-    const dist = editDistance(sw, aw);
-    const sim = similarity(sw, aw);
-
-    const soundSw = soundKey(sw);
-    const soundAw = soundKey(aw);
-
-    const sameFirst = sw[0] === aw[0];
-    const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
-    const soundSame = soundSw && soundAw && soundSw === soundAw;
-    const soundSameFirst = soundSw && soundAw && soundSw[0] === soundAw[0];
-
-    // 너무 다른 단어 방지: 첫소리도 다르고 유사도도 낮으면 오답
-    if (!sameFirst && !soundSameFirst && sim < 0.78) return false;
-
-    // 자음 뼈대가 같으면 발음/인식 차이로 허용
-    if (soundSame) return true;
-
-    // 짧은 기능어는 지나치게 관대하게 처리하지 않음
-    if (aw.length <= 2) return sim >= 0.90;
-
-    // 3~4글자 단어: 1글자 차이 또는 발음 유사 허용
-    if (aw.length <= 4) {{
-        return (sameFirst || soundSameFirst) && (dist <= 1 || sim >= 0.74);
-    }}
-
-    // 5~6글자 단어: 1~2글자 차이 또는 유사도 기준 허용
-    if (aw.length <= 6) {{
-        return (sameFirst || soundSameFirst || sameFirstTwo) && (dist <= 2 || sim >= 0.72);
-    }}
-
-    // 긴 단어는 좀 더 관대하게
-    return (sameFirst || soundSameFirst || sameFirstTwo) && (dist <= 3 || sim >= 0.68);
-}}
-
-function sentenceMatch(spoken, target) {{
-    const s = normalizeText(spoken);
-    const t = normalizeText(target);
-    if (!s || !t) return false;
-    if (s === t) return true;
-    if (s.includes(t) || t.includes(s)) {{
-        const ratio = Math.min(s.length, t.length) / Math.max(s.length, t.length);
-        if (ratio > 0.75) return true;
-    }}
-
-    const spokenWords = wordsOnly(s);
-    const targetWords = wordsOnly(t);
-
-    if (spokenWords.length === 0 || targetWords.length === 0) return false;
-
-    let matched = 0;
-    let used = new Array(spokenWords.length).fill(false);
-
-    for (let tw of targetWords) {{
-        let found = false;
-
-        for (let i = 0; i < spokenWords.length; i++) {{
-            if (used[i]) continue;
-            if (isUnderstandableWord(spokenWords[i], tw)) {{
-                used[i] = true;
-                found = true;
-                break;
-            }}
-        }}
-
-        if (found) matched += 1;
-    }}
-
-    const ratio = matched / targetWords.length;
-
-    // 긴 문장은 ASR이 중간을 누락할 수 있어 슬라이더 기준과 핵심어 기준을 함께 사용
-    const minRequired = Math.max(passRatio, 0.55);
-    return ratio >= minRequired;
-}}
-
-function makeFirstLetterHint(sentence) {{
-    return normalizeText(sentence)
-        .split(" ")
-        .map(w => w ? w[0] + "_".repeat(Math.max(0, Math.min(w.length - 1, 4))) : "")
-        .join(" ");
-}}
-
-function escapeHtml(text) {{
-    return String(text || "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}}
-
-function stopRecognition() {{
-    if (recognition) {{
-        recognition.onend = null;
-        recognition.onerror = null;
-        recognition.onresult = null;
-        try {{ recognition.abort(); }} catch(e) {{}}
-        try {{ recognition.stop(); }} catch(e) {{}}
-    }}
-    recognition = null;
-    isListening = false;
-    micBtn.innerText = "🎙️ 말하기";
-    micBtn.disabled = false;
-    micBtn.style.opacity = "1";
-}}
-
-function showCurrentQuestion() {{
-    if (currentIndex >= questions.length) {{
-        endGame();
-        return;
-    }}
-
-    stopRecognition();
-
-    alreadyCorrect = false;
-    questionCard.classList.remove("pop");
-    questionCard.style.opacity = "1";
-    questionCard.style.transform = "scale(1)";
-    questionCard.style.display = "flex";
-
-    answerArea.style.display = "none";
-    recognizedBox.innerText = "";
-
-    const q = questions[currentIndex];
-
-    qNum.innerText = currentIndex + 1;
-    categoryBox.innerText = q.category;
-    koreanBox.innerText = q.korean;
-
-    if (showFirstHint) {{
-        hintBox.style.display = "block";
-        hintBox.innerText = "힌트: " + makeFirstLetterHint(q.sentence);
-    }} else {{
-        hintBox.style.display = "none";
-        hintBox.innerText = "";
-    }}
-
-    messageBox.innerText = "🎙️ 말하기 버튼을 누르고 영어로 말해 보세요.";
-    stateBox.innerText = "대기";
-    startBtn.style.display = "none";
-    micBtn.style.display = "inline-block";
-}}
-
-function showHintAfterWrong() {{
-    if (currentIndex >= questions.length) return;
-    const q = questions[currentIndex];
-    hintBox.style.display = "block";
-    hintBox.innerText = "힌트: " + (q.hint || makeFirstLetterHint(q.sentence));
-}}
-
-function showAnswerArea() {{
-    if (currentIndex >= questions.length) return;
-    answerSentence.innerText = questions[currentIndex].sentence;
-    answerArea.style.display = "block";
-}}
-
-function speakText(text) {{
-    if (!("speechSynthesis" in window)) {{
-        recognizedBox.innerText = "❌ 이 브라우저는 음성 재생을 지원하지 않습니다.";
-        return;
-    }}
-
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.lang = "en-US";
-    utterance.rate = 0.85;
-    utterance.pitch = 1.02;
-
-    const voices = window.speechSynthesis.getVoices();
-    const preferred = voices.find(v =>
-        v.lang && v.lang.toLowerCase().startsWith("en") &&
-        /(samantha|jenny|aria|zira|google us english|karen|victoria|female)/i.test(v.name)
-    );
-    if (preferred) utterance.voice = preferred;
-
-    window.speechSynthesis.speak(utterance);
-}}
-
-function speakCurrentAnswer() {{
-    if (currentIndex >= questions.length) return;
-    speakText(questions[currentIndex].sentence);
-}}
-
-function showEffects() {{
-    const wrap = document.querySelector(".game-wrap");
-    const icons = ["💥", "✨", "🎉", "⭐", "👏", "🌟"];
-
-    for (let i = 0; i < 12; i++) {{
-        const e = document.createElement("div");
-        e.className = "effect";
-        e.innerText = icons[Math.floor(Math.random() * icons.length)];
-        e.style.left = Math.random() * 80 + 10 + "%";
-        e.style.top = Math.random() * 50 + 20 + "%";
-        wrap.appendChild(e);
-
-        setTimeout(() => {{
-            e.remove();
-        }}, 850);
-    }}
-}}
-
-function correctAnswer(transcript) {{
-    if (alreadyCorrect) return;
-
-    alreadyCorrect = true;
-    score++;
-    scoreBox.innerText = score;
-
-    recognizedBox.innerHTML = "🗣️ " + escapeHtml(transcript) + " <span style='color:#16a34a;'>✅ 정답입니다</span>";
-    messageBox.innerText = "💥 정답! 다음 문제는 직접 넘기세요.";
-    stateBox.innerText = "정답";
-
-    showAnswerArea();
-
-    questionCard.classList.add("pop");
-    showEffects();
-
-    stopRecognition();
-
-    if (autoSound) {{
-        setTimeout(() => {{
-            speakCurrentAnswer();
-        }}, 350);
-    }}
-}}
-
-function checkSpeech(transcript) {{
-    if (!gameStarted || alreadyCorrect || currentIndex >= questions.length) return;
-
-    recognizedBox.innerText = "🗣️ 인식: " + transcript;
-
-    const target = questions[currentIndex].sentence;
-
-    if (sentenceMatch(transcript, target)) {{
-        correctAnswer(transcript);
-    }} else {{
-        messageBox.innerText = "🍊 아직 정답으로 인식되지 않았습니다. 힌트를 보고 다시 말해 보세요.";
-        stateBox.innerText = "다시";
-        showHintAfterWrong();
-        showAnswerButtonOnly();
-    }}
-}}
-
-function showAnswerButtonOnly() {{
-    // 버튼은 항상 보이므로 별도 처리 없음. 의미상 함수만 유지.
-}}
-
-async function requestMicPermission() {{
-    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {{
-        try {{
-            const stream = await navigator.mediaDevices.getUserMedia({{ audio: true }});
-            stream.getTracks().forEach(track => track.stop());
-            return true;
-        }} catch(e) {{
-            recognizedBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
-            return false;
-        }}
-    }}
-    return true;
-}}
-
-async function startOneRecognition() {{
-    if (!gameStarted || currentIndex >= questions.length || alreadyCorrect) return;
+    <script>
+    const ITEMS = __ITEMS_JSON__;
+
+    let currentList = [];
+    let currentIndex = 0;
+    let currentItem = null;
+    let score = 0;
+    let alreadyCorrect = false;
+    let isListening = false;
+    let recognitionTimeout = null;
+
+    const categorySelect = document.getElementById("categorySelect");
+    const randomBtn = document.getElementById("randomBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const categoryLabel = document.getElementById("categoryLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const koPrompt = document.getElementById("koPrompt");
+    const blankSentence = document.getElementById("blankSentence");
+    const hintBox = document.getElementById("hintBox");
+    const hintBtn = document.getElementById("hintBtn");
+    const listenBtn = document.getElementById("listenBtn");
+    const answerBtn = document.getElementById("answerBtn");
+    const micBtn = document.getElementById("micBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const transcriptBox = document.getElementById("transcriptBox");
+    const resultBox = document.getElementById("resultBox");
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
 
-    if (!SpeechRecognition) {{
-        recognizedBox.innerText = "❌ 이 브라우저는 음성 인식을 지원하지 않습니다. Chrome으로 접속해 주세요.";
-        return;
-    }}
+    function uniqueCategories() {
+        const cats = ["전체"];
+        ITEMS.forEach(item => {
+            if (!cats.includes(item.cat)) cats.push(item.cat);
+        });
+        return cats;
+    }
 
-    if (isListening) {{
-        stopRecognition();
-        return;
-    }}
+    function initCategories() {
+        const cats = uniqueCategories();
+        categorySelect.innerHTML = "";
+        cats.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat;
+            option.innerText = cat;
+            categorySelect.appendChild(option);
+        });
+    }
 
-    const micOK = await requestMicPermission();
-    if (!micOK) return;
+    function getFilteredItems() {
+        const selected = categorySelect.value;
+        if (selected === "전체") return ITEMS.slice();
+        return ITEMS.filter(item => item.cat === selected);
+    }
 
-    stopRecognition();
-    window.speechSynthesis.cancel();
+    function shuffleArray(arr) {
+        const copied = arr.slice();
+        for (let i = copied.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copied[i], copied[j]] = [copied[j], copied[i]];
+        }
+        return copied;
+    }
 
-    recognition = new SpeechRecognition();
-    recognition.lang = "en-US";
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 5;
+    function normalizeText(text) {
+        return String(text || "")
+            .toLowerCase()
+            .replace(/\bi'm\b/g, "i am")
+            .replace(/\bim\b/g, "i am")
+            .replace(/\byou're\b/g, "you are")
+            .replace(/\bhe's\b/g, "he is")
+            .replace(/\bshe's\b/g, "she is")
+            .replace(/\bit's\b/g, "it is")
+            .replace(/\bwe're\b/g, "we are")
+            .replace(/\bthey're\b/g, "they are")
+            .replace(/\bdon't\b/g, "do not")
+            .replace(/\bdoesn't\b/g, "does not")
+            .replace(/\bdidn't\b/g, "did not")
+            .replace(/\bcan't\b/g, "cannot")
+            .replace(/\bcant\b/g, "cannot")
+            .replace(/\bi'll\b/g, "i will")
+            .replace(/\byou'll\b/g, "you will")
+            .replace(/\bhe'll\b/g, "he will")
+            .replace(/\bshe'll\b/g, "she will")
+            .replace(/[.,!?;:'"’‘“”]/g, "")
+            .replace(/-/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
 
-    isListening = true;
-    micBtn.innerText = "👂 듣는 중";
-    micBtn.disabled = true;
-    micBtn.style.opacity = "0.75";
-    messageBox.innerText = "듣고 있습니다.";
-    stateBox.innerText = "듣는 중";
-    recognizedBox.innerText = "";
+    function wordsOnly(text) {
+        return normalizeText(text).split(" ").filter(w => w.length > 0);
+    }
 
-    let finalTranscript = "";
-    let checked = false;
+    function editDistance(a, b) {
+        a = String(a || "");
+        b = String(b || "");
+        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 
-    recognition.onresult = function(event) {{
-        let currentText = "";
-        let hasFinal = false;
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
 
-        for (let i = 0; i < event.results.length; i++) {{
-            let best = event.results[i][0].transcript.trim();
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+        return dp[a.length][b.length];
+    }
 
-            for (let j = 0; j < event.results[i].length; j++) {{
-                const alt = event.results[i][j].transcript.trim();
-                if (sentenceMatch(alt, questions[currentIndex].sentence)) {{
-                    best = alt;
+    function wordSimilarity(a, b) {
+        if (!a || !b) return 0;
+        if (a === b) return 1;
+        const dist = editDistance(a, b);
+        return 1 - (dist / Math.max(a.length, b.length));
+    }
+
+    function soundKey(text) {
+        return normalizeText(text)
+            .replace(/[^a-z]/g, "")
+            .replace(/tion/g, "shun")
+            .replace(/sion/g, "shun")
+            .replace(/th/g, "d")
+            .replace(/ph/g, "f")
+            .replace(/gh/g, "g")
+            .replace(/ck/g, "k")
+            .replace(/qu/g, "kw")
+            .replace(/x/g, "ks")
+            .replace(/c/g, "k")
+            .replace(/q/g, "k")
+            .replace(/z/g, "s")
+            .replace(/v/g, "b")
+            .replace(/r/g, "l")
+            .replace(/ee/g, "i")
+            .replace(/ea/g, "i")
+            .replace(/ie/g, "i")
+            .replace(/ei/g, "i")
+            .replace(/oo/g, "u")
+            .replace(/ou/g, "u")
+            .replace(/ow/g, "o")
+            .replace(/oa/g, "o")
+            .replace(/ai/g, "e")
+            .replace(/ay/g, "e")
+            .replace(/[aeiouy]/g, "")
+            .replace(/(.)\1+/g, "$1");
+    }
+
+    function aliasMatch(spokenWord, answerWord) {
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        const aliases = {
+            "i": ["i", "eye", "ai"],
+            "you": ["you", "u", "yew"],
+            "he": ["he", "hi"],
+            "she": ["she", "see", "sea"],
+            "we": ["we", "wee"],
+            "they": ["they", "day"],
+            "one": ["one", "won"],
+            "two": ["two", "to", "too"],
+            "three": ["three", "tree"],
+            "four": ["four", "for"],
+            "eight": ["eight", "ate"],
+            "here": ["here", "hear"],
+            "there": ["there", "their"],
+            "right": ["right", "write"],
+            "wait": ["wait", "weight"],
+            "know": ["know", "no"],
+            "okay": ["okay", "ok"],
+            "phone": ["phone", "fone"],
+            "coffee": ["coffee", "coffe"],
+            "please": ["please", "plz"]
+        };
+
+        if (!aliases[aw]) return false;
+        return aliases[aw].includes(sw);
+    }
+
+    function isUnderstandableWord(spokenWord, answerWord) {
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        if (!sw || !aw) return false;
+        if (sw === aw) return true;
+        if (aliasMatch(sw, aw)) return true;
+
+        const dist = editDistance(sw, aw);
+        const sim = wordSimilarity(sw, aw);
+        const soundSw = soundKey(sw);
+        const soundAw = soundKey(aw);
+
+        const sameFirst = sw.charAt(0) === aw.charAt(0);
+        const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
+        const soundSame = soundSw && soundAw && soundSw === soundAw;
+        const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
+
+        if (!sameFirst && !soundSameFirst && sim < 0.78) return false;
+        if (soundSame) return true;
+
+        if (aw.length <= 2) return sim >= 0.9;
+        if (aw.length <= 4) return (sameFirst || soundSameFirst) && (dist <= 1 || sim >= 0.74);
+        if (aw.length <= 6) return (sameFirst || soundSameFirst || sameFirstTwo) && (dist <= 2 || sim >= 0.72);
+
+        return (sameFirst || soundSameFirst || sameFirstTwo) && (dist <= 3 || sim >= 0.68);
+    }
+
+    function isCloseEnough(spoken, answer) {
+        const s = normalizeText(spoken);
+        const a = normalizeText(answer);
+
+        if (!s || !a) return false;
+        if (s === a) return true;
+
+        const spokenWords = wordsOnly(s);
+        const answerWords = wordsOnly(a);
+
+        if (spokenWords.length === 0 || answerWords.length === 0) return false;
+
+        let matched = 0;
+        let used = new Array(spokenWords.length).fill(false);
+
+        for (let aw of answerWords) {
+            let found = false;
+            for (let i = 0; i < spokenWords.length; i++) {
+                if (used[i]) continue;
+                if (isUnderstandableWord(spokenWords[i], aw)) {
+                    used[i] = true;
+                    found = true;
                     break;
-                }}
-            }}
+                }
+            }
+            if (found) matched += 1;
+        }
 
-            if (best) currentText += (currentText ? " " : "") + best;
-            if (event.results[i].isFinal) hasFinal = true;
-        }}
+        const ratio = matched / answerWords.length;
 
-        if (currentText) {{
-            finalTranscript = currentText;
-            recognizedBox.innerText = "🗣️ 인식: " + currentText;
-        }}
+        // 긴 문장은 ASR 누락이 생길 수 있어 65% 이상 핵심 단어가 맞으면 통과
+        return ratio >= 0.65;
+    }
 
-        if (hasFinal && !checked) {{
-            checked = true;
-            checkSpeech(finalTranscript);
-        }}
-    }};
+    function isCorrectSpeech(spoken, answer) {
+        return isCloseEnough(spoken, answer);
+    }
 
-    recognition.onerror = function(event) {{
-        showHintAfterWrong();
-        recognizedBox.innerText = event.error === "no-speech"
-            ? "인식하지 못했습니다. 다시 눌러 주세요."
-            : "마이크 오류가 났습니다. 다시 눌러 주세요.";
-        messageBox.innerText = "다시 말하거나 정답을 확인할 수 있습니다.";
-        stateBox.innerText = "오류";
-        stopRecognition();
-    }};
+    function escapeHtml(text) {
+        return String(text || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-    recognition.onend = function() {{
-        if (!checked && finalTranscript) {{
-            checked = true;
-            checkSpeech(finalTranscript);
-        }}
+    function makeTwoLetterHint(answerWord) {
+        if (!answerWord) return "";
+
+        return String(answerWord).split("/").map(part => {
+            return part.trim().split(" ").map(word => {
+                const clean = word.trim();
+                if (clean.length <= 2) return clean;
+                return clean.slice(0, 2) + "_".repeat(Math.min(clean.length - 2, 6));
+            }).join(" ");
+        }).join(" / ");
+    }
+
+    function makeBlankSentenceHtml(blankText) {
+        const parts = String(blankText || "").split(/(______)/g);
+
+        return parts.map(part => {
+            if (part === "______") {
+                return "<span style='display:inline-block; min-width:120px; height:42px; vertical-align:middle; background:#e0f2fe; border-radius:14px; margin:0 6px; border:1.5px solid #bae6fd;'></span>";
+            }
+
+            return escapeHtml(part);
+        }).join("");
+    }
+
+    function makeFilledBlankSentenceHtml(blankText, hintText) {
+        const answers = String(hintText || "")
+            .split("/")
+            .map(x => x.trim())
+            .filter(x => x.length > 0);
+
+        let blankIndex = 0;
+        const parts = String(blankText || "").split(/(______)/g);
+
+        return parts.map(part => {
+            if (part === "______") {
+                const fill = answers[blankIndex] || "";
+                blankIndex += 1;
+
+                return "<span style='display:inline-block; min-width:96px; vertical-align:middle; background:#dcfce7; color:#166534; border-radius:14px; margin:0 6px; padding:4px 12px; border:1.5px solid #86efac; font-weight:900; box-shadow:0 3px 8px rgba(34,197,94,0.10);'>"
+                    + escapeHtml(fill) +
+                    "</span>";
+            }
+
+            return escapeHtml(part);
+        }).join("");
+    }
+
+    function updateScore() {
+        scoreLabel.innerText = "정답 " + score + "개";
+    }
+
+    function resetMicState() {
         isListening = false;
-        micBtn.innerText = "🎙️ 말하기";
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
         micBtn.disabled = false;
         micBtn.style.opacity = "1";
-    }};
+        micBtn.style.pointerEvents = "auto";
+        micBtn.innerText = "🎙️";
+    }
 
-    try {{
-        recognition.start();
-    }} catch(e) {{
-        recognizedBox.innerText = "마이크가 아직 준비되지 않았습니다. 다시 눌러 주세요.";
+    function stopRecognition() {
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        if (recognition) {
+            try { recognition.onresult = null; } catch (e) {}
+            try { recognition.onerror = null; } catch (e) {}
+            try { recognition.onend = null; } catch (e) {}
+            try { recognition.stop(); } catch (e) {}
+            try { recognition.abort(); } catch (e) {}
+            recognition = null;
+        }
+        resetMicState();
+    }
+
+    function speak(text) {
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "en-US";
+        utterance.rate = 0.82;
+        utterance.pitch = 1.05;
+
+        const voices = window.speechSynthesis.getVoices();
+        const preferred = voices.find(v =>
+            v.lang && v.lang.toLowerCase().startsWith("en") &&
+            /(samantha|jenny|aria|zira|google us english|karen|victoria|female)/i.test(v.name)
+        );
+        if (preferred) utterance.voice = preferred;
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    function loadQuestion(index = 0) {
+        if (currentList.length === 0) {
+            currentList = getFilteredItems();
+        }
+
+        if (index >= currentList.length) index = 0;
+        if (index < 0) index = currentList.length - 1;
+
+        currentIndex = index;
+        currentItem = currentList[currentIndex];
+        alreadyCorrect = false;
+
+        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
+        const emoji = currentItem.emoji || "🎙️";
+        koPrompt.innerHTML =
+            "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
+            "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
+
+        blankSentence.innerHTML = makeBlankSentenceHtml(currentItem.blank);
+        hintBox.style.display = "none";
+        hintBox.innerText = "";
+        transcriptBox.innerText = "";
+
+        resetMicState();
+        hintBtn.style.display = "inline-block";
+        micBtn.style.display = "inline-block";
+        answerBtn.style.display = "none";
+        listenBtn.style.display = "none";
+        nextBtn.style.display = "inline-block";
+
+        resultBox.style.display = "none";
+        resultBox.innerText = "";
+        updateScore();
+    }
+
+    function goNextQuestion() {
         stopRecognition();
-    }}
-}}
+        window.speechSynthesis.cancel();
+        loadQuestion(currentIndex + 1);
+    }
 
-function startGame() {{
-    gameStarted = true;
-    currentIndex = 0;
-    score = 0;
-    alreadyCorrect = false;
+    function checkSpeech(spokenText) {
+        if (!currentItem) return;
 
-    scoreBox.innerText = score;
-    qNum.innerText = 1;
-    total.innerText = questions.length;
-    stateBox.innerText = "시작";
+        const recognized = String(spokenText || "").trim();
 
-    showCurrentQuestion();
-}}
+        if (isCorrectSpeech(recognized, currentItem.answer)) {
+            if (!alreadyCorrect) {
+                score += 1;
+                alreadyCorrect = true;
+            }
 
-function nextQuestion() {{
-    if (!gameStarted) return;
+            updateScore();
 
-    stopRecognition();
-    window.speechSynthesis.cancel();
+            transcriptBox.innerHTML =
+                "<span style='color:#4c1d95;'>" + escapeHtml(recognized || currentItem.answer) + "</span> " +
+                "<span style='color:#166534;'>✅ 정답입니다</span>";
 
-    currentIndex++;
-    showCurrentQuestion();
-}}
+            blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
 
-function showAnswer() {{
-    if (!gameStarted || currentIndex >= questions.length) return;
+            hintBox.style.display = "none";
+            answerBtn.style.display = "none";
+            listenBtn.style.display = "inline-block";
+            nextBtn.style.display = "inline-block";
 
-    showAnswerArea();
-    showHintAfterWrong();
-    messageBox.innerText = "👀 정답을 확인하고 다시 말해 보세요. 맞히면 정답으로 인정됩니다.";
-    stateBox.innerText = "정답 보기";
-    speakCurrentAnswer();
-}}
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
 
-function resetGame() {{
-    stopRecognition();
-    window.speechSynthesis.cancel();
+            speak(currentItem.answer);
+        } else {
+            transcriptBox.innerHTML =
+                "<span style='color:#991b1b;'>" + escapeHtml(recognized || "인식 실패") + "</span> " +
+                "<span style='color:#991b1b;'>❌</span>";
 
-    gameStarted = false;
-    currentIndex = 0;
-    score = 0;
-    alreadyCorrect = false;
+            hintBox.style.display = "block";
+            hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
 
-    scoreBox.innerText = score;
-    qNum.innerText = 0;
-    stateBox.innerText = "대기";
-    messageBox.innerText = "게임 시작을 누르고 한국어 상황을 영어로 말해 보세요!";
-    categoryBox.innerText = "주제";
-    koreanBox.innerText = "게임 시작을 눌러 주세요 🎮";
-    hintBox.innerText = "";
-    hintBox.style.display = "none";
-    answerArea.style.display = "none";
-    recognizedBox.innerText = "Chrome에서 마이크 권한을 허용해 주세요.";
-    questionCard.classList.remove("pop");
-    questionCard.style.opacity = "1";
-    questionCard.style.transform = "scale(1)";
-    questionCard.style.display = "flex";
+            answerBtn.style.display = "inline-block";
+            listenBtn.style.display = "none";
+            nextBtn.style.display = "inline-block";
 
-    startBtn.style.display = "inline-block";
-    micBtn.style.display = "none";
-}}
+            resultBox.style.display = "block";
+            resultBox.style.color = "#92400e";
+            resultBox.innerText = "힌트를 보고 다시 연습해 보세요.";
+        }
+    }
 
-function endGame() {{
-    stopRecognition();
-    window.speechSynthesis.cancel();
+    async function startRecognition() {
+        if (!SpeechRecognition) {
+            transcriptBox.innerText = "Chrome에서 열어 주세요.";
+            return;
+        }
 
-    gameStarted = false;
-    alreadyCorrect = false;
+        if (!currentItem || alreadyCorrect) return;
 
-    stateBox.innerText = "완료";
-    messageBox.innerText = "🎉 게임 종료! 수고했습니다!";
-    categoryBox.innerText = "최종 점수";
-    koreanBox.innerText = score + " / " + questions.length;
-    hintBox.style.display = "block";
-    hintBox.innerText = "다시 하려면 다시 시작을 눌러 주세요.";
-    answerArea.style.display = "none";
-    recognizedBox.innerText = "최종 정답 개수: " + score + "개";
+        stopRecognition();
 
-    startBtn.style.display = "inline-block";
-    micBtn.style.display = "none";
-}}
-</script>
-</body>
-</html>
-"""
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(track => track.stop());
+            } catch (err) {
+                transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                resetMicState();
+                return;
+            }
+        }
 
-components.html(game_html, height=760, scrolling=True)
+        window.speechSynthesis.cancel();
+
+        try {
+            recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.interimResults = true;
+            recognition.continuous = false;
+            recognition.maxAlternatives = 5;
+
+            isListening = true;
+            micBtn.disabled = true;
+            micBtn.style.opacity = "0.78";
+            micBtn.innerText = "👂";
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
+            transcriptBox.innerText = "";
+
+            recognitionTimeout = setTimeout(function() {
+                if (isListening) {
+                    try { recognition.stop(); } catch (e) {}
+                    resetMicState();
+                }
+            }, 9000);
+
+            recognition.onresult = function(event) {
+                let spokenText = "";
+                let hasFinal = false;
+
+                for (let i = 0; i < event.results.length; i++) {
+                    let piece = event.results[i][0].transcript.trim();
+
+                    // 여러 후보 중 정답에 가까운 후보가 있으면 그걸 사용
+                    for (let j = 0; j < event.results[i].length; j++) {
+                        const alt = event.results[i][j].transcript.trim();
+                        if (isCorrectSpeech(alt, currentItem.answer)) {
+                            piece = alt;
+                            break;
+                        }
+                    }
+
+                    if (piece) {
+                        spokenText += (spokenText ? " " : "") + piece;
+                    }
+                    if (event.results[i].isFinal) {
+                        hasFinal = true;
+                    }
+                }
+
+                transcriptBox.innerText = spokenText;
+
+                if (hasFinal) {
+                    stopRecognition();
+                    checkSpeech(spokenText);
+                }
+            };
+
+            recognition.onerror = function(event) {
+                stopRecognition();
+
+                if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                    transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                } else {
+                    transcriptBox.innerText = "인식 실패";
+                    hintBox.style.display = "block";
+                    hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+                    answerBtn.style.display = "inline-block";
+                    nextBtn.style.display = "inline-block";
+                    resultBox.style.display = "block";
+                    resultBox.style.color = "#64748b";
+                    resultBox.innerText = "다시 누르거나 다음 문제로 넘어갈 수 있습니다.";
+                }
+            };
+
+            recognition.onend = function() {
+                resetMicState();
+            };
+
+            recognition.start();
+        } catch (err) {
+            stopRecognition();
+            transcriptBox.innerText = "다시 눌러 주세요.";
+        }
+    }
+
+    categorySelect.addEventListener("change", function() {
+        stopRecognition();
+        currentList = getFilteredItems();
+        currentIndex = 0;
+        loadQuestion(0);
+    });
+
+    randomBtn.addEventListener("click", function() {
+        stopRecognition();
+        currentList = shuffleArray(getFilteredItems());
+        loadQuestion(0);
+    });
+
+    resetBtn.addEventListener("click", function() {
+        stopRecognition();
+        score = 0;
+        alreadyCorrect = false;
+        updateScore();
+        resultBox.style.display = "none";
+        resultBox.innerText = "";
+        loadQuestion(0);
+    });
+
+    hintBtn.addEventListener("click", function() {
+        hintBox.style.display = "block";
+        hintBox.innerText = makeTwoLetterHint(currentItem.hint);
+    });
+
+    listenBtn.addEventListener("click", function() {
+        speak(currentItem.answer);
+    });
+
+    answerBtn.addEventListener("click", function() {
+        if (!currentItem) return;
+        blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
+        transcriptBox.innerHTML = "<span style='color:#166534;'>" + escapeHtml(currentItem.answer) + "</span>";
+        listenBtn.style.display = "inline-block";
+        nextBtn.style.display = "inline-block";
+        speak(currentItem.answer);
+
+        resultBox.style.display = "block";
+        resultBox.style.color = "#166534";
+        resultBox.innerText = "빈칸에 들어간 단어를 보고 다시 말하면 정답으로 인정됩니다.";
+    });
+
+    micBtn.addEventListener("click", startRecognition);
+
+    nextBtn.addEventListener("click", function() {
+        goNextQuestion();
+    });
+
+    initCategories();
+    currentList = getFilteredItems();
+    updateScore();
+    loadQuestion(0);
+    </script>
+    """
+
+    html = html.replace("__ITEMS_JSON__", items_json)
+    components.html(html, height=880, scrolling=True)
+
+
+speaking_practice_component(PRACTICE_ITEMS)
