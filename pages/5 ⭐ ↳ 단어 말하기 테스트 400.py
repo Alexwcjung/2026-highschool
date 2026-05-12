@@ -1703,14 +1703,6 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.markdown(
-    """
-    <div class="main-title-box">
-        <h1>🌱 Daily English 400 단어 카드 말하기 게임</h1>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 
 # =========================================================
