@@ -2134,6 +2134,81 @@ def daily_word_card_speaking_game(word_themes):
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
+    let isListening = false;
+    let typingTimer = null;
+    let recognitionStartTimer = null;
+    let activeQuestionKey = "";
+
+    function resetMicButton() {
+        isListening = false;
+        micBtn.disabled = false;
+        micBtn.innerText = "🎙️ 말하기";
+        micBtn.style.opacity = "1";
+        micBtn.style.cursor = "pointer";
+    }
+
+    function stopRecognitionSafely() {
+        if (recognitionStartTimer) {
+            clearTimeout(recognitionStartTimer);
+            recognitionStartTimer = null;
+        }
+
+        if (recognition) {
+            try {
+                recognition.onresult = null;
+                recognition.onerror = null;
+                recognition.onend = null;
+                recognition.abort();
+            } catch (err) {
+                try { recognition.stop(); } catch (err2) {}
+            }
+        }
+
+        recognition = null;
+        resetMicButton();
+    }
+
+    function clearTypingEffect() {
+        if (typingTimer) {
+            clearInterval(typingTimer);
+            typingTimer = null;
+        }
+    }
+
+    function displaySpellingStepByStep(text) {
+        clearTypingEffect();
+
+        const raw = String(text || "").trim();
+        if (!raw) {
+            transcriptBox.innerText = "";
+            return;
+        }
+
+        const letters = raw.split("");
+        let index = 0;
+        transcriptBox.innerHTML = "";
+
+        typingTimer = setInterval(function() {
+            if (index >= letters.length) {
+                clearTypingEffect();
+                return;
+            }
+
+            const ch = letters[index];
+            const safe = escapeHtml(ch);
+
+            if (ch === " ") {
+                transcriptBox.innerHTML += "<span style='display:inline-block; width:12px;'></span>";
+            } else {
+                transcriptBox.innerHTML +=
+                    "<span style='display:inline-block; margin:2px 3px; padding:3px 7px; border-radius:10px; background:#eef2ff; color:#3730a3; border:1px solid #c7d2fe; font-weight:900;'>" +
+                    safe +
+                    "</span>";
+            }
+
+            index += 1;
+        }, 55);
+    }
 
     function uniqueCategories() {
         const cats = ["전체"];
@@ -2607,6 +2682,8 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function showFinishScreen() {
+        stopRecognitionSafely();
+        clearTypingEffect();
         finished = true;
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
@@ -2631,9 +2708,12 @@ def daily_word_card_speaking_game(word_themes):
         if (index < 0) index = 0;
 
         showGameArea();
+        stopRecognitionSafely();
+        clearTypingEffect();
 
         currentIndex = index;
         currentItem = currentList[currentIndex];
+        activeQuestionKey = getItemKey(currentItem);
 
         emojiBox.innerText = currentItem.emoji || "🌱";
         meaningBox.innerText = currentItem.meaning;
@@ -2661,6 +2741,9 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function goNextCard() {
+        stopRecognitionSafely();
+        clearTypingEffect();
+
         if (currentIndex + 1 >= currentList.length) {
             showFinishScreen();
         } else {
@@ -2699,7 +2782,7 @@ def daily_word_card_speaking_game(word_themes):
         }
     }
 
-    function startRecognition() {
+    async function startRecognition() {
         if (!SpeechRecognition) {
             resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
             resultBox.style.background = "#fef2f2";
@@ -2708,9 +2791,29 @@ def daily_word_card_speaking_game(word_themes):
             return;
         }
 
-        if (finished) return;
+        if (finished || !currentItem) return;
 
+        // 몇 문제 뒤 버튼이 멈추는 것을 막기 위해 이전 음성 인식 객체를 먼저 완전히 정리
+        stopRecognitionSafely();
+        clearTypingEffect();
         window.speechSynthesis.cancel();
+
+        // 모바일/브라우저에서 마이크 권한 상태가 꼬이는 경우를 줄이기 위한 사전 권한 요청
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(function(track) { track.stop(); });
+            } catch (err) {
+                resultBox.innerText = "마이크 권한을 허용한 뒤 다시 눌러 주세요.";
+                resultBox.style.background = "#fef2f2";
+                resultBox.style.borderColor = "#fecaca";
+                resultBox.style.color = "#991b1b";
+                resetMicButton();
+                return;
+            }
+        }
+
+        const questionKeyAtStart = getItemKey(currentItem);
 
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
@@ -2718,50 +2821,97 @@ def daily_word_card_speaking_game(word_themes):
         recognition.continuous = false;
         recognition.maxAlternatives = 10;
 
-        micBtn.innerText = "🎙️ 듣는 중...";
+        isListening = true;
+        micBtn.disabled = true;
+        micBtn.innerText = "👂 듣는 중...";
+        micBtn.style.opacity = "0.72";
+        micBtn.style.cursor = "not-allowed";
+
+        transcriptBox.innerText = "";
         resultBox.innerText = "말해 보세요.";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
         resultBox.style.color = "#1d4ed8";
 
+        // 혹시 onend가 늦게 오거나 브라우저가 멈춘 경우에도 버튼이 다시 살아나도록 안전장치
+        recognitionStartTimer = setTimeout(function() {
+            if (isListening) {
+                stopRecognitionSafely();
+                resultBox.innerText = "인식이 오래 걸렸습니다. 다시 눌러 주세요.";
+                resultBox.style.background = "#f8fafc";
+                resultBox.style.borderColor = "#e2e8f0";
+                resultBox.style.color = "#334155";
+            }
+        }, 9000);
+
         recognition.onresult = function(event) {
+            if (!currentItem || questionKeyAtStart !== getItemKey(currentItem)) {
+                resetMicButton();
+                return;
+            }
+
             let bestTranscript = "";
 
-            for (let i = 0; i < event.results[0].length; i++) {
-                const transcript = event.results[0][i].transcript;
-                if (i === 0) bestTranscript = transcript;
+            if (event.results && event.results[0]) {
+                for (let i = 0; i < event.results[0].length; i++) {
+                    const transcript = event.results[0][i].transcript.trim();
+                    if (i === 0) bestTranscript = transcript;
 
-                if (isCorrectSpeech(transcript, currentItem.word)) {
-                    bestTranscript = transcript;
-                    break;
+                    if (isCorrectSpeech(transcript, currentItem.word)) {
+                        bestTranscript = transcript;
+                        break;
+                    }
                 }
             }
 
-            transcriptBox.innerText = bestTranscript;
+            displaySpellingStepByStep(bestTranscript);
             checkSpeech(bestTranscript);
         };
 
         recognition.onerror = function(event) {
+            if (recognitionStartTimer) {
+                clearTimeout(recognitionStartTimer);
+                recognitionStartTimer = null;
+            }
+
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                 resultBox.innerText = "마이크 권한을 허용해 주세요.";
                 resultBox.style.background = "#fef2f2";
                 resultBox.style.borderColor = "#fecaca";
                 resultBox.style.color = "#991b1b";
+            } else if (event.error === "no-speech") {
+                resultBox.innerText = "소리가 인식되지 않았습니다. 다시 눌러 주세요.";
+                resultBox.style.background = "#f8fafc";
+                resultBox.style.borderColor = "#e2e8f0";
+                resultBox.style.color = "#334155";
             } else {
-                resultBox.innerText = "다시 눌러 주세요.";
+                resultBox.innerText = "음성 인식이 잠시 멈췄습니다. 다시 눌러 주세요.";
                 resultBox.style.background = "#f8fafc";
                 resultBox.style.borderColor = "#e2e8f0";
                 resultBox.style.color = "#334155";
             }
 
-            micBtn.innerText = "🎙️ 말하기";
+            resetMicButton();
         };
 
         recognition.onend = function() {
-            micBtn.innerText = "🎙️ 말하기";
+            if (recognitionStartTimer) {
+                clearTimeout(recognitionStartTimer);
+                recognitionStartTimer = null;
+            }
+            recognition = null;
+            resetMicButton();
         };
 
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (err) {
+            resultBox.innerText = "마이크가 아직 준비되지 않았습니다. 다시 눌러 주세요.";
+            resultBox.style.background = "#f8fafc";
+            resultBox.style.borderColor = "#e2e8f0";
+            resultBox.style.color = "#334155";
+            resetMicButton();
+        }
     }
 
     function resetCurrentTheme() {
