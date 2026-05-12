@@ -484,7 +484,7 @@ def word_card_speaking_game(word_themes):
         </style>
 
         <div id="topControlBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
-            <label style="font-weight:900; color:#334155;">단어 테마 선택</label>
+            <label style="font-weight:900; color:#334155;">단어 범위 선택</label>
             <select id="categorySelect" style="
                 padding: 10px 14px;
                 border-radius: 999px;
@@ -503,7 +503,7 @@ def word_card_speaking_game(word_themes):
                 padding: 10px 15px;
                 font-weight: 900;
                 cursor: pointer;
-            ">🎲 섞어서 풀기</button>
+            ">🎲 이 범위 섞기</button>
 
             <button id="resetBtn" style="
                 border: 1.5px solid #fed7aa;
@@ -705,7 +705,7 @@ def word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#14532d;
                 margin-bottom:10px;
-            ">테마 완료!</div>
+            ">범위 완료!</div>
             <div id="finishScore" style="
                 font-size:24px;
                 font-weight:900;
@@ -809,11 +809,7 @@ def word_card_speaking_game(word_themes):
     }
 
     function uniqueCategories() {
-        const cats = ["전체"];
-        ITEMS.forEach(item => {
-            if (!cats.includes(item.cat)) cats.push(item.cat);
-        });
-        return cats;
+        return ["1~50", "51~100", "101~160"];
     }
 
     function initCategories() {
@@ -828,9 +824,21 @@ def word_card_speaking_game(word_themes):
     }
 
     function getFilteredItems() {
-        const selected = categorySelect.value;
-        if (selected === "전체") return ITEMS.slice();
-        return ITEMS.filter(item => item.cat === selected);
+        const selected = categorySelect.value || "1~50";
+
+        if (selected === "1~50") {
+            return ITEMS.slice(0, 50);
+        }
+
+        if (selected === "51~100") {
+            return ITEMS.slice(50, 100);
+        }
+
+        if (selected === "101~160") {
+            return ITEMS.slice(100, 160);
+        }
+
+        return ITEMS.slice(0, 50);
     }
 
     function getItemKey(item) {
@@ -1208,7 +1216,7 @@ def word_card_speaking_game(word_themes):
     }
 
 
-    function countCorrectInCurrentTheme() {
+    function countCorrectInCurrentRange() {
         const list = getFilteredItems();
         let count = 0;
 
@@ -1219,7 +1227,7 @@ def word_card_speaking_game(word_themes):
         return count;
     }
 
-    function countMissedInCurrentTheme() {
+    function countMissedInCurrentRange() {
         const list = getFilteredItems();
         let count = 0;
 
@@ -1232,8 +1240,8 @@ def word_card_speaking_game(word_themes):
 
     function updateScore() {
         const list = getFilteredItems();
-        const correctCount = countCorrectInCurrentTheme();
-        const missedCount = countMissedInCurrentTheme();
+        const correctCount = countCorrectInCurrentRange();
+        const missedCount = countMissedInCurrentRange();
         scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
     }
 
@@ -1265,8 +1273,8 @@ def word_card_speaking_game(word_themes):
         cleanupRecognition();
         finished = true;
         const list = getFilteredItems();
-        const correctCount = countCorrectInCurrentTheme();
-        const missedCount = countMissedInCurrentTheme();
+        const correctCount = countCorrectInCurrentRange();
+        const missedCount = countMissedInCurrentRange();
 
         finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
 
@@ -1509,7 +1517,7 @@ def word_card_speaking_game(word_themes):
         }
     }
 
-    function resetCurrentTheme() {
+    function resetCurrentRange() {
         cleanupRecognition();
         const list = getFilteredItems();
 
@@ -1540,8 +1548,8 @@ def word_card_speaking_game(word_themes):
         updateScore();
     });
 
-    resetBtn.addEventListener("click", resetCurrentTheme);
-    finishRetryBtn.addEventListener("click", resetCurrentTheme);
+    resetBtn.addEventListener("click", resetCurrentRange);
+    finishRetryBtn.addEventListener("click", resetCurrentRange);
 
     micBtn.addEventListener("click", startRecognition);
 
