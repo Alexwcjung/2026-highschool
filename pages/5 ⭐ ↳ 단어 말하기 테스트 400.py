@@ -1655,9 +1655,6 @@ WORD_THEMES = {
 }
 
 # =========================================================
-# 상단 디자인
-# =========================================================
-# =========================================================
 # 말하기 카드 게임 컴포넌트
 # =========================================================
 def daily_word_card_speaking_game(word_themes):
@@ -1749,43 +1746,14 @@ def daily_word_card_speaking_game(word_themes):
                     word-break: break-word;
                 }
 
-                #buttonBox {
-                    gap: 8px !important;
-                }
-
-                #micBtn {
-                    min-height: 54px !important;
-                    font-size: 17px !important;
+                #buttonBox button {
+                    flex: 1 1 100%;
+                    font-size: 16px !important;
                     padding: 13px 12px !important;
-                    border-radius: 999px !important;
-                }
-
-                #transcriptMiniBox {
-                    min-height: 62px !important;
-                    padding: 10px 12px !important;
-                    border-radius: 18px !important;
-                }
-
-                #transcriptMiniLabel {
-                    font-size: 12px !important;
-                    margin-bottom: 4px !important;
                 }
 
                 #transcriptBox {
                     font-size: 19px !important;
-                    line-height: 1.25 !important;
-                }
-
-                #smallButtonRow {
-                    gap: 6px !important;
-                }
-
-                #smallButtonRow button {
-                    min-height: 42px !important;
-                    font-size: 12px !important;
-                    padding: 8px 4px !important;
-                    border-radius: 15px !important;
-                    letter-spacing: -0.5px;
                 }
 
                 #resultBox {
@@ -1900,63 +1868,58 @@ def daily_word_card_speaking_game(word_themes):
                     margin-top:14px;
                     word-break:break-word;
                 ">hint</div>
+
+                <div id="cardFeedbackBox" style="
+                    display:none;
+                    background:#ecfdf5;
+                    border:1.5px solid #bbf7d0;
+                    color:#166534;
+                    border-radius:20px;
+                    padding:14px 16px;
+                    font-size:28px;
+                    font-weight:900;
+                    margin-top:14px;
+                    word-break:break-word;
+                ">✅ 정답입니다!</div>
             </div>
 
-            <div id="buttonBox" style="
-                display:flex;
-                flex-direction:column;
-                gap:10px;
-                align-items:stretch;
-                margin-bottom:16px;
-                width:100%;
-            ">
-                <button id="micBtn" style="
-                    width:100%;
-                    border:1.5px solid #fecaca;
-                    background:#fff1f2;
-                    color:#be123c;
-                    border-radius:999px;
-                    padding:14px 18px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:19px;
-                    min-height:58px;
-                    white-space:nowrap;
-                    box-shadow:0 3px 9px rgba(0,0,0,0.05);
-                ">🎙️ 말하기</button>
-
-                <div id="transcriptMiniBox" style="
-                    width:100%;
-                    background:#f8fafc;
-                    border:1.5px solid #e2e8f0;
-                    border-radius:20px;
-                    padding:12px 14px;
-                    min-height:68px;
-                    display:flex;
-                    flex-direction:column;
-                    justify-content:center;
-                    overflow:hidden;
-                ">
-                    <div id="transcriptMiniLabel" style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px; white-space:nowrap;">인식된 단어</div>
-                    <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+            <div id="buttonBox" style="margin-bottom:16px;">
+                <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:8px;">
+                    <button id="micBtn" style="
+                        width:100%;
+                        border:1.5px solid #fecaca;
+                        background:#fff1f2;
+                        color:#be123c;
+                        border-radius:999px;
+                        padding:15px 20px;
+                        font-weight:900;
+                        cursor:pointer;
+                        font-size:18px;
+                    ">🎙️ 말하기</button>
                 </div>
 
-                <div id="smallButtonRow" style="
-                    display:grid;
-                    grid-template-columns: repeat(3, minmax(0, 1fr));
-                    gap:8px;
-                    width:100%;
+                <div style="
+                    background:#f8fafc;
+                    border:1.5px solid #e2e8f0;
+                    border-radius:18px;
+                    padding:12px 14px;
+                    margin-bottom:8px;
+                    min-height:54px;
                 ">
+                    <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 단어</div>
+                    <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155; word-break:break-word;"></div>
+                </div>
+
+                <div id="smallButtonRow" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
                     <button id="hintBtn" style="
                         border:1.5px solid #fed7aa;
                         background:#fff7ed;
                         color:#9a3412;
                         border-radius:999px;
-                        padding:10px 8px;
+                        padding:10px 5px;
                         font-weight:900;
                         cursor:pointer;
-                        font-size:14px;
-                        min-height:46px;
+                        font-size:13px;
                         white-space:nowrap;
                     ">💡 힌트</button>
 
@@ -1965,35 +1928,34 @@ def daily_word_card_speaking_game(word_themes):
                         background:#eff6ff;
                         color:#1d4ed8;
                         border-radius:999px;
-                        padding:10px 8px;
+                        padding:10px 5px;
                         font-weight:900;
                         cursor:pointer;
-                        font-size:14px;
-                        min-height:46px;
+                        font-size:13px;
                         white-space:nowrap;
-                    ">👀 정답+🔊</button>
+                    ">정답+🔊</button>
 
                     <button id="skipBtn" style="
                         border:1.5px solid #c7d2fe;
                         background:#eef2ff;
                         color:#3730a3;
                         border-radius:999px;
-                        padding:10px 8px;
+                        padding:10px 5px;
                         font-weight:900;
                         cursor:pointer;
-                        font-size:14px;
-                        min-height:46px;
+                        font-size:13px;
                         white-space:nowrap;
-                    ">➡️ 다음</button>
+                    ">다음 ➡️</button>
                 </div>
             </div>
 
             <div id="resultBox" style="
+                display:none;
                 background:#f1f5f9;
                 border:1.5px solid #e2e8f0;
                 border-radius:18px;
-                padding:14px 16px;
-                font-size:20px;
+                padding:10px 12px;
+                font-size:16px;
                 font-weight:900;
                 color:#334155;
             ">
@@ -2062,6 +2024,7 @@ def daily_word_card_speaking_game(word_themes):
     const meaningBox = document.getElementById("meaningBox");
     const answerBox = document.getElementById("answerBox");
     const hintBox = document.getElementById("hintBox");
+    const cardFeedbackBox = document.getElementById("cardFeedbackBox");
 
     const micBtn = document.getElementById("micBtn");
     const answerBtn = document.getElementById("answerBtn");
@@ -2115,36 +2078,45 @@ def daily_word_card_speaking_game(word_themes):
     function normalizeText(text) {
         return String(text || "")
             .toLowerCase()
+            // 축약형 처리
             .replace(/\bi'm\b/g, "i am")
             .replace(/\bim\b/g, "i am")
             .replace(/\byou're\b/g, "you are")
             .replace(/\bhe's\b/g, "he is")
             .replace(/\bshe's\b/g, "she is")
+            .replace(/\bit's\b/g, "it is")
             .replace(/\bwe're\b/g, "we are")
             .replace(/\bthey're\b/g, "they are")
             .replace(/\bdon't\b/g, "do not")
+            .replace(/\bdoesn't\b/g, "does not")
+            .replace(/\bdidn't\b/g, "did not")
             .replace(/\bcan't\b/g, "cannot")
+            .replace(/\bcant\b/g, "cannot")
+            .replace(/\bi'll\b/g, "i will")
+            .replace(/\byou'll\b/g, "you will")
+            .replace(/\bhe'll\b/g, "he will")
+            .replace(/\bshe'll\b/g, "she will")
+            // 자주 잘못 인식되는 표현 보정
             .replace(/\bp\.?e\.?\b/g, "pe")
             .replace(/\bphysical education\b/g, "pe")
-            .replace(/\bt shirt\b/g, "tshirt")
-            .replace(/\btee shirt\b/g, "tshirt")
+            .replace(/\bt shirt\b/g, "t shirt")
             .replace(/\bwi fi\b/g, "wifi")
             .replace(/\bwi-fi\b/g, "wifi")
-            .replace(/\bok\b/g, "okay")
-            .replace(/\bo k\b/g, "okay")
+            .replace(/\bwifi\b/g, "wifi")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
             .trim();
     }
 
-    function editDistance(a, b) {
-        a = String(a || "");
-        b = String(b || "");
+    function wordsOnly(text) {
+        return normalizeText(text)
+            .split(" ")
+            .filter(w => w.length > 0);
+    }
 
-        const dp = Array.from({ length: a.length + 1 }, function() {
-            return Array(b.length + 1).fill(0);
-        });
+    function editDistance(a, b) {
+        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
 
         for (let i = 0; i <= a.length; i++) dp[i][0] = i;
         for (let j = 0; j <= b.length; j++) dp[0][j] = j;
@@ -2163,146 +2135,39 @@ def daily_word_card_speaking_game(word_themes):
         return dp[a.length][b.length];
     }
 
-    function similarity(a, b) {
+    function wordSimilarity(a, b) {
         if (!a || !b) return 0;
         if (a === b) return 1;
-        return 1 - (editDistance(a, b) / Math.max(a.length, b.length));
+
+        const dist = editDistance(a, b);
+        const maxLen = Math.max(a.length, b.length);
+
+        return 1 - (dist / maxLen);
     }
 
-    function soundKey(text) {
-        return normalizeText(text)
-            .replace(/[^a-z]/g, "")
-            .replace(/tion/g, "shun")
-            .replace(/sion/g, "shun")
-            .replace(/th/g, "d")
-            .replace(/ph/g, "f")
-            .replace(/gh/g, "g")
-            .replace(/ck/g, "k")
-            .replace(/qu/g, "kw")
-            .replace(/x/g, "ks")
-            .replace(/c/g, "k")
-            .replace(/q/g, "k")
-            .replace(/z/g, "s")
-            .replace(/v/g, "b")
-            .replace(/f/g, "p")
-            .replace(/r/g, "l")
-            .replace(/j/g, "g")
-            .replace(/w/g, "u")
-            .replace(/ee/g, "i")
-            .replace(/ea/g, "i")
-            .replace(/ie/g, "i")
-            .replace(/ei/g, "i")
-            .replace(/oo/g, "u")
-            .replace(/ou/g, "u")
-            .replace(/ow/g, "o")
-            .replace(/oa/g, "o")
-            .replace(/ai/g, "e")
-            .replace(/ay/g, "e")
-            .replace(/[aeiouy]/g, "")
-            .replace(/(.)\\1+/g, "$1");
-    }
+    function isSmallRecognitionMistake(spokenWord, answerWord) {
+        if (!spokenWord || !answerWord) return false;
+        if (spokenWord === answerWord) return true;
 
-    function vowelKey(text) {
-        return normalizeText(text)
-            .replace(/[^a-z]/g, "")
-            .replace(/ee/g, "i")
-            .replace(/ea/g, "i")
-            .replace(/ie/g, "i")
-            .replace(/ei/g, "i")
-            .replace(/oo/g, "u")
-            .replace(/ou/g, "u")
-            .replace(/ow/g, "o")
-            .replace(/oa/g, "o")
-            .replace(/ai/g, "e")
-            .replace(/ay/g, "e")
-            .replace(/[aeiouy]+/g, "v")
-            .replace(/(.)\\1+/g, "$1");
-    }
+        const dist = editDistance(spokenWord, answerWord);
+        const sim = wordSimilarity(spokenWord, answerWord);
 
-    function aliasMatch(spoken, answer) {
-        const sw = normalizeText(spoken).replace(/\s+/g, "");
-        const aw = normalizeText(answer).replace(/\s+/g, "");
-
-        const aliases = {
-            "i": ["i", "eye", "hi", "ai", "a"],
-            "you": ["you", "u", "yew", "yo", "ya", "your"],
-            "he": ["he", "hi", "hey"],
-            "she": ["she", "see", "sea", "shi", "seat"],
-            "we": ["we", "wee", "wi", "me", "be"],
-            "they": ["they", "day", "dey", "the", "there", "their", "theyre", "that"],
-            "one": ["one", "won"],
-            "two": ["two", "to", "too"],
-            "three": ["three", "tree", "free"],
-            "four": ["four", "for"],
-            "five": ["five", "fife"],
-            "six": ["six", "sex", "sick"],
-            "eight": ["eight", "ate"],
-            "here": ["here", "hear"],
-            "there": ["there", "their"],
-            "right": ["right", "write", "light"],
-            "left": ["left", "laughed"],
-            "wait": ["wait", "weight"],
-            "know": ["know", "no"],
-            "okay": ["okay", "ok", "kay"],
-            "pe": ["pe", "pee", "p", "physicaleducation"],
-            "wifi": ["wifi", "wifei", "wi"],
-            "tshirt": ["tshirt", "teeshirt", "t shirt", "tee shirt"]
-        };
-
-        if (!aliases[aw]) return false;
-        return aliases[aw].includes(sw);
-    }
-
-    function clearlyDifferentPronoun(spoken, answer) {
-        const sw = normalizeText(spoken).replace(/\s+/g, "");
-        const aw = normalizeText(answer).replace(/\s+/g, "");
-        const pronouns = ["i", "you", "he", "she", "we", "they"];
-
-        if (!pronouns.includes(aw)) return false;
-        if (!pronouns.includes(sw)) return false;
-
-        return sw !== aw;
-    }
-
-    function soundOverlap(a, b) {
-        const ka = soundKey(a);
-        const kb = soundKey(b);
-
-        if (!ka || !kb) return 0;
-        if (ka === kb) return 1;
-
-        let overlap = 0;
-        for (let i = 0; i < ka.length; i++) {
-            if (kb.indexOf(ka[i]) !== -1) overlap += 1;
+        // 아주 짧은 단어는 엄격하게
+        if (answerWord.length <= 2) {
+            return dist === 0;
         }
 
-        return overlap / Math.max(1, Math.min(ka.length, kb.length));
-    }
+        // 3~4글자 단어는 1글자 정도만 허용
+        if (answerWord.length <= 4) {
+            return dist <= 1 && sim >= 0.75;
+        }
 
-    function understandableWord(spokenWord, answerWord) {
-        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
-        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+        // 5글자 이상 단어는 음성 인식 오류를 조금 더 허용
+        if (answerWord.length >= 5) {
+            return dist <= 1 || sim >= 0.82;
+        }
 
-        if (!sw || !aw) return false;
-        if (sw === aw) return true;
-        if (aliasMatch(sw, aw)) return true;
-
-        // 완전히 다른 대명사류만 막음
-        if (clearlyDifferentPronoun(sw, aw)) return false;
-
-        if (soundKey(sw) && soundKey(sw) === soundKey(aw)) return true;
-        if (vowelKey(sw) && vowelKey(sw) === vowelKey(aw)) return true;
-
-        const sim = similarity(sw, aw);
-        const dist = editDistance(sw, aw);
-        const snd = soundOverlap(sw, aw);
-
-        // 강세, 인토네이션, 모음 길이, 남녀 음성 차이를 크게 허용
-        if (aw.length <= 2) return dist <= 1 || sim >= 0.30 || snd >= 0.25;
-        if (aw.length === 3) return dist <= 2 || sim >= 0.28 || snd >= 0.25;
-        if (aw.length === 4) return dist <= 3 || sim >= 0.26 || snd >= 0.25;
-        if (aw.length <= 6) return dist <= 4 || sim >= 0.24 || snd >= 0.22;
-        return dist <= 5 || sim >= 0.22 || snd >= 0.20;
+        return false;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -2312,35 +2177,52 @@ def daily_word_card_speaking_game(word_themes):
         if (!s || !a) return false;
         if (s === a) return true;
 
-        const spokenWords = s.split(" ").filter(Boolean);
-        const answerWords = a.split(" ").filter(Boolean);
+        const spokenWords = wordsOnly(s);
+        const answerWords = wordsOnly(a);
 
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
-        // 한 단어 정답: 여러 후보 중 하나라도 이해 가능하면 정답
+        // 한 단어 정답:
+        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우는 허용
+        // 예: "the word subject", "subject please"
         if (answerWords.length === 1) {
             for (const sw of spokenWords) {
-                if (understandableWord(sw, answerWords[0])) {
+                if (isSmallRecognitionMistake(sw, answerWords[0])) {
                     return true;
                 }
             }
             return false;
         }
 
-        // 두 단어 이상 표현: 표현 전체가 포함되면 정답
+        // 두 단어 이상 표현:
+        // 표현 전체가 포함되면 정답
         if (s.includes(a)) return true;
 
-        // 표현 단어들이 순서대로 이해 가능하면 정답
+        // 정답 단어들이 순서대로 들어오면 정답
+        // 예: "please bus stop" -> bus stop 인정
         let pos = 0;
-        for (const w of spokenWords) {
-            if (understandableWord(w, answerWords[pos])) {
+        let weakMatchCount = 0;
+
+        for (const sw of spokenWords) {
+            const target = answerWords[pos];
+            if (!target) break;
+
+            if (isSmallRecognitionMistake(sw, target)) {
+                if (sw !== target) weakMatchCount += 1;
                 pos += 1;
             }
 
-            if (pos >= answerWords.length) return true;
+            if (pos >= answerWords.length) break;
         }
 
-        return false;
+        if (pos < answerWords.length) return false;
+
+        // 표현이 짧은데 애매한 단어가 너무 많으면 오답
+        if (answerWords.length <= 3 && weakMatchCount >= 2) {
+            return false;
+        }
+
+        return true;
     }
 
     function countCorrectInCurrentTheme() {
@@ -2429,13 +2311,13 @@ def daily_word_card_speaking_game(word_themes):
         meaningBox.innerText = currentItem.meaning;
 
         answerBox.style.display = "none";
-        answerBox.style.background = "#ecfdf5";
-        answerBox.style.borderColor = "#bbf7d0";
-        answerBox.style.color = "#166534";
         answerBox.innerText = "정답: " + currentItem.word;
 
         hintBox.style.display = "none";
         hintBox.innerText = "";
+
+        cardFeedbackBox.style.display = "none";
+        cardFeedbackBox.innerText = "";
 
         transcriptBox.innerText = "";
         resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
@@ -2466,32 +2348,26 @@ def daily_word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            // 정답 피드백은 아래 결과 박스가 아니라 단어 카드 안에 바로 표시합니다.
-            answerBox.style.display = "block";
-            answerBox.style.background = "#ecfdf5";
-            answerBox.style.borderColor = "#86efac";
-            answerBox.style.color = "#166534";
-            answerBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:22px;'>" + currentItem.word + "</span>";
-
-            // 아래 결과 박스에는 정답 메시지를 반복해서 띄우지 않습니다.
-            resultBox.innerText = "";
-            resultBox.style.background = "#f8fafc";
-            resultBox.style.borderColor = "#e2e8f0";
-            resultBox.style.color = "#334155";
+            cardFeedbackBox.style.display = "block";
+            cardFeedbackBox.style.background = "#ecfdf5";
+            cardFeedbackBox.style.borderColor = "#bbf7d0";
+            cardFeedbackBox.style.color = "#166534";
+            cardFeedbackBox.innerHTML =
+                "✅ 정답입니다!<br>" +
+                "<span style='font-size:22px;'>" + currentItem.word + "</span>";
 
             speak(currentItem.word);
 
             setTimeout(function() {
                 goNextCard();
-            }, 850);
+            }, 1500);
         } else {
-            resultBox.innerHTML =
-                "🍊 다시 말해 보세요.<br>" +
-                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 또는 표현을 말하면 됩니다.</span>";
-
-            resultBox.style.background = "#fff7ed";
-            resultBox.style.borderColor = "#fed7aa";
-            resultBox.style.color = "#9a3412";
+            cardFeedbackBox.style.display = "block";
+            cardFeedbackBox.style.background = "#fff7ed";
+            cardFeedbackBox.style.borderColor = "#fed7aa";
+            cardFeedbackBox.style.color = "#9a3412";
+            cardFeedbackBox.innerHTML =
+                "🍊 다시 말해 보세요.";
         }
     }
 
@@ -2512,7 +2388,7 @@ def daily_word_card_speaking_game(word_themes):
         recognition.lang = "en-US";
         recognition.interimResults = false;
         recognition.continuous = false;
-        recognition.maxAlternatives = 10;
+        recognition.maxAlternatives = 3;
 
         micBtn.innerText = "🎙️ 듣는 중...";
         resultBox.innerText = "말해 보세요.";
