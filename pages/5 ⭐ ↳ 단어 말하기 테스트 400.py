@@ -1655,9 +1655,6 @@ WORD_THEMES = {
 }
 
 # =========================================================
-# 상단 디자인
-# =========================================================
-# =========================================================
 # 말하기 카드 게임 컴포넌트
 # =========================================================
 def daily_word_card_speaking_game(word_themes):
@@ -1749,43 +1746,14 @@ def daily_word_card_speaking_game(word_themes):
                     word-break: break-word;
                 }
 
-                #buttonBox {
-                    gap: 8px !important;
-                }
-
-                #micBtn {
-                    min-height: 54px !important;
-                    font-size: 17px !important;
+                #buttonBox button {
+                    flex: 1 1 100%;
+                    font-size: 16px !important;
                     padding: 13px 12px !important;
-                    border-radius: 999px !important;
-                }
-
-                #transcriptMiniBox {
-                    min-height: 62px !important;
-                    padding: 10px 12px !important;
-                    border-radius: 18px !important;
-                }
-
-                #transcriptMiniLabel {
-                    font-size: 12px !important;
-                    margin-bottom: 4px !important;
                 }
 
                 #transcriptBox {
                     font-size: 19px !important;
-                    line-height: 1.25 !important;
-                }
-
-                #smallButtonRow {
-                    gap: 6px !important;
-                }
-
-                #smallButtonRow button {
-                    min-height: 42px !important;
-                    font-size: 12px !important;
-                    padding: 8px 4px !important;
-                    border-radius: 15px !important;
-                    letter-spacing: -0.5px;
                 }
 
                 #resultBox {
@@ -1900,63 +1868,58 @@ def daily_word_card_speaking_game(word_themes):
                     margin-top:14px;
                     word-break:break-word;
                 ">hint</div>
+
+                <div id="cardFeedbackBox" style="
+                    display:none;
+                    background:#ecfdf5;
+                    border:1.5px solid #bbf7d0;
+                    color:#166534;
+                    border-radius:20px;
+                    padding:14px 16px;
+                    font-size:28px;
+                    font-weight:900;
+                    margin-top:14px;
+                    word-break:break-word;
+                ">✅ 정답입니다!</div>
             </div>
 
-            <div id="buttonBox" style="
-                display:flex;
-                flex-direction:column;
-                gap:10px;
-                align-items:stretch;
-                margin-bottom:16px;
-                width:100%;
-            ">
-                <button id="micBtn" style="
-                    width:100%;
-                    border:1.5px solid #fecaca;
-                    background:#fff1f2;
-                    color:#be123c;
-                    border-radius:999px;
-                    padding:14px 18px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:19px;
-                    min-height:58px;
-                    white-space:nowrap;
-                    box-shadow:0 3px 9px rgba(0,0,0,0.05);
-                ">🎙️ 말하기</button>
-
-                <div id="transcriptMiniBox" style="
-                    width:100%;
-                    background:#f8fafc;
-                    border:1.5px solid #e2e8f0;
-                    border-radius:20px;
-                    padding:12px 14px;
-                    min-height:68px;
-                    display:flex;
-                    flex-direction:column;
-                    justify-content:center;
-                    overflow:hidden;
-                ">
-                    <div id="transcriptMiniLabel" style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px; white-space:nowrap;">인식된 단어</div>
-                    <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+            <div id="buttonBox" style="margin-bottom:16px;">
+                <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:8px;">
+                    <button id="micBtn" style="
+                        width:100%;
+                        border:1.5px solid #fecaca;
+                        background:#fff1f2;
+                        color:#be123c;
+                        border-radius:999px;
+                        padding:15px 20px;
+                        font-weight:900;
+                        cursor:pointer;
+                        font-size:18px;
+                    ">🎙️ 말하기</button>
                 </div>
 
-                <div id="smallButtonRow" style="
-                    display:grid;
-                    grid-template-columns: repeat(3, minmax(0, 1fr));
-                    gap:8px;
-                    width:100%;
+                <div style="
+                    background:#f8fafc;
+                    border:1.5px solid #e2e8f0;
+                    border-radius:18px;
+                    padding:12px 14px;
+                    margin-bottom:8px;
+                    min-height:54px;
                 ">
+                    <div style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px;">인식된 단어</div>
+                    <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155; word-break:break-word;"></div>
+                </div>
+
+                <div id="smallButtonRow" style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:6px;">
                     <button id="hintBtn" style="
                         border:1.5px solid #fed7aa;
                         background:#fff7ed;
                         color:#9a3412;
                         border-radius:999px;
-                        padding:10px 8px;
+                        padding:10px 5px;
                         font-weight:900;
                         cursor:pointer;
-                        font-size:14px;
-                        min-height:46px;
+                        font-size:13px;
                         white-space:nowrap;
                     ">💡 힌트</button>
 
@@ -1965,35 +1928,34 @@ def daily_word_card_speaking_game(word_themes):
                         background:#eff6ff;
                         color:#1d4ed8;
                         border-radius:999px;
-                        padding:10px 8px;
+                        padding:10px 5px;
                         font-weight:900;
                         cursor:pointer;
-                        font-size:14px;
-                        min-height:46px;
+                        font-size:13px;
                         white-space:nowrap;
-                    ">👀 정답+🔊</button>
+                    ">정답+🔊</button>
 
                     <button id="skipBtn" style="
                         border:1.5px solid #c7d2fe;
                         background:#eef2ff;
                         color:#3730a3;
                         border-radius:999px;
-                        padding:10px 8px;
+                        padding:10px 5px;
                         font-weight:900;
                         cursor:pointer;
-                        font-size:14px;
-                        min-height:46px;
+                        font-size:13px;
                         white-space:nowrap;
-                    ">➡️ 다음</button>
+                    ">다음 ➡️</button>
                 </div>
             </div>
 
             <div id="resultBox" style="
+                display:none;
                 background:#f1f5f9;
                 border:1.5px solid #e2e8f0;
                 border-radius:18px;
-                padding:14px 16px;
-                font-size:20px;
+                padding:10px 12px;
+                font-size:16px;
                 font-weight:900;
                 color:#334155;
             ">
@@ -2062,6 +2024,7 @@ def daily_word_card_speaking_game(word_themes):
     const meaningBox = document.getElementById("meaningBox");
     const answerBox = document.getElementById("answerBox");
     const hintBox = document.getElementById("hintBox");
+    const cardFeedbackBox = document.getElementById("cardFeedbackBox");
 
     const micBtn = document.getElementById("micBtn");
     const answerBtn = document.getElementById("answerBtn");
@@ -2237,13 +2200,13 @@ def daily_word_card_speaking_game(word_themes):
         meaningBox.innerText = currentItem.meaning;
 
         answerBox.style.display = "none";
-        answerBox.style.background = "#ecfdf5";
-        answerBox.style.borderColor = "#bbf7d0";
-        answerBox.style.color = "#166534";
         answerBox.innerText = "정답: " + currentItem.word;
 
         hintBox.style.display = "none";
         hintBox.innerText = "";
+
+        cardFeedbackBox.style.display = "none";
+        cardFeedbackBox.innerText = "";
 
         transcriptBox.innerText = "";
         resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
@@ -2274,32 +2237,26 @@ def daily_word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            // 정답 피드백은 아래 결과 박스가 아니라 단어 카드 안에 바로 표시합니다.
-            answerBox.style.display = "block";
-            answerBox.style.background = "#ecfdf5";
-            answerBox.style.borderColor = "#86efac";
-            answerBox.style.color = "#166534";
-            answerBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:22px;'>" + currentItem.word + "</span>";
-
-            // 아래 결과 박스에는 정답 메시지를 반복해서 띄우지 않습니다.
-            resultBox.innerText = "";
-            resultBox.style.background = "#f8fafc";
-            resultBox.style.borderColor = "#e2e8f0";
-            resultBox.style.color = "#334155";
+            cardFeedbackBox.style.display = "block";
+            cardFeedbackBox.style.background = "#ecfdf5";
+            cardFeedbackBox.style.borderColor = "#bbf7d0";
+            cardFeedbackBox.style.color = "#166534";
+            cardFeedbackBox.innerHTML =
+                "✅ 정답입니다!<br>" +
+                "<span style='font-size:22px;'>" + currentItem.word + "</span>";
 
             speak(currentItem.word);
 
             setTimeout(function() {
                 goNextCard();
-            }, 850);
+            }, 900);
         } else {
-            resultBox.innerHTML =
-                "🍊 다시 말해 보세요.<br>" +
-                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 또는 표현을 말하면 됩니다.</span>";
-
-            resultBox.style.background = "#fff7ed";
-            resultBox.style.borderColor = "#fed7aa";
-            resultBox.style.color = "#9a3412";
+            cardFeedbackBox.style.display = "block";
+            cardFeedbackBox.style.background = "#fff7ed";
+            cardFeedbackBox.style.borderColor = "#fed7aa";
+            cardFeedbackBox.style.color = "#9a3412";
+            cardFeedbackBox.innerHTML =
+                "🍊 다시 말해 보세요.";
         }
     }
 
