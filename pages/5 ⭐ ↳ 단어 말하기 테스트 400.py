@@ -2188,7 +2188,7 @@ def daily_word_card_speaking_game(word_themes):
         return String(word || "")
             .toLowerCase()
             .replace(/[^a-z]/g, "")
-            // 강세·인토네이션 때문에 생기는 끝소리/약화음 차이 보정
+            // 끝소리, 복수형, 진행형 등 ASR이 흔히 다르게 잡는 부분 보정
             .replace(/tion$/g, "shun")
             .replace(/sion$/g, "shun")
             .replace(/ies$/g, "y")
@@ -2204,7 +2204,7 @@ def daily_word_card_speaking_game(word_themes):
 
     function roughSound(word) {
         return normalizeForSound(word)
-            // 남녀 음성, 강세, 인토네이션에 따라 흔들리는 소리들을 더 넓게 묶음
+            // 남녀 음성, 강세, 인토네이션에 따라 흔들리는 소리들을 넓게 묶음
             .replace(/th/g, "d")
             .replace(/ph/g, "f")
             .replace(/gh/g, "g")
@@ -2219,19 +2219,13 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/r/g, "l")
             .replace(/j/g, "g")
             .replace(/w/g, "u")
-            // 강세가 달라져도 모음은 크게 보지 않음
+            // 모음 길이와 강세 차이는 크게 보지 않음
             .replace(/[aeiouy]/g, "");
     }
 
     function looseVowelPattern(word) {
         return normalizeForSound(word)
-            .replace(/[aeiouy]+/g, "V")
-            .replace(/(.)\1+/g, "$1");
-    }
-
-    function removeVowelLengthDifference(word) {
-        return normalizeForSound(word)
-            // 긴장/이완 모음, 장단음 차이를 최대한 무시
+            // 장모음/단모음 차이 완화
             .replace(/ee/g, "i")
             .replace(/ea/g, "i")
             .replace(/ie/g, "i")
@@ -2242,39 +2236,8 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/oa/g, "o")
             .replace(/ai/g, "e")
             .replace(/ay/g, "e")
-            .replace(/a_e/g, "e")
-            .replace(/i_e/g, "i")
-            .replace(/o_e/g, "o")
-            .replace(/u_e/g, "u")
             .replace(/[aeiouy]+/g, "V")
             .replace(/(.)\1+/g, "$1");
-    }
-
-    function isVowelLengthClose(spokenWord, answerWord) {
-        const sw = normalizeForSound(spokenWord);
-        const aw = normalizeForSound(answerWord);
-
-        if (!sw || !aw) return false;
-
-        const sv = removeVowelLengthDifference(sw);
-        const av = removeVowelLengthDifference(aw);
-
-        if (sv === av) return true;
-
-        // 모음만 흔들리고 자음 뼈대가 비슷하면 인정
-        const rs = roughSound(sw);
-        const ra = roughSound(aw);
-
-        if (rs && ra && rs === ra) return true;
-
-        // 앞소리와 끝소리가 같고 중간 모음만 다르면 인정
-        if (sw.length >= 3 && aw.length >= 3) {
-            if (sw[0] === aw[0] && sw[sw.length - 1] === aw[aw.length - 1]) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     function isKnownSpeechAlias(spokenWord, answerWord) {
@@ -2311,16 +2274,14 @@ def daily_word_card_speaking_game(word_themes):
             "excuse": ["excuse", "excus"],
             "me": ["me"],
             "pe": ["pe", "pee", "p", "physicaleducation"],
-            "wifi": ["wifi", "wi-fi", "wifei", "wi"],
-            "subject": ["subject", "subjet", "sub check", "subjict"],
+            "wifi": ["wifi", "wifei", "wi"],
+            "subject": ["subject", "subjet", "subjict"],
             "science": ["science", "sience", "signs"],
-            "history": ["history", "his story"],
-            "music": ["music", "musick"],
+            "history": ["history", "historie"],
             "schedule": ["schedule", "skedule"],
             "presentation": ["presentation", "presentasion"],
             "restaurant": ["restaurant", "resturant"],
-            "comfortable": ["comfortable", "comfterble", "comfort"],
-            "interesting": ["interesting", "intresting"]
+            "comfortable": ["comfortable", "comfterble", "comfort"]
         };
 
         if (!aliases[aw]) return false;
@@ -2345,7 +2306,7 @@ def daily_word_card_speaking_game(word_themes):
 
         const groups = [
             ["c", "k", "q", "g"],
-            ["s", "c", "z", "sh"],
+            ["s", "c", "z"],
             ["f", "p", "v", "b"],
             ["g", "j", "z"],
             ["i", "e", "y", "a"],
@@ -2374,23 +2335,39 @@ def daily_word_card_speaking_game(word_themes):
         return (overlap / base) >= 0.28;
     }
 
+    function isVowelLengthClose(spokenWord, answerWord) {
+        const sw = normalizeForSound(spokenWord);
+        const aw = normalizeForSound(answerWord);
+
+        if (!sw || !aw) return false;
+
+        if (looseVowelPattern(sw) === looseVowelPattern(aw)) return true;
+
+        const rs = roughSound(sw);
+        const ra = roughSound(aw);
+
+        if (rs && ra && rs === ra) return true;
+
+        // 앞소리와 끝소리가 같으면 중간 모음 길이/강세 차이는 허용
+        if (sw.length >= 3 && aw.length >= 3) {
+            if (sw[0] === aw[0] && sw[sw.length - 1] === aw[aw.length - 1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function isStressIntonationClose(spokenWord, answerWord) {
         const sw = normalizeForSound(spokenWord);
         const aw = normalizeForSound(answerWord);
 
         if (!sw || !aw) return false;
 
-        const sv = looseVowelPattern(sw);
-        const av = looseVowelPattern(aw);
+        if (looseVowelPattern(sw) === looseVowelPattern(aw)) return true;
+        if (isVowelLengthClose(sw, aw)) return true;
 
-        if (sv === av) return true;
-
-        // 강세가 달라져 일부 음절이 약화되어도 앞뒤 핵심 소리만 맞으면 인정
         if (aw.length >= 5) {
-            if (sw[0] === aw[0] && (sw.includes(aw.slice(0, 3)) || aw.includes(sw.slice(0, 3)))) {
-                return true;
-            }
-
             if (sw[0] === aw[0] && hasEnoughSoundOverlap(sw, aw)) {
                 return true;
             }
@@ -2419,34 +2396,32 @@ def daily_word_card_speaking_game(word_themes):
 
         if (soundSw && soundAw && soundSw === soundAw) return true;
 
-        if (isStressIntonationClose(sw, aw)) return true;
-
-        // 모음 길이/긴장도 차이 때문에 ASR이 다르게 받아쓴 경우 허용
         if (isVowelLengthClose(sw, aw)) return true;
+        if (isStressIntonationClose(sw, aw)) return true;
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
 
         // 짧은 단어도 인토네이션/성별 음성 차이 때문에 너무 엄격하게 보지 않음
         if (aw.length <= 2) {
-            return dist <= 1 || sim >= 0.30 || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+            return dist <= 1 || sim >= 0.30 || hasEnoughSoundOverlap(sw, aw);
         }
 
         if (aw.length === 3) {
-            return dist <= 2 || sim >= 0.32 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+            return dist <= 2 || sim >= 0.32 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw);
         }
 
         if (aw.length === 4) {
-            return dist <= 3 || sim >= 0.30 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+            return dist <= 3 || sim >= 0.30 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw);
         }
 
         if (aw.length <= 6) {
-            return dist <= 4 || sim >= 0.28 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+            return dist <= 4 || sim >= 0.28 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw);
         }
 
         // 긴 단어는 강세 위치가 바뀌면 ASR이 크게 흔들리므로 가장 관대하게
         if (aw.length >= 7) {
-            return dist <= 5 || sim >= 0.25 || hasEnoughSoundOverlap(sw, aw) || isStressIntonationClose(sw, aw) || isVowelLengthClose(sw, aw);
+            return dist <= 5 || sim >= 0.25 || hasEnoughSoundOverlap(sw, aw);
         }
 
         return false;
