@@ -243,7 +243,7 @@ st.markdown(
     """
     <div class="main-title-box">
         <h1>🃏 생존 단어 카드 말하기 게임</h1>
-        <p>한국말 뜻을 보고 영어 단어를 말해 보세요.</p>
+        <p>한국말 뜻을 보고 영어 단어를 연습하세요.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -685,7 +685,7 @@ def word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#334155;
             ">
-                마이크 버튼을 누르고 영어 단어 한 단어를 말해 보세요.
+                
             </div>
         </div>
 
@@ -925,7 +925,10 @@ def word_card_speaking_game(word_themes):
             .replace(/q/g, "k")
             .replace(/z/g, "s")
             .replace(/v/g, "b")
+            .replace(/f/g, "p")
             .replace(/r/g, "l")
+            .replace(/j/g, "g")
+            .replace(/w/g, "u")
             .replace(/ee/g, "i")
             .replace(/ea/g, "i")
             .replace(/ie/g, "i")
@@ -945,29 +948,63 @@ def word_card_speaking_game(word_themes):
         const aw = normalizeText(answerWord).replace(/\s+/g, "");
 
         const aliases = {
-            "i": ["i", "eye", "ai"],
-            "you": ["you", "u", "yew"],
-            "he": ["he", "hi"],
-            "she": ["she", "see", "sea", "shi"],
-            "we": ["we", "wee", "wi"],
-            "they": ["they", "day", "dey", "their"],
+            "i": ["i", "eye", "hi", "ai", "a"],
+            "you": ["you", "u", "yew", "yo", "ya", "your"],
+            "he": ["he", "hi", "hey"],
+            "she": ["she", "see", "sea", "shi", "seat"],
+            "we": ["we", "wee", "wi", "me", "be"],
+            "they": ["they", "day", "dey", "the", "there", "their", "that"],
             "one": ["one", "won"],
             "two": ["two", "to", "too"],
-            "three": ["three", "tree"],
+            "three": ["three", "tree", "free"],
             "four": ["four", "for"],
+            "five": ["five", "fife"],
+            "six": ["six", "sex", "sick"],
+            "seven": ["seven", "seben"],
             "eight": ["eight", "ate"],
+            "ten": ["ten", "tin"],
             "here": ["here", "hear"],
             "there": ["there", "their"],
-            "right": ["right", "write"],
+            "right": ["right", "write", "light"],
             "wait": ["wait", "weight"],
             "know": ["know", "no"],
             "night": ["night", "knight"],
-            "okay": ["okay", "ok"],
+            "okay": ["okay", "ok", "kay"],
             "phone": ["phone", "fone"],
             "coffee": ["coffee", "coffe"],
             "please": ["please", "plz"],
             "excuse": ["excuse", "excus"],
-            "me": ["me"]
+            "me": ["me"],
+            "teacher": ["teacher", "techer"],
+            "student": ["student", "studen"],
+            "classmate": ["classmate", "class mate"],
+            "family": ["family", "famly"],
+            "father": ["father", "fader"],
+            "mother": ["mother", "mader"],
+            "brother": ["brother", "brader"],
+            "sister": ["sister", "seester"],
+            "person": ["person", "parson"],
+            "woman": ["woman", "women"],
+            "walk": ["walk", "work"],
+            "study": ["study", "stady"],
+            "listen": ["listen", "lisen"],
+            "speak": ["speak", "speek"],
+            "happy": ["happy", "happi"],
+            "hungry": ["hungry", "hangry"],
+            "thirsty": ["thirsty", "thirsti"],
+            "stomachache": ["stomachache", "stomach ache"],
+            "headache": ["headache", "head ache"],
+            "breakfast": ["breakfast", "brekfast"],
+            "medicine": ["medicine", "medisin"],
+            "hospital": ["hospital", "hospitel"],
+            "bathroom": ["bathroom", "bath room"],
+            "station": ["station", "stashion"],
+            "bottle": ["bottle", "bottel"],
+            "question": ["question", "kwestion"],
+            "understand": ["understand", "understend"],
+            "answer": ["answer", "anser"],
+            "again": ["again", "agen"],
+            "slowly": ["slowly", "slowli"]
         };
 
         if (!aliases[aw]) return false;
@@ -995,57 +1032,47 @@ def word_card_speaking_game(word_themes):
         if (sw === aw) return true;
         if (aliasMatch(sw, aw)) return true;
 
+        // I / you / he / she / we / they처럼 의미가 크게 바뀌는 대명사는 너무 관대하게 보지 않습니다.
         if (clearlyWrongPronoun(sw, aw)) return false;
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
-
         const soundSw = soundKey(sw);
         const soundAw = soundKey(aw);
 
         const sameFirst = sw.charAt(0) === aw.charAt(0);
-        const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
         const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
-
         const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
         const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
 
-        // Daily 최종 코드와 같은 안전장치:
-        // 첫 글자/첫소리가 다르면 거의 무조건 오답
+        // Daily 400과 비슷하게 조금 더 관대하게 처리합니다.
+        // 단, 완전히 다른 단어까지 정답 처리하지 않도록 첫소리 조건은 남겨 둡니다.
         if (!sameFirst && !soundSameFirst) {
-            return false;
+            if (!(sim >= 0.86 && dist <= 2)) return false;
         }
 
-        // 짧은 단어는 끝소리까지 맞아야 함
-        // 예: bag ≠ bad, cup ≠ cut, bus ≠ but
+        // 자음 뼈대가 같으면 발음/인식 차이로 보고 허용합니다.
+        if (soundSw && soundAw && soundSw === soundAw) return true;
+
+        // 1~2글자 단어는 완전 일치 또는 alias만 허용합니다.
+        if (aw.length <= 2) return false;
+
+        // 3~4글자 단어: 첫소리가 비슷하고 1글자 정도 차이면 허용합니다.
+        // 끝소리를 너무 강제하지 않아 Daily 400보다 체감상 덜 빡빡하게 만듭니다.
         if (aw.length <= 4) {
-            if (!sameLast && !soundSameLast) return false;
+            return (sameFirst || soundSameFirst) && (dist <= 1 || sim >= 0.76 || (soundSameLast && sim >= 0.70));
         }
 
-        // 자음 뼈대가 완전히 같으면 허용
-        if (soundSw && soundAw && soundSw === soundAw) {
-            return true;
-        }
-
-        // 2글자 이하는 alias 또는 완전 일치만 허용
-        if (aw.length <= 2) {
-            return false;
-        }
-
-        // 3~4글자는 철자 1개 차이 정도만 허용
-        if (aw.length <= 4) {
-            return sameFirst && sameLast && dist <= 1 && sim >= 0.75;
-        }
-
-        // 5~6글자는 첫 글자가 같고 너무 많이 다르지 않을 때만 허용
+        // 5~6글자 단어: 1~2글자 차이 또는 유사도 기준 허용
         if (aw.length <= 6) {
-            return sameFirst && (dist <= 1 || sim >= 0.78);
+            return (sameFirst || soundSameFirst) && (dist <= 2 || sim >= 0.74);
         }
 
-        // 긴 단어는 앞 2글자까지 비슷하거나 edit distance가 아주 작아야 함
-        return sameFirst && (
-            (sameFirstTwo && sim >= 0.72) ||
-            dist <= 2
+        // 7글자 이상 긴 단어: 앞부분 또는 소리 뼈대가 어느 정도 맞으면 허용
+        return (sameFirst || soundSameFirst) && (
+            dist <= 3 ||
+            sim >= 0.70 ||
+            (sameFirstTwo && sim >= 0.66)
         );
     }
 
@@ -1236,7 +1263,7 @@ def word_card_speaking_game(word_themes):
             // 틀렸을 때는 인식된 단어는 그대로 두고, 안내만 짧게 보여 줍니다.
             answerBox.style.display = "none";
             transcriptBox.style.color = "#334155";
-            resultBox.innerText = "다시 말해 보세요.";
+            resultBox.innerText = "다시 시도해 주세요.";
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
             resultBox.style.color = "#9a3412";
@@ -1291,10 +1318,10 @@ def word_card_speaking_game(word_themes):
         micBtn.style.cursor = "wait";
         micBtn.innerText = "🎙️ 듣는 중...";
 
-        resultBox.innerText = "말해 보세요.";
-        resultBox.style.background = "#eff6ff";
-        resultBox.style.borderColor = "#bfdbfe";
-        resultBox.style.color = "#1d4ed8";
+        resultBox.innerText = "";
+        resultBox.style.background = "#f8fafc";
+        resultBox.style.borderColor = "#e2e8f0";
+        resultBox.style.color = "#334155";
 
         recognition.onresult = function(event) {
             let bestTranscript = "";
@@ -1411,7 +1438,7 @@ def word_card_speaking_game(word_themes):
         speak(currentItem.word);
 
         resultBox.innerHTML =
-            "🔊 정답을 듣고 다시 말해 보세요.<br>" +
+            "🔊 정답을 듣고 다시 시도해 주세요.<br>" +
             "<span style='font-size:17px;'>다시 말해서 인식되면 정답으로 인정됩니다.</span>";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
