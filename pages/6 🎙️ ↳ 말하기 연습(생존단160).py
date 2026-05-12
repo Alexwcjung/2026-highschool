@@ -157,7 +157,7 @@ def speaking_practice_component(items):
                     font-size:15px;
                     font-weight:900;
                     border:1.5px solid #86efac;
-                ">0 / 0</div>
+                ">정답 0개</div>
             </div>
 
             <div style="
@@ -319,8 +319,8 @@ def speaking_practice_component(items):
     let currentIndex = 0;
     let currentItem = null;
     let score = 0;
-    let attempts = 0;
     let alreadyCorrect = false;
+    let autoNextTimer = null;
 
     const categorySelect = document.getElementById("categorySelect");
     const randomBtn = document.getElementById("randomBtn");
@@ -650,7 +650,7 @@ def speaking_practice_component(items):
 
 
     function updateScore() {
-        scoreLabel.innerText = score + " / " + attempts;
+        scoreLabel.innerText = "정답 " + score + "개";
     }
 
     function loadQuestion(index = 0) {
@@ -660,6 +660,11 @@ def speaking_practice_component(items):
 
         if (index >= currentList.length) index = 0;
         if (index < 0) index = currentList.length - 1;
+
+        if (autoNextTimer) {
+            clearTimeout(autoNextTimer);
+            autoNextTimer = null;
+        }
 
         currentIndex = index;
         currentItem = currentList[currentIndex];
@@ -706,16 +711,26 @@ def speaking_practice_component(items):
         window.speechSynthesis.speak(utterance);
     }
 
-    function checkSpeech(spokenText) {
-        attempts += 1;
+    function goNextQuestion() {
+        if (autoNextTimer) {
+            clearTimeout(autoNextTimer);
+            autoNextTimer = null;
+        }
+        loadQuestion(currentIndex + 1);
+    }
 
+    function checkSpeech(spokenText) {
         if (isCorrectSpeech(spokenText, currentItem.answer)) {
             if (!alreadyCorrect) {
                 score += 1;
                 alreadyCorrect = true;
             }
 
-            resultBox.style.display = "none";
+            updateScore();
+
+            resultBox.style.display = "block";
+            resultBox.style.color = "#166534";
+            resultBox.innerText = "정답입니다! 다음 문제로 넘어갑니다.";
 
             answerBox.style.display = "none";
             transcriptBox.innerText = currentItem.answer;
@@ -725,15 +740,23 @@ def speaking_practice_component(items):
             nextBtn.style.display = "inline-block";
 
             speak(currentItem.answer);
+
+            autoNextTimer = setTimeout(function() {
+                if (alreadyCorrect) {
+                    goNextQuestion();
+                }
+            }, 1000);
         } else {
-            resultBox.style.display = "none";
+            resultBox.style.display = "block";
+            resultBox.style.color = "#991b1b";
+            resultBox.innerText = "아직 정답으로 인식되지 않았습니다. 다시 말하거나, 정답을 보고 연습한 뒤 다시 말해 보세요.";
 
-            // 틀린 뒤에만 정답 보기 버튼 제공
+            // 틀린 경우에는 정답 개수에 포함하지 않음
+            // 대신 정답을 보고 다시 말해서 맞히면 그때 정답으로 인정함
             answerBtn.style.display = "inline-block";
-            nextBtn.style.display = "none";
+            listenBtn.style.display = "none";
+            nextBtn.style.display = "inline-block";
         }
-
-        updateScore();
     }
 
     async function startRecognition() {
@@ -791,9 +814,19 @@ def speaking_practice_component(items):
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                 transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
             } else if (event.error === "no-speech") {
-                transcriptBox.innerText = "";
+                transcriptBox.innerText = "인식하지 못했습니다. 다시 말하거나 다음 문제로 넘어갈 수 있습니다.";
+                answerBtn.style.display = "inline-block";
+                nextBtn.style.display = "inline-block";
+                resultBox.style.display = "block";
+                resultBox.style.color = "#64748b";
+                resultBox.innerText = "인식 실패는 정답 개수에 포함되지 않습니다.";
             } else {
-                transcriptBox.innerText = "다시 눌러 주세요.";
+                transcriptBox.innerText = "인식이 잘 되지 않았습니다. 다시 말하거나 다음 문제로 넘어갈 수 있습니다.";
+                answerBtn.style.display = "inline-block";
+                nextBtn.style.display = "inline-block";
+                resultBox.style.display = "block";
+                resultBox.style.color = "#64748b";
+                resultBox.innerText = "인식 실패는 정답 개수에 포함되지 않습니다.";
             }
             micBtn.innerText = "🎙️";
         };
@@ -823,7 +856,6 @@ def speaking_practice_component(items):
 
     resetBtn.addEventListener("click", function() {
         score = 0;
-        attempts = 0;
         alreadyCorrect = false;
         updateScore();
         resultBox.style.display = "none";
@@ -843,22 +875,19 @@ def speaking_practice_component(items):
         answerBox.style.display = "none";
         transcriptBox.innerText = currentItem.answer;
         listenBtn.style.display = "inline-block";
+        nextBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
-        resultBox.style.display = "none";
-        resultBox.innerText = "";
+        resultBox.style.display = "block";
+        resultBox.style.color = "#166534";
+        resultBox.innerText = "정답을 듣고 다시 말해 보세요. 다시 정확히 말하면 정답으로 인정됩니다.";
     });
 
     micBtn.addEventListener("click", startRecognition);
 
     nextBtn.addEventListener("click", function() {
-        if (!alreadyCorrect) {
-            resultBox.style.display = "none";
-            resultBox.innerText = "";
-            return;
-        }
-
-        loadQuestion(currentIndex + 1);
+        // 정답을 말하지 않고 넘어가면 정답 개수에는 포함하지 않음
+        goNextQuestion();
     });
 
     initCategories();
