@@ -862,7 +862,6 @@ def word_card_speaking_game(word_themes):
 
         const dist = editDistance(a, b);
         const maxLen = Math.max(a.length, b.length);
-
         return 1 - (dist / maxLen);
     }
 
@@ -870,7 +869,6 @@ def word_card_speaking_game(word_themes):
         return String(word || "")
             .toLowerCase()
             .replace(/[^a-z]/g, "")
-            // 끝소리, 복수형, 진행형 등 ASR이 흔히 다르게 잡는 부분 보정
             .replace(/ies$/g, "y")
             .replace(/es$/g, "")
             .replace(/s$/g, "")
@@ -879,20 +877,30 @@ def word_card_speaking_game(word_themes):
             .trim();
     }
 
+    function roughSound(word) {
+        return normalizeForSound(word)
+            // 영어 ASR/한국인 발음에서 자주 흔들리는 소리들을 대략 묶음
+            .replace(/th/g, "d")
+            .replace(/ph/g, "f")
+            .replace(/ck/g, "k")
+            .replace(/qu/g, "kw")
+            .replace(/[aeiou]/g, "");  // 모음 흔들림은 크게 보지 않음
+    }
+
     function isKnownSpeechAlias(spokenWord, answerWord) {
         const sw = normalizeText(spokenWord).replace(/\s+/g, "");
         const aw = normalizeText(answerWord).replace(/\s+/g, "");
 
         const aliases = {
-            "i": ["i", "eye", "hi"],
-            "you": ["you", "u", "yew"],
-            "he": ["he"],
-            "she": ["she"],
-            "we": ["we"],
-            "they": ["they"],
+            "i": ["i", "eye", "hi", "ai"],
+            "you": ["you", "u", "yew", "yo", "ya"],
+            "he": ["he", "hi"],
+            "she": ["she", "see", "shi", "sea"],
+            "we": ["we", "wee", "wi", "me"],
+            "they": ["they", "day", "dey", "the", "there", "theyre", "their"],
             "one": ["one", "won"],
             "two": ["two", "to", "too"],
-            "three": ["three", "tree"],
+            "three": ["three", "tree", "free"],
             "four": ["four", "for"],
             "five": ["five"],
             "six": ["six", "sex"],
@@ -921,7 +929,6 @@ def word_card_speaking_game(word_themes):
         if (!a || !b) return false;
         if (a[0] === b[0]) return true;
 
-        // 발음상 가까운 첫소리 묶음
         const groups = [
             ["c", "k", "q"],
             ["s", "c", "z"],
@@ -929,10 +936,30 @@ def word_card_speaking_game(word_themes):
             ["b", "v"],
             ["g", "j"],
             ["i", "e", "y"],
-            ["u", "o", "w"]
+            ["u", "o", "w"],
+            ["t", "d", "th"],
+            ["r", "l"]
         ];
 
         return groups.some(group => group.includes(a[0]) && group.includes(b[0]));
+    }
+
+    function isVeryDifferentCommonWord(spokenWord, answerWord) {
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        // 정말 자주 나오는 짧은 단어끼리는 엉뚱한 정답 처리를 막음
+        const hardDifferent = {
+            "i": ["you", "he", "she", "we", "they"],
+            "you": ["i", "he", "she", "we", "they"],
+            "he": ["i", "you", "she", "we", "they"],
+            "she": ["i", "you", "he", "we", "they"],
+            "we": ["i", "you", "he", "she", "they"],
+            "they": ["i", "you", "he", "she", "we"]
+        };
+
+        if (!hardDifferent[aw]) return false;
+        return hardDifferent[aw].includes(sw);
     }
 
     function isUnderstandableWord(spokenWord, answerWord) {
@@ -944,41 +971,42 @@ def word_card_speaking_game(word_themes):
         if (!sw || !aw) return false;
         if (sw === aw) return true;
 
-        // 동음이의어·ASR 흔한 변환은 허용
         if (isKnownSpeechAlias(sw, aw)) return true;
+        if (isVeryDifferentCommonWord(sw, aw)) return false;
 
         const soundSw = normalizeForSound(sw);
         const soundAw = normalizeForSound(aw);
 
         if (soundSw && soundAw && soundSw === soundAw) return true;
 
+        const roughSw = roughSound(sw);
+        const roughAw = roughSound(aw);
+
+        if (roughSw && roughAw && roughSw === roughAw) return true;
+
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
 
-        // 아주 짧은 단어는 alias가 아니면 너무 위험하므로 보수적으로
+        // 짧은 대명사/기능어도 너무 엄격하지 않게
+        // they, we 같은 단어는 ASR이 day, wee 등으로 자주 흔들리므로 alias와 유사도 중심으로 처리
         if (aw.length <= 2) {
-            return false;
+            return sim >= 0.50 || dist <= 1;
         }
 
-        // 3글자 단어: 첫소리가 비슷하고 1글자 차이까지 허용
-        // 예: bad/bag 같은 실제 다른 단어는 일부 위험하지만, 수업용 ASR에서는 이해 가능성을 우선
         if (aw.length === 3) {
-            return startsSimilar(sw, aw) && (dist <= 1 || sim >= 0.66);
+            return (startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.50)) || sim >= 0.68;
         }
 
-        // 4글자 단어: 첫소리가 비슷하면 2글자 차이까지 부분 허용
         if (aw.length === 4) {
-            return startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.62);
+            return (startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.50)) || sim >= 0.64;
         }
 
-        // 5~6글자 단어: 상당히 관대하게
         if (aw.length <= 6) {
-            return startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.58);
+            return (startsSimilar(sw, aw) && (dist <= 3 || sim >= 0.48)) || sim >= 0.60;
         }
 
-        // 7글자 이상 긴 단어: ASR 오류를 더 넓게 허용
         if (aw.length >= 7) {
-            return startsSimilar(sw, aw) && (dist <= 3 || sim >= 0.55);
+            return (startsSimilar(sw, aw) && (dist <= 4 || sim >= 0.45)) || sim >= 0.56;
         }
 
         return false;
@@ -997,8 +1025,7 @@ def word_card_speaking_game(word_themes):
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
         // 한 단어 정답:
-        // 음성 인식이 앞뒤에 잡음이나 짧은 말을 붙여도,
-        // 핵심 단어가 이해 가능하면 정답 처리
+        // 완전히 다른 대명사류만 막고, 이해 가능한 발음/ASR 결과는 정답 처리
         if (answerWords.length === 1) {
             for (const sw of spokenWords) {
                 if (isUnderstandableWord(sw, answerWords[0])) {
@@ -1009,11 +1036,8 @@ def word_card_speaking_game(word_themes):
         }
 
         // 두 단어 이상 표현:
-        // 표현 전체가 그대로 들어오면 정답
         if (s.includes(a)) return true;
 
-        // 정답 단어들이 순서대로 들어오면 정답
-        // 예: "please excuse me" -> excuse me 인정
         let pos = 0;
         let weakMatchCount = 0;
 
@@ -1031,11 +1055,7 @@ def word_card_speaking_game(word_themes):
 
         if (pos < answerWords.length) return false;
 
-        // 2단어 표현에서 둘 다 너무 애매하게만 맞은 경우는 오답 처리
-        if (answerWords.length <= 2 && weakMatchCount >= 2) {
-            return false;
-        }
-
+        // 표현 전체가 전부 애매하게만 맞아도, 짧은 생존 표현은 학습 흐름을 위해 인정
         return true;
     }
 
