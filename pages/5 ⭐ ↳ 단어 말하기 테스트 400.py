@@ -2712,11 +2712,12 @@ def daily_word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            // 인식된 영어 단어는 그대로 보여 주고,
-            // 바로 옆에 정답 표시만 붙입니다.
+            // 맞았을 때는 음성 인식 결과 대신
+            // 정확한 정답 영어 단어를 인식된 단어 칸에 보여 줍니다.
+            // 예: subject ✅ 정답입니다
             cardFeedbackBox.style.display = "none";
             transcriptBox.innerHTML =
-                "<span style='color:#334155;'>" + escapeHtml(spokenText) + "</span>" +
+                "<span style='color:#334155;'>" + escapeHtml(currentItem.word) + "</span>" +
                 " <span style='display:inline-block; margin-left:8px; padding:4px 9px; border-radius:999px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; font-size:0.82em; font-weight:900; vertical-align:middle;'>✅ 정답입니다</span>";
             transcriptBox.style.color = "#334155";
 
