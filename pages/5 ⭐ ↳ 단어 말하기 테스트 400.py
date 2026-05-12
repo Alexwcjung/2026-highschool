@@ -2135,9 +2135,17 @@ def daily_word_card_speaking_game(word_themes):
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let isListening = false;
+    let micSafetyTimer = null;
+    let recognitionRunId = 0;
 
     function resetMicButton() {
         isListening = false;
+
+        if (micSafetyTimer) {
+            clearTimeout(micSafetyTimer);
+            micSafetyTimer = null;
+        }
+
         micBtn.disabled = false;
         micBtn.style.opacity = "1";
         micBtn.style.cursor = "pointer";
@@ -2145,17 +2153,22 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function cleanupRecognition() {
+        recognitionRunId += 1;
+
+        if (micSafetyTimer) {
+            clearTimeout(micSafetyTimer);
+            micSafetyTimer = null;
+        }
+
         if (recognition) {
-            try {
-                recognition.onresult = null;
-                recognition.onerror = null;
-                recognition.onend = null;
-                recognition.stop();
-            } catch (e) {
-                try { recognition.abort(); } catch (err) {}
-            }
+            try { recognition.onresult = null; } catch (e) {}
+            try { recognition.onerror = null; } catch (e) {}
+            try { recognition.onend = null; } catch (e) {}
+            try { recognition.abort(); } catch (e) {}
+            try { recognition.stop(); } catch (e) {}
             recognition = null;
         }
+
         resetMicButton();
     }
 
@@ -2728,9 +2741,11 @@ def daily_word_card_speaking_game(word_themes):
 
             speak(currentItem.word);
 
-            setTimeout(function() {
-                goNextCard();
-            }, 1200);
+            // 정답을 맞혀도 자동으로 넘어가지 않습니다.
+            // 정답 개수만 올라가고, 학생이 직접 '다음' 버튼을 눌러 이동합니다.
+            cleanupRecognition();
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
         } else {
             // 틀렸을 때는 인식된 단어는 그대로 두고,
             // 아래 안내만 짧게 보여 줍니다.
@@ -2779,6 +2794,9 @@ def daily_word_card_speaking_game(word_themes):
 
         window.speechSynthesis.cancel();
 
+        recognitionRunId += 1;
+        const thisRunId = recognitionRunId;
+
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
         recognition.interimResults = false;
@@ -2797,6 +2815,7 @@ def daily_word_card_speaking_game(word_themes):
         resultBox.style.color = "#1d4ed8";
 
         recognition.onresult = function(event) {
+            if (thisRunId !== recognitionRunId) return;
             let bestTranscript = "";
 
             if (!event.results || !event.results[0]) {
@@ -2821,6 +2840,7 @@ def daily_word_card_speaking_game(word_themes):
         };
 
         recognition.onerror = function(event) {
+            if (thisRunId !== recognitionRunId) return;
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                 resultBox.innerText = "마이크 권한을 허용해 주세요.";
                 resultBox.style.background = "#fef2f2";
@@ -2842,6 +2862,7 @@ def daily_word_card_speaking_game(word_themes):
         };
 
         recognition.onend = function() {
+            if (thisRunId !== recognitionRunId) return;
             recognition = null;
             resetMicButton();
         };
@@ -2852,6 +2873,16 @@ def daily_word_card_speaking_game(word_themes):
                 resetMicButton();
             }
         }, 9000);
+
+        micSafetyTimer = setTimeout(function() {
+            if (thisRunId !== recognitionRunId) return;
+            if (isListening) {
+                try { recognition.abort(); } catch (e) {}
+                try { recognition.stop(); } catch (e) {}
+                recognition = null;
+                resetMicButton();
+            }
+        }, 11000);
 
         try {
             recognition.start();
