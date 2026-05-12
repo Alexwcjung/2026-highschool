@@ -761,6 +761,39 @@ def word_card_speaking_game(word_themes):
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
+    let isListening = false;
+
+    function resetMicButton() {
+        isListening = false;
+        micBtn.disabled = false;
+        micBtn.style.opacity = "1";
+        micBtn.style.cursor = "pointer";
+        micBtn.innerText = "🎙️ 말하기";
+    }
+
+    function cleanupRecognition() {
+        if (recognition) {
+            try {
+                recognition.onresult = null;
+                recognition.onerror = null;
+                recognition.onend = null;
+                recognition.stop();
+            } catch (e) {
+                try { recognition.abort(); } catch (err) {}
+            }
+            recognition = null;
+        }
+        resetMicButton();
+    }
+
+    function escapeHtml(text) {
+        return String(text || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
     function uniqueCategories() {
         const cats = ["전체"];
@@ -1109,6 +1142,7 @@ def word_card_speaking_game(word_themes):
     }
 
     function showFinishScreen() {
+        cleanupRecognition();
         finished = true;
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
@@ -1133,6 +1167,7 @@ def word_card_speaking_game(word_themes):
         if (index < 0) index = 0;
 
         showGameArea();
+        cleanupRecognition();
 
         currentIndex = index;
         currentItem = currentList[currentIndex];
@@ -1178,14 +1213,14 @@ def word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            // 정답 피드백은 아래 결과 박스가 아니라 단어 카드 안에 바로 표시합니다.
-            answerBox.style.display = "block";
-            answerBox.style.background = "#ecfdf5";
-            answerBox.style.borderColor = "#86efac";
-            answerBox.style.color = "#166534";
-            answerBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:22px;'>" + currentItem.word + "</span>";
+            // 정답 영어 단어를 인식된 단어 칸에 보여 주고, 바로 옆에 정답 표시를 붙입니다.
+            // 예: water ✅ 정답입니다
+            answerBox.style.display = "none";
+            transcriptBox.innerHTML =
+                "<span style='color:#334155;'>" + escapeHtml(currentItem.word) + "</span>" +
+                " <span style='display:inline-block; margin-left:8px; padding:4px 9px; border-radius:999px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; font-size:0.82em; font-weight:900; vertical-align:middle;'>✅ 정답입니다</span>";
+            transcriptBox.style.color = "#334155";
 
-            // 아래 결과 박스에는 정답 메시지를 반복해서 띄우지 않습니다.
             resultBox.innerText = "";
             resultBox.style.background = "#f8fafc";
             resultBox.style.borderColor = "#e2e8f0";
@@ -1194,29 +1229,53 @@ def word_card_speaking_game(word_themes):
             speak(currentItem.word);
 
             setTimeout(function() {
+                cleanupRecognition();
                 goNextCard();
-            }, 850);
+            }, 1200);
         } else {
-            resultBox.innerHTML =
-                "🍊 다시 말해 보세요.<br>" +
-                "<span style='font-size:17px;'>한국말 뜻을 보고 영어 단어 한 단어만 말하면 됩니다.</span>";
-
+            // 틀렸을 때는 인식된 단어는 그대로 두고, 안내만 짧게 보여 줍니다.
+            answerBox.style.display = "none";
+            transcriptBox.style.color = "#334155";
+            resultBox.innerText = "다시 말해 보세요.";
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
             resultBox.style.color = "#9a3412";
         }
     }
 
-    function startRecognition() {
+    async function startRecognition() {
         if (!SpeechRecognition) {
             resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
             resultBox.style.background = "#fef2f2";
             resultBox.style.borderColor = "#fecaca";
             resultBox.style.color = "#991b1b";
+            resetMicButton();
             return;
         }
 
-        if (finished) return;
+        if (finished || !currentItem) {
+            resetMicButton();
+            return;
+        }
+
+        // 이미 남아 있는 음성 인식 객체를 먼저 정리합니다.
+        // 몇 문제 뒤 말하기 버튼이 안 눌리는 현상을 줄이기 위한 안전장치입니다.
+        cleanupRecognition();
+
+        // 모바일/브라우저에서 마이크 권한이 꼬이는 경우를 줄입니다.
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                stream.getTracks().forEach(function(track) { track.stop(); });
+            } catch (err) {
+                resultBox.innerText = "마이크 권한을 허용한 뒤 다시 눌러 주세요.";
+                resultBox.style.background = "#fef2f2";
+                resultBox.style.borderColor = "#fecaca";
+                resultBox.style.color = "#991b1b";
+                resetMicButton();
+                return;
+            }
+        }
 
         window.speechSynthesis.cancel();
 
@@ -1226,7 +1285,12 @@ def word_card_speaking_game(word_themes):
         recognition.continuous = false;
         recognition.maxAlternatives = 10;
 
+        isListening = true;
+        micBtn.disabled = true;
+        micBtn.style.opacity = "0.72";
+        micBtn.style.cursor = "wait";
         micBtn.innerText = "🎙️ 듣는 중...";
+
         resultBox.innerText = "말해 보세요.";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
@@ -1235,8 +1299,13 @@ def word_card_speaking_game(word_themes):
         recognition.onresult = function(event) {
             let bestTranscript = "";
 
+            if (!event.results || !event.results[0]) {
+                resetMicButton();
+                return;
+            }
+
             for (let i = 0; i < event.results[0].length; i++) {
-                const transcript = event.results[0][i].transcript;
+                const transcript = event.results[0][i].transcript.trim();
                 if (i === 0) bestTranscript = transcript;
 
                 if (isCorrectSpeech(transcript, currentItem.word)) {
@@ -1245,26 +1314,59 @@ def word_card_speaking_game(word_themes):
                 }
             }
 
+            // 인식된 영어 단어는 먼저 그대로 보여 줍니다.
+            // 정답으로 판정되면 checkSpeech 안에서 정확한 정답 단어 + 정답 표시로 바뀝니다.
+            transcriptBox.style.color = "#334155";
             transcriptBox.innerText = bestTranscript;
             checkSpeech(bestTranscript);
         };
 
         recognition.onerror = function(event) {
-            resultBox.innerText = "다시 눌러 주세요.";
-            resultBox.style.background = "#fef2f2";
-            resultBox.style.borderColor = "#fecaca";
-            resultBox.style.color = "#991b1b";
-            micBtn.innerText = "🎙️ 말하기";
+            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                resultBox.innerText = "마이크 권한을 허용해 주세요.";
+                resultBox.style.background = "#fef2f2";
+                resultBox.style.borderColor = "#fecaca";
+                resultBox.style.color = "#991b1b";
+            } else if (event.error === "no-speech") {
+                resultBox.innerText = "소리가 인식되지 않았습니다. 다시 눌러 주세요.";
+                resultBox.style.background = "#f8fafc";
+                resultBox.style.borderColor = "#e2e8f0";
+                resultBox.style.color = "#334155";
+            } else {
+                resultBox.innerText = "다시 눌러 주세요.";
+                resultBox.style.background = "#f8fafc";
+                resultBox.style.borderColor = "#e2e8f0";
+                resultBox.style.color = "#334155";
+            }
+
+            resetMicButton();
         };
 
         recognition.onend = function() {
-            micBtn.innerText = "🎙️ 말하기";
+            recognition = null;
+            resetMicButton();
         };
 
-        recognition.start();
+        // 혹시 브라우저가 onend를 늦게 주거나 누락해도 버튼을 살립니다.
+        setTimeout(function() {
+            if (isListening) {
+                resetMicButton();
+            }
+        }, 9000);
+
+        try {
+            recognition.start();
+        } catch (err) {
+            resultBox.innerText = "다시 눌러 주세요.";
+            resultBox.style.background = "#f8fafc";
+            resultBox.style.borderColor = "#e2e8f0";
+            resultBox.style.color = "#334155";
+            cleanupRecognition();
+        }
     }
 
     function resetCurrentTheme() {
+        cleanupRecognition();
         const list = getFilteredItems();
 
         list.forEach(item => {
@@ -1279,6 +1381,7 @@ def word_card_speaking_game(word_themes):
     }
 
     categorySelect.addEventListener("change", function() {
+        cleanupRecognition();
         currentList = getFilteredItems();
         currentIndex = 0;
         loadQuestion(0);
@@ -1286,6 +1389,7 @@ def word_card_speaking_game(word_themes):
     });
 
     randomBtn.addEventListener("click", function() {
+        cleanupRecognition();
         currentList = shuffleArray(getFilteredItems());
         currentIndex = 0;
         loadQuestion(0);
@@ -1332,6 +1436,7 @@ def word_card_speaking_game(word_themes):
             missedMap[getItemKey(currentItem)] = true;
             updateScore();
         }
+        cleanupRecognition();
         goNextCard();
     });
 
