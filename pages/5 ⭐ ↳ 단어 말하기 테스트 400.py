@@ -2115,12 +2115,341 @@ def daily_word_card_speaking_game(word_themes):
     function normalizeText(text) {
         return String(text || "")
             .toLowerCase()
+            // 축약형 처리
+            .replace(/\bi'm\b/g, "i am")
+            .replace(/\bim\b/g, "i am")
+            .replace(/\byou're\b/g, "you are")
+            .replace(/\bhe's\b/g, "he is")
+            .replace(/\bshe's\b/g, "she is")
+            .replace(/\bit's\b/g, "it is")
+            .replace(/\bwe're\b/g, "we are")
+            .replace(/\bthey're\b/g, "they are")
+            .replace(/\bdon't\b/g, "do not")
+            .replace(/\bdoesn't\b/g, "does not")
+            .replace(/\bdidn't\b/g, "did not")
+            .replace(/\bcan't\b/g, "cannot")
+            .replace(/\bcant\b/g, "cannot")
+            .replace(/\bi'll\b/g, "i will")
+            .replace(/\byou'll\b/g, "you will")
+            .replace(/\bhe'll\b/g, "he will")
+            .replace(/\bshe'll\b/g, "she will")
+            // 자주 잘못 인식되는 표현 보정
             .replace(/\bp\.?e\.?\b/g, "pe")
+            .replace(/\bphysical education\b/g, "pe")
             .replace(/\bt shirt\b/g, "t shirt")
+            .replace(/\btee shirt\b/g, "t shirt")
+            .replace(/\bwi fi\b/g, "wifi")
+            .replace(/\bwi-fi\b/g, "wifi")
+            .replace(/\bwifi\b/g, "wifi")
+            .replace(/\bok\b/g, "okay")
+            .replace(/\bo k\b/g, "okay")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
             .trim();
+    }
+
+    function wordsOnly(text) {
+        return normalizeText(text)
+            .split(" ")
+            .filter(w => w.length > 0);
+    }
+
+    function editDistance(a, b) {
+        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return dp[a.length][b.length];
+    }
+
+    function wordSimilarity(a, b) {
+        if (!a || !b) return 0;
+        if (a === b) return 1;
+
+        const dist = editDistance(a, b);
+        const maxLen = Math.max(a.length, b.length);
+        return 1 - (dist / maxLen);
+    }
+
+    function normalizeForSound(word) {
+        return String(word || "")
+            .toLowerCase()
+            .replace(/[^a-z]/g, "")
+            // 강세·인토네이션 때문에 생기는 끝소리/약화음 차이 보정
+            .replace(/tion$/g, "shun")
+            .replace(/sion$/g, "shun")
+            .replace(/ies$/g, "y")
+            .replace(/es$/g, "")
+            .replace(/s$/g, "")
+            .replace(/ed$/g, "")
+            .replace(/ing$/g, "")
+            .replace(/er$/g, "")
+            .replace(/or$/g, "")
+            .replace(/ar$/g, "")
+            .trim();
+    }
+
+    function roughSound(word) {
+        return normalizeForSound(word)
+            // 남녀 음성, 강세, 인토네이션에 따라 흔들리는 소리들을 더 넓게 묶음
+            .replace(/th/g, "d")
+            .replace(/ph/g, "f")
+            .replace(/gh/g, "g")
+            .replace(/ck/g, "k")
+            .replace(/qu/g, "kw")
+            .replace(/x/g, "ks")
+            .replace(/c/g, "k")
+            .replace(/q/g, "k")
+            .replace(/z/g, "s")
+            .replace(/v/g, "b")
+            .replace(/f/g, "p")
+            .replace(/r/g, "l")
+            .replace(/j/g, "g")
+            .replace(/w/g, "u")
+            // 강세가 달라져도 모음은 크게 보지 않음
+            .replace(/[aeiouy]/g, "");
+    }
+
+    function looseVowelPattern(word) {
+        return normalizeForSound(word)
+            .replace(/[aeiouy]+/g, "V")
+            .replace(/(.)\1+/g, "$1");
+    }
+
+    function removeVowelLengthDifference(word) {
+        return normalizeForSound(word)
+            // 긴장/이완 모음, 장단음 차이를 최대한 무시
+            .replace(/ee/g, "i")
+            .replace(/ea/g, "i")
+            .replace(/ie/g, "i")
+            .replace(/ei/g, "i")
+            .replace(/oo/g, "u")
+            .replace(/ou/g, "u")
+            .replace(/ow/g, "o")
+            .replace(/oa/g, "o")
+            .replace(/ai/g, "e")
+            .replace(/ay/g, "e")
+            .replace(/a_e/g, "e")
+            .replace(/i_e/g, "i")
+            .replace(/o_e/g, "o")
+            .replace(/u_e/g, "u")
+            .replace(/[aeiouy]+/g, "V")
+            .replace(/(.)\1+/g, "$1");
+    }
+
+    function isVowelLengthClose(spokenWord, answerWord) {
+        const sw = normalizeForSound(spokenWord);
+        const aw = normalizeForSound(answerWord);
+
+        if (!sw || !aw) return false;
+
+        const sv = removeVowelLengthDifference(sw);
+        const av = removeVowelLengthDifference(aw);
+
+        if (sv === av) return true;
+
+        // 모음만 흔들리고 자음 뼈대가 비슷하면 인정
+        const rs = roughSound(sw);
+        const ra = roughSound(aw);
+
+        if (rs && ra && rs === ra) return true;
+
+        // 앞소리와 끝소리가 같고 중간 모음만 다르면 인정
+        if (sw.length >= 3 && aw.length >= 3) {
+            if (sw[0] === aw[0] && sw[sw.length - 1] === aw[aw.length - 1]) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isKnownSpeechAlias(spokenWord, answerWord) {
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        const aliases = {
+            "i": ["i", "eye", "hi", "ai", "a"],
+            "you": ["you", "u", "yew", "yo", "ya", "your"],
+            "he": ["he", "hi", "hey"],
+            "she": ["she", "see", "sea", "shi", "seat"],
+            "we": ["we", "wee", "wi", "me", "be"],
+            "they": ["they", "day", "dey", "the", "there", "their", "theyre", "that"],
+            "one": ["one", "won"],
+            "two": ["two", "to", "too"],
+            "three": ["three", "tree", "free"],
+            "four": ["four", "for"],
+            "five": ["five", "fife"],
+            "six": ["six", "sex", "sick"],
+            "seven": ["seven"],
+            "eight": ["eight", "ate"],
+            "ten": ["ten"],
+            "here": ["here", "hear"],
+            "there": ["there", "their"],
+            "right": ["right", "write", "light"],
+            "left": ["left", "laughed"],
+            "wait": ["wait", "weight"],
+            "know": ["know", "no"],
+            "night": ["night", "knight"],
+            "okay": ["okay", "ok", "kay"],
+            "phone": ["phone", "fone"],
+            "coffee": ["coffee", "coffe", "copy"],
+            "please": ["please", "plz"],
+            "excuse": ["excuse", "excus"],
+            "me": ["me"],
+            "pe": ["pe", "pee", "p", "physicaleducation"],
+            "wifi": ["wifi", "wi-fi", "wifei", "wi"],
+            "subject": ["subject", "subjet", "sub check", "subjict"],
+            "science": ["science", "sience", "signs"],
+            "history": ["history", "his story"],
+            "music": ["music", "musick"],
+            "schedule": ["schedule", "skedule"],
+            "presentation": ["presentation", "presentasion"],
+            "restaurant": ["restaurant", "resturant"],
+            "comfortable": ["comfortable", "comfterble", "comfort"],
+            "interesting": ["interesting", "intresting"]
+        };
+
+        if (!aliases[aw]) return false;
+        return aliases[aw].includes(sw);
+    }
+
+    function isClearlyDifferentPronoun(spokenWord, answerWord) {
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        const pronouns = ["i", "you", "he", "she", "we", "they"];
+
+        if (!pronouns.includes(aw)) return false;
+        if (!pronouns.includes(sw)) return false;
+
+        return sw !== aw;
+    }
+
+    function firstSoundSimilar(a, b) {
+        if (!a || !b) return false;
+        if (a[0] === b[0]) return true;
+
+        const groups = [
+            ["c", "k", "q", "g"],
+            ["s", "c", "z", "sh"],
+            ["f", "p", "v", "b"],
+            ["g", "j", "z"],
+            ["i", "e", "y", "a"],
+            ["u", "o", "w"],
+            ["t", "d"],
+            ["r", "l"],
+            ["m", "n"]
+        ];
+
+        return groups.some(group => group.includes(a[0]) && group.includes(b[0]));
+    }
+
+    function hasEnoughSoundOverlap(spokenWord, answerWord) {
+        const rs = roughSound(spokenWord);
+        const ra = roughSound(answerWord);
+
+        if (!rs || !ra) return false;
+        if (rs === ra) return true;
+
+        let overlap = 0;
+        for (const ch of rs) {
+            if (ra.includes(ch)) overlap += 1;
+        }
+
+        const base = Math.max(1, Math.min(rs.length, ra.length));
+        return (overlap / base) >= 0.28;
+    }
+
+    function isStressIntonationClose(spokenWord, answerWord) {
+        const sw = normalizeForSound(spokenWord);
+        const aw = normalizeForSound(answerWord);
+
+        if (!sw || !aw) return false;
+
+        const sv = looseVowelPattern(sw);
+        const av = looseVowelPattern(aw);
+
+        if (sv === av) return true;
+
+        // 강세가 달라져 일부 음절이 약화되어도 앞뒤 핵심 소리만 맞으면 인정
+        if (aw.length >= 5) {
+            if (sw[0] === aw[0] && (sw.includes(aw.slice(0, 3)) || aw.includes(sw.slice(0, 3)))) {
+                return true;
+            }
+
+            if (sw[0] === aw[0] && hasEnoughSoundOverlap(sw, aw)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function isUnderstandableWord(spokenWord, answerWord) {
+        if (!spokenWord || !answerWord) return false;
+
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        if (!sw || !aw) return false;
+        if (sw === aw) return true;
+
+        // 흔한 ASR 변환은 바로 인정
+        if (isKnownSpeechAlias(sw, aw)) return true;
+
+        // 완전히 다른 대명사끼리는 막음
+        if (isClearlyDifferentPronoun(sw, aw)) return false;
+
+        const soundSw = normalizeForSound(sw);
+        const soundAw = normalizeForSound(aw);
+
+        if (soundSw && soundAw && soundSw === soundAw) return true;
+
+        if (isStressIntonationClose(sw, aw)) return true;
+
+        // 모음 길이/긴장도 차이 때문에 ASR이 다르게 받아쓴 경우 허용
+        if (isVowelLengthClose(sw, aw)) return true;
+
+        const dist = editDistance(sw, aw);
+        const sim = wordSimilarity(sw, aw);
+
+        // 짧은 단어도 인토네이션/성별 음성 차이 때문에 너무 엄격하게 보지 않음
+        if (aw.length <= 2) {
+            return dist <= 1 || sim >= 0.30 || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+        }
+
+        if (aw.length === 3) {
+            return dist <= 2 || sim >= 0.32 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+        }
+
+        if (aw.length === 4) {
+            return dist <= 3 || sim >= 0.30 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+        }
+
+        if (aw.length <= 6) {
+            return dist <= 4 || sim >= 0.28 || firstSoundSimilar(sw, aw) || hasEnoughSoundOverlap(sw, aw) || isVowelLengthClose(sw, aw);
+        }
+
+        // 긴 단어는 강세 위치가 바뀌면 ASR이 크게 흔들리므로 가장 관대하게
+        if (aw.length >= 7) {
+            return dist <= 5 || sim >= 0.25 || hasEnoughSoundOverlap(sw, aw) || isStressIntonationClose(sw, aw) || isVowelLengthClose(sw, aw);
+        }
+
+        return false;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -2130,25 +2459,39 @@ def daily_word_card_speaking_game(word_themes):
         if (!s || !a) return false;
         if (s === a) return true;
 
-        const spokenWords = s.split(" ").filter(Boolean);
-        const answerWords = a.split(" ").filter(Boolean);
+        const spokenWords = wordsOnly(s);
+        const answerWords = wordsOnly(a);
 
-        // 한 단어 정답: 앞뒤에 다른 말이 조금 붙어도 핵심 단어가 있으면 정답
+        if (spokenWords.length === 0 || answerWords.length === 0) return false;
+
+        // 한 단어 정답:
+        // 완전히 다른 단어만 막고, 강세/인토네이션/성별 음성 차이로 흔들린 ASR 결과는 정답 처리
         if (answerWords.length === 1) {
-            return spokenWords.includes(a);
+            for (const sw of spokenWords) {
+                if (isUnderstandableWord(sw, answerWords[0])) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        // 두 단어 이상 표현: 표현 전체가 포함되면 정답
+        // 두 단어 이상 표현:
         if (s.includes(a)) return true;
 
-        // 표현 단어들이 순서대로 들어오면 정답
         let pos = 0;
-        for (const w of spokenWords) {
-            if (w === answerWords[pos]) pos += 1;
-            if (pos >= answerWords.length) return true;
+
+        for (const sw of spokenWords) {
+            const target = answerWords[pos];
+            if (!target) break;
+
+            if (isUnderstandableWord(sw, target)) {
+                pos += 1;
+            }
+
+            if (pos >= answerWords.length) break;
         }
 
-        return false;
+        return pos >= answerWords.length;
     }
 
     function countCorrectInCurrentTheme() {
@@ -2320,7 +2663,7 @@ def daily_word_card_speaking_game(word_themes):
         recognition.lang = "en-US";
         recognition.interimResults = false;
         recognition.continuous = false;
-        recognition.maxAlternatives = 3;
+        recognition.maxAlternatives = 10;
 
         micBtn.innerText = "🎙️ 듣는 중...";
         resultBox.innerText = "말해 보세요.";
