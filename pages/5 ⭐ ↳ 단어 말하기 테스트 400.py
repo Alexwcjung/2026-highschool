@@ -1859,18 +1859,7 @@ def daily_word_card_speaking_game(word_themes):
         </div>
 
         <div id="gameArea">
-            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
-                <div id="categoryLabel" style="
-                    display:inline-block;
-                    background:#eff6ff;
-                    color:#1d4ed8;
-                    border-radius:999px;
-                    padding:8px 14px;
-                    font-size:15px;
-                    font-weight:900;
-                    border:1px solid #bfdbfe;
-                "></div>
-
+            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
                 <div id="scoreLabel" style="
                     display:inline-block;
                     background:#f0fdf4;
@@ -1880,7 +1869,7 @@ def daily_word_card_speaking_game(word_themes):
                     font-size:15px;
                     font-weight:900;
                     border:1px solid #bbf7d0;
-                ">정답 0 / 0 · 못 말한 단어 0</div>
+                ">정답 0 / 0 · 연습 필요 단어 0</div>
             </div>
 
             <div id="cardBox" style="
@@ -2037,7 +2026,7 @@ def daily_word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#166534;
                 margin-bottom:18px;
-            ">정답 0 / 0 · 못 말한 단어 0</div>
+            ">정답 0 / 0 · 연습 필요 단어 0</div>
             <button id="finishRetryBtn" style="
                 border:1.5px solid #a7f3d0;
                 background:#ecfdf5;
@@ -2070,7 +2059,6 @@ def daily_word_card_speaking_game(word_themes):
     const finishScore = document.getElementById("finishScore");
     const finishRetryBtn = document.getElementById("finishRetryBtn");
 
-    const categoryLabel = document.getElementById("categoryLabel");
     const scoreLabel = document.getElementById("scoreLabel");
     const cardBox = document.getElementById("cardBox");
     const emojiBox = document.getElementById("emojiBox");
@@ -2192,7 +2180,7 @@ def daily_word_card_speaking_game(word_themes):
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
         const missedCount = countMissedInCurrentTheme();
-        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
+        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
     }
 
     function speak(text) {
@@ -2225,7 +2213,7 @@ def daily_word_card_speaking_game(word_themes):
         const correctCount = countCorrectInCurrentTheme();
         const missedCount = countMissedInCurrentTheme();
 
-        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
+        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
 
         gameArea.style.display = "none";
         finishBox.style.display = "block";
@@ -2248,7 +2236,6 @@ def daily_word_card_speaking_game(word_themes):
         currentIndex = index;
         currentItem = currentList[currentIndex];
 
-        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
         emojiBox.innerText = currentItem.emoji || "🌱";
         meaningBox.innerText = currentItem.meaning;
 
