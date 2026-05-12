@@ -1120,6 +1120,50 @@ theme_dialogues = {
 }
 
 
+
+# =========================
+# 카테고리 통합
+# - 단어 160개와 대화 내용은 삭제하지 않습니다.
+# - 카테고리만 크게 묶습니다.
+# - 이 통합 결과가 단어 목록, 퀴즈, 카테고리별 카세트, 전체 카세트에 모두 적용됩니다.
+# =========================
+CATEGORY_MERGE_MAP = {
+    "🧍 나와 사람": "🧍 사람·상태",
+    "💖 감정·몸 상태": "🧍 사람·상태",
+
+    "🏃 기본 동작": "🏃 동작·도움",
+    "🆘 도움 요청": "🏃 동작·도움",
+
+    "🍎 음식·물": "🍎 음식·건강",
+
+    "🚗 장소·이동": "🚗 장소·이동",
+
+    "⏰ 시간·숫자": "⏰ 시간·숫자",
+
+    "🎒 물건·돈": "🎒 물건·돈",
+}
+
+
+def merge_categories(original_dict):
+    merged = {}
+
+    for old_cat, items in original_dict.items():
+        new_cat = CATEGORY_MERGE_MAP.get(old_cat, old_cat)
+
+        if new_cat not in merged:
+            merged[new_cat] = []
+
+        # 단어/대화 내용은 그대로 유지하고 카테고리만 합칩니다.
+        merged[new_cat].extend(items)
+
+    return merged
+
+
+# 여기서 먼저 통합해야 아래 단어 목록, 퀴즈, 카세트가 모두 통합 카테고리 기준으로 작동합니다.
+word_themes = merge_categories(word_themes)
+theme_dialogues = merge_categories(theme_dialogues)
+
+
 # =========================
 # 전체 카세트 듣기 기능
 # 브라우저 음성 엔진 사용
@@ -1178,23 +1222,19 @@ def make_theme_cassette_items(theme_words, theme_name):
 
 
 
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="재생 버튼을 누르면 단어가 차례대로 재생됩니다.", height=600):
+def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="", height=600):
     """
     보기 편한 카세트 플레이어.
     - 큰 재생 버튼
-    - 현재 단어/뜻 크게 표시
     - 속도/반복 횟수 선택
-    - 현재 단어 다시 듣기
     - 모바일에서도 버튼이 잘리지 않도록 반응형 처리
     """
 
     player_id = f"easy_cassette_{uuid.uuid4().hex}"
     play_btn_id = f"play_{uuid.uuid4().hex}"
     pause_btn_id = f"pause_{uuid.uuid4().hex}"
-    replay_btn_id = f"replay_{uuid.uuid4().hex}"
     prev_btn_id = f"prev_{uuid.uuid4().hex}"
     next_btn_id = f"next_{uuid.uuid4().hex}"
-    stop_btn_id = f"stop_{uuid.uuid4().hex}"
     progress_id = f"progress_{uuid.uuid4().hex}"
     visual_bar_id = f"bar_{uuid.uuid4().hex}"
     percent_id = f"percent_{uuid.uuid4().hex}"
@@ -1314,13 +1354,13 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
             }}
             .easy-control-grid {{
                 display: grid;
-                grid-template-columns: 1.25fr 1fr 1fr;
+                grid-template-columns: 1fr 1fr;
                 gap: 9px;
                 margin-top: 12px;
             }}
             .easy-sub-grid {{
                 display: grid;
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 8px;
                 margin-top: 8px;
             }}
@@ -1385,7 +1425,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 .easy-cassette-small {{ font-size: 12px; padding: 6px 9px; }}
                 .easy-now-card {{ padding: 15px 13px; border-radius: 20px; }}
                 .easy-control-grid {{ grid-template-columns: 1fr; gap: 7px; }}
-                .easy-sub-grid {{ grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }}
+                .easy-sub-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }}
                 .easy-btn {{ min-height: 43px; font-size: 13px; border-radius: 15px; padding: 7px 4px; }}
                 .easy-btn-main {{ min-height: 52px; font-size: 18px; }}
                 .easy-select-row {{ grid-template-columns: 1fr 1fr; gap: 7px; }}
@@ -1419,14 +1459,12 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
             </div>
 
             <div class="easy-control-grid">
-                <button id="{play_btn_id}" class="easy-btn easy-btn-main">▶️ 듣기</button>
+                <button id="{play_btn_id}" class="easy-btn easy-btn-main">▶️ 재생</button>
                 <button id="{pause_btn_id}" class="easy-btn" style="background:#ecfeff; border-color:#67e8f9; color:#155e75;">⏸ 잠깐 멈춤</button>
-                <button id="{replay_btn_id}" class="easy-btn" style="background:#fef3c7; border-color:#fde68a; color:#92400e;">🔁 현재 단어</button>
             </div>
 
             <div class="easy-sub-grid">
                 <button id="{prev_btn_id}" class="easy-btn" style="background:#f8fafc; color:#334155;">⏮ 이전</button>
-                <button id="{stop_btn_id}" class="easy-btn" style="background:#fff7ed; border-color:#fed7aa; color:#9a3412;">⏹ 처음</button>
                 <button id="{next_btn_id}" class="easy-btn" style="background:#f8fafc; color:#334155;">다음 ⏭</button>
             </div>
 
@@ -1457,10 +1495,8 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                 const cassetteItems = {cassette_json};
                 const playBtn = document.getElementById("{play_btn_id}");
                 const pauseBtn = document.getElementById("{pause_btn_id}");
-                const replayBtn = document.getElementById("{replay_btn_id}");
                 const prevBtn = document.getElementById("{prev_btn_id}");
                 const nextBtn = document.getElementById("{next_btn_id}");
-                const stopBtn = document.getElementById("{stop_btn_id}");
                 const progress = document.getElementById("{progress_id}");
                 const visualBar = document.getElementById("{visual_bar_id}");
                 const percentBox = document.getElementById("{percent_id}");
@@ -1526,7 +1562,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     themeBox.innerText = item.theme || "Theme";
                     wordBox.innerText = item.word + " " + getEmoji(item.word);
                     meaningBox.innerHTML = escapeHtml(item.meaning);
-                    status.innerText = "현재 위치: " + (index + 1) + "번 · 반복 " + repeatRound + "/" + repeatSelect.value;
+                    status.innerText = "";
                 }}
 
                 function clearTimers() {{
@@ -1545,7 +1581,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     pauseBtn.innerText = "⏸ 잠깐 멈춤";
                     if (resetIndex) index = 0;
                     updateDisplay();
-                    if (showMessage) status.innerText = "처음으로 돌아갔습니다.";
+                    if (showMessage) status.innerText = "";
                 }}
 
                 channel.onmessage = function(event) {{
@@ -1641,7 +1677,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                             stopTape(false, false);
                             index = cassetteItems.length - 1;
                             updateDisplay();
-                            status.innerText = "카세트 듣기 완료!";
+                            status.innerText = "완료";
                             return;
                         }}
                         updateDisplay();
@@ -1682,7 +1718,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                         isPlaying = true;
                         playBtn.innerText = "재생 중...";
                         pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                        status.innerText = "이어 듣는 중";
+                        status.innerText = "";
                         return;
                     }}
                     startFromCurrent();
@@ -1694,7 +1730,7 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                         isPaused = true;
                         playBtn.innerText = "▶️ 이어 듣기";
                         pauseBtn.innerText = "멈춤 중";
-                        status.innerText = "잠깐 멈춤";
+                        status.innerText = "";
                     }}
                 }});
 
@@ -1717,7 +1753,6 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
 
                 prevBtn.addEventListener("click", function() {{ jumpTo(index - 1, true); }});
                 nextBtn.addEventListener("click", function() {{ jumpTo(index + 1, true); }});
-                stopBtn.addEventListener("click", function() {{ stopTape(true, true); }});
 
                 progress.addEventListener("input", function() {{
                     index = parseInt(progress.value);
@@ -1727,11 +1762,11 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     jumpTo(parseInt(progress.value), true);
                 }});
                 speedSelect.addEventListener("change", function() {{
-                    status.innerText = "속도 변경: " + speedSelect.options[speedSelect.selectedIndex].text;
+                    status.innerText = "";
                 }});
                 repeatSelect.addEventListener("change", function() {{
                     repeatRound = 1;
-                    status.innerText = "반복 횟수 변경: " + repeatSelect.value + "번";
+                    status.innerText = "";
                     updateDisplay();
                 }});
 
@@ -1752,7 +1787,7 @@ def browser_survival_cassette_player(all_items, height=620):
     browser_easy_cassette_player(
         all_items,
         title="📼 전체 단어 카세트 듣기",
-        intro="전체 단어를 단어만 차례대로 들을 수 있습니다. 속도와 반복 횟수를 고른 뒤 듣기를 누르세요.",
+        intro="",
         height=height
     )
 
@@ -1761,7 +1796,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=580):
     browser_easy_cassette_player(
         theme_items,
         title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="이 테마 단어만 차례대로 들을 수 있습니다. 현재 단어 다시 듣기와 이동 줄을 사용할 수 있습니다.",
+        intro="",
         height=height
     )
 
@@ -1802,7 +1837,7 @@ def show_all_cassette_tab():
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 테마 단어만 카세트 듣기")
+    st.markdown("### 🎧 이 카테고리 단어만 카세트 듣기")
 
     theme_items = make_theme_cassette_items(theme_words, theme_name)
 
@@ -2034,7 +2069,7 @@ def show_quiz(theme_words, theme_name):
 
         if len(wrong) == 0:
             st.balloons()
-            st.success("🌈 완벽합니다! 이 테마의 생존 단어를 모두 잘 기억하고 있습니다.")
+            st.success("🌈 완벽합니다! 이 카테고리의 생존 단어를 모두 잘 기억하고 있습니다.")
 
             if st.button("🔄 다시 풀기", key=f"{theme_name}_reset_all_correct"):
                 reset_theme(theme_name)
@@ -2152,7 +2187,7 @@ for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
             f"""
             <div class="theme-header">
                 <div class="theme-title">{theme_name}</div>
-                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 생존 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div>
+                <div class="theme-desc">이 카테고리에는 {len(theme_words)}개의 생존 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div>
             </div>
             """,
             unsafe_allow_html=True
