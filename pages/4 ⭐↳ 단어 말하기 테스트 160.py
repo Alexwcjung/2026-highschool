@@ -292,125 +292,108 @@ def word_card_speaking_game(word_themes):
             #cardBox {
                 position: relative;
                 overflow: hidden;
-                transform-style: preserve-3d;
-                perspective: 1400px;
-                transform-origin: left center;
-                backface-visibility: hidden;
+                transform-origin: center center;
+                will-change: transform, opacity, filter;
             }
 
-            /* 책장 넘기듯 접히는 효과 */
+            /* 다음 단어로 바뀌는 것이 확실히 보이는 전환 효과 */
             #cardBox::before {
-                content: "";
+                content: "다음 단어";
                 position: absolute;
-                top: 0;
-                right: 0;
-                width: 52%;
-                height: 100%;
-                border-radius: 0 32px 32px 0;
-                pointer-events: none;
-                background:
-                    linear-gradient(90deg,
-                        rgba(255,255,255,0.05) 0%,
-                        rgba(255,255,255,0.55) 42%,
-                        rgba(148,163,184,0.22) 72%,
-                        rgba(15,23,42,0.16) 100%);
-                transform-origin: left center;
-                transform: rotateY(0deg);
+                top: 18px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-16px) scale(0.88);
+                background: linear-gradient(135deg, #2563eb, #7c3aed);
+                color: white;
+                border: 3px solid rgba(255,255,255,0.92);
+                border-radius: 999px;
+                padding: 10px 20px;
+                font-size: 18px;
+                font-weight: 900;
+                letter-spacing: -0.2px;
+                box-shadow: 0 12px 26px rgba(37,99,235,0.24);
                 opacity: 0;
-                z-index: 5;
+                z-index: 8;
+                pointer-events: none;
+                white-space: nowrap;
             }
 
             #cardBox::after {
                 content: "";
                 position: absolute;
-                top: 0;
-                bottom: 0;
-                left: 50%;
-                width: 3px;
+                inset: 0;
                 pointer-events: none;
-                background: linear-gradient(180deg,
-                    rgba(255,255,255,0),
-                    rgba(100,116,139,0.25),
-                    rgba(255,255,255,0));
+                background: linear-gradient(90deg,
+                    rgba(219,234,254,0) 0%,
+                    rgba(219,234,254,0.88) 34%,
+                    rgba(237,233,254,0.92) 50%,
+                    rgba(254,243,199,0.88) 66%,
+                    rgba(219,234,254,0) 100%);
+                transform: translateX(-115%);
                 opacity: 0;
-                z-index: 6;
+                z-index: 7;
             }
 
-            .page-flip-card {
-                animation: bookPageMove 0.78s ease-in-out;
+            .next-card-animate {
+                animation: nextCardSlide 0.58s cubic-bezier(.2,.8,.2,1);
             }
 
-            .page-flip-card::before {
-                animation: bookPageFold 0.78s ease-in-out;
+            .next-card-animate::before {
+                animation: nextBadgePop 0.58s cubic-bezier(.2,.8,.2,1);
             }
 
-            .page-flip-card::after {
-                animation: bookPageCrease 0.78s ease-in-out;
+            .next-card-animate::after {
+                animation: nextLightSweep 0.58s ease-out;
             }
 
-            @keyframes bookPageMove {
-                0% {
-                    transform: rotateY(0deg) translateX(0);
-                    filter: brightness(1);
-                }
-                28% {
-                    transform: rotateY(-9deg) translateX(-5px);
-                    filter: brightness(0.98);
-                }
-                58% {
-                    transform: rotateY(4deg) translateX(2px);
-                    filter: brightness(1.02);
-                }
-                100% {
-                    transform: rotateY(0deg) translateX(0);
-                    filter: brightness(1);
-                }
-            }
-
-            @keyframes bookPageFold {
+            @keyframes nextCardSlide {
                 0% {
                     opacity: 0;
-                    transform: rotateY(0deg) skewY(0deg);
-                    box-shadow: none;
+                    transform: translateX(46px) scale(0.965);
+                    filter: blur(3px) brightness(1.05);
                 }
-                18% {
-                    opacity: 0.85;
-                    transform: rotateY(-18deg) skewY(-1deg);
-                    box-shadow: -14px 0 22px rgba(15,23,42,0.10);
-                }
-                45% {
+                55% {
                     opacity: 1;
-                    transform: rotateY(-64deg) skewY(-2deg);
-                    box-shadow: -22px 0 32px rgba(15,23,42,0.18);
-                }
-                72% {
-                    opacity: 0.6;
-                    transform: rotateY(-22deg) skewY(-1deg);
-                    box-shadow: -10px 0 18px rgba(15,23,42,0.10);
+                    transform: translateX(-7px) scale(1.012);
+                    filter: blur(0) brightness(1.03);
                 }
                 100% {
-                    opacity: 0;
-                    transform: rotateY(0deg) skewY(0deg);
-                    box-shadow: none;
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                    filter: blur(0) brightness(1);
                 }
             }
 
-            @keyframes bookPageCrease {
+            @keyframes nextBadgePop {
                 0% {
                     opacity: 0;
-                    transform: translateX(0);
+                    transform: translateX(-50%) translateY(-18px) scale(0.86);
                 }
-                35% {
+                20% {
                     opacity: 1;
-                    transform: translateX(-24px);
+                    transform: translateX(-50%) translateY(0) scale(1.04);
                 }
-                70% {
-                    opacity: 0.55;
-                    transform: translateX(12px);
+                62% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0) scale(1);
                 }
                 100% {
                     opacity: 0;
-                    transform: translateX(0);
+                    transform: translateX(-50%) translateY(-8px) scale(0.96);
+                }
+            }
+
+            @keyframes nextLightSweep {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-115%);
+                }
+                20% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(115%);
                 }
             }
 
@@ -886,9 +869,9 @@ def word_card_speaking_game(word_themes):
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
 
-        cardBox.classList.remove("page-flip-card");
+        cardBox.classList.remove("next-card-animate");
         void cardBox.offsetWidth;
-        cardBox.classList.add("page-flip-card");
+        cardBox.classList.add("next-card-animate");
 
         updateScore();
     }
