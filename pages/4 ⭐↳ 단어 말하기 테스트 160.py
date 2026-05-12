@@ -573,17 +573,6 @@ def word_card_speaking_game(word_themes):
                     font-size:17px;
                 ">🎙️ 말하기</button>
 
-                <button id="answerBtn" style="
-                    border:1.5px solid #bfdbfe;
-                    background:#eff6ff;
-                    color:#1d4ed8;
-                    border-radius:999px;
-                    padding:13px 20px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:17px;
-                ">👀 정답 보기 + 🔊 발음 듣기</button>
-
                 <button id="hintBtn" style="
                     border:1.5px solid #fed7aa;
                     background:#fff7ed;
@@ -594,6 +583,17 @@ def word_card_speaking_game(word_themes):
                     cursor:pointer;
                     font-size:17px;
                 ">💡 힌트 보기</button>
+
+                <button id="answerBtn" style="
+                    border:1.5px solid #bfdbfe;
+                    background:#eff6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:13px 20px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:17px;
+                ">👀 정답 보기 + 🔊 발음 듣기</button>
 
                 <button id="skipBtn" style="
                     border:1.5px solid #c7d2fe;
