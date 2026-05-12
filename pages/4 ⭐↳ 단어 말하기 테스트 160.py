@@ -822,9 +822,8 @@ def word_card_speaking_game(word_themes):
             .replace(/\bhe'll\b/g, "he will")
             .replace(/\bshe'll\b/g, "she will")
             // 자주 잘못 인식되는 표현 보정
-            .replace(/\bexcuse me\b/g, "excuse me")
-            .replace(/\bokay\b/g, "okay")
             .replace(/\bok\b/g, "okay")
+            .replace(/\bo k\b/g, "okay")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
@@ -867,29 +866,119 @@ def word_card_speaking_game(word_themes):
         return 1 - (dist / maxLen);
     }
 
-    function isSmallRecognitionMistake(spokenWord, answerWord) {
+    function normalizeForSound(word) {
+        return String(word || "")
+            .toLowerCase()
+            .replace(/[^a-z]/g, "")
+            // 끝소리, 복수형, 진행형 등 ASR이 흔히 다르게 잡는 부분 보정
+            .replace(/ies$/g, "y")
+            .replace(/es$/g, "")
+            .replace(/s$/g, "")
+            .replace(/ed$/g, "")
+            .replace(/ing$/g, "")
+            .trim();
+    }
+
+    function isKnownSpeechAlias(spokenWord, answerWord) {
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
+
+        const aliases = {
+            "i": ["i", "eye", "hi"],
+            "you": ["you", "u", "yew"],
+            "he": ["he"],
+            "she": ["she"],
+            "we": ["we"],
+            "they": ["they"],
+            "one": ["one", "won"],
+            "two": ["two", "to", "too"],
+            "three": ["three", "tree"],
+            "four": ["four", "for"],
+            "five": ["five"],
+            "six": ["six", "sex"],
+            "seven": ["seven"],
+            "eight": ["eight", "ate"],
+            "ten": ["ten"],
+            "here": ["here", "hear"],
+            "there": ["there", "their"],
+            "right": ["right", "write"],
+            "wait": ["wait", "weight"],
+            "know": ["know", "no"],
+            "night": ["night", "knight"],
+            "okay": ["okay", "ok", "kay"],
+            "phone": ["phone", "fone"],
+            "coffee": ["coffee", "coffe"],
+            "please": ["please", "plz"],
+            "excuse": ["excuse", "excus"],
+            "me": ["me"]
+        };
+
+        if (!aliases[aw]) return false;
+        return aliases[aw].includes(sw);
+    }
+
+    function startsSimilar(a, b) {
+        if (!a || !b) return false;
+        if (a[0] === b[0]) return true;
+
+        // 발음상 가까운 첫소리 묶음
+        const groups = [
+            ["c", "k", "q"],
+            ["s", "c", "z"],
+            ["f", "p"],
+            ["b", "v"],
+            ["g", "j"],
+            ["i", "e", "y"],
+            ["u", "o", "w"]
+        ];
+
+        return groups.some(group => group.includes(a[0]) && group.includes(b[0]));
+    }
+
+    function isUnderstandableWord(spokenWord, answerWord) {
         if (!spokenWord || !answerWord) return false;
-        if (spokenWord === answerWord) return true;
 
-        const dist = editDistance(spokenWord, answerWord);
-        const sim = wordSimilarity(spokenWord, answerWord);
+        const sw = normalizeText(spokenWord).replace(/\s+/g, "");
+        const aw = normalizeText(answerWord).replace(/\s+/g, "");
 
-        // 아주 짧은 단어는 엄격하게
-        // 예: I, he, we, go, do 등
-        if (answerWord.length <= 2) {
-            return dist === 0;
+        if (!sw || !aw) return false;
+        if (sw === aw) return true;
+
+        // 동음이의어·ASR 흔한 변환은 허용
+        if (isKnownSpeechAlias(sw, aw)) return true;
+
+        const soundSw = normalizeForSound(sw);
+        const soundAw = normalizeForSound(aw);
+
+        if (soundSw && soundAw && soundSw === soundAw) return true;
+
+        const dist = editDistance(sw, aw);
+        const sim = wordSimilarity(sw, aw);
+
+        // 아주 짧은 단어는 alias가 아니면 너무 위험하므로 보수적으로
+        if (aw.length <= 2) {
+            return false;
         }
 
-        // 3~4글자 단어는 1글자 정도만 허용
-        // 예: sick → sik, cold → col 정도
-        if (answerWord.length <= 4) {
-            return dist <= 1 && sim >= 0.75;
+        // 3글자 단어: 첫소리가 비슷하고 1글자 차이까지 허용
+        // 예: bad/bag 같은 실제 다른 단어는 일부 위험하지만, 수업용 ASR에서는 이해 가능성을 우선
+        if (aw.length === 3) {
+            return startsSimilar(sw, aw) && (dist <= 1 || sim >= 0.66);
         }
 
-        // 5글자 이상 단어는 음성 인식 오류를 조금 더 허용
-        // 예: thirsty, family, teacher 등
-        if (answerWord.length >= 5) {
-            return dist <= 1 || sim >= 0.82;
+        // 4글자 단어: 첫소리가 비슷하면 2글자 차이까지 부분 허용
+        if (aw.length === 4) {
+            return startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.62);
+        }
+
+        // 5~6글자 단어: 상당히 관대하게
+        if (aw.length <= 6) {
+            return startsSimilar(sw, aw) && (dist <= 2 || sim >= 0.58);
+        }
+
+        // 7글자 이상 긴 단어: ASR 오류를 더 넓게 허용
+        if (aw.length >= 7) {
+            return startsSimilar(sw, aw) && (dist <= 3 || sim >= 0.55);
         }
 
         return false;
@@ -908,11 +997,11 @@ def word_card_speaking_game(word_themes):
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
         // 한 단어 정답:
-        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우는 허용
-        // 예: "the word water", "water please"
+        // 음성 인식이 앞뒤에 잡음이나 짧은 말을 붙여도,
+        // 핵심 단어가 이해 가능하면 정답 처리
         if (answerWords.length === 1) {
             for (const sw of spokenWords) {
-                if (isSmallRecognitionMistake(sw, answerWords[0])) {
+                if (isUnderstandableWord(sw, answerWords[0])) {
                     return true;
                 }
             }
@@ -920,7 +1009,7 @@ def word_card_speaking_game(word_themes):
         }
 
         // 두 단어 이상 표현:
-        // 표현 전체가 포함되면 정답
+        // 표현 전체가 그대로 들어오면 정답
         if (s.includes(a)) return true;
 
         // 정답 단어들이 순서대로 들어오면 정답
@@ -932,8 +1021,8 @@ def word_card_speaking_game(word_themes):
             const target = answerWords[pos];
             if (!target) break;
 
-            if (isSmallRecognitionMistake(sw, target)) {
-                if (sw !== target) weakMatchCount += 1;
+            if (isUnderstandableWord(sw, target)) {
+                if (normalizeText(sw) !== normalizeText(target)) weakMatchCount += 1;
                 pos += 1;
             }
 
@@ -942,8 +1031,8 @@ def word_card_speaking_game(word_themes):
 
         if (pos < answerWords.length) return false;
 
-        // 짧은 표현에서 애매한 단어가 너무 많으면 오답
-        if (answerWords.length <= 3 && weakMatchCount >= 2) {
+        // 2단어 표현에서 둘 다 너무 애매하게만 맞은 경우는 오답 처리
+        if (answerWords.length <= 2 && weakMatchCount >= 2) {
             return false;
         }
 
@@ -1119,7 +1208,7 @@ def word_card_speaking_game(word_themes):
         recognition.lang = "en-US";
         recognition.interimResults = false;
         recognition.continuous = false;
-        recognition.maxAlternatives = 3;
+        recognition.maxAlternatives = 5;
 
         micBtn.innerText = "🎙️ 듣는 중...";
         resultBox.innerText = "말해 보세요.";
