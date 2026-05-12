@@ -320,7 +320,8 @@ def speaking_practice_component(items):
     let currentItem = null;
     let score = 0;
     let alreadyCorrect = false;
-    let autoNextTimer = null;
+    let isListening = false;
+    let recognitionTimeout = null;
 
     const categorySelect = document.getElementById("categorySelect");
     const randomBtn = document.getElementById("randomBtn");
@@ -661,11 +662,6 @@ def speaking_practice_component(items):
         if (index >= currentList.length) index = 0;
         if (index < 0) index = currentList.length - 1;
 
-        if (autoNextTimer) {
-            clearTimeout(autoNextTimer);
-            autoNextTimer = null;
-        }
-
         currentIndex = index;
         currentItem = currentList[currentIndex];
         alreadyCorrect = false;
@@ -675,19 +671,20 @@ def speaking_practice_component(items):
         koPrompt.innerHTML =
             "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
             "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
-        blankSentence.innerText = currentItem.blank;
+        blankSentence.innerHTML = makeBlankSentenceHtml(currentItem.blank);
         hintBox.style.display = "none";
         answerBox.style.display = "none";
         hintBox.innerText = "";
         answerBox.innerText = "";
         transcriptBox.innerText = "";
 
-        // 처음에는 힌트와 말하기 버튼만 보이게 함
+        // 처음에는 힌트, 말하기, 다음 버튼을 보이게 함
+        resetMicState();
         hintBtn.style.display = "inline-block";
         micBtn.style.display = "inline-block";
         answerBtn.style.display = "none";
         listenBtn.style.display = "none";
-        nextBtn.style.display = "none";
+        nextBtn.style.display = "inline-block";
 
         resultBox.style.display = "none";
         resultBox.innerText = "";
@@ -711,16 +708,46 @@ def speaking_practice_component(items):
         window.speechSynthesis.speak(utterance);
     }
 
-    function goNextQuestion() {
-        if (autoNextTimer) {
-            clearTimeout(autoNextTimer);
-            autoNextTimer = null;
+    function resetMicState() {
+        isListening = false;
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
         }
+        micBtn.disabled = false;
+        micBtn.style.opacity = "1";
+        micBtn.style.pointerEvents = "auto";
+        micBtn.innerText = "🎙️";
+    }
+
+    function stopRecognition() {
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        if (recognition) {
+            try { recognition.onresult = null; } catch (e) {}
+            try { recognition.onerror = null; } catch (e) {}
+            try { recognition.onend = null; } catch (e) {}
+            try { recognition.stop(); } catch (e) {}
+            try { recognition.abort(); } catch (e) {}
+            recognition = null;
+        }
+        resetMicState();
+    }
+
+    function goNextQuestion() {
+        stopRecognition();
+        window.speechSynthesis.cancel();
         loadQuestion(currentIndex + 1);
     }
 
     function checkSpeech(spokenText) {
-        if (isCorrectSpeech(spokenText, currentItem.answer)) {
+        if (!currentItem) return;
+
+        const recognized = String(spokenText || "").trim();
+
+        if (isCorrectSpeech(recognized, currentItem.answer)) {
             if (!alreadyCorrect) {
                 score += 1;
                 alreadyCorrect = true;
@@ -728,34 +755,39 @@ def speaking_practice_component(items):
 
             updateScore();
 
-            resultBox.style.display = "block";
-            resultBox.style.color = "#166534";
-            resultBox.innerText = "정답입니다! 다음 문제로 넘어갑니다.";
+            // 말해보카1 방식: 내가 말한 문장을 마이크 버튼 위에 띄우고, 빈칸에는 정답 문장을 채움
+            transcriptBox.innerHTML =
+                "<span style='color:#4c1d95;'>" + escapeHtml(recognized || currentItem.answer) + "</span> " +
+                "<span style='color:#166534;'>✅ 정답입니다</span>";
 
+            blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
+
+            hintBox.style.display = "none";
             answerBox.style.display = "none";
-            transcriptBox.innerText = currentItem.answer;
-
             answerBtn.style.display = "none";
             listenBtn.style.display = "inline-block";
             nextBtn.style.display = "inline-block";
 
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
+
             speak(currentItem.answer);
-
-            autoNextTimer = setTimeout(function() {
-                if (alreadyCorrect) {
-                    goNextQuestion();
-                }
-            }, 1000);
         } else {
-            resultBox.style.display = "block";
-            resultBox.style.color = "#991b1b";
-            resultBox.innerText = "아직 정답으로 인식되지 않았습니다. 다시 말하거나, 정답을 보고 연습한 뒤 다시 말해 보세요.";
+            // 말해보카2 방식: 한 번 틀리면 힌트를 바로 보여줌
+            transcriptBox.innerHTML =
+                "<span style='color:#991b1b;'>" + escapeHtml(recognized || "인식 실패") + "</span> " +
+                "<span style='color:#991b1b;'>❌</span>";
 
-            // 틀린 경우에는 정답 개수에 포함하지 않음
-            // 대신 정답을 보고 다시 말해서 맞히면 그때 정답으로 인정함
+            hintBox.style.display = "block";
+            hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+
             answerBtn.style.display = "inline-block";
             listenBtn.style.display = "none";
             nextBtn.style.display = "inline-block";
+
+            resultBox.style.display = "block";
+            resultBox.style.color = "#92400e";
+            resultBox.innerText = "힌트를 보고 다시 연습해 보세요.";
         }
     }
 
@@ -765,6 +797,11 @@ def speaking_practice_component(items):
             return;
         }
 
+        if (!currentItem) return;
+
+        // 이전 음성 인식 객체가 남아 있으면 먼저 정리해서 버튼 먹통을 방지함
+        stopRecognition();
+
         // 모바일에서 먼저 마이크 권한 요청
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
@@ -772,89 +809,100 @@ def speaking_practice_component(items):
                 stream.getTracks().forEach(track => track.stop());
             } catch (err) {
                 transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                resetMicState();
                 return;
             }
         }
 
         window.speechSynthesis.cancel();
 
-        recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.interimResults = true;
-        recognition.continuous = false;
-        recognition.maxAlternatives = 3;
-
-        micBtn.innerText = "👂";
-        resultBox.style.display = "none";
-        resultBox.innerText = "";
-        transcriptBox.innerText = "";
-
-        recognition.onresult = function(event) {
-            let spokenText = "";
-            let hasFinal = false;
-
-            for (let i = 0; i < event.results.length; i++) {
-                const piece = event.results[i][0].transcript.trim();
-                if (piece) {
-                    spokenText += (spokenText ? " " : "") + piece;
-                }
-                if (event.results[i].isFinal) {
-                    hasFinal = true;
-                }
-            }
-
-            transcriptBox.innerText = spokenText;
-
-            if (hasFinal) {
-                checkSpeech(spokenText);
-            }
-        };
-
-        recognition.onerror = function(event) {
-            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-                transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
-            } else if (event.error === "no-speech") {
-                transcriptBox.innerText = "인식하지 못했습니다. 다시 말하거나 다음 문제로 넘어갈 수 있습니다.";
-                answerBtn.style.display = "inline-block";
-                nextBtn.style.display = "inline-block";
-                resultBox.style.display = "block";
-                resultBox.style.color = "#64748b";
-                resultBox.innerText = "인식 실패는 정답 개수에 포함되지 않습니다.";
-            } else {
-                transcriptBox.innerText = "인식이 잘 되지 않았습니다. 다시 말하거나 다음 문제로 넘어갈 수 있습니다.";
-                answerBtn.style.display = "inline-block";
-                nextBtn.style.display = "inline-block";
-                resultBox.style.display = "block";
-                resultBox.style.color = "#64748b";
-                resultBox.innerText = "인식 실패는 정답 개수에 포함되지 않습니다.";
-            }
-            micBtn.innerText = "🎙️";
-        };
-
-        recognition.onend = function() {
-            micBtn.innerText = "🎙️";
-        };
-
         try {
+            recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.interimResults = true;
+            recognition.continuous = false;
+            recognition.maxAlternatives = 5;
+
+            isListening = true;
+            micBtn.disabled = true;
+            micBtn.style.opacity = "0.78";
+            micBtn.innerText = "👂";
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
+            transcriptBox.innerText = "";
+
+            recognitionTimeout = setTimeout(function() {
+                if (isListening) {
+                    try { recognition.stop(); } catch (e) {}
+                    resetMicState();
+                }
+            }, 8000);
+
+            recognition.onresult = function(event) {
+                let spokenText = "";
+                let hasFinal = false;
+
+                for (let i = 0; i < event.results.length; i++) {
+                    const piece = event.results[i][0].transcript.trim();
+                    if (piece) {
+                        spokenText += (spokenText ? " " : "") + piece;
+                    }
+                    if (event.results[i].isFinal) {
+                        hasFinal = true;
+                    }
+                }
+
+                transcriptBox.innerText = spokenText;
+
+                if (hasFinal) {
+                    stopRecognition();
+                    checkSpeech(spokenText);
+                }
+            };
+
+            recognition.onerror = function(event) {
+                stopRecognition();
+
+                if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                    transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                } else {
+                    transcriptBox.innerText = "인식 실패";
+                    hintBox.style.display = "block";
+                    hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+                    answerBtn.style.display = "inline-block";
+                    nextBtn.style.display = "inline-block";
+                    resultBox.style.display = "block";
+                    resultBox.style.color = "#64748b";
+                    resultBox.innerText = "다시 누르거나 다음 문제로 넘어갈 수 있습니다.";
+                }
+            };
+
+            recognition.onend = function() {
+                resetMicState();
+            };
+
             recognition.start();
         } catch (err) {
+            stopRecognition();
             transcriptBox.innerText = "다시 눌러 주세요.";
-            micBtn.innerText = "🎙️";
         }
     }
 
     categorySelect.addEventListener("change", function() {
+        stopRecognition();
         currentList = getFilteredItems();
         currentIndex = 0;
         loadQuestion(0);
     });
 
     randomBtn.addEventListener("click", function() {
+        stopRecognition();
         currentList = shuffleArray(getFilteredItems());
         loadQuestion(0);
     });
 
     resetBtn.addEventListener("click", function() {
+        stopRecognition();
         score = 0;
         alreadyCorrect = false;
         updateScore();
@@ -872,15 +920,17 @@ def speaking_practice_component(items):
     });
 
     answerBtn.addEventListener("click", function() {
+        if (!currentItem) return;
         answerBox.style.display = "none";
-        transcriptBox.innerText = currentItem.answer;
+        blankSentence.innerHTML = makeAnswerSentenceHtml(currentItem.answer);
+        transcriptBox.innerHTML = "<span style='color:#166534;'>" + escapeHtml(currentItem.answer) + "</span>";
         listenBtn.style.display = "inline-block";
         nextBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
         resultBox.style.display = "block";
         resultBox.style.color = "#166534";
-        resultBox.innerText = "정답을 듣고 다시 말해 보세요. 다시 정확히 말하면 정답으로 인정됩니다.";
+        resultBox.innerText = "정답을 듣고 다시 말하면 정답으로 인정됩니다.";
     });
 
     micBtn.addEventListener("click", startRecognition);
