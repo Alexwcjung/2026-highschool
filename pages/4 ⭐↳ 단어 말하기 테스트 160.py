@@ -243,7 +243,7 @@ st.markdown(
     """
     <div class="main-title-box">
         <h1>🃏 생존 단어 카드 말하기 게임</h1>
-        <p>한국말 뜻을 보고 영어 단어를 연습하세요.</p>
+        <p>한국말 뜻을 보고 영어 단어를 말해 보세요. 정답 후에는 직접 다음으로 넘어갑니다.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -762,9 +762,16 @@ def word_card_speaking_game(word_themes):
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     let recognition = null;
     let isListening = false;
+    let micSafetyTimer = null;
 
     function resetMicButton() {
         isListening = false;
+
+        if (micSafetyTimer) {
+            clearTimeout(micSafetyTimer);
+            micSafetyTimer = null;
+        }
+
         micBtn.disabled = false;
         micBtn.style.opacity = "1";
         micBtn.style.cursor = "pointer";
@@ -772,17 +779,20 @@ def word_card_speaking_game(word_themes):
     }
 
     function cleanupRecognition() {
+        if (micSafetyTimer) {
+            clearTimeout(micSafetyTimer);
+            micSafetyTimer = null;
+        }
+
         if (recognition) {
-            try {
-                recognition.onresult = null;
-                recognition.onerror = null;
-                recognition.onend = null;
-                recognition.stop();
-            } catch (e) {
-                try { recognition.abort(); } catch (err) {}
-            }
+            try { recognition.onresult = null; } catch (e) {}
+            try { recognition.onerror = null; } catch (e) {}
+            try { recognition.onend = null; } catch (e) {}
+            try { recognition.stop(); } catch (e) {}
+            try { recognition.abort(); } catch (e) {}
             recognition = null;
         }
+
         resetMicButton();
     }
 
@@ -1255,10 +1265,14 @@ def word_card_speaking_game(word_themes):
 
             speak(currentItem.word);
 
-            setTimeout(function() {
-                cleanupRecognition();
-                goNextCard();
-            }, 1200);
+            // 정답을 맞혀도 자동으로 다음 단어로 넘어가지 않습니다.
+            // 정답 개수만 올라가고, 학생이 직접 '다음' 버튼을 눌러야 넘어갑니다.
+            resultBox.innerText = "정답입니다. 다음 단어로 가려면 '다음'을 눌러 주세요.";
+            resultBox.style.background = "#f0fdf4";
+            resultBox.style.borderColor = "#bbf7d0";
+            resultBox.style.color = "#166534";
+
+            cleanupRecognition();
         } else {
             // 틀렸을 때는 인식된 단어는 그대로 두고, 안내만 짧게 보여 줍니다.
             answerBox.style.display = "none";
@@ -1281,6 +1295,16 @@ def word_card_speaking_game(word_themes):
         }
 
         if (finished || !currentItem) {
+            resetMicButton();
+            return;
+        }
+
+        // 이미 맞힌 단어에서는 마이크를 다시 켜지 않고, 다음 버튼으로 이동하게 합니다.
+        if (correctMap[getItemKey(currentItem)]) {
+            resultBox.innerText = "이미 맞힌 단어입니다. 다음 단어로 가려면 '다음'을 눌러 주세요.";
+            resultBox.style.background = "#f0fdf4";
+            resultBox.style.borderColor = "#bbf7d0";
+            resultBox.style.color = "#166534";
             resetMicButton();
             return;
         }
@@ -1375,8 +1399,12 @@ def word_card_speaking_game(word_themes):
         };
 
         // 혹시 브라우저가 onend를 늦게 주거나 누락해도 버튼을 살립니다.
-        setTimeout(function() {
+        // 동시에 남은 recognition 객체도 정리해 말하기 버튼 먹통을 방지합니다.
+        micSafetyTimer = setTimeout(function() {
             if (isListening) {
+                try { recognition.stop(); } catch (e) {}
+                try { recognition.abort(); } catch (e) {}
+                recognition = null;
                 resetMicButton();
             }
         }, 9000);
