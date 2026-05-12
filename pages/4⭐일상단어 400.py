@@ -2881,17 +2881,9 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     if (document.hidden) stopTape(false, false);
                 }});
 
-                // 카세트 영역이 화면에서 사라지면 자동 중지
-                if ("IntersectionObserver" in window && wrap) {{
-                    const observer = new IntersectionObserver(function(entries) {{
-                        entries.forEach(function(entry) {{
-                            if (!entry.isIntersecting && (isPlaying || isPaused || window.speechSynthesis.speaking)) {{
-                                stopTape(false, false);
-                            }}
-                        }});
-                    }}, {{ threshold: 0.05 }});
-                    observer.observe(wrap);
-                }}
+                // 스크롤로 카세트 영역이 화면 밖으로 나가도 재생을 멈추지 않습니다.
+                // 예전에는 IntersectionObserver로 화면 밖 이동 시 stopTape()를 실행했지만,
+                // 모바일에서 단어 목록을 보려고 스크롤하면 카세트가 끊기는 문제가 있어 제거했습니다.
 
                 // Streamlit의 상단 탭이나 왼쪽 페이지 메뉴를 누르면 모든 카세트 중지
                 try {{
@@ -3078,9 +3070,9 @@ def browser_daily_cassette_player(all_items, height=620):
     browser_easy_cassette_player(
         all_items,
         title="📼 전체 단어 카세트 듣기",
-        intro="전체 단어를 차례대로 듣습니다. 한 단어를 2번씩 들려준 뒤 다음 단어로 넘어갑니다.",
+        intro="전체 단어를 차례대로 듣습니다. 한 단어를 3번씩 들려준 뒤 다음 단어로 넘어갑니다.",
         height=height,
-        word_repeat_each=2
+        word_repeat_each=3
     )
 
 
