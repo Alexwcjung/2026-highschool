@@ -2120,18 +2120,10 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/\byou're\b/g, "you are")
             .replace(/\bhe's\b/g, "he is")
             .replace(/\bshe's\b/g, "she is")
-            .replace(/\bit's\b/g, "it is")
             .replace(/\bwe're\b/g, "we are")
             .replace(/\bthey're\b/g, "they are")
             .replace(/\bdon't\b/g, "do not")
-            .replace(/\bdoesn't\b/g, "does not")
-            .replace(/\bdidn't\b/g, "did not")
             .replace(/\bcan't\b/g, "cannot")
-            .replace(/\bcant\b/g, "cannot")
-            .replace(/\bi'll\b/g, "i will")
-            .replace(/\byou'll\b/g, "you will")
-            .replace(/\bhe'll\b/g, "he will")
-            .replace(/\bshe'll\b/g, "she will")
             .replace(/\bp\.?e\.?\b/g, "pe")
             .replace(/\bphysical education\b/g, "pe")
             .replace(/\bt shirt\b/g, "tshirt")
@@ -2144,12 +2136,6 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
             .trim();
-    }
-
-    function wordsOnly(text) {
-        return normalizeText(text).split(" ").filter(function(w) {
-            return w.length > 0;
-        });
     }
 
     function editDistance(a, b) {
@@ -2178,14 +2164,9 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function similarity(a, b) {
-        a = String(a || "");
-        b = String(b || "");
-
         if (!a || !b) return 0;
         if (a === b) return 1;
-
-        const maxLen = Math.max(a.length, b.length);
-        return 1 - (editDistance(a, b) / maxLen);
+        return 1 - (editDistance(a, b) / Math.max(a.length, b.length));
     }
 
     function soundKey(text) {
@@ -2218,10 +2199,10 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/ai/g, "e")
             .replace(/ay/g, "e")
             .replace(/[aeiouy]/g, "")
-            .replace(/(.)\1+/g, "$1");
+            .replace(/(.)\\1+/g, "$1");
     }
 
-    function vowelLooseKey(text) {
+    function vowelKey(text) {
         return normalizeText(text)
             .replace(/[^a-z]/g, "")
             .replace(/ee/g, "i")
@@ -2235,7 +2216,7 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/ai/g, "e")
             .replace(/ay/g, "e")
             .replace(/[aeiouy]+/g, "v")
-            .replace(/(.)\1+/g, "$1");
+            .replace(/(.)\\1+/g, "$1");
     }
 
     function aliasMatch(spoken, answer) {
@@ -2255,9 +2236,7 @@ def daily_word_card_speaking_game(word_themes):
             "four": ["four", "for"],
             "five": ["five", "fife"],
             "six": ["six", "sex", "sick"],
-            "seven": ["seven"],
             "eight": ["eight", "ate"],
-            "ten": ["ten"],
             "here": ["here", "hear"],
             "there": ["there", "their"],
             "right": ["right", "write", "light"],
@@ -2265,7 +2244,6 @@ def daily_word_card_speaking_game(word_themes):
             "wait": ["wait", "weight"],
             "know": ["know", "no"],
             "okay": ["okay", "ok", "kay"],
-            "phone": ["phone", "fone"],
             "pe": ["pe", "pee", "p", "physicaleducation"],
             "wifi": ["wifi", "wifei", "wi"],
             "tshirt": ["tshirt", "teeshirt", "t shirt", "tee shirt"]
@@ -2278,7 +2256,6 @@ def daily_word_card_speaking_game(word_themes):
     function clearlyDifferentPronoun(spoken, answer) {
         const sw = normalizeText(spoken).replace(/\s+/g, "");
         const aw = normalizeText(answer).replace(/\s+/g, "");
-
         const pronouns = ["i", "you", "he", "she", "we", "they"];
 
         if (!pronouns.includes(aw)) return false;
@@ -2313,30 +2290,18 @@ def daily_word_card_speaking_game(word_themes):
         // 완전히 다른 대명사류만 막음
         if (clearlyDifferentPronoun(sw, aw)) return false;
 
+        if (soundKey(sw) && soundKey(sw) === soundKey(aw)) return true;
+        if (vowelKey(sw) && vowelKey(sw) === vowelKey(aw)) return true;
+
         const sim = similarity(sw, aw);
         const dist = editDistance(sw, aw);
         const snd = soundOverlap(sw, aw);
 
-        // 모음 길이, 강세, 인토네이션, 남녀 음성 차이로 인한 흔들림 허용
-        if (soundKey(sw) && soundKey(sw) === soundKey(aw)) return true;
-        if (vowelLooseKey(sw) && vowelLooseKey(sw) === vowelLooseKey(aw)) return true;
-
-        if (aw.length <= 2) {
-            return dist <= 1 || sim >= 0.30 || snd >= 0.25;
-        }
-
-        if (aw.length === 3) {
-            return dist <= 2 || sim >= 0.28 || snd >= 0.25;
-        }
-
-        if (aw.length === 4) {
-            return dist <= 3 || sim >= 0.26 || snd >= 0.25;
-        }
-
-        if (aw.length <= 6) {
-            return dist <= 4 || sim >= 0.24 || snd >= 0.22;
-        }
-
+        // 강세, 인토네이션, 모음 길이, 남녀 음성 차이를 크게 허용
+        if (aw.length <= 2) return dist <= 1 || sim >= 0.30 || snd >= 0.25;
+        if (aw.length === 3) return dist <= 2 || sim >= 0.28 || snd >= 0.25;
+        if (aw.length === 4) return dist <= 3 || sim >= 0.26 || snd >= 0.25;
+        if (aw.length <= 6) return dist <= 4 || sim >= 0.24 || snd >= 0.22;
         return dist <= 5 || sim >= 0.22 || snd >= 0.20;
     }
 
@@ -2347,11 +2312,12 @@ def daily_word_card_speaking_game(word_themes):
         if (!s || !a) return false;
         if (s === a) return true;
 
-        const spokenWords = wordsOnly(s);
-        const answerWords = wordsOnly(a);
+        const spokenWords = s.split(" ").filter(Boolean);
+        const answerWords = a.split(" ").filter(Boolean);
 
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
+        // 한 단어 정답: 여러 후보 중 하나라도 이해 가능하면 정답
         if (answerWords.length === 1) {
             for (const sw of spokenWords) {
                 if (understandableWord(sw, answerWords[0])) {
@@ -2361,11 +2327,13 @@ def daily_word_card_speaking_game(word_themes):
             return false;
         }
 
+        // 두 단어 이상 표현: 표현 전체가 포함되면 정답
         if (s.includes(a)) return true;
 
+        // 표현 단어들이 순서대로 이해 가능하면 정답
         let pos = 0;
-        for (const sw of spokenWords) {
-            if (understandableWord(sw, answerWords[pos])) {
+        for (const w of spokenWords) {
+            if (understandableWord(w, answerWords[pos])) {
                 pos += 1;
             }
 
@@ -2581,12 +2549,7 @@ def daily_word_card_speaking_game(word_themes):
             micBtn.innerText = "🎙️ 말하기";
         };
 
-        try {
-            recognition.start();
-        } catch (err) {
-            resultBox.innerText = "다시 눌러 주세요.";
-            micBtn.innerText = "🎙️ 말하기";
-        }
+        recognition.start();
     }
 
     function resetCurrentTheme() {
