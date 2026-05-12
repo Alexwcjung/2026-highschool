@@ -1695,14 +1695,112 @@ def daily_word_card_speaking_game(word_themes):
                 max-width: 100%;
             }
 
-            .bounce-card {
-                animation: cardBounce 0.42s ease;
+            #cardBox {
+                position: relative;
+                overflow: hidden;
+                transform-origin: center center;
+                will-change: transform, opacity, filter;
             }
 
-            @keyframes cardBounce {
-                0% { transform: scale(1); }
-                40% { transform: scale(1.035); }
-                100% { transform: scale(1); }
+            /* 다음 단어로 넘어갈 때 카드 위에 표시되는 반짝 전환 효과 */
+            #cardBox::before {
+                content: "다음 단어";
+                position: absolute;
+                top: 18px;
+                left: 50%;
+                transform: translateX(-50%) translateY(-16px) scale(0.88);
+                background: linear-gradient(135deg, #2563eb, #7c3aed);
+                color: white;
+                border: 3px solid rgba(255,255,255,0.92);
+                border-radius: 999px;
+                padding: 10px 20px;
+                font-size: 18px;
+                font-weight: 900;
+                letter-spacing: -0.2px;
+                box-shadow: 0 12px 26px rgba(37,99,235,0.24);
+                opacity: 0;
+                z-index: 8;
+                pointer-events: none;
+                white-space: nowrap;
+            }
+
+            #cardBox::after {
+                content: "";
+                position: absolute;
+                inset: 0;
+                pointer-events: none;
+                background: linear-gradient(90deg,
+                    rgba(219,234,254,0) 0%,
+                    rgba(219,234,254,0.88) 34%,
+                    rgba(237,233,254,0.92) 50%,
+                    rgba(254,243,199,0.88) 66%,
+                    rgba(219,234,254,0) 100%);
+                transform: translateX(-115%);
+                opacity: 0;
+                z-index: 7;
+            }
+
+            .next-card-animate {
+                animation: nextCardSlide 0.58s cubic-bezier(.2,.8,.2,1);
+            }
+
+            .next-card-animate::before {
+                animation: nextBadgePop 0.58s cubic-bezier(.2,.8,.2,1);
+            }
+
+            .next-card-animate::after {
+                animation: nextLightSweep 0.58s ease-out;
+            }
+
+            @keyframes nextCardSlide {
+                0% {
+                    opacity: 0;
+                    transform: translateX(46px) scale(0.965);
+                    filter: blur(3px) brightness(1.05);
+                }
+                55% {
+                    opacity: 1;
+                    transform: translateX(-7px) scale(1.012);
+                    filter: blur(0) brightness(1.03);
+                }
+                100% {
+                    opacity: 1;
+                    transform: translateX(0) scale(1);
+                    filter: blur(0) brightness(1);
+                }
+            }
+
+            @keyframes nextBadgePop {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-18px) scale(0.86);
+                }
+                20% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0) scale(1.04);
+                }
+                62% {
+                    opacity: 1;
+                    transform: translateX(-50%) translateY(0) scale(1);
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(-50%) translateY(-8px) scale(0.96);
+                }
+            }
+
+            @keyframes nextLightSweep {
+                0% {
+                    opacity: 0;
+                    transform: translateX(-115%);
+                }
+                20% {
+                    opacity: 1;
+                }
+                100% {
+                    opacity: 0;
+                    transform: translateX(115%);
+                }
             }
 
             @media (max-width: 768px) {
@@ -2555,9 +2653,9 @@ def daily_word_card_speaking_game(word_themes):
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
 
-        cardBox.classList.remove("bounce-card");
+        cardBox.classList.remove("next-card-animate");
         void cardBox.offsetWidth;
-        cardBox.classList.add("bounce-card");
+        cardBox.classList.add("next-card-animate");
 
         updateScore();
     }
