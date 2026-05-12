@@ -11,294 +11,8 @@ st.set_page_config(
 # =========================================================
 # 데이터
 # =========================================================
-PRACTICE_ITEMS = [{'cat': '💪 할 수 있는 일 말하기',
-  'ko': '나는 영어를 조금 말할 수 있어. 그래서 너를 도와줄 수 있어.',
-  'blank': 'I can speak ______ a little, so I can ______ you.',
-  'answer': 'I can speak English a little, so I can help you.',
-  'hint': 'English / help',
-  'emoji': '🤝'},
- {'cat': '💪 할 수 있는 일 말하기',
-  'ko': '나는 지금 갈 수 없어. 하지만 여기서 기다릴 수 있어.',
-  'blank': 'I cannot ______ now, but I can ______ here.',
-  'answer': 'I cannot go now, but I can wait here.',
-  'hint': 'go / wait',
-  'emoji': '⏳'},
- {'cat': '💪 할 수 있는 일 말하기',
-  'ko': '너는 천천히 말할 수 있니? 나는 잘 이해할 수 없어.',
-  'blank': 'Can you speak ______? I cannot ______ well.',
-  'answer': 'Can you speak slowly? I cannot understand well.',
-  'hint': 'slowly / understand',
-  'emoji': '🗣️'},
- {'cat': '💪 할 수 있는 일 말하기',
-  'ko': '나는 지도를 읽을 수 있어. 그래서 역을 찾을 수 있어.',
-  'blank': 'I can ______ a map, so I can ______ the station.',
-  'answer': 'I can read a map, so I can find the station.',
-  'hint': 'read / find',
-  'emoji': '🗺️'},
- {'cat': '💪 할 수 있는 일 말하기',
-  'ko': '그는 수영할 수 없어. 그래서 그는 도움이 필요해.',
-  'blank': 'He cannot ______, so he needs ______.',
-  'answer': 'He cannot swim, so he needs help.',
-  'hint': 'swim / help',
-  'emoji': '🏊'},
- {'cat': '💪 할 수 있는 일 말하기',
-  'ko': '우리는 오늘 공부할 수 있어. 하지만 오래 머물 수는 없어.',
-  'blank': 'We can ______ today, but we cannot ______ long.',
-  'answer': 'We can study today, but we cannot stay long.',
-  'hint': 'study / stay',
-  'emoji': '📚'},
- {'cat': '📢 부탁하고 지시하기',
-  'ko': '문을 열어 주세요. 안에 들어오지 마세요.',
-  'blank': '______ the door, please. Do not ______ inside.',
-  'answer': 'Open the door, please. Do not come inside.',
-  'hint': 'Open / come',
-  'emoji': '🚪'},
- {'cat': '📢 부탁하고 지시하기',
-  'ko': '천천히 말해 주세요. 나는 잘 이해하지 못해요.',
-  'blank': '______ slowly, please. I do not ______ well.',
-  'answer': 'Speak slowly, please. I do not understand well.',
-  'hint': 'Speak / understand',
-  'emoji': '🙏'},
- {'cat': '📢 부탁하고 지시하기',
-  'ko': '여기에 앉으세요. 그리고 이름을 쓰세요.',
-  'blank': '______ here, and ______ your name.',
-  'answer': 'Sit here, and write your name.',
-  'hint': 'Sit / write',
-  'emoji': '✏️'},
- {'cat': '📢 부탁하고 지시하기',
-  'ko': '조심하세요. 길을 건너지 마세요.',
-  'blank': 'Be ______. Do not ______ the street.',
-  'answer': 'Be careful. Do not cross the street.',
-  'hint': 'careful / cross',
-  'emoji': '⚠️'},
- {'cat': '📢 부탁하고 지시하기',
-  'ko': '다시 말해 주세요. 그러면 내가 따라 말할게요.',
-  'blank': '______ it again, and I will ______ it.',
-  'answer': 'Say it again, and I will repeat it.',
-  'hint': 'Say / repeat',
-  'emoji': '🔁'},
- {'cat': '📢 부탁하고 지시하기',
-  'ko': '칠판을 보세요. 답을 확인하세요.',
-  'blank': '______ at the board, and ______ your answer.',
-  'answer': 'Look at the board, and check your answer.',
-  'hint': 'Look / check',
-  'emoji': '🧑\u200d🏫'},
- {'cat': '📍 어디에 있는지 말하기',
-  'ko': '책상 위에 책 한 권이 있어. 그 옆에 연필 두 자루가 있어.',
-  'blank': 'There is a ______ on the desk, and there are two ______ next to it.',
-  'answer': 'There is a book on the desk, and there are two pencils next to it.',
-  'hint': 'book / pencils',
-  'emoji': '📚'},
- {'cat': '📍 어디에 있는지 말하기',
-  'ko': '교실에 학생들이 많이 있어. 하지만 선생님은 없어.',
-  'blank': 'There are many ______ in the classroom, but there is no ______.',
-  'answer': 'There are many students in the classroom, but there is no teacher.',
-  'hint': 'students / teacher',
-  'emoji': '🏫'},
- {'cat': '📍 어디에 있는지 말하기',
-  'ko': '근처에 가게가 하나 있어. 그래서 물을 살 수 있어.',
-  'blank': 'There is a ______ nearby, so I can buy ______.',
-  'answer': 'There is a store nearby, so I can buy water.',
-  'hint': 'store / water',
-  'emoji': '🏪'},
- {'cat': '📍 어디에 있는지 말하기',
-  'ko': '거리에 자동차가 많아. 그래서 조심해야 해.',
-  'blank': 'There are many ______ on the street, so be ______.',
-  'answer': 'There are many cars on the street, so be careful.',
-  'hint': 'cars / careful',
-  'emoji': '🚗'},
- {'cat': '📍 어디에 있는지 말하기',
-  'ko': '탁자 아래에 가방이 있어. 그 안에 휴대전화가 있어.',
-  'blank': 'There is a ______ under the table. There is a ______ in it.',
-  'answer': 'There is a bag under the table. There is a phone in it.',
-  'hint': 'bag / phone',
-  'emoji': '🎒'},
- {'cat': '📍 어디에 있는지 말하기',
-  'ko': '역 앞에 버스가 있어. 하지만 택시는 없어.',
-  'blank': 'There is a ______ in front of the station, but there is no ______.',
-  'answer': 'There is a bus in front of the station, but there is no taxi.',
-  'hint': 'bus / taxi',
-  'emoji': '🚌'},
- {'cat': '🧭 위치 자세히 말하기',
-  'ko': '내 가방은 의자 아래에 있어. 내 휴대전화는 책상 위에 있어.',
-  'blank': 'My bag is ______ the chair, and my phone is ______ the desk.',
-  'answer': 'My bag is under the chair, and my phone is on the desk.',
-  'hint': 'under / on',
-  'emoji': '📱'},
- {'cat': '🧭 위치 자세히 말하기',
-  'ko': '화장실은 가게 옆에 있어. 병원은 역 뒤에 있어.',
-  'blank': 'The bathroom is ______ the store. The hospital is ______ the station.',
-  'answer': 'The bathroom is next to the store. The hospital is behind the station.',
-  'hint': 'next to / behind',
-  'emoji': '🚻'},
- {'cat': '🧭 위치 자세히 말하기',
-  'ko': '버스 정류장은 학교 앞에 있어. 나는 거기서 기다릴 거야.',
-  'blank': 'The bus stop is ______ the school, and I will ______ there.',
-  'answer': 'The bus stop is in front of the school, and I will wait there.',
-  'hint': 'in front of / wait',
-  'emoji': '🚏'},
- {'cat': '🧭 위치 자세히 말하기',
-  'ko': '고양이는 상자 안에 있어. 개는 문 뒤에 있어.',
-  'blank': 'The cat is ______ the box, and the dog is ______ the door.',
-  'answer': 'The cat is in the box, and the dog is behind the door.',
-  'hint': 'in / behind',
-  'emoji': '🐱'},
- {'cat': '🧭 위치 자세히 말하기',
-  'ko': '내 친구는 공원 옆에 있어. 나는 그를 찾을 수 있어.',
-  'blank': 'My friend is ______ the park, so I can ______ him.',
-  'answer': 'My friend is next to the park, so I can find him.',
-  'hint': 'next to / find',
-  'emoji': '🌳'},
- {'cat': '🧭 위치 자세히 말하기',
-  'ko': '내 표는 가방 안에 있어. 하지만 열쇠는 탁자 위에 있어.',
-  'blank': 'My ticket is ______ my bag, but my key is ______ the table.',
-  'answer': 'My ticket is in my bag, but my key is on the table.',
-  'hint': 'in / on',
-  'emoji': '🎫'},
- {'cat': '💭 원하는 것 말하기',
-  'ko': '나는 물을 원해. 왜냐하면 목이 말라.',
-  'blank': 'I want ______ because I am ______.',
-  'answer': 'I want water because I am thirsty.',
-  'hint': 'water / thirsty',
-  'emoji': '💧'},
- {'cat': '💭 원하는 것 말하기',
-  'ko': '그녀는 새 휴대전화를 원해. 하지만 돈이 없어.',
-  'blank': 'She wants a new ______, but she has no ______.',
-  'answer': 'She wants a new phone, but she has no money.',
-  'hint': 'phone / money',
-  'emoji': '📱'},
- {'cat': '💭 원하는 것 말하기',
-  'ko': '우리는 음식을 원해. 그리고 쉴 곳도 원해.',
-  'blank': 'We want ______, and we want a place to ______.',
-  'answer': 'We want food, and we want a place to rest.',
-  'hint': 'food / rest',
-  'emoji': '🍽️'},
- {'cat': '💭 원하는 것 말하기',
-  'ko': '그들은 택시를 원해. 왜냐하면 버스가 없기 때문이야.',
-  'blank': 'They want a ______ because there is no ______.',
-  'answer': 'They want a taxi because there is no bus.',
-  'hint': 'taxi / bus',
-  'emoji': '🚕'},
- {'cat': '💭 원하는 것 말하기',
-  'ko': '나는 이걸 원하지 않아. 나는 저걸 원해.',
-  'blank': 'I do not ______ this. I ______ that.',
-  'answer': 'I do not want this. I want that.',
-  'hint': 'want / want',
-  'emoji': '👉'},
- {'cat': '💭 원하는 것 말하기',
-  'ko': '그는 커피를 원해. 하지만 나는 주스를 원해.',
-  'blank': 'He wants ______, but I want ______.',
-  'answer': 'He wants coffee, but I want juice.',
-  'hint': 'coffee / juice',
-  'emoji': '☕'},
- {'cat': '🚀 하고 싶은 일 말하기',
-  'ko': '나는 집에 가고 싶어. 왜냐하면 피곤해.',
-  'blank': 'I want to ______ home because I am ______.',
-  'answer': 'I want to go home because I am tired.',
-  'hint': 'go / tired',
-  'emoji': '🏠'},
- {'cat': '🚀 하고 싶은 일 말하기',
-  'ko': '그녀는 물을 마시고 싶어. 왜냐하면 목이 말라.',
-  'blank': 'She wants to ______ water because she is ______.',
-  'answer': 'She wants to drink water because she is thirsty.',
-  'hint': 'drink / thirsty',
-  'emoji': '🥤'},
- {'cat': '🚀 하고 싶은 일 말하기',
-  'ko': '우리는 영어를 공부하고 싶어. 그래서 매일 연습해.',
-  'blank': 'We want to ______ English, so we ______ every day.',
-  'answer': 'We want to study English, so we practice every day.',
-  'hint': 'study / practice',
-  'emoji': '📘'},
- {'cat': '🚀 하고 싶은 일 말하기',
-  'ko': '나는 피자를 먹고 싶어. 하지만 돈이 없어.',
-  'blank': 'I want to ______ pizza, but I have no ______.',
-  'answer': 'I want to eat pizza, but I have no money.',
-  'hint': 'eat / money',
-  'emoji': '🍕'},
- {'cat': '🚀 하고 싶은 일 말하기',
-  'ko': '그는 자전거를 타고 싶어. 하지만 비가 와.',
-  'blank': 'He wants to ______ a bike, but it is ______.',
-  'answer': 'He wants to ride a bike, but it is raining.',
-  'hint': 'ride / raining',
-  'emoji': '🚲'},
- {'cat': '🚀 하고 싶은 일 말하기',
-  'ko': '나는 너를 돕고 싶어. 그래서 여기에 있을게.',
-  'blank': 'I want to ______ you, so I will ______ here.',
-  'answer': 'I want to help you, so I will stay here.',
-  'hint': 'help / stay',
-  'emoji': '🤗'},
- {'cat': '🎒 가진 것 말하기',
-  'ko': '나는 표가 있어. 그래서 역에 갈 수 있어.',
-  'blank': 'I have a ______, so I can go to the ______.',
-  'answer': 'I have a ticket, so I can go to the station.',
-  'hint': 'ticket / station',
-  'emoji': '🎫'},
- {'cat': '🎒 가진 것 말하기',
-  'ko': '그는 돈이 없어. 그래서 물을 살 수 없어.',
-  'blank': 'He has no ______, so he cannot buy ______.',
-  'answer': 'He has no money, so he cannot buy water.',
-  'hint': 'money / water',
-  'emoji': '💸'},
- {'cat': '🎒 가진 것 말하기',
-  'ko': '그녀는 새 자전거가 있어. 하지만 헬멧은 없어.',
-  'blank': 'She has a new ______, but she does not have a ______.',
-  'answer': 'She has a new bike, but she does not have a helmet.',
-  'hint': 'bike / helmet',
-  'emoji': '🚴'},
- {'cat': '🎒 가진 것 말하기',
-  'ko': '우리는 지도가 있어. 그래서 길을 찾을 수 있어.',
-  'blank': 'We have a ______, so we can find the ______.',
-  'answer': 'We have a map, so we can find the way.',
-  'hint': 'map / way',
-  'emoji': '🗺️'},
- {'cat': '🎒 가진 것 말하기',
-  'ko': '내 친구는 휴대전화가 있어. 나는 그에게 전화할 수 있어.',
-  'blank': 'My friend has a ______, so I can ______ him.',
-  'answer': 'My friend has a phone, so I can call him.',
-  'hint': 'phone / call',
-  'emoji': '📞'},
- {'cat': '🎒 가진 것 말하기',
-  'ko': '나는 시간이 없어. 하지만 너를 도와주고 싶어.',
-  'blank': 'I have no ______, but I want to ______ you.',
-  'answer': 'I have no time, but I want to help you.',
-  'hint': 'time / help',
-  'emoji': '⏰'},
- {'cat': '🔗 이유와 조건 붙이기',
-  'ko': '나는 배고파서 음식을 원해.',
-  'blank': 'I want ______ because I am ______.',
-  'answer': 'I want food because I am hungry.',
-  'hint': 'food / hungry',
-  'emoji': '🍽️'},
- {'cat': '🔗 이유와 조건 붙이기',
-  'ko': '비가 오면 나는 집에 있을 거야.',
-  'blank': 'If it ______, I will ______ home.',
-  'answer': 'If it rains, I will stay home.',
-  'hint': 'rains / stay',
-  'emoji': '🌧️'},
- {'cat': '🔗 이유와 조건 붙이기',
-  'ko': '나는 피곤하지만 공부할 거야.',
-  'blank': 'I am ______, but I will ______.',
-  'answer': 'I am tired, but I will study.',
-  'hint': 'tired / study',
-  'emoji': '📚'},
- {'cat': '🔗 이유와 조건 붙이기',
-  'ko': '나는 목이 말라서 물을 마시고 싶어.',
-  'blank': 'I am ______, so I want to ______ water.',
-  'answer': 'I am thirsty, so I want to drink water.',
-  'hint': 'thirsty / drink',
-  'emoji': '💧'},
- {'cat': '🔗 이유와 조건 붙이기',
-  'ko': '네가 도움이 필요하면 내가 도와줄 수 있어.',
-  'blank': 'If you need ______, I can ______ you.',
-  'answer': 'If you need help, I can help you.',
-  'hint': 'help / help',
-  'emoji': '🆘'},
- {'cat': '🔗 이유와 조건 붙이기',
-  'ko': '나는 영어를 좋아해. 왜냐하면 재미있기 때문이야.',
-  'blank': 'I like ______ because it is ______.',
-  'answer': 'I like English because it is fun.',
-  'hint': 'English / fun',
-  'emoji': '😊'}]
+PRACTICE_ITEMS = [{'cat': '🙋 내 상태 말하기', 'ko': '나는 배고파.', 'blank': 'I am ______.', 'answer': 'I am hungry.', 'hint': 'hungry', 'emoji': '🍽️'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 목말라.', 'blank': 'I am ______.', 'answer': 'I am thirsty.', 'hint': 'thirsty', 'emoji': '💧'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 피곤해.', 'blank': 'I am ______.', 'answer': 'I am tired.', 'hint': 'tired', 'emoji': '😴'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 아파.', 'blank': 'I am ______.', 'answer': 'I am sick.', 'hint': 'sick', 'emoji': '🤒'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 괜찮아.', 'blank': 'I am ______.', 'answer': 'I am okay.', 'hint': 'okay', 'emoji': '🙂'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 추워.', 'blank': 'I am ______.', 'answer': 'I am cold.', 'hint': 'cold', 'emoji': '🥶'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 걱정돼.', 'blank': 'I am ______.', 'answer': 'I am worried.', 'hint': 'worried', 'emoji': '😟'}, {'cat': '🙋 내 상태 말하기', 'ko': '나는 무서워.', 'blank': 'I am ______.', 'answer': 'I am scared.', 'hint': 'scared', 'emoji': '😨'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 물이 필요해.', 'blank': 'I need ______.', 'answer': 'I need water.', 'hint': 'water', 'emoji': '💧'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 음식이 필요해.', 'blank': 'I need ______.', 'answer': 'I need food.', 'hint': 'food', 'emoji': '🍽️'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 도움이 필요해.', 'blank': 'I need ______.', 'answer': 'I need help.', 'hint': 'help', 'emoji': '🆘'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 약이 필요해.', 'blank': 'I need ______.', 'answer': 'I need medicine.', 'hint': 'medicine', 'emoji': '💊'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 병원이 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a hospital.', 'hint': 'hospital', 'emoji': '🏥'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 택시가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a taxi.', 'hint': 'taxi', 'emoji': '🚕'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 표가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a ticket.', 'hint': 'ticket', 'emoji': '🎫'}, {'cat': '🆘 필요한 것 말하기', 'ko': '나는 열쇠가 필요해.', 'blank': 'I need a ______.', 'answer': 'I need a key.', 'hint': 'key', 'emoji': '🔑'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 음식을 원해.', 'blank': 'I want ______.', 'answer': 'I want food.', 'hint': 'food', 'emoji': '🍽️'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 물을 원해.', 'blank': 'I want ______.', 'answer': 'I want water.', 'hint': 'water', 'emoji': '💧'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 밥을 원해.', 'blank': 'I want ______.', 'answer': 'I want rice.', 'hint': 'rice', 'emoji': '🍚'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 빵을 원해.', 'blank': 'I want ______.', 'answer': 'I want bread.', 'hint': 'bread', 'emoji': '🍞'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 우유를 원해.', 'blank': 'I want ______.', 'answer': 'I want milk.', 'hint': 'milk', 'emoji': '🥛'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 주스를 원해.', 'blank': 'I want ______.', 'answer': 'I want juice.', 'hint': 'juice', 'emoji': '🧃'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 커피를 원해.', 'blank': 'I want ______.', 'answer': 'I want coffee.', 'hint': 'coffee', 'emoji': '☕'}, {'cat': '💭 원하는 것 말하기', 'ko': '나는 간식을 원해.', 'blank': 'I want a ______.', 'answer': 'I want a snack.', 'hint': 'snack', 'emoji': '🍪'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 먹고 있어.', 'blank': 'I am ______.', 'answer': 'I am eating.', 'hint': 'eating', 'emoji': '🍽️'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 마시고 있어.', 'blank': 'I am ______.', 'answer': 'I am drinking.', 'hint': 'drinking', 'emoji': '🥤'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 기다리고 있어.', 'blank': 'I am ______.', 'answer': 'I am waiting.', 'hint': 'waiting', 'emoji': '⏳'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 공부하고 있어.', 'blank': 'I am ______.', 'answer': 'I am studying.', 'hint': 'studying', 'emoji': '📚'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 읽고 있어.', 'blank': 'I am ______.', 'answer': 'I am reading.', 'hint': 'reading', 'emoji': '📖'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 쓰고 있어.', 'blank': 'I am ______.', 'answer': 'I am writing.', 'hint': 'writing', 'emoji': '✏️'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 걷고 있어.', 'blank': 'I am ______.', 'answer': 'I am walking.', 'hint': 'walking', 'emoji': '🚶'}, {'cat': '🏃 지금 하는 일 말하기', 'ko': '나는 듣고 있어.', 'blank': 'I am ______.', 'answer': 'I am listening.', 'hint': 'listening', 'emoji': '👂'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 집에 갈 거야.', 'blank': 'I will ______ home.', 'answer': 'I will go home.', 'hint': 'go', 'emoji': '🏠'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 기다릴 거야.', 'blank': 'I will ______.', 'answer': 'I will wait.', 'hint': 'wait', 'emoji': '⏳'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 너를 도와줄 거야.', 'blank': 'I will ______ you.', 'answer': 'I will help you.', 'hint': 'help', 'emoji': '🤝'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 영어를 공부할 거야.', 'blank': 'I will ______ English.', 'answer': 'I will study English.', 'hint': 'study', 'emoji': '📚'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 점심을 먹을 거야.', 'blank': 'I will ______ lunch.', 'answer': 'I will eat lunch.', 'hint': 'eat', 'emoji': '🍱'}, {'cat': '🚀 앞으로 할 일 말하기', 'ko': '나는 물을 마실 거야.', 'blank': 'I will ______ water.', 'answer': 'I will drink water.', 'hint': 'drink', 'emoji': '💧'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 아프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not sick.', 'hint': 'sick', 'emoji': '🙂'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 배고프지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not hungry.', 'hint': 'hungry', 'emoji': '🙅🍽️'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 괜찮지 않아.', 'blank': 'I am not ______.', 'answer': 'I am not okay.', 'hint': 'okay', 'emoji': '😟'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 몰라.', 'blank': 'I do not ______.', 'answer': 'I do not know.', 'hint': 'know', 'emoji': '🤷'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 이해하지 못해.', 'blank': 'I do not ______.', 'answer': 'I do not understand.', 'hint': 'understand', 'emoji': '❓'}, {'cat': '❌ 아니라고 말하기', 'ko': '나는 그것을 원하지 않아.', 'blank': 'I do not ______ it.', 'answer': 'I do not want it.', 'hint': 'want', 'emoji': '🙅'}, {'cat': '❓ 간단히 물어보기', 'ko': '괜찮니?', 'blank': 'Are you ______?', 'answer': 'Are you okay?', 'hint': 'okay', 'emoji': '🙂'}, {'cat': '❓ 간단히 물어보기', 'ko': '아프니?', 'blank': 'Are you ______?', 'answer': 'Are you sick?', 'hint': 'sick', 'emoji': '🤒'}, {'cat': '❓ 간단히 물어보기', 'ko': '배고프니?', 'blank': 'Are you ______?', 'answer': 'Are you hungry?', 'hint': 'hungry', 'emoji': '🍽️'}, {'cat': '❓ 간단히 물어보기', 'ko': '목마르니?', 'blank': 'Are you ______?', 'answer': 'Are you thirsty?', 'hint': 'thirsty', 'emoji': '💧'}, {'cat': '❓ 간단히 물어보기', 'ko': '도움이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need help?', 'hint': 'help', 'emoji': '🆘'}, {'cat': '❓ 간단히 물어보기', 'ko': '물이 필요하니?', 'blank': 'Do you need ______?', 'answer': 'Do you need water?', 'hint': 'water', 'emoji': '💧'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '화장실은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the bathroom?', 'hint': 'bathroom', 'emoji': '🚻'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '병원은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the hospital?', 'hint': 'hospital', 'emoji': '🏥'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '가게는 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the store?', 'hint': 'store', 'emoji': '🏪'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '역은 어디에 있나요?', 'blank': 'Where is the ______?', 'answer': 'Where is the station?', 'hint': 'station', 'emoji': '🚉'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '지금 몇 시인가요?', 'blank': 'What ______ is it?', 'answer': 'What time is it?', 'hint': 'time', 'emoji': '⏰'}, {'cat': '🕵️ 필요한 정보 묻기', 'ko': '이름이 무엇인가요?', 'blank': 'What is your ______?', 'answer': 'What is your name?', 'hint': 'name', 'emoji': '🏷️'}]
+
 
 # =========================================================
 # 디자인
@@ -606,7 +320,8 @@ def speaking_practice_component(items):
     let currentItem = null;
     let score = 0;
     let alreadyCorrect = false;
-    let autoNextTimer = null;
+    let isListening = false;
+    let recognitionTimeout = null;
 
     const categorySelect = document.getElementById("categorySelect");
     const randomBtn = document.getElementById("randomBtn");
@@ -927,6 +642,29 @@ def speaking_practice_component(items):
         return html;
     }
 
+    function makeFilledBlankSentenceHtml(blankText, hintText) {
+        const answers = String(hintText || "")
+            .split("/")
+            .map(x => x.trim())
+            .filter(x => x.length > 0);
+
+        let blankIndex = 0;
+        const parts = String(blankText || "").split(/(______)/g);
+
+        return parts.map(part => {
+            if (part === "______") {
+                const fill = answers[blankIndex] || "";
+                blankIndex += 1;
+
+                return "<span style='display:inline-block; min-width:96px; vertical-align:middle; background:#dcfce7; color:#166534; border-radius:14px; margin:0 6px; padding:4px 12px; border:1.5px solid #86efac; font-weight:900; box-shadow:0 3px 8px rgba(34,197,94,0.10);'>"
+                    + escapeHtml(fill) +
+                    "</span>";
+            }
+
+            return escapeHtml(part);
+        }).join("");
+    }
+
     function makeAnswerSentenceHtml(answer) {
         return answer.split(/\s+/).map(word => {
             return "<span style='display:inline-block; margin:4px 5px; padding:6px 11px; border-radius:999px; background:#dcfce7; color:#166534; border:1px solid #bbf7d0; font-weight:900;'>" +
@@ -947,11 +685,6 @@ def speaking_practice_component(items):
         if (index >= currentList.length) index = 0;
         if (index < 0) index = currentList.length - 1;
 
-        if (autoNextTimer) {
-            clearTimeout(autoNextTimer);
-            autoNextTimer = null;
-        }
-
         currentIndex = index;
         currentItem = currentList[currentIndex];
         alreadyCorrect = false;
@@ -961,19 +694,20 @@ def speaking_practice_component(items):
         koPrompt.innerHTML =
             "<span style='font-size:42px; margin-right:10px; vertical-align:middle;'>" + emoji + "</span>" +
             "<span style='vertical-align:middle;'>" + currentItem.ko + "</span>";
-        blankSentence.innerText = currentItem.blank;
+        blankSentence.innerHTML = makeBlankSentenceHtml(currentItem.blank);
         hintBox.style.display = "none";
         answerBox.style.display = "none";
         hintBox.innerText = "";
         answerBox.innerText = "";
         transcriptBox.innerText = "";
 
-        // 처음에는 힌트와 말하기 버튼만 보이게 함
+        // 처음에는 힌트, 말하기, 다음 버튼을 보이게 함
+        resetMicState();
         hintBtn.style.display = "inline-block";
         micBtn.style.display = "inline-block";
         answerBtn.style.display = "none";
         listenBtn.style.display = "none";
-        nextBtn.style.display = "none";
+        nextBtn.style.display = "inline-block";
 
         resultBox.style.display = "none";
         resultBox.innerText = "";
@@ -997,16 +731,46 @@ def speaking_practice_component(items):
         window.speechSynthesis.speak(utterance);
     }
 
-    function goNextQuestion() {
-        if (autoNextTimer) {
-            clearTimeout(autoNextTimer);
-            autoNextTimer = null;
+    function resetMicState() {
+        isListening = false;
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
         }
+        micBtn.disabled = false;
+        micBtn.style.opacity = "1";
+        micBtn.style.pointerEvents = "auto";
+        micBtn.innerText = "🎙️";
+    }
+
+    function stopRecognition() {
+        if (recognitionTimeout) {
+            clearTimeout(recognitionTimeout);
+            recognitionTimeout = null;
+        }
+        if (recognition) {
+            try { recognition.onresult = null; } catch (e) {}
+            try { recognition.onerror = null; } catch (e) {}
+            try { recognition.onend = null; } catch (e) {}
+            try { recognition.stop(); } catch (e) {}
+            try { recognition.abort(); } catch (e) {}
+            recognition = null;
+        }
+        resetMicState();
+    }
+
+    function goNextQuestion() {
+        stopRecognition();
+        window.speechSynthesis.cancel();
         loadQuestion(currentIndex + 1);
     }
 
     function checkSpeech(spokenText) {
-        if (isCorrectSpeech(spokenText, currentItem.answer)) {
+        if (!currentItem) return;
+
+        const recognized = String(spokenText || "").trim();
+
+        if (isCorrectSpeech(recognized, currentItem.answer)) {
             if (!alreadyCorrect) {
                 score += 1;
                 alreadyCorrect = true;
@@ -1014,34 +778,39 @@ def speaking_practice_component(items):
 
             updateScore();
 
-            resultBox.style.display = "block";
-            resultBox.style.color = "#166534";
-            resultBox.innerText = "정답입니다! 다음 문제로 넘어갑니다.";
+            // 말해보카1 방식: 내가 말한 문장을 마이크 버튼 위에 띄우고, 빈칸에만 정답 단어를 채움
+            transcriptBox.innerHTML =
+                "<span style='color:#4c1d95;'>" + escapeHtml(recognized || currentItem.answer) + "</span> " +
+                "<span style='color:#166534;'>✅ 정답입니다</span>";
 
+            blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
+
+            hintBox.style.display = "none";
             answerBox.style.display = "none";
-            transcriptBox.innerText = currentItem.answer;
-
             answerBtn.style.display = "none";
             listenBtn.style.display = "inline-block";
             nextBtn.style.display = "inline-block";
 
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
+
             speak(currentItem.answer);
-
-            autoNextTimer = setTimeout(function() {
-                if (alreadyCorrect) {
-                    goNextQuestion();
-                }
-            }, 1000);
         } else {
-            resultBox.style.display = "block";
-            resultBox.style.color = "#991b1b";
-            resultBox.innerText = "아직 정답으로 인식되지 않았습니다. 다시 말하거나, 정답을 보고 연습한 뒤 다시 말해 보세요.";
+            // 말해보카2 방식: 한 번 틀리면 힌트를 바로 보여줌
+            transcriptBox.innerHTML =
+                "<span style='color:#991b1b;'>" + escapeHtml(recognized || "인식 실패") + "</span> " +
+                "<span style='color:#991b1b;'>❌</span>";
 
-            // 틀린 경우에는 정답 개수에 포함하지 않음
-            // 대신 정답을 보고 다시 말해서 맞히면 그때 정답으로 인정함
+            hintBox.style.display = "block";
+            hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+
             answerBtn.style.display = "inline-block";
             listenBtn.style.display = "none";
             nextBtn.style.display = "inline-block";
+
+            resultBox.style.display = "block";
+            resultBox.style.color = "#92400e";
+            resultBox.innerText = "힌트를 보고 다시 연습해 보세요.";
         }
     }
 
@@ -1051,6 +820,11 @@ def speaking_practice_component(items):
             return;
         }
 
+        if (!currentItem) return;
+
+        // 이전 음성 인식 객체가 남아 있으면 먼저 정리해서 버튼 먹통을 방지함
+        stopRecognition();
+
         // 모바일에서 먼저 마이크 권한 요청
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
@@ -1058,89 +832,100 @@ def speaking_practice_component(items):
                 stream.getTracks().forEach(track => track.stop());
             } catch (err) {
                 transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                resetMicState();
                 return;
             }
         }
 
         window.speechSynthesis.cancel();
 
-        recognition = new SpeechRecognition();
-        recognition.lang = "en-US";
-        recognition.interimResults = true;
-        recognition.continuous = false;
-        recognition.maxAlternatives = 3;
-
-        micBtn.innerText = "👂";
-        resultBox.style.display = "none";
-        resultBox.innerText = "";
-        transcriptBox.innerText = "";
-
-        recognition.onresult = function(event) {
-            let spokenText = "";
-            let hasFinal = false;
-
-            for (let i = 0; i < event.results.length; i++) {
-                const piece = event.results[i][0].transcript.trim();
-                if (piece) {
-                    spokenText += (spokenText ? " " : "") + piece;
-                }
-                if (event.results[i].isFinal) {
-                    hasFinal = true;
-                }
-            }
-
-            transcriptBox.innerText = spokenText;
-
-            if (hasFinal) {
-                checkSpeech(spokenText);
-            }
-        };
-
-        recognition.onerror = function(event) {
-            if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-                transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
-            } else if (event.error === "no-speech") {
-                transcriptBox.innerText = "인식하지 못했습니다. 다시 말하거나 다음 문제로 넘어갈 수 있습니다.";
-                answerBtn.style.display = "inline-block";
-                nextBtn.style.display = "inline-block";
-                resultBox.style.display = "block";
-                resultBox.style.color = "#64748b";
-                resultBox.innerText = "인식 실패는 정답 개수에 포함되지 않습니다.";
-            } else {
-                transcriptBox.innerText = "인식이 잘 되지 않았습니다. 다시 말하거나 다음 문제로 넘어갈 수 있습니다.";
-                answerBtn.style.display = "inline-block";
-                nextBtn.style.display = "inline-block";
-                resultBox.style.display = "block";
-                resultBox.style.color = "#64748b";
-                resultBox.innerText = "인식 실패는 정답 개수에 포함되지 않습니다.";
-            }
-            micBtn.innerText = "🎙️";
-        };
-
-        recognition.onend = function() {
-            micBtn.innerText = "🎙️";
-        };
-
         try {
+            recognition = new SpeechRecognition();
+            recognition.lang = "en-US";
+            recognition.interimResults = true;
+            recognition.continuous = false;
+            recognition.maxAlternatives = 5;
+
+            isListening = true;
+            micBtn.disabled = true;
+            micBtn.style.opacity = "0.78";
+            micBtn.innerText = "👂";
+            resultBox.style.display = "none";
+            resultBox.innerText = "";
+            transcriptBox.innerText = "";
+
+            recognitionTimeout = setTimeout(function() {
+                if (isListening) {
+                    try { recognition.stop(); } catch (e) {}
+                    resetMicState();
+                }
+            }, 8000);
+
+            recognition.onresult = function(event) {
+                let spokenText = "";
+                let hasFinal = false;
+
+                for (let i = 0; i < event.results.length; i++) {
+                    const piece = event.results[i][0].transcript.trim();
+                    if (piece) {
+                        spokenText += (spokenText ? " " : "") + piece;
+                    }
+                    if (event.results[i].isFinal) {
+                        hasFinal = true;
+                    }
+                }
+
+                transcriptBox.innerText = spokenText;
+
+                if (hasFinal) {
+                    stopRecognition();
+                    checkSpeech(spokenText);
+                }
+            };
+
+            recognition.onerror = function(event) {
+                stopRecognition();
+
+                if (event.error === "not-allowed" || event.error === "service-not-allowed") {
+                    transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
+                } else {
+                    transcriptBox.innerText = "인식 실패";
+                    hintBox.style.display = "block";
+                    hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
+                    answerBtn.style.display = "inline-block";
+                    nextBtn.style.display = "inline-block";
+                    resultBox.style.display = "block";
+                    resultBox.style.color = "#64748b";
+                    resultBox.innerText = "다시 누르거나 다음 문제로 넘어갈 수 있습니다.";
+                }
+            };
+
+            recognition.onend = function() {
+                resetMicState();
+            };
+
             recognition.start();
         } catch (err) {
+            stopRecognition();
             transcriptBox.innerText = "다시 눌러 주세요.";
-            micBtn.innerText = "🎙️";
         }
     }
 
     categorySelect.addEventListener("change", function() {
+        stopRecognition();
         currentList = getFilteredItems();
         currentIndex = 0;
         loadQuestion(0);
     });
 
     randomBtn.addEventListener("click", function() {
+        stopRecognition();
         currentList = shuffleArray(getFilteredItems());
         loadQuestion(0);
     });
 
     resetBtn.addEventListener("click", function() {
+        stopRecognition();
         score = 0;
         alreadyCorrect = false;
         updateScore();
@@ -1158,15 +943,17 @@ def speaking_practice_component(items):
     });
 
     answerBtn.addEventListener("click", function() {
+        if (!currentItem) return;
         answerBox.style.display = "none";
-        transcriptBox.innerText = currentItem.answer;
+        blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
+        transcriptBox.innerHTML = "<span style='color:#166534;'>" + escapeHtml(currentItem.answer) + "</span>";
         listenBtn.style.display = "inline-block";
         nextBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
         resultBox.style.display = "block";
         resultBox.style.color = "#166534";
-        resultBox.innerText = "정답을 듣고 다시 말해 보세요. 다시 정확히 말하면 정답으로 인정됩니다.";
+        resultBox.innerText = "빈칸에 들어간 단어를 보고 다시 말하면 정답으로 인정됩니다.";
     });
 
     micBtn.addEventListener("click", startRecognition);
