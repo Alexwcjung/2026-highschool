@@ -915,6 +915,9 @@ def word_card_speaking_game(word_themes):
         meaningBox.innerText = currentItem.meaning;
 
         answerBox.style.display = "none";
+        answerBox.style.background = "#ecfdf5";
+        answerBox.style.borderColor = "#bbf7d0";
+        answerBox.style.color = "#166534";
         answerBox.innerText = "정답: " + currentItem.word;
 
         hintBox.style.display = "none";
@@ -949,19 +952,24 @@ def word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            resultBox.innerHTML =
-                "✅ 정답입니다!<br>" +
-                "<span style='font-size:17px;'>잘 말했어요: " + currentItem.word + "</span>";
+            // 정답 피드백은 아래 결과 박스가 아니라 단어 카드 안에 바로 표시합니다.
+            answerBox.style.display = "block";
+            answerBox.style.background = "#ecfdf5";
+            answerBox.style.borderColor = "#86efac";
+            answerBox.style.color = "#166534";
+            answerBox.innerHTML = "✅ 정답입니다!<br><span style='font-size:22px;'>" + currentItem.word + "</span>";
 
-            resultBox.style.background = "#ecfdf5";
-            resultBox.style.borderColor = "#bbf7d0";
-            resultBox.style.color = "#166534";
+            // 아래 결과 박스에는 정답 메시지를 반복해서 띄우지 않습니다.
+            resultBox.innerText = "";
+            resultBox.style.background = "#f8fafc";
+            resultBox.style.borderColor = "#e2e8f0";
+            resultBox.style.color = "#334155";
 
             speak(currentItem.word);
 
             setTimeout(function() {
                 goNextCard();
-            }, 650);
+            }, 850);
         } else {
             resultBox.innerHTML =
                 "🍊 다시 말해 보세요.<br>" +
@@ -1066,6 +1074,9 @@ def word_card_speaking_game(word_themes):
     answerBtn.addEventListener("click", function() {
         if (!currentItem) return;
         answerBox.style.display = "block";
+        answerBox.style.background = "#ecfdf5";
+        answerBox.style.borderColor = "#bbf7d0";
+        answerBox.style.color = "#166534";
         answerBox.innerText = "정답: " + currentItem.word;
         speak(currentItem.word);
 
