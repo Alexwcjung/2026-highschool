@@ -2134,11 +2134,10 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/\bshe'll\b/g, "she will")
             .replace(/\bp\.?e\.?\b/g, "pe")
             .replace(/\bphysical education\b/g, "pe")
-            .replace(/\bt shirt\b/g, "t shirt")
-            .replace(/\btee shirt\b/g, "t shirt")
+            .replace(/\bt shirt\b/g, "tshirt")
+            .replace(/\btee shirt\b/g, "tshirt")
             .replace(/\bwi fi\b/g, "wifi")
             .replace(/\bwi-fi\b/g, "wifi")
-            .replace(/\bwifi\b/g, "wifi")
             .replace(/\bok\b/g, "okay")
             .replace(/\bo k\b/g, "okay")
             .replace(/[.,!?;:'"’‘“”]/g, "")
@@ -2181,6 +2180,7 @@ def daily_word_card_speaking_game(word_themes):
     function similarity(a, b) {
         a = String(a || "");
         b = String(b || "");
+
         if (!a || !b) return 0;
         if (a === b) return 1;
 
@@ -2218,7 +2218,7 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/ai/g, "e")
             .replace(/ay/g, "e")
             .replace(/[aeiouy]/g, "")
-            .replace(/(.)\\1+/g, "$1");
+            .replace(/(.)\1+/g, "$1");
     }
 
     function vowelLooseKey(text) {
@@ -2235,7 +2235,7 @@ def daily_word_card_speaking_game(word_themes):
             .replace(/ai/g, "e")
             .replace(/ay/g, "e")
             .replace(/[aeiouy]+/g, "v")
-            .replace(/(.)\\1+/g, "$1");
+            .replace(/(.)\1+/g, "$1");
     }
 
     function aliasMatch(spoken, answer) {
@@ -2280,6 +2280,7 @@ def daily_word_card_speaking_game(word_themes):
         const aw = normalizeText(answer).replace(/\s+/g, "");
 
         const pronouns = ["i", "you", "he", "she", "we", "they"];
+
         if (!pronouns.includes(aw)) return false;
         if (!pronouns.includes(sw)) return false;
 
@@ -2308,16 +2309,18 @@ def daily_word_card_speaking_game(word_themes):
         if (!sw || !aw) return false;
         if (sw === aw) return true;
         if (aliasMatch(sw, aw)) return true;
+
+        // 완전히 다른 대명사류만 막음
         if (clearlyDifferentPronoun(sw, aw)) return false;
 
         const sim = similarity(sw, aw);
         const dist = editDistance(sw, aw);
         const snd = soundOverlap(sw, aw);
 
+        // 모음 길이, 강세, 인토네이션, 남녀 음성 차이로 인한 흔들림 허용
         if (soundKey(sw) && soundKey(sw) === soundKey(aw)) return true;
         if (vowelLooseKey(sw) && vowelLooseKey(sw) === vowelLooseKey(aw)) return true;
 
-        // 매우 관대한 기준: 모음 길이, 강세, 남녀 음성, 억양 차이를 크게 허용
         if (aw.length <= 2) {
             return dist <= 1 || sim >= 0.30 || snd >= 0.25;
         }
@@ -2365,6 +2368,7 @@ def daily_word_card_speaking_game(word_themes):
             if (understandableWord(sw, answerWords[pos])) {
                 pos += 1;
             }
+
             if (pos >= answerWords.length) return true;
         }
 
@@ -2577,7 +2581,12 @@ def daily_word_card_speaking_game(word_themes):
             micBtn.innerText = "🎙️ 말하기";
         };
 
-        recognition.start();
+        try {
+            recognition.start();
+        } catch (err) {
+            resultBox.innerText = "다시 눌러 주세요.";
+            micBtn.innerText = "🎙️ 말하기";
+        }
     }
 
     function resetCurrentTheme() {
