@@ -1657,52 +1657,6 @@ WORD_THEMES = {
 # =========================================================
 # 상단 디자인
 # =========================================================
-st.markdown(
-    """
-    <style>
-    .main-title-box {
-        background: linear-gradient(135deg, #dcfce7 0%, #e0f2fe 50%, #fef3c7 100%);
-        border: 1.5px solid #bbf7d0;
-        border-radius: 30px;
-        padding: 28px 30px;
-        margin-bottom: 22px;
-        box-shadow: 0 8px 22px rgba(0,0,0,0.07);
-    }
-
-    .main-title-box h1 {
-        margin: 0 0 10px 0;
-        color: #0f172a;
-        font-size: 38px;
-        font-weight: 900;
-    }
-
-    .main-title-box p {
-        margin: 0;
-        color: #475569;
-        font-size: 18px;
-        line-height: 1.7;
-        font-weight: 700;
-    }
-
-    @media (max-width: 768px) {
-        .main-title-box {
-            padding: 20px 18px;
-            border-radius: 22px;
-        }
-
-        .main-title-box h1 {
-            font-size: 27px;
-        }
-
-        .main-title-box p {
-            font-size: 15px;
-        }
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
-
 # =========================================================
 # 말하기 카드 게임 컴포넌트
 # =========================================================
