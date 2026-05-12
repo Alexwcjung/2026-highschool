@@ -2249,7 +2249,7 @@ def daily_word_card_speaking_game(word_themes):
 
             setTimeout(function() {
                 goNextCard();
-            }, 900);
+            }, 1500);
         } else {
             cardFeedbackBox.style.display = "block";
             cardFeedbackBox.style.background = "#fff7ed";
