@@ -2274,29 +2274,129 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function isSmallRecognitionMistake(spokenWord, answerWord) {
+        if (!spokenWord || !answerWord) return false;
+
         const sw = normalizeText(spokenWord).replace(/\s+/g, "");
         const aw = normalizeText(answerWord).replace(/\s+/g, "");
 
         if (!sw || !aw) return false;
         if (sw === aw) return true;
-        if (aliasMatch(sw, aw)) return true;
 
-        // 완전히 다른 대명사류만 막음
-        if (clearlyWrongPronoun(sw, aw)) return false;
+        // 꼭 허용할 ASR 오인식만 명시적으로 인정
+        const aliases = {
+            "i": ["i", "eye", "ai"],
+            "you": ["you", "u", "yew"],
+            "he": ["he", "hi"],
+            "she": ["she", "see", "sea", "shi"],
+            "we": ["we", "wee", "wi"],
+            "they": ["they", "day", "dey", "their"],
+            "one": ["one", "won"],
+            "two": ["two", "to", "too"],
+            "three": ["three", "tree"],
+            "four": ["four", "for"],
+            "eight": ["eight", "ate"],
+            "here": ["here", "hear"],
+            "there": ["there", "their"],
+            "right": ["right", "write"],
+            "wait": ["wait", "weight"],
+            "know": ["know", "no"],
+            "okay": ["okay", "ok"],
+            "pe": ["pe", "pee", "p", "physicaleducation"],
+            "wifi": ["wifi", "wi", "wifei"],
 
-        if (soundKey(sw) && soundKey(sw) === soundKey(aw)) return true;
-        if (vowelLooseKey(sw) && vowelLooseKey(sw) === vowelLooseKey(aw)) return true;
+            // 짧은 단어는 위험하므로 필요한 것만 명시적으로 허용
+            "math": ["math", "mat", "mass", "meth", "matt"],
+            "art": ["art", "heart"],
+            "science": ["science", "sience", "signs"],
+            "history": ["history", "hisstory"],
+            "music": ["music", "musick"],
+            "schedule": ["schedule", "skedule"],
+            "library": ["library", "libary"],
+            "restaurant": ["restaurant", "resturant"],
+            "comfortable": ["comfortable", "comfterble"]
+        };
+
+        if (aliases[aw] && aliases[aw].includes(sw)) return true;
+
+        // 완전히 다른 대명사류는 오답
+        const pronouns = ["i", "you", "he", "she", "we", "they"];
+        if (pronouns.includes(aw) && pronouns.includes(sw) && aw !== sw) {
+            return false;
+        }
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
-        const snd = soundOverlap(sw, aw);
 
-        // 모음 길이, 강세, 인토네이션, 남녀 음성 차이까지 관대하게
-        if (aw.length <= 2) return dist <= 1 || sim >= 0.30 || snd >= 0.25;
-        if (aw.length === 3) return dist <= 2 || sim >= 0.30 || snd >= 0.25;
-        if (aw.length === 4) return dist <= 2 || sim >= 0.28 || snd >= 0.25;
-        if (aw.length <= 6) return dist <= 3 || sim >= 0.25 || snd >= 0.22;
-        return dist <= 4 || sim >= 0.22 || snd >= 0.20;
+        function soundKey(x) {
+            return String(x || "")
+                .replace(/tion/g, "shun")
+                .replace(/sion/g, "shun")
+                .replace(/th/g, "d")
+                .replace(/ph/g, "f")
+                .replace(/gh/g, "g")
+                .replace(/ck/g, "k")
+                .replace(/qu/g, "kw")
+                .replace(/x/g, "ks")
+                .replace(/c/g, "k")
+                .replace(/q/g, "k")
+                .replace(/z/g, "s")
+                .replace(/v/g, "b")
+                .replace(/r/g, "l")
+                .replace(/ee/g, "i")
+                .replace(/ea/g, "i")
+                .replace(/ie/g, "i")
+                .replace(/ei/g, "i")
+                .replace(/oo/g, "u")
+                .replace(/ou/g, "u")
+                .replace(/ow/g, "o")
+                .replace(/oa/g, "o")
+                .replace(/ai/g, "e")
+                .replace(/ay/g, "e")
+                .replace(/[aeiouy]/g, "");
+        }
+
+        const soundSw = soundKey(sw);
+        const soundAw = soundKey(aw);
+
+        const sameFirst = sw.charAt(0) === aw.charAt(0);
+        const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
+
+        const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
+        const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
+
+        // 짧은 단어에서 마지막 소리가 다르면 오답 처리
+        // 예: club ≠ call, card ≠ car, coat ≠ court
+        if (aw.length <= 4) {
+            if (!sameLast && !soundSameLast) return false;
+        }
+
+        // 자음 뼈대가 완전히 같으면 허용
+        // 단, 짧은 단어는 첫소리와 끝소리도 맞아야 함
+        if (soundSw && soundAw && soundSw === soundAw) {
+            if (aw.length <= 4) {
+                return sameFirst || soundSameFirst;
+            }
+            return true;
+        }
+
+        // 2글자 이하는 alias 또는 거의 정확한 경우만
+        if (aw.length <= 2) {
+            return dist === 0;
+        }
+
+        // 3~4글자는 매우 조심:
+        // 첫소리와 끝소리가 맞고, 철자 1개 정도만 차이날 때만 허용
+        if (aw.length <= 4) {
+            return sameFirst && sameLast && dist <= 1 && sim >= 0.70;
+        }
+
+        // 5~6글자는 첫소리가 맞고 유사도가 충분할 때만 허용
+        if (aw.length <= 6) {
+            return sameFirst && (dist <= 2 || sim >= 0.72);
+        }
+
+        // 긴 단어는 ASR이 흔들릴 수 있으나, 첫소리 + 유사도 조건 유지
+        return sameFirst && (dist <= 3 || sim >= 0.68);
     }
 
     function isCorrectSpeech(spoken, answer) {
