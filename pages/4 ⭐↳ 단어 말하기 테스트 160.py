@@ -803,9 +803,96 @@ def word_card_speaking_game(word_themes):
     function normalizeText(text) {
         return String(text || "")
             .toLowerCase()
+            // 축약형 처리
+            .replace(/\bi'm\b/g, "i am")
+            .replace(/\bim\b/g, "i am")
+            .replace(/\byou're\b/g, "you are")
+            .replace(/\bhe's\b/g, "he is")
+            .replace(/\bshe's\b/g, "she is")
+            .replace(/\bit's\b/g, "it is")
+            .replace(/\bwe're\b/g, "we are")
+            .replace(/\bthey're\b/g, "they are")
+            .replace(/\bdon't\b/g, "do not")
+            .replace(/\bdoesn't\b/g, "does not")
+            .replace(/\bdidn't\b/g, "did not")
+            .replace(/\bcan't\b/g, "cannot")
+            .replace(/\bcant\b/g, "cannot")
+            .replace(/\bi'll\b/g, "i will")
+            .replace(/\byou'll\b/g, "you will")
+            .replace(/\bhe'll\b/g, "he will")
+            .replace(/\bshe'll\b/g, "she will")
+            // 자주 잘못 인식되는 표현 보정
+            .replace(/\bexcuse me\b/g, "excuse me")
+            .replace(/\bokay\b/g, "okay")
+            .replace(/\bok\b/g, "okay")
             .replace(/[.,!?;:'"’‘“”]/g, "")
+            .replace(/-/g, " ")
             .replace(/\s+/g, " ")
             .trim();
+    }
+
+    function wordsOnly(text) {
+        return normalizeText(text)
+            .split(" ")
+            .filter(w => w.length > 0);
+    }
+
+    function editDistance(a, b) {
+        const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+
+        for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+        for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+
+        for (let i = 1; i <= a.length; i++) {
+            for (let j = 1; j <= b.length; j++) {
+                const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                dp[i][j] = Math.min(
+                    dp[i - 1][j] + 1,
+                    dp[i][j - 1] + 1,
+                    dp[i - 1][j - 1] + cost
+                );
+            }
+        }
+
+        return dp[a.length][b.length];
+    }
+
+    function wordSimilarity(a, b) {
+        if (!a || !b) return 0;
+        if (a === b) return 1;
+
+        const dist = editDistance(a, b);
+        const maxLen = Math.max(a.length, b.length);
+
+        return 1 - (dist / maxLen);
+    }
+
+    function isSmallRecognitionMistake(spokenWord, answerWord) {
+        if (!spokenWord || !answerWord) return false;
+        if (spokenWord === answerWord) return true;
+
+        const dist = editDistance(spokenWord, answerWord);
+        const sim = wordSimilarity(spokenWord, answerWord);
+
+        // 아주 짧은 단어는 엄격하게
+        // 예: I, he, we, go, do 등
+        if (answerWord.length <= 2) {
+            return dist === 0;
+        }
+
+        // 3~4글자 단어는 1글자 정도만 허용
+        // 예: sick → sik, cold → col 정도
+        if (answerWord.length <= 4) {
+            return dist <= 1 && sim >= 0.75;
+        }
+
+        // 5글자 이상 단어는 음성 인식 오류를 조금 더 허용
+        // 예: thirsty, family, teacher 등
+        if (answerWord.length >= 5) {
+            return dist <= 1 || sim >= 0.82;
+        }
+
+        return false;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -813,20 +900,54 @@ def word_card_speaking_game(word_themes):
         const a = normalizeText(answer);
 
         if (!s || !a) return false;
-
         if (s === a) return true;
 
-        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우 허용
-        // 예: "the word water" / "water please"
-        const words = s.split(" ").filter(Boolean);
-        if (!a.includes(" ") && words.includes(a)) return true;
+        const spokenWords = wordsOnly(s);
+        const answerWords = wordsOnly(a);
 
-        // excuse me처럼 두 단어 단어도 처리
-        if (a.includes(" ")) {
-            return s.includes(a);
+        if (spokenWords.length === 0 || answerWords.length === 0) return false;
+
+        // 한 단어 정답:
+        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우는 허용
+        // 예: "the word water", "water please"
+        if (answerWords.length === 1) {
+            for (const sw of spokenWords) {
+                if (isSmallRecognitionMistake(sw, answerWords[0])) {
+                    return true;
+                }
+            }
+            return false;
         }
 
-        return false;
+        // 두 단어 이상 표현:
+        // 표현 전체가 포함되면 정답
+        if (s.includes(a)) return true;
+
+        // 정답 단어들이 순서대로 들어오면 정답
+        // 예: "please excuse me" -> excuse me 인정
+        let pos = 0;
+        let weakMatchCount = 0;
+
+        for (const sw of spokenWords) {
+            const target = answerWords[pos];
+            if (!target) break;
+
+            if (isSmallRecognitionMistake(sw, target)) {
+                if (sw !== target) weakMatchCount += 1;
+                pos += 1;
+            }
+
+            if (pos >= answerWords.length) break;
+        }
+
+        if (pos < answerWords.length) return false;
+
+        // 짧은 표현에서 애매한 단어가 너무 많으면 오답
+        if (answerWords.length <= 3 && weakMatchCount >= 2) {
+            return false;
+        }
+
+        return true;
     }
 
     function countCorrectInCurrentTheme() {
