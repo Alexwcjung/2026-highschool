@@ -439,37 +439,42 @@ def word_card_speaking_game(word_themes):
                 }
 
                 #buttonBox {
-                    grid-template-columns: 1fr 1.15fr 0.72fr 0.92fr 0.72fr !important;
-                    gap: 5px !important;
-                }
-
-                #buttonBox button {
-                    min-height: 42px !important;
-                    font-size: 12px !important;
-                    padding: 8px 5px !important;
-                    border-radius: 15px !important;
-                    letter-spacing: -0.4px;
+                    gap: 8px !important;
                 }
 
                 #micBtn {
-                    font-size: 13px !important;
-                    padding: 8px 6px !important;
+                    min-height: 54px !important;
+                    font-size: 17px !important;
+                    padding: 13px 12px !important;
+                    border-radius: 999px !important;
                 }
 
                 #transcriptMiniBox {
-                    min-height: 42px !important;
-                    padding: 6px 7px !important;
-                    border-radius: 15px !important;
+                    min-height: 62px !important;
+                    padding: 10px 12px !important;
+                    border-radius: 18px !important;
                 }
 
                 #transcriptMiniLabel {
-                    font-size: 10px !important;
-                    margin-bottom: 1px !important;
+                    font-size: 12px !important;
+                    margin-bottom: 4px !important;
                 }
 
                 #transcriptBox {
-                    font-size: 14px !important;
-                    line-height: 1.15 !important;
+                    font-size: 19px !important;
+                    line-height: 1.25 !important;
+                }
+
+                #smallButtonRow {
+                    gap: 6px !important;
+                }
+
+                #smallButtonRow button {
+                    min-height: 42px !important;
+                    font-size: 12px !important;
+                    padding: 8px 4px !important;
+                    border-radius: 15px !important;
+                    letter-spacing: -0.5px;
                 }
 
                 #resultBox {
@@ -586,79 +591,89 @@ def word_card_speaking_game(word_themes):
             </div>
 
             <div id="buttonBox" style="
-                display:grid;
-                grid-template-columns: 1.05fr 1.35fr 0.85fr 1.05fr 0.85fr;
-                gap:8px;
+                display:flex;
+                flex-direction:column;
+                gap:10px;
                 align-items:stretch;
                 margin-bottom:16px;
                 width:100%;
             ">
                 <button id="micBtn" style="
+                    width:100%;
                     border:1.5px solid #fecaca;
                     background:#fff1f2;
                     color:#be123c;
                     border-radius:999px;
-                    padding:12px 14px;
+                    padding:14px 18px;
                     font-weight:900;
                     cursor:pointer;
-                    font-size:16px;
-                    min-height:50px;
+                    font-size:19px;
+                    min-height:58px;
                     white-space:nowrap;
+                    box-shadow:0 3px 9px rgba(0,0,0,0.05);
                 ">🎙️ 말하기</button>
 
                 <div id="transcriptMiniBox" style="
+                    width:100%;
                     background:#f8fafc;
                     border:1.5px solid #e2e8f0;
-                    border-radius:18px;
-                    padding:8px 10px;
-                    min-height:50px;
+                    border-radius:20px;
+                    padding:12px 14px;
+                    min-height:68px;
                     display:flex;
                     flex-direction:column;
                     justify-content:center;
                     overflow:hidden;
                 ">
-                    <div id="transcriptMiniLabel" style="font-size:11px; color:#64748b; font-weight:900; margin-bottom:2px; white-space:nowrap;">인식된 단어</div>
-                    <div id="transcriptBox" style="font-size:17px; font-weight:900; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
+                    <div id="transcriptMiniLabel" style="font-size:13px; color:#64748b; font-weight:900; margin-bottom:5px; white-space:nowrap;">인식된 단어</div>
+                    <div id="transcriptBox" style="font-size:22px; font-weight:900; color:#334155; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;"></div>
                 </div>
 
-                <button id="hintBtn" style="
-                    border:1.5px solid #fed7aa;
-                    background:#fff7ed;
-                    color:#9a3412;
-                    border-radius:999px;
-                    padding:9px 10px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:14px;
-                    min-height:46px;
-                    white-space:nowrap;
-                ">💡 힌트</button>
+                <div id="smallButtonRow" style="
+                    display:grid;
+                    grid-template-columns: repeat(3, minmax(0, 1fr));
+                    gap:8px;
+                    width:100%;
+                ">
+                    <button id="hintBtn" style="
+                        border:1.5px solid #fed7aa;
+                        background:#fff7ed;
+                        color:#9a3412;
+                        border-radius:999px;
+                        padding:10px 8px;
+                        font-weight:900;
+                        cursor:pointer;
+                        font-size:14px;
+                        min-height:46px;
+                        white-space:nowrap;
+                    ">💡 힌트</button>
 
-                <button id="answerBtn" style="
-                    border:1.5px solid #bfdbfe;
-                    background:#eff6ff;
-                    color:#1d4ed8;
-                    border-radius:999px;
-                    padding:9px 10px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:14px;
-                    min-height:46px;
-                    white-space:nowrap;
-                ">👀 정답+🔊</button>
+                    <button id="answerBtn" style="
+                        border:1.5px solid #bfdbfe;
+                        background:#eff6ff;
+                        color:#1d4ed8;
+                        border-radius:999px;
+                        padding:10px 8px;
+                        font-weight:900;
+                        cursor:pointer;
+                        font-size:14px;
+                        min-height:46px;
+                        white-space:nowrap;
+                    ">👀 정답+🔊</button>
 
-                <button id="skipBtn" style="
-                    border:1.5px solid #c7d2fe;
-                    background:#eef2ff;
-                    color:#3730a3;
-                    border-radius:999px;
-                    padding:9px 10px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:14px;
-                    min-height:46px;
-                    white-space:nowrap;
-                ">➡️ 다음</button>
+                    <button id="skipBtn" style="
+                        border:1.5px solid #c7d2fe;
+                        background:#eef2ff;
+                        color:#3730a3;
+                        border-radius:999px;
+                        padding:10px 8px;
+                        font-weight:900;
+                        cursor:pointer;
+                        font-size:14px;
+                        min-height:46px;
+                        white-space:nowrap;
+                    ">➡️ 다음</button>
+                </div>
             </div>
 
             <div id="resultBox" style="
