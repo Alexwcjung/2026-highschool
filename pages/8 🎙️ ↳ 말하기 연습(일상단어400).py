@@ -785,6 +785,41 @@ def speaking_practice_component(items):
 
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
+        // 핵심 수정:
+        // 빈칸이 여러 개일 때 앞 빈칸만 말해도 전체 정답 처리되는 문제를 막습니다.
+        // currentItem.hint에 들어 있는 모든 빈칸 정답을 말해야 정답으로 인정합니다.
+        if (currentItem && currentItem.hint) {
+            const blankAnswers = String(currentItem.hint)
+                .split("/")
+                .map(x => normalizeText(x).trim())
+                .filter(x => x.length > 0);
+
+            for (const blankAnswer of blankAnswers) {
+                const blankWords = wordsOnly(blankAnswer);
+                let allWordsFound = true;
+
+                for (const bw of blankWords) {
+                    let foundThisWord = false;
+
+                    for (const sw of spokenWords) {
+                        if (isUnderstandableWord(sw, bw)) {
+                            foundThisWord = true;
+                            break;
+                        }
+                    }
+
+                    if (!foundThisWord) {
+                        allWordsFound = false;
+                        break;
+                    }
+                }
+
+                if (!allWordsFound) {
+                    return false;
+                }
+            }
+        }
+
         let matched = 0;
         let used = new Array(spokenWords.length).fill(false);
 
@@ -803,8 +838,9 @@ def speaking_practice_component(items):
 
         const ratio = matched / answerWords.length;
 
-        // 긴 문장은 ASR 누락이 생길 수 있어 65% 이상 핵심 단어가 맞으면 통과
-        return ratio >= 0.65;
+        // 모든 빈칸 정답을 말한 상태에서만 문장 전체 비율을 봅니다.
+        // 기존 65%는 너무 관대해서 75%로 올렸습니다.
+        return ratio >= 0.75;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -1005,6 +1041,16 @@ def speaking_practice_component(items):
     }
 
     async function startRecognition() {
+        // 듣는 중에 다시 누르면 기존 인식을 끊고 새로 시작합니다.
+        // 학생이 잘못 말했거나 다시 말하고 싶을 때 버튼이 먹통처럼 느껴지지 않게 합니다.
+        if (isListening) {
+            stopRecognition();
+            setTimeout(function() {
+                startRecognition();
+            }, 120);
+            return;
+        }
+
         if (!SpeechRecognition) {
             transcriptBox.innerText = "Chrome에서 열어 주세요.";
             return;
@@ -1035,9 +1081,10 @@ def speaking_practice_component(items):
             recognition.maxAlternatives = 5;
 
             isListening = true;
-            micBtn.disabled = true;
-            micBtn.style.opacity = "0.78";
-            micBtn.innerText = "👂";
+            micBtn.disabled = false;
+            micBtn.style.opacity = "0.9";
+            micBtn.style.pointerEvents = "auto";
+            micBtn.innerText = "🔁";
             resultBox.style.display = "none";
             resultBox.innerText = "";
             transcriptBox.innerText = "";
@@ -1045,6 +1092,8 @@ def speaking_practice_component(items):
             recognitionTimeout = setTimeout(function() {
                 if (isListening) {
                     try { recognition.stop(); } catch (e) {}
+                    try { recognition.abort(); } catch (e) {}
+                    recognition = null;
                     resetMicState();
                 }
             }, 9000);
