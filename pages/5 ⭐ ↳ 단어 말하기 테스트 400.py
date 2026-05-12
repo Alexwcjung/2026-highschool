@@ -4,7 +4,7 @@ import json
 
 st.set_page_config(
     page_title="Daily English 400 단어 카드 말하기 게임",
-    page_icon="🃏",
+    page_icon="🌱",
     layout="wide"
 )
 
@@ -1661,8 +1661,8 @@ st.markdown(
     """
     <style>
     .main-title-box {
-        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1.5px solid #dbeafe;
+        background: linear-gradient(135deg, #dcfce7 0%, #e0f2fe 50%, #fef3c7 100%);
+        border: 1.5px solid #bbf7d0;
         border-radius: 30px;
         padding: 28px 30px;
         margin-bottom: 22px;
@@ -1706,8 +1706,11 @@ st.markdown(
 st.markdown(
     """
     <div class="main-title-box">
-        <h1>🃏 Daily English 400 단어 카드 말하기 게임</h1>
-        <p>한국말 뜻을 보고 영어 단어 또는 표현을 말해 보세요.</p>
+        <h1>🌱 Daily English 400 단어 카드 말하기 게임</h1>
+        <p>
+            한국말 뜻을 보고 <b>영어 단어 또는 표현</b>을 말해 보세요.<br>
+            음성 인식으로 정답이면 자동으로 다음 카드로 넘어갑니다.
+        </p>
     </div>
     """,
     unsafe_allow_html=True
@@ -1732,8 +1735,8 @@ def daily_word_card_speaking_game(word_themes):
     html = r"""
     <div id="daily-word-card-app" style="
         font-family: Arial, sans-serif;
-        background: linear-gradient(135deg, #f0f9ff 0%, #fff7ed 50%, #fdf2f8 100%);
-        border: 1.5px solid #dbeafe;
+        background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #fff7ed 100%);
+        border: 1.5px solid #bbf7d0;
         border-radius: 30px;
         padding: 24px;
         box-shadow: 0 8px 24px rgba(0,0,0,0.08);
@@ -1755,109 +1758,14 @@ def daily_word_card_speaking_game(word_themes):
                 max-width: 100%;
             }
 
-            #cardBox {
-                position: relative;
-                overflow: hidden;
+            .bounce-card {
+                animation: cardBounce 0.42s ease;
             }
 
-            #cardBox::before {
-                content: "다음 단어";
-                position: absolute;
-                top: 18px;
-                left: 50%;
-                transform: translateX(-50%) translateY(-16px) scale(0.88);
-                background: linear-gradient(135deg, #2563eb, #7c3aed);
-                color: white;
-                border: 3px solid rgba(255,255,255,0.92);
-                border-radius: 999px;
-                padding: 10px 20px;
-                font-size: 18px;
-                font-weight: 900;
-                letter-spacing: -0.2px;
-                box-shadow: 0 12px 26px rgba(37,99,235,0.24);
-                opacity: 0;
-                z-index: 8;
-                pointer-events: none;
-                white-space: nowrap;
-            }
-
-            #cardBox::after {
-                content: "";
-                position: absolute;
-                inset: 0;
-                pointer-events: none;
-                background: linear-gradient(90deg,
-                    rgba(219,234,254,0) 0%,
-                    rgba(219,234,254,0.88) 34%,
-                    rgba(237,233,254,0.92) 50%,
-                    rgba(254,243,199,0.88) 66%,
-                    rgba(219,234,254,0) 100%);
-                transform: translateX(-115%);
-                opacity: 0;
-                z-index: 7;
-            }
-
-            .next-card-animate {
-                animation: nextCardSlide 0.58s cubic-bezier(.2,.8,.2,1);
-            }
-
-            .next-card-animate::before {
-                animation: nextBadgePop 0.58s cubic-bezier(.2,.8,.2,1);
-            }
-
-            .next-card-animate::after {
-                animation: nextLightSweep 0.58s ease-out;
-            }
-
-            @keyframes nextCardSlide {
-                0% {
-                    opacity: 0;
-                    transform: translateX(46px) scale(0.965);
-                    filter: blur(3px) brightness(1.05);
-                }
-                55% {
-                    opacity: 1;
-                    transform: translateX(-7px) scale(1.012);
-                    filter: blur(0) brightness(1.03);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateX(0) scale(1);
-                    filter: blur(0) brightness(1);
-                }
-            }
-
-            @keyframes nextBadgePop {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-18px) scale(0.86);
-                }
-                20% {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1.04);
-                }
-                62% {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-8px) scale(0.96);
-                }
-            }
-
-            @keyframes nextLightSweep {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-115%);
-                }
-                20% {
-                    opacity: 1;
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateX(115%);
-                }
+            @keyframes cardBounce {
+                0% { transform: scale(1); }
+                40% { transform: scale(1.035); }
+                100% { transform: scale(1); }
             }
 
             @media (max-width: 768px) {
@@ -1922,7 +1830,7 @@ def daily_word_card_speaking_game(word_themes):
             <select id="categorySelect" style="
                 padding: 10px 14px;
                 border-radius: 999px;
-                border: 1.5px solid #bae6fd;
+                border: 1.5px solid #bbf7d0;
                 font-size: 15px;
                 font-weight: 800;
                 color: #0f172a;
@@ -1951,7 +1859,18 @@ def daily_word_card_speaking_game(word_themes):
         </div>
 
         <div id="gameArea">
-            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+                <div id="categoryLabel" style="
+                    display:inline-block;
+                    background:#eff6ff;
+                    color:#1d4ed8;
+                    border-radius:999px;
+                    padding:8px 14px;
+                    font-size:15px;
+                    font-weight:900;
+                    border:1px solid #bfdbfe;
+                "></div>
+
                 <div id="scoreLabel" style="
                     display:inline-block;
                     background:#f0fdf4;
@@ -1961,14 +1880,14 @@ def daily_word_card_speaking_game(word_themes):
                     font-size:15px;
                     font-weight:900;
                     border:1px solid #bbf7d0;
-                ">정답 0 / 0 · 연습 필요 0</div>
+                ">정답 0 / 0 · 못 말한 단어 0</div>
             </div>
 
             <div id="cardBox" style="
                 background:white;
                 border-radius:32px;
                 padding:30px 24px;
-                border:1.5px solid #e0f2fe;
+                border:1.5px solid #dcfce7;
                 box-shadow:0 8px 24px rgba(0,0,0,0.07);
                 text-align:center;
                 margin-bottom:18px;
@@ -2010,6 +1929,19 @@ def daily_word_card_speaking_game(word_themes):
                     font-weight:900;
                     margin-top:18px;
                 ">answer</div>
+
+                <div id="hintBox" style="
+                    display:none;
+                    background:#fff7ed;
+                    border:1.5px solid #fed7aa;
+                    color:#9a3412;
+                    border-radius:20px;
+                    padding:14px 16px;
+                    font-size:30px;
+                    font-weight:900;
+                    margin-top:14px;
+                    word-break:break-word;
+                ">hint</div>
             </div>
 
             <div id="buttonBox" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:16px;">
@@ -2024,6 +1956,17 @@ def daily_word_card_speaking_game(word_themes):
                     font-size:17px;
                 ">🎙️ 말하기</button>
 
+                <button id="hintBtn" style="
+                    border:1.5px solid #fed7aa;
+                    background:#fff7ed;
+                    color:#9a3412;
+                    border-radius:999px;
+                    padding:13px 20px;
+                    font-weight:900;
+                    cursor:pointer;
+                    font-size:17px;
+                ">💡 힌트 보기</button>
+
                 <button id="answerBtn" style="
                     border:1.5px solid #bfdbfe;
                     background:#eff6ff;
@@ -2033,7 +1976,7 @@ def daily_word_card_speaking_game(word_themes):
                     font-weight:900;
                     cursor:pointer;
                     font-size:17px;
-                ">🔊 정답 듣기/보기</button>
+                ">🔊 정답 보기 + 발음 듣기</button>
 
                 <button id="skipBtn" style="
                     border:1.5px solid #c7d2fe;
@@ -2094,7 +2037,7 @@ def daily_word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#166534;
                 margin-bottom:18px;
-            ">정답 0 / 0 · 연습 필요 0</div>
+            ">정답 0 / 0 · 못 말한 단어 0</div>
             <button id="finishRetryBtn" style="
                 border:1.5px solid #a7f3d0;
                 background:#ecfdf5;
@@ -2127,14 +2070,17 @@ def daily_word_card_speaking_game(word_themes):
     const finishScore = document.getElementById("finishScore");
     const finishRetryBtn = document.getElementById("finishRetryBtn");
 
+    const categoryLabel = document.getElementById("categoryLabel");
     const scoreLabel = document.getElementById("scoreLabel");
     const cardBox = document.getElementById("cardBox");
     const emojiBox = document.getElementById("emojiBox");
     const meaningBox = document.getElementById("meaningBox");
     const answerBox = document.getElementById("answerBox");
+    const hintBox = document.getElementById("hintBox");
 
     const micBtn = document.getElementById("micBtn");
     const answerBtn = document.getElementById("answerBtn");
+    const hintBtn = document.getElementById("hintBtn");
     const skipBtn = document.getElementById("skipBtn");
 
     const transcriptBox = document.getElementById("transcriptBox");
@@ -2246,7 +2192,7 @@ def daily_word_card_speaking_game(word_themes):
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
         const missedCount = countMissedInCurrentTheme();
-        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 " + missedCount;
+        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
     }
 
     function speak(text) {
@@ -2279,7 +2225,7 @@ def daily_word_card_speaking_game(word_themes):
         const correctCount = countCorrectInCurrentTheme();
         const missedCount = countMissedInCurrentTheme();
 
-        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 " + missedCount;
+        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
 
         gameArea.style.display = "none";
         finishBox.style.display = "block";
@@ -2302,11 +2248,15 @@ def daily_word_card_speaking_game(word_themes):
         currentIndex = index;
         currentItem = currentList[currentIndex];
 
+        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
         emojiBox.innerText = currentItem.emoji || "🌱";
         meaningBox.innerText = currentItem.meaning;
 
         answerBox.style.display = "none";
         answerBox.innerText = "정답: " + currentItem.word;
+
+        hintBox.style.display = "none";
+        hintBox.innerText = "";
 
         transcriptBox.innerText = "";
         resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
@@ -2314,9 +2264,9 @@ def daily_word_card_speaking_game(word_themes):
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
 
-        cardBox.classList.remove("next-card-animate");
+        cardBox.classList.remove("bounce-card");
         void cardBox.offsetWidth;
-        cardBox.classList.add("next-card-animate");
+        cardBox.classList.add("bounce-card");
 
         updateScore();
     }
@@ -2338,7 +2288,8 @@ def daily_word_card_speaking_game(word_themes):
             updateScore();
 
             resultBox.innerHTML =
-                "✅ 정답: " + currentItem.word;
+                "✅ 정답입니다!<br>" +
+                "<span style='font-size:17px;'>잘 말했어요: " + currentItem.word + "</span>";
 
             resultBox.style.background = "#ecfdf5";
             resultBox.style.borderColor = "#bbf7d0";
@@ -2455,6 +2406,26 @@ def daily_word_card_speaking_game(word_themes):
         answerBox.style.display = "block";
         answerBox.innerText = "정답: " + currentItem.word;
         speak(currentItem.word);
+    });
+
+    hintBtn.addEventListener("click", function() {
+        if (!currentItem) return;
+
+        const cleanWord = String(currentItem.word || "").trim();
+        const words = cleanWord.split(/\s+/).filter(Boolean);
+
+        const hintText = words.map(function(word) {
+            const lettersOnly = word.replace(/[^a-zA-Z]/g, "");
+            if (lettersOnly.length <= 2) return word;
+
+            const firstTwo = lettersOnly.slice(0, 2);
+            const blanks = "_".repeat(Math.max(1, lettersOnly.length - 2));
+
+            return firstTwo + blanks;
+        }).join(" ");
+
+        hintBox.style.display = "block";
+        hintBox.innerText = "힌트: " + hintText;
     });
 
     skipBtn.addEventListener("click", function() {
