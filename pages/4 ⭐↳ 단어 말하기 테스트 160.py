@@ -436,18 +436,7 @@ def word_card_speaking_game(word_themes):
         </div>
 
         <div id="gameArea">
-            <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
-                <div id="categoryLabel" style="
-                    display:inline-block;
-                    background:#eef6ff;
-                    color:#1d4ed8;
-                    border-radius:999px;
-                    padding:8px 14px;
-                    font-size:15px;
-                    font-weight:900;
-                    border:1px solid #bfdbfe;
-                "></div>
-
+            <div style="display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
                 <div id="scoreLabel" style="
                     display:inline-block;
                     background:#f0fdf4;
@@ -457,7 +446,7 @@ def word_card_speaking_game(word_themes):
                     font-size:15px;
                     font-weight:900;
                     border:1px solid #bbf7d0;
-                ">정답 0 / 0 · 못 말한 단어 0</div>
+                ">정답 0 / 0 · 연습 필요 단어 0</div>
             </div>
 
             <div id="cardBox" style="
@@ -541,7 +530,7 @@ def word_card_speaking_game(word_themes):
                     font-weight:900;
                     cursor:pointer;
                     font-size:17px;
-                ">🔊 정답 듣기/보기</button>
+                ">👀 정답 보기 + 🔊 발음 듣기</button>
 
                 <button id="hintBtn" style="
                     border:1.5px solid #fed7aa;
@@ -646,7 +635,6 @@ def word_card_speaking_game(word_themes):
     const finishScore = document.getElementById("finishScore");
     const finishRetryBtn = document.getElementById("finishRetryBtn");
 
-    const categoryLabel = document.getElementById("categoryLabel");
     const scoreLabel = document.getElementById("scoreLabel");
     const cardBox = document.getElementById("cardBox");
     const emojiBox = document.getElementById("emojiBox");
@@ -758,7 +746,7 @@ def word_card_speaking_game(word_themes):
         const list = getFilteredItems();
         const correctCount = countCorrectInCurrentTheme();
         const missedCount = countMissedInCurrentTheme();
-        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
+        scoreLabel.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
     }
 
     function speak(text) {
@@ -791,7 +779,7 @@ def word_card_speaking_game(word_themes):
         const correctCount = countCorrectInCurrentTheme();
         const missedCount = countMissedInCurrentTheme();
 
-        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 못 말한 단어 " + missedCount;
+        finishScore.innerText = "정답 " + correctCount + " / " + list.length + " · 연습 필요 단어 " + missedCount;
 
         gameArea.style.display = "none";
         finishBox.style.display = "block";
@@ -814,7 +802,6 @@ def word_card_speaking_game(word_themes):
         currentIndex = index;
         currentItem = currentList[currentIndex];
 
-        categoryLabel.innerText = currentItem.cat + " · " + (currentIndex + 1) + " / " + currentList.length;
         emojiBox.innerText = currentItem.emoji || "🃏";
         meaningBox.innerText = currentItem.meaning;
 
@@ -972,6 +959,13 @@ def word_card_speaking_game(word_themes):
         answerBox.style.display = "block";
         answerBox.innerText = "정답: " + currentItem.word;
         speak(currentItem.word);
+
+        resultBox.innerHTML =
+            "🔊 정답을 듣고 다시 말해 보세요.<br>" +
+            "<span style='font-size:17px;'>다시 말해서 인식되면 정답으로 인정됩니다.</span>";
+        resultBox.style.background = "#eff6ff";
+        resultBox.style.borderColor = "#bfdbfe";
+        resultBox.style.color = "#1d4ed8";
     });
 
     hintBtn.addEventListener("click", function() {
@@ -986,6 +980,8 @@ def word_card_speaking_game(word_themes):
     });
 
     skipBtn.addEventListener("click", function() {
+        // 학생이 그냥 다음으로 넘길 때만 연습 필요 단어로 기록합니다.
+        // 틀리게 말한 것만으로는 기록하지 않고, 나중에 다시 말해서 맞히면 정답으로 바뀝니다.
         if (currentItem && !correctMap[getItemKey(currentItem)]) {
             missedMap[getItemKey(currentItem)] = true;
             updateScore();
