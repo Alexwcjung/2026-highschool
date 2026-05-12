@@ -763,6 +763,7 @@ def word_card_speaking_game(word_themes):
     let recognition = null;
     let isListening = false;
     let micSafetyTimer = null;
+    let recognitionRunId = 0;
 
     function resetMicButton() {
         isListening = false;
@@ -779,6 +780,8 @@ def word_card_speaking_game(word_themes):
     }
 
     function cleanupRecognition() {
+        recognitionRunId += 1;
+
         if (micSafetyTimer) {
             clearTimeout(micSafetyTimer);
             micSafetyTimer = null;
@@ -788,8 +791,8 @@ def word_card_speaking_game(word_themes):
             try { recognition.onresult = null; } catch (e) {}
             try { recognition.onerror = null; } catch (e) {}
             try { recognition.onend = null; } catch (e) {}
-            try { recognition.stop(); } catch (e) {}
             try { recognition.abort(); } catch (e) {}
+            try { recognition.stop(); } catch (e) {}
             recognition = null;
         }
 
@@ -1223,9 +1226,10 @@ def word_card_speaking_game(word_themes):
 
         transcriptBox.innerText = "";
         resultBox.innerText = "";
-        resultBox.style.background = "#f1f5f9";
-        resultBox.style.borderColor = "#e2e8f0";
-        resultBox.style.color = "#334155";
+        resultBox.style.display = "none";
+        resultBox.style.background = "#fff7ed";
+        resultBox.style.borderColor = "#fed7aa";
+        resultBox.style.color = "#92400e";
 
         cardBox.classList.remove("next-card-animate");
         void cardBox.offsetWidth;
@@ -1259,34 +1263,32 @@ def word_card_speaking_game(word_themes):
             transcriptBox.style.color = "#334155";
 
             resultBox.innerText = "";
-            resultBox.style.background = "#f8fafc";
-            resultBox.style.borderColor = "#e2e8f0";
-            resultBox.style.color = "#334155";
+            resultBox.style.display = "none";
 
             speak(currentItem.word);
 
             // 정답을 맞혀도 자동으로 다음 단어로 넘어가지 않습니다.
-            // 정답 개수만 올라가고, 학생이 직접 '다음' 버튼을 눌러야 넘어갑니다.
-            resultBox.innerText = "정답입니다. 다음 단어로 가려면 '다음'을 눌러 주세요.";
-            resultBox.style.background = "#f0fdf4";
-            resultBox.style.borderColor = "#bbf7d0";
-            resultBox.style.color = "#166534";
+            // 정답 표시는 인식된 단어 칸에만 남기고, 아래 안내 문구는 숨깁니다.
+            resultBox.innerText = "";
+            resultBox.style.display = "none";
 
             cleanupRecognition();
         } else {
             // 틀렸을 때는 인식된 단어는 그대로 두고, 안내만 짧게 보여 줍니다.
             answerBox.style.display = "none";
             transcriptBox.style.color = "#334155";
+            resultBox.style.display = "block";
             resultBox.innerText = "다시 시도해 주세요.";
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
-            resultBox.style.color = "#9a3412";
+            resultBox.style.color = "#92400e";
         }
     }
 
     async function startRecognition() {
         if (!SpeechRecognition) {
             resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
+                resultBox.style.display = "block";
             resultBox.style.background = "#fef2f2";
             resultBox.style.borderColor = "#fecaca";
             resultBox.style.color = "#991b1b";
@@ -1301,10 +1303,8 @@ def word_card_speaking_game(word_themes):
 
         // 이미 맞힌 단어에서는 마이크를 다시 켜지 않고, 다음 버튼으로 이동하게 합니다.
         if (correctMap[getItemKey(currentItem)]) {
-            resultBox.innerText = "이미 맞힌 단어입니다. 다음 단어로 가려면 '다음'을 눌러 주세요.";
-            resultBox.style.background = "#f0fdf4";
-            resultBox.style.borderColor = "#bbf7d0";
-            resultBox.style.color = "#166534";
+            resultBox.innerText = "";
+            resultBox.style.display = "none";
             resetMicButton();
             return;
         }
@@ -1320,6 +1320,7 @@ def word_card_speaking_game(word_themes):
                 stream.getTracks().forEach(function(track) { track.stop(); });
             } catch (err) {
                 resultBox.innerText = "마이크 권한을 허용한 뒤 다시 눌러 주세요.";
+                resultBox.style.display = "block";
                 resultBox.style.background = "#fef2f2";
                 resultBox.style.borderColor = "#fecaca";
                 resultBox.style.color = "#991b1b";
@@ -1329,6 +1330,9 @@ def word_card_speaking_game(word_themes):
         }
 
         window.speechSynthesis.cancel();
+
+        recognitionRunId += 1;
+        const thisRunId = recognitionRunId;
 
         recognition = new SpeechRecognition();
         recognition.lang = "en-US";
@@ -1343,11 +1347,13 @@ def word_card_speaking_game(word_themes):
         micBtn.innerText = "🎙️ 듣는 중...";
 
         resultBox.innerText = "";
-        resultBox.style.background = "#f8fafc";
-        resultBox.style.borderColor = "#e2e8f0";
-        resultBox.style.color = "#334155";
+        resultBox.style.display = "none";
+        resultBox.style.background = "#fff7ed";
+        resultBox.style.borderColor = "#fed7aa";
+        resultBox.style.color = "#92400e";
 
         recognition.onresult = function(event) {
+            if (thisRunId !== recognitionRunId) return;
             let bestTranscript = "";
 
             if (!event.results || !event.results[0]) {
@@ -1373,18 +1379,22 @@ def word_card_speaking_game(word_themes):
         };
 
         recognition.onerror = function(event) {
+            if (thisRunId !== recognitionRunId) return;
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                 resultBox.innerText = "마이크 권한을 허용해 주세요.";
+                resultBox.style.display = "block";
                 resultBox.style.background = "#fef2f2";
                 resultBox.style.borderColor = "#fecaca";
                 resultBox.style.color = "#991b1b";
             } else if (event.error === "no-speech") {
                 resultBox.innerText = "소리가 인식되지 않았습니다. 다시 눌러 주세요.";
+                resultBox.style.display = "block";
                 resultBox.style.background = "#f8fafc";
                 resultBox.style.borderColor = "#e2e8f0";
                 resultBox.style.color = "#334155";
             } else {
                 resultBox.innerText = "다시 눌러 주세요.";
+                resultBox.style.display = "block";
                 resultBox.style.background = "#f8fafc";
                 resultBox.style.borderColor = "#e2e8f0";
                 resultBox.style.color = "#334155";
@@ -1394,6 +1404,7 @@ def word_card_speaking_game(word_themes):
         };
 
         recognition.onend = function() {
+            if (thisRunId !== recognitionRunId) return;
             recognition = null;
             resetMicButton();
         };
@@ -1401,6 +1412,7 @@ def word_card_speaking_game(word_themes):
         // 혹시 브라우저가 onend를 늦게 주거나 누락해도 버튼을 살립니다.
         // 동시에 남은 recognition 객체도 정리해 말하기 버튼 먹통을 방지합니다.
         micSafetyTimer = setTimeout(function() {
+            if (thisRunId !== recognitionRunId) return;
             if (isListening) {
                 try { recognition.stop(); } catch (e) {}
                 try { recognition.abort(); } catch (e) {}
@@ -1413,6 +1425,7 @@ def word_card_speaking_game(word_themes):
             recognition.start();
         } catch (err) {
             resultBox.innerText = "다시 눌러 주세요.";
+                resultBox.style.display = "block";
             resultBox.style.background = "#f8fafc";
             resultBox.style.borderColor = "#e2e8f0";
             resultBox.style.color = "#334155";
@@ -1465,9 +1478,8 @@ def word_card_speaking_game(word_themes):
         answerBox.innerText = "정답: " + currentItem.word;
         speak(currentItem.word);
 
-        resultBox.innerHTML =
-            "🔊 정답을 듣고 다시 시도해 주세요.<br>" +
-            "<span style='font-size:17px;'>다시 말해서 인식되면 정답으로 인정됩니다.</span>";
+        resultBox.style.display = "block";
+        resultBox.innerText = "듣고 다시 말해 보세요.";
         resultBox.style.background = "#eff6ff";
         resultBox.style.borderColor = "#bfdbfe";
         resultBox.style.color = "#1d4ed8";
