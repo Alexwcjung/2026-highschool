@@ -291,57 +291,126 @@ def word_card_speaking_game(word_themes):
 
             #cardBox {
                 position: relative;
+                overflow: hidden;
                 transform-style: preserve-3d;
-                perspective: 1200px;
+                perspective: 1400px;
                 transform-origin: left center;
+                backface-visibility: hidden;
+            }
+
+            /* 책장 넘기듯 접히는 효과 */
+            #cardBox::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                right: 0;
+                width: 52%;
+                height: 100%;
+                border-radius: 0 32px 32px 0;
+                pointer-events: none;
+                background:
+                    linear-gradient(90deg,
+                        rgba(255,255,255,0.05) 0%,
+                        rgba(255,255,255,0.55) 42%,
+                        rgba(148,163,184,0.22) 72%,
+                        rgba(15,23,42,0.16) 100%);
+                transform-origin: left center;
+                transform: rotateY(0deg);
+                opacity: 0;
+                z-index: 5;
             }
 
             #cardBox::after {
                 content: "";
                 position: absolute;
-                inset: 0;
-                border-radius: 32px;
+                top: 0;
+                bottom: 0;
+                left: 50%;
+                width: 3px;
                 pointer-events: none;
-                background: linear-gradient(90deg, rgba(255,255,255,0.15), rgba(15,23,42,0.10));
+                background: linear-gradient(180deg,
+                    rgba(255,255,255,0),
+                    rgba(100,116,139,0.25),
+                    rgba(255,255,255,0));
                 opacity: 0;
+                z-index: 6;
             }
 
             .page-flip-card {
-                animation: pageFlip 0.62s ease-in-out;
+                animation: bookPageMove 0.78s ease-in-out;
+            }
+
+            .page-flip-card::before {
+                animation: bookPageFold 0.78s ease-in-out;
             }
 
             .page-flip-card::after {
-                animation: pageShadow 0.62s ease-in-out;
+                animation: bookPageCrease 0.78s ease-in-out;
             }
 
-            @keyframes pageFlip {
+            @keyframes bookPageMove {
                 0% {
                     transform: rotateY(0deg) translateX(0);
+                    filter: brightness(1);
+                }
+                28% {
+                    transform: rotateY(-9deg) translateX(-5px);
+                    filter: brightness(0.98);
+                }
+                58% {
+                    transform: rotateY(4deg) translateX(2px);
+                    filter: brightness(1.02);
+                }
+                100% {
+                    transform: rotateY(0deg) translateX(0);
+                    filter: brightness(1);
+                }
+            }
+
+            @keyframes bookPageFold {
+                0% {
+                    opacity: 0;
+                    transform: rotateY(0deg) skewY(0deg);
+                    box-shadow: none;
+                }
+                18% {
+                    opacity: 0.85;
+                    transform: rotateY(-18deg) skewY(-1deg);
+                    box-shadow: -14px 0 22px rgba(15,23,42,0.10);
+                }
+                45% {
                     opacity: 1;
+                    transform: rotateY(-64deg) skewY(-2deg);
+                    box-shadow: -22px 0 32px rgba(15,23,42,0.18);
+                }
+                72% {
+                    opacity: 0.6;
+                    transform: rotateY(-22deg) skewY(-1deg);
+                    box-shadow: -10px 0 18px rgba(15,23,42,0.10);
+                }
+                100% {
+                    opacity: 0;
+                    transform: rotateY(0deg) skewY(0deg);
+                    box-shadow: none;
+                }
+            }
+
+            @keyframes bookPageCrease {
+                0% {
+                    opacity: 0;
+                    transform: translateX(0);
                 }
                 35% {
-                    transform: rotateY(-18deg) translateX(-6px);
-                    opacity: 0.92;
+                    opacity: 1;
+                    transform: translateX(-24px);
                 }
                 70% {
-                    transform: rotateY(7deg) translateX(3px);
-                    opacity: 1;
-                }
-                100% {
-                    transform: rotateY(0deg) translateX(0);
-                    opacity: 1;
-                }
-            }
-
-            @keyframes pageShadow {
-                0% {
-                    opacity: 0;
-                }
-                35% {
-                    opacity: 1;
+                    opacity: 0.55;
+                    transform: translateX(12px);
                 }
                 100% {
                     opacity: 0;
+                    transform: translateX(0);
                 }
             }
 
