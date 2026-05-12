@@ -2282,7 +2282,7 @@ def daily_word_card_speaking_game(word_themes):
         if (!sw || !aw) return false;
         if (sw === aw) return true;
 
-        // 꼭 허용할 ASR 오인식만 명시적으로 인정
+        // 꼭 필요한 ASR 오인식만 명시적으로 허용
         const aliases = {
             "i": ["i", "eye", "ai"],
             "you": ["you", "u", "yew"],
@@ -2304,7 +2304,7 @@ def daily_word_card_speaking_game(word_themes):
             "pe": ["pe", "pee", "p", "physicaleducation"],
             "wifi": ["wifi", "wi", "wifei"],
 
-            // 짧은 단어는 위험하므로 필요한 것만 명시적으로 허용
+            // 짧거나 ASR이 자주 흔들리는 단어만 제한적으로 허용
             "math": ["math", "mat", "mass", "meth", "matt"],
             "art": ["art", "heart"],
             "science": ["science", "sience", "signs"],
@@ -2360,43 +2360,56 @@ def daily_word_card_speaking_game(word_themes):
 
         const sameFirst = sw.charAt(0) === aw.charAt(0);
         const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
+        const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
 
         const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
         const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
 
-        // 짧은 단어에서 마지막 소리가 다르면 오답 처리
-        // 예: club ≠ call, card ≠ car, coat ≠ court
+        // 핵심 안전장치:
+        // 첫 글자/첫소리가 다르면 완전히 다른 단어일 가능성이 높으므로 오답.
+        // 예: assignment ≠ project
+        if (!sameFirst && !soundSameFirst) {
+            return false;
+        }
+
+        // 짧은 단어는 끝소리까지 맞아야 함.
+        // 예: club ≠ call
         if (aw.length <= 4) {
             if (!sameLast && !soundSameLast) return false;
         }
 
-        // 자음 뼈대가 완전히 같으면 허용
-        // 단, 짧은 단어는 첫소리와 끝소리도 맞아야 함
+        // 자음 뼈대가 완전히 같으면 허용.
+        // 단, 첫소리는 이미 위에서 확인됨.
         if (soundSw && soundAw && soundSw === soundAw) {
-            if (aw.length <= 4) {
-                return sameFirst || soundSameFirst;
-            }
             return true;
         }
 
-        // 2글자 이하는 alias 또는 거의 정확한 경우만
+        // 2글자 이하는 alias 또는 완전 일치만 허용
         if (aw.length <= 2) {
-            return dist === 0;
+            return false;
         }
 
-        // 3~4글자는 매우 조심:
-        // 첫소리와 끝소리가 맞고, 철자 1개 정도만 차이날 때만 허용
+        // 3~4글자는 철자 1개 차이 정도만 허용
         if (aw.length <= 4) {
-            return sameFirst && sameLast && dist <= 1 && sim >= 0.70;
+            return sameFirst && sameLast && dist <= 1 && sim >= 0.75;
         }
 
-        // 5~6글자는 첫소리가 맞고 유사도가 충분할 때만 허용
+        // 5~6글자는 첫 글자가 같고, 너무 많이 다르지 않을 때만 허용
         if (aw.length <= 6) {
-            return sameFirst && (dist <= 2 || sim >= 0.72);
+            return sameFirst && (dist <= 1 || sim >= 0.78);
         }
 
-        // 긴 단어는 ASR이 흔들릴 수 있으나, 첫소리 + 유사도 조건 유지
-        return sameFirst && (dist <= 3 || sim >= 0.68);
+        // 7글자 이상 긴 단어:
+        // 앞 2글자까지 같거나, edit distance가 아주 작아야 함.
+        // assignment/project 같은 완전히 다른 단어는 여기서 오답 처리됨.
+        if (aw.length >= 7) {
+            return sameFirst && (
+                (sameFirstTwo && sim >= 0.72) ||
+                dist <= 2
+            );
+        }
+
+        return false;
     }
 
     function isCorrectSpeech(spoken, answer) {
