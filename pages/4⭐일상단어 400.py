@@ -905,7 +905,7 @@ def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height
 
 
 # =========================
-# Daily English 400 테마별 단어
+# Daily English 400 통합 카테고리별 단어
 # =========================
 word_themes = {
     "🏫 학교생활": [
@@ -3080,7 +3080,7 @@ def browser_theme_cassette_player(theme_items, theme_name, height=580):
     browser_easy_cassette_player(
         theme_items,
         title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="이 테마 단어를 차례대로 듣습니다. 한 단어를 2번씩 들려준 뒤 다음 단어로 넘어갑니다.",
+        intro="이 카테고리 단어를 차례대로 듣습니다. 한 단어를 2번씩 들려준 뒤 다음 단어로 넘어갑니다.",
         height=height,
         word_repeat_each=2
     )
@@ -3124,7 +3124,7 @@ def show_all_cassette_tab():
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 테마 단어만 카세트 듣기")
+    st.markdown("### 🎧 이 카테고리 단어만 카세트 듣기")
 
     theme_items = make_theme_cassette_items(theme_words, theme_name)
 
@@ -3371,7 +3371,7 @@ def show_quiz(theme_words, theme_name):
 
         if len(wrong) == 0:
             st.balloons()
-            st.success("🌈 완벽합니다! 이 테마의 일상 단어를 모두 잘 기억하고 있습니다.")
+            st.success("🌈 완벽합니다! 이 카테고리의 일상 단어를 모두 잘 기억하고 있습니다.")
 
             if st.button("🔄 다시 풀기", key=f"{theme_name}_reset_all_correct"):
                 reset_theme(theme_name)
@@ -3474,6 +3474,62 @@ def show_quiz(theme_words, theme_name):
             st.rerun()
 
 
+
+
+# =========================
+# 카테고리 통합
+# - 단어와 대화 내용은 그대로 유지하고, 겹치는 카테고리만 합칩니다.
+# =========================
+CATEGORY_MERGE_MAP = {
+    "🏫 학교생활": "🏫 학교생활",
+    "✏️ 교실 활동": "🏫 학교생활",
+
+    "🏠 집과 생활": "🏠 집과 생활",
+    "🌅 하루 일과": "🏠 집과 생활",
+
+    "🎮 취미와 여가": "🎮 취미와 여가",
+    "⚽ 운동과 활동": "🎮 취미와 여가",
+
+    "🌦️ 날씨와 계절": "🌦️ 날씨와 자연",
+    "🌳 자연과 환경": "🌦️ 날씨와 자연",
+
+    "🍽️ 식당과 주문": "🍽️ 식당과 쇼핑",
+    "🛍️ 쇼핑과 가격": "🍽️ 식당과 쇼핑",
+    "👕 옷과 외모": "🍽️ 식당과 쇼핑",
+
+    "🚇 교통과 길 찾기": "🚇 교통과 여행",
+    "🧳 여행과 숙박": "🚇 교통과 여행",
+
+    "👥 친구 관계": "👥 친구와 감정",
+    "😊 감정 표현 확장": "👥 친구와 감정",
+
+    "💭 생각과 의견": "💭 생각과 계획",
+    "📅 계획과 약속": "💭 생각과 계획",
+
+    "🩺 건강한 생활": "🩺 건강한 생활",
+    "📱 미디어와 스마트폰": "📱 미디어",
+    "🌈 직업과 미래": "🌈 직업과 미래",
+}
+
+
+def merge_categories(original_dict):
+    merged = {}
+    for old_cat, items in original_dict.items():
+        new_cat = CATEGORY_MERGE_MAP.get(old_cat, old_cat)
+
+        if new_cat not in merged:
+            merged[new_cat] = []
+
+        # 내용은 그대로 유지
+        merged[new_cat].extend(items)
+
+    return merged
+
+
+word_themes = merge_categories(word_themes)
+theme_dialogues = merge_categories(theme_dialogues)
+
+
 # =========================
 # 탭 구성
 # =========================
@@ -3489,7 +3545,7 @@ for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
             f"""
             <div class="theme-header">
                 <div class="theme-title">{theme_name}</div>
-                <div class="theme-desc">이 테마에는 {len(theme_words)}개의 일상 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div>
+                <div class="theme-desc">이 카테고리에는 {len(theme_words)}개의 일상 단어가 있습니다. 핵심 단어를 듣고 익혀 봅시다.</div>
             </div>
             """,
             unsafe_allow_html=True
