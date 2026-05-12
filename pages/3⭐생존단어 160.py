@@ -1568,24 +1568,15 @@ def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro
                     }} catch (e) {{}}
                 }}
 
-                // Streamlit 페이지 이동, 새로고침, 브라우저 탭 이동 시 자동 중지
-                window.addEventListener("pagehide", function() {{ stopTape(false, false); }});
-                window.addEventListener("beforeunload", function() {{ stopTape(false, false); }});
-                document.addEventListener("visibilitychange", function() {{
-                    if (document.hidden) stopTape(false, false);
+                // 페이지를 완전히 나가거나 새로고침할 때만 중지
+                // 단순히 스크롤해서 카세트가 화면 밖으로 나가는 경우에는 멈추지 않음
+                window.addEventListener("pagehide", function() {{
+                    stopTape(false, false);
                 }});
 
-                // 카세트 영역이 화면에서 사라지면 자동 중지
-                if ("IntersectionObserver" in window && wrap) {{
-                    const observer = new IntersectionObserver(function(entries) {{
-                        entries.forEach(function(entry) {{
-                            if (!entry.isIntersecting && (isPlaying || isPaused || window.speechSynthesis.speaking)) {{
-                                stopTape(false, false);
-                            }}
-                        }});
-                    }}, {{ threshold: 0.05 }});
-                    observer.observe(wrap);
-                }}
+                window.addEventListener("beforeunload", function() {{
+                    stopTape(false, false);
+                }});
 
                 // Streamlit의 상단 탭이나 왼쪽 페이지 메뉴를 누르면 모든 카세트 중지
                 try {{
