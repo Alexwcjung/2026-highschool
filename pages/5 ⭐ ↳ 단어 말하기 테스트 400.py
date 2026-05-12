@@ -2674,6 +2674,7 @@ def daily_word_card_speaking_game(word_themes):
         cardFeedbackBox.innerText = "";
 
         transcriptBox.innerText = "";
+        transcriptBox.style.color = "#334155";
         resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
@@ -2702,26 +2703,31 @@ def daily_word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            cardFeedbackBox.style.display = "block";
-            cardFeedbackBox.style.background = "#ecfdf5";
-            cardFeedbackBox.style.borderColor = "#bbf7d0";
-            cardFeedbackBox.style.color = "#166534";
-            cardFeedbackBox.innerHTML =
-                "✅ 정답입니다!<br>" +
-                "<span style='font-size:22px;'>" + currentItem.word + "</span>";
+            // 화면을 단순하게 보이도록 별도 피드백 박스 대신
+            // 인식된 단어 칸에 정답 여부만 표시합니다.
+            cardFeedbackBox.style.display = "none";
+            transcriptBox.innerText = "✅ 정답입니다!";
+            transcriptBox.style.color = "#166534";
+
+            resultBox.innerText = "";
+            resultBox.style.background = "#f8fafc";
+            resultBox.style.borderColor = "#e2e8f0";
+            resultBox.style.color = "#334155";
 
             speak(currentItem.word);
 
             setTimeout(function() {
                 goNextCard();
-            }, 1500);
+            }, 1200);
         } else {
-            cardFeedbackBox.style.display = "block";
-            cardFeedbackBox.style.background = "#fff7ed";
-            cardFeedbackBox.style.borderColor = "#fed7aa";
-            cardFeedbackBox.style.color = "#9a3412";
-            cardFeedbackBox.innerHTML =
-                "🍊 다시 말해 보세요.";
+            // 틀렸을 때는 인식된 단어는 그대로 두고,
+            // 아래 안내만 짧게 보여 줍니다.
+            cardFeedbackBox.style.display = "none";
+            transcriptBox.style.color = "#334155";
+            resultBox.innerText = "다시 말해 보세요.";
+            resultBox.style.background = "#fff7ed";
+            resultBox.style.borderColor = "#fed7aa";
+            resultBox.style.color = "#9a3412";
         }
     }
 
@@ -2797,6 +2803,7 @@ def daily_word_card_speaking_game(word_themes):
             }
 
             // 인식된 단어는 아까처럼 한꺼번에 보여 줍니다.
+            transcriptBox.style.color = "#334155";
             transcriptBox.innerText = bestTranscript;
             checkSpeech(bestTranscript);
         };
