@@ -3,7 +3,7 @@ import random
 import string
 
 # =========================
-# 1. 기본 설정 및 디자인
+# 1. 기본 설정 및 디자인 (레이아웃 유지)
 # =========================
 st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
 
@@ -22,12 +22,11 @@ st.markdown("""
         display: block;
     }
     .info-box {
-        background-color: #f1f5f9; padding: 35px; border-radius: 15px;
-        border: 1px solid #cbd5e1; line-height: 2.0; margin-bottom: 25px;
+        background-color: #f1f5f9; padding: 30px; border-radius: 15px;
+        border: 1px solid #cbd5e1; line-height: 1.9; margin-bottom: 25px;
     }
-    .info-box h3 { color: #4338ca; border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-top: 0; font-size: 1.6rem; }
-    .info-box b { color: #1e3a8a; font-size: 1.1rem; }
-    .info-box p { margin-bottom: 15px; font-size: 1.05rem; color: #334155; }
+    .info-box h3 { color: #4338ca; border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-top: 0; }
+    .info-box b { color: #1e3a8a; }
     .lyrics-container {
         padding: 12px 20px; border-left: 5px solid #6366f1;
         margin-bottom: 10px; background-color: #f8fafc; border-radius: 0 10px 10px 0;
@@ -72,20 +71,20 @@ if st.session_state.selected_song != song_choice:
     reset_data()
     st.rerun()
 
+# 탭 선택
 tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"]
 selected_tab = st.radio("", tabs_list, index=tabs_list.index(st.session_state.current_tab), horizontal=True, label_visibility="collapsed")
 st.session_state.current_tab = selected_tab
 
 # -------------------------
-# 곡별 데이터 설정 (대폭 보강된 배경 지식)
+# 곡별 데이터 설정 (풍부한 배경지식 + 6문제 퀴즈)
 # -------------------------
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
     bg_content = """
-    <h3>❄️ Let It Go: 완벽함을 강요받는 사회에서의 탈출</h3>
-    <p><b>[작품 배경]</b> 디즈니 애니메이션 '겨울왕국'의 엘사는 태어날 때부터 통제할 수 없는 강력한 마법 능력을 가졌습니다. 그녀의 부모는 능력을 숨기라고 가르쳤고, 엘사는 평생을 자신을 억누르며 '착한 소녀(Good girl)'로 살기 위해 고군분투했습니다. 이 곡은 그녀의 비밀이 온 세상에 탄로나고, 모든 것을 내려놓은 뒤 홀로 북쪽 산으로 향하며 부르는 노래입니다.</p>
-    <p><b>[문학적 해석]</b> 노래 초반부의 '고립된 왕국'은 엘사의 심리적 폐쇄성을 상징합니다. 하지만 곡이 진행될수록 엘사는 자신의 능력을 더 이상 '저주'가 아닌 '자아의 일부'로 받아들입니다. 가사 속 <b>"Conceal, don't feel"</b>은 감정을 억압해야 했던 과거를, <b>"Let it go"</b>는 타인의 시선에서 해방되어 진정한 자신의 모습으로 살겠다는 선언을 담고 있습니다.</p>
-    <p><b>[핵심 메시지]</b> 이 곡은 전 세계적으로 <b>'자기 수용(Self-Acceptance)'</b>의 찬가가 되었습니다. "추위는 더 이상 나를 괴롭히지 못한다"는 선언은, 나를 옥죄던 세상의 차가운 편견조차 나의 자존감을 꺾을 수 없음을 시사합니다.</p>
+    <h3>❄️ Let It Go: 억압된 자아의 화려한 해방</h3>
+    <p>디즈니 <b>'겨울왕국'</b>의 주인공 엘사가 자신의 마법 능력이 세상에 드러난 후, '착한 소녀'라는 사회적 굴레를 벗어던지며 부르는 곡입니다. 평생 "감추고(Conceal), 느끼지 마라(Don't feel)"는 교육을 받으며 능력을 억압해온 그녀가 비로소 <b>심리적 해방감</b>을 느끼는 과정을 보여줍니다.</p>
+    <p><b>[서사 포인트]</b> 가사 속 "The cold never bothered me anyway"는 물리적 추위뿐만 아니라, 나를 향한 세상의 차가운 시선조차 더 이상 나를 흔들 수 없다는 <b>강력한 자존감</b>을 의미합니다.</p>
     """
     lyrics_raw = [
         ("The snow glows white on the mountain tonight", "오늘 밤 산엔 눈이 하얗게 빛나고"),
@@ -98,7 +97,7 @@ if "1. Let It Go" in song_choice:
         ("I don't care what they're going to say. Let the storm rage on", "그들이 뭐라 하든 상관없어. 폭풍아 계속 휘몰아쳐라")
     ]
     questions = [
-        ("1. 엘사가 현재 주요 심경은?", ["해방감", "공포", "분노"], "해방감"),
+        ("1. 엘사의 현재 주요 심경은?", ["해방감", "공포", "분노"], "해방감"),
         ("2. 'Conceal'의 뜻은?", ["숨기다", "드러내다", "나누다"], "숨기다"),
         ("3. 'The cold'가 상징하는 것은?", ["사회적 시선", "실제 날씨", "겨울 휴가"], "사회적 시선"),
         ("4. 'Good girl'은 무엇의 기대를 의미하나요?", ["타인과 사회", "엘사 자신", "안나"], "타인과 사회"),
@@ -109,10 +108,9 @@ if "1. Let It Go" in song_choice:
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
     bg_content = """
-    <h3>☎️ Hello: 과거의 상처와 조우하는 용기</h3>
-    <p><b>[작품 배경]</b> 아델(Adele)의 3집 앨범 '25'의 타이틀곡인 이 노래는 전 세계 28개국 차트 1위를 휩쓸었습니다. 아델은 이 곡이 단순히 헤어진 연인에게 보내는 편지가 아니라, <b>'과거의 자신과 화해하고 싶은 마음'</b>을 담았다고 밝혔습니다. 나이가 들면서 잊고 지냈던 소중한 사람들, 그리고 한때 순수했던 예전의 나에게 건네는 안부입니다.</p>
-    <p><b>[문학적 해석]</b> <b>"Hello from the other side"</b>라는 표현은 중의적입니다. 물리적으로는 전화기 너머를 뜻하지만, 은유적으로는 '성장이 끝난 현재의 나'가 '미숙했던 과거의 나'를 바라보는 경계를 의미합니다. 수천 번 전화했다는 가사는 결코 닿을 수 없는 시간의 간극에 대한 안타까움과 후회를 극적으로 보여줍니다.</p>
-    <p><b>[핵심 메시지]</b> 아델은 이 노래를 통해 누구나 가슴 한구석에 품고 있는 '미안함'을 대변합니다. 상대가 전화를 받지 않더라도, 사과를 전하려 노력했다는 사실만으로도 화자는 치유를 얻습니다.</p>
+    <h3>☎️ Hello: 과거와 현재를 잇는 서글픈 안부</h3>
+    <p>아델(Adele)이 과거의 자신과 상처를 주었던 연인에게 건네는 뒤늦은 사과입니다. 화자는 여전히 과거의 기억에서 완전히 벗어나지 못해 사과를 반복하고 있습니다.</p>
+    <p><b>[서사 포인트]</b> "Hello from the other side"는 전화를 거는 물리적 상황과 더불어, 결코 돌아갈 수 없는 <b>'과거와 현재 사이의 단절'</b>을 비유적으로 표현합니다. 수천 번 전화를 걸었다는 고백은 미안함의 깊이를 나타냅니다.</p>
     """
     lyrics_raw = [
         ("Hello, it's me. I was wondering if you'd like to meet", "안녕, 나야. 네가 만나고 싶어 할지 궁금했어"),
@@ -134,10 +132,9 @@ elif "2. Hello" in song_choice:
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
     bg_content = """
-    <h3>✨ A Whole New World: 금기된 성벽을 넘어선 새로운 시야</h3>
-    <p><b>[작품 배경]</b> 애니메이션 '알라딘'의 하이라이트 곡입니다. 성안에 갇혀 자신의 운명을 주체적으로 결정하지 못했던 자스민 공주에게, 거리의 부랑자였던 알라딘이 마법 양탄자를 통해 성벽 너머의 진짜 세상을 보여줍니다. 두 사람이 밤하늘을 가로지르며 느끼는 해방감과 로맨스를 담고 있습니다.</p>
-    <p><b>[문학적 해석]</b> 이 노래에서 '새로운 세상'은 단순한 풍경이 아니라 <b>'주체적인 삶'</b>을 의미합니다. "Let your heart decide(당신의 마음이 결정하게 하세요)"라는 알라딘의 제안은 타인의 규칙에 얽매여 살던 공주에게 큰 울림을 줍니다. 하늘 높이 올라갔을 때 모든 것이 <b>'Crystal clear(수정처럼 명확한)'</b>해졌다는 가사는, 높은 곳에서 내려다볼 때 비로소 자신의 삶을 객관적으로 바라볼 수 있게 되었음을 시사합니다.</p>
-    <p><b>[핵심 메시지]</b> 익숙한 환경을 벗어나는 용기가 우리에게 얼마나 더 넓은 세상을 보여주는지에 대한 찬가입니다.</p>
+    <h3>✨ A Whole New World: 금지된 성벽을 넘는 자유</h3>
+    <p>성안의 억압적인 생활에 갇혀있던 자스민 공주에게 알라딘이 마법 양탄자를 통해 진짜 세상을 보여주는 순간입니다.</p>
+    <p><b>[서사 포인트]</b> 이 노래는 단순한 로맨스를 넘어 <b>'주체적인 자유와 새로운 시각'</b>을 상징합니다. "Let your heart decide"라는 말처럼 타인의 규칙이 아닌 자신의 마음이 이끄는 대로 세상을 바라보겠다는 의지가 담겨있습니다.</p>
     """
     lyrics_raw = [
         ("I can show you the world. Shining, shimmering, splendid", "당신에게 세상을 보여줄 수 있어요. 화려한 세상을요"),
@@ -159,10 +156,9 @@ elif "3. A Whole New World" in song_choice:
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
     bg_content = """
-    <h3>🤝 Stand By Me: 절망의 끝에서 빛나는 신뢰의 힘</h3>
-    <p><b>[작품 배경]</b> 1961년 벤 E. 킹이 발표한 이 곡은 인종차별과 갈등이 심했던 당시 미국 사회에 큰 위로를 주었습니다. 성경의 시편에서 영감을 얻은 가사는, 세상이 아무리 험난하고 어두워도 서로를 지지해주는 사람만 있다면 두려움 없이 나아갈 수 있다는 메시지를 전달합니다.</p>
-    <p><b>[문학적 해석]</b> 노래 전반부의 <b>"Night has come(밤이 왔다)"</b>과 <b>"Land is dark(땅이 어둡다)"</b>는 인생에서 마주하는 절망적인 시기나 사회적 혼란을 상징합니다. 하늘이 무너져 내리는(Tumble and fall) 극단적인 상황에서도 "내 곁에 서 달라(Stand by me)"는 부탁은, 물질적 도움이 아닌 정서적 연대가 인간을 구원한다는 점을 강조합니다.</p>
-    <p><b>[핵심 메시지]</b> 'Stand by'라는 단어는 단순히 옆에 서 있는 것이 아니라, <b>'어떤 고난이 있어도 당신의 편이 되겠다'</b>는 숭고한 약속입니다. 이 곡은 영화, 시위 현장, 축제 등 연대가 필요한 모든 곳에서 불리고 있습니다.</p>
+    <h3>🤝 Stand By Me: 어둠 속에서 빛나는 연대의 힘</h3>
+    <p>인생의 '어두운 밤'과 같은 거대한 시련 속에서도 내 곁을 지켜주는 단 한 사람만 있다면 모든 것을 이겨낼 수 있다는 <b>신뢰와 우정</b>을 노래합니다.</p>
+    <p><b>[서사 포인트]</b> "The moon is the only light"와 "The sky should tumble and fall"은 절망적인 상황을 비유하며, 그런 순간에도 '함께 서 있는(Stand by)' 존재가 있다면 눈물조차 흘리지 않겠다는 강력한 연대 의식을 보여줍니다.</p>
     """
     lyrics_raw = [
         ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
@@ -184,10 +180,9 @@ elif "4. Stand By Me" in song_choice:
 elif "5. Don't Know Why" in song_choice:
     video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
     bg_content = """
-    <h3>🍂 Don't Know Why: 망설임의 미학, 그리고 짙은 후회</h3>
-    <p><b>[작품 배경]</b> 노라 존스(Norah Jones)의 데뷔 앨범 타이틀곡으로, 2003년 그래미 시상식을 휩쓴 재즈 팝의 명곡입니다. 이 곡은 연인과의 약속 장소에 가지 못한 여자가 새벽녘에 홀로 느끼는 상실감과 자책을 노래합니다. 특별한 사건보다는 <b>'미묘한 감정의 파동'</b>을 다루는 것이 특징입니다.</p>
-    <p><b>[문학적 해석]</b> <b>"I feel as empty as a drum(드럼처럼 공허하다)"</b>이라는 은유는 가슴 깊은 곳에서 울리는 공허함을 탁월하게 묘사합니다. 화자는 해가 뜰 때까지 기다렸지만, 결국 약속 장소인 'House of fun(축제의 집)'으로 가지 않았습니다. 왜 가지 않았는지 스스로도 명확히 설명하지 못하는(I don't know why) 모습은, 사랑 앞에서 두려움을 느끼는 인간의 나약함을 잘 보여줍니다.</p>
-    <p><b>[핵심 메시지]</b> 인생에는 용기를 내야 할 순간이 있지만, 그 순간을 놓쳤을 때 남는 것은 영원한 후회와 "왜 그랬을까?"라는 물음뿐임을 담담하게 이야기합니다.</p>
+    <h3>🍂 Don't Know Why: 망설임 끝에 놓쳐버린 사랑의 후회</h3>
+    <p>잡을 수 있었던 인연을 알 수 없는 망설임과 두려움 때문에 놓쳐버린 후 느끼는 공허함을 담은 쓸쓸한 독백입니다.</p>
+    <p><b>[서사 포인트]</b> 'Drenched in wine(술에 젖은 마음)'이나 'Empty as a drum(드럼처럼 텅 빈)'과 같은 은유를 통해 화자의 지독한 상실감을 시적으로 표현합니다. 왜 그때 다가지 못했는지 스스로에게 묻는 후회가 반복됩니다.</p>
     """
     lyrics_raw = [
         ("I waited 'til I saw the sun", "난 해가 뜰 때까지 기다렸어요"),
@@ -207,7 +202,7 @@ elif "5. Don't Know Why" in song_choice:
     ]
 
 # -------------------------
-# 가사 및 순서 가공
+# 가사 가공 (알파벳 기호 추가)
 # -------------------------
 alphabet = list(string.ascii_lowercase)
 full_lyrics = []
@@ -215,13 +210,16 @@ for i, (eng, kor) in enumerate(lyrics_raw):
     label = alphabet[i] if i < len(alphabet) else str(i)
     full_lyrics.append((f"({label}) {eng}", kor))
 
+# -------------------------
+# 순서 섞기 및 세션 관리
+# -------------------------
 correct_order = [line[0] for line in full_lyrics]
 if 'scrambled' not in st.session_state or st.session_state.get('last_song') != song_choice:
     st.session_state.scrambled = random.sample(correct_order, len(correct_order))
     st.session_state.last_song = song_choice
 
 # -------------------------
-# 화면 출력 (레이아웃 엄격 유지)
+# 탭별 화면 출력 (레이아웃 유지)
 # -------------------------
 if selected_tab == "🎬 배경 학습":
     st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
@@ -229,7 +227,9 @@ if selected_tab == "🎬 배경 학습":
     with v2: st.video(video_url)
 
 elif selected_tab == "📖 가사 & 퀴즈":
+    # 좌우 2분할 레이아웃
     col_left, col_right = st.columns([1, 1.2])
+    
     with col_left:
         st.video(video_url)
         st.divider()
@@ -244,6 +244,7 @@ elif selected_tab == "📖 가사 & 퀴즈":
             if st.form_submit_button("정답 확인 및 채점"):
                 st.session_state.submitted_step2 = True
                 st.rerun()
+                
     with col_right:
         st.markdown("### 🎼 Full Lyrics")
         for eng, kor in full_lyrics:
