@@ -38,7 +38,7 @@ st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Cl
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습 & 퀴즈", "🧩 STEP 3. 1절 전체 순서 맞추기"])
 
 # -------------------------
-# STEP 1: 영화 배경 (이미지 제거)
+# STEP 1: 영화 배경
 # -------------------------
 with tab1:
     st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
@@ -60,7 +60,7 @@ with tab2:
     with col_vid2:
         st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
         st.divider()
-        st.markdown("### 💡 내용 이해 퀴즈 (6문제)")
+        st.markdown("### 💡 내용 이해 퀴즈")
         
         questions = [
             ("1. 노래 시작 부분의 배경은 어떤 상태인가요?", ["발자국이 가득한 거리", "아무도 없는 고립된 눈산", "햇살이 비치는 해변"], "아무도 없는 고립된 눈산"),
@@ -74,10 +74,12 @@ with tab2:
         for i, (q, opts, ans) in enumerate(questions):
             choice = st.radio(q, opts, index=None, key=f"step2_q{i}")
             if st.session_state.submitted_step2:
-                if choice == ans: st.success("✅ 정답!")
-                else: st.error(f"❌ 오답! (정답: {ans})")
+                if choice == ans: 
+                    st.success(f"✨ 정답이에요!")
+                else: 
+                    st.info(f"💡 정답은 바로: **{ans}**")
 
-        if st.button("STEP 2 정답 제출"):
+        if st.button("결과 확인하기"):
             st.session_state.submitted_step2 = True
             st.rerun()
 
@@ -105,11 +107,11 @@ with tab2:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
 # -------------------------
-# STEP 3: 문장 순서 맞추기 (제출 후 전체 공개)
+# STEP 3: 문장 순서 맞추기
 # -------------------------
 with tab3:
     st.subheader("🧩 1절 전체 순서 맞추기")
-    st.write("알파벳 문장을 올바른 순서대로 클릭하세요. 모든 문장을 선택한 뒤 **[결과 확인]** 버튼을 누르면 정답이 공개됩니다.")
+    st.write("문장을 순서대로 클릭해보세요!")
     
     q3_correct = [
         "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
@@ -131,7 +133,6 @@ with tab3:
         "E. Let it go, let it go! Can't hold it back anymore."
     ]
     
-    # 문장 선택 영역
     cols = st.columns(2)
     for i, sentence in enumerate(q3_scrambled):
         if (cols[0] if i % 2 == 0 else cols[1]).button(sentence, key=f"q3_btn_{i}", use_container_width=True):
@@ -143,38 +144,35 @@ with tab3:
     st.divider()
     st.markdown("### 📥 내가 나열한 순서")
     
-    # 나열된 카드 표시 (수정 가능하도록 삭제 버튼 포함)
     for idx, s in enumerate(st.session_state.q3_cards):
         c1, c2 = st.columns([0.9, 0.1])
-        c1.info(f"선택 {idx+1}: {s}")
+        c1.info(f"{idx+1}번 문장: {s}")
         if c2.button("🗑️", key=f"del_{idx}"):
             st.session_state.q3_cards.pop(idx)
             st.session_state.submitted_step3 = False
             st.rerun()
 
-    # 정답 제출 버튼
     if len(st.session_state.q3_cards) == len(q3_correct):
-        if st.button("🚩 결과 확인 및 정답 제출", type="primary", use_container_width=True):
+        if st.button("🚩 정답 확인하기", type="primary", use_container_width=True):
             st.session_state.submitted_step3 = True
             st.rerun()
 
-    # 결과 표시 영역
     if st.session_state.submitted_step3:
-        st.markdown("### 📋 최종 채점 결과")
+        st.markdown("### 📋 학습 결과")
         all_correct = True
         for idx, user_s in enumerate(st.session_state.q3_cards):
             correct_s = q3_correct[idx]
             if user_s == correct_s:
-                st.success(f"✅ {idx+1}단계: 정답입니다!")
+                st.write(f"✨ {idx+1}번째 문장: 완벽해요!")
             else:
-                st.error(f"❌ {idx+1}단계: 오답입니다! (정답: {correct_s})")
+                st.write(f"🔍 {idx+1}번째 문장: 다시 한번 확인해볼까요? (알맞은 순서: {correct_s[:20]}...)")
                 all_correct = False
         
         if all_correct:
             st.balloons()
-            st.success("🎉 완벽합니다! A부터 G까지의 흐름을 모두 맞히셨습니다!")
+            st.success("🎉 대단해요! 모든 순서를 완벽하게 맞히셨습니다!")
         
-        if st.button("다시 도전하기"):
+        if st.button("다시 도전해서 만점 받기!"):
             st.session_state.q3_cards = []
             st.session_state.submitted_step3 = False
             st.rerun()
