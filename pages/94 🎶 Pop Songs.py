@@ -21,24 +21,24 @@ st.markdown("""
         display: block;
     }
     .info-box {
-        background-color: #f1f5f9; padding: 25px; border-radius: 12px;
-        border: 1px solid #cbd5e1; line-height: 1.8; margin-bottom: 20px;
+        background-color: #f1f5f9; padding: 30px; border-radius: 15px;
+        border: 1px solid #cbd5e1; line-height: 1.8; margin-bottom: 25px;
     }
-    .info-box h3 { color: #4338ca; border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; margin-top: 0; }
+    .info-box h3 { color: #4338ca; border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-top: 0; }
+    .info-box b { color: #1e3a8a; }
     .lyrics-container {
-        padding: 8px 15px; border-left: 4px solid #6366f1;
-        margin-bottom: 8px; background-color: #f8fafc; border-radius: 0 8px 8px 0;
+        padding: 10px 18px; border-left: 5px solid #6366f1;
+        margin-bottom: 10px; background-color: #f8fafc; border-radius: 0 10px 10px 0;
     }
-    .eng-line { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; }
-    .kor-sub { font-size: 0.9rem; color: #64748b; }
-    .highlight { color: #4338ca; font-weight: 700; }
+    .eng-line { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
+    .kor-sub { font-size: 0.95rem; color: #64748b; }
 </style>
 """, unsafe_allow_html=True)
 
 # -------------------------
 # 세션 상태 관리
 # -------------------------
-if 'selected_song' not in st.session_state: st.session_state.selected_song = "Let It Go - Frozen OST"
+if 'selected_song' not in st.session_state: st.session_state.selected_song = "1. Let It Go - Frozen OST"
 if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 
@@ -49,15 +49,16 @@ def reset_data():
     if 'scrambled' in st.session_state: del st.session_state.scrambled
 
 # -------------------------
-# 상단 곡 선택 메뉴
+# 상단 곡 선택 메뉴 (번호 추가)
 # -------------------------
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
 st.markdown('<span class="big-label">👉 학습할 노래를 선택하세요</span>', unsafe_allow_html=True)
+
 song_options = [
-    "Let It Go - Frozen OST", 
-    "Hello - Adele", 
-    "A Whole New World - Aladdin OST",
-    "Stand By Me - Ben E. King"
+    "1. Let It Go - Frozen OST", 
+    "2. Hello - Adele", 
+    "3. A Whole New World - Aladdin OST",
+    "4. Stand By Me - Ben E. King"
 ]
 song_choice = st.selectbox("", song_options, label_visibility="collapsed")
 
@@ -67,13 +68,19 @@ if st.session_state.selected_song != song_choice:
     st.rerun()
 
 # -------------------------
-# [데이터 빌드]
+# [데이터 빌드: 배경지식 대폭 보강]
 # -------------------------
-if song_choice == "Let It Go - Frozen OST":
+if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
     bg_content = """
-    <h3>❄️ Let It Go: 완벽한 착한 소녀를 벗어던지다</h3>
-    <p><b>[전체 줄거리]</b> 아렌델 왕국의 장녀 엘사는 태어날 때부터 모든 것을 얼려버리는 강력한 마법을 가지고 태어났습니다. 어린 시절의 트라우마로 부모님은 엘사에게 "자신의 감정을 숨기고 마법을 억누르라"고 가르쳤고, 그녀는 장갑 속에 손을 감춘 채 고립되어 살아갑니다. 대관식 날 마법이 폭발하자 그녀는 북쪽 산으로 도망치고, 그곳에서 비로소 자유를 선언합니다.</p>
+    <h3>❄️ Let It Go: 억압된 자아의 폭발과 진정한 자유</h3>
+    <p><b>[심층 배경]</b> 이 노래는 주인공 엘사가 자신의 마법 능력이 온 세상에 드러난 후, 사람들의 시선을 피해 북쪽 산으로 도망치며 부르는 노래입니다. 
+    어린 시절부터 "감추고(Conceal), 느끼지 마라(Don't feel)"는 교육을 받으며 타인의 기준에 맞춘 '착한 소녀'로 살아왔던 그녀가, 
+    아이러니하게도 고립된 산속에서 비로소 <b>심리적 해방감</b>을 느끼는 과정을 보여줍니다.</p>
+    <p><b>[학습 포인트]</b> 가사 중 "The cold never bothered me anyway"는 단순히 물리적 추위를 견딜 수 있다는 뜻을 넘어, 
+    타인의 차가운 시선이나 사회적 편견이 더 이상 나를 아프게 하지 못한다는 <b>자존감의 회복</b>을 상징합니다.</p>
+    <p><b>[스토리텔링]</b> 발자국 하나 없는 하얀 눈 위에서 엘사는 자신만의 얼음 성을 쌓아 올립니다. 
+    이는 과거의 구속(장갑, 왕관)을 벗어던지고 자신의 잠재력을 있는 그대로 인정하는 성인식과 같은 순간입니다.</p>
     """
     full_lyrics = [
         ("The snow glows white on the mountain tonight, not a footprint to be seen", "오늘 밤 산엔 눈이 하얗게 빛나고, 발자국 하나 보이지 않네"),
@@ -96,11 +103,18 @@ if song_choice == "Let It Go - Frozen OST":
         ("6. 'Let it go'를 한국어로 의역하면?", ["다 내려놓아(잊어버려)", "그걸 내게 줘", "멀리 가버려"], "다 내려놓아(잊어버려)")
     ]
 
-elif song_choice == "Hello - Adele":
+elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
     bg_content = """
-    <h3>☎️ Hello: 닿지 않는 과거에 건네는 간절한 사과</h3>
-    <p><b>[곡의 배경]</b> 세월이 흐른 뒤, 과거에 상처를 주었던 인연에게 건네는 뒤늦은 사과를 담고 있습니다. "수천 번을 전화했다"는 말은 실제로 건 전화 횟수라기보다, 매일 밤 마음속으로 되뇌었던 사과의 진심을 뜻합니다.</p>
+    <h3>☎️ Hello: 과거와 현재를 잇는 서글픈 응답하라</h3>
+    <p><b>[심층 배경]</b> 25세의 아델이 과거의 자신과 그리고 과거에 상처를 주었던 연인에게 건네는 뒤늦은 안부 인사입니다. 
+    노래 속 'California'는 단순히 장소를 의미하기보다, 화자가 현재 머물고 있는 물리적/심리적 거리를 상징합니다. 
+    상대방은 이미 모든 것을 잊고 잘 지내고 있지만, 화자는 여전히 과거의 기억에서 벗어나지 못해 사과를 되풀이하고 있습니다.</p>
+    <p><b>[학습 포인트]</b> "Hello from the other side"는 전화를 거는 상황뿐만 아니라, 
+    다시는 돌아갈 수 없는 <b>'과거의 우리'와 '현재의 나' 사이의 단절</b>을 비유하는 아주 깊은 표현입니다.</p>
+    <p><b>[스토리텔링]</b> 수천 번(a thousand times) 전화를 걸었다는 가사는 그만큼 씻어내지 못한 미안함이 크다는 것을 의미합니다. 
+    하지만 상대방은 전화를 받지 않거나 집에 없습니다. 이는 결국 사과란 상대방을 위해서가 아니라, 
+    나의 죄책감을 덜기 위한 마지막 시도일 수도 있다는 서글픈 깨달음을 줍니다.</p>
     """
     full_lyrics = [
         ("Hello, it's me. I was wondering if after all these years you'd like to meet", "안녕, 나야. 이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
@@ -123,11 +137,18 @@ elif song_choice == "Hello - Adele":
         ("6. 'Time's supposed to heal ya'의 뜻은?", ["시간이 약이다", "시간을 멈추고 싶다", "시간이 너무 빠르다"], "시간이 약이다")
     ]
 
-elif song_choice == "A Whole New World - Aladdin OST":
+elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
     bg_content = """
-    <h3>✨ A Whole New World: 성벽 너머, 새로운 운명을 향한 비행</h3>
-    <p><b>[곡의 배경]</b> 궁궐에 갇혀 살던 자스민 공주가 알라딘과 함께 마법 양탄자를 타고 세상을 마주하는 장면입니다. "완전히 새로운 세상"이란 타인의 통제에서 벗어나 스스로 선택하는 삶을 의미합니다.</p>
+    <h3>✨ A Whole New World: 금지된 장벽을 넘는 자유의 비행</h3>
+    <p><b>[심층 배경]</b> 성안의 억압적인 생활과 정략결혼의 압박 속에서 살던 자스민 공주에게, 
+    알라딘은 '마법 양탄자'라는 수단을 통해 난생처음 성 밖의 진짜 세상을 보여줍니다. 
+    이 곡은 단순히 로맨틱한 데이트를 넘어, <b>'보는 것(Seeing)'과 '아는 것(Knowing)'</b>의 차이를 이야기합니다. 
+    궁전 안의 화려함이 전부인 줄 알았던 공주에게 세상은 훨씬 넓고 눈부신 곳임을 알려주는 순간입니다.</p>
+    <p><b>[학습 포인트]</b> "Crystal clear"는 액체나 보석이 투명하다는 뜻도 있지만, 가사에서는 어떤 사실이나 상황이 
+    <b>머릿속에서 아주 명확하게 이해됨</b>을 의미합니다.</p>
+    <p><b>[스토리텔링]</b> 구름 위를 날며 두 사람은 "안 돼(No)"라고 말하거나 어디로 가라고 명령하는 이가 없는 공간에 도달합니다. 
+    이는 단순히 고도가 높은 곳으로 올라간 것이 아니라, <b>사회적 계급과 구속이 없는 이상향</b>에 도착했음을 뜻합니다.</p>
     """
     full_lyrics = [
         ("I can show you the world. Shining, shimmering, splendid", "당신에게 세상을 보여줄 수 있어요. 빛나고 어른거리며 화려한 세상을요"),
@@ -139,7 +160,7 @@ elif song_choice == "A Whole New World - Aladdin OST":
         ("A whole new world! A dazzling place I never knew", "완전히 새로운 세상! 내가 결코 알지 못했던 눈부신 곳이에요"),
         ("But when I'm way up here, it's crystal clear", "하지만 여기 높이 올라오니 모든 게 아주 명확해졌어요"),
         ("That now I'm in a whole new world with you", "지금 내가 당신과 함께 완전히 새로운 세상에 있다는 사실이요"),
-        ("(Now I'm in a whole new world with you)", "(이제 당신과 함께 새로운 세상에 있네요)")
+        ("Now I'm in a whole new world with you", "이제 당신과 함께 새로운 세상에 있네요")
     ]
     questions = [
         ("1. 두 사람이 타고 있는 것은?", ["마법 양탄자", "마법 빗자루", "구름"], "마법 양탄자"),
@@ -150,11 +171,17 @@ elif song_choice == "A Whole New World - Aladdin OST":
         ("6. 'No one to tell us 'No''는 무엇을 의미하는가?", ["아무도 대답하지 않는다", "아무도 우리를 방해(간섭)할 수 없다", "모두가 예라고 말한다"], "아무도 우리를 방해(간섭)할 수 없다")
     ]
 
-else: # Stand By Me
+else: # 4. Stand By Me
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
     bg_content = """
-    <h3>🤝 Stand By Me: 어둠 속에서도 든든한 연대의 힘</h3>
-    <p><b>[배경 설명]</b> 1961년 발표된 명곡으로 '우정과 연대'의 상징입니다. 칠흑 같은 밤, 하늘이 무너져 내리는 시련이 닥칠지라도 곁에 의지할 누군가가 있다면 두렵지 않다는 메시지를 담고 있습니다.</p>
+    <h3>🤝 Stand By Me: 시련을 이겨내는 연대의 힘</h3>
+    <p><b>[심층 배경]</b> 1961년 벤 E. 킹에 의해 발표된 이후, 전 세계적으로 가장 많이 리메이크된 명곡 중 하나입니다. 
+    이 노래에서 말하는 '어두운 밤(Dark night)'이나 '무너지는 하늘(Sky tumble)'은 우리 인생에서 마주하는 경제적 위기, 
+    사회적 차별, 개인적인 절망 등 모든 <b>시련</b>을 상징합니다.</p>
+    <p><b>[학습 포인트]</b> "Just as long as"는 시간의 길이를 말하는 것이 아니라 <b>"~하는 한은"이라는 조건</b>을 나타내는 아주 중요한 숙어입니다. 
+    즉, 다른 모든 것이 무너져도 '너만 곁에 있다면' 괜찮다는 확신을 담고 있습니다.</p>
+    <p><b>[스토리텔링]</b> 산이 바다로 무너져 내리는 천재지변 속에서도 화자는 눈물을 흘리지 않겠다고 말합니다. 
+    이는 인간이 가진 가장 강력한 무기는 물질적인 풍요가 아니라, 서로의 곁을 지켜주는 <b>신뢰와 사랑</b>임을 역설하고 있습니다.</p>
     """
     full_lyrics = [
         ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
