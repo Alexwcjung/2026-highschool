@@ -4,151 +4,137 @@ import streamlit as st
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Pop Song Listening Activity",
-    page_icon="🎵",
+    page_title="Lyrics Training: Lion King",
+    page_icon="🎤",
     layout="wide"
 )
 
 # =========================
-# CSS 디자인 (탭, 음영, 레이아웃)
+# 고급 CSS 디자인 (Lyrics Training 스타일)
 # =========================
 st.markdown("""
 <style>
-.stApp {
-    background-color: #f8fafc;
-}
-.title-box {
-    background: linear-gradient(135deg, #f59e0b, #22c55e);
-    padding: 25px;
-    border-radius: 20px;
-    color: white;
-    text-align: center;
-    margin-bottom: 25px;
-}
-.lyrics-container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 15px;
-    border: 1px solid #e2e8f0;
-    line-height: 2.2;
-    font-size: 1.1rem;
-    color: #1e293b;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-.highlight-blank {
-    background-color: #fef08a; /* 노란색 음영 */
-    padding: 2px 10px;
-    border-radius: 6px;
-    font-weight: bold;
-    color: #c2410c;
-    border-bottom: 2px solid #f59e0b;
-    margin: 0 2px;
-}
-.expression-card {
-    background: #ecfdf5;
-    padding: 15px;
-    border-radius: 12px;
-    margin-bottom: 10px;
-    border-left: 5px solid #10b981;
-}
+    .stApp { background-color: #0f172a; color: #f8fafc; } /* 다크 모드 스타일 */
+    .title-box {
+        background: linear-gradient(90deg, #1e40af, #7e22ce);
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 25px;
+    }
+    /* 가사 박스: 스크롤 가능하고 가독성 높게 */
+    .lyrics-window {
+        background-color: #1e293b;
+        padding: 30px;
+        border-radius: 20px;
+        border: 2px solid #334155;
+        height: 550px;
+        overflow-y: auto;
+        line-height: 2.5;
+        font-size: 1.25rem;
+        font-family: 'Courier New', monospace;
+        color: #cbd5e1;
+    }
+    .highlight {
+        background-color: #eab308;
+        color: #000;
+        padding: 2px 8px;
+        border-radius: 5px;
+        font-weight: bold;
+        margin: 0 3px;
+    }
+    .stRadio > div { flex-direction: row; gap: 15px; } /* 선택지 가로 정렬 */
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="title-box"><h1>🎵 Can You Feel the Love Tonight</h1><p>노래를 들으며 노란 음영 속 빈칸의 정답을 맞춰보세요!</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="title-box"><h1>🎤 Lyrics Training: Can You Feel the Love Tonight</h1></div>', unsafe_allow_html=True)
 
 # =========================
-# 탭 구성[cite: 1]
+# 데이터 설정 (가사 지점별 문제)
 # =========================
-tab_activity, tab_expression, tab_reflection = st.tabs([
-    "🎧 Listening Activity",
-    "📘 Key Expressions",
-    "✍️ Reflection"
-])
+# 정답 리스트: surrender, world, worrier, wanderer, far, vagabonds, learn, turn, outdoors, voyager, yours, best
+options = [
+    ["surrender", "surprise", "sunlight"], # 1
+    ["wave", "world", "word"],             # 2
+    ["warrior", "worrier", "worker"],      # 3
+    ["wanderer", "wonderer", "winner"],    # 4
+    ["fast", "far", "fair"],               # 5
+    ["vacation", "vagabonds", "victory"],  # 6
+    ["learn", "lean", "leave"],            # 7
+    ["time", "tune", "turn"],              # 8
+    ["outdoors", "outdoorsy", "outside"],  # 9
+    ["voyager", "voter", "voice"],         # 10
+    ["yours", "young", "years"],           # 11
+    ["best", "beast", "blast"]             # 12
+]
 
 # =========================
-# 1. Listening Activity (영상 + 가사 퀴즈 병렬 배치)[cite: 1]
+# 메인 레이아웃
 # =========================
-with tab_activity:
-    col1, col2 = st.columns([1.2, 1])
+tab_play, tab_score = st.tabs(["🎮 Game Mode", "📊 Result"])
 
-    with col1:
-        st.subheader("🎬 Watch & Listen")
-        video_url = "https://www.youtube.com/watch?v=25QyCxVkXwQ"
-        st.video(video_url)
-        st.info("💡 왼쪽 영상을 재생하고, 오른쪽 가사의 흐름(1~5번)을 따라가며 답을 골라보세요.")
+with tab_play:
+    col_vid, col_lyric = st.columns([1, 1.2])
 
-    with col2:
-        st.subheader("📜 Lyrics & Quiz")
-        # 가사 전체 반영 및 주요 지점 음영/번호 처리[cite: 1]
-        lyrics_html = """
-        <div class="lyrics-container">
-            There's a calm <span class="highlight-blank">( 1 )</span><br>
-            To the rush of day<br>
-            When the heat of the rolling <span class="highlight-blank">( 2 )</span><br>
-            Can be turned away<br><br>
-            And enchanted moment<br>
-            And it sees me through<br>
-            It's enough for this restless <span class="highlight-blank">( 3 )</span><br>
-            Just to be with you<br><br>
-            And can you feel the love tonight?<br>
-            It is where we are<br>
-            It's enough for this wide-eyed <span class="highlight-blank">( 4 )</span><br>
-            That we got this far<br><br>
-            ... (중략) ...<br><br>
-            It's enough to make kings and <span class="highlight-blank">( 5 )</span><br>
-            Believe the very best
+    with col_vid:
+        st.subheader("📺 Watch Video")
+        st.video("https://www.youtube.com/watch?v=25QyCxVkXwQ")
+        
+        st.markdown("---")
+        st.markdown("### ⌨️ 빈칸을 채워주세요!")
+        
+        # 실제 입력을 받는 구역 (스크롤하며 풀기 좋게)
+        u1 = st.selectbox("Q1", options[0], key="u1")
+        u2 = st.selectbox("Q2", options[1], key="u2")
+        u3 = st.selectbox("Q3", options[2], key="u3")
+        u4 = st.selectbox("Q4", options[3], key="u4")
+        u5 = st.selectbox("Q5", options[4], key="u5")
+        u6 = st.selectbox("Q6", options[5], key="u6")
+
+    with col_lyric:
+        st.subheader("📜 Fill in the Blanks")
+        # 가사 전체 출력 (음영 처리)
+        lyrics_content = """
+        <div class="lyrics-window">
+        There's a calm <span class="highlight">1</span><br>
+        To the rush of day<br>
+        When the heat of the rolling <span class="highlight">2</span><br>
+        Can be turned away<br>
+        And enchanted moment<br>
+        And it sees me through<br>
+        It's enough for this restless <span class="highlight">3</span><br>
+        Just to be with you<br><br>
+        And can you feel the love tonight?<br>
+        It is where we are<br>
+        It's enough for this wide-eyed <span class="highlight">4</span><br>
+        That we got this <span class="highlight">5</span><br>
+        And can you feel the love tonight?<br>
+        How it's laid to rest?<br>
+        It's enough to make kings and <span class="highlight">6</span><br>
+        Believe the very best<br><br>
+        There's a time for everyone<br>
+        If they only learn... (이하 생략)
         </div>
         """
-        st.markdown(lyrics_html, unsafe_allow_html=True)
+        st.markdown(lyrics_content, unsafe_allow_html=True)
         
-        st.write("---")
-        
-        # 1~5번 퀴즈 (들리는 대로 고르기)[cite: 1]
-        st.markdown("### 🎧 빈칸 채우기 (1~3번 중 선택)")
-        
-        q1 = st.selectbox("1번: There's a calm...", ["--- 선택 ---", "1. surrender", "2. sunshine", "3. sudden"], key="l1")
-        q2 = st.selectbox("2번: ...rolling...", ["--- 선택 ---", "1. wood", "2. world", "3. wave"], key="l2")
-        q3 = st.selectbox("3번: ...restless...", ["--- 선택 ---", "1. warrior", "2. winner", "3. worrier"], key="l3")
-        q4 = st.selectbox("4번: ...wide-eyed...", ["--- 선택 ---", "1. wanderer", "2. wonder", "3. winter"], key="l4")
-        q5 = st.selectbox("5번: ...kings and...", ["--- 선택 ---", "1. vacation", "2. vagabonds", "3. victory"], key="l5")
+        if st.button("Check Answers", use_container_width=True):
+            st.toast("채점 완료! Result 탭을 확인하세요.")
 
-        if st.button("정답 확인하기", use_container_width=True):
-            score = 0
-            if "surrender" in q1: score += 1
-            if "world" in q2: score += 1
-            if "worrier" in q3: score += 1
-            if "wanderer" in q4: score += 1
-            if "vagabonds" in q5: score += 1
-            
-            if score == 5:
-                st.balloons()
-                st.success(f"Perfect! {score}/5 다 맞혔어요!")
-            else:
-                st.warning(f"다시 들어볼까요? 현재 점수: {score}/5")
-
-# =========================
-# 2. Key Expressions[cite: 1]
-# =========================
-with tab_expression:
-    st.subheader("📘 핵심 표현 익히기")
-    expressions = {
-        "Surrender": "내맡김, 항복 (여기선 평온한 수용)",
-        "Restless worrier": "쉴 새 없이 걱정하는 사람",
-        "Wide-eyed wanderer": "눈을 크게 뜨고 방랑하는 사람",
-        "Vagabonds": "방랑자, 부랑자",
-        "Believe the very best": "최선(가장 좋은 것)을 믿다"
-    }
-    for word, mean in expressions.items():
-        st.markdown(f'<div class="expression-card"><b>{word}</b>: {mean}</div>', unsafe_allow_html=True)
-
-# =========================
-# 3. Reflection[cite: 1]
-# =========================
-with tab_reflection:
-    st.subheader("✍️ 오늘의 소감")
-    user_input = st.text_area("노래를 듣고 가장 마음에 들었던 가사나 느낌을 적어보세요.")
-    if st.button("제출하기"):
-        if user_input:
-            st.success("소중한 소감 감사합니다!")
-        else:
-            st.warning("내용을 입력해주세요.")
+with tab_score:
+    st.subheader("📊 Your Performance")
+    # 채점 로직
+    user_answers = [u1, u2, u3, u4, u5, u6]
+    correct_answers = ["surrender", "world", "worrier", "wanderer", "far", "vagabonds"]
+    
+    score = sum(1 for ua, ca in zip(user_answers, correct_answers) if ua == ca)
+    
+    col_a, col_b = st.columns(2)
+    col_a.metric("Correct", f"{score} / 6")
+    col_b.progress(score / 6)
+    
+    if score == 6:
+        st.balloons()
+        st.success("You are a Pop Song Master! 🏆")
+    else:
+        st.info("Keep practicing! 가사를 다시 보며 들어보세요.")
