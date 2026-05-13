@@ -42,7 +42,8 @@ def reset_data():
 # -------------------------
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
 
-song_choice = st.selectbox("학습할 노래를 선택하세요:", ["Let It Go - Frozen OST", "Hello - Adele"])
+song_choice = st.selectbox("학습할 노래를 선택하세요:", 
+                           ["Let It Go - Frozen OST", "Hello - Adele", "A Whole New World - Aladdin OST"])
 
 if st.session_state.selected_song != song_choice:
     st.session_state.selected_song = song_choice
@@ -73,38 +74,59 @@ if song_choice == "Let It Go - Frozen OST":
         ("3. 'Let it go'의 핵심 메시지는?", ["과거에 얽매이지 않는 자유", "다시 왕국으로 돌아가기", "친구를 찾아 떠나기"], "과거에 얽매이지 않는 자유"),
         ("4. 'The cold never bothered me'의 의미는?", ["감기에 걸렸다", "추위는 상관없다", "눈이 싫다"], "추위는 상관없다")
     ]
-else:
+    correct_order = [line[0] for line in full_lyrics]
+    scrambled_order = [correct_order[3], correct_order[0], correct_order[7], correct_order[1], correct_order[5], correct_order[2], correct_order[8], correct_order[4], correct_order[6], correct_order[9]]
+
+elif song_choice == "Hello - Adele":
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
-    bg_content = "헤어진 연인에게 수년 만에 전화를 걸어 사과와 그리움을 전하는 노래입니다. 아델의 파워풀한 보컬과 명확한 발음이 특징입니다."
-    # 1절 끝(첫 후렴 종료)까지의 긴 문장 구성
+    bg_content = "헤어진 연인에게 수년 만에 전화를 걸어 사과와 그리움을 전하는 노래입니다. 아델의 파워풀한 보컬이 특징입니다."
     full_lyrics = [
         ("Hello, it's me. I was wondering if after all these years you'd like to meet", "안녕, 나야. 이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
-        ("To go over everything. They say that time's supposed to heal ya, but I ain't done much healing", "모든 걸 되짚어보기 위해 말야. 시간은 모든 걸 치유한다지만 난 별로 치유되지 않았어"),
+        ("To go over everything. They say that time's supposed to heal ya, but I ain't done much healing", "모든 걸 되짚어보기 위해 말야. 시간은 치유해준다지만 난 별로 치유되지 않았어"),
         ("Hello, can you hear me? I'm in California dreaming about who we used to be", "여보세요, 내 말 들리니? 난 캘리포니아에서 예전의 우리 모습을 꿈꾸고 있어"),
-        ("When we were younger and free. I've forgotten how it felt before the world fell at our feet", "우리가 더 어리고 자유로웠을 때 말야. 세상이 우리 발아래 무너지기 전 기분이 어땠는지 잊어버렸어"),
+        ("When we were younger and free. I've forgotten how it felt before the world fell at our feet", "우리가 더 어리고 자유로웠을 때 말야. 세상이 무너지기 전 기분이 어땠는지 잊어버렸어"),
         ("There's such a difference between us and a million miles", "우리 사이엔 너무 큰 차이가 있고 수백만 마일의 거리가 있네"),
         ("Hello from the other side. I must've called a thousand times", "반대편에서 인사해. 수천 번은 전화했을 거야"),
-        ("To tell you I'm sorry for everything that I've done. But when I call, you never seem to be home", "내가 했던 모든 일에 대해 미안하다고 말하려고. 하지만 내가 전화할 때 넌 절대 집에 없는 것 같아"),
-        ("Hello from the outside. At least I can say that I've tried", "외부(밖)에서 인사해. 적어도 내가 노력했다는 말은 할 수 있겠지"),
+        ("To tell you I'm sorry for everything that I've done. But when I call, you never seem to be home", "내 모든 일에 대해 미안하다고 말하려고. 하지만 넌 절대 집에 없는 것 같아"),
+        ("Hello from the outside. At least I can say that I've tried", "외부에서 인사해. 적어도 내가 노력했다는 말은 할 수 있겠지"),
         ("To tell you I'm sorry for breaking your heart", "네 마음을 아프게 해서 미안하다고 말하기 위해서 말야"),
-        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 상관없겠지, 그게 더 이상 널 힘들게(찢어지게) 하지 않는 게 분명하니까")
+        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 상관없겠지, 그게 더 이상 널 힘들게 하지 않는 게 분명하니까")
     ]
     questions = [
-        ("1. 'I must've called a thousand times'의 뉘앙스는?", ["실제로 딱 1,000번 셌다", "아주 많이 연락했다는 강조", "전화기가 고장 났다"], "아주 많이 연락했다는 강조"),
-        ("2. 화자가 치유(healing)에 대해 하는 말은?", ["시간 덕분에 다 나았다", "시간이 흘러도 별로 나아지지 않았다", "병원에 가야 한다"], "시간이 흘러도 별로 나아지지 않았다"),
-        ("3. 'The other side'와 'The outside'는 무엇을 의미할까요?", ["옆집", "심리적/물리적으로 멀어진 현재의 위치", "외출 중인 상태"], "심리적/물리적으로 멀어진 현재의 위치"),
-        ("4. 마지막 문장에서 화자가 깨달은 점은?", ["상대방도 나를 그리워한다", "상대방은 이제 더 이상 아파하지 않는다", "전화번호가 바뀌었다"], "상대방은 이제 더 이상 아파하지 않는다")
+        ("1. 'I must've called a thousand times'의 의미는?", ["실제로 1,000번 셌다", "아주 많이 연락했다는 강조", "전화기 숫자 버튼이 고장 났다"], "아주 많이 연락했다는 강조"),
+        ("2. 'Time's supposed to heal ya'는 무슨 뜻인가요?", ["시간이 약이다", "시간이 너무 빠르다", "지금은 몇 시인가"], "시간이 약이다"),
+        ("3. 화자가 현재 있는 곳으로 언급된 장소는?", ["London", "California", "New York"], "California"),
+        ("4. 화자가 전화를 거는 주된 목적은?", ["돈을 빌리기 위해", "사과하기 위해", "물건을 찾기 위해"], "사과하기 위해")
     ]
-
-correct_order = [line[0] for line in full_lyrics]
-# 퀴즈용 셔플 (순서 고정)
-if song_choice == "Let It Go - Frozen OST":
-    scrambled_order = [correct_order[3], correct_order[0], correct_order[7], correct_order[1], correct_order[5], correct_order[2], correct_order[8], correct_order[4], correct_order[6], correct_order[9]]
-else:
+    correct_order = [line[0] for line in full_lyrics]
     scrambled_order = [correct_order[5], correct_order[0], correct_order[9], correct_order[2], correct_order[7], correct_order[1], correct_order[8], correct_order[3], correct_order[6], correct_order[4]]
 
+else: # A Whole New World
+    video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
+    bg_content = "알라딘이 자스민 공주를 마법 양탄자에 태우고 성 밖의 넓은 세상을 보여주며 사랑을 확인하는 장면입니다."
+    full_lyrics = [
+        ("I can show you the world. Shining, shimmering, splendid", "당신에게 세상을 보여줄 수 있어요. 빛나고 어른거리며 화려한 세상을요"),
+        ("Tell me, princess, now when did you last let your heart decide?", "말해봐요 공주님, 마지막으로 마음이 가는 대로 결정했던 게 언제였나요?"),
+        ("I can open your eyes. Take you wonder by wonder", "당신의 눈을 뜨게 해 줄게요. 경이로운 곳들로 당신을 데려가 줄게요"),
+        ("Over, sideways and under on a magic carpet ride", "마법 양탄자를 타고 위로, 옆으로, 아래로 가로지르며 말이죠"),
+        ("A whole new world! A new fantastic point of view", "완전히 새로운 세상! 새롭고 환상적인 시야가 펼쳐져요"),
+        ("No one to tell us 'No' or where to go, or say we're only dreaming", "누구도 안 된다거나 어디로 가라고 말 못 해요, 우리가 꿈꾸는 뿐이라 말하지도 못하죠"),
+        ("A whole new world! A dazzling place I never knew", "완전히 새로운 세상! 내가 결코 알지 못했던 눈부신 곳이에요"),
+        ("But when I'm way up here, it's crystal clear", "하지만 여기 높이 올라오니 모든 게 아주 명확해졌어요"),
+        ("That now I'm in a whole new world with you", "지금 내가 당신과 함께 완전히 새로운 세상에 있다는 사실이요"),
+        ("(Now I'm in a whole new world with you)", "(이제 당신과 함께 새로운 세상에 있네요)")
+    ]
+    questions = [
+        ("1. 알라딘이 공주를 태우고 가는 이동 수단은?", ["황금 마차", "마법 양탄자", "코끼리"], "마법 양탄자"),
+        ("2. 'A whole new world'는 어떤 의미인가요?", ["오래된 골동품 가게", "지금까지 본 적 없는 새로운 세상", "무서운 지하 감옥"], "지금까지 본 적 없는 새로운 세상"),
+        ("3. 'Crystal clear'의 뜻은?", ["수정이 깨끗하다", "아주 명확하고 분명하다", "유리창을 닦아야 한다"], "아주 명확하고 분명하다"),
+        ("4. 알라딘이 공주에게 물어본 질문은?", ["배가 고픈지", "마지막으로 마음의 결정을 따른 게 언제인지", "이름이 무엇인지"], "마지막으로 마음의 결정을 따른 게 언제인지")
+    ]
+    correct_order = [line[0] for line in full_lyrics]
+    scrambled_order = [correct_order[4], correct_order[1], correct_order[8], correct_order[0], correct_order[7], correct_order[2], correct_order[9], correct_order[3], correct_order[6], correct_order[5]]
+
 # -------------------------
-# 탭 구성
+# 탭 구성 (공통 로직)
 # -------------------------
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 배경 학습", "📖 STEP 2. 전체 가사 & 퀴즈", "🧩 STEP 3. 1절 순서 배열"])
 
@@ -176,4 +198,4 @@ with tab3:
         
         if all_correct:
             st.balloons()
-            st.success(f"🎉 대단합니다! {song_choice} 1절을 완벽하게 마스터하셨네요!")
+            st.success(f"🎉 대단합니다! {song_choice} 마스터!")
