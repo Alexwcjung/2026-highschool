@@ -16,7 +16,6 @@ st.markdown("""
     .info-box {
         background-color: #f8fafc; padding: 20px; border-radius: 12px;
         border: 1px solid #e2e8f0; line-height: 1.8; margin-bottom: 20px;
-        height: 100%;
     }
     /* 가사 스타일 */
     .lyrics-container {
@@ -46,18 +45,17 @@ st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Cl
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경 알기", "📖 STEP 2. 가사 듣기 & 이해", "🧩 STEP 3. 후렴구 순서 맞추기"])
 
 # -------------------------
-# STEP 1: 영상 & 상세 배경 설명 (영상 절반 크기로 배치)
+# STEP 1: 영상 & 상세 배경 설명 (영상을 절반 크기로 옆에 배치)
 # -------------------------
 with tab1:
     st.subheader("❄️ '겨울왕국(Frozen)' 배경 알아보기")
-    
-    # 화면을 정확히 절반(1:1)으로 나눕니다
-    col_vid, col_txt = st.columns(2)
-    
-    with col_vid:
-        # 영상이 화면의 절반만 차지하도록 배치
+
+    # ▶ 영상을 왼쪽 절반, 텍스트를 오른쪽 절반에 배치
+    col_video, col_txt = st.columns([1, 1])
+
+    with col_video:
         st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-        st.info("🏰 **아렌델 왕국 (Arendelle)**\n\n북유럽의 노르웨이를 모델로 한 아름다운 항구 도시입니다. 평화롭지만 마법의 두려워하는 전통이 있는 곳이죠.")
+        st.info("🏰 **아렌델 왕국 (Arendelle)**\n\n북유럽의 노르웨이를 모델로 한 아름다운 항구 도시입니다. 평화롭지만 마법을 두려워하는 전통이 있는 곳이죠.")
 
     with col_txt:
         st.markdown("""
@@ -72,7 +70,7 @@ with tab1:
         """, unsafe_allow_html=True)
 
 # -------------------------
-# STEP 2: 가사 전체 노출 & 왼쪽 퀴즈 (스크롤 제거)
+# STEP 2: 가사 전체 노출 & 왼쪽 퀴즈
 # -------------------------
 with tab2:
     st.subheader("📖 가사 전체 보기 및 이해도 체크")
@@ -100,7 +98,8 @@ with tab2:
 
     with col_lyrics:
         st.markdown("### ❄️ 전체 가사 (Full Lyrics)")
-        # 전체 가사 리스트
+
+        # ▶ 전체 가사 리스트 (스크롤 없이 전부 표시)
         full_lyrics = [
             ("The snow glows white on the mountain tonight", "오늘 밤 산에는 하얀 눈이 빛나고"),
             ("Not a footprint to be seen", "발자국 하나 보이지 않네"),
@@ -143,14 +142,16 @@ with tab2:
             ("The cold never bothered me anyway", "어차피 추위는 날 괴롭히지 못했으니까")
         ]
         
-        # 이전 코드의 컨테이너(스크롤)를 제거하고 전체 가사가 길게 그대로 보이도록 설정
+        # ▶ height 제한 없이 전체 가사 표시 (스크롤 박스 제거)
+        lyrics_html = ""
         for eng, kor in full_lyrics:
-            st.markdown(f"""
+            lyrics_html += f"""
             <div class="lyrics-container">
                 <div class="eng-line">{eng}</div>
                 <div class="kor-sub">{kor}</div>
             </div>
-            """, unsafe_allow_html=True)
+            """
+        st.markdown(lyrics_html, unsafe_allow_html=True)
 
 # -------------------------
 # STEP 3: 순서 맞추기 (문제 여러 개)
@@ -159,7 +160,6 @@ with tab3:
     st.subheader("🎧 오디오만 듣고 순서 맞추기")
     st.write("화면을 보지 않고 소리에만 집중해서 문장을 완성해보세요!")
 
-    # 오디오 파일 (예시 링크)
     st.audio("https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3") 
     st.divider()
 
