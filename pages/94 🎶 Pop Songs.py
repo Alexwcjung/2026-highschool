@@ -31,21 +31,17 @@ st.markdown("""
 # 세션 상태 초기화
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
-if 'submitted_step3' not in st.session_state: st.session_state.submitted_step3 = False
 
 st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Class</h1></div>', unsafe_allow_html=True)
 
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습 & 퀴즈", "🧩 STEP 3. 1절 전체 순서 맞추기"])
 
 # -------------------------
-# STEP 1: 영화 배경 (오류 없는 이미지로 교체)
+# STEP 1: 영화 배경 (이미지 제거)
 # -------------------------
 with tab1:
     col_vid1, col_txt1 = st.columns(2)
     with col_vid1:
-        # 오류가 적은 Wikimedia 이미지 혹은 Placehold 이미지 사용
-        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Snow_on_mountain_tops.jpg/640px-Snow_on_mountain_tops.jpg", 
-                 caption="Kingdom of Isolation: 고립된 설산의 모습")
         st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
     with col_txt1:
         st.markdown("""
@@ -54,6 +50,8 @@ with tab1:
             엘사는 모든 것을 얼리는 마법을 숨기기 위해 평생 고립된 삶을 살았습니다. 
             대관식 날 비밀이 드러나자 도망친 엘사가 산 위에서 부르는 이 노래는 
             과거의 굴레를 벗어던지고 <b>진정한 자유</b>를 선언하는 순간입니다.
+            <br><br>
+            이 탭에서 영상을 시청하며 엘사의 감정 변화를 느껴보세요.
         </div>
         """, unsafe_allow_html=True)
 
@@ -113,11 +111,11 @@ with tab2:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
 # -------------------------
-# STEP 3: 문장 순서 맞추기 (제출 버튼 추가)
+# STEP 3: 문장 순서 맞추기 (실시간 정답 체크)
 # -------------------------
 with tab3:
-    st.subheader("🧩 1절 전체 문장 완성 챌린지")
-    st.write("A부터 G까지 순서대로 클릭하여 나열한 뒤, 최하단의 **[최종 정답 제출]** 버튼을 누르세요.")
+    st.subheader("🧩 1절 실시간 순서 맞추기")
+    st.write("문장을 클릭하면 즉시 정답 여부가 확인됩니다. 올바른 순서(A→G)로 나열해보세요!")
     
     q3_correct = [
         "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
@@ -144,36 +142,32 @@ with tab3:
         if (cols[0] if i % 2 == 0 else cols[1]).button(sentence, key=f"q3_btn_{i}", use_container_width=True):
             if sentence not in st.session_state.q3_cards:
                 st.session_state.q3_cards.append(sentence)
-                st.session_state.submitted_step3 = False # 수정 시 제출 상태 초기화
                 st.rerun()
 
     st.divider()
-    st.markdown("### 📥 내가 나열한 순서")
+    st.markdown("### 📥 실시간 채점 결과")
     
+    correct_count = 0
     for idx, s in enumerate(st.session_state.q3_cards):
         col_text, col_del = st.columns([0.85, 0.15])
-        col_text.info(f"{idx+1}: {s}")
+        
+        # 현재 위치의 정답 문장과 비교
+        if s == q3_correct[idx]:
+            col_text.success(f"✅ 단계 {idx+1} (정답): {s}")
+            correct_count += 1
+        else:
+            col_text.error(f"❌ 단계 {idx+1} (오답): {s}")
+            
         if col_del.button("삭제", key=f"del_{idx}"):
             st.session_state.q3_cards.pop(idx)
-            st.session_state.submitted_step3 = False
             st.rerun()
 
-    # STEP 3 제출 버튼
+    # 모든 정답을 맞혔을 때 피드백
+    if correct_count == len(q3_correct):
+        st.balloons()
+        st.success("🎉 완벽합니다! 1절의 모든 문장을 올바른 감정 흐름에 맞춰 완성하셨습니다!")
+    
     if len(st.session_state.q3_cards) > 0:
-        if st.button("STEP 3 최종 정답 제출", type="primary"):
-            st.session_state.submitted_step3 = True
+        if st.button("전체 초기화"):
+            st.session_state.q3_cards = []
             st.rerun()
-
-    # 제출 결과 표시
-    if st.session_state.submitted_step3:
-        if len(st.session_state.q3_cards) != len(q3_correct):
-            st.warning("모든 문장(7개)을 나열해야 제출할 수 있습니다.")
-        elif st.session_state.q3_cards == q3_correct:
-            st.balloons()
-            st.success("🎉 완벽합니다! 1절의 모든 문장을 올바른 순서로 맞추셨습니다!")
-        else:
-            st.error("❌ 순서가 틀렸습니다. 삭제 버튼을 이용해 수정하거나 처음부터 다시 해보세요.")
-            if st.button("전체 초기화"):
-                st.session_state.q3_cards = []
-                st.session_state.submitted_step3 = False
-                st.rerun()
