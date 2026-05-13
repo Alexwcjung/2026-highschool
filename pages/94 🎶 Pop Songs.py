@@ -9,23 +9,10 @@ st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout=
 
 st.markdown("""
 <style>
-    .stApp { 
-        background: linear-gradient(180deg, #ffffff 0%, #eef2ff 45%, #f8fafc 100%);
-        color: #1e293b; 
-    }
+    .stApp { background-color: #ffffff; color: #1e293b; }
     .main-title {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-        padding: 26px; 
-        border-radius: 22px;
-        text-align: center; 
-        color: white; 
-        margin-bottom: 25px;
-        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.18);
-    }
-    .main-title h1 {
-        margin: 0;
-        font-size: 42px;
-        font-weight: 900;
+        background-color: #f8fafc; padding: 25px; border-radius: 15px;
+        border: 2px solid #6366f1; text-align: center; color: #4338ca; margin-bottom: 25px;
     }
     .big-label {
         font-size: 1.8rem !important;
@@ -35,64 +22,34 @@ st.markdown("""
         display: block;
     }
     .info-box {
-        background-color: #ffffff; 
-        padding: 30px; 
-        border-radius: 20px;
-        border: 1px solid #cbd5e1; 
-        line-height: 1.9; 
-        margin-bottom: 25px;
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.10);
+        background-color: #f1f5f9; padding: 30px; border-radius: 15px;
+        border: 1px solid #cbd5e1; line-height: 1.9; margin-bottom: 25px;
     }
-    .info-box h3 { 
-        color: #4338ca; 
-        border-bottom: 3px solid #6366f1; 
-        padding-bottom: 12px; 
-        margin-top: 0; 
-    }
+    .info-box h3 { color: #4338ca; border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-top: 0; }
     .info-box b { color: #1e3a8a; }
-    .info-box p { font-size: 1.08rem; }
     .lyrics-container {
-        padding: 12px 20px; 
-        border-left: 5px solid #6366f1;
-        margin-bottom: 10px; 
-        background-color: #ffffff; 
-        border-radius: 0 12px 12px 0;
-        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+        padding: 12px 20px; border-left: 5px solid #6366f1;
+        margin-bottom: 10px; background-color: #f8fafc; border-radius: 0 10px 10px 0;
     }
-    .eng-line { 
-        font-size: 1.15rem; 
-        font-weight: 700; 
-        color: #1e3a8a; 
-    }
-    .kor-sub { 
-        font-size: 0.95rem; 
-        color: #64748b; 
-    }
-    div[data-testid="stRadio"] label { font-size: 1rem; }
+    .eng-line { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
+    .kor-sub { font-size: 0.95rem; color: #64748b; }
 </style>
 """, unsafe_allow_html=True)
 
 # -------------------------
 # 세션 상태 관리
 # -------------------------
-if 'selected_song' not in st.session_state:
-    st.session_state.selected_song = "1. Let It Go - Frozen OST"
-if 'submitted_step2' not in st.session_state:
-    st.session_state.submitted_step2 = False
-if 'q3_cards' not in st.session_state:
-    st.session_state.q3_cards = []
-if 'current_tab' not in st.session_state:
-    st.session_state.current_tab = "🎬 배경 학습"
-if 'show_q3_result' not in st.session_state:
-    st.session_state.show_q3_result = False
+if 'selected_song' not in st.session_state: st.session_state.selected_song = "1. Let It Go - Frozen OST"
+if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
+if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
+if 'current_tab' not in st.session_state: st.session_state.current_tab = "🎬 배경 학습"
 
 def reset_data():
     st.session_state.submitted_step2 = False
     st.session_state.q3_cards = []
     st.session_state.show_q3_result = False
     st.session_state.current_tab = "🎬 배경 학습"
-    if 'scrambled' in st.session_state:
-        del st.session_state.scrambled
+    if 'scrambled' in st.session_state: del st.session_state.scrambled
 
 # -------------------------
 # 상단 곡 선택 메뉴
@@ -101,13 +58,12 @@ st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></di
 st.markdown('<span class="big-label">👉 학습할 노래를 선택하세요</span>', unsafe_allow_html=True)
 
 song_options = [
-    "1. Let It Go - Frozen OST",
-    "2. Hello - Adele",
+    "1. Let It Go - Frozen OST", 
+    "2. Hello - Adele", 
     "3. A Whole New World - Aladdin OST",
     "4. Stand By Me - Ben E. King",
     "5. Don't Know Why - Norah Jones"
 ]
-
 song_choice = st.selectbox("", song_options, label_visibility="collapsed")
 
 if st.session_state.selected_song != song_choice:
@@ -115,27 +71,17 @@ if st.session_state.selected_song != song_choice:
     reset_data()
     st.rerun()
 
+# 탭 수동 제어
 tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"]
-selected_tab = st.radio(
-    "",
-    tabs_list,
-    index=tabs_list.index(st.session_state.current_tab),
-    horizontal=True,
-    label_visibility="collapsed"
-)
+selected_tab = st.radio("", tabs_list, index=tabs_list.index(st.session_state.current_tab), horizontal=True, label_visibility="collapsed")
 st.session_state.current_tab = selected_tab
 
 # -------------------------
-# 곡별 데이터 설정
+# 곡별 데이터 설정 (모두 6문제씩)
 # -------------------------
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
-    bg_content = """
-    <h3>❄️ Let It Go: 숨겨야 했던 나를 드러내는 순간</h3>
-    <p>이 노래는 영화 <b>Frozen</b>에서 엘사가 자신의 마법 능력을 더 이상 숨기지 않기로 결심하는 장면에 나옵니다. 엘사는 어릴 때부터 모든 것을 얼리는 힘을 가지고 있었지만, 그 힘 때문에 다른 사람을 다치게 할까 봐 두려워했습니다. 그래서 오랫동안 자신의 감정과 능력을 숨기며 살아왔습니다.</p>
-    <p>대관식 날, 엘사의 마법이 사람들 앞에 드러나고 사람들은 그녀를 두려워합니다. 엘사는 결국 왕국을 떠나 눈 덮인 산으로 도망갑니다. 하지만 산 위에서 그녀는 처음으로 다른 사람의 시선을 벗어나 자유를 느낍니다.</p>
-    <p><b>핵심 메시지:</b> 이 노래는 단순히 “다 잊어버리자”는 뜻이 아니라, 억눌렸던 자신을 받아들이고 진짜 나로 살아가려는 용기를 보여줍니다. 학생들은 이 노래를 통해 <b>자기표현, 자유, 두려움 극복</b>이라는 주제를 생각해 볼 수 있습니다.</p>
-    """
+    bg_content = "<h3>❄️ Let It Go: 억압된 자아의 해방</h3><p>엘사가 타인의 시선에서 벗어나 진정한 자유를 찾는 과정을 담고 있습니다.</p>"
     lyrics_raw = [
         ("The snow glows white on the mountain tonight", "오늘 밤 산엔 눈이 하얗게 빛나고"),
         ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아"),
@@ -157,12 +103,7 @@ if "1. Let It Go" in song_choice:
 
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
-    bg_content = """
-    <h3>☎️ Hello: 지나간 관계에 건네는 늦은 사과</h3>
-    <p>Adele의 <b>Hello</b>는 오래전에 멀어진 사람에게 다시 연락하는 마음을 담은 노래입니다. 화자는 시간이 많이 지난 뒤에도 여전히 과거의 기억을 떠올립니다. 전화를 걸지만, 상대방에게 제대로 닿지 않는 듯한 느낌이 반복됩니다.</p>
-    <p>이 노래에서 “Hello”는 단순한 인사말이 아닙니다. 그 안에는 <b>미안함, 후회, 그리움, 다시 말하고 싶은 마음</b>이 담겨 있습니다. 화자는 과거의 자신을 돌아보며, 그때 하지 못했던 말을 이제라도 전하고 싶어 합니다.</p>
-    <p><b>핵심 메시지:</b> 사람은 누구나 지나간 관계나 선택에 대해 후회할 때가 있습니다. 이 노래는 그런 감정을 솔직하게 마주하는 과정을 보여줍니다. 학생들은 이 노래를 통해 <b>사과, 그리움, 후회, 감정 표현</b>과 관련된 영어 표현을 배울 수 있습니다.</p>
-    """
+    bg_content = "<h3>☎️ Hello: 과거를 향한 뒤늦은 안부</h3><p>미안함과 그리움을 담아 과거의 연인에게 건네는 메시지입니다.</p>"
     lyrics_raw = [
         ("Hello, it's me", "안녕, 나야"),
         ("I was wondering if after all these years you'd like to meet", "이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
@@ -182,12 +123,7 @@ elif "2. Hello" in song_choice:
 
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
-    bg_content = """
-    <h3>✨ A Whole New World: 새로운 세상을 보는 용기</h3>
-    <p>이 노래는 영화 <b>Aladdin</b>에서 알라딘과 자스민이 마법 양탄자를 타고 새로운 세상을 바라보는 장면에 나옵니다. 자스민은 궁전 안에서 보호받으며 살았지만, 동시에 자유롭게 세상을 경험하지 못했습니다. 알라딘은 그녀에게 궁전 밖의 넓은 세상을 보여줍니다.</p>
-    <p>노래 속 “A Whole New World”는 단순히 새로운 장소를 뜻하지 않습니다. 그것은 <b>새로운 시야, 새로운 경험, 스스로 선택하는 삶</b>을 의미합니다. 자스민은 이 장면을 통해 자신이 몰랐던 세상을 보고, 자신의 마음이 원하는 방향을 생각하게 됩니다.</p>
-    <p><b>핵심 메시지:</b> 새로운 세상을 만난다는 것은 단순히 여행을 떠나는 것이 아니라, 내 생각과 시야가 넓어지는 경험입니다. 학생들은 이 노래를 통해 <b>도전, 자유, 새로운 관점, 주체적인 선택</b>이라는 주제를 배울 수 있습니다.</p>
-    """
+    bg_content = "<h3>✨ A Whole New World: 금지된 장벽을 넘는 자유</h3><p>새로운 시야와 자유에 대한 노래입니다.</p>"
     lyrics_raw = [
         ("I can show you the world", "당신에게 세상을 보여줄 수 있어요"),
         ("Shining, shimmering, splendid", "빛나고 어른거리며 화려한 세상을요"),
@@ -207,12 +143,7 @@ elif "3. A Whole New World" in song_choice:
 
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
-    bg_content = """
-    <h3>🤝 Stand By Me: 힘든 순간에도 곁에 있어 주는 사람</h3>
-    <p><b>Stand By Me</b>는 어려운 상황에서도 누군가가 내 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다. 노래 속에는 어두운 밤, 무너지는 하늘, 흔들리는 땅 같은 표현이 나옵니다. 이것들은 실제 자연 현상이라기보다 인생에서 만나는 <b>불안, 위기, 두려움</b>을 상징합니다.</p>
-    <p>하지만 화자는 그런 상황 속에서도 “네가 내 곁에 있어 준다면 두렵지 않다”고 말합니다. 여기서 중요한 것은 큰 해결책이 아닙니다. 그저 옆에 있어 주는 것, 함께 버텨 주는 것만으로도 사람에게 큰 힘이 될 수 있다는 뜻입니다.</p>
-    <p><b>핵심 메시지:</b> 이 노래는 우정, 신뢰, 지지의 가치를 보여줍니다. 학생들은 이 노래를 통해 <b>친구를 지지하는 말, 어려울 때 함께하는 태도, 관계의 소중함</b>을 배울 수 있습니다.</p>
-    """
+    bg_content = "<h3>🤝 Stand By Me: 신뢰와 연대의 힘</h3><p>시련 속에서도 곁을 지켜주는 사람이 있다면 이겨낼 수 있다는 노래입니다.</p>"
     lyrics_raw = [
         ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
         ("And the moon is the only light we'll see", "저 달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
@@ -232,12 +163,7 @@ elif "4. Stand By Me" in song_choice:
 
 elif "5. Don't Know Why" in song_choice:
     video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
-    bg_content = """
-    <h3>🍂 Don't Know Why: 망설임 뒤에 남은 후회</h3>
-    <p>Norah Jones의 <b>Don't Know Why</b>는 조용하고 부드러운 분위기의 노래이지만, 그 안에는 깊은 후회와 쓸쓸함이 담겨 있습니다. 화자는 어떤 사람에게 가지 못했고, 시간이 지난 뒤에도 왜 그때 가지 않았는지 스스로에게 묻습니다.</p>
-    <p>이 노래의 핵심 감정은 <b>망설임</b>입니다. 가고 싶었지만 가지 못했고, 말하고 싶었지만 말하지 못한 마음이 노래 전체에 흐릅니다. 그래서 반복되는 “I don't know why”는 단순히 이유를 모른다는 뜻이 아니라, 자신의 선택을 계속 되돌아보는 마음을 보여줍니다.</p>
-    <p><b>핵심 메시지:</b> 때로는 용기를 내지 못한 선택이 오래 마음에 남을 수 있습니다. 이 노래는 조용한 멜로디를 통해 <b>후회, 망설임, 그리움, 놓친 기회</b>를 표현합니다. 학생들은 이 노래를 통해 감정을 은근하게 표현하는 영어를 배울 수 있습니다.</p>
-    """
+    bg_content = "<h3>🍂 Don't Know Why: 망설임 끝에 놓친 사랑</h3><p>용기가 없어 다가지 못한 인연에 대한 쓸쓸한 후회입니다.</p>"
     lyrics_raw = [
         ("I waited 'til I saw the sun", "난 해가 뜰 때까지 기다렸어요"),
         ("I don't know why I didn't come", "내가 왜 가지 않았는지 모르겠어요"),
@@ -256,7 +182,7 @@ elif "5. Don't Know Why" in song_choice:
     ]
 
 # -------------------------
-# 가사 가공
+# 가사 가공 (알파벳 기호 추가)
 # -------------------------
 alphabet = list(string.ascii_lowercase)
 full_lyrics = []
@@ -268,7 +194,6 @@ for i, (eng, kor) in enumerate(lyrics_raw):
 # 순서 섞기 및 세션 관리
 # -------------------------
 correct_order = [line[0] for line in full_lyrics]
-
 if 'scrambled' not in st.session_state or st.session_state.get('last_song') != song_choice:
     st.session_state.scrambled = random.sample(correct_order, len(correct_order))
     st.session_state.last_song = song_choice
@@ -278,99 +203,54 @@ if 'scrambled' not in st.session_state or st.session_state.get('last_song') != s
 # -------------------------
 if selected_tab == "🎬 배경 학습":
     st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
-
     v1, v2, v3 = st.columns([1, 4, 1])
-    with v2:
-        st.video(video_url)
+    with v2: st.video(video_url)
 
 elif selected_tab == "📖 가사 & 퀴즈":
     col_v, col_l = st.columns([1, 1.2])
-
     with col_v:
         st.video(video_url)
         st.divider()
         st.markdown("### 💡 Comprehension Quiz")
-
         with st.form(f"quiz_{song_choice}"):
             for i, (q, opts, ans) in enumerate(questions):
                 q_text = q
-
                 if st.session_state.submitted_step2:
                     user_val = st.session_state.get(f"q_sel_{i}")
                     q_text += " ✅" if user_val == ans else f" 🔍 (정답: {ans})"
-
                 st.radio(q_text, opts, index=None, key=f"q_sel_{i}")
-
             if st.form_submit_button("정답 확인 및 채점"):
                 st.session_state.submitted_step2 = True
                 st.rerun()
-
     with col_l:
         st.markdown("### 🎼 Full Lyrics")
-
         for eng, kor in full_lyrics:
-            st.markdown(
-                f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>',
-                unsafe_allow_html=True
-            )
+            st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
 elif selected_tab == "🧩 순서 배열":
-    st.subheader("🧩 가사 순서대로 클릭하세요")
-    st.caption("a, b, c... 순서를 참고해서 클릭하세요.")
-
+    st.subheader("🧩 가사 순서대로 클릭하세요 (a, b, c... 순서 참고)")
     b_cols = st.columns(2)
-
     for i, text in enumerate(st.session_state.scrambled):
         is_sel = text in st.session_state.q3_cards
-
-        if (b_cols[0] if i % 2 == 0 else b_cols[1]).button(
-            text,
-            key=f"btn3_{i}",
-            use_container_width=True,
-            disabled=is_sel
-        ):
+        if (b_cols[0] if i % 2 == 0 else b_cols[1]).button(text, key=f"btn3_{i}", use_container_width=True, disabled=is_sel):
             st.session_state.q3_cards.append(text)
             st.rerun()
-
     st.divider()
-
-    st.markdown("### 내가 선택한 순서")
-
     for idx, card in enumerate(st.session_state.q3_cards):
         c1, c2 = st.columns([0.92, 0.08])
-        c1.info(f"{idx + 1}: {card}")
-
+        c1.info(f"{idx+1}: {card}")
         if c2.button("🗑️", key=f"del3_{idx}"):
             st.session_state.q3_cards.pop(idx)
             st.rerun()
-
-    c_reset, c_result = st.columns(2)
-
-    with c_reset:
-        if st.button("다시 섞기", use_container_width=True):
-            st.session_state.q3_cards = []
-            st.session_state.scrambled = random.sample(correct_order, len(correct_order))
-            st.session_state.show_q3_result = False
+    if len(st.session_state.q3_cards) == len(correct_order):
+        if st.button("🚩 최종 결과 확인", type="primary", use_container_width=True):
+            st.session_state.show_q3_result = True
             st.rerun()
-
-    with c_result:
-        if len(st.session_state.q3_cards) == len(correct_order):
-            if st.button("🚩 최종 결과 확인", type="primary", use_container_width=True):
-                st.session_state.show_q3_result = True
-                st.rerun()
-        else:
-            st.info(f"{len(st.session_state.q3_cards)} / {len(correct_order)} 선택 완료")
-
     if st.session_state.get('show_q3_result'):
         all_correct = True
-
         for i, user_s in enumerate(st.session_state.q3_cards):
-            if user_s == correct_order[i]:
-                st.success(f"Step {i + 1}: Perfect!")
+            if user_s == correct_order[i]: st.success(f"Step {i+1}: Perfect!")
             else:
-                st.error(f"Step {i + 1}: Wrong / 정답: {correct_order[i]}")
+                st.error(f"Step {i+1}: Wrong (정답: {correct_order[i]})")
                 all_correct = False
-
-        if all_correct:
-            st.balloons()
-            st.success("🎉 완벽합니다!")
+        if all_correct: st.balloons()
