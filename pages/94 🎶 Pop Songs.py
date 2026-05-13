@@ -12,7 +12,6 @@ st.markdown("""
         background-color: #f8fafc; padding: 25px; border-radius: 15px;
         border: 2px solid #6366f1; text-align: center; color: #4338ca; margin-bottom: 25px;
     }
-    /* 선택 박스 라벨 글씨 크기 조정 */
     .big-label {
         font-size: 1.8rem !important;
         font-weight: 800 !important;
@@ -47,15 +46,11 @@ def reset_data():
     st.session_state.show_q3_result = False
 
 # -------------------------
-# 상단 곡 선택 메뉴 (글씨 크게 변경)
+# 상단 곡 선택 메뉴
 # -------------------------
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
-
-# HTML 커스텀 라벨 사용
 st.markdown('<span class="big-label">👉 학습할 노래를 선택하세요</span>', unsafe_allow_html=True)
-song_choice = st.selectbox("", 
-                           ["Let It Go - Frozen OST", "Hello - Adele", "A Whole New World - Aladdin OST"],
-                           label_visibility="collapsed")
+song_choice = st.selectbox("", ["Let It Go - Frozen OST", "Hello - Adele", "A Whole New World - Aladdin OST"], label_visibility="collapsed")
 
 if st.session_state.selected_song != song_choice:
     st.session_state.selected_song = song_choice
@@ -68,8 +63,10 @@ if st.session_state.selected_song != song_choice:
 if song_choice == "Let It Go - Frozen OST":
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
     bg_content = """
-    <p><b>❄️ 영화 '겨울왕국(Frozen)'의 핵심 장면입니다.</b></p>
-    <p>주인공 엘사는 태어날 때부터 모든 것을 얼려버리는 마법을 숨기며 평생을 억눌려 살아왔습니다. 하지만 마법이 세상에 드러나자 북쪽 산으로 도망쳐, <b>더 이상 남의 시선을 신경 쓰지 않고 자신의 본모습을 받아들이며 자유를 선언하는 순간</b>을 노래합니다.</p>
+    <h3>❄️ Let It Go: 자유를 향한 외침</h3>
+    <p><b>[줄거리]</b> 아렌델 왕국의 공주 엘사는 손에 닿는 모든 것을 얼려버리는 강력한 마법을 가지고 태어났습니다. 어린 시절 사고로 동생 안나를 다치게 한 후, 엘사는 자신의 힘이 괴물 같다고 느끼며 방 안에 스스로를 가둔 채 평생을 숨기며 살아왔습니다. "숨기고, 느끼지 마라(Conceal, don't feel)"는 부모님의 가르침은 그녀에게 거대한 족쇄였습니다.</p>
+    <p>성인이 되어 여왕 대관식을 치르던 날, 통제할 수 없었던 마법이 온 세상에 드러나게 되고 사람들은 엘사를 괴물로 몰아붙입니다. 결국 엘사는 사람들을 피해 아무도 없는 북쪽 산으로 도망칩니다.</p>
+    <p><b>[노래의 의미]</b> 이 곡은 바로 그 순간, 고립된 산속에서 엘사가 부르는 노래입니다. 더 이상 완벽한 여왕일 필요도, 자신의 마법을 숨길 필요도 없다는 것을 깨달은 엘사는 비로소 <b>자신의 본습을 긍정하며 억눌렸던 에너지를 폭발</b>시킵니다. "추위는 더 이상 나를 괴롭히지 못한다"는 선언과 함께 화려한 얼음 성을 짓는 장면은 영화사상 최고의 명장면으로 꼽힙니다.</p>
     """
     full_lyrics = [
         ("The snow glows white on the mountain tonight, not a footprint to be seen", "오늘 밤 산엔 눈이 하얗게 빛나고, 발자국 하나 보이지 않네"),
@@ -90,8 +87,10 @@ if song_choice == "Let It Go - Frozen OST":
 elif song_choice == "Hello - Adele":
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
     bg_content = """
-    <p><b>☎️ 아델(Adele)의 깊은 감성이 담긴 곡입니다.</b></p>
-    <p>오랜 시간이 흐른 뒤, 주인공은 전 연인에게 전화를 걸어 "Hello"라고 인사를 건넵니다. 단순히 상대를 그리워하는 것을 넘어, <b>과거의 잘못에 대해 미안함을 전하고 스스로와 화해하고 싶어 하는 간절함</b>을 노래하고 있습니다.</p>
+    <h3>☎️ Hello: 과거의 나에게 건네는 안부</h3>
+    <p><b>[배경 설명]</b> 아델의 'Hello'는 단순히 이별한 연인을 그리워하는 노래를 넘어선 깊은 감정을 담고 있습니다. 아델은 이 곡이 <b>"자기 자신을 포함한 모든 사람에게 건네는 사과와 안부"</b>라고 설명했습니다.</p>
+    <p>우리는 누구나 살면서 소중한 사람에게 상처를 주거나, 미숙했던 과거의 자신 때문에 후회하는 순간이 있습니다. 이 노래의 주인공은 아주 오랜 시간이 흐른 뒤, 도저히 닿을 수 없을 것 같은 과거의 인연에게 조심스럽게 전화를 겁니다. 캘리포니아의 화려함 속에 있지만, 마음은 여전히 그 시절의 우리를 꿈꾸고 있죠.</p>
+    <p><b>[노래의 의미]</b> "Hello from the other side(반대편에서 인사해)"라는 가사는 물리적인 거리뿐만 아니라, 다시는 돌아갈 수 없는 '과거'와 '현재' 사이의 거대한 벽을 의미합니다. 상대방은 이미 상처를 잊고 평온해졌을지 모르지만, 주인공은 <b>수천 번의 전화를 걸어서라도 미안하다는 말을 전함으로써 자신의 아픈 과거를 매듭짓고자</b> 합니다.</p>
     """
     full_lyrics = [
         ("Hello, it's me. I was wondering if after all these years you'd like to meet", "안녕, 나야. 이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
@@ -112,8 +111,10 @@ elif song_choice == "Hello - Adele":
 else: # A Whole New World
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
     bg_content = """
-    <p><b>✨ 애니메이션 '알라딘'의 경이로운 비행 장면입니다.</b></p>
-    <p>알라딘은 마법 양탄자를 이용해 성 안에만 갇혀 지내던 자스민 공주에게 성 밖의 광활한 세상을 보여줍니다. <b>처음 느껴보는 자유로움과 설레는 사랑</b>을 밤하늘을 날며 노래하는 아름다운 듀엣곡입니다.</p>
+    <h3>✨ A Whole New World: 성벽 너머의 경이로움</h3>
+    <p><b>[줄거리]</b> 아그라바 왕국의 가난하지만 마음 착한 좀도둑 알라딘은 우연히 시장에서 신분을 숨기고 나온 자스민 공주를 만나 사랑에 빠집니다. 하지만 법적으로 공주는 오직 왕자와만 결혼할 수 있었죠. 알라딘은 지니의 도움으로 왕자로 변신하여 성에 있는 자스민을 찾아갑니다.</p>
+    <p>평생 성벽 안에 갇혀 정해진 삶만을 강요받던 자스민은 알라딘에 대해 반감을 품지만, 알라딘은 그녀에게 "나를 믿나요?(Do you trust me?)"라고 물으며 마법 양탄자에 태웁니다.</p>
+    <p><b>[노래의 의미]</b> 이 곡은 두 사람이 양탄자를 타고 밤하늘을 가로지르며 부르는 듀엣곡입니다. <b>"완전히 새로운 세상"</b>이란 단순히 화려한 경치를 넘어, 누구의 방해도 받지 않고 자신의 의지대로 선택할 수 있는 '자유로운 삶'을 의미합니다. 자스민이 처음으로 성 밖의 세상을 보며 느낀 전율과 알라딘의 진심이 어우러져 디즈니 역사상 가장 로맨틱한 순간을 만들어냅니다.</p>
     """
     full_lyrics = [
         ("I can show you the world. Shining, shimmering, splendid", "당신에게 세상을 보여줄 수 있어요. 빛나고 어른거리며 화려한 세상을요"),
@@ -132,14 +133,16 @@ else: # A Whole New World
     scrambled_order = [correct_order[4], correct_order[1], correct_order[8], correct_order[0], correct_order[7], correct_order[2], correct_order[9], correct_order[3], correct_order[6], correct_order[5]]
 
 # -------------------------
-# 탭 구성
+# 탭 구성 (공통 로직)
 # -------------------------
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 배경 학습", "📖 STEP 2. 전체 가사 & 퀴즈", "🧩 STEP 3. 1절 순서 배열"])
 
 with tab1:
-    st.markdown(f'<div class="info-box"><h3>📜 Song Story: {song_choice}</h3>{bg_content}</div>', unsafe_allow_html=True)
     v1, v2, v3 = st.columns([1, 4, 1])
-    with v2: st.video(video_url)
+    with v2: 
+        st.video(video_url)
+    # 영상 아래로 설명 이동 및 분량 강화
+    st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
 
 with tab2:
     col_v, col_l = st.columns([1, 1.2])
