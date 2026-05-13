@@ -10,7 +10,7 @@ st.set_page_config(
 )
 
 # =========================
-# 고급 CSS 디자인 (A/B 선택 강조)
+# 고급 CSS 디자인 (인터랙티브 요소 강조)
 # =========================
 st.markdown("""
 <style>
@@ -22,118 +22,106 @@ st.markdown("""
         text-align: center;
         margin-bottom: 25px;
     }
-    .lyrics-window {
+    /* 가사 영역 스타일 */
+    .lyrics-container {
         background-color: #1e293b;
         padding: 30px;
         border-radius: 20px;
         border: 2px solid #38bdf8;
-        height: 500px;
-        overflow-y: auto;
-        line-height: 3.0;
-        font-size: 1.25rem;
-        font-family: 'Courier New', monospace;
-        color: #e2e8f0;
+        line-height: 2.5;
+        font-size: 1.3rem;
+        font-family: 'Nanum Gothic', sans-serif;
     }
-    .choice-tag {
+    /* 현재 읽는 구절 강조색 */
+    .current-line {
+        background-color: rgba(56, 189, 248, 0.2);
+        border-left: 4px solid #38bdf8;
+        padding-left: 10px;
+        display: block;
+    }
+    .choice-label {
         color: #fbbf24;
         font-weight: bold;
-        background-color: #334155;
-        padding: 3px 8px;
-        border-radius: 6px;
-        border: 1px solid #fbbf24;
+        margin-right: 10px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="title-box"><h1>❄️ Let It Go: Verse 1 Training</h1><p>노래를 들으며 가사 속 [ A / B ] 중 들리는 단어를 순서대로 고르세요!</p></div>', unsafe_allow_html=True)
+st.markdown('<div class="title-box"><h1>❄️ Let It Go: Direct Click Training</h1><p>노래를 들으며 가사 속 버튼을 눌러 정답을 바로 고르세요!</p></div>', unsafe_allow_html=True)
 
 # =========================
-# 1절 데이터 설정 (A/B 보기)
+# 메인 레이아웃 (영상 | 인터랙티브 가사)
 # =========================
-questions = [
-    {"id": 1, "options": ["mountain", "fountain"], "ans": "mountain"},
-    {"id": 2, "options": ["footsteps", "footprints"], "ans": "footprints"},
-    {"id": 3, "options": ["isolation", "imagination"], "ans": "isolation"},
-    {"id": 4, "options": ["swirling", "swinging"], "ans": "swirling"},
-    {"id": 5, "options": ["heaven", "hidden"], "ans": "heaven"},
-    {"id": 6, "options": ["conceal", "reveal"], "ans": "conceal"},
-    {"id": 7, "options": ["anymore", "anyhow"], "ans": "anymore"},
-    {"id": 8, "options": ["rage", "race"], "ans": "rage"}
-]
+col_v, col_l = st.columns([1, 1.2])
 
-# =========================
-# 메인 레이아웃 (영상 | 가사 및 퀴즈)
-# =========================
-tab_play, tab_result = st.tabs(["🎮 Game Mode", "📊 My Score"])
-
-with tab_play:
-    col_v, col_l = st.columns([1, 1.2])
-
-    with col_v:
-        st.subheader("🎬 Watch & Listen")
-        # 1절 분량에 집중할 수 있도록 영상 배치[cite: 1]
-        st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-        
-        st.divider()
-        st.markdown("### 👂 가사를 들으며 고르세요!")
-        
-        # 가사 순서대로 Radio 버튼 배치[cite: 1]
-        user_answers = []
-        c1, c2 = st.columns(2)
-        for i, q in enumerate(questions):
-            target_col = c1 if i < 4 else c2
-            choice = target_col.radio(
-                f"Question {q['id']}", 
-                q['options'], 
-                index=None, 
-                key=f"q_{q['id']}"
-            )
-            user_answers.append(choice)
-
-    with col_l:
-        st.subheader("📜 Lyrics (Verse 1)")
-        # 1절 가사 내에 선택지를 직접 노출하여 가독성 증대[cite: 1]
-        lyrics_html = """
-        <div class="lyrics-window">
-        The snow glows white on the <span class="choice-tag">1. mountain / fountain</span> tonight<br>
-        Not a <span class="choice-tag">2. footsteps / footprints</span> to be seen<br>
-        A kingdom of <span class="choice-tag">3. isolation / imagination</span><br>
-        And it looks like I'm the queen<br><br>
-        The wind is howling like this <span class="choice-tag">4. swirling / swinging</span> storm inside<br>
-        Couldn't keep it in, <span class="choice-tag">5. heaven / hidden</span> knows I tried<br><br>
-        Don't let them in, don't let them see<br>
-        Be the good girl you always have to be<br>
-        <span class="choice-tag">6. conceal / reveal</span>, don't feel, don't let them know<br>
-        Well, now they know!<br><br>
-        Let it go, let it go<br>
-        Can't hold it back <span class="choice-tag">7. anymore / anyhow</span><br>
-        Let it go, let it go<br>
-        Turn away and slam the door!<br><br>
-        I don't care what they're going to say<br>
-        Let the storm <span class="choice-tag">8. rage / race</span> on<br>
-        The cold never bothered me anyway
-        </div>
-        """
-        st.markdown(lyrics_html, unsafe_allow_html=True)
-
-# =========================
-# 결과 탭
-# =========================
-with tab_result:
-    st.subheader("📊 Your Score")
-    score = 0
-    if None in user_answers:
-        st.warning("아직 풀지 않은 문제가 있습니다!")
+with col_v:
+    st.subheader("🎬 Watch & Listen")
+    st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
     
-    for i, q in enumerate(questions):
-        if user_answers[i] == q['ans']:
-            score += 1
-            st.success(f"{i+1}번: 정답! ({q['ans']})")
-        elif user_answers[i] is not None:
-            st.error(f"{i+1}번: 오답 (정답: {q['ans']})")
-            
     st.divider()
-    st.metric("Total Score", f"{score} / {len(questions)}")
-    if score == len(questions):
+    # 학습 가이드 및 결과 확인
+    st.info("💡 가사 옆의 선택 버튼을 클릭하면 즉시 정답 여부가 확인됩니다.")
+    
+    # 점수 계산용 세션 상태 초기화
+    if 'score' not in st.session_state:
+        st.session_state.score = 0
+    if 'answered' not in st.session_state:
+        st.session_state.answered = set()
+
+    st.metric("My Score", f"{st.session_state.score} / 5")
+    if st.session_state.score == 5:
         st.balloons()
-        st.success("1절 마스터! 정말 잘 들으셨네요! ❄️")
+        st.success("1절의 핵심 단어를 모두 맞혔습니다!")
+
+with col_l:
+    st.subheader("📜 Interactive Lyrics")
+    
+    # 가사를 섹션별로 나누어 배치하고, 버튼을 가사 줄에 직접 통합
+    with st.container():
+        # 1번 문항
+        st.write("The snow glows white on the...")
+        c1_1, c1_2, c1_3 = st.columns([0.1, 0.4, 0.5])
+        with c1_2:
+            q1 = st.selectbox("1. mountain / fountain", ["-선택-", "mountain", "fountain"], key="q1", label_visibility="collapsed")
+            if q1 == "mountain" and "q1" not in st.session_state.answered:
+                st.session_state.score += 1
+                st.session_state.answered.add("q1")
+        st.markdown("<span class="current-line">...tonight, Not a footprint to be seen.</span>", unsafe_allow_html=True)
+        
+        st.write("A kingdom of...")
+        c2_1, c2_2, c2_3 = st.columns([0.1, 0.4, 0.5])
+        with c2_2:
+            q2 = st.selectbox("2. isolation / imagination", ["-선택-", "isolation", "imagination"], key="q2", label_visibility="collapsed")
+            if q2 == "isolation" and "q2" not in st.session_state.answered:
+                st.session_state.score += 1
+                st.session_state.answered.add("q2")
+        st.write("And it looks like I'm the queen.")
+        
+        st.write("The wind is howling like this...")
+        c3_1, c3_2, c3_3 = st.columns([0.1, 0.4, 0.5])
+        with c3_2:
+            q3 = st.selectbox("3. swirling / swinging", ["-선택-", "swirling", "swinging"], key="q3", label_visibility="collapsed")
+            if q3 == "swirling" and "q3" not in st.session_state.answered:
+                st.session_state.score += 1
+                st.session_state.answered.add("q3")
+        st.write("storm inside. Couldn't keep it in, heaven knows I tried.")
+
+        st.write("---")
+        st.write("Don't let them in, don't let them see...")
+        
+        c4_1, c4_2, c4_3 = st.columns([0.1, 0.4, 0.5])
+        with c4_2:
+            q4 = st.selectbox("4. conceal / reveal", ["-선택-", "conceal", "reveal"], key="q4", label_visibility="collapsed")
+            if q4 == "conceal" and "q4" not in st.session_state.answered:
+                st.session_state.score += 1
+                st.session_state.answered.add("q4")
+        st.write("don't feel, don't let them know. Well, now they know!")
+
+        st.write("Let it go, let it go. Can't hold it back...")
+        c5_1, c5_2, c5_3 = st.columns([0.1, 0.4, 0.5])
+        with c5_2:
+            q5 = st.selectbox("5. anymore / anyhow", ["-선택-", "anymore", "anyhow"], key="q5", label_visibility="collapsed")
+            if q5 == "anymore" and "q5" not in st.session_state.answered:
+                st.session_state.score += 1
+                st.session_state.answered.add("q5")
+        st.write("Let it go, let it go. Turn away and slam the door!")
