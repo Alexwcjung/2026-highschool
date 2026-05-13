@@ -68,53 +68,31 @@ st.markdown("""
         font-size: 0.95rem; 
         color: #64748b; 
     }
-    div[data-testid="stRadio"] label {
-        font-size: 1rem;
-    }
-    div[data-testid="stTabs"] button {
-        font-size: 17px;
-        font-weight: 800;
-    }
-    .stButton > button {
-        border-radius: 13px;
-        font-weight: 800;
-    }
+    div[data-testid="stRadio"] label { font-size: 1rem; }
 </style>
 """, unsafe_allow_html=True)
 
 # -------------------------
 # 세션 상태 관리
 # -------------------------
-if "selected_song" not in st.session_state:
+if 'selected_song' not in st.session_state:
     st.session_state.selected_song = "1. Let It Go - Frozen OST"
-
-if "submitted_step2" not in st.session_state:
+if 'submitted_step2' not in st.session_state:
     st.session_state.submitted_step2 = False
-
-if "q3_cards" not in st.session_state:
+if 'q3_cards' not in st.session_state:
     st.session_state.q3_cards = []
-
-if "current_tab" not in st.session_state:
+if 'current_tab' not in st.session_state:
     st.session_state.current_tab = "🎬 배경 학습"
-
-if "show_q3_result" not in st.session_state:
+if 'show_q3_result' not in st.session_state:
     st.session_state.show_q3_result = False
-
 
 def reset_data():
     st.session_state.submitted_step2 = False
     st.session_state.q3_cards = []
     st.session_state.show_q3_result = False
     st.session_state.current_tab = "🎬 배경 학습"
-
-    if "scrambled" in st.session_state:
+    if 'scrambled' in st.session_state:
         del st.session_state.scrambled
-
-    # 곡을 바꿀 때 이전 퀴즈 선택값 제거
-    for key in list(st.session_state.keys()):
-        if key.startswith("q_sel_"):
-            del st.session_state[key]
-
 
 # -------------------------
 # 상단 곡 선택 메뉴
@@ -137,48 +115,27 @@ if st.session_state.selected_song != song_choice:
     reset_data()
     st.rerun()
 
-# -------------------------
-# 탭 수동 제어: key로 상태를 직접 저장
-# 여기서 index와 수동 대입을 쓰지 않아야 탭 이동이 한 번에 인식됩니다.
-# -------------------------
 tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"]
-
 selected_tab = st.radio(
     "",
     tabs_list,
+    index=tabs_list.index(st.session_state.current_tab),
     horizontal=True,
-    label_visibility="collapsed",
-    key="current_tab"
+    label_visibility="collapsed"
 )
+st.session_state.current_tab = selected_tab
 
 # -------------------------
 # 곡별 데이터 설정
 # -------------------------
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
-
     bg_content = """
     <h3>❄️ Let It Go: 숨겨야 했던 나를 드러내는 순간</h3>
-
-    <p>
-    이 노래는 영화 <b>Frozen</b>에서 엘사가 자신의 마법 능력을 더 이상 숨기지 않기로 결심하는 장면에 나옵니다.
-    엘사는 어릴 때부터 모든 것을 얼리는 힘을 가지고 있었지만, 그 힘 때문에 다른 사람을 다치게 할까 봐 두려워했습니다.
-    그래서 오랫동안 자신의 감정과 능력을 숨기며 살아왔습니다.
-    </p>
-
-    <p>
-    대관식 날, 엘사의 마법이 사람들 앞에 드러나고 사람들은 그녀를 두려워합니다.
-    엘사는 결국 왕국을 떠나 눈 덮인 산으로 도망갑니다.
-    하지만 산 위에서 그녀는 처음으로 다른 사람의 시선을 벗어나 자유를 느낍니다.
-    </p>
-
-    <p>
-    <b>핵심 메시지:</b> 이 노래는 단순히 “다 잊어버리자”는 뜻이 아니라,
-    억눌렸던 자신을 받아들이고 진짜 나로 살아가려는 용기를 보여줍니다.
-    학생들은 이 노래를 통해 <b>자기표현, 자유, 두려움 극복</b>이라는 주제를 생각해 볼 수 있습니다.
-    </p>
+    <p>이 노래는 영화 <b>Frozen</b>에서 엘사가 자신의 마법 능력을 더 이상 숨기지 않기로 결심하는 장면에 나옵니다. 엘사는 어릴 때부터 모든 것을 얼리는 힘을 가지고 있었지만, 그 힘 때문에 다른 사람을 다치게 할까 봐 두려워했습니다. 그래서 오랫동안 자신의 감정과 능력을 숨기며 살아왔습니다.</p>
+    <p>대관식 날, 엘사의 마법이 사람들 앞에 드러나고 사람들은 그녀를 두려워합니다. 엘사는 결국 왕국을 떠나 눈 덮인 산으로 도망갑니다. 하지만 산 위에서 그녀는 처음으로 다른 사람의 시선을 벗어나 자유를 느낍니다.</p>
+    <p><b>핵심 메시지:</b> 이 노래는 단순히 “다 잊어버리자”는 뜻이 아니라, 억눌렸던 자신을 받아들이고 진짜 나로 살아가려는 용기를 보여줍니다. 학생들은 이 노래를 통해 <b>자기표현, 자유, 두려움 극복</b>이라는 주제를 생각해 볼 수 있습니다.</p>
     """
-
     lyrics_raw = [
         ("The snow glows white on the mountain tonight", "오늘 밤 산엔 눈이 하얗게 빛나고"),
         ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아"),
@@ -189,7 +146,6 @@ if "1. Let It Go" in song_choice:
         ("Conceal, don't feel, don't let them know", "숨기고, 느끼지 말고, 모르게 해"),
         ("Let it go, let it go! Can't hold it back anymore", "다 잊어, 이제 자유야! 더는 억누를 수 없어")
     ]
-
     questions = [
         ("1. 엘사의 현재 심경은?", ["해방감", "공포", "분노"], "해방감"),
         ("2. 'Conceal'의 뜻은?", ["숨기다", "드러내다", "나누다"], "숨기다"),
@@ -201,29 +157,12 @@ if "1. Let It Go" in song_choice:
 
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
-
     bg_content = """
     <h3>☎️ Hello: 지나간 관계에 건네는 늦은 사과</h3>
-
-    <p>
-    Adele의 <b>Hello</b>는 오래전에 멀어진 사람에게 다시 연락하는 마음을 담은 노래입니다.
-    화자는 시간이 많이 지난 뒤에도 여전히 과거의 기억을 떠올립니다.
-    전화를 걸지만, 상대방에게 제대로 닿지 않는 듯한 느낌이 반복됩니다.
-    </p>
-
-    <p>
-    이 노래에서 “Hello”는 단순한 인사말이 아닙니다.
-    그 안에는 <b>미안함, 후회, 그리움, 다시 말하고 싶은 마음</b>이 담겨 있습니다.
-    화자는 과거의 자신을 돌아보며, 그때 하지 못했던 말을 이제라도 전하고 싶어 합니다.
-    </p>
-
-    <p>
-    <b>핵심 메시지:</b> 사람은 누구나 지나간 관계나 선택에 대해 후회할 때가 있습니다.
-    이 노래는 그런 감정을 솔직하게 마주하는 과정을 보여줍니다.
-    학생들은 이 노래를 통해 <b>사과, 그리움, 후회, 감정 표현</b>과 관련된 영어 표현을 배울 수 있습니다.
-    </p>
+    <p>Adele의 <b>Hello</b>는 오래전에 멀어진 사람에게 다시 연락하는 마음을 담은 노래입니다. 화자는 시간이 많이 지난 뒤에도 여전히 과거의 기억을 떠올립니다. 전화를 걸지만, 상대방에게 제대로 닿지 않는 듯한 느낌이 반복됩니다.</p>
+    <p>이 노래에서 “Hello”는 단순한 인사말이 아닙니다. 그 안에는 <b>미안함, 후회, 그리움, 다시 말하고 싶은 마음</b>이 담겨 있습니다. 화자는 과거의 자신을 돌아보며, 그때 하지 못했던 말을 이제라도 전하고 싶어 합니다.</p>
+    <p><b>핵심 메시지:</b> 사람은 누구나 지나간 관계나 선택에 대해 후회할 때가 있습니다. 이 노래는 그런 감정을 솔직하게 마주하는 과정을 보여줍니다. 학생들은 이 노래를 통해 <b>사과, 그리움, 후회, 감정 표현</b>과 관련된 영어 표현을 배울 수 있습니다.</p>
     """
-
     lyrics_raw = [
         ("Hello, it's me", "안녕, 나야"),
         ("I was wondering if after all these years you'd like to meet", "이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
@@ -232,7 +171,6 @@ elif "2. Hello" in song_choice:
         ("Hello from the other side", "반대편에서 인사해"),
         ("I must've called a thousand times", "수천 번은 전화했을 거야")
     ]
-
     questions = [
         ("1. 화자가 전화를 거는 주된 이유는?", ["사과하기 위해", "돈을 빌리기 위해", "자랑하기 위해"], "사과하기 위해"),
         ("2. 'a thousand times'의 속뜻은?", ["간절한 반복", "정확히 1,000번", "한 번만"], "간절한 반복"),
@@ -244,29 +182,12 @@ elif "2. Hello" in song_choice:
 
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
-
     bg_content = """
     <h3>✨ A Whole New World: 새로운 세상을 보는 용기</h3>
-
-    <p>
-    이 노래는 영화 <b>Aladdin</b>에서 알라딘과 자스민이 마법 양탄자를 타고 새로운 세상을 바라보는 장면에 나옵니다.
-    자스민은 궁전 안에서 보호받으며 살았지만, 동시에 자유롭게 세상을 경험하지 못했습니다.
-    알라딘은 그녀에게 궁전 밖의 넓은 세상을 보여줍니다.
-    </p>
-
-    <p>
-    노래 속 “A Whole New World”는 단순히 새로운 장소를 뜻하지 않습니다.
-    그것은 <b>새로운 시야, 새로운 경험, 스스로 선택하는 삶</b>을 의미합니다.
-    자스민은 이 장면을 통해 자신이 몰랐던 세상을 보고, 자신의 마음이 원하는 방향을 생각하게 됩니다.
-    </p>
-
-    <p>
-    <b>핵심 메시지:</b> 새로운 세상을 만난다는 것은 단순히 여행을 떠나는 것이 아니라,
-    내 생각과 시야가 넓어지는 경험입니다.
-    학생들은 이 노래를 통해 <b>도전, 자유, 새로운 관점, 주체적인 선택</b>이라는 주제를 배울 수 있습니다.
-    </p>
+    <p>이 노래는 영화 <b>Aladdin</b>에서 알라딘과 자스민이 마법 양탄자를 타고 새로운 세상을 바라보는 장면에 나옵니다. 자스민은 궁전 안에서 보호받으며 살았지만, 동시에 자유롭게 세상을 경험하지 못했습니다. 알라딘은 그녀에게 궁전 밖의 넓은 세상을 보여줍니다.</p>
+    <p>노래 속 “A Whole New World”는 단순히 새로운 장소를 뜻하지 않습니다. 그것은 <b>새로운 시야, 새로운 경험, 스스로 선택하는 삶</b>을 의미합니다. 자스민은 이 장면을 통해 자신이 몰랐던 세상을 보고, 자신의 마음이 원하는 방향을 생각하게 됩니다.</p>
+    <p><b>핵심 메시지:</b> 새로운 세상을 만난다는 것은 단순히 여행을 떠나는 것이 아니라, 내 생각과 시야가 넓어지는 경험입니다. 학생들은 이 노래를 통해 <b>도전, 자유, 새로운 관점, 주체적인 선택</b>이라는 주제를 배울 수 있습니다.</p>
     """
-
     lyrics_raw = [
         ("I can show you the world", "당신에게 세상을 보여줄 수 있어요"),
         ("Shining, shimmering, splendid", "빛나고 어른거리며 화려한 세상을요"),
@@ -275,7 +196,6 @@ elif "3. A Whole New World" in song_choice:
         ("Take you wonder by wonder", "경이로운 곳들로 데려가 줄게요"),
         ("A whole new world! A new fantastic point of view", "완전히 새로운 세상! 환상적인 새로운 시야죠")
     ]
-
     questions = [
         ("1. 'Crystal clear'의 문맥상 의미는?", ["아주 명확한", "유리처럼 딱딱한", "차가운"], "아주 명확한"),
         ("2. 노래의 핵심 주제는?", ["자유와 새로운 시각", "성안에서의 안전", "마법 양탄자 수리"], "자유와 새로운 시각"),
@@ -287,28 +207,12 @@ elif "3. A Whole New World" in song_choice:
 
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
-
     bg_content = """
     <h3>🤝 Stand By Me: 힘든 순간에도 곁에 있어 주는 사람</h3>
-
-    <p>
-    <b>Stand By Me</b>는 어려운 상황에서도 누군가가 내 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다.
-    노래 속에는 어두운 밤, 무너지는 하늘, 흔들리는 땅 같은 표현이 나옵니다.
-    이것들은 실제 자연 현상이라기보다 인생에서 만나는 <b>불안, 위기, 두려움</b>을 상징합니다.
-    </p>
-
-    <p>
-    하지만 화자는 그런 상황 속에서도 “네가 내 곁에 있어 준다면 두렵지 않다”고 말합니다.
-    여기서 중요한 것은 큰 해결책이 아닙니다.
-    그저 옆에 있어 주는 것, 함께 버텨 주는 것만으로도 사람에게 큰 힘이 될 수 있다는 뜻입니다.
-    </p>
-
-    <p>
-    <b>핵심 메시지:</b> 이 노래는 우정, 신뢰, 지지의 가치를 보여줍니다.
-    학생들은 이 노래를 통해 <b>친구를 지지하는 말, 어려울 때 함께하는 태도, 관계의 소중함</b>을 배울 수 있습니다.
-    </p>
+    <p><b>Stand By Me</b>는 어려운 상황에서도 누군가가 내 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다. 노래 속에는 어두운 밤, 무너지는 하늘, 흔들리는 땅 같은 표현이 나옵니다. 이것들은 실제 자연 현상이라기보다 인생에서 만나는 <b>불안, 위기, 두려움</b>을 상징합니다.</p>
+    <p>하지만 화자는 그런 상황 속에서도 “네가 내 곁에 있어 준다면 두렵지 않다”고 말합니다. 여기서 중요한 것은 큰 해결책이 아닙니다. 그저 옆에 있어 주는 것, 함께 버텨 주는 것만으로도 사람에게 큰 힘이 될 수 있다는 뜻입니다.</p>
+    <p><b>핵심 메시지:</b> 이 노래는 우정, 신뢰, 지지의 가치를 보여줍니다. 학생들은 이 노래를 통해 <b>친구를 지지하는 말, 어려울 때 함께하는 태도, 관계의 소중함</b>을 배울 수 있습니다.</p>
     """
-
     lyrics_raw = [
         ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
         ("And the moon is the only light we'll see", "저 달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
@@ -317,7 +221,6 @@ elif "4. Stand By Me" in song_choice:
         ("If the sky that we look upon should tumble and fall", "우리가 보는 저 하늘이 무너져 내린다 해도"),
         ("I won't cry, I won't cry. No, I won't shed a tear", "난 울지 않을 거예요")
     ]
-
     questions = [
         ("1. 화자가 두렵지 않은 조건은?", ["누군가 곁에 있을 때", "돈이 많을 때", "해가 뜰 때"], "누군가 곁에 있을 때"),
         ("2. 'Shed a tear'의 뜻은?", ["눈물을 흘리다", "미소를 짓다", "소리를 지르다"], "눈물을 흘리다"),
@@ -329,30 +232,12 @@ elif "4. Stand By Me" in song_choice:
 
 elif "5. Don't Know Why" in song_choice:
     video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
-
     bg_content = """
     <h3>🍂 Don't Know Why: 망설임 뒤에 남은 후회</h3>
-
-    <p>
-    Norah Jones의 <b>Don't Know Why</b>는 조용하고 부드러운 분위기의 노래이지만,
-    그 안에는 깊은 후회와 쓸쓸함이 담겨 있습니다.
-    화자는 어떤 사람에게 가지 못했고, 시간이 지난 뒤에도 왜 그때 가지 않았는지 스스로에게 묻습니다.
-    </p>
-
-    <p>
-    이 노래의 핵심 감정은 <b>망설임</b>입니다.
-    가고 싶었지만 가지 못했고, 말하고 싶었지만 말하지 못한 마음이 노래 전체에 흐릅니다.
-    그래서 반복되는 “I don't know why”는 단순히 이유를 모른다는 뜻이 아니라,
-    자신의 선택을 계속 되돌아보는 마음을 보여줍니다.
-    </p>
-
-    <p>
-    <b>핵심 메시지:</b> 때로는 용기를 내지 못한 선택이 오래 마음에 남을 수 있습니다.
-    이 노래는 조용한 멜로디를 통해 <b>후회, 망설임, 그리움, 놓친 기회</b>를 표현합니다.
-    학생들은 이 노래를 통해 감정을 은근하게 표현하는 영어를 배울 수 있습니다.
-    </p>
+    <p>Norah Jones의 <b>Don't Know Why</b>는 조용하고 부드러운 분위기의 노래이지만, 그 안에는 깊은 후회와 쓸쓸함이 담겨 있습니다. 화자는 어떤 사람에게 가지 못했고, 시간이 지난 뒤에도 왜 그때 가지 않았는지 스스로에게 묻습니다.</p>
+    <p>이 노래의 핵심 감정은 <b>망설임</b>입니다. 가고 싶었지만 가지 못했고, 말하고 싶었지만 말하지 못한 마음이 노래 전체에 흐릅니다. 그래서 반복되는 “I don't know why”는 단순히 이유를 모른다는 뜻이 아니라, 자신의 선택을 계속 되돌아보는 마음을 보여줍니다.</p>
+    <p><b>핵심 메시지:</b> 때로는 용기를 내지 못한 선택이 오래 마음에 남을 수 있습니다. 이 노래는 조용한 멜로디를 통해 <b>후회, 망설임, 그리움, 놓친 기회</b>를 표현합니다. 학생들은 이 노래를 통해 감정을 은근하게 표현하는 영어를 배울 수 있습니다.</p>
     """
-
     lyrics_raw = [
         ("I waited 'til I saw the sun", "난 해가 뜰 때까지 기다렸어요"),
         ("I don't know why I didn't come", "내가 왜 가지 않았는지 모르겠어요"),
@@ -361,7 +246,6 @@ elif "5. Don't Know Why" in song_choice:
         ("My heart is drenched in wine, but you'll be on my mind forever", "내 마음은 술에 흠뻑 젖었지만, 당신은 영원히 내 마음속에 있을 거예요"),
         ("I feel as empty as a drum, I don't know why I didn't come", "텅 빈 드럼처럼 공허해요")
     ]
-
     questions = [
         ("1. 이 노래의 지배적인 감정은?", ["후회와 아쉬움", "분노와 원망", "기쁨"], "후회와 아쉬움"),
         ("2. 'Drenched in wine'은 무엇을 비유하나?", ["슬픔에 젖은 마음", "즐거운 파티", "갈증"], "슬픔에 젖은 마음"),
@@ -375,7 +259,6 @@ elif "5. Don't Know Why" in song_choice:
 # 가사 가공
 # -------------------------
 alphabet = list(string.ascii_lowercase)
-
 full_lyrics = []
 for i, (eng, kor) in enumerate(lyrics_raw):
     label = alphabet[i] if i < len(alphabet) else str(i)
@@ -386,7 +269,7 @@ for i, (eng, kor) in enumerate(lyrics_raw):
 # -------------------------
 correct_order = [line[0] for line in full_lyrics]
 
-if "scrambled" not in st.session_state or st.session_state.get("last_song") != song_choice:
+if 'scrambled' not in st.session_state or st.session_state.get('last_song') != song_choice:
     st.session_state.scrambled = random.sample(correct_order, len(correct_order))
     st.session_state.last_song = song_choice
 
@@ -478,7 +361,7 @@ elif selected_tab == "🧩 순서 배열":
         else:
             st.info(f"{len(st.session_state.q3_cards)} / {len(correct_order)} 선택 완료")
 
-    if st.session_state.get("show_q3_result"):
+    if st.session_state.get('show_q3_result'):
         all_correct = True
 
         for i, user_s in enumerate(st.session_state.q3_cards):
