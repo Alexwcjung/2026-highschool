@@ -1,4 +1,5 @@
 import streamlit as st
+import random
 
 # =========================
 # 1. 기본 설정 및 디자인
@@ -45,13 +46,20 @@ def reset_data():
     st.session_state.submitted_step2 = False
     st.session_state.q3_cards = []
     st.session_state.show_q3_result = False
+    if 'scrambled' in st.session_state: del st.session_state.scrambled
 
 # -------------------------
 # 상단 곡 선택 메뉴
 # -------------------------
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
 st.markdown('<span class="big-label">👉 학습할 노래를 선택하세요</span>', unsafe_allow_html=True)
-song_choice = st.selectbox("", ["Let It Go - Frozen OST", "Hello - Adele", "A Whole New World - Aladdin OST"], label_visibility="collapsed")
+song_options = [
+    "Let It Go - Frozen OST", 
+    "Hello - Adele", 
+    "A Whole New World - Aladdin OST",
+    "Stand By Me - Ben E. King"
+]
+song_choice = st.selectbox("", song_options, label_visibility="collapsed")
 
 if st.session_state.selected_song != song_choice:
     st.session_state.selected_song = song_choice
@@ -65,9 +73,9 @@ if song_choice == "Let It Go - Frozen OST":
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
     bg_content = """
     <h3>❄️ Let It Go: 완벽한 착한 소녀를 벗어던지다</h3>
-    <p><b>[전체 줄거리]</b> 아렌델 왕국의 장녀 엘사는 태어날 때부터 손에 닿는 모든 것을 얼려버리는 강력한 마법을 가지고 태어났습니다. 하지만 어린 시절, 마법으로 동생 안나를 놀아주다 실수로 안나의 머리에 상처를 입히는 사고가 발생합니다. 이 일로 큰 충격을 받은 부모님은 엘사의 힘을 외부와 격리시키고, 엘사에게 "자신의 감정을 숨기고 마법을 억누르라"고 가르칩니다. 엘사는 동생마저 멀리한 채 장갑을 끼고 방 안에서만 평생을 고립되어 살아갑니다.</p>
-    <p>세월이 흘러 부모님이 돌아가신 후 여왕 대관식이 열리던 날, 사소한 말다툼 끝에 통제력을 잃은 엘사의 마법이 온 세상 사람들 앞에서 폭발합니다. 사람들은 그녀를 '괴물'이라며 두려워하고, 엘사는 공포에 질려 북쪽 산으로 홀로 도망칩니다.</p>
-    <p><b>[곡의 배경과 의미]</b> 이 곡은 고립된 눈산에서 홀로 남겨진 엘사가 부르는 노래입니다. 처음에는 두려움에 떨지만, 곧 <b>누구도 자신을 감시하지 않는 이곳이야말로 진정한 자유를 누릴 수 있는 곳</b>임을 깨닫습니다. "Conceal, don't feel"이라는 평생의 제약을 던져버리고, 자신의 잠재력을 마음껏 발산하며 얼음 성을 짓는 이 장면은 자아를 찾아가는 해방감을 상징합니다.</p>
+    <p><b>[전체 줄거리]</b> 아렌델 왕국의 장녀 엘사는 태어날 때부터 모든 것을 얼려버리는 강력한 마법을 가지고 태어났습니다. 어린 시절, 실수로 동생 안나를 다치게 한 후 엘사는 자신의 힘을 공포의 대상으로 여기게 됩니다. 부모님은 엘사에게 "자신의 감정을 숨기고 마법을 억누르라"고 가르쳤고, 그녀는 장갑 속에 손을 감춘 채 평생을 고립되어 살아갑니다.</p>
+    <p>여왕 대관식 날, 억눌렸던 마법이 세상 사람들 앞에서 폭발하고 엘사는 '괴물'이라는 비난을 피해 북쪽 산으로 도망칩니다. 아무도 없는 눈산에 도착한 엘사는 비로소 평생 자신을 옥죄었던 "착한 소녀가 되어야 한다"는 강박을 벗어던집니다.</p>
+    <p><b>[노래의 의미]</b> 이 곡은 엘사의 <span class="highlight">'해방'과 '자기 수용'</span>을 상징합니다. 과거의 두려움과 사람들의 시선을 뒤로하고, 자신의 마법으로 화려한 얼음 성을 짓는 과정은 억압받던 영혼이 비로소 자유를 찾는 위대한 선언입니다.</p>
     """
     full_lyrics = [
         ("The snow glows white on the mountain tonight, not a footprint to be seen", "오늘 밤 산엔 눈이 하얗게 빛나고, 발자국 하나 보이지 않네"),
@@ -87,9 +95,9 @@ elif song_choice == "Hello - Adele":
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
     bg_content = """
     <h3>☎️ Hello: 닿지 않는 과거에 건네는 간절한 사과</h3>
-    <p><b>[곡의 배경과 정서]</b> 아델의 'Hello'는 단순히 헤어진 연인에 대한 그리움을 넘어, 세월의 흐름과 관계의 상실에 대한 깊은 성찰을 담고 있습니다. 곡 속의 주인공은 화려한 도시 생활 속에서도 마음 한구석에 해결되지 않은 과거의 '미안함'을 품고 살아갑니다. 오랜 시간이 흘러 이제는 상대방의 번호조차 맞는지 확신할 수 없지만, 주인공은 용기를 내어 전화를 겁니다.</p>
-    <p><b>[풍부한 서사]</b> 가사 속에서 주인공은 "우리가 어리고 자유로웠던 시절"을 회상합니다. 세상이 우리 발밑에 있었고 영원할 것 같았던 그때, 주인공은 상대방에게 큰 상처를 남기고 떠났습니다. 이제 어른이 된 주인공은 그 상처를 보듬기 위해 "반대편(The other side)"에서 전화를 겁니다. </p>
-    <p><b>[노래의 의미]</b> "수천 번을 전화했다"는 표현은 물리적인 통화 횟수라기보다, <b>매일 밤 마음속으로 수만 번 되뇌었던 사과의 진심</b>을 뜻합니다. 비록 상대방은 이미 삶을 회복하여 전화를 받지 않거나 응답이 없지만, 주인공은 이 일방적인 고백을 통해 비로소 스스로의 죄책감에서 벗어나고자 하는 처절한 성장을 보여줍니다.</p>
+    <p><b>[곡의 배경]</b> 아델의 'Hello'는 세월이 흐른 뒤, 과거에 상처를 주었던 인연에게 건네는 뒤늦은 사과를 담고 있습니다. 주인공은 캘리포니아의 화려한 삶 속에 있지만, 마음 한구석에는 여전히 해결되지 않은 과거의 후회가 남아 있습니다.</p>
+    <p><b>[풍부한 서사]</b> 주인공은 "우리가 어리고 자유로웠던 시절"을 회상합니다. 세상이 우리 발밑에 있었고 영원할 것 같았던 그때, 미숙했던 주인공은 상대방에게 큰 상처를 남기고 떠났습니다. 이제 어른이 된 그녀는 도저히 닿을 수 없을 것 같은 과거의 인연에게 "Hello"라고 인사를 건넵니다.</p>
+    <p><b>[노래의 의미]</b> "수천 번을 전화했다"는 말은 실제로 건 전화 횟수라기보다, <b>매일 밤 마음속으로 되뇌었던 사과의 진심</b>을 뜻합니다. 비록 상대방은 이미 삶을 회복하여 응답이 없지만, 주인공은 이 일방적인 고백을 통해 비로소 자신의 죄책감에서 벗어나고자 합니다.</p>
     """
     full_lyrics = [
         ("Hello, it's me. I was wondering if after all these years you'd like to meet", "안녕, 나야. 이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
@@ -105,13 +113,13 @@ elif song_choice == "Hello - Adele":
     ]
     questions = [("1. 'thousand times'의 뜻은?", ["딱 1000번", "매우 많이 연락함", "번호 실수"], "매우 많이 연락함"), ("2. 치유(healing)에 대한 화자의 말?", ["다 나았다", "별로 치유 안 됐다", "행복하다"], "별로 치유 안 됐다"), ("3. 화자가 있는 장소는?", ["런던", "캘리포니아", "서울"], "캘리포니아"), ("4. 전화 목적은?", ["돈 빌리기", "사과하기", "다시 사귀기"], "사과하기")]
 
-else: # A Whole New World
+elif song_choice == "A Whole New World - Aladdin OST":
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
     bg_content = """
     <h3>✨ A Whole New World: 성벽 너머, 새로운 운명을 향한 비행</h3>
-    <p><b>[전체 줄거리]</b> 아그라바 왕국의 시장에서 좀도둑으로 살아가던 알라딘은 변장을 하고 성 밖으로 탈출한 자스민 공주를 우연히 도와주며 첫눈에 반하게 됩니다. 하지만 신분의 벽은 높기만 했죠. 알라딘은 램프의 요정 지니를 만나 '알리 왕자'로 변신한 뒤, 수많은 구혼자들에게 지쳐있던 자스민을 찾아갑니다.</p>
-    <p>자스민 공주는 평생 궁궐이라는 화려한 감옥에 갇혀, 법률에 따라 사랑하지도 않는 왕자와 결혼해야 하는 운명에 처해 있었습니다. 알라딘은 그런 그녀에게 "나를 믿나요?"라고 물으며 마법 양탄자를 내밉니다.</p>
-    <p><b>[곡의 배경과 의미]</b> 이 노래는 두 사람이 양탄자를 타고 구름 위와 세계 곳곳의 유적지를 누비며 부르는 환상적인 듀엣곡입니다. 단순히 아름다운 경치를 감상하는 노래가 아닙니다. <b>"A Whole New World"는 자스민에게는 '억압으로부터의 탈출'을, 알라딘에게는 '진실한 사랑'을 의미합니다.</b> 처음으로 자신의 눈으로 직접 세상을 마주하게 된 자스민과, 그녀에게 넓은 세상을 선물한 알라딘의 교감은 "누구도 우리에게 안 된다고 말할 수 없는" 주체적인 삶에 대한 찬가입니다.</p>
+    <p><b>[전체 줄거리]</b> 아그라바 왕국의 시장에서 좀도둑으로 살아가던 알라딘은 신분을 숨기고 탈출한 자스민 공주를 우연히 도와주며 사랑에 빠집니다. 하지만 신분의 벽 때문에 다가가지 못하다가, 지니의 도움으로 '알리 왕자'로 변신해 그녀를 찾아갑니다.</p>
+    <p>자스민 공주는 평생 궁궐이라는 감옥에 갇혀 법률에 따라 사랑하지도 않는 왕자와 결혼해야 하는 운명에 절망하고 있었습니다. 알라딘은 그런 그녀에게 "나를 믿나요?"라고 물으며 마법 양탄자에 태워 성 밖으로 데려갑니다.</p>
+    <p><b>[노래의 의미]</b> 이 곡은 두 사람이 밤하늘을 날며 부르는 환상적인 듀엣곡입니다. 여기서 <span class="highlight">"완전히 새로운 세상"</span>이란 단순히 화려한 풍경이 아니라, <b>타인의 통제에서 벗어나 스스로 선택하고 사랑할 수 있는 자유로운 삶</b>을 의미합니다. 자스민이 처음으로 마주한 세상의 광활함은 그녀의 인생이 바뀔 것임을 예고합니다.</p>
     """
     full_lyrics = [
         ("I can show you the world. Shining, shimmering, splendid", "당신에게 세상을 보여줄 수 있어요. 빛나고 어른거리며 화려한 세상을요"),
@@ -127,10 +135,31 @@ else: # A Whole New World
     ]
     questions = [("1. 이동 수단은?", ["마차", "양탄자", "코끼리"], "양탄자"), ("2. 'A whole new world'?", ["오래된 가게", "새로운 세상", "감옥"], "새로운 세상"), ("3. 'Crystal clear'?", ["수정이 깨끗함", "매우 명확함", "유리가 반짝임"], "매우 명확함"), ("4. 알라딘의 질문은?", ["배고픈지", "마음의 결정을 따랐는지", "이름이 뭔지"], "마음의 결정을 따랐는지")]
 
-# 공통 데이터 처리
+else: # Stand By Me
+    video_url = "https://www.youtube.com/watch?v=hwZNL7QVJjE"
+    bg_content = """
+    <h3>🤝 Stand By Me: 어둠 속에서도 든든한 연대의 힘</h3>
+    <p><b>[배경 설명]</b> 1961년 베릴 E. 킹이 발표한 이 곡은 대중음악 역사상 가장 위대한 곡 중 하나로 꼽힙니다. 흑인 영가에서 영감을 받아 만들어진 이 노래는, 이후 동명의 영화(1986)의 주제곡으로 쓰이며 '우정과 연대'의 상징이 되었습니다.</p>
+    <p><b>[풍부한 서사]</b> 노래의 배경은 칠흑 같은 어둠이 깔린 밤입니다. 땅은 어둡고 달빛만이 유일한 빛인 두려운 상황이죠. 하늘이 무너져 내리고 산이 바다로 무너져 내리는 천재지변 같은 시련이 닥칠지라도, 주인공은 "울지 않겠다"고 다짐합니다. </p>
+    <p><b>[노래의 의미]</b> 이 노래에서 <span class="highlight">"Stand By Me(내 곁에 서 있어줘)"</span>는 단순한 물리적 거리가 아니라, 고난을 함께 이겨내자는 <b>'신뢰와 지지'</b>를 의미합니다. 친구, 연인, 혹은 공동체 등 우리가 의지할 수 있는 누군가가 곁에 있다면 그 어떤 세상의 종말 같은 위협도 두렵지 않다는 인간애의 메시지를 담고 있습니다.</p>
+    """
+    full_lyrics = [
+        ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
+        ("And the moon is the only light we'll see", "우리가 볼 수 있는 빛이라곤 저 달빛뿐일 때"),
+        ("No, I won't be afraid. Oh, I won't be afraid", "난 두렵지 않을 거예요. 두려워하지 않을 거예요"),
+        ("Just as long as you stand, stand by me", "당신이 내 곁에, 내 곁에 서 있어 주기만 한다면요"),
+        ("If the sky that we look upon should tumble and fall", "우리가 올려다보는 저 하늘이 무너져 내린다 해도"),
+        ("Or the mountain should crumble to the sea", "혹은 저 산이 바다로 무너져 내린다 해도"),
+        ("I won't cry, I won't cry. No, I won't shed a tear", "난 울지 않을 거예요. 눈물 한 방울 흘리지 않을 거예요"),
+        ("Just as long as you stand, stand by me", "당신이 내 곁에, 내 곁에 서 있어 주기만 한다면요"),
+        ("Whenever you're in trouble won't you stand by me", "당신이 곤경에 처할 때마다 내 곁에 서 있어 주겠어요?"),
+        ("Oh, stand by me, won't you stand by me", "내 곁에 서 주세요, 내 곁에 서 주지 않겠어요?")
+    ]
+    questions = [("1. 유일한 빛(only light)은?", ["햇빛", "달빛", "별빛"], "달빛"), ("2. 'Tumble and fall' 하는 것은?", ["산", "하늘", "나무"], "하늘"), ("3. 'Shed a tear'의 뜻은?", ["웃다", "노래하다", "눈물을 흘리다"], "눈물을 흘리다"), ("4. 'Stand by me'의 의미는?", ["멀리 떠나다", "내 곁에 있어주다", "일어서다"], "내 곁에 있어주다")]
+
+# 공통 데이터 처리 (순서 섞기)
 correct_order = [line[0] for line in full_lyrics]
 if 'scrambled' not in st.session_state or st.session_state.get('last_song') != song_choice:
-    import random
     st.session_state.scrambled = random.sample(correct_order, len(correct_order))
     st.session_state.last_song = song_choice
 
@@ -140,10 +169,13 @@ if 'scrambled' not in st.session_state or st.session_state.get('last_song') != s
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 배경 학습", "📖 STEP 2. 전체 가사 & 퀴즈", "🧩 STEP 3. 1절 순서 배열"])
 
 with tab1:
+    # 설명을 맨 위로 배치
+    st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
+    
+    # 영상을 아래로 배치
     v1, v2, v3 = st.columns([1, 4, 1])
     with v2: 
         st.video(video_url)
-    st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
 
 with tab2:
     col_v, col_l = st.columns([1, 1.2])
