@@ -1,7 +1,8 @@
 
-st.markdown("## ⚽ Soccer Talk with Ronaldo")
+from pathlib import Path
 
-st.image("pages/images/ronaldo.png", use_container_width=True)
+BASE_DIR = Path(__file__).resolve().parent
+st.image(str(BASE_DIR / "images" / "ronaldo.png"), use_container_width=True)
 
 st.markdown("""
 ### Reading Practice
