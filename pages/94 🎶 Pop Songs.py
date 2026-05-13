@@ -16,6 +16,7 @@ st.markdown("""
     .info-box {
         background-color: #f8fafc; padding: 20px; border-radius: 12px;
         border: 1px solid #e2e8f0; line-height: 1.8; margin-bottom: 20px;
+        height: 100%;
     }
     /* 가사 스타일 */
     .lyrics-container {
@@ -45,18 +46,17 @@ st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Cl
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경 알기", "📖 STEP 2. 가사 듣기 & 이해", "🧩 STEP 3. 후렴구 순서 맞추기"])
 
 # -------------------------
-# STEP 1: 영상 & 상세 배경 설명
+# STEP 1: 영상 & 상세 배경 설명 (영상 절반 크기로 배치)
 # -------------------------
 with tab1:
     st.subheader("❄️ '겨울왕국(Frozen)' 배경 알아보기")
     
-    # 영상 추가 (영화 클립 또는 공식 뮤직비디오)
-    st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-    st.markdown("<br>", unsafe_allow_html=True)
+    # 화면을 정확히 절반(1:1)으로 나눕니다
+    col_vid, col_txt = st.columns(2)
     
-    col_img, col_txt = st.columns([1, 1.5])
-    
-    with col_img:
+    with col_vid:
+        # 영상이 화면의 절반만 차지하도록 배치
+        st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
         st.info("🏰 **아렌델 왕국 (Arendelle)**\n\n북유럽의 노르웨이를 모델로 한 아름다운 항구 도시입니다. 평화롭지만 마법의 두려워하는 전통이 있는 곳이죠.")
 
     with col_txt:
@@ -72,7 +72,7 @@ with tab1:
         """, unsafe_allow_html=True)
 
 # -------------------------
-# STEP 2: 가사 전체 노출 & 왼쪽 퀴즈
+# STEP 2: 가사 전체 노출 & 왼쪽 퀴즈 (스크롤 제거)
 # -------------------------
 with tab2:
     st.subheader("📖 가사 전체 보기 및 이해도 체크")
@@ -143,15 +143,14 @@ with tab2:
             ("The cold never bothered me anyway", "어차피 추위는 날 괴롭히지 못했으니까")
         ]
         
-        # 스크롤 가능한 컨테이너 안에 가사 넣기
-        with st.container(height=600):
-            for eng, kor in full_lyrics:
-                st.markdown(f"""
-                <div class="lyrics-container">
-                    <div class="eng-line">{eng}</div>
-                    <div class="kor-sub">{kor}</div>
-                </div>
-                """, unsafe_allow_html=True)
+        # 이전 코드의 컨테이너(스크롤)를 제거하고 전체 가사가 길게 그대로 보이도록 설정
+        for eng, kor in full_lyrics:
+            st.markdown(f"""
+            <div class="lyrics-container">
+                <div class="eng-line">{eng}</div>
+                <div class="kor-sub">{kor}</div>
+            </div>
+            """, unsafe_allow_html=True)
 
 # -------------------------
 # STEP 3: 순서 맞추기 (문제 여러 개)
