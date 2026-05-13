@@ -4,61 +4,49 @@ import streamlit as st
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Lyrics Training: Let It Go",
+    page_title="Lyrics Training with Subtitles",
     page_icon="❄️",
     layout="wide"
 )
 
 # =========================
-# CSS 디자인 (강조 및 잠금 효과)
+# CSS 디자인 (자막 가독성 강화)
 # =========================
 st.markdown("""
 <style>
     .stApp { background-color: #0f172a; color: #f8fafc; } 
-    .title-box {
-        background: linear-gradient(90deg, #0ea5e9, #2563eb);
-        padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 25px;
+    .lyrics-card {
+        background-color: #1e293b;
+        padding: 20px;
+        border-radius: 15px;
+        border-left: 5px solid #38bdf8;
+        margin-bottom: 20px;
     }
-    .lyrics-row {
-        padding: 12px;
-        margin: 5px 0;
-        border-radius: 8px;
-        font-size: 1.3rem;
-        transition: all 0.3s;
+    .korean-sub {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        font-family: 'Nanum Gothic', sans-serif;
+        margin-top: 5px;
     }
-    /* 현재 풀어야 할 가사 강조 */
-    .active-row {
-        background-color: rgba(56, 189, 248, 0.25);
-        border-left: 6px solid #38bdf8;
+    .english-line {
+        font-size: 1.2rem;
         font-weight: bold;
+        color: #f1f5f9;
     }
-    /* 아직 도달하지 않은 가사 흐리게 */
-    .locked-row {
-        color: #475569;
-        filter: blur(1px);
-        pointer-events: none;
+    .stop-sign {
+        color: #ef4444;
+        font-weight: bold;
+        font-size: 0.9rem;
+        margin-bottom: 5px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="title-box"><h1>❄️ Let It Go: Step-by-Step</h1><p>정답을 맞춰야 다음 가사가 나타납니다!</p></div>', unsafe_allow_html=True)
-
 # =========================
-# 세션 상태 초기화 (진행 단계 관리)
+# 세션 상태 (진행 단계 관리)
 # =========================
 if 'step' not in st.session_state:
-    st.session_state.step = 1  # 1단계부터 시작
-if 'score' not in st.session_state:
-    st.session_state.score = 0
-
-# 문제 데이터
-questions = [
-    {"id": 1, "text": "The snow glows white on the...", "options": ["mountain", "fountain"], "ans": "mountain", "after": "tonight, Not a footprint to be seen."},
-    {"id": 2, "text": "A kingdom of...", "options": ["isolation", "imagination"], "ans": "isolation", "after": "And it looks like I'm the queen."},
-    {"id": 3, "text": "The wind is howling like this...", "options": ["swirling", "swinging"], "ans": "swirling", "after": "storm inside. Heaven knows I tried."},
-    {"id": 4, "text": "Don't let them in, don't let them see. Be the good girl you always have to be...", "options": ["conceal", "reveal"], "ans": "conceal", "after": "don't feel, don't let them know."},
-    {"id": 5, "text": "Let it go, let it go. Can't hold it back...", "options": ["anymore", "anyhow"], "ans": "anymore", "after": "Turn away and slam the door!"}
-]
+    st.session_state.step = 1[cite: 1]
 
 # =========================
 # 메인 레이아웃
@@ -66,49 +54,88 @@ questions = [
 col_v, col_l = st.columns([1, 1.2])
 
 with col_v:
-    st.subheader("🎬 Watch & Listen")
+    st.markdown("### 🎬 1. Watch Video")
     st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
+    st.info("💡 노래를 들으며 오른쪽에서 정답을 고르세요. 정답을 맞춰야 다음 자막이 나옵니다.")
     
     st.divider()
-    st.metric("Progress", f"{st.session_state.step - 1} / 5 Solved")
-    st.progress((st.session_state.step - 1) / 5)
-    
-    if st.session_state.step > 5:
-        st.balloons()
-        st.success("Perfect! 모든 단어를 찾아냈습니다! ❄️")
-        if st.button("다시 도전하기"):
-            st.session_state.step = 1
-            st.rerun()
+    st.metric("Progress", f"Step {st.session_state.step} / 5")
 
 with col_l:
-    st.subheader("📜 Interactive Lyrics")
+    st.markdown("### 📜 2. Interactive Subtitles")
 
-    for i, q in enumerate(questions):
-        current_num = i + 1
-        
-        # 1. 이미 푼 문제들 (결과 표시)
-        if st.session_state.step > current_num:
-            st.markdown(f'<div class="lyrics-row">{q["text"]} **{q["ans"]}**</div>', unsafe_allow_html=True)
-            st.markdown(f'<div class="lyrics-row text-dim">{q["after"]}</div>', unsafe_allow_html=True)
-            st.divider()
-
-        # 2. 현재 풀어야 할 문제
-        elif st.session_state.step == current_num:
-            st.markdown(f'<div class="lyrics-row active-row">{q["text"]}</div>', unsafe_allow_html=True)
-            
-            # 선택지 버튼
-            choice = st.radio(f"Select word for Step {current_num}", q["options"], index=None, key=f"q{current_num}", horizontal=True)
-            
-            if choice:
-                if choice == q["ans"]:
-                    st.success("Correct! 다음 줄로 넘어갑니다.")
-                    if st.button("Next Line →", key=f"btn{current_num}"):
-                        st.session_state.step += 1
+    # 단계별 가사, 자막, 문제 구성
+    
+    # --- STEP 1 ---
+    if st.session_state.step >= 1:
+        with st.container():
+            st.markdown('<div class="english-line">The snow glows white on the... tonight</div>', unsafe_allow_html=True)
+            st.markdown('<div class="korean-sub">오늘 밤 산에는 하얀 눈이 빛나고</div>', unsafe_allow_html=True)
+            if st.session_state.step == 1:
+                ans1 = st.radio("1. 들리는 단어를 고르세요:", ["mountain", "fountain"], index=None, horizontal=True, key="q1")
+                if ans1 == "mountain":
+                    if st.button("정답! 다음 문장 보기"):
+                        st.session_state.step = 2
                         st.rerun()
-                else:
-                    st.error("다시 한 번 잘 들어보세요!")
-            break # 현재 단계 아래는 보여주지 않음
+            else:
+                st.success("Selected: mountain")
 
-        # 3. 아직 잠겨있는 문제들
-        else:
-            st.markdown(f'<div class="lyrics-row locked-row">Next lyrics is locked...</div>', unsafe_allow_html=True)
+    # --- STEP 2 ---
+    if st.session_state.step >= 2:
+        st.divider()
+        with st.container():
+            st.markdown('<div class="english-line">A kingdom of... and it looks like I\'m the queen</div>', unsafe_allow_html=True)
+            st.markdown('<div class="korean-sub">고립된 왕국, 그리고 내가 이곳의 여왕이 된 것 같아</div>', unsafe_allow_html=True)
+            if st.session_state.step == 2:
+                ans2 = st.radio("2. 들리는 단어를 고르세요:", ["isolation", "imagination"], index=None, horizontal=True, key="q2")
+                if ans2 == "isolation":
+                    if st.button("정답! 다음 문장 보기"):
+                        st.session_state.step = 3
+                        st.rerun()
+            else:
+                st.success("Selected: isolation")
+
+    # --- STEP 3 ---
+    if st.session_state.step >= 3:
+        st.divider()
+        with st.container():
+            st.markdown('<div class="english-line">The wind is howling like this... storm inside</div>', unsafe_allow_html=True)
+            st.markdown('<div class="korean-sub">바람은 내 안의 휘몰아치는 폭풍처럼 울부짖고 있어</div>', unsafe_allow_html=True)
+            if st.session_state.step == 3:
+                ans3 = st.radio("3. 들리는 단어를 고르세요:", ["swirling", "swinging"], index=None, horizontal=True, key="q3")
+                if ans3 == "swirling":
+                    if st.button("정답! 다음 문장 보기"):
+                        st.session_state.step = 4
+                        st.rerun()
+            else:
+                st.success("Selected: swirling")
+
+    # --- STEP 4 ---
+    if st.session_state.step >= 4:
+        st.divider()
+        with st.container():
+            st.markdown('<div class="english-line">...don\'t let them know. Well, now they know!</div>', unsafe_allow_html=True)
+            st.markdown('<div class="korean-sub">그들이 알게 하지 마. 그런데 이제 그들이 알아버렸어!</div>', unsafe_allow_html=True)
+            if st.session_state.step == 4:
+                ans4 = st.radio("4. 들리는 단어를 고르세요:", ["conceal", "reveal"], index=None, horizontal=True, key="q4")
+                if ans4 == "conceal":
+                    if st.button("정답! 다음 문장 보기"):
+                        st.session_state.step = 5
+                        st.rerun()
+            else:
+                st.success("Selected: conceal")
+
+    # --- STEP 5 ---
+    if st.session_state.step >= 5:
+        st.divider()
+        with st.container():
+            st.markdown('<div class="english-line">Let it go, let it go. Can\'t hold it back...</div>', unsafe_allow_html=True)
+            st.markdown('<div class="korean-sub">다 잊어, 다 잊어. 더 이상은 견딜 수 없어</div>', unsafe_allow_html=True)
+            if st.session_state.step == 5:
+                ans5 = st.radio("5. 들리는 단어를 고르세요:", ["anymore", "anyhow"], index=None, horizontal=True, key="q5")
+                if ans5 == "anymore":
+                    st.balloons()
+                    st.success("Perfect! 1절 학습 완료!")
+                    if st.button("다시 도전하기"):
+                        st.session_state.step = 1
+                        st.rerun()
