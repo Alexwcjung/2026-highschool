@@ -28,34 +28,20 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------
-# 세션 상태 관리 (초기화 로직)
-# -------------------------
-if 'active_tab' not in st.session_state: st.session_state.active_tab = "tab1"
-if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
-if 'submitted_step3' not in st.session_state: st.session_state.submitted_step3 = False
-if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
-
-def clear_data():
-    st.session_state.submitted_step2 = False
-    st.session_state.submitted_step3 = False
-    st.session_state.q3_cards = []
-    if 'step2_answers' in st.session_state: del st.session_state.step2_answers
-
 st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Class</h1></div>', unsafe_allow_html=True)
 
+# -------------------------
+# 세션 상태 초기화 (탭별 독립 관리)
+# -------------------------
+if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
+
+# 탭 생성
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습 & 퀴즈", "🧩 STEP 3. 1절 전체 순서 맞추기"])
 
 # -------------------------
 # STEP 1: 영화 배경
 # -------------------------
 with tab1:
-    if st.session_state.active_tab != "tab1":
-        clear_data()
-        st.session_state.active_tab = "tab1"
-        st.rerun()
-
-    # 영상 크기 조절 (양옆 여백)
     v_col1, v_col2, v_col3 = st.columns([1, 2, 1])
     with v_col2:
         st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
@@ -73,11 +59,6 @@ with tab1:
 # STEP 2: 가사 학습 & 퀴즈
 # -------------------------
 with tab2:
-    if st.session_state.active_tab != "tab2":
-        clear_data()
-        st.session_state.active_tab = "tab2"
-        st.rerun()
-
     col_vid2, col_lyrics2 = st.columns([1, 1])
     
     with col_vid2:
@@ -94,27 +75,23 @@ with tab2:
             ("6. 엘사가 마지막에 '문(door)'을 닫는 행위의 의미는?", ["배가 고파서", "과거와의 단절과 새로운 시작", "청소를 하기 위해"], "과거와의 단절과 새로운 시작")
         ]
         
-        # 제출 전까지 결과를 절대 보여주지 않기 위해 form 사용
-        with st.form("quiz_step2"):
-            current_answers = []
+        # 폼 내부에서 퀴즈 진행
+        with st.form("quiz_form_tab2"):
+            u_ans_list = []
             for i, (q, opts, ans) in enumerate(questions):
-                choice = st.radio(q, opts, index=None, key=f"radio2_{i}")
-                current_answers.append(choice)
+                u_ans = st.radio(q, opts, index=None, key=f"q2_radio_{i}")
+                u_ans_list.append(u_ans)
             
-            submitted = st.form_submit_button("퀴즈 정답 제출하기")
-            if submitted:
-                st.session_state.submitted_step2 = True
-                st.session_state.step2_answers = current_answers
+            submitted_2 = st.form_submit_button("정답 제출 및 결과 확인")
 
-        # ★ 폼 외부에서 제출 여부를 확인하여 정답 노출
-        if st.session_state.submitted_step2:
+        # 제출 후에만 결과 표시
+        if submitted_2:
             st.markdown("#### 📊 채점 결과")
             for i, (q, opts, ans) in enumerate(questions):
-                u_ans = st.session_state.step2_answers[i]
-                if u_ans == ans:
+                if u_ans_list[i] == ans:
                     st.success(f"✨ {i+1}번: 정답입니다!")
                 else:
-                    st.info(f"💡 {i+1}번 확인: 정답은 **'{ans}'**입니다.")
+                    st.info(f"💡 {i+1}번: 정답은 '{ans}'입니다.")
 
     with col_lyrics2:
         st.markdown("### ❄️ 전체 가사 (Section 1)")
@@ -143,13 +120,8 @@ with tab2:
 # STEP 3: 문장 순서 맞추기
 # -------------------------
 with tab3:
-    if st.session_state.active_tab != "tab3":
-        clear_data()
-        st.session_state.active_tab = "tab3"
-        st.rerun()
-
     st.subheader("🧩 1절 전체 순서 맞추기")
-    st.write("알맞은 순서대로 가사를 클릭하세요!")
+    st.write("가사를 순서대로 클릭하세요. 마지막에 [결과 확인] 버튼을 누르면 채점됩니다.")
     
     q3_correct = [
         "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
@@ -161,7 +133,7 @@ with tab3:
         "G. I don't care what they're going to say. Let the storm rage on. The cold never bothered me anyway."
     ]
     
-    scrambled = [
+    scrambled_list = [
         "D. Conceal, don't feel, don't let them know. Well, now they know!",
         "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
         "G. I don't care what they're going to say. Let the storm rage on. The cold never bothered me anyway.",
@@ -171,43 +143,45 @@ with tab3:
         "E. Let it go, let it go! Can't hold it back anymore."
     ]
     
+    # 클릭 버튼 영역
     btn_cols = st.columns(2)
-    for i, sent in enumerate(scrambled):
-        is_selected = sent in st.session_state.q3_cards
-        if (btn_cols[0] if i % 2 == 0 else btn_cols[1]).button(sent, key=f"q3_btn_{i}", use_container_width=True, disabled=is_selected):
-            st.session_state.q3_cards.append(sent)
-            st.session_state.submitted_step3 = False # 클릭 시에는 결과 초기화
+    for i, text in enumerate(scrambled_list):
+        is_in = text in st.session_state.q3_cards
+        if (btn_cols[0] if i % 2 == 0 else btn_cols[1]).button(text, key=f"btn_v2_{i}", use_container_width=True, disabled=is_in):
+            st.session_state.q3_cards.append(text)
             st.rerun()
 
     st.divider()
-    st.markdown("### 📥 내가 선택한 순서")
+    st.markdown("### 📥 내가 나열한 가사")
     
-    for idx, s in enumerate(st.session_state.q3_cards):
+    for idx, card in enumerate(st.session_state.q3_cards):
         c1, c2 = st.columns([0.9, 0.1])
-        c1.info(f"{idx+1}번 가사: {s}")
-        if c2.button("🗑️", key=f"del_q3_{idx}"):
+        c1.info(f"{idx+1}번: {card}")
+        if c2.button("🗑️", key=f"del_v2_{idx}"):
             st.session_state.q3_cards.pop(idx)
-            st.session_state.submitted_step3 = False
             st.rerun()
 
-    # 모든 카드를 선택했을 때 제출 버튼 활성화
+    # 모든 문장을 골랐을 때만 결과 확인 버튼 등장
     if len(st.session_state.q3_cards) == len(q3_correct):
-        if st.button("🚩 전체 순서 제출 및 결과 확인", type="primary", use_container_width=True):
-            st.session_state.submitted_step3 = True
-            st.rerun()
-
-    # ★ 제출 전에는 아래 채점 결과가 절대 보이지 않음
-    if st.session_state.submitted_step3:
-        st.markdown("---")
-        st.markdown("### 📋 최종 채점")
-        all_ok = True
-        for idx, user_s in enumerate(st.session_state.q3_cards):
-            if user_s == q3_correct[idx]:
-                st.write(f"✨ {idx+1}번: 완벽한 순서입니다!")
-            else:
-                st.write(f"🔍 {idx+1}번: 순서를 다시 확인해보세요. (정답: {q3_correct[idx][:35]}...)")
-                all_ok = False
-        
-        if all_ok:
-            st.balloons()
-            st.success("🎉 축하합니다! 1절 가사 순서를 마스터하셨습니다!")
+        # 이번에는 버튼 클릭 여부를 변수에 담아 하단 내용을 제어합니다.
+        if st.button("🚩 결과 확인하기", type="primary", use_container_width=True):
+            st.session_state.show_q3_result = True
+            
+        if st.session_state.get('show_q3_result'):
+            st.markdown("### 📋 최종 채점 결과")
+            all_ok = True
+            for i, user_sent in enumerate(st.session_state.q3_cards):
+                if user_sent == q3_correct[i]:
+                    st.write(f"✨ {i+1}번: 정답!")
+                else:
+                    st.write(f"🔍 {i+1}번 확인: (정답 시작: {q3_correct[i][:30]}...)")
+                    all_ok = False
+            
+            if all_ok:
+                st.balloons()
+                st.success("🎉 완벽합니다!")
+            
+            if st.button("다시 하기"):
+                st.session_state.q3_cards = []
+                st.session_state.show_q3_result = False
+                st.rerun()
