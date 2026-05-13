@@ -30,20 +30,22 @@ st.markdown("""
 
 # 세션 상태 초기화
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
-if 'submitted' not in st.session_state: st.session_state.submitted = False
+if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
+if 'submitted_step3' not in st.session_state: st.session_state.submitted_step3 = False
 
 st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Class</h1></div>', unsafe_allow_html=True)
 
 tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습 & 퀴즈", "🧩 STEP 3. 1절 전체 순서 맞추기"])
 
 # -------------------------
-# STEP 1: 영화 배경
+# STEP 1: 영화 배경 (오류 없는 이미지로 교체)
 # -------------------------
 with tab1:
     col_vid1, col_txt1 = st.columns(2)
     with col_vid1:
-        st.image("https://images.unsplash.com/photo-1516912481808-34061f8bc9a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
-                 caption="고립된 눈산과 엘사의 마법을 상징하는 풍경")
+        # 오류가 적은 Wikimedia 이미지 혹은 Placehold 이미지 사용
+        st.image("https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Snow_on_mountain_tops.jpg/640px-Snow_on_mountain_tops.jpg", 
+                 caption="Kingdom of Isolation: 고립된 설산의 모습")
         st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
     with col_txt1:
         st.markdown("""
@@ -75,19 +77,16 @@ with tab2:
             ("6. 엘사가 마지막에 '문(door)'을 닫는 행위의 의미는?", ["배가 고파서", "과거와의 단절과 새로운 시작", "청소를 하기 위해"], "과거와의 단절과 새로운 시작")
         ]
         
-        user_answers = []
+        user_answers_step2 = []
         for i, (q, opts, ans) in enumerate(questions):
             choice = st.radio(q, opts, index=None, key=f"step2_q{i}")
-            user_answers.append(choice)
-            # 제출 버튼을 눌렀을 때만 결과 표시
-            if st.session_state.submitted:
-                if choice == ans:
-                    st.success(f"✅ 정답입니다!")
-                else:
-                    st.error(f"❌ 오답입니다! (정답: {ans})")
+            user_answers_step2.append(choice)
+            if st.session_state.submitted_step2:
+                if choice == ans: st.success("✅ 정답!")
+                else: st.error(f"❌ 오답! (정답: {ans})")
 
-        if st.button("정답 최종 제출"):
-            st.session_state.submitted = True
+        if st.button("STEP 2 정답 제출"):
+            st.session_state.submitted_step2 = True
             st.rerun()
 
     with col_lyrics2:
@@ -114,11 +113,11 @@ with tab2:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
 # -------------------------
-# STEP 3: 문장 순서 맞추기 (개별 삭제 기능 추가)
+# STEP 3: 문장 순서 맞추기 (제출 버튼 추가)
 # -------------------------
 with tab3:
     st.subheader("🧩 1절 전체 문장 완성 챌린지")
-    st.write("A부터 G까지 순서대로 클릭하세요. 잘못 선택했다면 문장 옆 [삭제] 버튼을 누르세요.")
+    st.write("A부터 G까지 순서대로 클릭하여 나열한 뒤, 최하단의 **[최종 정답 제출]** 버튼을 누르세요.")
     
     q3_correct = [
         "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
@@ -140,29 +139,41 @@ with tab3:
         "E. Let it go, let it go! Can't hold it back anymore."
     ]
     
-    # 상단 버튼들
     cols = st.columns(2)
     for i, sentence in enumerate(q3_scrambled):
         if (cols[0] if i % 2 == 0 else cols[1]).button(sentence, key=f"q3_btn_{i}", use_container_width=True):
             if sentence not in st.session_state.q3_cards:
                 st.session_state.q3_cards.append(sentence)
+                st.session_state.submitted_step3 = False # 수정 시 제출 상태 초기화
                 st.rerun()
 
     st.divider()
-    st.markdown("### 📥 내가 나열한 순서 (잘못된 문장은 삭제하세요)")
+    st.markdown("### 📥 내가 나열한 순서")
     
-    # 개별 삭제 로직
     for idx, s in enumerate(st.session_state.q3_cards):
         col_text, col_del = st.columns([0.85, 0.15])
         col_text.info(f"{idx+1}: {s}")
         if col_del.button("삭제", key=f"del_{idx}"):
             st.session_state.q3_cards.pop(idx)
+            st.session_state.submitted_step3 = False
             st.rerun()
 
-    # 정답 검증
-    if len(st.session_state.q3_cards) == len(q3_correct):
-        if st.session_state.q3_cards == q3_correct:
+    # STEP 3 제출 버튼
+    if len(st.session_state.q3_cards) > 0:
+        if st.button("STEP 3 최종 정답 제출", type="primary"):
+            st.session_state.submitted_step3 = True
+            st.rerun()
+
+    # 제출 결과 표시
+    if st.session_state.submitted_step3:
+        if len(st.session_state.q3_cards) != len(q3_correct):
+            st.warning("모든 문장(7개)을 나열해야 제출할 수 있습니다.")
+        elif st.session_state.q3_cards == q3_correct:
             st.balloons()
-            st.success("🎉 완벽합니다! 1절 스토리를 모두 맞히셨습니다!")
+            st.success("🎉 완벽합니다! 1절의 모든 문장을 올바른 순서로 맞추셨습니다!")
         else:
-            st.error("❌ 순서가 틀렸습니다. 다시 확인해보세요.")
+            st.error("❌ 순서가 틀렸습니다. 삭제 버튼을 이용해 수정하거나 처음부터 다시 해보세요.")
+            if st.button("전체 초기화"):
+                st.session_state.q3_cards = []
+                st.session_state.submitted_step3 = False
+                st.rerun()
