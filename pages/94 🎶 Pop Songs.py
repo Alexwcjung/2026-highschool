@@ -30,9 +30,8 @@ st.markdown("""
 
 st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Class</h1></div>', unsafe_allow_html=True)
 
-# -------------------------
-# 세션 상태 초기화 (탭별 독립 관리)
-# -------------------------
+# 세션 상태 초기화
+if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 
 # 탭 생성
@@ -56,7 +55,7 @@ with tab1:
     """, unsafe_allow_html=True)
 
 # -------------------------
-# STEP 2: 가사 학습 & 퀴즈
+# STEP 2: 가사 학습 & 퀴즈 (문제 항목에 직접 정답 표시)
 # -------------------------
 with tab2:
     col_vid2, col_lyrics2 = st.columns([1, 1])
@@ -75,23 +74,27 @@ with tab2:
             ("6. 엘사가 마지막에 '문(door)'을 닫는 행위의 의미는?", ["배가 고파서", "과거와의 단절과 새로운 시작", "청소를 하기 위해"], "과거와의 단절과 새로운 시작")
         ]
         
-        # 폼 내부에서 퀴즈 진행
-        with st.form("quiz_form_tab2"):
-            u_ans_list = []
+        # 폼을 통해 제출 전까지 결과 노출 방지
+        with st.form("quiz_form"):
+            user_answers = []
             for i, (q, opts, ans) in enumerate(questions):
-                u_ans = st.radio(q, opts, index=None, key=f"q2_radio_{i}")
-                u_ans_list.append(u_ans)
+                # 제출 후라면 문제 제목 뒤에 정답 여부 표시
+                display_q = q
+                if st.session_state.submitted_step2:
+                    # 선택값 가져오기 (form 내부에선 런타임 값이 바로 안 잡히므로 session_state 활용)
+                    user_pick = st.session_state.get(f"q2_sel_{i}")
+                    if user_pick == ans:
+                        display_q += " ✅ (정답)"
+                    else:
+                        display_q += f" 🔍 (확인: {ans})"
+                
+                choice = st.radio(display_q, opts, index=None, key=f"q2_sel_{i}")
+                user_answers.append(choice)
             
-            submitted_2 = st.form_submit_button("정답 제출 및 결과 확인")
-
-        # 제출 후에만 결과 표시
-        if submitted_2:
-            st.markdown("#### 📊 채점 결과")
-            for i, (q, opts, ans) in enumerate(questions):
-                if u_ans_list[i] == ans:
-                    st.success(f"✨ {i+1}번: 정답입니다!")
-                else:
-                    st.info(f"💡 {i+1}번: 정답은 '{ans}'입니다.")
+            submit_btn = st.form_submit_button("정답 확인하기")
+            if submit_btn:
+                st.session_state.submitted_step2 = True
+                st.rerun() # 정답 표시를 위해 화면 갱신
 
     with col_lyrics2:
         st.markdown("### ❄️ 전체 가사 (Section 1)")
@@ -143,12 +146,12 @@ with tab3:
         "E. Let it go, let it go! Can't hold it back anymore."
     ]
     
-    # 클릭 버튼 영역
     btn_cols = st.columns(2)
     for i, text in enumerate(scrambled_list):
         is_in = text in st.session_state.q3_cards
-        if (btn_cols[0] if i % 2 == 0 else btn_cols[1]).button(text, key=f"btn_v2_{i}", use_container_width=True, disabled=is_in):
+        if (btn_cols[0] if i % 2 == 0 else btn_cols[1]).button(text, key=f"q3_btn_{i}", use_container_width=True, disabled=is_in):
             st.session_state.q3_cards.append(text)
+            st.session_state.show_q3_result = False
             st.rerun()
 
     st.divider()
@@ -157,31 +160,26 @@ with tab3:
     for idx, card in enumerate(st.session_state.q3_cards):
         c1, c2 = st.columns([0.9, 0.1])
         c1.info(f"{idx+1}번: {card}")
-        if c2.button("🗑️", key=f"del_v2_{idx}"):
+        if c2.button("🗑️", key=f"del_q3_{idx}"):
             st.session_state.q3_cards.pop(idx)
+            st.session_state.show_q3_result = False
             st.rerun()
 
-    # 모든 문장을 골랐을 때만 결과 확인 버튼 등장
     if len(st.session_state.q3_cards) == len(q3_correct):
-        # 이번에는 버튼 클릭 여부를 변수에 담아 하단 내용을 제어합니다.
         if st.button("🚩 결과 확인하기", type="primary", use_container_width=True):
             st.session_state.show_q3_result = True
-            
-        if st.session_state.get('show_q3_result'):
-            st.markdown("### 📋 최종 채점 결과")
-            all_ok = True
-            for i, user_sent in enumerate(st.session_state.q3_cards):
-                if user_sent == q3_correct[i]:
-                    st.write(f"✨ {i+1}번: 정답!")
-                else:
-                    st.write(f"🔍 {i+1}번 확인: (정답 시작: {q3_correct[i][:30]}...)")
-                    all_ok = False
-            
-            if all_ok:
-                st.balloons()
-                st.success("🎉 완벽합니다!")
-            
-            if st.button("다시 하기"):
-                st.session_state.q3_cards = []
-                st.session_state.show_q3_result = False
-                st.rerun()
+            st.rerun()
+
+    if st.session_state.get('show_q3_result'):
+        st.markdown("### 📋 최종 순서 체크")
+        all_ok = True
+        for i, user_sent in enumerate(st.session_state.q3_cards):
+            if user_sent == q3_correct[i]:
+                st.success(f"✨ {i+1}번: 완벽해요!")
+            else:
+                st.warning(f"🔍 {i+1}번: 순서를 바꿔야 해요. (정답 힌트: {q3_correct[i][:30]}...)")
+                all_ok = False
+        
+        if all_ok:
+            st.balloons()
+            st.success("🎉 만점입니다! Let It Go 1절을 완벽히 이해하셨네요!")
