@@ -1,7 +1,7 @@
 import streamlit as st
 
 # =========================
-# 1. 기본 설정 및 디자인 요소
+# 1. 기본 설정 및 디자인
 # =========================
 st.set_page_config(page_title="Frozen English Class", page_icon="❄️", layout="wide")
 
@@ -14,66 +14,76 @@ st.markdown("""
     }
     .info-box {
         background-color: #f8fafc; padding: 20px; border-radius: 12px;
-        border: 1px solid #e2e8f0; line-height: 1.8; margin-bottom: 20px;
+        border: 1px solid #e2e8f0; line-height: 1.6; margin-bottom: 20px;
     }
     .lyrics-container {
-        padding: 10px 20px;
+        padding: 8px 15px;
         border-left: 4px solid #38bdf8;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         background-color: #f1f5f9;
-        border-radius: 0 10px 10px 0;
+        border-radius: 0 8px 8px 0;
     }
-    .eng-line { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
-    .kor-sub { font-size: 0.95rem; color: #64748b; }
-    .q-label { font-size: 1.05rem; font-weight: 800; color: #0f172a; display: block; margin-top: 15px; }
+    .eng-line { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; }
+    .kor-sub { font-size: 0.9rem; color: #64748b; }
 </style>
 """, unsafe_allow_html=True)
 
-# 세션 상태 초기화 (문제용)
-if 'q1_cards' not in st.session_state: st.session_state.q1_cards = []
-if 'q2_cards' not in st.session_state: st.session_state.q2_cards = []
+# 세션 상태 초기화
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 
 st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Class</h1></div>', unsafe_allow_html=True)
 
-# =========================
-# 2. 탭 구성
-# =========================
-tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습", "🧩 STEP 3. 가사 완성 챌린지"])
+tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습 & 퀴즈", "🧩 STEP 3. 문장 순서 맞추기"])
 
 # -------------------------
 # STEP 1: 영화 배경
 # -------------------------
 with tab1:
-    col_vid, col_txt = st.columns(2)
-    with col_vid:
+    col_vid1, col_txt1 = st.columns(2)
+    with col_vid1:
         st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-    with col_txt:
+    with col_txt1:
         st.markdown("""
         <div class="info-box">
             <h3>🏰 아렌델과 엘사의 이야기</h3>
-            엘사는 태어날 때부터 모든 것을 얼리는 마법을 가졌지만, 사고를 막기 위해 평생 마법을 숨기며 살아왔습니다. 
-            하지만 대관식 날 마법이 들통나자 산으로 도망치게 되죠. <b>'Let It Go'</b>는 더 이상 숨지 않고 자신을 찾겠다는 선언입니다.
+            엘사는 태어날 때부터 모든 것을 얼리는 마법을 가졌지만, 이를 숨기기 위해 평생 고립된 삶을 살았습니다. 
+            대관식 날 비밀이 드러나자 도망친 엘사가 산 위에서 부르는 이 노래는, 
+            과거의 굴레를 벗어던지고 <b>진정한 자유</b>를 선언하는 순간을 담고 있습니다.
         </div>
         """, unsafe_allow_html=True)
 
 # -------------------------
-# STEP 2: 가사 학습 (영상 추가 & 전체 가사)
+# STEP 2: 가사 학습 & 6문제 퀴즈 (영상 절반 배치)
 # -------------------------
 with tab2:
-    st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-    st.divider()
+    col_vid2, col_lyrics2 = st.columns([1, 1])
     
-    col_quiz, col_lyrics = st.columns([1, 2])
-    with col_quiz:
-        st.markdown("### 💡 내용 이해 퀴즈")
-        ans1 = st.radio("1. 엘사가 현재 머무는 곳은?", ["번잡한 도시", "고립된 눈 덮인 산", "안나의 방"], index=None)
-        ans2 = st.radio("2. 'Conceal, don't feel'의 의미는?", ["숨기고 느끼지 마라", "당당하게 드러내라", "슬퍼하지 마라"], index=None)
-        if st.button("정답 확인"):
-            if ans1 == "고립된 눈 덮인 산" and ans2 == "숨기고 느끼지 마라": st.success("정답입니다!")
-            else: st.error("다시 확인해보세요!")
+    with col_vid2:
+        st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
+        st.divider()
+        st.markdown("### 💡 내용 이해 퀴즈 (6문제)")
+        
+        q1 = st.radio("1. 노래 시작 부분의 배경은 어떤 상태인가요?", ["발자국이 가득한 거리", "아무도 없는 고립된 눈산", "햇살이 비치는 해변"], index=None)
+        q2 = st.radio("2. 엘사가 그동안 지켜온 규칙은?", ["말을 많이 해라", "숨기고 느끼지 마라", "문을 항상 열어두어라"], index=None)
+        q3 = st.radio("3. 'Well, now they know!'는 어떤 상황인가요?", ["마법을 영원히 숨기게 됨", "사람들에게 마법을 들킴", "왕국으로 돌아가는 중"], index=None)
+        q4 = st.radio("4. 'Let it go'의 핵심 의미는?", ["다시 돌아가기", "포기하고 울기", "억눌렸던 것을 놓아주기"], index=None)
+        q5 = st.radio("5. 'The cold never bothered me anyway'의 뜻은?", ["추위는 나를 괴롭힌 적 없다", "날씨가 너무 춥다", "감기에 걸릴 것 같다"], index=None)
+        q6 = st.radio("6. 엘사가 마지막에 '문(door)'을 닫는 행위의 의미는?", ["배가 고파서", "과거와의 단절과 새로운 시작", "청소를 하기 위해"], index=None)
 
-    with col_lyrics:
+        if st.button("6문제 정답 제출"):
+            score = 0
+            if q1 == "아무도 없는 고립된 눈산": score += 1
+            if q2 == "숨기고 느끼지 마라": score += 1
+            if q3 == "사람들에게 마법을 들킴": score += 1
+            if q4 == "억눌렸던 것을 놓아주기": score += 1
+            if q5 == "추위는 나를 괴롭힌 적 없다": score += 1
+            if q6 == "과거와의 단절과 새로운 시작": score += 1
+            
+            if score == 6: st.success("💯 만점입니다! 완벽하게 이해하셨네요!"); st.balloons()
+            else: st.warning(f"{score}/6 문제 맞췄습니다. 다시 확인해보세요!")
+
+    with col_lyrics2:
+        st.markdown("### ❄️ 전체 가사 (Section 1)")
         full_lyrics = [
             ("The snow glows white on the mountain tonight", "오늘 밤 산에 내린 눈은 하얗게 빛나고"),
             ("Not a footprint to be seen", "발자국 하나 보이지 않네"),
@@ -86,7 +96,6 @@ with tab2:
             ("Well, now they know!", "그런데 이제 그들이 알아버렸어!"),
             ("Let it go, let it go", "다 잊어, 다 내려놓자"),
             ("Can't hold it back anymore", "더는 억누를 수 없어"),
-            ("Let it go, let it go", "다 잊어, 이제 자유야"),
             ("Turn away and slam the door!", "돌아서서 문을 쾅 닫아버려"),
             ("I don't care what they're going to say", "사람들이 뭐라 하든 상관없어"),
             ("Let the storm rage on", "폭풍아 계속 휘몰아쳐라"),
@@ -96,82 +105,55 @@ with tab2:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
 # -------------------------
-# STEP 3: 가사 완성 챌린지 (더 많은 문제 & 1절 전체)
+# STEP 3: 문장 순서 맞추기 (긴 문장 구성)
 # -------------------------
 with tab3:
-    st.subheader("🧩 1절 가사 순서 맞추기 끝판왕")
-    st.write("버튼을 순서대로 눌러 가사를 완성하세요.")
+    st.subheader("🧩 문장 순서 맞추기 챌린지")
+    st.write("버튼을 눌러 1절의 전체 흐름(도입-갈등-해방)을 완성하세요.")
     
-    # --- 문제 1: 도입부 (Verse 1) ---
-    st.markdown("#### 1. 노래의 시작 부분을 완성하세요")
-    q1_correct = ["The snow glows white", "Not a footprint to be seen", "A kingdom of isolation", "I'm the queen"]
-    q1_scrambled = sorted(q1_correct)
-    
-    cols1 = st.columns(4)
-    for i, word in enumerate(q1_scrambled):
-        if cols1[i].button(word, key=f"q1_{i}"): st.session_state.q1_cards.append(word)
-    
-    st.write("선택한 순서:", " → ".join(st.session_state.q1_cards))
-    if len(st.session_state.q1_cards) == 4:
-        if st.session_state.q1_cards == q1_correct: st.success("Good!")
-        else: 
-            st.error("틀렸습니다.")
-            if st.button("다시 하기", key="r1"): st.session_state.q1_cards = []; st.rerun()
-
-    st.divider()
-
-    # --- 문제 2: 갈등 (Pre-Chorus) ---
-    st.markdown("#### 2. 엘사의 내적 갈등 부분")
-    q2_correct = ["Don't let them in", "Be the good girl", "Conceal, don't feel", "Well, now they know!"]
-    q2_scrambled = ["Be the good girl", "Well, now they know!", "Don't let them in", "Conceal, don't feel"]
-    
-    cols2 = st.columns(4)
-    for i, word in enumerate(q2_scrambled):
-        if cols2[i].button(word, key=f"q2_{i}"): st.session_state.q2_cards.append(word)
-    
-    st.write("선택한 순서:", " → ".join(st.session_state.q2_cards))
-    if len(st.session_state.q2_cards) == 4:
-        if st.session_state.q2_cards == q2_correct: st.success("Great!")
-        else: 
-            st.error("다시 생각해보세요.")
-            if st.button("다시 하기", key="r2"): st.session_state.q2_cards = []; st.rerun()
-
-    st.divider()
-
-    # --- 문제 3: 1절 후렴구 전체 (Full Chorus) ---
-    st.markdown("#### 3. 1절 후렴구 전체를 완성하세요 (고난도)")
     q3_correct = [
-        "Let it go, let it go", 
-        "Can't hold it back anymore", 
-        "Turn away and slam the door!", 
-        "I don't care what they're going to say", 
-        "Let the storm rage on", 
-        "The cold never bothered me anyway"
+        "1. The snow glows white on the mountain tonight, not a footprint to be seen.",
+        "2. A kingdom of isolation, and it looks like I'm the queen.",
+        "3. The wind is howling like this swirling storm inside.",
+        "4. Conceal, don't feel, don't let them know. Well, now they know!",
+        "5. Let it go, let it go! Can't hold it back anymore.",
+        "6. Turn away and slam the door! I don't care what they're going to say.",
+        "7. Let the storm rage on. The cold never bothered me anyway."
     ]
+    # 섞인 리스트
     q3_scrambled = [
-        "Let the storm rage on",
-        "Let it go, let it go",
-        "The cold never bothered me anyway",
-        "Turn away and slam the door!",
-        "Can't hold it back anymore",
-        "I don't care what they're going to say"
+        "4. Conceal, don't feel, don't let them know. Well, now they know!",
+        "1. The snow glows white on the mountain tonight, not a footprint to be seen.",
+        "7. Let the storm rage on. The cold never bothered me anyway.",
+        "2. A kingdom of isolation, and it looks like I'm the queen.",
+        "6. Turn away and slam the door! I don't care what they're going to say.",
+        "3. The wind is howling like this swirling storm inside.",
+        "5. Let it go, let it go! Can't hold it back anymore."
     ]
     
-    cols3 = st.columns(3)
-    cols4 = st.columns(3)
-    for i, word in enumerate(q3_scrambled):
-        target_col = cols3[i] if i < 3 else cols4[i-3]
-        if target_col.button(word, key=f"q3_{i}", use_container_width=True): 
-            st.session_state.q3_cards.append(word)
-    
-    st.write("선택한 순서:")
-    for idx, line in enumerate(st.session_state.q3_cards):
-        st.caption(f"{idx+1}: {line}")
+    # 버튼 배치
+    for i, sentence in enumerate(q3_scrambled):
+        if st.button(sentence, key=f"btn_{i}", use_container_width=True):
+            if sentence not in st.session_state.q3_cards:
+                st.session_state.q3_cards.append(sentence)
+            else:
+                st.warning("이미 선택한 문장입니다.")
 
-    if len(st.session_state.q3_cards) == 6:
+    st.divider()
+    st.markdown("### 📥 내가 완성한 노래")
+    for idx, s in enumerate(st.session_state.q3_cards):
+        st.info(f"{idx+1}단계: {s}")
+
+    if len(st.session_state.q3_cards) == len(q3_correct):
         if st.session_state.q3_cards == q3_correct:
             st.balloons()
-            st.success("대단합니다! 1절을 완벽하게 마스터하셨어요!")
+            st.success("🎉 완벽한 순서입니다! 1절을 마스터하셨습니다!")
         else:
-            st.error("순서가 조금 틀렸네요. 가사를 다시 확인해보세요!")
-            if st.button("다시 하기", key="r3"): st.session_state.q3_cards = []; st.rerun()
+            st.error("❌ 순서가 틀렸습니다. 다시 도전해보세요!")
+            if st.button("초기화"):
+                st.session_state.q3_cards = []
+                st.rerun()
+    elif len(st.session_state.q3_cards) > 0:
+        if st.button("지우고 다시 하기"):
+            st.session_state.q3_cards = []
+            st.rerun()
