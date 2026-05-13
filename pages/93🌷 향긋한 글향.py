@@ -7,8 +7,8 @@ import io
 # 기본 설정
 # =========================================================
 st.set_page_config(
-    page_title="Celebrity English Reading",
-    page_icon="🌟",
+    page_title="English Reading",
+    page_icon="📖",
     layout="wide"
 )
 
@@ -31,13 +31,12 @@ def make_tts(text, lang="en"):
 def detect_language(text):
     english_count = sum(1 for ch in text if ch.lower() in "abcdefghijklmnopqrstuvwxyz")
     korean_count = sum(1 for ch in text if "가" <= ch <= "힣")
-
     if korean_count > english_count:
         return "ko"
     return "en"
 
 
-def make_korean_to_english(text, person_name_clean):
+def make_korean_to_english(text, topic_name):
     ideas = []
 
     if "포기" in text:
@@ -50,10 +49,14 @@ def make_korean_to_english(text, person_name_clean):
         ideas.append("I should believe in myself")
     if "성실" in text or "꾸준" in text:
         ideas.append("I should be hardworking and consistent")
-    if "지치" in text or "힘들" in text or "피곤" in text:
-        ideas.append("I can rest a little and try again when I feel tired")
+    if "도전" in text:
+        ideas.append("I should challenge myself")
     if "꿈" in text or "목표" in text:
         ideas.append("I should work hard for my dream")
+    if "자연" in text or "여행" in text:
+        ideas.append("I should enjoy nature and learn from travel")
+    if "문화" in text or "역사" in text:
+        ideas.append("I should respect culture and history")
 
     if len(ideas) == 0:
         ideas.append("I should learn a positive attitude")
@@ -67,12 +70,12 @@ def make_korean_to_english(text, person_name_clean):
         idea_sentence = ", ".join(ideas[:-1]) + ", and " + ideas[-1]
 
     return (
-        f"Through {person_name_clean}, I learned that {idea_sentence}. "
-        f"Even when something is difficult, I should keep going and trust myself."
+        f"Through {topic_name}, I learned that {idea_sentence}. "
+        f"I want to remember this lesson and apply it to my life."
     )
 
 
-def improve_english_answer(text, person_name_clean):
+def improve_english_answer(text, topic_name):
     lower_text = text.lower()
     ideas = []
 
@@ -84,12 +87,14 @@ def improve_english_answer(text, person_name_clean):
         ideas.append("I should believe in myself")
     if "hard" in lower_text or "hardworking" in lower_text:
         ideas.append("I should work hard for my goal")
-    if "tired" in lower_text:
-        ideas.append("I can rest a little and try again when I feel tired")
     if "best" in lower_text:
         ideas.append("I should do my best")
     if "dream" in lower_text or "goal" in lower_text:
         ideas.append("I should keep working toward my dream")
+    if "travel" in lower_text or "nature" in lower_text:
+        ideas.append("I should learn from travel and nature")
+    if "culture" in lower_text or "history" in lower_text:
+        ideas.append("I should respect culture and history")
 
     if len(ideas) == 0:
         ideas.append("I should have a positive attitude")
@@ -103,35 +108,34 @@ def improve_english_answer(text, person_name_clean):
         idea_sentence = ", ".join(ideas[:-1]) + ", and " + ideas[-1]
 
     return (
-        f"Through {person_name_clean}, I learned that {idea_sentence}. "
-        f"This lesson is important because everyone faces difficult moments. "
-        f"I will remember this message and try again."
+        f"Through {topic_name}, I learned that {idea_sentence}. "
+        f"This lesson is meaningful because it can help me grow in my own life."
     )
 
 # =========================================================
-# 간단한 디자인
+# 단순 디자인
 # =========================================================
 st.markdown("""
 <style>
 .main-title {
     background: #14532d;
     color: white;
-    padding: 20px;
-    border-radius: 18px;
-    text-align: center;
-    margin-bottom: 18px;
-}
-.person-card {
-    background: #f8fafc;
-    padding: 16px;
+    padding: 18px;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
+    text-align: center;
     margin-bottom: 16px;
+}
+.info-card {
+    background: #f8fafc;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 14px;
 }
 .reading-card {
     background: #f7fff7;
     padding: 22px;
-    border-radius: 18px;
+    border-radius: 16px;
     border: 1px solid #86efac;
     font-size: 20px;
     line-height: 1.75;
@@ -139,177 +143,285 @@ st.markdown("""
 .korean-card {
     background: #fffbea;
     padding: 22px;
-    border-radius: 18px;
+    border-radius: 16px;
     border: 1px solid #facc15;
     font-size: 19px;
     line-height: 1.7;
 }
 .expression {
     background: #f1f8e9;
-    padding: 12px 14px;
-    border-radius: 12px;
-    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    margin-bottom: 8px;
     font-size: 18px;
-}
-.simple-box {
-    background: #f8fafc;
-    padding: 16px;
-    border-radius: 14px;
-    border: 1px solid #e2e8f0;
-    margin-bottom: 14px;
 }
 </style>
 """, unsafe_allow_html=True)
 
 # =========================================================
-# 인물별 자료
+# 자료
+# 이미지 파일은 pages/images 폴더에 넣으면 됩니다.
+# 예: pages/images/ronaldo.png
 # =========================================================
-people_data = {
-    "⚽ Ronaldo": {
-        "title": "Soccer Talk with Ronaldo",
-        "subtitle": "Practice, confidence, and never giving up",
-        "video_url": "여기에_로날도_유튜브_링크",
-        "image_path": BASE_DIR / "images" / "ronaldo.png",
+data_bank = {
+    "인물": {
+        "⚽ Ronaldo": {
+            "title": "Soccer Talk with Ronaldo",
+            "subtitle": "Practice and confidence",
+            "video_url": "여기에_로날도_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "ronaldo.png",
+            "dialogue": [
+                ("Ronaldo", "Hi! Do you like soccer?", "안녕! 너는 축구를 좋아하니?"),
+                ("Me", "Yes, I do. I really like soccer.", "응, 좋아해. 나는 축구를 정말 좋아해."),
+                ("Ronaldo", "Who is your favorite player?", "네가 가장 좋아하는 선수는 누구니?"),
+                ("Me", "You are my favorite player, Ronaldo.", "로날도, 당신이 제가 가장 좋아하는 선수예요."),
+                ("Ronaldo", "Why do you like me?", "왜 나를 좋아하니?"),
+                ("Me", "Because you are fast, strong, and hardworking.", "당신은 빠르고, 강하고, 성실하기 때문이에요."),
+                ("Ronaldo", "Practice is very important. You must keep going.", "연습은 매우 중요해. 계속해 나가야 해."),
+                ("Me", "Sometimes I get tired.", "가끔은 지쳐요."),
+                ("Ronaldo", "Rest a little, and then try again.", "조금 쉬고, 다시 도전해 봐."),
+                ("Me", "I will do my best.", "최선을 다할게요."),
+                ("Ronaldo", "Good! Believe in yourself. Never give up.", "좋아! 너 자신을 믿어. 절대 포기하지 마.")
+            ],
+            "key_expressions": [
+                "Do you like soccer?",
+                "Who is your favorite player?",
+                "Practice is very important.",
+                "Believe in yourself.",
+                "Never give up."
+            ],
+            "questions": [
+                ("1. What sport does the student like?", ["Soccer", "Baseball", "Tennis", "Basketball"], "Soccer"),
+                ("2. Why does the student like Ronaldo?", ["He is fast and hardworking", "He is a singer", "He is a teacher", "He is lazy"], "He is fast and hardworking"),
+                ("3. What advice does Ronaldo give?", ["Never give up", "Stop practicing", "Sleep all day", "Play alone"], "Never give up")
+            ],
+            "reflection_prompt": "Ronaldo를 통해 내가 배울 점은 무엇인가요?"
+        },
 
-        "dialogue": [
-            ("Ronaldo", "Hi! Do you like soccer?", "안녕! 너는 축구를 좋아하니?"),
-            ("Me", "Yes, I do. I really like soccer.", "응, 좋아해. 나는 축구를 정말 좋아해."),
-            ("Ronaldo", "That’s great. Who is your favorite player?", "멋지다. 네가 가장 좋아하는 선수는 누구니?"),
-            ("Me", "You are my favorite player, Ronaldo.", "로날도, 당신이 제가 가장 좋아하는 선수예요."),
-            ("Ronaldo", "Thank you. Why do you like me?", "고마워. 왜 나를 좋아하니?"),
-            ("Me", "Because you are fast, strong, and hardworking.", "당신은 빠르고, 강하고, 성실하기 때문이에요."),
-            ("Ronaldo", "I’m happy to hear that. Do you play soccer?", "그 말을 들으니 기쁘구나. 너도 축구를 하니?"),
-            ("Me", "Yes, I do. I play soccer with my friends.", "네, 해요. 친구들과 축구를 해요."),
-            ("Ronaldo", "What position do you play?", "너는 어떤 포지션을 맡니?"),
-            ("Me", "I usually play forward.", "저는 보통 공격수를 맡아요."),
-            ("Ronaldo", "Nice. Do you practice every day?", "좋아. 매일 연습하니?"),
-            ("Me", "Not every day, but I try to practice often.", "매일은 아니지만, 자주 연습하려고 노력해요."),
-            ("Ronaldo", "Practice is very important. You must keep going.", "연습은 매우 중요해. 계속해 나가야 해."),
-            ("Me", "Sometimes I get tired.", "가끔은 지쳐요."),
-            ("Ronaldo", "That’s okay. Everyone gets tired sometimes.", "괜찮아. 누구나 가끔은 지칠 때가 있어."),
-            ("Me", "What should I do when I feel tired?", "제가 지칠 때는 어떻게 해야 할까요?"),
-            ("Ronaldo", "Rest a little, and then try again.", "조금 쉬고, 다시 도전해 봐."),
-            ("Me", "I want to be a great player like you.", "저도 당신처럼 훌륭한 선수가 되고 싶어요."),
-            ("Ronaldo", "Believe in yourself. Never give up.", "너 자신을 믿어. 절대 포기하지 마."),
-            ("Me", "Thank you, Ronaldo. I will do my best.", "고마워요, 로날도. 최선을 다할게요."),
-            ("Ronaldo", "Good! I believe in you. Keep practicing!", "좋아! 나는 너를 믿어. 계속 연습해!")
-        ],
+        "🏀 Jordan": {
+            "title": "Basketball Talk with Jordan",
+            "subtitle": "Dreams and effort",
+            "video_url": "여기에_조던_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "jordan.png",
+            "dialogue": [
+                ("Jordan", "Hi! Do you like basketball?", "안녕! 너는 농구를 좋아하니?"),
+                ("Me", "Yes, I do. I love basketball.", "네, 좋아해요. 저는 농구를 정말 좋아해요."),
+                ("Jordan", "What is your dream?", "네 꿈은 무엇이니?"),
+                ("Me", "I want to be a great player.", "저는 훌륭한 선수가 되고 싶어요."),
+                ("Jordan", "Then you need practice and confidence.", "그렇다면 연습과 자신감이 필요해."),
+                ("Me", "Sometimes I make many mistakes.", "가끔 실수를 많이 해요."),
+                ("Jordan", "Mistakes are part of learning.", "실수는 배움의 일부야."),
+                ("Me", "I will keep trying.", "계속 노력할게요."),
+                ("Jordan", "Good. Work hard and believe in yourself.", "좋아. 열심히 노력하고 너 자신을 믿어.")
+            ],
+            "key_expressions": [
+                "What is your dream?",
+                "I want to be a great player.",
+                "Mistakes are part of learning.",
+                "Keep trying.",
+                "Believe in yourself."
+            ],
+            "questions": [
+                ("1. What sport does the student like?", ["Basketball", "Soccer", "Baseball", "Golf"], "Basketball"),
+                ("2. What does the student want to be?", ["A great player", "A singer", "A doctor", "A cook"], "A great player"),
+                ("3. What are mistakes?", ["Part of learning", "Always bad", "Not important", "A sport"], "Part of learning")
+            ],
+            "reflection_prompt": "Jordan을 통해 내가 배울 점은 무엇인가요?"
+        },
 
-        "key_expressions": [
-            "Do you like soccer?",
-            "Who is your favorite player?",
-            "Why do you like me?",
-            "What position do you play?",
-            "Practice is very important.",
-            "Believe in yourself.",
-            "Never give up.",
-            "Keep practicing!"
-        ],
+        "⚽ Son Heung-min": {
+            "title": "Talk with Son Heung-min",
+            "subtitle": "Teamwork and humility",
+            "video_url": "여기에_손흥민_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "son.png",
+            "dialogue": [
+                ("Son", "Hi! Do you enjoy playing with your friends?", "안녕! 친구들과 함께 경기하는 것을 즐기니?"),
+                ("Me", "Yes, I do. I like playing as a team.", "네. 저는 한 팀으로 경기하는 것을 좋아해요."),
+                ("Son", "That is great. Soccer is not only about one player.", "좋아. 축구는 한 사람만의 경기가 아니야."),
+                ("Me", "What is important in a team?", "팀에서 중요한 것은 무엇인가요?"),
+                ("Son", "Respect, communication, and hard work are important.", "존중, 소통, 노력이 중요해."),
+                ("Me", "I want to help my team.", "저도 우리 팀에 도움이 되고 싶어요."),
+                ("Son", "Then listen to others and do your best.", "그렇다면 다른 사람의 말을 듣고 최선을 다해."),
+                ("Me", "Thank you. I will remember that.", "감사합니다. 기억할게요.")
+            ],
+            "key_expressions": [
+                "I like playing as a team.",
+                "What is important in a team?",
+                "Respect is important.",
+                "Do your best.",
+                "Listen to others."
+            ],
+            "questions": [
+                ("1. What does the student like?", ["Playing as a team", "Playing alone", "Watching TV", "Sleeping"], "Playing as a team"),
+                ("2. What is important in a team?", ["Respect and communication", "Only speed", "Only money", "Silence"], "Respect and communication"),
+                ("3. What advice does Son give?", ["Listen to others and do your best", "Never listen", "Give up", "Forget the team"], "Listen to others and do your best")
+            ],
+            "reflection_prompt": "Son Heung-min을 통해 내가 배울 점은 무엇인가요?"
+        },
 
-        "comprehension_questions": [
-            {
-                "question": "1. What sport does the student like?",
-                "options": ["Baseball", "Soccer", "Basketball", "Tennis"],
-                "answer": "Soccer"
-            },
-            {
-                "question": "2. What position does the student usually play?",
-                "options": ["Goalkeeper", "Defender", "Forward", "Coach"],
-                "answer": "Forward"
-            },
-            {
-                "question": "3. What advice does Ronaldo give?",
-                "options": [
-                    "Stop practicing",
-                    "Believe in yourself and never give up",
-                    "Do not play soccer",
-                    "Practice only when you win"
-                ],
-                "answer": "Believe in yourself and never give up"
-            }
-        ],
+        "🎤 IU": {
+            "title": "Music Talk with IU",
+            "subtitle": "Creativity and sincerity",
+            "video_url": "여기에_IU_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "iu.png",
+            "dialogue": [
+                ("IU", "Hi! Do you like music?", "안녕! 너는 음악을 좋아하니?"),
+                ("Me", "Yes, I do. Music makes me happy.", "네. 음악은 저를 행복하게 해요."),
+                ("IU", "That is wonderful. What kind of music do you like?", "멋지다. 어떤 음악을 좋아하니?"),
+                ("Me", "I like songs with warm messages.", "저는 따뜻한 메시지가 있는 노래를 좋아해요."),
+                ("IU", "A good song can comfort people.", "좋은 노래는 사람들을 위로할 수 있어."),
+                ("Me", "I want to express my feelings better.", "저도 제 감정을 더 잘 표현하고 싶어요."),
+                ("IU", "Be honest and keep writing.", "솔직해지고 계속 써 봐."),
+                ("Me", "I will try to express myself.", "저도 제 자신을 표현해 볼게요.")
+            ],
+            "key_expressions": [
+                "Music makes me happy.",
+                "What kind of music do you like?",
+                "A good song can comfort people.",
+                "Be honest.",
+                "Express myself."
+            ],
+            "questions": [
+                ("1. What makes the student happy?", ["Music", "Math", "Rain", "Homework"], "Music"),
+                ("2. What kind of songs does the student like?", ["Songs with warm messages", "Very noisy songs", "Songs without words", "Only fast songs"], "Songs with warm messages"),
+                ("3. What advice does IU give?", ["Be honest and keep writing", "Stop writing", "Hide your feelings", "Never sing"], "Be honest and keep writing")
+            ],
+            "reflection_prompt": "IU를 통해 내가 배울 점은 무엇인가요?"
+        },
 
-        "reflection_prompt": "Ronaldo를 통해 내가 배울 점은 무엇인가요?",
-        "reflection_example_en": "I learned that I should believe in myself and never give up because practice is very important.",
-        "reflection_example_ko": "로날도를 보며 지쳐도 포기하지 않고 계속 연습하는 태도를 배워야겠다고 생각했다."
+        "👑 King Sejong": {
+            "title": "Talk with King Sejong",
+            "subtitle": "Learning and helping people",
+            "video_url": "여기에_세종대왕_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "sejong.png",
+            "dialogue": [
+                ("King Sejong", "Hello. Do you think learning is important?", "안녕. 너는 배움이 중요하다고 생각하니?"),
+                ("Me", "Yes, I do. Learning can change our lives.", "네. 배움은 우리의 삶을 바꿀 수 있어요."),
+                ("King Sejong", "I wanted more people to read and write.", "나는 더 많은 사람들이 읽고 쓸 수 있기를 바랐단다."),
+                ("Me", "That is amazing.", "정말 놀라워요."),
+                ("King Sejong", "Knowledge should help people.", "지식은 사람들에게 도움이 되어야 해."),
+                ("Me", "I want to use learning to help others.", "저도 배움을 통해 다른 사람들을 돕고 싶어요."),
+                ("King Sejong", "That is a noble goal. Keep learning.", "그것은 훌륭한 목표구나. 계속 배워라.")
+            ],
+            "key_expressions": [
+                "Learning is important.",
+                "Learning can change our lives.",
+                "Knowledge should help people.",
+                "Help others.",
+                "Keep learning."
+            ],
+            "questions": [
+                ("1. What does the student think is important?", ["Learning", "Shopping", "Sleeping", "Noise"], "Learning"),
+                ("2. What did King Sejong want people to do?", ["Read and write", "Stop learning", "Play games", "Forget books"], "Read and write"),
+                ("3. What should knowledge do?", ["Help people", "Make people tired", "Disappear", "Stop people"], "Help people")
+            ],
+            "reflection_prompt": "King Sejong을 통해 내가 배울 점은 무엇인가요?"
+        }
     },
 
-    "🏀 Jordan": {
-        "title": "Basketball Talk with Jordan",
-        "subtitle": "Dreams, practice, and confidence",
-        "video_url": "여기에_조던_유튜브_링크",
-        "image_path": BASE_DIR / "images" / "jordan.png",
+    "장소": {
+        "🏜️ Grand Canyon": {
+            "title": "A Trip to the Grand Canyon",
+            "subtitle": "Nature and wonder",
+            "video_url": "여기에_그랜드캐니언_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "grand_canyon.png",
+            "dialogue": [
+                ("Guide", "Welcome to the Grand Canyon.", "그랜드캐니언에 오신 것을 환영합니다."),
+                ("Me", "Wow, it is huge and beautiful.", "와, 정말 크고 아름다워요."),
+                ("Guide", "Nature can make us feel small.", "자연은 우리를 작게 느끼게 할 수 있어요."),
+                ("Me", "I feel amazed.", "정말 경이롭게 느껴져요."),
+                ("Guide", "This place was made over a very long time.", "이곳은 아주 오랜 시간에 걸쳐 만들어졌어요."),
+                ("Me", "I want to protect nature.", "저는 자연을 보호하고 싶어요.")
+            ],
+            "key_expressions": [
+                "It is huge and beautiful.",
+                "I feel amazed.",
+                "Nature is powerful.",
+                "Protect nature."
+            ],
+            "questions": [
+                ("1. Where is the student?", ["Grand Canyon", "School", "Hospital", "Market"], "Grand Canyon"),
+                ("2. How does the student feel?", ["Amazed", "Angry", "Bored", "Sleepy"], "Amazed"),
+                ("3. What does the student want to protect?", ["Nature", "Money", "A phone", "A car"], "Nature")
+            ],
+            "reflection_prompt": "Grand Canyon을 통해 내가 배울 점은 무엇인가요?"
+        },
 
-        "dialogue": [
-            ("Jordan", "Hi! Do you like basketball?", "안녕! 너는 농구를 좋아하니?"),
-            ("Me", "Yes, I do. I really like basketball.", "응, 좋아해. 나는 농구를 정말 좋아해."),
-            ("Jordan", "What is your dream?", "네 꿈은 무엇이니?"),
-            ("Me", "I want to be a great player.", "저는 훌륭한 선수가 되고 싶어요."),
-            ("Jordan", "Then practice every day and believe in yourself.", "그렇다면 매일 연습하고 너 자신을 믿어."),
-            ("Me", "I will do my best.", "최선을 다할게요."),
-            ("Jordan", "Good. Never give up.", "좋아. 절대 포기하지 마.")
-        ],
+        "🗽 New York": {
+            "title": "A Visit to New York",
+            "subtitle": "Dreams and diversity",
+            "video_url": "여기에_뉴욕_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "new_york.png",
+            "dialogue": [
+                ("Guide", "Welcome to New York.", "뉴욕에 오신 것을 환영합니다."),
+                ("Me", "There are so many people here.", "여기에는 정말 많은 사람들이 있어요."),
+                ("Guide", "People from many cultures live here.", "다양한 문화의 사람들이 이곳에 살고 있어요."),
+                ("Me", "It feels exciting.", "정말 신나요."),
+                ("Guide", "New York is a city of dreams.", "뉴욕은 꿈의 도시예요."),
+                ("Me", "I want to follow my dream too.", "저도 제 꿈을 따라가고 싶어요.")
+            ],
+            "key_expressions": [
+                "There are so many people.",
+                "Many cultures live here.",
+                "It feels exciting.",
+                "Follow my dream."
+            ],
+            "questions": [
+                ("1. Where is the student?", ["New York", "Paris", "Seoul", "Tokyo"], "New York"),
+                ("2. What kind of city is New York?", ["A city of dreams", "A small village", "A quiet farm", "A desert"], "A city of dreams"),
+                ("3. What does the student want to follow?", ["My dream", "A bus", "A bird", "A map"], "My dream")
+            ],
+            "reflection_prompt": "New York을 통해 내가 배울 점은 무엇인가요?"
+        },
 
-        "key_expressions": [
-            "Do you like basketball?",
-            "What is your dream?",
-            "I want to be a great player.",
-            "Practice every day.",
-            "Believe in yourself.",
-            "Never give up."
-        ],
-
-        "comprehension_questions": [
-            {
-                "question": "1. What sport does the student like?",
-                "options": ["Soccer", "Basketball", "Baseball", "Tennis"],
-                "answer": "Basketball"
-            },
-            {
-                "question": "2. What does the student want to be?",
-                "options": ["A great player", "A singer", "A teacher", "A doctor"],
-                "answer": "A great player"
-            },
-            {
-                "question": "3. What advice does Jordan give?",
-                "options": [
-                    "Practice every day and believe in yourself",
-                    "Stop playing basketball",
-                    "Sleep all day",
-                    "Never practice"
-                ],
-                "answer": "Practice every day and believe in yourself"
-            }
-        ],
-
-        "reflection_prompt": "Jordan을 통해 내가 배울 점은 무엇인가요?",
-        "reflection_example_en": "I learned that I should practice every day and believe in myself.",
-        "reflection_example_ko": "조던을 보며 매일 꾸준히 연습하고 자신을 믿는 태도를 배워야겠다고 생각했다."
+        "🏯 Gyeongbokgung": {
+            "title": "A Visit to Gyeongbokgung",
+            "subtitle": "History and culture",
+            "video_url": "여기에_경복궁_유튜브_링크",
+            "image_path": BASE_DIR / "images" / "gyeongbokgung.png",
+            "dialogue": [
+                ("Guide", "Welcome to Gyeongbokgung.", "경복궁에 오신 것을 환영합니다."),
+                ("Me", "This palace is beautiful.", "이 궁궐은 아름다워요."),
+                ("Guide", "It shows Korean history and culture.", "이곳은 한국의 역사와 문화를 보여줍니다."),
+                ("Me", "I want to learn more about history.", "역사에 대해 더 배우고 싶어요."),
+                ("Guide", "History helps us understand who we are.", "역사는 우리가 누구인지 이해하도록 도와줍니다."),
+                ("Me", "I will respect our culture.", "우리 문화를 존중하겠습니다.")
+            ],
+            "key_expressions": [
+                "This palace is beautiful.",
+                "It shows history and culture.",
+                "Learn more about history.",
+                "Respect our culture."
+            ],
+            "questions": [
+                ("1. Where is the student?", ["Gyeongbokgung", "New York", "Grand Canyon", "A beach"], "Gyeongbokgung"),
+                ("2. What does the palace show?", ["History and culture", "Sports and games", "Food and cars", "Music only"], "History and culture"),
+                ("3. What will the student respect?", ["Our culture", "Noise", "A test", "A computer"], "Our culture")
+            ],
+            "reflection_prompt": "Gyeongbokgung을 통해 내가 배울 점은 무엇인가요?"
+        }
     }
 }
 
 # =========================================================
-# 화면 구성
+# 화면
 # =========================================================
 st.markdown("""
 <div class="main-title">
-    <h1>🌟 Celebrity English Reading</h1>
+    <h1>📖 English Reading</h1>
 </div>
 """, unsafe_allow_html=True)
 
-person_name = st.selectbox(
-    "인물 선택",
-    list(people_data.keys())
-)
+category = st.selectbox("카테고리", list(data_bank.keys()))
+topic_name = st.selectbox("주제 선택", list(data_bank[category].keys()))
 
-data = people_data[person_name]
+data = data_bank[category][topic_name]
 dialogue = data["dialogue"]
 
 full_english = "\n".join([f"{speaker}: {eng}" for speaker, eng, kor in dialogue])
-full_korean = "\n".join([f"{speaker}: {kor}" for speaker, eng, kor in dialogue])
 
 st.markdown(f"""
-<div class="person-card">
+<div class="info-card">
     <h2>{data["title"]}</h2>
     <p>{data["subtitle"]}</p>
 </div>
@@ -323,7 +435,7 @@ tab_video, tab_image, tab_reading, tab_activity = st.tabs([
 ])
 
 # =========================================================
-# 1. 동영상
+# 동영상
 # =========================================================
 with tab_video:
     st.markdown("## 🎬 동영상")
@@ -336,7 +448,7 @@ with tab_video:
         st.info("video_url에 유튜브 링크를 넣으세요.")
 
 # =========================================================
-# 2. 그림
+# 그림
 # =========================================================
 with tab_image:
     st.markdown("## 🖼️ 그림")
@@ -348,12 +460,8 @@ with tab_image:
     else:
         st.error(f"이미지 파일을 찾을 수 없습니다: {image_path}")
 
-    st.markdown("### 핵심 문장")
-    for exp in data["key_expressions"][:4]:
-        st.markdown(f'<div class="expression">{exp}</div>', unsafe_allow_html=True)
-
 # =========================================================
-# 3. Reading
+# Reading
 # =========================================================
 with tab_reading:
     st.markdown("## 📖 Reading")
@@ -362,13 +470,12 @@ with tab_reading:
     for speaker, eng, kor in dialogue:
         reading_html += f"<b>{speaker}:</b> {eng}<br><br>"
     reading_html += "</div>"
-
     st.markdown(reading_html, unsafe_allow_html=True)
 
     st.markdown("---")
 
-    listening_key = f"{person_name}_show_listening"
-    korean_key = f"{person_name}_show_korean"
+    listening_key = f"{category}_{topic_name}_show_listening"
+    korean_key = f"{category}_{topic_name}_show_korean"
 
     if listening_key not in st.session_state:
         st.session_state[listening_key] = False
@@ -379,11 +486,11 @@ with tab_reading:
     col1, col2 = st.columns(2)
 
     with col1:
-        if st.button("🎧 듣기", use_container_width=True, key=f"{person_name}_listening_btn"):
+        if st.button("🎧 듣기", use_container_width=True, key=f"{category}_{topic_name}_listening_btn"):
             st.session_state[listening_key] = not st.session_state[listening_key]
 
     with col2:
-        if st.button("🇰🇷 해석", use_container_width=True, key=f"{person_name}_korean_btn"):
+        if st.button("🇰🇷 해석", use_container_width=True, key=f"{category}_{topic_name}_korean_btn"):
             st.session_state[korean_key] = not st.session_state[korean_key]
 
     if st.session_state[listening_key]:
@@ -402,43 +509,33 @@ with tab_reading:
         for speaker, eng, kor in dialogue:
             korean_html += f"<b>{speaker}:</b> {kor}<br><br>"
         korean_html += "</div>"
-
         st.markdown(korean_html, unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("### ⭐ Key Expressions")
 
-    col_a, col_b = st.columns(2)
-    half = (len(data["key_expressions"]) + 1) // 2
-
-    with col_a:
-        for exp in data["key_expressions"][:half]:
-            st.markdown(f'<div class="expression">{exp}</div>', unsafe_allow_html=True)
-
-    with col_b:
-        for exp in data["key_expressions"][half:]:
-            st.markdown(f'<div class="expression">{exp}</div>', unsafe_allow_html=True)
+    for exp in data["key_expressions"]:
+        st.markdown(f'<div class="expression">{exp}</div>', unsafe_allow_html=True)
 
 # =========================================================
-# 4. 활동
+# 활동
 # =========================================================
 with tab_activity:
     st.markdown("## ✍️ 활동")
 
-    st.markdown('<div class="simple-box"><b>Reading Check</b></div>', unsafe_allow_html=True)
+    st.markdown("### 1. Reading Check")
 
-    comprehension_questions = data["comprehension_questions"]
     user_choices = []
 
-    for i, q in enumerate(comprehension_questions, start=1):
+    for i, (question, options, answer) in enumerate(data["questions"], start=1):
         choice = st.radio(
-            q["question"],
-            q["options"],
-            key=f"{person_name}_reading_check_{i}"
+            question,
+            options,
+            key=f"{category}_{topic_name}_q{i}"
         )
-        user_choices.append((choice, q["answer"]))
+        user_choices.append((choice, answer))
 
-    if st.button("정답 확인", key=f"{person_name}_reading_check_button"):
+    if st.button("정답 확인", key=f"{category}_{topic_name}_check"):
         score = 0
 
         for i, (choice, answer) in enumerate(user_choices, start=1):
@@ -448,9 +545,9 @@ with tab_activity:
             else:
                 st.error(f"{i}번 정답: {answer}")
 
-        st.markdown(f"### 점수: {score} / {len(comprehension_questions)}")
+        st.markdown(f"### 점수: {score} / {len(data['questions'])}")
 
-        if score == len(comprehension_questions):
+        if score == len(data["questions"]):
             st.balloons()
             st.success("잘했습니다!")
         elif score >= 2:
@@ -460,47 +557,30 @@ with tab_activity:
 
     st.markdown("---")
 
-    st.markdown('<div class="simple-box"><b>Reflection Writing</b></div>', unsafe_allow_html=True)
+    st.markdown("### 2. Reflection Writing")
 
     reflection = st.text_area(
         data["reflection_prompt"],
-        placeholder=(
-            f"예: {data['reflection_example_en']}\n"
-            f"예: {data['reflection_example_ko']}"
-        ),
-        height=150,
-        key=f"{person_name}_reflection"
+        placeholder="영어 또는 한국어로 적어 보세요.",
+        height=140,
+        key=f"{category}_{topic_name}_reflection"
     )
 
-    if st.button("피드백 받기", key=f"{person_name}_reflection_feedback"):
+    if st.button("피드백 받기", key=f"{category}_{topic_name}_feedback"):
         text = reflection.strip()
 
         if text == "":
             st.warning("먼저 답을 적어 주세요.")
-
         else:
-            person_name_clean = person_name.split(" ", 1)[-1]
+            clean_name = topic_name.split(" ", 1)[-1]
             answer_lang = detect_language(text)
 
             if answer_lang == "ko":
                 st.markdown("### 영어로 바꾸면")
-                translated_answer = make_korean_to_english(text, person_name_clean)
-                st.success(translated_answer)
-
-                if len(text) < 30:
-                    st.info("이유를 한 문장 더 쓰면 더 좋습니다.")
-                else:
-                    st.info("생각이 잘 드러납니다.")
-
+                st.success(make_korean_to_english(text, clean_name))
             else:
                 st.markdown("### 다듬은 영어")
-                improved_answer = improve_english_answer(text, person_name_clean)
-                st.success(improved_answer)
-
-                if "because" not in text.lower():
-                    st.info("because를 넣으면 이유가 더 분명해집니다.")
-                else:
-                    st.info("이유를 잘 설명했습니다.")
+                st.success(improve_english_answer(text, clean_name))
 
             st.markdown("### 추천 표현")
-            st.write("I should believe in myself. / I should never give up. / I should keep practicing.")
+            st.write("I should keep trying. / I should believe in myself. / I learned something important.")
