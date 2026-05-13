@@ -220,6 +220,109 @@ people_data = {
     }
 }
 
+
+# =========================================================
+# 서술형 답변 변환/확장 함수
+# =========================================================
+def detect_language(text):
+    english_count = sum(1 for ch in text if ch.lower() in "abcdefghijklmnopqrstuvwxyz")
+    korean_count = sum(1 for ch in text if "가" <= ch <= "힣")
+
+    if korean_count > english_count:
+        return "ko"
+    return "en"
+
+
+def make_korean_to_english(text, person_name_clean):
+    """
+    학생이 한국어로 적었을 때 영어 문장으로 바꾸기
+    완전한 AI 번역은 아니지만, 수업용으로 자연스러운 영어 예시를 만들어 줍니다.
+    """
+
+    lower_text = text.lower()
+
+    ideas = []
+
+    if "포기" in text:
+        ideas.append("I should not give up easily")
+    if "연습" in text or "훈련" in text or "연습" in lower_text:
+        ideas.append("I should keep practicing")
+    if "노력" in text or "최선" in text:
+        ideas.append("I should do my best")
+    if "믿" in text or "자신감" in text:
+        ideas.append("I should believe in myself")
+    if "성실" in text or "꾸준" in text:
+        ideas.append("I should be hardworking and consistent")
+    if "지치" in text or "힘들" in text or "피곤" in text:
+        ideas.append("I can rest a little and try again when I feel tired")
+    if "꿈" in text or "목표" in text:
+        ideas.append("I should work hard for my dream")
+
+    if len(ideas) == 0:
+        ideas.append("I should learn a positive attitude from this person")
+        ideas.append("I should try harder in my own life")
+
+    if len(ideas) == 1:
+        idea_sentence = ideas[0]
+    elif len(ideas) == 2:
+        idea_sentence = ideas[0] + " and " + ideas[1]
+    else:
+        idea_sentence = ", ".join(ideas[:-1]) + ", and " + ideas[-1]
+
+    improved = (
+        f"Through {person_name_clean}, I learned that {idea_sentence}. "
+        f"Even when something is difficult, I should keep going and trust myself. "
+        f"I want to apply this lesson to my own life and become a better person."
+    )
+
+    return improved
+
+
+def improve_english_answer(text, person_name_clean):
+    """
+    학생이 영어로 적었을 때 문법을 조금 다듬고 내용을 풍부하게 만들어 주기
+    규칙 기반으로 수업용 예시 문장을 생성합니다.
+    """
+
+    lower_text = text.lower()
+
+    ideas = []
+
+    if "give up" in lower_text:
+        ideas.append("I should not give up easily")
+    if "practice" in lower_text:
+        ideas.append("I should keep practicing")
+    if "believe" in lower_text:
+        ideas.append("I should believe in myself")
+    if "hard" in lower_text or "hardworking" in lower_text:
+        ideas.append("I should work hard for my goal")
+    if "tired" in lower_text:
+        ideas.append("I can rest a little and try again when I feel tired")
+    if "best" in lower_text:
+        ideas.append("I should do my best")
+    if "dream" in lower_text or "goal" in lower_text:
+        ideas.append("I should keep working toward my dream")
+
+    if len(ideas) == 0:
+        ideas.append("I should have a positive attitude")
+        ideas.append("I should keep trying in difficult situations")
+
+    if len(ideas) == 1:
+        idea_sentence = ideas[0]
+    elif len(ideas) == 2:
+        idea_sentence = ideas[0] + " and " + ideas[1]
+    else:
+        idea_sentence = ", ".join(ideas[:-1]) + ", and " + ideas[-1]
+
+    improved = (
+        f"Through {person_name_clean}, I learned that {idea_sentence}. "
+        f"This lesson is important because everyone faces difficult moments. "
+        f"When I feel tired or discouraged, I will remember this message and try again. "
+        f"I want to become a person who keeps growing through effort and confidence."
+    )
+
+    return improved
+
 # =========================================================
 # 제목
 # =========================================================
@@ -461,54 +564,30 @@ with tab_activity:
             st.warning("먼저 자신의 생각을 한 문장 이상 적어 주세요.")
 
         else:
-            english_count = sum(
-                1 for ch in text
-                if ch.lower() in "abcdefghijklmnopqrstuvwxyz"
-            )
-
-            korean_count = sum(
-                1 for ch in text
-                if "가" <= ch <= "힣"
-            )
+            person_name_clean = person_name.split(" ", 1)[-1]
+            answer_lang = detect_language(text)
 
             st.markdown("### 💬 Feedback")
 
-            # 영어 답변 피드백
-            if english_count > korean_count:
-                st.success("영어로 자신의 생각을 표현한 점이 좋습니다.")
-
-                if len(text.split()) >= 10:
-                    st.info("문장의 길이도 충분합니다. 자신의 생각을 비교적 구체적으로 표현했습니다.")
-                else:
-                    st.info("좋은 시작입니다. 이유를 한 문장 더 추가하면 더 좋은 답이 됩니다.")
-
-                if "because" in text.lower():
-                    st.success("because를 사용해서 이유를 설명한 점이 좋습니다.")
-                else:
-                    st.warning("because를 사용해서 이유를 덧붙이면 더 좋은 답이 됩니다.")
-
-                if (
-                    "believe" in text.lower()
-                    or "practice" in text.lower()
-                    or "never give up" in text.lower()
-                    or "do my best" in text.lower()
-                    or "hardworking" in text.lower()
-                ):
-                    st.success("오늘 배운 핵심 표현이나 핵심 메시지를 잘 활용했습니다.")
-                else:
-                    st.info("believe in yourself, practice, never give up, do my best 같은 표현을 넣어 보면 더 좋습니다.")
-
-                st.markdown("#### ✨ 더 좋은 예시")
-                st.write(data["reflection_example_en"])
-
-            # 한국어 답변 피드백
-            else:
+            # =================================================
+            # 한국어로 적은 경우: 영어로 바꾸기
+            # =================================================
+            if answer_lang == "ko":
                 st.success("한국어로 자신의 생각을 잘 표현했습니다.")
+                st.info("아래처럼 영어 문장으로 바꾸어 볼 수 있습니다.")
+
+                translated_answer = make_korean_to_english(text, person_name_clean)
+
+                st.markdown("#### 🇰🇷 내가 쓴 내용")
+                st.write(text)
+
+                st.markdown("#### 🇺🇸 영어로 바꾸면")
+                st.success(translated_answer)
 
                 if len(text) >= 30:
-                    st.info("내용이 충분히 구체적입니다.")
+                    st.info("내용이 충분히 구체적입니다. 자신의 생각과 배울 점이 잘 드러납니다.")
                 else:
-                    st.info("좋은 시작입니다. 왜 그렇게 생각했는지 조금 더 쓰면 좋습니다.")
+                    st.warning("조금 더 구체적으로 쓰면 좋습니다. 예를 들어, 왜 그렇게 생각했는지 한 문장을 더 추가해 보세요.")
 
                 if (
                     "포기" in text
@@ -521,11 +600,61 @@ with tab_activity:
                 ):
                     st.success("오늘 지문의 핵심 메시지와 잘 연결했습니다.")
                 else:
-                    st.info("연습, 자신감, 포기하지 않는 태도, 꾸준함과 연결하면 더 좋습니다.")
+                    st.info("연습, 자신감, 포기하지 않는 태도, 꾸준함과 연결하면 더 좋은 답이 됩니다.")
 
-                st.markdown("#### ✨ 영어로 바꾸면")
-                st.write(data["reflection_example_en"])
+                st.markdown("#### ✍️ 조금 더 풍부한 영어 답변 예시")
+                st.write(
+                    translated_answer
+                    + " I also learned that success does not come in one day. "
+                    + "Small effort every day can make a big difference."
+                )
 
+            # =================================================
+            # 영어로 적은 경우: 문법/내용을 다듬고 풍부하게 만들기
+            # =================================================
+            else:
+                st.success("영어로 자신의 생각을 표현한 점이 좋습니다.")
+                st.info("아래처럼 문장을 조금 더 자연스럽고 풍부하게 다듬을 수 있습니다.")
+
+                improved_answer = improve_english_answer(text, person_name_clean)
+
+                st.markdown("#### ✍️ 내가 쓴 영어")
+                st.write(text)
+
+                st.markdown("#### 🌟 다듬은 영어 답변")
+                st.success(improved_answer)
+
+                if len(text.split()) >= 10:
+                    st.info("문장의 길이도 좋습니다. 자신의 생각을 비교적 구체적으로 표현했습니다.")
+                else:
+                    st.warning("좋은 시작입니다. 이유를 한 문장 더 추가하면 더 좋은 답이 됩니다.")
+
+                if "because" in text.lower():
+                    st.success("because를 사용해서 이유를 설명한 점이 좋습니다.")
+                else:
+                    st.info("because를 사용해서 이유를 덧붙이면 글이 더 논리적으로 보입니다.")
+
+                if (
+                    "believe" in text.lower()
+                    or "practice" in text.lower()
+                    or "never give up" in text.lower()
+                    or "do my best" in text.lower()
+                    or "hardworking" in text.lower()
+                ):
+                    st.success("오늘 배운 핵심 표현이나 핵심 메시지를 잘 활용했습니다.")
+                else:
+                    st.info("believe in yourself, practice, never give up, do my best 같은 표현을 넣어 보면 더 좋습니다.")
+
+                st.markdown("#### 📌 추천 표현")
+                st.markdown("""
+- I learned that I should believe in myself.
+- I should never give up even when I feel tired.
+- Practice is important because it helps me improve.
+- I want to do my best every day.
+""")
+
+            st.markdown("---")
             st.success(
                 "좋습니다. 이 활동은 지문 속 인물의 태도를 내 삶과 연결해 보는 것이 핵심입니다."
             )
+
