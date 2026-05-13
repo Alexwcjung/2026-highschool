@@ -77,7 +77,7 @@ selected_tab = st.radio("", tabs_list, index=tabs_list.index(st.session_state.cu
 st.session_state.current_tab = selected_tab
 
 # -------------------------
-# 곡별 데이터 설정 (모두 6문제씩)
+# 곡별 데이터 설정
 # -------------------------
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
@@ -143,22 +143,28 @@ elif "3. A Whole New World" in song_choice:
 
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
-    bg_content = "<h3>🤝 Stand By Me: 신뢰와 연대의 힘</h3><p>시련 속에서도 곁을 지켜주는 사람이 있다면 이겨낼 수 있다는 노래입니다.</p>"
+    bg_content = "<h3>🤝 Stand By Me: 신뢰와 연대의 힘</h3><p>이 곡은 1961년 발표된 벤 E. 킹의 명곡으로, 어떤 시련 속에서도 곁을 지켜주는 사람이 있다면 두려울 것이 없다는 믿음을 노래합니다.</p>"
+    # 1절 전체 가사 및 코러스 포함
     lyrics_raw = [
-        ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
+        ("When the night has come and the land is dark", "밤이 찾아오고 세상이 어두워질 때"),
         ("And the moon is the only light we'll see", "저 달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
-        ("No, I won't be afraid. Oh, I won't be afraid", "난 두렵지 않을 거예요"),
+        ("No, I won't be afraid, oh, I won't be afraid", "난 두렵지 않을 거예요, 정말 두렵지 않을 거예요"),
         ("Just as long as you stand, stand by me", "당신이 내 곁에 서 있어 주기만 한다면요"),
-        ("If the sky that we look upon should tumble and fall", "우리가 보는 저 하늘이 무너져 내린다 해도"),
-        ("I won't cry, I won't cry. No, I won't shed a tear", "난 울지 않을 거예요")
+        ("So darling, darling, stand by me", "그러니 그대여, 내 곁에 서 주세요"),
+        ("Oh, stand by me", "내 곁에 있어 줘요"),
+        ("Oh, stand, stand by me, stand by me", "내 곁에, 내 곁에 서 주세요"),
+        ("If the sky that we look upon should tumble and fall", "우리가 바라보는 저 하늘이 무너져 내리고"),
+        ("Or the mountains should crumble to the sea", "저 산들이 부서져 바다로 흘러내린다 해도"),
+        ("I won't cry, I won't cry, no, I won't shed a tear", "난 울지 않을 거예요, 울지 않아요, 눈물 한 방울 흘리지 않겠어요"),
+        ("Just as long as you stand, stand by me", "당신이 내 곁에 서 있어 주기만 한다면요")
     ]
     questions = [
-        ("1. 화자가 두렵지 않은 조건은?", ["누군가 곁에 있을 때", "돈이 많을 때", "해가 뜰 때"], "누군가 곁에 있을 때"),
-        ("2. 'Shed a tear'의 뜻은?", ["눈물을 흘리다", "미소를 짓다", "소리를 지르다"], "눈물을 흘리다"),
-        ("3. 'Tumble and fall'은 무엇을 상징하나요?", ["큰 시련이나 재앙", "가을 낙엽", "잠들기"], "큰 시련이나 재앙"),
-        ("4. 'The night is dark'는 어떤 상황을 비유하나요?", ["인생의 힘든 시기", "실제 취침 시간", "정전 상황"], "인생의 힘든 시기"),
-        ("5. 'Stand by me'의 핵심 의미는?", ["지지와 동행", "옆에 서 있기만 하기", "길 비켜주기"], "지지와 동행"),
-        ("6. 'The moon is the only light'가 주는 느낌은?", ["희망의 끈", "절대적인 어둠", "화려함"], "희망의 끈")
+        ("1. 'The land is dark'가 의미하는 상황은?", ["절망적인 상황", "정전된 상태", "밤잠을 자는 시간"], "절망적인 상황"),
+        ("2. 'Shed a tear'의 올바른 의미는?", ["눈물을 흘리다", "미소를 짓다", "소리를 지르다"], "눈물을 흘리다"),
+        ("3. 가사 중 '하늘이 무너지는 것'은 무엇을 비유하나요?", ["거대한 시련이나 재앙", "자연 현상", "기상 악화"], "거대한 시련이나 재앙"),
+        ("4. 화자가 두려움을 극복할 수 있는 유일한 조건은?", ["상대방이 곁에 있어 주는 것", "날이 밝아오는 것", "산에 올라가는 것"], "상대방이 곁에 있어 주는 것"),
+        ("5. 'Crumble'의 뜻으로 가장 적절한 것은?", ["바스러지다/무너지다", "단단해지다", "솟아오르다"], "바스러지다/무너지다"),
+        ("6. 이 노래의 핵심 메시지는 무엇인가요?", ["우정과 연대의 소중함", "자연 보호의 필요성", "이별의 아픔"], "우정과 연대의 소중함")
     ]
 
 elif "5. Don't Know Why" in song_choice:
@@ -223,7 +229,7 @@ elif selected_tab == "📖 가사 & 퀴즈":
                 st.session_state.submitted_step2 = True
                 st.rerun()
     with col_l:
-        st.markdown("### 🎼 Full Lyrics")
+        st.markdown("### 🎼 Full Lyrics (Verse 1 & Chorus)")
         for eng, kor in full_lyrics:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
