@@ -4,49 +4,51 @@ import streamlit as st
 # 기본 설정
 # =========================
 st.set_page_config(
-    page_title="Lyrics Training with Subtitles",
+    page_title="Lyrics & Translation: Let It Go",
     page_icon="❄️",
     layout="wide"
 )
 
 # =========================
-# CSS 디자인 (자막 가독성 강화)
+# 디자인 최적화 (가사/해석 가독성)
 # =========================
 st.markdown("""
 <style>
     .stApp { background-color: #0f172a; color: #f8fafc; } 
-    .lyrics-card {
+    .title-box {
+        background: linear-gradient(90deg, #0ea5e9, #2563eb);
+        padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 30px;
+    }
+    .lyrics-container {
         background-color: #1e293b;
-        padding: 20px;
-        border-radius: 15px;
-        border-left: 5px solid #38bdf8;
-        margin-bottom: 20px;
+        padding: 40px;
+        border-radius: 20px;
+        border: 2px solid #38bdf8;
+        line-height: 1.8;
     }
-    .korean-sub {
-        color: #94a3b8;
-        font-size: 0.95rem;
-        font-family: 'Nanum Gothic', sans-serif;
-        margin-top: 5px;
-    }
-    .english-line {
-        font-size: 1.2rem;
+    .eng-line {
+        font-size: 1.4rem;
         font-weight: bold;
         color: #f1f5f9;
+        margin-top: 15px;
     }
-    .stop-sign {
-        color: #ef4444;
-        font-weight: bold;
+    .kor-sub {
+        font-size: 1.05rem;
+        color: #94a3b8;
+        margin-bottom: 10px;
+        font-family: 'Nanum Gothic', sans-serif;
+    }
+    .chorus-tag {
+        color: #fbbf24;
         font-size: 0.9rem;
-        margin-bottom: 5px;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-top: 30px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# =========================
-# 세션 상태 (진행 단계 관리)
-# =========================
-if 'step' not in st.session_state:
-    st.session_state.step = 1[cite: 1]
+st.markdown('<div class="title-box"><h1>❄️ Let It Go: Full Translation</h1><p>영상과 함께 전체 가사의 의미를 확인해 보세요.</p></div>', unsafe_allow_html=True)
 
 # =========================
 # 메인 레이아웃
@@ -54,88 +56,47 @@ if 'step' not in st.session_state:
 col_v, col_l = st.columns([1, 1.2])
 
 with col_v:
-    st.markdown("### 🎬 1. Watch Video")
+    st.subheader("🎬 Watch Video")
     st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-    st.info("💡 노래를 들으며 오른쪽에서 정답을 고르세요. 정답을 맞춰야 다음 자막이 나옵니다.")
-    
-    st.divider()
-    st.metric("Progress", f"Step {st.session_state.step} / 5")
+    st.info("💡 왼쪽 영상을 재생하고 오른쪽의 해석과 함께 감상하세요.")
 
 with col_l:
-    st.markdown("### 📜 2. Interactive Subtitles")
-
-    # 단계별 가사, 자막, 문제 구성
+    st.subheader("📜 Lyrics & Korean Subtitles")
     
-    # --- STEP 1 ---
-    if st.session_state.step >= 1:
-        with st.container():
-            st.markdown('<div class="english-line">The snow glows white on the... tonight</div>', unsafe_allow_html=True)
-            st.markdown('<div class="korean-sub">오늘 밤 산에는 하얀 눈이 빛나고</div>', unsafe_allow_html=True)
-            if st.session_state.step == 1:
-                ans1 = st.radio("1. 들리는 단어를 고르세요:", ["mountain", "fountain"], index=None, horizontal=True, key="q1")
-                if ans1 == "mountain":
-                    if st.button("정답! 다음 문장 보기"):
-                        st.session_state.step = 2
-                        st.rerun()
-            else:
-                st.success("Selected: mountain")
+    # 전체 가사 및 해석 데이터
+    lyrics_data = [
+        ("The snow glows white on the mountain tonight", "오늘 밤 산에는 하얀 눈이 빛나고"),
+        ("Not a footprint to be seen", "발자국 하나 보이지 않네"),
+        ("A kingdom of isolation", "고립된 이 왕국에서"),
+        ("And it looks like I'm the queen", "내가 이곳의 여왕이 된 것 같아"),
+        
+        ("The wind is howling like this swirling storm inside", "바람은 내 안의 휘몰아치는 폭풍처럼 울부짖고"),
+        ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었어, 하늘은 내가 노력했다는 걸 알 거야"),
+        
+        ("Don't let them in, don't let them see", "아무도 들여보내지 마, 아무것도 보여주지 마"),
+        ("Be the good girl you always have to be", "언제나 그랬듯 착한 소녀가 되어야 해"),
+        ("Conceal, don't feel, don't let them know", "숨기고, 느끼지 마, 그들이 알게 하지 마"),
+        ("Well, now they know!", "그런데 이제 그들이 알아버렸어!"),
+        
+        ("Let it go, let it go", "다 잊어, 이제 다 잊어"),
+        ("Can't hold it back anymore", "더 이상 참을 수 없어"),
+        ("Let it go, let it go", "다 잊어, 다 던져버려"),
+        ("Turn away and slam the door!", "뒤돌아서 문을 쾅 닫아버릴 거야"),
+        
+        ("I don't care what they're going to say", "남들이 무슨 말을 하든 상관없어"),
+        ("Let the storm rage on", "폭풍아 계속 몰아쳐라"),
+        ("The cold never bothered me anyway", "추위는 더 이상 나를 괴롭히지 못하니까")
+    ]
 
-    # --- STEP 2 ---
-    if st.session_state.step >= 2:
-        st.divider()
-        with st.container():
-            st.markdown('<div class="english-line">A kingdom of... and it looks like I\'m the queen</div>', unsafe_allow_html=True)
-            st.markdown('<div class="korean-sub">고립된 왕국, 그리고 내가 이곳의 여왕이 된 것 같아</div>', unsafe_allow_html=True)
-            if st.session_state.step == 2:
-                ans2 = st.radio("2. 들리는 단어를 고르세요:", ["isolation", "imagination"], index=None, horizontal=True, key="q2")
-                if ans2 == "isolation":
-                    if st.button("정답! 다음 문장 보기"):
-                        st.session_state.step = 3
-                        st.rerun()
-            else:
-                st.success("Selected: isolation")
+    # 가사 출력 루프
+    with st.container():
+        for eng, kor in lyrics_data:
+            # 후렴구 구분
+            if eng == "Let it go, let it go":
+                st.markdown('<div class="chorus-tag">── Chorus ──</div>', unsafe_allow_html=True)
+            
+            st.markdown(f'<div class="eng-line">{eng}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="kor-sub">{kor}</div>', unsafe_allow_html=True)
 
-    # --- STEP 3 ---
-    if st.session_state.step >= 3:
-        st.divider()
-        with st.container():
-            st.markdown('<div class="english-line">The wind is howling like this... storm inside</div>', unsafe_allow_html=True)
-            st.markdown('<div class="korean-sub">바람은 내 안의 휘몰아치는 폭풍처럼 울부짖고 있어</div>', unsafe_allow_html=True)
-            if st.session_state.step == 3:
-                ans3 = st.radio("3. 들리는 단어를 고르세요:", ["swirling", "swinging"], index=None, horizontal=True, key="q3")
-                if ans3 == "swirling":
-                    if st.button("정답! 다음 문장 보기"):
-                        st.session_state.step = 4
-                        st.rerun()
-            else:
-                st.success("Selected: swirling")
-
-    # --- STEP 4 ---
-    if st.session_state.step >= 4:
-        st.divider()
-        with st.container():
-            st.markdown('<div class="english-line">...don\'t let them know. Well, now they know!</div>', unsafe_allow_html=True)
-            st.markdown('<div class="korean-sub">그들이 알게 하지 마. 그런데 이제 그들이 알아버렸어!</div>', unsafe_allow_html=True)
-            if st.session_state.step == 4:
-                ans4 = st.radio("4. 들리는 단어를 고르세요:", ["conceal", "reveal"], index=None, horizontal=True, key="q4")
-                if ans4 == "conceal":
-                    if st.button("정답! 다음 문장 보기"):
-                        st.session_state.step = 5
-                        st.rerun()
-            else:
-                st.success("Selected: conceal")
-
-    # --- STEP 5 ---
-    if st.session_state.step >= 5:
-        st.divider()
-        with st.container():
-            st.markdown('<div class="english-line">Let it go, let it go. Can\'t hold it back...</div>', unsafe_allow_html=True)
-            st.markdown('<div class="korean-sub">다 잊어, 다 잊어. 더 이상은 견딜 수 없어</div>', unsafe_allow_html=True)
-            if st.session_state.step == 5:
-                ans5 = st.radio("5. 들리는 단어를 고르세요:", ["anymore", "anyhow"], index=None, horizontal=True, key="q5")
-                if ans5 == "anymore":
-                    st.balloons()
-                    st.success("Perfect! 1절 학습 완료!")
-                    if st.button("다시 도전하기"):
-                        st.session_state.step = 1
-                        st.rerun()
+    st.divider()
+    st.caption("겨울왕국(Frozen) OST - Let It Go (1절)")
