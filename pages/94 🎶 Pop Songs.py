@@ -37,18 +37,18 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -------------------------
-# 세션 상태 관리
+# 세션 상태 관리 (초기화 로직 수정)
 # -------------------------
 if 'selected_song' not in st.session_state: st.session_state.selected_song = "1. Let It Go - Frozen OST"
 if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 if 'current_tab' not in st.session_state: st.session_state.current_tab = "🎬 배경 학습"
 
-def reset_data():
-    st.session_state.submitted_step2 = False
+# 곡을 바꿀 때 데이터를 강제로 비우지 않도록 수정
+def reset_data_soft():
+    # 가사 순서 배열의 경우 곡마다 내용이 다르므로 이 부분만 안전하게 비워줌 (오류 방지)
     st.session_state.q3_cards = []
     st.session_state.show_q3_result = False
-    st.session_state.current_tab = "🎬 배경 학습"
     if 'scrambled' in st.session_state: del st.session_state.scrambled
 
 # -------------------------
@@ -68,10 +68,10 @@ song_choice = st.selectbox("", song_options, label_visibility="collapsed")
 
 if st.session_state.selected_song != song_choice:
     st.session_state.selected_song = song_choice
-    reset_data()
+    reset_data_soft() # 최소한의 데이터만 재설정
     st.rerun()
 
-# 탭 수동 제어
+# 탭 선택 상태 유지
 tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"]
 selected_tab = st.radio("", tabs_list, index=tabs_list.index(st.session_state.current_tab), horizontal=True, label_visibility="collapsed")
 st.session_state.current_tab = selected_tab
@@ -143,8 +143,7 @@ elif "3. A Whole New World" in song_choice:
 
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
-    bg_content = "<h3>🤝 Stand By Me: 신뢰와 연대의 힘</h3><p>이 곡은 1961년 발표된 벤 E. 킹의 명곡으로, 어떤 시련 속에서도 곁을 지켜주는 사람이 있다면 두려울 것이 없다는 믿음을 노래합니다.</p>"
-    # 1절 전체 가사 및 코러스 포함
+    bg_content = "<h3>🤝 Stand By Me: 신뢰와 연대의 힘</h3><p>벤 E. 킹의 명곡으로, 어떤 시련 속에서도 곁을 지켜주는 사람이 있다면 두려울 것이 없다는 믿음을 노래합니다.</p>"
     lyrics_raw = [
         ("When the night has come and the land is dark", "밤이 찾아오고 세상이 어두워질 때"),
         ("And the moon is the only light we'll see", "저 달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
@@ -188,7 +187,7 @@ elif "5. Don't Know Why" in song_choice:
     ]
 
 # -------------------------
-# 가사 가공 (알파벳 기호 추가)
+# 가사 가공
 # -------------------------
 alphabet = list(string.ascii_lowercase)
 full_lyrics = []
@@ -196,10 +195,9 @@ for i, (eng, kor) in enumerate(lyrics_raw):
     label = alphabet[i] if i < len(alphabet) else str(i)
     full_lyrics.append((f"({label}) {eng}", kor))
 
-# -------------------------
-# 순서 섞기 및 세션 관리
-# -------------------------
 correct_order = [line[0] for line in full_lyrics]
+
+# 섞인 가사 상태 관리
 if 'scrambled' not in st.session_state or st.session_state.get('last_song') != song_choice:
     st.session_state.scrambled = random.sample(correct_order, len(correct_order))
     st.session_state.last_song = song_choice
@@ -229,12 +227,12 @@ elif selected_tab == "📖 가사 & 퀴즈":
                 st.session_state.submitted_step2 = True
                 st.rerun()
     with col_l:
-        st.markdown("### 🎼 Full Lyrics (Verse 1 & Chorus)")
+        st.markdown("### 🎼 Full Lyrics")
         for eng, kor in full_lyrics:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
 elif selected_tab == "🧩 순서 배열":
-    st.subheader("🧩 가사 순서대로 클릭하세요 (a, b, c... 순서 참고)")
+    st.subheader("🧩 가사 순서대로 클릭하세요")
     b_cols = st.columns(2)
     for i, text in enumerate(st.session_state.scrambled):
         is_sel = text in st.session_state.q3_cards
@@ -248,15 +246,18 @@ elif selected_tab == "🧩 순서 배열":
         if c2.button("🗑️", key=f"del3_{idx}"):
             st.session_state.q3_cards.pop(idx)
             st.rerun()
+    
     if len(st.session_state.q3_cards) == len(correct_order):
         if st.button("🚩 최종 결과 확인", type="primary", use_container_width=True):
             st.session_state.show_q3_result = True
             st.rerun()
+            
     if st.session_state.get('show_q3_result'):
         all_correct = True
         for i, user_s in enumerate(st.session_state.q3_cards):
-            if user_s == correct_order[i]: st.success(f"Step {i+1}: Perfect!")
-            else:
-                st.error(f"Step {i+1}: Wrong (정답: {correct_order[i]})")
-                all_correct = False
+            if i < len(correct_order):
+                if user_s == correct_order[i]: st.success(f"Step {i+1}: Perfect!")
+                else:
+                    st.error(f"Step {i+1}: Wrong (정답: {correct_order[i]})")
+                    all_correct = False
         if all_correct: st.balloons()
