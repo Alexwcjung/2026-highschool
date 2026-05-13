@@ -3,183 +3,177 @@ import streamlit as st
 # =========================
 # 1. 기본 설정 및 디자인
 # =========================
-st.set_page_config(page_title="Frozen English Class", page_icon="❄️", layout="wide")
+st.set_page_config(page_title="Pop Song English Class", page_icon="🎵", layout="wide")
 
 st.markdown("""
 <style>
     .stApp { background-color: #ffffff; color: #1e293b; }
     .main-title {
-        background-color: #f0f9ff; padding: 20px; border-radius: 15px;
-        border: 2px solid #0ea5e9; text-align: center; color: #0369a1; margin-bottom: 25px;
+        background-color: #f8fafc; padding: 25px; border-radius: 15px;
+        border: 2px solid #6366f1; text-align: center; color: #4338ca; margin-bottom: 25px;
     }
     .info-box {
-        background-color: #f8fafc; padding: 20px; border-radius: 12px;
-        border: 1px solid #e2e8f0; line-height: 1.6; margin-bottom: 20px;
+        background-color: #f1f5f9; padding: 20px; border-radius: 12px;
+        border: 1px solid #cbd5e1; line-height: 1.6; margin-bottom: 20px;
     }
     .lyrics-container {
-        padding: 8px 15px;
-        border-left: 4px solid #38bdf8;
-        margin-bottom: 8px;
-        background-color: #f1f5f9;
-        border-radius: 0 8px 8px 0;
+        padding: 8px 15px; border-left: 4px solid #6366f1;
+        margin-bottom: 8px; background-color: #f8fafc; border-radius: 0 8px 8px 0;
     }
     .eng-line { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; }
     .kor-sub { font-size: 0.9rem; color: #64748b; }
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-title"><h1>❄️ Frozen: Let It Go Interactive Class</h1></div>', unsafe_allow_html=True)
-
-# 세션 상태 초기화
+# -------------------------
+# 세션 상태 관리
+# -------------------------
+if 'selected_song' not in st.session_state: st.session_state.selected_song = None
 if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 
-# 탭 생성
-tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 영화 배경", "📖 STEP 2. 가사 학습 & 퀴즈", "🧩 STEP 3. 1절 전체 순서 맞추기"])
+def reset_data():
+    st.session_state.submitted_step2 = False
+    st.session_state.q3_cards = []
+    st.session_state.show_q3_result = False
 
 # -------------------------
-# STEP 1: 영화 배경
+# 상단 곡 선택 메뉴
 # -------------------------
+st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning 🎵</h1></div>', unsafe_allow_html=True)
+
+song_choice = st.selectbox("학습할 노래를 선택하세요:", ["선택하세요", "Let It Go - Frozen OST", "Hello - Adele"], index=0)
+
+if song_choice == "선택하세요":
+    st.info("위의 메뉴에서 노래를 선택하면 수업이 시작됩니다!")
+    st.stop()
+
+# 곡이 바뀌면 데이터 초기화
+if st.session_state.selected_song != song_choice:
+    st.session_state.selected_song = song_choice
+    reset_data()
+    st.rerun()
+
+# -------------------------
+# 곡별 데이터 설정
+# -------------------------
+if song_choice == "Let It Go - Frozen OST":
+    video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
+    bg_text = "엘사는 마법을 숨기기 위해 평생 고립된 삶을 살았습니다. 이 노래는 진정한 자유를 선언하는 순간입니다."
+    lyrics_data = [
+        ("The snow glows white on the mountain tonight", "오늘 밤 산에 내린 눈은 하얗게 빛나고"),
+        ("Not a footprint to be seen", "발자국 하나 보이지 않네"),
+        ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아"),
+        ("Let it go, let it go", "다 잊어, 다 내려놓자"),
+        ("Can't hold it back anymore", "더는 억누를 수 없어")
+    ]
+    questions = [
+        ("1. 노래 시작 부분의 배경은?", ["발자국 가득한 거리", "아무도 없는 눈산", "햇살 비치는 해변"], "아무도 없는 눈산"),
+        ("2. 'Let it go'의 의미는?", ["다시 돌아가기", "억눌렸던 것을 놓아주기", "포기하기"], "억눌렸던 것을 놓아주기")
+    ]
+    scrambled_lyrics = [
+        "C. A kingdom of isolation, and it looks like I'm the queen.",
+        "A. The snow glows white on the mountain tonight.",
+        "D. Let it go, let it go! Can't hold it back anymore.",
+        "B. Not a footprint to be seen.",
+        "E. Turn away and slam the door!"
+    ]
+    correct_order = [
+        "A. The snow glows white on the mountain tonight.",
+        "B. Not a footprint to be seen.",
+        "C. A kingdom of isolation, and it looks like I'm the queen.",
+        "D. Let it go, let it go! Can't hold it back anymore.",
+        "E. Turn away and slam the door!"
+    ]
+
+else: # Adele - Hello
+    video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
+    bg_text = "과거의 연인에게 연락을 시도하며 지난날을 회상하고 사과하는 애절한 발라드입니다. 아델의 명확한 발음이 돋보입니다."
+    lyrics_data = [
+        ("Hello, it's me", "안녕, 나야"),
+        ("I was wondering if after all these years you'd like to meet", "수년이 흐른 지금, 네가 만나고 싶어할지 궁금했어"),
+        ("Hello from the other side", "반대편(먼 곳)에서 인사해"),
+        ("I must've called a thousand times", "수천 번은 전화했을 거야"),
+        ("To tell you I'm sorry for everything that I've done", "내가 했던 모든 일들에 미안하다고 말하기 위해서")
+    ]
+    questions = [
+        ("1. 'Hello, it's me'는 어떤 상황인가요?", ["자기소개 하기", "전화를 걸어 인사하기", "처음 보는 사람에게 인사"], "전화를 걸어 인사하기"),
+        ("2. 'I must've called a thousand times'의 뜻은?", ["천 번 전화했다(강한 추측/강조)", "천 번 전화할 것이다", "전화가 고장 났다"], "천 번 전화했다(강한 추측/강조)")
+    ]
+    scrambled_lyrics = [
+        "B. I was wondering if after all these years you'd like to meet.",
+        "D. I must've called a thousand times.",
+        "A. Hello, it's me.",
+        "E. To tell you I'm sorry for everything that I've done.",
+        "C. Hello from the other side."
+    ]
+    correct_order = [
+        "A. Hello, it's me.",
+        "B. I was wondering if after all these years you'd like to meet.",
+        "C. Hello from the other side.",
+        "D. I must've called a thousand times.",
+        "E. To tell you I'm sorry for everything that I've done."
+    ]
+
+# -------------------------
+# 공통 탭 구조
+# -------------------------
+tab1, tab2, tab3 = st.tabs(["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 맞추기"])
+
 with tab1:
-    v_col1, v_col2, v_col3 = st.columns([1, 2, 1])
-    with v_col2:
-        st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-    
-    st.markdown("""
-    <div class="info-box">
-        <h3>🏰 아렌델과 엘사의 이야기</h3>
-        엘사는 모든 것을 얼리는 마법을 숨기기 위해 평생 고립된 삶을 살았습니다. 
-        대관식 날 비밀이 드러나자 도망친 엘사가 산 위에서 부르는 이 노래는 
-        과거의 굴레를 벗어던지고 <b>진정한 자유</b>를 선언하는 순간입니다.
-    </div>
-    """, unsafe_allow_html=True)
+    v1, v2, v3 = st.columns([1, 2, 1])
+    with v2: st.video(video_url)
+    st.markdown(f'<div class="info-box"><h3>💡 노래 이야기</h3>{bg_text}</div>', unsafe_allow_html=True)
 
-# -------------------------
-# STEP 2: 가사 학습 & 퀴즈 (문제 항목에 직접 정답 표시)
-# -------------------------
 with tab2:
-    col_vid2, col_lyrics2 = st.columns([1, 1])
-    
-    with col_vid2:
-        st.video("https://www.youtube.com/watch?v=L0MK7qz13bU")
-        st.divider()
-        st.markdown("### 💡 내용 이해 퀴즈")
-        
-        questions = [
-            ("1. 노래 시작 부분의 배경은 어떤 상태인가요?", ["발자국이 가득한 거리", "아무도 없는 고립된 눈산", "햇살이 비치는 해변"], "아무도 없는 고립된 눈산"),
-            ("2. 엘사가 그동안 지켜온 규칙은?", ["말을 많이 해라", "숨기고 느끼지 마라", "문을 항상 열어두어라"], "숨기고 느끼지 마라"),
-            ("3. 'Well, now they know!'는 어떤 상황인가요?", ["마법을 영원히 숨기게 됨", "사람들에게 마법을 들킴", "왕국으로 돌아가는 중"], "사람들에게 마법을 들킴"),
-            ("4. 'Let it go'의 핵심 의미는?", ["다시 돌아가기", "포기하고 울기", "억눌렸던 것을 놓아주기"], "억눌렸던 것을 놓아주기"),
-            ("5. 'The cold never bothered me anyway'의 뜻은?", ["추위는 나를 괴롭힌 적 없다", "날씨가 너무 춥다", "감기에 걸릴 것 같다"], "추위는 나를 괴롭힌 적 없다"),
-            ("6. 엘사가 마지막에 '문(door)'을 닫는 행위의 의미는?", ["배가 고파서", "과거와의 단절과 새로운 시작", "청소를 하기 위해"], "과거와의 단절과 새로운 시작")
-        ]
-        
-        # 폼을 통해 제출 전까지 결과 노출 방지
-        with st.form("quiz_form"):
-            user_answers = []
-            for i, (q, opts, ans) in enumerate(questions):
-                # 제출 후라면 문제 제목 뒤에 정답 여부 표시
-                display_q = q
-                if st.session_state.submitted_step2:
-                    # 선택값 가져오기 (form 내부에선 런타임 값이 바로 안 잡히므로 session_state 활용)
-                    user_pick = st.session_state.get(f"q2_sel_{i}")
-                    if user_pick == ans:
-                        display_q += " ✅ (정답)"
-                    else:
-                        display_q += f" 🔍 (확인: {ans})"
-                
-                choice = st.radio(display_q, opts, index=None, key=f"q2_sel_{i}")
-                user_answers.append(choice)
-            
-            submit_btn = st.form_submit_button("정답 확인하기")
-            if submit_btn:
-                st.session_state.submitted_step2 = True
-                st.rerun() # 정답 표시를 위해 화면 갱신
-
-    with col_lyrics2:
-        st.markdown("### ❄️ 전체 가사 (Section 1)")
-        full_lyrics = [
-            ("The snow glows white on the mountain tonight", "오늘 밤 산에 내린 눈은 하얗게 빛나고"),
-            ("Not a footprint to be seen", "발자국 하나 보이지 않네"),
-            ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아"),
-            ("The wind is howling like this swirling storm inside", "내 안의 폭풍처럼 바람이 울부짖고 있어"),
-            ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었어, 하늘은 내 노력을 알 거야"),
-            ("Don't let them in, don't let them see", "그들을 들여보내지 마, 보여주지 마"),
-            ("Be the good girl you always have to be", "늘 그래왔던 것처럼 착한 소녀가 되어야 해"),
-            ("Conceal, don't feel, don't let them know", "숨기고, 느끼지 말고, 그들이 모르게 해"),
-            ("Well, now they know!", "그런데 이제 그들이 알아버렸어!"),
-            ("Let it go, let it go", "다 잊어, 다 내려놓자"),
-            ("Can't hold it back anymore", "더는 억누를 수 없어"),
-            ("Let it go, let it go", "다 잊어, 이제 자유야"),
-            ("Turn away and slam the door!", "돌아서서 문을 쾅 닫아버려"),
-            ("I don't care what they're going to say", "사람들이 뭐라 하든 상관없어"),
-            ("Let the storm rage on", "폭풍아 계속 휘몰아쳐라"),
-            ("The cold never bothered me anyway", "추위는 더 이상 나를 괴롭히지 못하니까")
-        ]
-        for eng, kor in full_lyrics:
+    l_col, q_col = st.columns([1, 1])
+    with l_col:
+        st.markdown("### ❄️ Lyrics Focus")
+        for eng, kor in lyrics_data:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
+    
+    with q_col:
+        st.markdown("### 💡 Comprehension Quiz")
+        with st.form("quiz_form"):
+            for i, (q, opts, ans) in enumerate(questions):
+                label = q
+                if st.session_state.submitted_step2:
+                    user_val = st.session_state.get(f"sel_{i}")
+                    label += " ✅" if user_val == ans else f" 🔍 (정답: {ans})"
+                st.radio(label, opts, index=None, key=f"sel_{i}")
+            
+            if st.form_submit_button("정답 확인하기"):
+                st.session_state.submitted_step2 = True
+                st.rerun()
 
-# -------------------------
-# STEP 3: 문장 순서 맞추기
-# -------------------------
 with tab3:
-    st.subheader("🧩 1절 전체 순서 맞추기")
-    st.write("가사를 순서대로 클릭하세요. 마지막에 [결과 확인] 버튼을 누르면 채점됩니다.")
-    
-    q3_correct = [
-        "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
-        "B. The wind is howling like this swirling storm inside. Couldn't keep it in, heaven knows I tried.",
-        "C. Don't let them in, don't let them see. Be the good girl you always have to be.",
-        "D. Conceal, don't feel, don't let them know. Well, now they know!",
-        "E. Let it go, let it go! Can't hold it back anymore.",
-        "F. Let it go, let it go! Turn away and slam the door!",
-        "G. I don't care what they're going to say. Let the storm rage on. The cold never bothered me anyway."
-    ]
-    
-    scrambled_list = [
-        "D. Conceal, don't feel, don't let them know. Well, now they know!",
-        "A. The snow glows white on the mountain tonight, not a footprint to be seen. A kingdom of isolation, and it looks like I'm the queen.",
-        "G. I don't care what they're going to say. Let the storm rage on. The cold never bothered me anyway.",
-        "B. The wind is howling like this swirling storm inside. Couldn't keep it in, heaven knows I tried.",
-        "F. Let it go, let it go! Turn away and slam the door!",
-        "C. Don't let them in, don't let them see. Be the good girl you always have to be.",
-        "E. Let it go, let it go! Can't hold it back anymore."
-    ]
-    
-    btn_cols = st.columns(2)
-    for i, text in enumerate(scrambled_list):
-        is_in = text in st.session_state.q3_cards
-        if (btn_cols[0] if i % 2 == 0 else btn_cols[1]).button(text, key=f"q3_btn_{i}", use_container_width=True, disabled=is_in):
+    st.subheader("🧩 가사 순서 완성하기")
+    b_cols = st.columns(2)
+    for i, text in enumerate(scrambled_lyrics):
+        is_sel = text in st.session_state.q3_cards
+        if (b_cols[0] if i%2==0 else b_cols[1]).button(text, key=f"q3_{i}", use_container_width=True, disabled=is_sel):
             st.session_state.q3_cards.append(text)
             st.session_state.show_q3_result = False
             st.rerun()
-
-    st.divider()
-    st.markdown("### 📥 내가 나열한 가사")
     
-    for idx, card in enumerate(st.session_state.q3_cards):
+    st.divider()
+    for idx, c in enumerate(st.session_state.q3_cards):
         c1, c2 = st.columns([0.9, 0.1])
-        c1.info(f"{idx+1}번: {card}")
-        if c2.button("🗑️", key=f"del_q3_{idx}"):
+        c1.info(f"{idx+1}: {c}")
+        if c2.button("🗑️", key=f"del_{idx}"):
             st.session_state.q3_cards.pop(idx)
-            st.session_state.show_q3_result = False
             st.rerun()
-
-    if len(st.session_state.q3_cards) == len(q3_correct):
+            
+    if len(st.session_state.q3_cards) == len(correct_order):
         if st.button("🚩 결과 확인하기", type="primary", use_container_width=True):
             st.session_state.show_q3_result = True
             st.rerun()
 
     if st.session_state.get('show_q3_result'):
-        st.markdown("### 📋 최종 순서 체크")
         all_ok = True
-        for i, user_sent in enumerate(st.session_state.q3_cards):
-            if user_sent == q3_correct[i]:
-                st.success(f"✨ {i+1}번: 완벽해요!")
+        for i, u_s in enumerate(st.session_state.q3_cards):
+            if u_s == correct_order[i]: st.success(f"{i+1}번: 정답!")
             else:
-                st.warning(f"🔍 {i+1}번: 순서를 바꿔야 해요. (정답 힌트: {q3_correct[i][:30]}...)")
+                st.warning(f"{i+1}번: 오답 (정답: {correct_order[i][:30]}...)")
                 all_ok = False
-        
-        if all_ok:
-            st.balloons()
-            st.success("🎉 만점입니다! Let It Go 1절을 완벽히 이해하셨네요!")
+        if all_ok: st.balloons()
