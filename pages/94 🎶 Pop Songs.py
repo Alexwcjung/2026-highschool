@@ -3,7 +3,7 @@ import streamlit as st
 # =========================
 # 1. 기본 설정 및 디자인
 # =========================
-st.set_page_config(page_title="Pop Song English Class", page_icon="🎵", layout="wide")
+st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
 
 st.markdown("""
 <style>
@@ -28,7 +28,7 @@ st.markdown("""
 # -------------------------
 # 세션 상태 관리
 # -------------------------
-if 'selected_song' not in st.session_state: st.session_state.selected_song = None
+if 'selected_song' not in st.session_state: st.session_state.selected_song = "Let It Go - Frozen OST"
 if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 
@@ -40,140 +40,140 @@ def reset_data():
 # -------------------------
 # 상단 곡 선택 메뉴
 # -------------------------
-st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning 🎵</h1></div>', unsafe_allow_html=True)
+st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
 
-song_choice = st.selectbox("학습할 노래를 선택하세요:", ["선택하세요", "Let It Go - Frozen OST", "Hello - Adele"], index=0)
+song_choice = st.selectbox("학습할 노래를 선택하세요:", ["Let It Go - Frozen OST", "Hello - Adele"])
 
-if song_choice == "선택하세요":
-    st.info("위의 메뉴에서 노래를 선택하면 수업이 시작됩니다!")
-    st.stop()
-
-# 곡이 바뀌면 데이터 초기화
 if st.session_state.selected_song != song_choice:
     st.session_state.selected_song = song_choice
     reset_data()
     st.rerun()
 
 # -------------------------
-# 곡별 데이터 설정
+# [데이터 빌드]
 # -------------------------
 if song_choice == "Let It Go - Frozen OST":
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
-    bg_text = "엘사는 마법을 숨기기 위해 평생 고립된 삶을 살았습니다. 이 노래는 진정한 자유를 선언하는 순간입니다."
-    lyrics_data = [
-        ("The snow glows white on the mountain tonight", "오늘 밤 산에 내린 눈은 하얗게 빛나고"),
-        ("Not a footprint to be seen", "발자국 하나 보이지 않네"),
+    bg_content = "엘사가 자신의 마법을 더 이상 숨기지 않고 자유를 선언하며 얼음 성을 짓는 명장면입니다."
+    full_lyrics = [
+        ("The snow glows white on the mountain tonight, not a footprint to be seen", "오늘 밤 산엔 눈이 하얗게 빛나고, 발자국 하나 보이지 않네"),
         ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아"),
-        ("Let it go, let it go", "다 잊어, 다 내려놓자"),
-        ("Can't hold it back anymore", "더는 억누를 수 없어")
+        ("The wind is howling like this swirling storm inside", "내 안의 폭풍처럼 바람이 울부짖고 있어"),
+        ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었어, 하늘은 내 노력을 알 거야"),
+        ("Don't let them in, don't let them see. Be the good girl you always have to be", "그들을 들여보내지 마, 보여주지 마. 늘 그랬듯 착한 소녀가 되어야 해"),
+        ("Conceal, don't feel, don't let them know. Well, now they know!", "숨기고, 느끼지 말고, 모르게 해. 그런데 이제 그들이 알아버렸어!"),
+        ("Let it go, let it go! Can't hold it back anymore", "다 잊어, 이제 자유야! 더는 억누를 수 없어"),
+        ("Let it go, let it go! Turn away and slam the door!", "다 잊어, 이제 자유야! 돌아서서 문을 쾅 닫아버려!"),
+        ("I don't care what they're going to say. Let the storm rage on", "그들이 뭐라 하든 상관없어. 폭풍아 계속 휘몰아쳐라"),
+        ("The cold never bothered me anyway", "추위는 더 이상 나를 괴롭히지 못하니까")
     ]
     questions = [
-        ("1. 노래 시작 부분의 배경은?", ["발자국 가득한 거리", "아무도 없는 눈산", "햇살 비치는 해변"], "아무도 없는 눈산"),
-        ("2. 'Let it go'의 의미는?", ["다시 돌아가기", "억눌렸던 것을 놓아주기", "포기하기"], "억눌렸던 것을 놓아주기")
+        ("1. 노래의 배경이 되는 장소는?", ["사람이 북적이는 마을", "아무도 없는 고립된 눈산", "따뜻한 성 안"], "아무도 없는 고립된 눈산"),
+        ("2. 엘사가 숨기려고 노력했던 것은?", ["자신의 보물", "자신의 얼음 마법", "동생 안나의 비밀"], "자신의 얼음 마법"),
+        ("3. 'Let it go'의 핵심 메시지는?", ["과거에 얽매이지 않는 자유", "다시 왕국으로 돌아가기", "친구를 찾아 떠나기"], "과거에 얽매이지 않는 자유"),
+        ("4. 'The cold never bothered me'의 의미는?", ["감기에 걸렸다", "추위는 상관없다", "눈이 싫다"], "추위는 상관없다")
     ]
-    scrambled_lyrics = [
-        "C. A kingdom of isolation, and it looks like I'm the queen.",
-        "A. The snow glows white on the mountain tonight.",
-        "D. Let it go, let it go! Can't hold it back anymore.",
-        "B. Not a footprint to be seen.",
-        "E. Turn away and slam the door!"
-    ]
-    correct_order = [
-        "A. The snow glows white on the mountain tonight.",
-        "B. Not a footprint to be seen.",
-        "C. A kingdom of isolation, and it looks like I'm the queen.",
-        "D. Let it go, let it go! Can't hold it back anymore.",
-        "E. Turn away and slam the door!"
-    ]
-
-else: # Adele - Hello
+else:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
-    bg_text = "과거의 연인에게 연락을 시도하며 지난날을 회상하고 사과하는 애절한 발라드입니다. 아델의 명확한 발음이 돋보입니다."
-    lyrics_data = [
-        ("Hello, it's me", "안녕, 나야"),
-        ("I was wondering if after all these years you'd like to meet", "수년이 흐른 지금, 네가 만나고 싶어할지 궁금했어"),
-        ("Hello from the other side", "반대편(먼 곳)에서 인사해"),
-        ("I must've called a thousand times", "수천 번은 전화했을 거야"),
-        ("To tell you I'm sorry for everything that I've done", "내가 했던 모든 일들에 미안하다고 말하기 위해서")
+    bg_content = "헤어진 연인에게 수년 만에 전화를 걸어 사과와 그리움을 전하는 노래입니다. 아델의 파워풀한 보컬과 명확한 발음이 특징입니다."
+    # 1절 끝(첫 후렴 종료)까지의 긴 문장 구성
+    full_lyrics = [
+        ("Hello, it's me. I was wondering if after all these years you'd like to meet", "안녕, 나야. 이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
+        ("To go over everything. They say that time's supposed to heal ya, but I ain't done much healing", "모든 걸 되짚어보기 위해 말야. 시간은 모든 걸 치유한다지만 난 별로 치유되지 않았어"),
+        ("Hello, can you hear me? I'm in California dreaming about who we used to be", "여보세요, 내 말 들리니? 난 캘리포니아에서 예전의 우리 모습을 꿈꾸고 있어"),
+        ("When we were younger and free. I've forgotten how it felt before the world fell at our feet", "우리가 더 어리고 자유로웠을 때 말야. 세상이 우리 발아래 무너지기 전 기분이 어땠는지 잊어버렸어"),
+        ("There's such a difference between us and a million miles", "우리 사이엔 너무 큰 차이가 있고 수백만 마일의 거리가 있네"),
+        ("Hello from the other side. I must've called a thousand times", "반대편에서 인사해. 수천 번은 전화했을 거야"),
+        ("To tell you I'm sorry for everything that I've done. But when I call, you never seem to be home", "내가 했던 모든 일에 대해 미안하다고 말하려고. 하지만 내가 전화할 때 넌 절대 집에 없는 것 같아"),
+        ("Hello from the outside. At least I can say that I've tried", "외부(밖)에서 인사해. 적어도 내가 노력했다는 말은 할 수 있겠지"),
+        ("To tell you I'm sorry for breaking your heart", "네 마음을 아프게 해서 미안하다고 말하기 위해서 말야"),
+        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 상관없겠지, 그게 더 이상 널 힘들게(찢어지게) 하지 않는 게 분명하니까")
     ]
     questions = [
-        ("1. 'Hello, it's me'는 어떤 상황인가요?", ["자기소개 하기", "전화를 걸어 인사하기", "처음 보는 사람에게 인사"], "전화를 걸어 인사하기"),
-        ("2. 'I must've called a thousand times'의 뜻은?", ["천 번 전화했다(강한 추측/강조)", "천 번 전화할 것이다", "전화가 고장 났다"], "천 번 전화했다(강한 추측/강조)")
-    ]
-    scrambled_lyrics = [
-        "B. I was wondering if after all these years you'd like to meet.",
-        "D. I must've called a thousand times.",
-        "A. Hello, it's me.",
-        "E. To tell you I'm sorry for everything that I've done.",
-        "C. Hello from the other side."
-    ]
-    correct_order = [
-        "A. Hello, it's me.",
-        "B. I was wondering if after all these years you'd like to meet.",
-        "C. Hello from the other side.",
-        "D. I must've called a thousand times.",
-        "E. To tell you I'm sorry for everything that I've done."
+        ("1. 'I must've called a thousand times'의 뉘앙스는?", ["실제로 딱 1,000번 셌다", "아주 많이 연락했다는 강조", "전화기가 고장 났다"], "아주 많이 연락했다는 강조"),
+        ("2. 화자가 치유(healing)에 대해 하는 말은?", ["시간 덕분에 다 나았다", "시간이 흘러도 별로 나아지지 않았다", "병원에 가야 한다"], "시간이 흘러도 별로 나아지지 않았다"),
+        ("3. 'The other side'와 'The outside'는 무엇을 의미할까요?", ["옆집", "심리적/물리적으로 멀어진 현재의 위치", "외출 중인 상태"], "심리적/물리적으로 멀어진 현재의 위치"),
+        ("4. 마지막 문장에서 화자가 깨달은 점은?", ["상대방도 나를 그리워한다", "상대방은 이제 더 이상 아파하지 않는다", "전화번호가 바뀌었다"], "상대방은 이제 더 이상 아파하지 않는다")
     ]
 
+correct_order = [line[0] for line in full_lyrics]
+# 퀴즈용 셔플 (순서 고정)
+if song_choice == "Let It Go - Frozen OST":
+    scrambled_order = [correct_order[3], correct_order[0], correct_order[7], correct_order[1], correct_order[5], correct_order[2], correct_order[8], correct_order[4], correct_order[6], correct_order[9]]
+else:
+    scrambled_order = [correct_order[5], correct_order[0], correct_order[9], correct_order[2], correct_order[7], correct_order[1], correct_order[8], correct_order[3], correct_order[6], correct_order[4]]
+
 # -------------------------
-# 공통 탭 구조
+# 탭 구성
 # -------------------------
-tab1, tab2, tab3 = st.tabs(["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 맞추기"])
+tab1, tab2, tab3 = st.tabs(["🎬 STEP 1. 배경 학습", "📖 STEP 2. 전체 가사 & 퀴즈", "🧩 STEP 3. 1절 순서 배열"])
 
 with tab1:
     v1, v2, v3 = st.columns([1, 2, 1])
     with v2: st.video(video_url)
-    st.markdown(f'<div class="info-box"><h3>💡 노래 이야기</h3>{bg_text}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="info-box"><h3>📜 Song Story</h3>{bg_content}</div>', unsafe_allow_html=True)
 
 with tab2:
-    l_col, q_col = st.columns([1, 1])
-    with l_col:
-        st.markdown("### ❄️ Lyrics Focus")
-        for eng, kor in lyrics_data:
-            st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
-    
-    with q_col:
+    col_v, col_l = st.columns([1, 1.2])
+    with col_v:
+        st.video(video_url)
+        st.divider()
         st.markdown("### 💡 Comprehension Quiz")
-        with st.form("quiz_form"):
+        with st.form(f"quiz_{song_choice}"):
             for i, (q, opts, ans) in enumerate(questions):
-                label = q
+                q_text = q
                 if st.session_state.submitted_step2:
-                    user_val = st.session_state.get(f"sel_{i}")
-                    label += " ✅" if user_val == ans else f" 🔍 (정답: {ans})"
-                st.radio(label, opts, index=None, key=f"sel_{i}")
+                    user_val = st.session_state.get(f"q_sel_{i}")
+                    q_text += " ✅" if user_val == ans else f" 🔍 (정답: {ans})"
+                st.radio(q_text, opts, index=None, key=f"q_sel_{i}")
             
-            if st.form_submit_button("정답 확인하기"):
+            if st.form_submit_button("정답 확인 및 채점"):
                 st.session_state.submitted_step2 = True
                 st.rerun()
 
+    with col_l:
+        st.markdown("### 🎼 Full Lyrics (Section 1)")
+        for eng, kor in full_lyrics:
+            st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
+
 with tab3:
-    st.subheader("🧩 가사 순서 완성하기")
+    st.subheader("🧩 1절 전체 문장 순서 맞추기")
+    st.write("아래 문장들을 가사 순서대로 하나씩 클릭하세요!")
+    
     b_cols = st.columns(2)
-    for i, text in enumerate(scrambled_lyrics):
+    for i, text in enumerate(scrambled_order):
         is_sel = text in st.session_state.q3_cards
-        if (b_cols[0] if i%2==0 else b_cols[1]).button(text, key=f"q3_{i}", use_container_width=True, disabled=is_sel):
+        if (b_cols[0] if i % 2 == 0 else b_cols[1]).button(text, key=f"btn3_{i}", use_container_width=True, disabled=is_sel):
             st.session_state.q3_cards.append(text)
             st.session_state.show_q3_result = False
             st.rerun()
-    
+
     st.divider()
-    for idx, c in enumerate(st.session_state.q3_cards):
-        c1, c2 = st.columns([0.9, 0.1])
-        c1.info(f"{idx+1}: {c}")
-        if c2.button("🗑️", key=f"del_{idx}"):
+    st.markdown("### 📥 내가 구성한 가사")
+    for idx, card in enumerate(st.session_state.q3_cards):
+        c1, c2 = st.columns([0.92, 0.08])
+        c1.info(f"{idx+1}: {card}")
+        if c2.button("🗑️", key=f"del3_{idx}"):
             st.session_state.q3_cards.pop(idx)
+            st.session_state.show_q3_result = False
             st.rerun()
-            
+
     if len(st.session_state.q3_cards) == len(correct_order):
-        if st.button("🚩 결과 확인하기", type="primary", use_container_width=True):
+        if st.button("🚩 최종 결과 확인", type="primary", use_container_width=True):
             st.session_state.show_q3_result = True
             st.rerun()
 
     if st.session_state.get('show_q3_result'):
-        all_ok = True
-        for i, u_s in enumerate(st.session_state.q3_cards):
-            if u_s == correct_order[i]: st.success(f"{i+1}번: 정답!")
+        st.markdown("### 📋 채점 리포트")
+        all_correct = True
+        for i, user_s in enumerate(st.session_state.q3_cards):
+            if user_s == correct_order[i]:
+                st.success(f"Sentence {i+1}: Perfect!")
             else:
-                st.warning(f"{i+1}번: 오답 (정답: {correct_order[i][:30]}...)")
-                all_ok = False
-        if all_ok: st.balloons()
+                st.error(f"Sentence {i+1}: Wrong Order")
+                st.write(f"👉 **정답:** {correct_order[i]}")
+                all_correct = False
+        
+        if all_correct:
+            st.balloons()
+            st.success(f"🎉 대단합니다! {song_choice} 1절을 완벽하게 마스터하셨네요!")
