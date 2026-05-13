@@ -34,7 +34,6 @@ st.markdown("""
 if 'selected_song' not in st.session_state: st.session_state.selected_song = "1. Let It Go - Frozen OST"
 if 'current_tab' not in st.session_state: st.session_state.current_tab = "🎬 배경 학습"
 if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
-# Step 2 채점 상태 저장용
 if 'quiz_submitted' not in st.session_state: st.session_state.quiz_submitted = False
 
 # -------------------------
@@ -116,7 +115,76 @@ elif "2. Hello" in song_choice:
         ("5. 현재 두 사람 사이의 거리감을 나타낸 단어는?", ["A million miles", "A small gap", "Next door"], "A million miles"),
         ("6. 이 노래의 지배적인 정서는 무엇인가요?", ["기쁨", "증오", "그리움과 후회"], "그리움과 후회")
     ]
-# (3, 4, 5번 곡 데이터 생략 - 위 구조와 동일하게 유지됨)
+
+elif "3. A Whole New World" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
+    bg_content = "<h3>✨ A Whole New World: 성벽을 넘는 자유의 비행</h3><p>억압받던 공주가 새로운 시야를 갖게 되는 성장을 의미합니다.</p>"
+    lyrics_raw = [
+        ("I can show you the world", "당신에게 세상을 보여줄 수 있어요"),
+        ("Shining, shimmering, splendid", "빛나고 반짝이며 화려한 세상을"),
+        ("Tell me, princess, now when did you last let your heart decide?", "공주님, 마지막으로 마음 가는 대로 결정했던 게 언제였나요?"),
+        ("I can open your eyes", "당신의 눈을 뜨게 해 줄게요"),
+        ("Take you wonder by wonder", "경이로운 곳들로 데려가 줄게요"),
+        ("Over, sideways and under on a magic carpet ride", "마법 양탄자를 타고 위아래 옆으로 누비며"),
+        ("A whole new world! A new fantastic point of view", "완전히 새로운 세상! 환상적인 새로운 시야죠"),
+        ("No one to tell us 'No', or where to go", "아무도 우리에게 안 된다거나, 어디로 가라고 말하지 않아요"),
+        ("Or say we're only dreaming", "그저 꿈일 뿐이라고 말하지도 않죠")
+    ]
+    questions = [
+        ("1. 알라딘이 묻는 '결정'의 주체는?", ["왕", "자신의 마음(Your heart)", "지니"], "자신의 마음(Your heart)"),
+        ("2. 'Shimmering'의 뜻으로 적절한 것은?", ["깜깜한", "희미하게 빛나는", "시끄러운"], "희미하게 빛나는"),
+        ("3. 양탄자를 타고 가는 방향 묘사가 아닌 것은?", ["Over", "Sideways", "Backward"], "Backward"),
+        ("4. 'A whole new world'가 상징하는 것은?", ["이민", "자유롭고 새로운 삶", "가짜 세상"], "자유롭고 새로운 삶"),
+        ("5. 'Point of view'의 의미는?", ["장소", "시야/관점", "목소리"], "시야/관점"),
+        ("6. 이 곳의 특징은?", ["누구도 No라고 하지 않음", "매일 비가 옴", "성안에 갇혀 있음"], "누구도 No라고 하지 않음")
+    ]
+
+elif "4. Stand By Me" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
+    bg_content = "<h3>🤝 Stand By Me: 시련 속에서도 변치 않는 연대</h3><p>어떤 어둠이 닥쳐도 곁에 누군가 있다면 이겨낼 수 있다는 믿음의 노래입니다.</p>"
+    lyrics_raw = [
+        ("When the night has come and the land is dark", "밤이 오고 대지가 어두워질 때"),
+        ("And the moon is the only light we'll see", "저 달빛이 우리가 볼 수 있는 유일한 빛일 때"),
+        ("No, I won't be afraid, no, I won't be afraid", "난 두렵지 않을 거예요, 정말 두렵지 않아요"),
+        ("Just as long as you stand, stand by me", "당신이 내 곁에 서 있어 주기만 한다면요"),
+        ("So darling, darling, stand by me", "그러니 그대여, 내 곁에 서 주세요"),
+        ("Oh, stand by me", "내 곁에 있어 줘요"),
+        ("If the sky that we look upon should tumble and fall", "우리가 바라보는 저 하늘이 무너져 내리고"),
+        ("Or the mountains should crumble to the sea", "저 산들이 부서져 바다로 흘러내린다 해도"),
+        ("I won't cry, I won't cry, no, I won't shed a tear", "난 울지 않을 거예요, 눈물 한 방울 흘리지 않겠어요"),
+        ("Just as long as you stand, stand by me", "당신이 내 곁에 서 있어 주기만 한다면요")
+    ]
+    questions = [
+        ("1. 'The land is dark'는 무엇을 상징하나요?", ["잠잘 시간", "인생의 시련/절망", "정전"], "인생의 시련/절망"),
+        ("2. 화자가 두려워하지 않는 조건은?", ["돈", "상대방이 곁에 있는 것", "낮이 되는 것"], "상대방이 곁에 있는 것"),
+        ("3. 'Stand by me'의 올바른 의미는?", ["옆에 서서 구경하다", "지지하고 함께해주다", "일어서다"], "지지하고 함께해주다"),
+        ("4. 'Crumble'의 뜻은?", ["부서지다/허물어지다", "솟아오르다", "폭발하다"], "부서지다/허물어지다"),
+        ("5. 'Shed a tear'의 의미는?", ["눈물을 흘리다", "미소를 짓다", "노래하다"], "눈물을 흘리다"),
+        ("6. 이 노래가 강조하는 가치는?", ["신뢰와 연대", "개인주의", "자연의 위대함"], "신뢰와 연대")
+    ]
+
+elif "5. Don't Know Why" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
+    bg_content = "<h3>🍂 Don't Know Why: 망설임이 남긴 쓸쓸한 후회</h3><p>알 수 없는 망설임 때문에 사랑을 놓쳐버린 뒤의 공허함을 노래합니다.</p>"
+    lyrics_raw = [
+        ("I waited 'til I saw the sun", "난 해가 뜰 때까지 기다렸어요"),
+        ("I don't know why I didn't come", "내가 왜 가지 않았는지 모르겠어요"),
+        ("I left you by the house of fun", "당신을 축제의 집 근처에 남겨둔 채로요"),
+        ("I don't know why I didn't come", "왜 가지 않았는지 정말 모르겠어요"),
+        ("When I saw the break of day, I wished that I could fly away", "새벽이 밝아올 때 난 멀리 날아가 버리고 싶었죠"),
+        ("Instead of kneeling in the sand, catching teardrops in my hand", "모래 위에 무릎 꿇고 손바닥으로 눈물을 받는 대신에요"),
+        ("My heart is drenched in wine, but you'll be on my mind forever", "내 마음은 술에 흠뻑 젖었지만, 당신은 영원히 내 마음속에 있을 거예요"),
+        ("Out across the endless sea, I would die in ecstasy", "끝없는 바다 건너에서 난 황홀하게 죽을 수도 있었겠죠"),
+        ("But I'll be a bag of bones, waiting on the street alone", "하지만 난 그저 길거리에서 홀로 기다리는 앙상한 뼈가 되겠죠")
+    ]
+    questions = [
+        ("1. 화자는 언제까지 기다렸나요?", ["해 뜰 때까지", "한 시간", "잠시 동안"], "해 뜰 때까지"),
+        ("2. 가사에서 반복되는 주된 감정은?", ["자신감", "이유를 알 수 없는 후회", "분노"], "이유를 알 수 없는 후회"),
+        ("3. 'Fly away'는 어떤 마음인가요?", ["여행 가고 싶음", "현재 상황에서 도피하고 싶음", "비행기 조종"], "현재 상황에서 도피하고 싶음"),
+        ("4. 'Drenched in wine'은 어떤 비유인가요?", ["기분 좋음", "슬픔에 푹 잠겨 있음", "갈증"], "슬픔에 푹 잠겨 있음"),
+        ("5. 'A bag of bones'가 의미하는 상태는?", ["건강함", "기운 없이 초라한 모습", "무거운 짐"], "기운 없이 초라한 모습"),
+        ("6. 화자의 마음속에 영원히 남을 존재는?", ["가족", "가지 못해 놓쳐버린 당신", "나 자신"], "가지 못해 놓쳐버린 당신")
+    ]
 
 # -------------------------
 # 5. 탭별 화면 출력
@@ -133,30 +201,26 @@ elif selected_tab == "📖 가사 & 퀴즈":
         st.divider()
         st.markdown("### 💡 Comprehension Quiz")
         
-        # 폼 내부에서 사용자 선택값 받기
         with st.form(key=f"quiz_form_{song_choice}"):
             user_answers = []
             for i, (q, opts, ans) in enumerate(questions):
                 user_choice = st.radio(q, opts, index=None, key=f"q_radio_{song_choice}_{i}")
                 user_answers.append(user_choice)
             
-            submit_btn = st.form_submit_button("채점하기")
-            if submit_btn:
+            if st.form_submit_button("채점하기"):
                 st.session_state.quiz_submitted = True
 
-        # 채점 결과 출력 (폼 외부 또는 하단)
         if st.session_state.quiz_submitted:
             st.markdown("---")
             score = 0
             for i, (q, opts, ans) in enumerate(questions):
                 user_ans = user_answers[i]
                 if user_ans == ans:
-                    st.success(f"**Q{i+1} 정답!** (선택: {user_ans})")
+                    st.success(f"**Q{i+1} 정답!**")
                     score += 1
                 else:
-                    st.error(f"**Q{i+1} 오답** (선택: {user_ans if user_ans else '미선택'} / 정답: {ans})")
-            
-            st.info(f"총 {len(questions)}문제 중 {score}문제를 맞히셨습니다!")
+                    st.error(f"**Q{i+1} 오답** (정답: {ans})")
+            st.info(f"결과: {score} / {len(questions)}")
             if score == len(questions): st.balloons()
 
     with col_l:
@@ -171,12 +235,7 @@ elif selected_tab == "📖 가사 & 퀴즈":
             ''', unsafe_allow_html=True)
 
 elif selected_tab == "🧩 순서 배열":
-    # 가사 가공 (알파벳 기호 붙이기)
-    full_lyrics_labeled = []
-    for i, (eng, kor) in enumerate(lyrics_raw):
-        label = list(string.ascii_lowercase)[i] if i < 26 else str(i)
-        full_lyrics_labeled.append(f"({label}) {eng}")
-    
+    full_lyrics_labeled = [f"({list(string.ascii_lowercase)[i] if i < 26 else str(i)}) {eng}" for i, (eng, kor) in enumerate(lyrics_raw)]
     correct_order = full_lyrics_labeled
     
     if 'scrambled' not in st.session_state or st.session_state.get('last_song_id') != song_choice:
