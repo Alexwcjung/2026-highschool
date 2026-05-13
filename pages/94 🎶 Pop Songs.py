@@ -3,26 +3,36 @@ import random
 import string
 
 # =========================
-# 1. 스타일 및 레이아웃 설정
+# 1. 기본 설정 및 디자인
 # =========================
-st.set_page_config(page_title="Music English Master", layout="wide")
+st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
 
 st.markdown("""
 <style>
-    .stApp { background-color: #ffffff; }
-    .block-container { padding-top: 1.5rem !important; }
-    .guide-text { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; margin-bottom: 10px; display: block; }
+    .stApp { background-color: #ffffff; color: #1e293b; }
+    .main-title {
+        background-color: #f8fafc; padding: 25px; border-radius: 15px;
+        border: 2px solid #6366f1; text-align: center; color: #4338ca; margin-bottom: 25px;
+    }
+    .big-label {
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+        color: #1e3a8a !important;
+        margin-bottom: 15px !important;
+        display: block;
+    }
     .info-box {
-        background-color: #f8fafc; padding: 25px; border-radius: 12px;
-        border: 1px solid #e2e8f0; line-height: 1.8; margin-bottom: 20px;
+        background-color: #f1f5f9; padding: 30px; border-radius: 15px;
+        border: 1px solid #cbd5e1; line-height: 1.9; margin-bottom: 25px;
     }
-    .info-box h3 { font-size: 1.4rem; color: #4338ca; margin-bottom: 12px; border-bottom: 3px solid #6366f1; padding-bottom: 5px; }
+    .info-box h3 { color: #4338ca; border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-top: 0; }
+    .info-box b { color: #1e3a8a; }
     .lyrics-container {
-        padding: 10px; border-left: 4px solid #6366f1;
-        margin-bottom: 8px; background-color: #f1f5f9; border-radius: 0 8px 8px 0;
+        padding: 12px 20px; border-left: 5px solid #6366f1;
+        margin-bottom: 10px; background-color: #f8fafc; border-radius: 0 10px 10px 0;
     }
-    .eng-line { font-size: 1rem; font-weight: 700; color: #1e3a8a; }
-    .kor-sub { font-size: 0.85rem; color: #64748b; }
+    .eng-line { font-size: 1.15rem; font-weight: 700; color: #1e3a8a; }
+    .kor-sub { font-size: 0.95rem; color: #64748b; }
 </style>
 """, unsafe_allow_html=True)
 
@@ -30,19 +40,23 @@ st.markdown("""
 # 세션 상태 관리
 # -------------------------
 if 'selected_song' not in st.session_state: st.session_state.selected_song = "1. Let It Go - Frozen OST"
-if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
 if 'submitted_step2' not in st.session_state: st.session_state.submitted_step2 = False
+if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
+if 'current_tab' not in st.session_state: st.session_state.current_tab = "🎬 배경 학습"
 
 def reset_data():
     st.session_state.submitted_step2 = False
     st.session_state.q3_cards = []
     st.session_state.show_q3_result = False
+    st.session_state.current_tab = "🎬 배경 학습"
     if 'scrambled' in st.session_state: del st.session_state.scrambled
 
 # -------------------------
-# 곡 선택 섹션
+# 상단 곡 선택 메뉴
 # -------------------------
-st.markdown('<span class="guide-text">👉 학습할 노래를 선택하세요</span>', unsafe_allow_html=True)
+st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
+st.markdown('<span class="big-label">👉 학습할 노래를 선택하세요</span>', unsafe_allow_html=True)
+
 song_options = [
     "1. Let It Go - Frozen OST", 
     "2. Hello - Adele", 
@@ -57,156 +71,186 @@ if st.session_state.selected_song != song_choice:
     reset_data()
     st.rerun()
 
-# 상단 탭 구성
-tab1, tab2, tab3 = st.tabs(["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"])
+# 탭 수동 제어
+tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"]
+selected_tab = st.radio("", tabs_list, index=tabs_list.index(st.session_state.current_tab), horizontal=True, label_visibility="collapsed")
+st.session_state.current_tab = selected_tab
 
 # -------------------------
-# 2. 곡별 풍부한 데이터 (1절 전체 분량)
+# 곡별 데이터 설정 (모두 6문제씩)
 # -------------------------
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
-    bg_content = "<h3>❄️ Let It Go: 억압된 자아의 해방</h3>엘사가 자신의 마법 능력을 더 이상 숨기지 않고 진정한 자아를 찾아가는 과정을 담고 있습니다."
+    bg_content = "<h3>❄️ Let It Go: 억압된 자아의 해방</h3><p>엘사가 타인의 시선에서 벗어나 진정한 자유를 찾는 과정을 담고 있습니다.</p>"
     lyrics_raw = [
-        ("The snow glows white on the mountain tonight", "오늘 밤 산엔 눈이 하얗게 빛나네요"),
-        ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아요"),
-        ("The wind is howling like this swirling storm inside", "내 안의 폭풍처럼 바람이 울부짖고 있어요"),
-        ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었죠, 하늘은 내 노력을 알 거예요"),
-        ("Don't let them in, don't let them see", "그들을 들여보내지 마요, 보여주지 마요"),
-        ("Be the good girl you always have to be", "늘 그래야만 했던 착한 소녀가 되세요"),
-        ("Conceal, don't feel, don't let them know", "숨기고, 느끼지 마요, 모르게 하세요"),
-        ("Well, now they know! Let it go, let it go!", "그런데 이제 그들이 알아버렸죠! 다 잊어버려요")
+        ("The snow glows white on the mountain tonight", "오늘 밤 산엔 눈이 하얗게 빛나고"),
+        ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아"),
+        ("The wind is howling like this swirling storm inside", "내 안의 폭풍처럼 바람이 울부짖고 있어"),
+        ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었어, 하늘은 내 노력을 알 거야"),
+        ("Don't let them in, don't let them see", "그들을 들여보내지 마, 보여주지 마"),
+        ("Be the good girl you always have to be", "늘 그랬듯 착한 소녀가 되어야 해"),
+        ("Conceal, don't feel, don't let them know", "숨기고, 느끼지 말고, 모르게 해"),
+        ("Let it go, let it go! Can't hold it back anymore", "다 잊어, 이제 자유야! 더는 억누를 수 없어")
     ]
-    questions = [("엘사의 현재 심경은?", ["해방감", "공포"], "해방감"), ("'Conceal'의 뜻은?", ["숨기다", "드러내다"], "숨기다")]
+    questions = [
+        ("1. 엘사의 현재 심경은?", ["해방감", "공포", "분노"], "해방감"),
+        ("2. 'Conceal'의 뜻은?", ["숨기다", "드러내다", "나누다"], "숨기다"),
+        ("3. 'The cold'가 상징하는 것은?", ["사회적 시선", "실제 추운 날씨", "겨울 왕국"], "사회적 시선"),
+        ("4. 'Good girl'은 누구의 기대를 의미하나요?", ["타인과 사회", "엘사 자신", "안나"], "타인과 사회"),
+        ("5. 'Isolation'의 의미는?", ["고립/격리", "함께함", "승리"], "고립/격리"),
+        ("6. 가사에서 폭풍(Storm)은 무엇을 비유하나요?", ["내면의 억눌린 감정", "실제 기상 악화", "자연의 힘"], "내면의 억눌린 감정")
+    ]
 
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
-    bg_content = "<h3>☎️ Hello: 과거의 나에게 건네는 안부</h3>아델이 과거의 미숙했던 자신과 자신이 상처 주었던 사람들에게 건네는 화해의 메시지입니다."
+    bg_content = "<h3>☎️ Hello: 과거를 향한 뒤늦은 안부</h3><p>미안함과 그리움을 담아 과거의 연인에게 건네는 메시지입니다.</p>"
     lyrics_raw = [
         ("Hello, it's me", "안녕, 나야"),
         ("I was wondering if after all these years you'd like to meet", "이 모든 시간이 흐른 뒤에 네가 만나고 싶어 할지 궁금했어"),
-        ("To go over everything", "모든 것을 짚어보기 위해서 말이야"),
-        ("They say that time's supposed to heal ya", "시간이 모든 걸 치유해준다고들 하지만"),
-        ("But I ain't done much healing", "난 별로 치유되지 않은 것 같아"),
         ("Hello, can you hear me?", "여보세요, 내 말 들리니?"),
         ("I'm in California dreaming about who we used to be", "난 캘리포니아에서 예전의 우리 모습을 꿈꾸고 있어"),
-        ("Hello from the other side", "반대편에서 인사해")
+        ("Hello from the other side", "반대편에서 인사해"),
+        ("I must've called a thousand times", "수천 번은 전화했을 거야")
     ]
-    questions = [("화자가 전화를 거는 이유는?", ["사과와 화해", "복수"], "사과와 화해")]
+    questions = [
+        ("1. 화자가 전화를 거는 주된 이유는?", ["사과하기 위해", "돈을 빌리기 위해", "자랑하기 위해"], "사과하기 위해"),
+        ("2. 'a thousand times'의 속뜻은?", ["간절한 반복", "정확히 1,000번", "한 번만"], "간절한 반복"),
+        ("3. 'California dreaming'은 무엇에 대한 비유인가요?", ["예전의 우리 모습", "여행 계획", "날씨"], "예전의 우리 모습"),
+        ("4. 'The other side'는 무엇을 의미하나요?", ["이별 후의 현재 상태", "지구 반대편", "저세상"], "이별 후의 현재 상태"),
+        ("5. 'Wondering'의 뜻은?", ["궁금해하다", "확신하다", "길을 잃다"], "궁금해하다"),
+        ("6. 노래의 전반적인 정서는?", ["그리움과 후회", "기쁨과 희망", "분노와 증오"], "그리움과 후회")
+    ]
 
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
-    bg_content = "<h3>✨ A Whole New World: 시야의 확장</h3>알라딘과 자스민이 양탄자를 타고 성벽 너머의 자유로운 세상을 처음 마주하는 경이로움을 노래합니다."
+    bg_content = "<h3>✨ A Whole New World: 금지된 장벽을 넘는 자유</h3><p>새로운 시야와 자유에 대한 노래입니다.</p>"
     lyrics_raw = [
         ("I can show you the world", "당신에게 세상을 보여줄 수 있어요"),
-        ("Shining, shimmering, splendid", "빛나고 화려한 세상을요"),
-        ("Tell me, princess, now when did you last let your heart decide?", "마지막으로 마음이 가는 대로 결정했던 게 언제였나요?"),
+        ("Shining, shimmering, splendid", "빛나고 어른거리며 화려한 세상을요"),
+        ("Tell me, princess, now when did you last let your heart decide?", "공주님, 마지막으로 마음이 가는 대로 결정했던 게 언제였나요?"),
         ("I can open your eyes", "당신의 눈을 뜨게 해 줄게요"),
         ("Take you wonder by wonder", "경이로운 곳들로 데려가 줄게요"),
-        ("Over, sideways and under on a magic carpet ride", "마법 양탄자를 타고 위아래 옆으로 다니며"),
-        ("A whole new world! A new fantastic point of view", "완전히 새로운 세상! 환상적인 새로운 시야죠"),
-        ("No one to tell us 'No' or where to go", "누구도 안 된다거나 어디로 가라고 말 못 해요")
+        ("A whole new world! A new fantastic point of view", "완전히 새로운 세상! 환상적인 새로운 시야죠")
     ]
-    questions = [("'Crystal clear'의 의미는?", ["명확한", "차가운"], "명확한")]
+    questions = [
+        ("1. 'Crystal clear'의 문맥상 의미는?", ["아주 명확한", "유리처럼 딱딱한", "차가운"], "아주 명확한"),
+        ("2. 노래의 핵심 주제는?", ["자유와 새로운 시각", "성안에서의 안전", "마법 양탄자 수리"], "자유와 새로운 시각"),
+        ("3. 'Splendid'의 뜻은?", ["화려한/훌륭한", "평범한", "어두운"], "화려한/훌륭한"),
+        ("4. 알라딘이 공주에게 묻는 '마음의 결정'은 무엇을 뜻하나?", ["주체적인 삶", "결혼 결정", "외출 허락"], "주체적인 삶"),
+        ("5. 'Wonder by wonder'는 어떤 느낌을 주나요?", ["끊임없는 감동", "지루함", "공포"], "끊임없는 감동"),
+        ("6. 'Fantastic point of view'는 무엇을 의미하나요?", ["환상적인 시야", "가짜 뉴스", "어지러움"], "환상적인 시야")
+    ]
 
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
-    bg_content = "<h3>🤝 Stand By Me: 변치 않는 연대</h3>어떤 거대한 시련이 닥쳐도 곁에 있는 사람만 있다면 두렵지 않다는 신뢰를 노래합니다."
+    bg_content = "<h3>🤝 Stand By Me: 신뢰와 연대의 힘</h3><p>시련 속에서도 곁을 지켜주는 사람이 있다면 이겨낼 수 있다는 노래입니다.</p>"
     lyrics_raw = [
         ("When the night has come and the land is dark", "밤이 오고 사방이 어두워질 때"),
         ("And the moon is the only light we'll see", "저 달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
         ("No, I won't be afraid. Oh, I won't be afraid", "난 두렵지 않을 거예요"),
         ("Just as long as you stand, stand by me", "당신이 내 곁에 서 있어 주기만 한다면요"),
         ("If the sky that we look upon should tumble and fall", "우리가 보는 저 하늘이 무너져 내린다 해도"),
-        ("Or the mountain should crumble to the sea", "혹은 산이 무너져 바다로 가라앉는다 해도"),
-        ("I won't cry, I won't cry. No, I won't shed a tear", "난 울지 않을 거예요"),
-        ("Just as long as you stand, stand by me", "그저 당신이 내 곁에 있어 주기만 한다면요")
+        ("I won't cry, I won't cry. No, I won't shed a tear", "난 울지 않을 거예요")
     ]
-    questions = [("화자가 두려워하지 않는 이유는?", ["동행자가 있어서", "돈이 많아서"], "동행자가 있어서")]
+    questions = [
+        ("1. 화자가 두렵지 않은 조건은?", ["누군가 곁에 있을 때", "돈이 많을 때", "해가 뜰 때"], "누군가 곁에 있을 때"),
+        ("2. 'Shed a tear'의 뜻은?", ["눈물을 흘리다", "미소를 짓다", "소리를 지르다"], "눈물을 흘리다"),
+        ("3. 'Tumble and fall'은 무엇을 상징하나요?", ["큰 시련이나 재앙", "가을 낙엽", "잠들기"], "큰 시련이나 재앙"),
+        ("4. 'The night is dark'는 어떤 상황을 비유하나요?", ["인생의 힘든 시기", "실제 취침 시간", "정전 상황"], "인생의 힘든 시기"),
+        ("5. 'Stand by me'의 핵심 의미는?", ["지지와 동행", "옆에 서 있기만 하기", "길 비켜주기"], "지지와 동행"),
+        ("6. 'The moon is the only light'가 주는 느낌은?", ["희망의 끈", "절대적인 어둠", "화려함"], "희망의 끈")
+    ]
 
 elif "5. Don't Know Why" in song_choice:
     video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
-    bg_content = "<h3>🍂 Don't Know Why: 망설임의 후회</h3>약속 장소에 가지 못한 자책과 그로 인해 남겨진 공허함을 담담한 재즈 선율에 담았습니다."
+    bg_content = "<h3>🍂 Don't Know Why: 망설임 끝에 놓친 사랑</h3><p>용기가 없어 다가지 못한 인연에 대한 쓸쓸한 후회입니다.</p>"
     lyrics_raw = [
         ("I waited 'til I saw the sun", "난 해가 뜰 때까지 기다렸어요"),
         ("I don't know why I didn't come", "내가 왜 가지 않았는지 모르겠어요"),
         ("I left you by the house of fun", "당신을 축제의 집 근처에 남겨둔 채로요"),
-        ("I don't know why I didn't come", "내가 왜 가지 않았는지 모르겠어요"),
-        ("When I saw the break of day", "새벽이 밝아오는 걸 보았을 때"),
-        ("I wished that I could fly away", "난 멀리 날아가 버리고 싶었죠"),
-        ("Instead of kneeling in the sand", "모래 위에 무릎 꿇고 있는 대신에"),
-        ("Thinking of the things I did", "내가 했던 일들을 생각하면서요")
+        ("When I saw the break of day, I wished that I could fly away", "새벽이 올 때 난 멀리 날아가 버리고 싶었죠"),
+        ("My heart is drenched in wine, but you'll be on my mind forever", "내 마음은 술에 흠뻑 젖었지만, 당신은 영원히 내 마음속에 있을 거예요"),
+        ("I feel as empty as a drum, I don't know why I didn't come", "텅 빈 드럼처럼 공허해요")
     ]
-    questions = [("노래의 분위기는?", ["후회와 고독", "희망"], "후회와 고독")]
+    questions = [
+        ("1. 이 노래의 지배적인 감정은?", ["후회와 아쉬움", "분노와 원망", "기쁨"], "후회와 아쉬움"),
+        ("2. 'Drenched in wine'은 무엇을 비유하나?", ["슬픔에 젖은 마음", "즐거운 파티", "갈증"], "슬픔에 젖은 마음"),
+        ("3. 'A bag of bones'는 어떤 상태인가?", ["무기력하고 야윈 상태", "건강한 상태", "무거운 상태"], "무기력하고 야윈 상태"),
+        ("4. 화자가 약속에 가지 않은 진짜 이유는?", ["망설임과 두려움", "길을 잃어서", "약속을 잊어서"], "망설임과 두려움"),
+        ("5. 'Empty as a drum'은 무엇을 강조하나?", ["내면의 공허함", "시끄러운 소리", "음악적 재능"], "내면의 공허함"),
+        ("6. 가사가 계속 반복되는 이유는?", ["자책하는 마음의 강조", "단어 암기", "시간 때우기"], "자책하는 마음의 강조")
+    ]
 
 # -------------------------
-# 데이터 처리
+# 가사 가공 (알파벳 기호 추가)
 # -------------------------
 alphabet = list(string.ascii_lowercase)
-processed_lyrics = []
+full_lyrics = []
 for i, (eng, kor) in enumerate(lyrics_raw):
     label = alphabet[i] if i < len(alphabet) else str(i)
-    processed_lyrics.append((f"({label}) {eng}", kor))
+    full_lyrics.append((f"({label}) {eng}", kor))
 
-correct_order = [line[0] for line in processed_lyrics]
+# -------------------------
+# 순서 섞기 및 세션 관리
+# -------------------------
+correct_order = [line[0] for line in full_lyrics]
 if 'scrambled' not in st.session_state or st.session_state.get('last_song') != song_choice:
     st.session_state.scrambled = random.sample(correct_order, len(correct_order))
     st.session_state.last_song = song_choice
 
 # -------------------------
-# 3. 화면 출력 (탭별 구성)
+# 화면 출력
 # -------------------------
-with tab1:
+if selected_tab == "🎬 배경 학습":
     st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
-    st.video(video_url)
+    v1, v2, v3 = st.columns([1, 4, 1])
+    with v2: st.video(video_url)
 
-with tab2:
-    # [수정] 영상 화면을 작게 조절 (1:2 비율의 컬럼 사용)
-    v_col, l_col = st.columns([1, 1.5])
-    with v_col:
+elif selected_tab == "📖 가사 & 퀴즈":
+    col_v, col_l = st.columns([1, 1.2])
+    with col_v:
         st.video(video_url)
         st.divider()
-        st.markdown("### 💡 Quiz")
+        st.markdown("### 💡 Comprehension Quiz")
         with st.form(f"quiz_{song_choice}"):
             for i, (q, opts, ans) in enumerate(questions):
-                st.radio(q, opts, key=f"q_{i}", index=None)
-            if st.form_submit_button("채점하기"):
+                q_text = q
+                if st.session_state.submitted_step2:
+                    user_val = st.session_state.get(f"q_sel_{i}")
+                    q_text += " ✅" if user_val == ans else f" 🔍 (정답: {ans})"
+                st.radio(q_text, opts, index=None, key=f"q_sel_{i}")
+            if st.form_submit_button("정답 확인 및 채점"):
                 st.session_state.submitted_step2 = True
                 st.rerun()
-    with l_col:
-        st.markdown("### 🎼 가사 해석")
-        for eng, kor in processed_lyrics:
+    with col_l:
+        st.markdown("### 🎼 Full Lyrics")
+        for eng, kor in full_lyrics:
             st.markdown(f'<div class="lyrics-container"><div class="eng-line">{eng}</div><div class="kor-sub">{kor}</div></div>', unsafe_allow_html=True)
 
-with tab3:
-    st.info("가사 순서(a, b, c...)를 생각하며 버튼을 클릭하세요!")
-    # 버튼 배치
+elif selected_tab == "🧩 순서 배열":
+    st.subheader("🧩 가사 순서대로 클릭하세요 (a, b, c... 순서 참고)")
     b_cols = st.columns(2)
     for i, text in enumerate(st.session_state.scrambled):
-        btn_col = b_cols[0] if i % 2 == 0 else b_cols[1]
         is_sel = text in st.session_state.q3_cards
-        if btn_col.button(text, key=f"btn3_{i}", use_container_width=True, disabled=is_sel):
+        if (b_cols[0] if i % 2 == 0 else b_cols[1]).button(text, key=f"btn3_{i}", use_container_width=True, disabled=is_sel):
             st.session_state.q3_cards.append(text)
             st.rerun()
-    
     st.divider()
-    st.markdown("### 📝 정답지 완성 중...")
     for idx, card in enumerate(st.session_state.q3_cards):
-        c1, c2 = st.columns([0.9, 0.1])
+        c1, c2 = st.columns([0.92, 0.08])
         c1.info(f"{idx+1}: {card}")
-        if c2.button("X", key=f"del_{idx}"):
+        if c2.button("🗑️", key=f"del3_{idx}"):
             st.session_state.q3_cards.pop(idx)
             st.rerun()
-
     if len(st.session_state.q3_cards) == len(correct_order):
         if st.button("🚩 최종 결과 확인", type="primary", use_container_width=True):
             st.session_state.show_q3_result = True
             st.rerun()
-
     if st.session_state.get('show_q3_result'):
         all_correct = True
         for i, user_s in enumerate(st.session_state.q3_cards):
-            if user_s == correct_order[i]: st.success(f"{i+1}: Correct! ✅")
+            if user_s == correct_order[i]: st.success(f"Step {i+1}: Perfect!")
             else:
-                st.error(f"{i+1}: Wrong ❌ (정답: {correct_order[i]})")
+                st.error(f"Step {i+1}: Wrong (정답: {correct_order[i]})")
                 all_correct = False
         if all_correct: st.balloons()
