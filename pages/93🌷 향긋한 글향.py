@@ -282,39 +282,45 @@ data_bank = {
             "image_path": BASE_DIR / "images" / "jordan.png",
             "facts": [
                 "American basketball legend",
-                "Known for competitiveness, clutch moments, and learning from failure",
-                "Lesson: mistakes can become growth"
+                "Won 6 NBA championships with the Chicago Bulls",
+                "Known for strong competitiveness and clutch performances",
+                "Famous lesson: failure can become motivation"
             ],
             "dialogue": [
                 ("Jordan", "Hi! Do you like basketball?", "안녕! 너는 농구를 좋아하니?"),
                 ("Me", "Yes, I do. I love basketball.", "네, 좋아해요. 저는 농구를 정말 좋아해요."),
-                ("Jordan", "That is great. Do you play often?", "멋지다. 자주 농구를 하니?"),
-                ("Me", "I play after school with my friends.", "방과 후에 친구들과 농구를 해요."),
-                ("Jordan", "What is your dream?", "네 꿈은 무엇이니?"),
-                ("Me", "I want to be a great player.", "저는 훌륭한 선수가 되고 싶어요."),
-                ("Jordan", "Then you need practice, patience, and confidence.", "그렇다면 연습, 인내, 자신감이 필요해."),
-                ("Me", "Sometimes I miss easy shots.", "가끔 쉬운 슛도 놓쳐요."),
-                ("Jordan", "That happens to everyone. Mistakes are part of learning.", "그건 누구에게나 일어나. 실수는 배움의 일부야."),
-                ("Me", "Did you make mistakes too?", "당신도 실수를 했나요?"),
-                ("Jordan", "Of course. I failed many times, but I kept trying.", "물론이지. 나는 여러 번 실패했지만 계속 노력했어."),
-                ("Me", "I feel better when I hear that.", "그 말을 들으니 마음이 나아져요."),
-                ("Jordan", "Failure can teach you where to improve.", "실패는 네가 어디를 발전시켜야 하는지 알려 줄 수 있어."),
-                ("Me", "So I should not be afraid of mistakes?", "그러면 실수를 두려워하지 말아야 하나요?"),
-                ("Jordan", "Right. Learn from them, practice again, and come back stronger.", "맞아. 실수에서 배우고, 다시 연습하고, 더 강해져서 돌아와."),
-                ("Me", "I will practice more and learn from mistakes.", "더 연습하고 실수에서 배우겠습니다."),
-                ("Jordan", "Good. Effort can turn failure into growth.", "좋아. 노력은 실패를 성장으로 바꿀 수 있어.")
+                ("Jordan", "That is great. Do you know what I am famous for?", "멋지다. 내가 무엇으로 유명한지 아니?"),
+                ("Me", "You are famous for winning many championships.", "많은 우승을 한 것으로 유명해요."),
+                ("Jordan", "Yes. I won six NBA championships with the Chicago Bulls.", "맞아. 나는 시카고 불스와 함께 NBA 챔피언십에서 여섯 번 우승했어."),
+                ("Me", "That is amazing. Were you always the best?", "정말 대단해요. 항상 최고였나요?"),
+                ("Jordan", "No. I faced failure many times.", "아니. 나는 여러 번 실패를 겪었어."),
+                ("Me", "Really? I thought great players never failed.", "정말요? 훌륭한 선수들은 실패하지 않는 줄 알았어요."),
+                ("Jordan", "Great players fail, but they use failure as motivation.", "훌륭한 선수들도 실패해. 하지만 실패를 동기로 사용해."),
+                ("Me", "I sometimes miss easy shots.", "저는 가끔 쉬운 슛도 놓쳐요."),
+                ("Jordan", "That is normal. Missing a shot does not make you weak.", "그건 자연스러운 일이야. 슛을 놓친다고 약한 사람이 되는 건 아니야."),
+                ("Me", "Then what should I do after a mistake?", "그럼 실수한 뒤에는 어떻게 해야 하나요?"),
+                ("Jordan", "Think about why it happened, practice again, and take the next shot with confidence.", "왜 그런 일이 일어났는지 생각하고, 다시 연습하고, 다음 슛을 자신 있게 던져."),
+                ("Me", "I heard you were very competitive.", "당신은 승부욕이 정말 강했다고 들었어요."),
+                ("Jordan", "Yes. I wanted to win, but I also worked very hard to deserve winning.", "맞아. 나는 이기고 싶었지만, 이길 자격을 갖추기 위해 정말 열심히 노력했어."),
+                ("Me", "So competitiveness is not just wanting to win?", "그러면 승부욕은 단순히 이기고 싶어 하는 것만은 아니네요?"),
+                ("Jordan", "Right. Real competitiveness means preparation, focus, and responsibility.", "맞아. 진짜 승부욕은 준비, 집중, 책임감을 뜻해."),
+                ("Me", "I want to have that kind of mindset.", "저도 그런 마음가짐을 갖고 싶어요."),
+                ("Jordan", "Then practice hard, learn from failure, and never be afraid of the next challenge.", "그렇다면 열심히 연습하고, 실패에서 배우고, 다음 도전을 두려워하지 마."),
+                ("Me", "I will remember that failure can become motivation.", "실패가 동기가 될 수 있다는 것을 기억할게요."),
+                ("Jordan", "Good. Champions are made by effort, courage, and a strong mind.", "좋아. 챔피언은 노력, 용기, 강한 마음으로 만들어져.")
             ],
             "key_expressions": [
-                "Mistakes are part of learning.",
-                "Failure can teach you.",
-                "Come back stronger.",
-                "Learn from mistakes.",
-                "Effort can turn failure into growth."
+                "I won six NBA championships.",
+                "Failure can become motivation.",
+                "Take the next shot with confidence.",
+                "Real competitiveness means preparation.",
+                "Learn from failure.",
+                "Never be afraid of the next challenge."
             ],
             "questions": [
-                ("1. What sport does the student like?", ["Basketball", "Soccer", "Baseball", "Golf"], "Basketball"),
-                ("2. What does Jordan say about mistakes?", ["They are part of learning", "They are always terrible", "They never happen", "They are not useful"], "They are part of learning"),
-                ("3. What can effort turn failure into?", ["Growth", "Noise", "Sleep", "A game"], "Growth")
+                ("1. How many NBA championships did Jordan win with the Chicago Bulls?", ["Six", "Two", "Ten", "One"], "Six"),
+                ("2. What does Jordan say great players use failure as?", ["Motivation", "An excuse", "A game", "A secret"], "Motivation"),
+                ("3. What does real competitiveness mean?", ["Preparation, focus, and responsibility", "Only wanting to win", "Getting angry", "Never practicing"], "Preparation, focus, and responsibility")
             ],
             "reflection_prompt": "Jordan을 통해 내가 배울 점은 무엇인가요?"
         },
