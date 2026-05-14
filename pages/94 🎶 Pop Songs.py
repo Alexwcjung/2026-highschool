@@ -87,12 +87,6 @@ elif "2. Hello" in song_choice:
     Adele의 <b>Hello</b>는 오랜 시간이 지난 뒤, 과거의 누군가에게 다시 말을 걸고 싶은 마음을 담은 노래입니다.
     화자는 미안함과 후회를 안고 상대에게 연락하려 하지만, 이미 두 사람 사이에는 큰 거리와 시간이 생겨 있습니다.
     </p>
-
-    <p>
-    이 노래는 속도가 비교적 느리고 반복되는 표현이 많아 듣기 활동에 좋습니다.
-    특히 <b>I'm sorry</b>, <b>I tried</b>, <b>after all these years</b> 같은 표현을 통해
-    사과하기, 과거 회상하기, 후회 표현하기를 자연스럽게 배울 수 있습니다.
-    </p>
     """
 
     lyrics_full = [
@@ -103,58 +97,41 @@ elif "2. Hello" in song_choice:
         ("They say that time's", "사람들은 시간이"),
         ("supposed to heal ya", "너를 치유해 줄 거라고 말해"),
         ("But I ain't done much healing", "하지만 나는 별로 치유되지 않았어"),
-
         ("Hello, can you hear me?", "여보세요, 내 말 들리니?"),
         ("I'm in California dreaming", "나는 캘리포니아에서 꿈꾸고 있어"),
         ("about who we used to be", "예전의 우리 모습에 대해"),
         ("When we were younger and free", "우리가 더 어리고 자유로웠을 때"),
         ("I've forgotten how it felt before", "나는 예전의 그 느낌을 잊어버렸어"),
         ("the world fell at our feet", "세상이 우리 발아래 있는 것 같았던 그때를"),
-        ("There's such a", "우리 사이에는"),
-        ("difference between us", "너무 큰 차이가 있어"),
+        ("There's such a difference between us", "우리 사이에는 너무 큰 차이가 있어"),
         ("And a million miles", "그리고 백만 마일만큼의 거리도 있어"),
 
         ("Hello from the other side", "저편에서 안녕이라고 말해"),
-        ("I must've called a", "나는 아마"),
-        ("thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
-        ("I'm sorry, for everything", "미안하다고, 모든 것에 대해"),
-        ("that I've done", "내가 했던 모든 일에 대해"),
-        ("But when I call you", "하지만 내가 너에게 전화할 때"),
-        ("never seem to be home", "너는 집에 없는 것 같아"),
+        ("I must've called a thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
+        ("I'm sorry, for everything that I've done", "내가 했던 모든 일에 대해 미안해"),
+        ("But when I call you never seem to be home", "하지만 내가 전화할 때 너는 집에 없는 것 같아"),
 
         ("Hello from the outside", "바깥쪽에서 안녕이라고 말해"),
-        ("At least I can say", "적어도 나는 말할 수 있어"),
-        ("that I've tried to tell you", "너에게 말하려고 노력했다고"),
-        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안하다고"),
-        ("But it don't matter,", "하지만 이제는 상관없는 것 같아"),
-        ("it clearly doesn't tear you", "분명히 그것은 너를 찢어놓지 않아"),
-        ("apart anymore", "더 이상 아프게 하지 않아"),
+        ("At least I can say that I've tried to tell you", "적어도 너에게 말하려고 노력했다고는 말할 수 있어"),
+        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안해"),
+        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 이제는 상관없는 것 같아. 더 이상 너를 아프게 하지 않는 것 같아"),
 
         ("Hello, how are you?", "안녕, 어떻게 지내?"),
-        ("It's so typical of me", "나답게도"),
-        ("to talk about myself", "내 이야기만 하고 있네"),
+        ("It's so typical of me to talk about myself", "내 이야기만 하는 건 참 나답지"),
         ("I'm sorry, I hope that you're well", "미안해, 네가 잘 지내길 바라"),
         ("Did you ever make it out of that town", "너는 그 마을을 벗어났니?"),
         ("Where nothing ever happened?", "아무 일도 일어나지 않던 그곳에서?"),
-        ("It's no secret", "비밀도 아니야"),
-        ("That the both of us are", "우리 둘 다"),
-        ("running out of time", "시간이 얼마 남지 않았다는 건"),
+        ("It's no secret that the both of us are running out of time", "우리 둘 다 시간이 얼마 남지 않았다는 건 비밀도 아니야"),
 
         ("Hello from the other side", "저편에서 안녕이라고 말해"),
-        ("I must've called a", "나는 아마"),
-        ("thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
-        ("I'm sorry, for everything", "미안하다고, 모든 것에 대해"),
-        ("that I've done", "내가 했던 모든 일에 대해"),
-        ("But when I call you", "하지만 내가 너에게 전화할 때"),
-        ("never seem to be home", "너는 집에 없는 것 같아"),
+        ("I must've called a thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
+        ("I'm sorry, for everything that I've done", "내가 했던 모든 일에 대해 미안해"),
+        ("But when I call you never seem to be home", "하지만 내가 전화할 때 너는 집에 없는 것 같아"),
 
         ("Hello from the outside", "바깥쪽에서 안녕이라고 말해"),
-        ("At least I can say", "적어도 나는 말할 수 있어"),
-        ("that I've tried to tell you", "너에게 말하려고 노력했다고"),
-        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안하다고"),
-        ("But it don't matter,", "하지만 이제는 상관없는 것 같아"),
-        ("it clearly doesn't tear you", "분명히 그것은 너를 찢어놓지 않아"),
-        ("apart anymore", "더 이상 아프게 하지 않아"),
+        ("At least I can say that I've tried to tell you", "적어도 너에게 말하려고 노력했다고는 말할 수 있어"),
+        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안해"),
+        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 이제는 상관없는 것 같아. 더 이상 너를 아프게 하지 않는 것 같아"),
 
         ("Ooooohh, anymore", "오, 더 이상"),
         ("Ooooohh, anymore", "오, 더 이상"),
@@ -162,199 +139,49 @@ elif "2. Hello" in song_choice:
         ("Anymore", "더 이상"),
 
         ("Hello from the other side", "저편에서 안녕이라고 말해"),
-        ("I must've called a", "나는 아마"),
-        ("thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
-        ("I'm sorry, for everything", "미안하다고, 모든 것에 대해"),
-        ("that I've done", "내가 했던 모든 일에 대해"),
-        ("But when I call you", "하지만 내가 너에게 전화할 때"),
-        ("never seem to be home", "너는 집에 없는 것 같아"),
+        ("I must've called a thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
+        ("I'm sorry, for everything that I've done", "내가 했던 모든 일에 대해 미안해"),
+        ("But when I call you never seem to be home", "하지만 내가 전화할 때 너는 집에 없는 것 같아"),
 
         ("Hello from the outside", "바깥쪽에서 안녕이라고 말해"),
-        ("At least I can say", "적어도 나는 말할 수 있어"),
-        ("that I've tried to tell you", "너에게 말하려고 노력했다고"),
-        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안하다고"),
-        ("But it don't matter,", "하지만 이제는 상관없는 것 같아"),
-        ("it clearly doesn't tear you", "분명히 그것은 너를 찢어놓지 않아"),
-        ("apart anymore", "더 이상 아프게 하지 않아"),
+        ("At least I can say that I've tried to tell you", "적어도 너에게 말하려고 노력했다고는 말할 수 있어"),
+        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안해"),
+        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 이제는 상관없는 것 같아. 더 이상 너를 아프게 하지 않는 것 같아"),
     ]
 
     comprehension_questions = [
         {
             "q": "1. Who is the speaker trying to contact?",
-            "options": [
-                "A person from the past",
-                "A new teacher",
-                "A famous singer",
-                "A stranger in California"
-            ],
+            "options": ["A person from the past", "A new teacher", "A famous singer", "A stranger in California"],
             "answer": "A person from the past"
         },
         {
             "q": "2. What does the speaker mainly want to say?",
-            "options": [
-                "Thank you",
-                "I'm sorry",
-                "Good luck",
-                "Happy birthday"
-            ],
+            "options": ["Thank you", "I'm sorry", "Good luck", "Happy birthday"],
             "answer": "I'm sorry"
         },
         {
             "q": "3. What do people say time is supposed to do?",
-            "options": [
-                "Heal people",
-                "Make people rich",
-                "Stop sadness forever",
-                "Change the past"
-            ],
+            "options": ["Heal people", "Make people rich", "Stop sadness forever", "Change the past"],
             "answer": "Heal people"
         },
         {
             "q": "4. Where is the speaker dreaming?",
-            "options": [
-                "London",
-                "California",
-                "New York",
-                "Paris"
-            ],
+            "options": ["London", "California", "New York", "Paris"],
             "answer": "California"
         },
         {
             "q": "5. What does the speaker say about calling?",
-            "options": [
-                "The speaker called many times",
-                "The speaker never called",
-                "The speaker called only once",
-                "The speaker forgot the number"
-            ],
+            "options": ["The speaker called many times", "The speaker never called", "The speaker called only once", "The speaker forgot the number"],
             "answer": "The speaker called many times"
         },
         {
             "q": "6. What is the main feeling of the song?",
-            "options": [
-                "Regret and apology",
-                "Excitement and joy",
-                "Anger and revenge",
-                "Hope for a vacation"
-            ],
+            "options": ["Regret and apology", "Excitement and joy", "Anger and revenge", "Hope for a vacation"],
             "answer": "Regret and apology"
         },
     ]
 
-    with tab1:
-        st.markdown(bg_content, unsafe_allow_html=True)
-
-        st.video(video_url)
-
-    with tab2:
-        st.markdown("## 🎵 Full Lyrics")
-
-        st.markdown(
-            """
-            <div style="
-                background: linear-gradient(135deg, #fff7ed, #fef3c7);
-                padding: 16px;
-                border-radius: 16px;
-                border: 1px solid #fed7aa;
-                margin-bottom: 18px;
-            ">
-            <h3 style="margin-top:0;">📖 가사를 읽고 노래의 내용을 이해해 봅시다</h3>
-            <p style="font-size:16px; margin-bottom:0;">
-            영어 가사와 한국어 뜻을 함께 보면서 화자가 어떤 마음으로 말하고 있는지 생각해 봅시다.
-            </p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        for eng, kor in lyrics_full:
-            st.markdown(
-                f"""
-                <div style="
-                    background:white;
-                    padding:12px 14px;
-                    border-radius:14px;
-                    margin-bottom:8px;
-                    border:1px solid #e5e7eb;
-                    box-shadow:0 2px 6px rgba(0,0,0,0.04);
-                ">
-                    <div style="font-size:17px; font-weight:700; color:#111827;">
-                        {eng}
-                    </div>
-                    <div style="font-size:15px; color:#4b5563; margin-top:4px;">
-                        {kor}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-        st.markdown("---")
-        st.markdown("## 📝 Understanding Check")
-
-        st.markdown(
-            """
-            <div style="
-                background:#f0f9ff;
-                padding:15px;
-                border-radius:15px;
-                border:1px solid #bae6fd;
-                margin-bottom:16px;
-            ">
-            <b>전체 가사를 읽고 아래 문제를 풀어 봅시다.</b><br>
-            화자의 감정, 사과의 이유, 반복되는 표현을 중심으로 생각하면 됩니다.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        score = 0
-        user_answers = []
-
-        with st.form("hello_comprehension_quiz"):
-            for i, item in enumerate(comprehension_questions):
-                st.markdown(f"### {item['q']}")
-                answer = st.radio(
-                    "Choose the best answer.",
-                    item["options"],
-                    key=f"hello_comp_{i}",
-                    label_visibility="collapsed"
-                )
-                user_answers.append(answer)
-
-            submitted = st.form_submit_button("✅ Submit Answers")
-
-        if submitted:
-            st.markdown("## 📌 Results")
-
-            for i, item in enumerate(comprehension_questions):
-                correct = item["answer"]
-                user_answer = user_answers[i]
-
-                if user_answer == correct:
-                    score += 1
-                    st.success(f"{i+1}. Correct! ✅")
-                else:
-                    st.error(f"{i+1}. Wrong ❌")
-                    st.markdown(f"정답: **{correct}**")
-
-            st.markdown(
-                f"""
-                <div style="
-                    background:linear-gradient(135deg,#dcfce7,#bbf7d0);
-                    padding:18px;
-                    border-radius:18px;
-                    border:1px solid #86efac;
-                    margin-top:18px;
-                    text-align:center;
-                ">
-                    <h2 style="margin:0;">Your Score: {score} / {len(comprehension_questions)}</h2>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-    ]
             
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
