@@ -2,6 +2,8 @@ import streamlit as st
 import random
 import string
 import html
+import time
+import streamlit.components.v1 as components
 
 # =========================
 # 1. 기본 설정 및 디자인
@@ -126,6 +128,28 @@ st.markdown("""
     }
 
 
+
+    @keyframes matchBlast {
+        0% { transform: scale(1); opacity: 1; filter: brightness(1); }
+        35% { transform: scale(1.12) rotate(1deg); opacity: 1; filter: brightness(1.25); }
+        65% { transform: scale(0.82) rotate(-1deg); opacity: 0.75; filter: brightness(1.6); }
+        100% { transform: scale(0.05); opacity: 0; filter: brightness(2); }
+    }
+
+    .match-blast-card {
+        background: linear-gradient(135deg, #fef3c7, #fde68a, #fca5a5);
+        border: 3px solid #f97316;
+        color: #7c2d12;
+        padding: 0.75rem 1rem;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 8px 22px rgba(249, 115, 22, 0.28);
+        animation: matchBlast 0.75s ease-in forwards;
+        transform-origin: center;
+    }
 
 
 </style>
@@ -1452,6 +1476,8 @@ def reset_matching_game(game_key):
     st.session_state[f"match_done_{game_key}"] = []
     st.session_state[f"match_message_{game_key}"] = ""
     st.session_state[f"match_cards_{game_key}"] = None
+    st.session_state[f"match_blast_{game_key}"] = None
+    st.session_state[f"match_blast_at_{game_key}"] = 0.0
 
 
 def show_matching_game(song_choice):
@@ -1472,6 +1498,22 @@ def show_matching_game(song_choice):
         st.session_state[f"match_done_{game_key}"] = []
     if f"match_message_{game_key}" not in st.session_state:
         st.session_state[f"match_message_{game_key}"] = ""
+    if f"match_blast_{game_key}" not in st.session_state:
+        st.session_state[f"match_blast_{game_key}"] = None
+    if f"match_blast_at_{game_key}" not in st.session_state:
+        st.session_state[f"match_blast_at_{game_key}"] = 0.0
+
+    # 맞춘 직후에는 0.75초 동안 카드가 펑 터지는 애니메이션을 보여 주고,
+    # 다음 자동 새로고침 때 실제로 목록에서 제거합니다.
+    blast_pair = st.session_state.get(f"match_blast_{game_key}")
+    blast_at = st.session_state.get(f"match_blast_at_{game_key}", 0.0)
+    if blast_pair is not None and time.time() - blast_at > 0.75:
+        if blast_pair not in st.session_state[f"match_done_{game_key}"]:
+            st.session_state[f"match_done_{game_key}"].append(blast_pair)
+        st.session_state[f"match_blast_{game_key}"] = None
+        st.session_state[f"match_blast_at_{game_key}"] = 0.0
+        st.rerun()
+
     # 이전 버전에서 만들어진 세션값이 남아 있으면 cards가 list 형태일 수 있습니다.
     # 현재 버전은 {"en": [...], "ko": [...]} 형태를 사용하므로, 형태가 다르면 새로 만듭니다.
     saved_cards = st.session_state.get(f"match_cards_{game_key}")
@@ -1488,6 +1530,7 @@ def show_matching_game(song_choice):
     selected = st.session_state[f"match_selected_{game_key}"]
     done = st.session_state[f"match_done_{game_key}"]
     cards = st.session_state[f"match_cards_{game_key}"]
+    blast_pair = st.session_state.get(f"match_blast_{game_key}")
 
     st.markdown(
         """
@@ -1528,7 +1571,8 @@ def show_matching_game(song_choice):
             st.rerun()
 
         elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
-            st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
+            st.session_state[f"match_blast_{game_key}"] = card["pair_id"]
+            st.session_state[f"match_blast_at_{game_key}"] = time.time()
             st.session_state[f"match_selected_{game_key}"] = None
             st.session_state[f"match_message_{game_key}"] = ""
             st.rerun()
@@ -1547,29 +1591,54 @@ def show_matching_game(song_choice):
 
     with left_col:
         for card in english_cards:
+            is_blast = blast_pair == card["pair_id"]
             is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
 
-            if is_selected:
+            if is_blast:
+                st.markdown(
+                    f"<div class='match-blast-card'>{html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            elif is_selected:
                 st.markdown(
                     f"<div class='match-selected-card'>✅ {html.escape(card['text'])}</div>",
                     unsafe_allow_html=True
                 )
             else:
-                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True, disabled=blast_pair is not None):
                     handle_card_click(card)
 
     with right_col:
         for card in korean_cards:
+            is_blast = blast_pair == card["pair_id"]
             is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
 
-            if is_selected:
+            if is_blast:
+                st.markdown(
+                    f"<div class='match-blast-card'>{html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            elif is_selected:
                 st.markdown(
                     f"<div class='match-selected-card'>✅ {html.escape(card['text'])}</div>",
                     unsafe_allow_html=True
                 )
             else:
-                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True, disabled=blast_pair is not None):
                     handle_card_click(card)
+
+    if blast_pair is not None:
+        components.html(
+            """
+            <script>
+            setTimeout(function() {
+                try { window.parent.location.reload(); }
+                catch(e) { window.location.reload(); }
+            }, 850);
+            </script>
+            """,
+            height=0,
+        )
 
     st.markdown("---")
     if st.button("🔄 게임 다시 섞기", use_container_width=True, key=f"match_restart_{game_key}"):
