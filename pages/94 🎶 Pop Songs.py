@@ -10,63 +10,129 @@ st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout=
 st.markdown("""
 <style>
     .stApp { background-color: #ffffff; color: #1e293b; }
+
     .main-title {
-        background-color: #f8fafc; padding: 25px; border-radius: 15px;
-        border: 2px solid #6366f1; text-align: center; color: #4338ca; margin-bottom: 25px;
+        background-color: #f8fafc;
+        padding: 25px;
+        border-radius: 15px;
+        border: 2px solid #6366f1;
+        text-align: center;
+        color: #4338ca;
+        margin-bottom: 25px;
     }
+
     .info-box {
-        background-color: #f1f5f9; padding: 30px; border-radius: 15px;
-        border: 1px solid #cbd5e1; line-height: 1.8; margin-bottom: 25px;
+        background-color: #f1f5f9;
+        padding: 24px;
+        border-radius: 15px;
+        border: 1px solid #cbd5e1;
+        line-height: 1.8;
+        margin-bottom: 25px;
     }
-    .info-box h3 { color: #4338ca; border-bottom: 3px solid #6366f1; padding-bottom: 12px; margin-top: 0; }
+
+    .info-box h3 {
+        color: #4338ca;
+        border-bottom: 3px solid #6366f1;
+        padding-bottom: 12px;
+        margin-top: 0;
+    }
+
     .lyrics-container {
-        padding: 12px 20px; border-left: 5px solid #6366f1;
-        margin-bottom: 10px; background-color: #f8fafc; border-radius: 0 10px 10px 0;
+        padding: 12px 20px;
+        border-left: 5px solid #6366f1;
+        margin-bottom: 10px;
+        background-color: #f8fafc;
+        border-radius: 0 10px 10px 0;
     }
-    .eng-line { font-size: 1.1rem; font-weight: 700; color: #1e3a8a; }
-    .kor-sub { font-size: 0.9rem; color: #64748b; }
+
+    .eng-line {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e3a8a;
+    }
+
+    .kor-sub {
+        font-size: 0.9rem;
+        color: #64748b;
+        margin-top: 4px;
+    }
+
+    .quiz-box {
+        background-color: #f0f9ff;
+        padding: 18px;
+        border-radius: 15px;
+        border: 1px solid #bae6fd;
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
+
+    .score-box {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        padding: 18px;
+        border-radius: 18px;
+        border: 1px solid #86efac;
+        margin-top: 18px;
+        text-align: center;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------
-# 2. 세션 상태 관리
-# -------------------------
-if 'selected_song' not in st.session_state: st.session_state.selected_song = "1. Let It Go - Frozen OST"
-if 'current_tab' not in st.session_state: st.session_state.current_tab = "🎬 배경 학습"
-if 'q3_cards' not in st.session_state: st.session_state.q3_cards = []
-if 'quiz_submitted' not in st.session_state: st.session_state.quiz_submitted = False
 
-# -------------------------
-# 3. 상단 컨트롤
-# -------------------------
-st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
+# =========================
+# 2. 세션 상태 관리
+# =========================
+if "selected_song" not in st.session_state:
+    st.session_state.selected_song = "1. Let It Go - Frozen OST"
+
+if "current_tab" not in st.session_state:
+    st.session_state.current_tab = "🎬 배경 학습"
+
+if "quiz_submitted" not in st.session_state:
+    st.session_state.quiz_submitted = False
+
+
+# =========================
+# 3. 상단 제목 및 컨트롤
+# =========================
+st.markdown(
+    '<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>',
+    unsafe_allow_html=True
+)
 
 song_options = [
-    "1. Let It Go - Frozen OST", 
-    "2. Hello - Adele", 
+    "1. Let It Go - Frozen OST",
+    "2. Hello - Adele",
     "3. A Whole New World - Aladdin OST",
     "4. Stand By Me - Ben E. King",
     "5. Don't Know Why - Norah Jones"
 ]
 
 def sync_song():
-    st.session_state.q3_cards = []
     st.session_state.quiz_submitted = False
-    if 'scrambled' in st.session_state: del st.session_state.scrambled
 
-song_choice = st.selectbox("👉 학습할 노래를 선택하세요", song_options, 
-                           index=song_options.index(st.session_state.selected_song),
-                           on_change=sync_song, key="song_selector")
+song_choice = st.selectbox(
+    "👉 학습할 노래를 선택하세요",
+    song_options,
+    index=song_options.index(st.session_state.selected_song),
+    on_change=sync_song,
+    key="song_selector"
+)
+
 st.session_state.selected_song = song_choice
 
-tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 순서 배열"]
-selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
+# 순서 배열 삭제함
+tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈"]
 
-# -------------------------
-# 4. 곡별 데이터 (1절 처음부터 순서대로 6문장 구성)
-# -------------------------
+selected_tab = st.radio(
+    "학습 단계",
+    tabs_list,
+    horizontal=True,
+    key="current_tab"
+)
+
+
 # =========================
-# 노래 선택에 따른 데이터 설정
+# 4. 곡별 데이터 설정
 # =========================
 
 if "1. Let It Go" in song_choice:
@@ -198,105 +264,219 @@ elif "2. Hello" in song_choice:
     comprehension_questions = [
         {
             "q": "1. Who is the speaker trying to contact?",
-            "options": [
-                "A person from the past",
-                "A new teacher",
-                "A famous singer",
-                "A stranger in California"
-            ],
+            "options": ["A person from the past", "A new teacher", "A famous singer", "A stranger in California"],
             "answer": "A person from the past"
         },
         {
             "q": "2. What does the speaker mainly want to say?",
-            "options": [
-                "Thank you",
-                "I'm sorry",
-                "Good luck",
-                "Happy birthday"
-            ],
+            "options": ["Thank you", "I'm sorry", "Good luck", "Happy birthday"],
             "answer": "I'm sorry"
         },
         {
             "q": "3. What do people say time is supposed to do?",
-            "options": [
-                "Heal people",
-                "Make people rich",
-                "Stop sadness forever",
-                "Change the past"
-            ],
+            "options": ["Heal people", "Make people rich", "Stop sadness forever", "Change the past"],
             "answer": "Heal people"
         },
         {
             "q": "4. Where is the speaker dreaming?",
-            "options": [
-                "London",
-                "California",
-                "New York",
-                "Paris"
-            ],
+            "options": ["London", "California", "New York", "Paris"],
             "answer": "California"
         },
         {
             "q": "5. What does the speaker say about calling?",
-            "options": [
-                "The speaker called many times",
-                "The speaker never called",
-                "The speaker called only once",
-                "The speaker forgot the number"
-            ],
+            "options": ["The speaker called many times", "The speaker never called", "The speaker called only once", "The speaker forgot the number"],
             "answer": "The speaker called many times"
         },
         {
             "q": "6. What is the main feeling of the song?",
-            "options": [
-                "Regret and apology",
-                "Excitement and joy",
-                "Anger and revenge",
-                "Hope for a vacation"
-            ],
+            "options": ["Regret and apology", "Excitement and joy", "Anger and revenge", "Hope for a vacation"],
             "answer": "Regret and apology"
         },
     ]
 
 
+elif "3. A Whole New World" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
+
+    bg_content = """
+    <h3>🕌 A Whole New World: 새로운 세상으로 떠나는 여행</h3>
+    <p>
+    <b>A Whole New World</b>는 영화 <i>Aladdin</i>의 대표곡으로,
+    알라딘과 자스민이 마법 양탄자를 타고 새로운 세상을 바라보는 장면에서 나오는 노래입니다.
+    </p>
+    """
+
+    lyrics_full = [
+        ("I can show you the world", "내가 너에게 세상을 보여 줄 수 있어"),
+        ("Shining, shimmering, splendid", "빛나고, 반짝이고, 눈부신 세상"),
+        ("Tell me, princess, now when did you last let your heart decide?", "공주님, 마지막으로 마음이 원하는 대로 한 게 언제였나요?"),
+        ("I can open your eyes", "내가 너의 눈을 뜨게 해 줄 수 있어"),
+        ("Take you wonder by wonder", "놀라운 곳에서 또 다른 놀라운 곳으로 데려가며"),
+        ("Over, sideways and under on a magic carpet ride", "마법 양탄자를 타고 위로, 옆으로, 아래로 날아가며"),
+    ]
+
+    comprehension_questions = [
+        {
+            "q": "1. What can the speaker show?",
+            "options": ["The world", "A classroom", "A book", "A phone"],
+            "answer": "The world"
+        },
+        {
+            "q": "2. Who is the speaker talking to?",
+            "options": ["A princess", "A teacher", "A king", "A student"],
+            "answer": "A princess"
+        },
+        {
+            "q": "3. What do they ride?",
+            "options": ["A magic carpet", "A train", "A bicycle", "A boat"],
+            "answer": "A magic carpet"
+        },
+        {
+            "q": "4. What is the feeling of the song?",
+            "options": ["Wonder and excitement", "Fear and anger", "Sadness and regret", "Boredom"],
+            "answer": "Wonder and excitement"
+        },
+        {
+            "q": "5. What does 'splendid' mean?",
+            "options": ["Wonderful", "Small", "Dark", "Slow"],
+            "answer": "Wonderful"
+        },
+        {
+            "q": "6. What is the song mainly about?",
+            "options": ["Discovering a new world", "Taking a test", "Buying food", "Cleaning a room"],
+            "answer": "Discovering a new world"
+        },
+    ]
+
+
+elif "4. Stand By Me" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=hwZNL7QVJjE"
+
+    bg_content = """
+    <h3>🤝 Stand By Me: 곁에 있어 주는 힘</h3>
+    <p>
+    <b>Stand By Me</b>는 힘들고 어두운 순간에도 누군가가 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다.
+    단순한 표현이 반복되어 학생들이 따라 부르기 좋습니다.
+    </p>
+    """
+
+    lyrics_full = [
+        ("When the night has come", "밤이 찾아오고"),
+        ("And the land is dark", "세상이 어두워지고"),
+        ("And the moon is the only light we'll see", "달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
+        ("No, I won't be afraid", "아니, 나는 두려워하지 않을 거야"),
+        ("Oh, I won't be afraid", "오, 나는 두려워하지 않을 거야"),
+        ("Just as long as you stand, stand by me", "네가 내 곁에 있어 준다면"),
+    ]
+
+    comprehension_questions = [
+        {
+            "q": "1. When does the song begin?",
+            "options": ["At night", "In the morning", "At school", "At lunch"],
+            "answer": "At night"
+        },
+        {
+            "q": "2. What is the only light they see?",
+            "options": ["The moon", "The sun", "A phone", "A candle"],
+            "answer": "The moon"
+        },
+        {
+            "q": "3. What does the speaker say about fear?",
+            "options": ["I won't be afraid", "I am always afraid", "I like fear", "I fear school"],
+            "answer": "I won't be afraid"
+        },
+        {
+            "q": "4. What does 'stand by me' mean?",
+            "options": ["Stay with me", "Run away", "Sit down", "Go home"],
+            "answer": "Stay with me"
+        },
+        {
+            "q": "5. What is the main theme?",
+            "options": ["Support and friendship", "Shopping", "Competition", "Cooking"],
+            "answer": "Support and friendship"
+        },
+        {
+            "q": "6. Why is the speaker not afraid?",
+            "options": ["Because someone is with him", "Because he has money", "Because it is sunny", "Because he is sleeping"],
+            "answer": "Because someone is with him"
+        },
+    ]
+
+
+elif "5. Don't Know Why" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
+
+    bg_content = """
+    <h3>🌙 Don't Know Why: 이유를 알 수 없는 마음</h3>
+    <p>
+    <b>Don't Know Why</b>는 조용하고 부드러운 분위기의 노래로,
+    마음속 아쉬움과 설명하기 어려운 감정을 담고 있습니다.
+    느린 속도의 노래라 듣기 활동에 활용하기 좋습니다.
+    </p>
+    """
+
+    lyrics_full = [
+        ("I waited 'til I saw the sun", "나는 해가 보일 때까지 기다렸어"),
+        ("I don't know why I didn't come", "왜 내가 가지 않았는지 모르겠어"),
+        ("I left you by the house of fun", "나는 너를 즐거움의 집 옆에 남겨 두었어"),
+        ("I don't know why I didn't come", "왜 내가 가지 않았는지 모르겠어"),
+        ("When I saw the break of day", "새벽이 밝아오는 것을 보았을 때"),
+        ("I wished that I could fly away", "나는 날아가 버릴 수 있기를 바랐어"),
+    ]
+
+    comprehension_questions = [
+        {
+            "q": "1. What did the speaker wait for?",
+            "options": ["The sun", "The bus", "A teacher", "A phone call"],
+            "answer": "The sun"
+        },
+        {
+            "q": "2. What does the speaker not know?",
+            "options": ["Why she didn't come", "How to read", "Where school is", "What food to eat"],
+            "answer": "Why she didn't come"
+        },
+        {
+            "q": "3. What did the speaker wish?",
+            "options": ["To fly away", "To sleep early", "To buy a car", "To study math"],
+            "answer": "To fly away"
+        },
+        {
+            "q": "4. What is the mood of the song?",
+            "options": ["Quiet and regretful", "Angry and loud", "Fast and funny", "Excited and wild"],
+            "answer": "Quiet and regretful"
+        },
+        {
+            "q": "5. What does 'break of day' mean?",
+            "options": ["Dawn", "Midnight", "Lunch time", "Winter"],
+            "answer": "Dawn"
+        },
+        {
+            "q": "6. What is repeated in the song?",
+            "options": ["I don't know why I didn't come", "I love soccer", "Let it go", "Stand by me"],
+            "answer": "I don't know why I didn't come"
+        },
+    ]
+
+
 # =========================
-# 탭 구성
-# 순서 배열 탭 삭제
+# 5. 화면 출력
 # =========================
 
-tab1, tab2 = st.tabs([
-    "🎬 1. Background & Video",
-    "🎵 2. Full Lyrics & Quiz"
-])
-
-
-# =========================
-# 1번째 탭: 노래 소개 + 영상
-# =========================
-
-with tab1:
+if selected_tab == "🎬 배경 학습":
+    st.markdown('<div class="info-box">', unsafe_allow_html=True)
     st.markdown(bg_content, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown("### 🎬 Music Video")
     st.video(video_url)
 
 
-# =========================
-# 2번째 탭: 전체 가사 + 이해도 문제
-# =========================
-
-with tab2:
+elif selected_tab == "📖 가사 & 퀴즈":
     st.markdown("## 🎵 Full Lyrics")
 
     st.markdown(
         """
-        <div style="
-            background: linear-gradient(135deg, #fff7ed, #fef3c7);
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid #fed7aa;
-            margin-bottom: 18px;
-        ">
+        <div class="quiz-box">
             <h3 style="margin-top:0;">📖 전체 가사를 먼저 읽어 봅시다</h3>
             <p style="font-size:16px; margin-bottom:0;">
             영어 가사와 한국어 뜻을 함께 보면서 노래의 내용을 이해해 봅시다.
@@ -310,38 +490,20 @@ with tab2:
     for eng, kor in lyrics_full:
         st.markdown(
             f"""
-            <div style="
-                background:white;
-                padding:12px 14px;
-                border-radius:14px;
-                margin-bottom:8px;
-                border:1px solid #e5e7eb;
-                box-shadow:0 2px 6px rgba(0,0,0,0.04);
-            ">
-                <div style="font-size:17px; font-weight:700; color:#111827;">
-                    {eng}
-                </div>
-                <div style="font-size:15px; color:#4b5563; margin-top:4px;">
-                    {kor}
-                </div>
+            <div class="lyrics-container">
+                <div class="eng-line">{eng}</div>
+                <div class="kor-sub">{kor}</div>
             </div>
             """,
             unsafe_allow_html=True
         )
 
     st.markdown("---")
-
     st.markdown("## 📝 Understanding Check")
 
     st.markdown(
         """
-        <div style="
-            background:#f0f9ff;
-            padding:15px;
-            border-radius:15px;
-            border:1px solid #bae6fd;
-            margin-bottom:16px;
-        ">
+        <div class="quiz-box">
             <b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>
             화자의 감정, 노래의 상황, 반복되는 표현을 중심으로 생각하면 됩니다.
         </div>
@@ -352,14 +514,22 @@ with tab2:
     score = 0
     user_answers = []
 
-    with st.form("comprehension_quiz_form"):
+    safe_song_key = (
+        song_choice
+        .replace(" ", "_")
+        .replace(".", "")
+        .replace("-", "_")
+        .replace("'", "")
+    )
+
+    with st.form(f"comprehension_quiz_form_{safe_song_key}"):
         for i, item in enumerate(comprehension_questions):
             st.markdown(f"### {item['q']}")
 
             answer = st.radio(
                 "Choose the best answer.",
                 item["options"],
-                key=f"comp_quiz_{song_choice}_{i}",
+                key=f"comp_quiz_{safe_song_key}_{i}",
                 label_visibility="collapsed"
             )
 
@@ -383,129 +553,9 @@ with tab2:
 
         st.markdown(
             f"""
-            <div style="
-                background:linear-gradient(135deg,#dcfce7,#bbf7d0);
-                padding:18px;
-                border-radius:18px;
-                border:1px solid #86efac;
-                margin-top:18px;
-                text-align:center;
-            ">
+            <div class="score-box">
                 <h2 style="margin:0;">Your Score: {score} / {len(comprehension_questions)}</h2>
             </div>
             """,
             unsafe_allow_html=True
         )
-
-            
-elif "3. A Whole New World" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
-    bg_content = "<h3>✨ A Whole New World: 성벽을 넘는 자유의 비행</h3>"
-    lyrics_full = [
-        ("I can show you the world, shining, shimmering, splendid", "당신에게 세상을 보여줄 수 있어요, 빛나고 반짝이며 화려한 세상을"),
-        ("Tell me, princess, now when did you last let your heart decide?", "공주님, 마지막으로 마음 가는 대로 결정했던 게 언제였나요?"),
-        ("I can open your eyes, take you wonder by wonder", "당신의 눈을 뜨게 해 줄게요, 경이로운 곳들로 데려가 줄게요"),
-        ("Over, sideways and under on a magic carpet ride", "마법 양탄자를 타고 위아래 옆으로 누비며"),
-        ("A whole new world! A new fantastic point of view", "완전히 새로운 세상! 환상적인 새로운 시야죠"),
-        ("No one to tell us 'No', or where to go, or say we're only dreaming", "아무도 우리에게 안 된다거나 어디로 가라고, 혹은 꿈일 뿐이라고 말하지 않아요")
-    ]
-
-elif "4. Stand By Me" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=Us-TVg40ExM"
-    bg_content = "<h3>🤝 Stand By Me: 시련 속에서도 변치 않는 연대</h3>"
-    lyrics_full = [
-        ("When the night has come and the land is dark", "밤이 찾아오고 대지가 어두워질 때"),
-        ("And the moon is the only light we'll see", "저 달빛이 우리가 볼 수 있는 유일한 빛일 때"),
-        ("No, I won't be afraid, oh, I won't be afraid", "난 두렵지 않을 거예요, 정말 두렵지 않아요"),
-        ("Just as long as you stand, stand by me", "당신이 내 곁에 서 있어 주기만 한다면요"),
-        ("So darling, darling, stand by me, oh, stand by me", "그러니 그대여, 내 곁에 서 주세요, 내 곁에 있어 줘요"),
-        ("If the sky that we look upon should tumble and fall", "우리가 바라보는 저 하늘이 무너져 내린다고 해도")
-    ]
-
-elif "5. Don't Know Why" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
-    bg_content = "<h3>🍂 Don't Know Why: 망설임이 남긴 쓸쓸한 후회</h3>"
-    lyrics_full = [
-        ("I waited 'til I saw the sun", "난 해가 뜰 때까지 기다렸어요"),
-        ("I don't know why I didn't come", "내가 왜 가지 않았는지 모르겠어요"),
-        ("I left you by the house of fun", "당신을 축제의 집 근처에 남겨둔 채로요"),
-        ("I don't know why I didn't come, I don't know why I didn't come", "왜 가지 않았는지 모르겠어요, 정말 모르겠어요"),
-        ("When I saw the break of day, I wished that I could fly away", "새벽이 밝아올 때 난 멀리 날아가 버리고 싶었죠"),
-        ("Instead of kneeling in the sand, catching teardrops in my hand", "모래 위에 무릎 꿇고 손바닥으로 눈물을 받는 대신에요")
-    ]
-
-# 퀴즈는 공통 문항 유지 (내용이 1절에 포함됨)
-questions = [
-    ("1. 가사 내용상 화자의 현재 감정은?", ["기쁨", "슬픔/고민", "분노"], "슬픔/고민"),
-    ("2. 가사 첫 부분의 시간적 배경은?", ["아침", "밤/새벽", "낮"], "밤/새벽")
-]
-
-# -------------------------
-# 5. 탭별 화면 출력
-# -------------------------
-if selected_tab == "🎬 배경 학습":
-    st.markdown(f'<div class="info-box">{bg_content}</div>', unsafe_allow_html=True)
-    st.video(video_url)
-
-elif selected_tab == "📖 가사 & 퀴즈":
-    col_v, col_l = st.columns([1, 1.2])
-    with col_v:
-        st.video(video_url)
-        st.divider()
-        st.markdown("### 💡 Quick Check")
-        with st.form(key=f"quiz_form_{song_choice}"):
-            user_answers = []
-            for i, (q, opts, ans) in enumerate(questions):
-                user_choice = st.radio(q, opts, index=None, key=f"q_radio_{song_choice}_{i}")
-                user_answers.append(user_choice)
-            if st.form_submit_button("채점하기"):
-                st.session_state.quiz_submitted = True
-        if st.session_state.quiz_submitted:
-            st.info("정답을 확인하고 다음 단계로 넘어가세요!")
-    with col_l:
-        st.markdown("### 🎼 First Verse (처음~6문장)")
-        for i, (eng, kor) in enumerate(lyrics_full):
-            label = list(string.ascii_lowercase)[i]
-            st.markdown(f'''
-                <div class="lyrics-container">
-                    <div class="eng-line">({label}) {eng}</div>
-                    <div class="kor-sub">{kor}</div>
-                </div>
-            ''', unsafe_allow_html=True)
-
-elif selected_tab == "🧩 순서 배열":
-    # 1절 처음부터 순서대로 6개 라벨링
-    correct_order = [f"({list(string.ascii_lowercase)[i]}) {eng}" for i, (eng, kor) in enumerate(lyrics_full)]
-    
-    if 'scrambled' not in st.session_state or st.session_state.get('last_song_id') != song_choice:
-        st.session_state.scrambled = random.sample(correct_order, len(correct_order))
-        st.session_state.last_song_id = song_choice
-
-    st.subheader("🧩 가사 순서대로 클릭하세요 (1절 도입부부터)")
-    st.caption("가사 앞의 (a) (b) (c)... 기호를 참고하여 노래가 흐르는 순서대로 버튼을 누르세요.")
-    
-    b_cols = st.columns(2)
-    for i, text in enumerate(st.session_state.scrambled):
-        is_sel = text in st.session_state.q3_cards
-        if (b_cols[i % 2]).button(text, key=f"puz_{song_choice}_{i}", use_container_width=True, disabled=is_sel):
-            st.session_state.q3_cards.append(text)
-            st.rerun()
-
-    st.divider()
-    st.write("📝 **내가 배열한 순서:**")
-    for idx, card in enumerate(st.session_state.q3_cards):
-        c1, c2 = st.columns([0.9, 0.1])
-        c1.info(f"{idx+1}: {card}")
-        if c2.button("🗑️", key=f"del_{song_choice}_{idx}"):
-            st.session_state.q3_cards.pop(idx)
-            st.rerun()
-
-    if len(st.session_state.q3_cards) == 6:
-        if st.button("🚩 최종 채점 하기", type="primary", use_container_width=True):
-            all_correct = True
-            for i, user_s in enumerate(st.session_state.q3_cards):
-                if user_s == correct_order[i]: st.success(f"{i+1}번: 정답!")
-                else:
-                    st.error(f"{i+1}번: 오답 (정답: {correct_order[i]})")
-                    all_correct = False
-            if all_correct: st.balloons()
