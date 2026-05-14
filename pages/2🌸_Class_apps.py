@@ -25,35 +25,8 @@ def create_wordcloud(text):
     return wordcloud
 
 
-# =========================
-# 학생 안내 문구
-# =========================
-st.markdown("""
-<div style="
-    background: linear-gradient(135deg, #eef7ff, #f7fbff);
-    border: 1px solid #d6e9ff;
-    border-radius: 18px;
-    padding: 22px 24px;
-    margin-bottom: 18px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-">
-    <h2 style="margin-top:0; color:#1f4e79;">🧰 수업 도구 모음</h2>
-    <p style="font-size:18px; line-height:1.7; margin-bottom:12px;">
-        이 앱은 수업 시간에 바로 사용할 수 있는 간단한 도구 모음입니다.
-        위의 탭을 눌러 필요한 기능을 선택하세요.
-    </p>
-    <ul style="font-size:16px; line-height:1.8; margin-bottom:0;">
-        <li><b>Blackboard</b>: 칠판처럼 글을 크게 보여줍니다.</li>
-        <li><b>Drawing</b>: 화면에 자유롭게 그림을 그릴 수 있습니다.</li>
-        <li><b>QR code</b>: 인터넷 주소를 QR 코드로 바꿉니다.</li>
-        <li><b>Timer</b>: 활동 시간을 정하고 타이머를 사용할 수 있습니다.</li>
-        <li><b>WordCloud</b>: 입력한 글에서 중요한 단어를 구름 모양으로 보여줍니다.</li>
-        <li><b>Emoji</b>: 수업 자료에 사용할 이모지를 쉽게 찾을 수 있습니다.</li>
-        <li><b>Grouping</b>: 학생들을 무작위로 조 편성할 수 있습니다.</li>
-        <li><b>Translation</b>: 영어↔한국어 번역을 하고, 번역된 영어 문장의 발음을 속도별로 들을 수 있습니다.</li>
-    </ul>
-</div>
-""", unsafe_allow_html=True)
+st.title("🧰 수업 도구 모음")
+st.caption("칠판, 그림판, QR 코드, 타이머, 워드클라우드, 이모지, 조 편성, 번역을 한곳에서 사용할 수 있습니다.")
 
 # Streamlit tabs
 tabs = st.tabs([
@@ -623,26 +596,6 @@ with tabs[6]:
 # --- Tab 7: Translation ---
 with tabs[7]:
     st.subheader("🌐 Translation Tool")
-    st.caption("영어 ↔ 한국어 번역을 할 수 있습니다. 번역 결과가 영어일 때는 발음도 속도별로 들어볼 수 있습니다.")
-
-    st.markdown("""
-    <div style="
-        background: linear-gradient(135deg, #fff7ed, #ffffff);
-        border: 1px solid #fed7aa;
-        border-radius: 16px;
-        padding: 16px 18px;
-        margin-bottom: 16px;
-        font-size: 16px;
-        line-height: 1.7;
-    ">
-        <b>사용 방법</b><br>
-        1. 원문 언어와 번역할 언어를 선택하세요.<br>
-        2. 문장을 입력하고 <b>번역하기</b>를 누르세요.<br>
-        3. 번역 결과가 영어이면 <b>발음 듣기</b>로 영어 발음을 연습하세요.<br>
-        4. 학습이 어려우면 <b>느리게</b>, 익숙해지면 <b>보통</b>이나 <b>빠르게</b>로 들어보세요.
-    </div>
-    """, unsafe_allow_html=True)
-
     lang_options = {
         "한국어 Korean": "ko",
         "영어 English": "en",
@@ -728,17 +681,12 @@ with tabs[7]:
 
             speed_label = st.radio(
                 "발음 속도",
-                ["느리게", "보통", "빠르게"],
-                index=1,
+                ["0.25", "0.5", "1", "1.25", "1.5"],
+                index=2,
                 horizontal=True
             )
 
-            speed_map = {
-                "느리게": 0.75,
-                "보통": 1.0,
-                "빠르게": 1.25
-            }
-            playback_rate = speed_map[speed_label]
+            playback_rate = float(speed_label)
 
             if st.button("🔊 발음 듣기", use_container_width=True):
                 if not translated_result.strip():
@@ -768,7 +716,7 @@ with tabs[7]:
                                 audio.playbackRate = {playback_rate};
                             </script>
                             <p style="margin-top:10px; color:#475569; font-size:14px;">
-                                현재 속도: <b>{speed_label}</b>
+                                현재 속도: <b>{speed_label}x</b>
                             </p>
                         </div>
                         """
@@ -780,14 +728,3 @@ with tabs[7]:
         else:
             st.info("번역할 언어를 영어 English로 선택하면 영어 발음을 들을 수 있습니다.")
 
-    st.markdown("---")
-    st.markdown("### 📌 사용 안내")
-    st.markdown(
-        """
-        - 영어를 한국어로 번역할 때는 원문 언어를 `영어 English`, 번역할 언어를 `한국어 Korean`으로 선택하세요.
-        - 한국어를 영어로 번역할 때는 원문 언어를 `한국어 Korean`, 번역할 언어를 `영어 English`로 선택하세요.
-        - 번역 결과가 영어일 때만 `발음 듣기`가 나타납니다.
-        - 발음 속도는 `느리게`, `보통`, `빠르게` 중에서 선택할 수 있습니다.
-        - 번역 품질은 문맥에 따라 달라질 수 있으므로, 중요한 자료는 교사가 한 번 확인하는 것이 좋습니다.
-        """
-    )
