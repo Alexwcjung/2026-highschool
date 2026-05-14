@@ -1,27 +1,26 @@
-
 import streamlit as st
 from gtts import gTTS
 import io
 import random
-import base64
-import uuid
 import re
-import json
-import html
-import streamlit.components.v1 as components
 
-# =========================
-# 기본 설정
-# =========================
+# =====================================================
+# Survival English 160 - 안정형 버전
+# 핵심 수정:
+# 1) Streamlit 컴포넌트 방식 삭제
+# 2) 브라우저 스크립트 방식 삭제
+# 3) Streamlit 기본 st.audio()만 사용
+# =====================================================
+
 st.set_page_config(
     page_title="Survival English 160",
     page_icon="🛟",
     layout="wide"
 )
 
-# =========================
+# =====================================================
 # CSS 디자인
-# =========================
+# =====================================================
 st.markdown(
     """
     <style>
@@ -31,13 +30,11 @@ st.markdown(
         color: #1f2937;
         margin-bottom: 4px;
     }
-
     .sub-title {
         font-size: 17px;
         color: #6b7280;
         margin-bottom: 24px;
     }
-
     .hero-box {
         background: linear-gradient(135deg, #ecfeff 0%, #fef3c7 50%, #fce7f3 100%);
         border-radius: 22px;
@@ -46,90 +43,84 @@ st.markdown(
         box-shadow: 0 6px 18px rgba(0,0,0,0.06);
         border: 1px solid rgba(255,255,255,0.8);
     }
-
-    .hero-title {
-        font-size: 27px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 10px;
-    }
-
-    .hero-text {
-        font-size: 16px;
-        color: #374151;
-        line-height: 1.8;
-    }
-
     .theme-header {
         background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 50%, #ec4899 100%);
         color: white;
-        padding: 30px 32px;
-        border-radius: 28px;
-        margin-bottom: 26px;
+        padding: 28px 30px;
+        border-radius: 26px;
+        margin-bottom: 22px;
         box-shadow: 0 10px 24px rgba(14,165,233,0.28);
     }
-
     .theme-title {
-        font-size: 40px;
+        font-size: 38px;
         font-weight: 1000;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         letter-spacing: -0.5px;
         line-height: 1.15;
     }
-
     .theme-desc {
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 800;
         opacity: 0.98;
         line-height: 1.55;
     }
-
+    .cassette-box {
+        background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 48%, #fdf2f8 100%);
+        border: 1px solid #bae6fd;
+        border-radius: 26px;
+        padding: 20px 22px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+    .cassette-title {
+        font-size: 24px;
+        font-weight: 900;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+    .cassette-note {
+        font-size: 14px;
+        font-weight: 800;
+        color: #475569;
+        margin-bottom: 12px;
+        line-height: 1.6;
+    }
     .dialogue-box {
         background: #fefce8;
         border: 1px solid #fde68a;
         border-radius: 24px;
         padding: 20px 22px;
-        margin-bottom: 24px;
+        margin-bottom: 22px;
         box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     }
-
     .dialogue-title {
         font-size: 24px;
         font-weight: 900;
         color: #854d0e;
         margin-bottom: 14px;
     }
-
     .dialogue-line {
         font-size: 18px;
         font-weight: 900;
         color: #111827;
         margin-top: 10px;
     }
-
     .dialogue-meaning {
         font-size: 15px;
         color: #6b7280;
         margin-bottom: 5px;
     }
-
     .word-card {
         background: white;
         border-radius: 18px;
-        padding: 10px 14px;
-        margin-bottom: 8px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
         border: 1px solid #e0f2fe;
         box-shadow: 0 3px 10px rgba(0,0,0,0.04);
     }
-
-    .word-row {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
     .word-number {
-        min-width: 38px;
+        display:inline-block;
+        min-width: 34px;
         font-size: 13px;
         font-weight: 900;
         color: #0369a1;
@@ -137,32 +128,22 @@ st.markdown(
         border-radius: 999px;
         padding: 5px 9px;
         text-align: center;
+        margin-right: 8px;
     }
-
     .word-text {
-        min-width: 170px;
         font-size: 25px;
         font-weight: 900;
         color: #111827;
-        white-space: nowrap;
     }
-
     .meaning-text {
-        font-size: 19px;
+        font-size: 18px;
         font-weight: 800;
         color: #374151;
-        margin-left: 8px;
-        white-space: nowrap;
-        line-height: 42px;
     }
-
     .emoji-text {
-        font-size: 25px;
-        line-height: 1;
+        font-size: 26px;
         text-align: center;
-        padding-top: 2px;
     }
-
     .quiz-card {
         background: #ffffff;
         border-radius: 24px;
@@ -171,168 +152,84 @@ st.markdown(
         border: 1px solid #e9d5ff;
         box-shadow: 0 5px 18px rgba(0,0,0,0.06);
     }
-
-    .quiz-number {
-        display: inline-block;
-        background: #dcfce7;
-        color: #166534;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-weight: 900;
-        font-size: 13px;
-        margin-bottom: 10px;
-    }
-
-    .quiz-word {
-        font-size: 34px;
-        font-weight: 900;
-        color: #111827;
-        margin-bottom: 8px;
-    }
-
     .score-box {
         background: linear-gradient(135deg, #dcfce7 0%, #dbeafe 50%, #fce7f3 100%);
         border-radius: 24px;
-        padding: 24px 26px;
+        padding: 20px 22px;
         margin: 20px 0;
         border: 1px solid #bbf7d0;
         box-shadow: 0 6px 18px rgba(0,0,0,0.06);
-    }
-
-    .score-title {
-        font-size: 27px;
+        font-size: 22px;
         font-weight: 900;
         color: #14532d;
     }
-
-    .wrong-box {
-        background: #fff7ed;
-        border-left: 6px solid #fb923c;
-        border-radius: 18px;
-        padding: 16px 18px;
-        margin: 18px 0;
-        color: #7c2d12;
-        font-weight: 700;
-    }
-
-    .answer-box {
-        background: #f8fafc;
-        border-radius: 20px;
-        padding: 18px 20px;
-        border: 1px solid #e2e8f0;
-        margin-bottom: 16px;
-    }
-
     .stButton > button {
         border-radius: 999px;
         font-weight: 800;
         border: 1px solid #d1d5db;
         padding: 0.45rem 1rem;
     }
-
-    .stButton > button:hover {
-        border-color: #0ea5e9;
-        color: #0ea5e9;
-    }
-
-
-    /* 카테고리 탭 글자 크게 */
     div[data-baseweb="tab-list"] {
         gap: 10px;
         flex-wrap: wrap;
     }
-
     button[data-baseweb="tab"] {
-        min-height: 58px;
+        min-height: 56px;
         padding: 12px 18px;
         border-radius: 18px 18px 0 0;
         background: #f8fafc;
         border: 1px solid #e5e7eb;
         margin-right: 4px;
     }
-
     button[data-baseweb="tab"] p {
-        font-size: 21px !important;
+        font-size: 20px !important;
         font-weight: 1000 !important;
         color: #111827 !important;
         line-height: 1.25 !important;
         white-space: nowrap;
     }
-
     button[data-baseweb="tab"][aria-selected="true"] {
         background: linear-gradient(135deg, #dbeafe, #fce7f3);
         border-bottom: 4px solid #8b5cf6;
     }
-
-    /* 학습 모드 선택 글자도 조금 크게 */
-    div[role="radiogroup"] label p {
-        font-size: 18px !important;
-        font-weight: 900 !important;
-    }
-
     @media (max-width: 600px) {
-        .main-title {
-            font-size: 34px;
-        }
-
-        .theme-header {
-            padding: 24px 22px;
-            border-radius: 24px;
-        }
-
-        .theme-title {
-            font-size: 33px;
-        }
-
-        .theme-desc {
-            font-size: 16px;
-        }
-
-        button[data-baseweb="tab"] {
-            min-height: 52px;
-            padding: 10px 14px;
-        }
-
-        button[data-baseweb="tab"] p {
-            font-size: 18px !important;
-        }
+        .main-title { font-size: 34px; }
+        .theme-header { padding: 22px 20px; border-radius: 22px; }
+        .theme-title { font-size: 31px; }
+        .theme-desc { font-size: 16px; }
+        button[data-baseweb="tab"] { min-height: 50px; padding: 9px 12px; }
+        button[data-baseweb="tab"] p { font-size: 17px !important; }
     }
-
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# =========================
-# 상단 제목
-# =========================
-st.markdown("<div class='main-title'>🛟 Survival English 160</div>", unsafe_allow_html=True)
-st.markdown(
-    "<div class='sub-title'>생존 회화에 꼭 필요한 문장과 단어를 듣고, 따라 하고, 퀴즈로 익혀 봅시다.</div>",
-    unsafe_allow_html=True
-)
-
-st.markdown(
-    """
-    <div class="hero-box">
-        <div class="hero-text" style="font-size:18px; font-weight:900; color:#374151;">
-            이 단어 160개만 외우면 미국에서 생존이 가능합니다.
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-# =========================
+# =====================================================
 # TTS 함수
-# =========================
-@st.cache_data
+# =====================================================
+@st.cache_data(show_spinner=False)
 def make_tts_audio(text, lang="en", tld="com"):
+    """
+    gTTS로 영어 음성 mp3 bytes 생성.
+    Streamlit Cloud에서 가끔 gTTS 연결 실패가 날 수 있으므로 호출부에서 예외 처리합니다.
+    """
     fp = io.BytesIO()
     tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
     tts.write_to_fp(fp)
     fp.seek(0)
     return fp.read()
+
+
+def play_audio_block(text, label="🔊 듣기"):
+    """JavaScript 없이 Streamlit 기본 오디오 플레이어로 출력"""
+    try:
+        audio_bytes = make_tts_audio(text, lang="en", tld="com")
+        st.caption(label)
+        st.audio(audio_bytes, format="audio/mp3")
+    except Exception:
+        st.error("음성 파일을 만들지 못했습니다. 잠시 후 다시 실행하거나, Streamlit Cloud 로그를 확인해 주세요.")
+        st.caption(f"읽을 문장: {text}")
 
 
 def remove_speaker_label(sentence):
@@ -343,9 +240,9 @@ def make_dialogue_tts_text(dialogue):
     return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
 
 
-# =========================
+# =====================================================
 # 생존 회화 160 테마별 단어
-# =========================
+# =====================================================
 word_themes = {
     "🧍 나와 사람": [
         {"word": "I", "meaning": "나"},
@@ -525,9 +422,9 @@ word_themes = {
     ],
 }
 
-# =========================
+# =====================================================
 # 단어별 예문
-# =========================
+# =====================================================
 CASSETTE_EXAMPLES = {
     "I": "I am a student.", "you": "You are my friend.", "he": "He is my friend.", "she": "She is a student.",
     "we": "We are happy.", "they": "They are students.", "friend": "He is my friend.", "teacher": "She is my teacher.",
@@ -645,9 +542,9 @@ CASSETTE_EXAMPLES_KO = {
     "repeat": "반복해 주세요.", "look": "이것을 보세요.",
 }
 
-# =========================
+# =====================================================
 # 단어별 이모지
-# =========================
+# =====================================================
 WORD_EMOJIS = {
     "I": "🙋", "you": "👉", "he": "👦", "she": "👧", "we": "👥", "they": "👥",
     "friend": "🤝", "teacher": "👩‍🏫", "student": "🧑‍🎓", "classmate": "👫", "family": "👨‍👩‍👧",
@@ -687,371 +584,9 @@ def get_word_emoji(word):
     return WORD_EMOJIS.get(word, "🌱")
 
 
-# =========================
-# 오디오 공통 중지 채널
-# =========================
-AUDIO_CHANNEL_NAME = "survival_english_audio_channel"
-
-
-# =========================
-# 단어용 HTML 오디오 플레이어
-# =========================
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=42):
-    audio_bytes = make_tts_audio(text)
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-
-    audio_id = f"audio_{uuid.uuid4().hex}"
-    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
-    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    player_id = f"player_{uuid.uuid4().hex}"
-
-    safe_label = json.dumps(label)
-    safe_text = json.dumps(text)
-    safe_player_id = json.dumps(player_id)
-    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
-
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:36px;">
-            <audio id="{audio_id}" src="data:audio/mp3;base64,{audio_base64}"></audio>
-
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #fce7f3, #dbeafe);
-                border: 1px solid #e9d5ff;
-                border-radius: 999px;
-                padding: 5px 8px;
-                font-weight: 800;
-                font-size: 12px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.06);
-                white-space: nowrap;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 5px 8px;
-                font-weight: 800;
-                font-size: 12px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-                white-space: nowrap;
-            ">
-                ⏹ 중지
-            </button>
-
-            <span id="{status_id}" style="
-                font-size: 12px;
-                color: #075985;
-                font-weight: 700;
-                white-space: nowrap;
-            "></span>
-
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-
-            let count = 0;
-            let timer = null;
-            let isStopped = false;
-
-            const maxCount = {repeat_count};
-            const pauseMs = {pause_ms};
-            const labelText = {safe_label};
-            const wordText = {safe_text};
-            const playerId = {safe_player_id};
-            const channelName = {safe_channel};
-
-            const channel = new BroadcastChannel(channelName);
-
-            function stopThisAudio(showMessage = false) {{
-                isStopped = true;
-
-                if (timer) {{
-                    clearTimeout(timer);
-                    timer = null;
-                }}
-
-                audio.pause();
-                audio.currentTime = 0;
-                count = 0;
-
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-
-                if (showMessage) {{
-                    status.innerText = "중지됨";
-                }} else {{
-                    status.innerText = "";
-                }}
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
-                }}
-            }};
-
-            function playOnce() {{
-                if (isStopped) return;
-
-                if (count >= maxCount) {{
-                    status.innerText = "완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                    return;
-                }}
-
-                audio.currentTime = 0;
-
-                audio.play().then(() => {{
-                    count += 1;
-                    status.innerText = count + "/" + maxCount;
-                }}).catch((error) => {{
-                    status.innerText = "다시 클릭";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }}
-
-            audio.addEventListener("ended", function() {{
-                if (isStopped) return;
-
-                if (count < maxCount) {{
-                    timer = setTimeout(playOnce, pauseMs);
-                }} else {{
-                    status.innerText = "완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }}
-            }});
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                stopThisAudio(false);
-
-                isStopped = false;
-                count = 0;
-                playBtn.disabled = true;
-                playBtn.innerText = "재생중";
-                status.innerText = "시작";
-                playOnce();
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
-            }});
-            </script>
-        </div>
-        """,
-        height=height
-    )
-
-
-def audio_button(label, text, key=None):
-    html_word_audio_player(
-        label=label,
-        text=text,
-        repeat_count=20,
-        pause_ms=1500,
-        height=42
-    )
-
-
-# =========================
-# 대화용 HTML 오디오 플레이어
-# =========================
-def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height=105):
-    audio_data_list = []
-
-    for line in dialogue_lines:
-        clean_text = remove_speaker_label(line["en"])
-        audio_bytes = make_tts_audio(clean_text)
-        audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-        audio_data_list.append({
-            "text": clean_text,
-            "src": f"data:audio/mp3;base64,{audio_base64}"
-        })
-
-    audio_json = json.dumps(audio_data_list)
-    safe_label = json.dumps(label)
-
-    audio_id = f"dialogue_audio_{uuid.uuid4().hex}"
-    play_btn_id = f"dialogue_play_{uuid.uuid4().hex}"
-    stop_btn_id = f"dialogue_stop_{uuid.uuid4().hex}"
-    status_id = f"dialogue_status_{uuid.uuid4().hex}"
-    player_id = f"dialogue_player_{uuid.uuid4().hex}"
-    safe_player_id = json.dumps(player_id)
-    safe_channel = json.dumps(AUDIO_CHANNEL_NAME)
-
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
-            <audio id="{audio_id}"></audio>
-
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #fef3c7, #dbeafe);
-                border: 1px solid #fde68a;
-                border-radius: 999px;
-                padding: 9px 15px;
-                font-weight: 800;
-                font-size: 14px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                margin-right: 6px;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 9px 15px;
-                font-weight: 800;
-                font-size: 14px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-            ">
-                ⏹ 중지
-            </button>
-
-            <div id="{status_id}" style="
-                margin-top: 8px;
-                font-size: 13px;
-                color: #075985;
-                font-weight: 700;
-            "></div>
-
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-
-            const dialogueAudios = {audio_json};
-            const linePauseMs = {line_pause_ms};
-            const labelText = {safe_label};
-            const playerId = {safe_player_id};
-            const channelName = {safe_channel};
-
-            let index = 0;
-            let timer = null;
-            let isStopped = false;
-
-            const channel = new BroadcastChannel(channelName);
-
-            function stopThisAudio(showMessage = false) {{
-                isStopped = true;
-
-                if (timer) {{
-                    clearTimeout(timer);
-                    timer = null;
-                }}
-
-                audio.pause();
-                audio.currentTime = 0;
-                index = 0;
-
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-
-                if (showMessage) {{
-                    status.innerText = "⏹ 대화 듣기를 중지했습니다.";
-                }} else {{
-                    status.innerText = "";
-                }}
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
-                }}
-            }};
-
-            function playCurrentLine() {{
-                if (isStopped) return;
-
-                if (index >= dialogueAudios.length) {{
-                    status.innerText = "✅ 대화 재생 완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                    return;
-                }}
-
-                audio.src = dialogueAudios[index].src;
-                audio.currentTime = 0;
-
-                audio.play().then(() => {{
-                    status.innerText = "🔊 대화 재생 중: " + (index + 1) + " / " + dialogueAudios.length;
-                }}).catch((error) => {{
-                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }}
-
-            audio.addEventListener("ended", function() {{
-                if (isStopped) return;
-
-                index += 1;
-
-                if (index < dialogueAudios.length) {{
-                    timer = setTimeout(playCurrentLine, linePauseMs);
-                }} else {{
-                    status.innerText = "✅ 대화 재생 완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }}
-            }});
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                stopThisAudio(false);
-
-                isStopped = false;
-                index = 0;
-                playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
-                status.innerText = "🔊 대화 듣기를 시작합니다.";
-                playCurrentLine();
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
-            }});
-            </script>
-        </div>
-        """,
-        height=height
-    )
-
-
-# =========================
+# =====================================================
 # 오늘의 생존 대화
-# =========================
+# =====================================================
 theme_dialogues = {
     "🧍 나와 사람": [
         {"en": "A: Hello. What is your name?", "ko": "A: 안녕. 네 이름은 뭐니?"},
@@ -1120,13 +655,9 @@ theme_dialogues = {
 }
 
 
-
-# =========================
+# =====================================================
 # 카테고리 통합
-# - 단어 160개와 대화 내용은 삭제하지 않습니다.
-# - 카테고리만 크게 묶습니다.
-# - 이 통합 결과가 단어 목록, 퀴즈, 카테고리별 카세트, 전체 카세트에 모두 적용됩니다.
-# =========================
+# =====================================================
 CATEGORY_MERGE_MAP = {
     "🧍 나와 사람": "🧍 사람·상태",
     "💖 감정·몸 상태": "🧍 사람·상태",
@@ -1146,28 +677,21 @@ CATEGORY_MERGE_MAP = {
 
 def merge_categories(original_dict):
     merged = {}
-
     for old_cat, items in original_dict.items():
         new_cat = CATEGORY_MERGE_MAP.get(old_cat, old_cat)
-
         if new_cat not in merged:
             merged[new_cat] = []
-
-        # 단어/대화 내용은 그대로 유지하고 카테고리만 합칩니다.
         merged[new_cat].extend(items)
-
     return merged
 
 
-# 여기서 먼저 통합해야 아래 단어 목록, 퀴즈, 카세트가 모두 통합 카테고리 기준으로 작동합니다.
 word_themes = merge_categories(word_themes)
 theme_dialogues = merge_categories(theme_dialogues)
 
 
-# =========================
-# 전체 카세트 듣기 기능
-# 브라우저 음성 엔진 사용
-# =========================
+# =====================================================
+# 카세트용 데이터
+# =====================================================
 def get_example_sentence(word):
     return CASSETTE_EXAMPLES.get(word, f"This is {word}.")
 
@@ -1179,637 +703,98 @@ def get_example_sentence_ko(word):
 def flatten_survival_words():
     all_items = []
     number = 1
-
     for theme_name, theme_words in word_themes.items():
         for item in theme_words:
             word = item["word"]
-            example = get_example_sentence(word)
-            example_ko = get_example_sentence_ko(word)
-
             all_items.append({
                 "number": number,
                 "theme": theme_name,
                 "word": word,
                 "meaning": item["meaning"],
-                "example": example,
-                "example_ko": example_ko,
-                "script": f"{word}. {word}. {word}."
+                "example": get_example_sentence(word),
+                "example_ko": get_example_sentence_ko(word),
             })
             number += 1
-
     return all_items
 
 
 def make_theme_cassette_items(theme_words, theme_name):
     theme_items = []
-
     for idx, item in enumerate(theme_words, start=1):
         word = item["word"]
-        example = get_example_sentence(word)
-        example_ko = get_example_sentence_ko(word)
-
         theme_items.append({
             "number": idx,
             "theme": theme_name,
             "word": word,
             "meaning": item["meaning"],
-            "example": example,
-            "example_ko": example_ko,
-            "script": f"{word}. {word}. {word}."
+            "example": get_example_sentence(word),
+            "example_ko": get_example_sentence_ko(word),
         })
-
     return theme_items
 
 
+def make_cassette_text(items, repeat_word=2, include_example=False):
+    parts = []
+    for item in items:
+        word = item["word"]
+        if repeat_word == 1:
+            parts.append(f"{word}.")
+        elif repeat_word == 2:
+            parts.append(f"{word}. {word}.")
+        else:
+            parts.append(f"{word}. {word}. {word}.")
 
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="", height=600):
-    """
-    보기 편한 카세트 플레이어.
-    - 큰 재생 버튼
-    - 속도/반복 횟수 선택
-    - 모바일에서도 버튼이 잘리지 않도록 반응형 처리
-    """
+        if include_example:
+            parts.append(item["example"])
+    return " ".join(parts)
 
-    player_id = f"easy_cassette_{uuid.uuid4().hex}"
-    play_btn_id = f"play_{uuid.uuid4().hex}"
-    pause_btn_id = f"pause_{uuid.uuid4().hex}"
-    prev_btn_id = f"prev_{uuid.uuid4().hex}"
-    next_btn_id = f"next_{uuid.uuid4().hex}"
-    progress_id = f"progress_{uuid.uuid4().hex}"
-    visual_bar_id = f"bar_{uuid.uuid4().hex}"
-    percent_id = f"percent_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    word_id = f"word_{uuid.uuid4().hex}"
-    meaning_id = f"meaning_{uuid.uuid4().hex}"
-    count_id = f"count_{uuid.uuid4().hex}"
-    theme_id = f"theme_{uuid.uuid4().hex}"
-    speed_select_id = f"speed_{uuid.uuid4().hex}"
-    repeat_select_id = f"repeat_{uuid.uuid4().hex}"
-    wrap_id = f"wrap_{uuid.uuid4().hex}"
 
-    cassette_json = json.dumps(all_items, ensure_ascii=False)
-    safe_player_id = json.dumps(player_id)
-    safe_title = html.escape(title)
-    safe_intro = html.escape(intro)
-    max_index = max(len(all_items) - 1, 0)
-
-    components.html(
+def show_cassette_audio(items, title):
+    st.markdown(
         f"""
-        <style>
-            .easy-cassette-wrap {{
-                font-family: Arial, sans-serif;
-                width: 100%;
-                max-width: 100%;
-                box-sizing: border-box;
-                overflow: hidden;
-                border-radius: 28px;
-                padding: 20px;
-                background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 48%, #fdf2f8 100%);
-                border: 1px solid #bae6fd;
-                box-shadow: 0 8px 22px rgba(15, 23, 42, 0.10);
-            }}
-            .easy-cassette-top {{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 12px;
-                flex-wrap: wrap;
-                margin-bottom: 12px;
-            }}
-            .easy-cassette-title {{
-                font-size: 24px;
-                font-weight: 900;
-                color: #0f172a;
-                line-height: 1.25;
-            }}
-            .easy-cassette-small {{
-                font-size: 13px;
-                font-weight: 900;
-                color: #475569;
-                background: rgba(255,255,255,0.75);
-                border: 1px solid #dbeafe;
-                border-radius: 999px;
-                padding: 7px 12px;
-            }}
-            .easy-now-card {{
-                background: rgba(255,255,255,0.86);
-                border: 1px solid #dbeafe;
-                border-radius: 24px;
-                padding: 18px 18px;
-                margin: 12px 0;
-                box-sizing: border-box;
-            }}
-            .easy-theme {{
-                display: inline-block;
-                font-size: 13px;
-                font-weight: 900;
-                color: #7c3aed;
-                background: #f3e8ff;
-                border-radius: 999px;
-                padding: 6px 11px;
-                margin-bottom: 9px;
-            }}
-            .easy-word {{
-                font-size: clamp(42px, 9vw, 72px);
-                font-weight: 900;
-                color: #111827;
-                line-height: 1.05;
-                word-break: break-word;
-                letter-spacing: -1px;
-            }}
-            .easy-meaning {{
-                margin-top: 8px;
-                font-size: clamp(20px, 5vw, 31px);
-                font-weight: 900;
-                color: #334155;
-                line-height: 1.25;
-                word-break: keep-all;
-            }}
-            .easy-progress-box {{
-                background: rgba(255,255,255,0.76);
-                border: 1px solid #dbeafe;
-                border-radius: 20px;
-                padding: 13px 14px;
-                margin: 12px 0;
-            }}
-            .easy-bar-bg {{
-                width: 100%;
-                height: 14px;
-                background: #e2e8f0;
-                border-radius: 999px;
-                overflow: hidden;
-                margin: 8px 0 9px 0;
-            }}
-            .easy-bar-fill {{
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);
-                border-radius: 999px;
-            }}
-            .easy-range {{
-                width: 100%;
-                height: 34px;
-                accent-color: #8b5cf6;
-                cursor: pointer;
-            }}
-            .easy-control-grid {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 9px;
-                margin-top: 12px;
-            }}
-            .easy-sub-grid {{
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
-                margin-top: 8px;
-            }}
-            .easy-btn {{
-                width: 100%;
-                min-height: 48px;
-                border-radius: 18px;
-                border: 1px solid #cbd5e1;
-                font-size: 16px;
-                font-weight: 900;
-                cursor: pointer;
-                box-sizing: border-box;
-                white-space: nowrap;
-                box-shadow: 0 3px 9px rgba(15,23,42,0.07);
-            }}
-            .easy-btn-main {{
-                min-height: 58px;
-                font-size: 20px;
-                background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                border-color: #c4b5fd;
-                color: #111827;
-            }}
-            .easy-select-row {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 9px;
-                margin-top: 10px;
-            }}
-            .easy-select-box {{
-                background: rgba(255,255,255,0.84);
-                border: 1px solid #dbeafe;
-                border-radius: 18px;
-                padding: 10px 12px;
-                box-sizing: border-box;
-            }}
-            .easy-label {{
-                font-size: 12px;
-                font-weight: 900;
-                color: #64748b;
-                margin-bottom: 5px;
-            }}
-            .easy-select {{
-                width: 100%;
-                border: 0;
-                background: transparent;
-                font-size: 16px;
-                font-weight: 900;
-                color: #0f172a;
-                outline: none;
-            }}
-            .easy-status {{
-                margin-top: 10px;
-                font-size: 14px;
-                font-weight: 900;
-                color: #075985;
-                min-height: 20px;
-                line-height: 1.35;
-            }}
-            @media (max-width: 520px) {{
-                .easy-cassette-wrap {{ padding: 14px 11px; border-radius: 22px; }}
-                .easy-cassette-title {{ font-size: 19px; }}
-                .easy-cassette-small {{ font-size: 12px; padding: 6px 9px; }}
-                .easy-now-card {{ padding: 15px 13px; border-radius: 20px; }}
-                .easy-control-grid {{ grid-template-columns: 1fr; gap: 7px; }}
-                .easy-sub-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }}
-                .easy-btn {{ min-height: 43px; font-size: 13px; border-radius: 15px; padding: 7px 4px; }}
-                .easy-btn-main {{ min-height: 52px; font-size: 18px; }}
-                .easy-select-row {{ grid-template-columns: 1fr 1fr; gap: 7px; }}
-                .easy-select {{ font-size: 14px; }}
-            }}
-        </style>
-
-        <div id="{wrap_id}" class="easy-cassette-wrap">
-            <div class="easy-cassette-top">
-                <div class="easy-cassette-title">{safe_title}</div>
-                <div id="{count_id}" class="easy-cassette-small">1 / {len(all_items)}</div>
+        <div class="cassette-box">
+            <div class="cassette-title">{title}</div>
+            <div class="cassette-note">
+                브라우저 스크립트를 제거한 안정형 버전입니다. 아래 오디오 바에서 ▶ 버튼을 눌러 재생하세요.
+                멈춤은 오디오 바의 일시정지 버튼을 사용하면 됩니다.
             </div>
-
-            <div style="font-size:14px; font-weight:800; color:#475569; line-height:1.5; margin-bottom:8px;">
-                {safe_intro}
-            </div>
-
-            <div class="easy-now-card">
-                <div id="{theme_id}" class="easy-theme">Theme</div>
-                <div id="{word_id}" class="easy-word">Ready</div>
-                <div id="{meaning_id}" class="easy-meaning">재생 버튼을 눌러 주세요.</div>
-            </div>
-
-            <div class="easy-progress-box">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
-                    <span style="font-size:13px; font-weight:900; color:#075985;">🎚️ 단어 위치</span>
-                    <span id="{percent_id}" style="font-size:13px; font-weight:900; color:#7c3aed;">0%</span>
-                </div>
-                <div class="easy-bar-bg"><div id="{visual_bar_id}" class="easy-bar-fill"></div></div>
-                <input id="{progress_id}" class="easy-range" type="range" min="0" max="{max_index}" value="0" step="1">
-            </div>
-
-            <div class="easy-control-grid">
-                <button id="{play_btn_id}" class="easy-btn easy-btn-main">▶️ 재생</button>
-                <button id="{pause_btn_id}" class="easy-btn" style="background:#ecfeff; border-color:#67e8f9; color:#155e75;">⏸ 잠깐 멈춤</button>
-            </div>
-
-            <div class="easy-sub-grid">
-                <button id="{prev_btn_id}" class="easy-btn" style="background:#f8fafc; color:#334155;">⏮ 이전</button>
-                <button id="{next_btn_id}" class="easy-btn" style="background:#f8fafc; color:#334155;">다음 ⏭</button>
-            </div>
-
-            <div class="easy-select-row">
-                <div class="easy-select-box">
-                    <div class="easy-label">속도</div>
-                    <select id="{speed_select_id}" class="easy-select">
-                        <option value="0.55">천천히</option>
-                        <option value="0.75" selected>보통</option>
-                        <option value="0.95">조금 빠르게</option>
-                        <option value="1.15">빠르게</option>
-                    </select>
-                </div>
-                <div class="easy-select-box">
-                    <div class="easy-label">전체 반복</div>
-                    <select id="{repeat_select_id}" class="easy-select">
-                        <option value="1">1번</option>
-                        <option value="2">2번</option>
-                        <option value="3" selected>3번</option>
-                    </select>
-                </div>
-            </div>
-
-            <div id="{status_id}" class="easy-status"></div>
-
-            <script>
-            (function() {{
-                const cassetteItems = {cassette_json};
-                const playBtn = document.getElementById("{play_btn_id}");
-                const pauseBtn = document.getElementById("{pause_btn_id}");
-                const prevBtn = document.getElementById("{prev_btn_id}");
-                const nextBtn = document.getElementById("{next_btn_id}");
-                const progress = document.getElementById("{progress_id}");
-                const visualBar = document.getElementById("{visual_bar_id}");
-                const percentBox = document.getElementById("{percent_id}");
-                const status = document.getElementById("{status_id}");
-                const wordBox = document.getElementById("{word_id}");
-                const meaningBox = document.getElementById("{meaning_id}");
-                const countBox = document.getElementById("{count_id}");
-                const themeBox = document.getElementById("{theme_id}");
-                const speedSelect = document.getElementById("{speed_select_id}");
-                const repeatSelect = document.getElementById("{repeat_select_id}");
-                const wrap = document.getElementById("{wrap_id}");
-                const playerId = {safe_player_id};
-                const channel = new BroadcastChannel("survival_english_audio_channel");
-
-                let index = 0;
-                let isPlaying = false;
-                let isPaused = false;
-                let playToken = 0;
-                let repeatRound = 1;
-                let safetyTimer = null;
-                let jumpTimer = null;
-
-                function escapeHtml(text) {{
-                    const div = document.createElement("div");
-                    div.innerText = text || "";
-                    return div.innerHTML;
-                }}
-
-                function getEmoji(word) {{
-                    const emojiMap = {{
-                        "I":"🙋","you":"👉","he":"👦","she":"👧","we":"👥","they":"👥","friend":"🤝","teacher":"👩‍🏫","student":"🧑‍🎓",
-                        "go":"➡️","come":"⬅️","walk":"🚶","run":"🏃","sit":"🪑","stand":"🧍","stop":"🛑","start":"▶️","open":"📂","close":"📕",
-                        "eat":"🍽️","drink":"🥤","sleep":"😴","study":"📚","read":"📖","write":"✏️","listen":"👂","speak":"🗣️","help":"🆘",
-                        "happy":"😊","sad":"😢","angry":"😠","tired":"🥱","hungry":"😋","thirsty":"🥤","sick":"🤒","okay":"👌","fine":"🙂",
-                        "food":"🍽️","water":"💧","rice":"🍚","bread":"🍞","milk":"🥛","juice":"🧃","coffee":"☕","tea":"🍵",
-                        "home":"🏠","school":"🏫","bathroom":"🚻","hospital":"🏥","store":"🏪","bus":"🚌","car":"🚗","taxi":"🚕","train":"🚆","bike":"🚲",
-                        "time":"⏰","now":"🕒","today":"📅","tomorrow":"➡️📅","yesterday":"⬅️📅","nine":"9️⃣","ten":"🔟",
-                        "bag":"🎒","phone":"📱","book":"📘","money":"💵","card":"💳","ticket":"🎫",
-                        "please":"🙏","sorry":"🙇","excuse me":"🙋","again":"🔁","slowly":"🐢","question":"❓","answer":"✅"
-                    }};
-                    return emojiMap[word] || "🌱";
-                }}
-
-                function getEnglishVoice() {{
-                    const voices = window.speechSynthesis.getVoices();
-                    const preferredNames = ["Samantha", "Google US English", "Microsoft Jenny", "Microsoft Aria", "Microsoft Zira", "Karen", "Moira", "Tessa", "Fiona", "Victoria"];
-                    for (const name of preferredNames) {{
-                        const found = voices.find(v => v.name && v.name.toLowerCase().includes(name.toLowerCase()) && v.lang && v.lang.toLowerCase().startsWith("en"));
-                        if (found) return found;
-                    }}
-                    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) || null;
-                }}
-
-                function updateDisplay() {{
-                    const item = cassetteItems[index];
-                    if (!item) return;
-                    const max = Math.max(cassetteItems.length - 1, 1);
-                    const pct = Math.round((index / max) * 100);
-                    progress.value = index;
-                    visualBar.style.width = pct + "%";
-                    percentBox.innerText = pct + "%";
-                    countBox.innerText = (index + 1) + " / " + cassetteItems.length;
-                    themeBox.innerText = item.theme || "Theme";
-                    wordBox.innerText = item.word + " " + getEmoji(item.word);
-                    meaningBox.innerHTML = escapeHtml(item.meaning);
-                    status.innerText = "";
-                }}
-
-                function clearTimers() {{
-                    if (safetyTimer) {{ clearTimeout(safetyTimer); safetyTimer = null; }}
-                    if (jumpTimer) {{ clearTimeout(jumpTimer); jumpTimer = null; }}
-                }}
-
-                function stopTape(resetIndex = false, showMessage = false) {{
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    isPlaying = false;
-                    isPaused = false;
-                    repeatRound = 1;
-                    playBtn.innerText = "▶️ 듣기";
-                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                    if (resetIndex) index = 0;
-                    updateDisplay();
-                    if (showMessage) status.innerText = "";
-                }}
-
-                channel.onmessage = function(event) {{
-                    if (!event.data) return;
-
-                    // 다른 카테고리/다른 카세트가 시작되거나,
-                    // 탭/챕터 이동 신호가 오면 현재 듣기를 자동으로 중지합니다.
-                    if (event.data.type === "STOP_ALL") {{
-                        stopTape(false, false);
-                    }}
-
-                    if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                        stopTape(false, false);
-                    }}
-                }};
-
-                function broadcastStopAll() {{
-                    try {{
-                        channel.postMessage({{ type: "STOP_ALL", playerId: playerId }});
-                    }} catch (e) {{}}
-                }}
-
-                // 페이지를 완전히 나가거나 새로고침할 때만 중지
-                // 단순히 스크롤해서 카세트가 화면 밖으로 나가는 경우에는 멈추지 않음
-                window.addEventListener("pagehide", function() {{
-                    stopTape(false, false);
-                }});
-
-                window.addEventListener("beforeunload", function() {{
-                    stopTape(false, false);
-                }});
-
-                // Streamlit의 상단 탭이나 왼쪽 페이지 메뉴를 누르면 모든 카세트 중지
-                try {{
-                    const parentDoc = window.parent && window.parent.document;
-                    if (parentDoc && !window.parent.__survivalCassetteAutoStopBound) {{
-                        window.parent.__survivalCassetteAutoStopBound = true;
-                        parentDoc.addEventListener("click", function(e) {{
-                            const target = e.target;
-                            if (!target) return;
-                            const clickedTab = target.closest('[role="tab"]');
-                            const clickedSidebarLink = target.closest('section[data-testid="stSidebar"] a');
-                            const clickedPageLink = target.closest('a[href]');
-                            if (clickedTab || clickedSidebarLink || clickedPageLink) {{
-                                setTimeout(broadcastStopAll, 10);
-                            }}
-                        }}, true);
-                    }}
-                }} catch (e) {{}}
-
-                function speakItem(item, onDone, token) {{
-                    if (!item || token !== playToken) return;
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(item.script || item.word);
-                    utterance.lang = "en-US";
-                    utterance.rate = parseFloat(speedSelect.value || "0.75");
-                    utterance.pitch = 1.05;
-                    const voice = getEnglishVoice();
-                    if (voice) utterance.voice = voice;
-
-                    let done = false;
-                    function finish() {{
-                        if (done) return;
-                        done = true;
-                        if (token !== playToken) return;
-                        onDone();
-                    }}
-                    utterance.onend = finish;
-                    utterance.onerror = finish;
-                    window.speechSynthesis.speak(utterance);
-
-                    const estimatedMs = Math.max(1600, (item.script || item.word || "word").length * 160 / Math.max(parseFloat(speedSelect.value || "0.75"), 0.4));
-                    safetyTimer = setTimeout(finish, estimatedMs);
-                }}
-
-                function speakCurrent(token = playToken) {{
-                    if (!isPlaying || isPaused || token !== playToken) return;
-                    const item = cassetteItems[index];
-                    if (!item) return;
-                    updateDisplay();
-                    speakItem(item, function() {{
-                        if (!isPlaying || isPaused || token !== playToken) return;
-                        index += 1;
-                        if (index >= cassetteItems.length) {{
-                            const maxRepeat = parseInt(repeatSelect.value || "1");
-                            if (repeatRound < maxRepeat) {{
-                                repeatRound += 1;
-                                index = 0;
-                                updateDisplay();
-                                jumpTimer = setTimeout(function() {{ speakCurrent(token); }}, 600);
-                                return;
-                            }}
-                            stopTape(false, false);
-                            index = cassetteItems.length - 1;
-                            updateDisplay();
-                            status.innerText = "완료";
-                            return;
-                        }}
-                        updateDisplay();
-                        jumpTimer = setTimeout(function() {{ speakCurrent(token); }}, 500);
-                    }}, token);
-                }}
-
-                function startFromCurrent() {{
-                    channel.postMessage({{ type: "STOP_OTHERS", playerId: playerId }});
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    isPlaying = true;
-                    isPaused = false;
-                    playBtn.innerText = "재생 중...";
-                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                    const token = playToken;
-                    speakCurrent(token);
-                }}
-
-                function jumpTo(newIndex, keepPlaying = true) {{
-                    index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
-                    repeatRound = 1;
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    updateDisplay();
-                    if (isPlaying && keepPlaying) {{
-                        const token = playToken;
-                        jumpTimer = setTimeout(function() {{ speakCurrent(token); }}, 300);
-                    }}
-                }}
-
-                playBtn.addEventListener("click", function() {{
-                    if (isPaused) {{
-                        window.speechSynthesis.resume();
-                        isPaused = false;
-                        isPlaying = true;
-                        playBtn.innerText = "재생 중...";
-                        pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                        status.innerText = "";
-                        return;
-                    }}
-                    startFromCurrent();
-                }});
-
-                pauseBtn.addEventListener("click", function() {{
-                    if (isPlaying && !isPaused && window.speechSynthesis.speaking) {{
-                        window.speechSynthesis.pause();
-                        isPaused = true;
-                        playBtn.innerText = "▶️ 이어 듣기";
-                        pauseBtn.innerText = "멈춤 중";
-                        status.innerText = "";
-                    }}
-                }});
-
-                replayBtn.addEventListener("click", function() {{
-                    channel.postMessage({{ type: "STOP_OTHERS", playerId: playerId }});
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    isPlaying = false;
-                    isPaused = false;
-                    playBtn.innerText = "▶️ 듣기";
-                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                    updateDisplay();
-                    const token = playToken;
-                    status.innerText = "현재 단어 다시 듣기";
-                    speakItem(cassetteItems[index], function() {{
-                        if (token === playToken) status.innerText = "현재 단어 듣기 완료";
-                    }}, token);
-                }});
-
-                prevBtn.addEventListener("click", function() {{ jumpTo(index - 1, true); }});
-                nextBtn.addEventListener("click", function() {{ jumpTo(index + 1, true); }});
-
-                progress.addEventListener("input", function() {{
-                    index = parseInt(progress.value);
-                    updateDisplay();
-                }});
-                progress.addEventListener("change", function() {{
-                    jumpTo(parseInt(progress.value), true);
-                }});
-                speedSelect.addEventListener("change", function() {{
-                    status.innerText = "";
-                }});
-                repeatSelect.addEventListener("change", function() {{
-                    repeatRound = 1;
-                    status.innerText = "";
-                    updateDisplay();
-                }});
-
-                if (typeof speechSynthesis !== "undefined") {{
-                    speechSynthesis.onvoiceschanged = function() {{ getEnglishVoice(); }};
-                }}
-
-                updateDisplay();
-            }})();
-            </script>
         </div>
         """,
-        height=height
+        unsafe_allow_html=True
     )
 
-
-def browser_survival_cassette_player(all_items, height=620):
-    browser_easy_cassette_player(
-        all_items,
-        title="📼 전체 단어 카세트 듣기",
-        intro="",
-        height=height
+    repeat_word = st.selectbox(
+        "단어 반복 횟수",
+        [1, 2, 3],
+        index=1,
+        key=f"repeat_{title}"
+    )
+    include_example = st.checkbox(
+        "예문도 함께 듣기",
+        value=False,
+        key=f"example_{title}"
     )
 
+    text = make_cassette_text(items, repeat_word=repeat_word, include_example=include_example)
 
-def browser_theme_cassette_player(theme_items, theme_name, height=580):
-    browser_easy_cassette_player(
-        theme_items,
-        title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="",
-        height=height
-    )
+    with st.expander("📜 실제 재생 대본 보기"):
+        st.write(text)
+
+    play_audio_block(text, label="🎧 카세트 오디오")
+
+
+def show_cassette_player(theme_words, theme_name):
+    st.markdown("### 🎧 이 카테고리 단어 카세트 듣기")
+    theme_items = make_theme_cassette_items(theme_words, theme_name)
+    show_cassette_audio(theme_items, f"📼 {theme_name} 단어 카세트")
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어만 카세트 듣기")
-
+    st.markdown("## 🎧 전체 단어 카세트 듣기")
     all_items = flatten_survival_words()
-    browser_survival_cassette_player(all_items, height=760)
+    show_cassette_audio(all_items, "📼 전체 단어 카세트 듣기")
 
     with st.expander("📜 전체 카세트 단어 목록 보기"):
-        st.write("카세트에서 실제로 들려주는 단어와 뜻을 확인할 수 있습니다.")
-
         for item in all_items:
             st.markdown(
                 f"""
@@ -1822,10 +807,13 @@ def show_all_cassette_tab():
                     box-shadow:0 2px 8px rgba(0,0,0,0.035);
                 ">
                     <div style="font-size:18px; font-weight:900; color:#111827;">
-                        {item['number']}. {item['word']}
+                        {item['number']}. {get_word_emoji(item['word'])} {item['word']}
                     </div>
                     <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
-                        단어 뜻: {item['meaning']}
+                        뜻: {item['meaning']}
+                    </div>
+                    <div style="font-size:13px; font-weight:700; color:#64748b; margin-top:4px;">
+                        예문: {item['example']}
                     </div>
                     <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
                         {item['theme']}
@@ -1836,97 +824,11 @@ def show_all_cassette_tab():
             )
 
 
-def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 카테고리 단어만 카세트 듣기")
-
-    theme_items = make_theme_cassette_items(theme_words, theme_name)
-
-    browser_theme_cassette_player(
-        theme_items,
-        theme_name,
-        height=680
-    )
-
-
-# =========================
-# 전체 뜻 목록 만들기
-# =========================
-all_words = []
-for theme_words in word_themes.values():
-    all_words.extend(theme_words)
-
-all_meanings = [item["meaning"] for item in all_words]
-
-
-# =========================
-# 보기 고정 랜덤 섞기
-# =========================
-def get_shuffled_options(theme_name, index, options):
-    key = f"{theme_name}_options_{index}"
-
-    if key not in st.session_state:
-        shuffled = options[:]
-        random.seed(f"{theme_name}_{index}")
-        random.shuffle(shuffled)
-        st.session_state[key] = shuffled
-
-    return st.session_state[key]
-
-
-# =========================
-# 퀴즈 문항 만들기
-# =========================
-def make_quiz_items(theme_words, theme_name):
-    quiz_items = []
-
-    for idx, item in enumerate(theme_words):
-        correct = item["meaning"]
-        distractors = [m for m in all_meanings if m != correct]
-        random.seed(f"{theme_name}_{item['word']}_{idx}")
-        wrong_options = random.sample(distractors, 3)
-
-        options = [correct] + wrong_options
-
-        quiz_items.append({
-            "word": item["word"],
-            "answer": correct,
-            "options": options
-        })
-
-    return quiz_items
-
-
-# =========================
-# 상태 초기화
-# =========================
-def init_state(theme_name):
-    if f"{theme_name}_submitted1" not in st.session_state:
-        st.session_state[f"{theme_name}_submitted1"] = False
-
-    if f"{theme_name}_submitted2" not in st.session_state:
-        st.session_state[f"{theme_name}_submitted2"] = False
-
-    if f"{theme_name}_wrong" not in st.session_state:
-        st.session_state[f"{theme_name}_wrong"] = []
-
-
-def reset_theme(theme_name):
-    keys_to_delete = []
-
-    for key in st.session_state.keys():
-        if key.startswith(theme_name):
-            keys_to_delete.append(key)
-
-    for key in keys_to_delete:
-        del st.session_state[key]
-
-
-# =========================
-# 오늘의 생존 대화 보여주기
-# =========================
+# =====================================================
+# 대화
+# =====================================================
 def show_dialogue(theme_name):
     dialogue = theme_dialogues.get(theme_name, [])
-
     if not dialogue:
         return
 
@@ -1934,78 +836,152 @@ def show_dialogue(theme_name):
     st.markdown('<div class="dialogue-title">💬 오늘의 생존 대화</div>', unsafe_allow_html=True)
 
     for line in dialogue:
-        st.markdown(
-            f"<div class='dialogue-line'>{line['en']}</div>",
-            unsafe_allow_html=True
-        )
-        st.markdown(
-            f"<div class='dialogue-meaning'>{line['ko']}</div>",
-            unsafe_allow_html=True
-        )
+        st.markdown(f"<div class='dialogue-line'>{line['en']}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div class='dialogue-meaning'>{line['ko']}</div>", unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
 
-    html_dialogue_audio_player(
-        label="🔊 대화 듣기",
-        dialogue_lines=dialogue,
-        line_pause_ms=1400,
-        height=105
-    )
+    dialogue_text = make_dialogue_tts_text(dialogue)
+    play_audio_block(dialogue_text, label="🔊 대화 전체 듣기")
 
 
-
-# =========================
-# 단어 익히기
-# =========================
+# =====================================================
+# 단어 카드
+# =====================================================
 def show_word_cards(theme_words, theme_name):
-    # 카세트 듣기를 제일 위에 먼저 보여 주고, 그 아래에 단어 목록을 보여 줍니다.
     show_cassette_player(theme_words, theme_name)
 
-    st.markdown('---')
+    st.markdown("---")
     st.markdown("### 🌱 핵심 단어 익히기")
 
-    for idx, item in enumerate(theme_words):
-        st.markdown('<div class="word-card">', unsafe_allow_html=True)
+    for idx, item in enumerate(theme_words, start=1):
+        with st.container():
+            st.markdown('<div class="word-card">', unsafe_allow_html=True)
+            col1, col2, col3, col4 = st.columns([1.5, 1.2, 0.4, 1.8])
 
-        col1, col2, col3, col4 = st.columns([1.25, 1.05, 0.35, 1.65])
+            with col1:
+                st.markdown(
+                    f"<span class='word-number'>{idx}</span><span class='word-text'>{item['word']}</span>",
+                    unsafe_allow_html=True
+                )
 
-        with col1:
-            st.markdown(
-                f"""
-                <div class="word-row">
-                    <div class="word-number">{idx + 1}</div>
-                    <div class="word-text">{item['word']}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+            with col2:
+                st.markdown(f"<div class='meaning-text'>{item['meaning']}</div>", unsafe_allow_html=True)
 
-        with col2:
-            st.markdown(
-                f"<div class='meaning-text'>{item['meaning']}</div>",
-                unsafe_allow_html=True
-            )
+            with col3:
+                st.markdown(f"<div class='emoji-text'>{get_word_emoji(item['word'])}</div>", unsafe_allow_html=True)
 
-        with col3:
-            st.markdown(
-                f"<div class='emoji-text'>{get_word_emoji(item['word'])}</div>",
-                unsafe_allow_html=True
-            )
+            with col4:
+                with st.expander("🔊 듣기"):
+                    play_audio_block(item["word"], label="단어 발음")
+                    st.caption(get_example_sentence(item["word"]))
+                    play_audio_block(get_example_sentence(item["word"]), label="예문 발음")
 
-        with col4:
-            audio_button(
-                "🔊 듣기",
-                item["word"],
-                key=f"{theme_name}_learn_audio_{idx}"
-            )
+            st.markdown('</div>', unsafe_allow_html=True)
 
+
+# =====================================================
+# 퀴즈
+# =====================================================
+def make_quiz_items(theme_name, theme_words):
+    quiz_key = f"quiz_items_{theme_name}"
+    if quiz_key not in st.session_state:
+        quiz_items = theme_words.copy()
+        random.shuffle(quiz_items)
+        st.session_state[quiz_key] = quiz_items[:min(10, len(quiz_items))]
+    return st.session_state[quiz_key]
+
+
+def reset_quiz(theme_name):
+    quiz_key = f"quiz_items_{theme_name}"
+    answer_key = f"answers_{theme_name}"
+    if quiz_key in st.session_state:
+        del st.session_state[quiz_key]
+    if answer_key in st.session_state:
+        del st.session_state[answer_key]
+
+
+def show_quiz(theme_name, theme_words):
+    st.markdown("### 📝 단어 뜻 퀴즈")
+    st.caption("영어 단어를 보고 알맞은 뜻을 고르세요.")
+
+    if st.button("🔄 퀴즈 새로 만들기", key=f"reset_{theme_name}"):
+        reset_quiz(theme_name)
+        st.rerun()
+
+    quiz_items = make_quiz_items(theme_name, theme_words)
+
+    all_words = []
+    for words in word_themes.values():
+        all_words.extend(words)
+    all_meanings = list({item["meaning"] for item in all_words})
+
+    answers = {}
+
+    for q_idx, item in enumerate(quiz_items, start=1):
+        correct = item["meaning"]
+        wrongs = [m for m in all_meanings if m != correct]
+        random.seed(f"{theme_name}_{q_idx}_{item['word']}")
+        options = random.sample(wrongs, min(3, len(wrongs))) + [correct]
+        random.shuffle(options)
+
+        st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
+        st.markdown(f"**문제 {q_idx}.** `{item['word']}` 의 뜻은?")
+        answers[q_idx] = st.radio(
+            "정답 선택",
+            options,
+            key=f"quiz_{theme_name}_{q_idx}",
+            label_visibility="collapsed"
+        )
         st.markdown('</div>', unsafe_allow_html=True)
 
+    if st.button("✅ 채점하기", key=f"submit_{theme_name}"):
+        score = 0
+        wrong_list = []
 
-# =========================
+        for q_idx, item in enumerate(quiz_items, start=1):
+            if answers[q_idx] == item["meaning"]:
+                score += 1
+            else:
+                wrong_list.append((item["word"], item["meaning"], answers[q_idx]))
+
+        st.markdown(
+            f"<div class='score-box'>점수: {score} / {len(quiz_items)}</div>",
+            unsafe_allow_html=True
+        )
+
+        if score == len(quiz_items):
+            st.balloons()
+            st.success("완벽합니다!")
+        else:
+            st.warning("틀린 문제를 다시 확인해 봅시다.")
+            for word, correct, user_answer in wrong_list:
+                st.write(f"- **{word}**: 정답 **{correct}** / 선택 **{user_answer}**")
+
+
+# =====================================================
+# 상단 제목
+# =====================================================
+st.markdown("<div class='main-title'>🛟 Survival English 160</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='sub-title'>생존 회화에 꼭 필요한 문장과 단어를 듣고, 따라 하고, 퀴즈로 익혀 봅시다.</div>",
+    unsafe_allow_html=True
+)
+st.markdown(
+    """
+    <div class="hero-box">
+        <div style="font-size:18px; font-weight:900; color:#374151;">
+            이 단어 160개만 외우면 미국에서 생존이 가능합니다.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+
+# =====================================================
 # 탭 구성
-# =========================
-# 전체 카세트 듣기는 제일 마지막 탭에 배치
+# =====================================================
 tab_names = list(word_themes.keys()) + ["🎧 전체 카세트 듣기"]
 tabs = st.tabs(tab_names)
 
@@ -2023,7 +999,19 @@ for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
             unsafe_allow_html=True
         )
 
-        show_word_cards(theme_words, theme_name)
+        mode = st.radio(
+            "학습 모드 선택",
+            ["🎧 듣기·단어", "💬 대화", "📝 퀴즈"],
+            horizontal=True,
+            key=f"mode_{theme_name}"
+        )
+
+        if mode == "🎧 듣기·단어":
+            show_word_cards(theme_words, theme_name)
+        elif mode == "💬 대화":
+            show_dialogue(theme_name)
+        else:
+            show_quiz(theme_name, theme_words)
 
 with tabs[-1]:
     show_all_cassette_tab()
