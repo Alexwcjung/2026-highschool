@@ -1,46 +1,28 @@
 streamlit>=1.30
 requests>=2.31
 
-# TTS / 번역
 gTTS
 deep-translator
 googletrans==4.0.0-rc1
 
-# 기본 데이터 처리
 pandas
 numpy
 scipy
 
-# 시각화
 matplotlib
 seaborn
 plotly
 wordcloud
 
-# 이미지 / QR
 Pillow
 qrcode
 
-# Streamlit 확장 기능
 streamlit-drawable-canvas
 streamlit-mic-recorder
 
-# 음성 인식
-SpeechRecognition
-
-# Google 연동
 gspread
 google-auth
 
-# 엑셀
 openpyxl
-
-# 텍스트 분석
 textstat
-
-# 국가 정보
-countryinfo  이거 수정
-
-gTTS
-deep-translator
-googletrans==4.0.0-rc1
+countryinfo
