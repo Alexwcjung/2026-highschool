@@ -10,6 +10,8 @@ from streamlit_drawable_canvas import st_canvas
 import random
 import html
 import json
+import io
+from gtts import gTTS
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -818,64 +820,51 @@ with tabs[7]:
         if st.session_state["translation_method"]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
-        # 영어로 번역된 경우에만 발음 듣기 제공
-        # gTTS를 쓰지 않고 브라우저 기본 음성 기능을 사용합니다.
-        # 그래서 Streamlit Cloud / 휴대폰에서 gTTSError가 나지 않습니다.
-        if st.session_state["translation_target_code"] == "en":
-            st.markdown("#### 🔊 영어 발음 듣기")
+        # 번역 결과를 gTTS로 발음 듣기
+        # 브라우저 음성 인식/speechSynthesis가 아니라, 실제 mp3 파일을 만들어 재생합니다.
+        st.markdown("#### 🔊 번역문 발음 듣기")
 
-            speed_label = st.radio(
-                "속도",
-                ["0.7", "0.85", "1", "1.15", "1.3"],
-                index=2,
-                horizontal=True,
-                key="tts_speed"
+        def make_tts_audio_bytes(text, lang_code):
+            """번역 결과를 gTTS mp3 bytes로 변환합니다."""
+            # gTTS 언어 코드 보정
+            tts_lang = lang_code
+            if tts_lang == "zh-CN":
+                tts_lang = "zh-CN"
+            elif tts_lang == "zh-cn":
+                tts_lang = "zh-CN"
+
+            fp = io.BytesIO()
+
+            # 영어는 미국식에 가깝게 tld="com" 사용
+            if tts_lang == "en":
+                tts = gTTS(text=text, lang="en", tld="com", slow=False)
+            else:
+                tts = gTTS(text=text, lang=tts_lang, slow=False)
+
+            tts.write_to_fp(fp)
+            fp.seek(0)
+            return fp.getvalue()
+
+        target_code_for_tts = st.session_state.get("translation_target_code", "en")
+
+        if st.button("🔊 발음 만들기", use_container_width=True, key="make_translation_gtts"):
+            try:
+                audio_bytes = make_tts_audio_bytes(
+                    st.session_state["translated_text"],
+                    target_code_for_tts
+                )
+
+                st.session_state["translation_audio_bytes"] = audio_bytes
+                st.session_state["translation_audio_lang"] = target_code_for_tts
+
+            except Exception as tts_error:
+                st.session_state["translation_audio_bytes"] = None
+                st.error("발음 파일을 만드는 중 오류가 발생했습니다.")
+                st.warning("대부분 gTTS 패키지 누락, 인터넷 연결 문제, 또는 해당 언어 코드 미지원 문제입니다.")
+                st.write(tts_error)
+
+        if st.session_state.get("translation_audio_bytes"):
+            st.audio(
+                st.session_state["translation_audio_bytes"],
+                format="audio/mp3"
             )
-
-            playback_rate = float(speed_label)
-            text_for_speech = json.dumps(st.session_state["translated_text"])
-
-            speech_html = f"""
-            <div style="display:flex; gap:8px; flex-wrap:wrap; width:100%;">
-                <button onclick="
-                    window.speechSynthesis.cancel();
-                    var utterance = new SpeechSynthesisUtterance({text_for_speech});
-                    utterance.lang = 'en-US';
-                    utterance.rate = {playback_rate};
-                    utterance.pitch = 1;
-                    window.speechSynthesis.speak(utterance);
-                "
-                style="
-                    flex:1;
-                    min-width:140px;
-                    background-color:#2563eb;
-                    color:white;
-                    border:none;
-                    border-radius:10px;
-                    padding:10px 14px;
-                    font-size:16px;
-                    cursor:pointer;
-                    font-weight:700;
-                ">
-                    🔊 발음 듣기
-                </button>
-
-                <button onclick="window.speechSynthesis.cancel();"
-                style="
-                    flex:1;
-                    min-width:100px;
-                    background-color:#dc2626;
-                    color:white;
-                    border:none;
-                    border-radius:10px;
-                    padding:10px 14px;
-                    font-size:16px;
-                    cursor:pointer;
-                    font-weight:700;
-                ">
-                    ⏹ 멈춤
-                </button>
-            </div>
-            """
-
-            components.html(speech_html, height=75)
