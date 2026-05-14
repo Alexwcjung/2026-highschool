@@ -11,7 +11,8 @@ import re
 # 1) Streamlit 컴포넌트 방식 삭제
 # 2) 브라우저 스크립트 방식 삭제
 # 3) gTTS 서버 생성 방식 삭제
-# 4) Google TTS URL + Streamlit 기본 st.audio() 사용
+# 4) Google TTS URL + requests + Streamlit 기본 st.audio() 사용
+# 5) 카세트는 여러 조각 mp3를 하나로 이어 붙여 한 번에 재생
 # =====================================================
 
 st.set_page_config(
@@ -264,6 +265,25 @@ def split_tts_chunks(text, max_chars=130):
         chunks.append(current)
 
     return chunks
+
+
+@st.cache_data(show_spinner=False)
+def get_combined_tts_mp3_bytes(text, lang="en", max_chars=155):
+    """
+    긴 카세트 대본을 Google TTS가 처리할 수 있는 길이로 나눈 뒤,
+    여러 mp3 조각을 하나로 이어 붙여 st.audio() 하나로 재생합니다.
+    별도 라이브러리나 ffmpeg가 필요 없습니다.
+    """
+    chunks = split_tts_chunks(text, max_chars=max_chars)
+    combined = b""
+
+    for chunk in chunks:
+        combined += get_tts_mp3_bytes(chunk, lang=lang)
+
+    if not combined or len(combined) < 500:
+        raise ValueError("통합 음성 파일이 비어 있습니다.")
+
+    return combined
 
 
 def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
@@ -812,7 +832,7 @@ def show_cassette_audio(items, title):
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
             <div class="cassette-note">
-                자바스크립트와 gTTS를 제거했습니다. 버튼을 누르면 mp3를 직접 받아와서 재생합니다.
+                예문은 빼고 단어만 재생합니다. 버튼을 누르면 전체 단어 카세트를 하나의 오디오로 만들어 재생합니다.
                 멈춤은 오디오 바의 일시정지 버튼을 사용하면 됩니다.
             </div>
         </div>
@@ -826,22 +846,21 @@ def show_cassette_audio(items, title):
         index=1,
         key=f"repeat_{title}"
     )
-    include_example = st.checkbox(
-        "예문도 함께 듣기",
-        value=False,
-        key=f"example_{title}"
-    )
 
-    text = make_cassette_text(items, repeat_word=repeat_word, include_example=include_example)
-    chunks = split_tts_chunks(text, max_chars=170)
+    # 예문은 듣기에 넣지 않습니다. 단어만 반복해서 카세트로 만듭니다.
+    text = make_cassette_text(items, repeat_word=repeat_word, include_example=False)
 
     with st.expander("📜 실제 재생 대본 보기"):
         st.write(text)
 
-    st.info("카세트는 길이 제한 때문에 여러 개의 오디오로 나누어 재생됩니다. 1번부터 차례대로 누르면 됩니다.")
-
-    for i, chunk in enumerate(chunks, start=1):
-        play_audio_block(chunk, label=f"🎧 카세트 {i} / {len(chunks)}", show_link=False, key=f"cassette_{title}_{i}")
+    if st.button("▶️ 카세트 한 번에 듣기", key=f"one_cassette_{title}", use_container_width=True):
+        try:
+            with st.spinner("카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+                audio_bytes = get_combined_tts_mp3_bytes(text, lang="en", max_chars=155)
+            st.audio(audio_bytes, format="audio/mp3")
+        except Exception as e:
+            st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
 
 
 def show_cassette_player(theme_words, theme_name):
@@ -935,8 +954,6 @@ def show_word_cards(theme_words, theme_name):
             with col4:
                 with st.expander("🔊 듣기"):
                     play_audio_block(item["word"], label="🔊 단어 발음", key=f"word_audio_{theme_name}_{idx}_{item['word']}")
-                    st.caption(get_example_sentence(item["word"]))
-                    play_audio_block(get_example_sentence(item["word"]), label="🔊 예문 발음", key=f"example_audio_{theme_name}_{idx}_{item['word']}")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
