@@ -13,52 +13,65 @@ st.markdown(
     """
     <style>
     .main {
-        background: linear-gradient(180deg, #fff7fb 0%, #f8fffb 45%, #ffffff 100%);
+        background: linear-gradient(180deg, #fffaf0 0%, #fff7fb 45%, #ffffff 100%);
     }
 
     .hero-box {
-        background: linear-gradient(135deg, #0f766e 0%, #14b8a6 55%, #f9a8d4 100%);
-        padding: 42px 34px;
-        border-radius: 30px;
-        color: white;
-        box-shadow: 0 12px 32px rgba(15, 118, 110, 0.22);
+        background: linear-gradient(135deg, #fff7ed 0%, #fff1f2 42%, #fde68a 100%);
+        padding: 44px 36px;
+        border-radius: 32px;
+        color: #1f2937;
+        box-shadow: 0 12px 32px rgba(251, 191, 36, 0.22);
         margin-bottom: 24px;
         position: relative;
         overflow: hidden;
+        border: 1px solid #fed7aa;
     }
 
     .hero-box::after {
-        content: "🌸";
+        content: "🌍";
         position: absolute;
         right: 28px;
-        top: 18px;
-        font-size: 88px;
+        top: 16px;
+        font-size: 96px;
+        opacity: 0.18;
+    }
+
+    .hero-box::before {
+        content: "🌸";
+        position: absolute;
+        right: 118px;
+        bottom: 12px;
+        font-size: 70px;
         opacity: 0.22;
     }
 
     .hero-title {
-        font-size: 48px;
+        font-size: 50px;
         font-weight: 900;
         letter-spacing: -1px;
         margin-bottom: 10px;
+        color: #0f172a;
     }
 
     .hero-subtitle {
         font-size: 20px;
         line-height: 1.6;
-        font-weight: 500;
-        opacity: 0.96;
+        font-weight: 700;
+        color: #374151;
     }
 
     .pill {
         display: inline-block;
-        background: rgba(255,255,255,0.2);
-        padding: 8px 14px;
+        background: rgba(255,255,255,0.75);
+        padding: 8px 15px;
         border-radius: 999px;
         font-size: 15px;
-        font-weight: 800;
+        font-weight: 900;
         margin-right: 8px;
         margin-top: 18px;
+        color: #0f766e;
+        border: 1px solid rgba(20,184,166,0.18);
     }
 
     .section-title {
@@ -67,6 +80,21 @@ st.markdown(
         color: #0f172a;
         margin-top: 14px;
         margin-bottom: 14px;
+    }
+
+    .intro-box {
+        background: white;
+        padding: 28px 26px;
+        border-radius: 28px;
+        border: 1px solid #fbcfe8;
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+        margin-bottom: 24px;
+    }
+
+    .intro-text {
+        font-size: 17px;
+        line-height: 1.85;
+        color: #334155;
     }
 
     .card {
@@ -97,17 +125,17 @@ st.markdown(
     }
 
     .mini-box {
-        background: linear-gradient(135deg, #ecfdf5 0%, #fff7fb 100%);
+        background: linear-gradient(135deg, #fff7ed 0%, #fff7fb 100%);
         padding: 22px;
         border-radius: 24px;
-        border: 1px solid #bbf7d0;
-        box-shadow: 0 8px 20px rgba(20, 184, 166, 0.1);
+        border: 1px solid #fed7aa;
+        box-shadow: 0 8px 20px rgba(251, 191, 36, 0.12);
     }
 
     .mini-title {
         font-size: 22px;
         font-weight: 900;
-        color: #0f766e;
+        color: #be123c;
         margin-bottom: 8px;
     }
 
@@ -141,6 +169,10 @@ st.markdown(
         .section-title {
             font-size: 23px;
         }
+
+        .intro-box {
+            padding: 22px 20px;
+        }
     }
     </style>
     """,
@@ -161,6 +193,30 @@ st.markdown(
             <span class="pill">🔊 듣기 먼저</span>
             <span class="pill">🗣️ 말하기 먼저</span>
             <span class="pill">🌱 쉬운 표현부터</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
+# =========================
+# Intro
+# =========================
+st.markdown(
+    """
+    <div class="intro-box">
+        <div class="intro-text">
+            <b>Survival English</b>는 영어를 처음부터 어렵게 공부하는 앱이 아닙니다.<br>
+            학생들이 실제 생활에서 쓸 수 있는 쉬운 단어와 문장을
+            <b>듣고, 따라 말하고, 다시 확인하면서</b> 영어에 익숙해지는 공간입니다.
+            <br><br>
+            문법을 길게 설명하기보다, 먼저 영어 소리에 익숙해지고
+            입으로 짧은 표현을 말해 보는 것을 중요하게 생각합니다.
+            <br><br>
+            완벽한 영어보다 먼저 필요한 것은
+            <b>두려움 없이 듣고 말해 보는 경험</b>입니다.
+            한 단어, 한 문장씩 천천히 익히며
+            영어를 사용할 수 있다는 자신감을 기릅니다.
         </div>
     </div>
     """,
