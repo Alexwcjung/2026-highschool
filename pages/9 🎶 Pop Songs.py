@@ -125,6 +125,40 @@ st.markdown("""
         box-shadow: 0 4px 12px rgba(245, 158, 11, 0.22);
     }
 
+
+    .pop-effect-box {
+        background: linear-gradient(135deg, #fef3c7, #fee2e2, #fce7f3);
+        border: 2px solid #fb7185;
+        border-radius: 22px;
+        padding: 18px 20px;
+        margin: 16px 0 20px 0;
+        text-align: center;
+        box-shadow: 0 10px 24px rgba(244, 63, 94, 0.18);
+        animation: popBlast 0.75s ease-out;
+    }
+
+    .pop-effect-main {
+        font-size: 2.2rem;
+        font-weight: 1000;
+        color: #be123c;
+        line-height: 1.25;
+    }
+
+    .pop-effect-sub {
+        margin-top: 8px;
+        font-size: 1.1rem;
+        font-weight: 900;
+        color: #7f1d1d;
+        line-height: 1.5;
+    }
+
+    @keyframes popBlast {
+        0% { transform: scale(0.55) rotate(-3deg); opacity: 0; }
+        35% { transform: scale(1.13) rotate(2deg); opacity: 1; }
+        60% { transform: scale(0.95) rotate(-1deg); }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -1448,6 +1482,7 @@ def reset_matching_game(game_key):
     st.session_state[f"match_selected_{game_key}"] = None
     st.session_state[f"match_done_{game_key}"] = []
     st.session_state[f"match_message_{game_key}"] = ""
+    st.session_state[f"match_last_pop_{game_key}"] = None
     st.session_state[f"match_cards_{game_key}"] = None
 
 
@@ -1469,6 +1504,8 @@ def show_matching_game(song_choice):
         st.session_state[f"match_done_{game_key}"] = []
     if f"match_message_{game_key}" not in st.session_state:
         st.session_state[f"match_message_{game_key}"] = ""
+    if f"match_last_pop_{game_key}" not in st.session_state:
+        st.session_state[f"match_last_pop_{game_key}"] = None
     # 이전 버전에서 만들어진 세션값이 남아 있으면 cards가 list 형태일 수 있습니다.
     # 현재 버전은 {"en": [...], "ko": [...]} 형태를 사용하므로, 형태가 다르면 새로 만듭니다.
     saved_cards = st.session_state.get(f"match_cards_{game_key}")
@@ -1504,6 +1541,21 @@ def show_matching_game(song_choice):
     st.progress(matched_pairs / total_pairs if total_pairs else 0)
     st.markdown(f"### 현재 점수: {matched_pairs} / {total_pairs}쌍")
 
+    last_pop = st.session_state.get(f"match_last_pop_{game_key}")
+    if last_pop:
+        st.markdown(
+            f"""
+            <div class="pop-effect-box">
+                <div class="pop-effect-main">💥 팡! 정답!</div>
+                <div class="pop-effect-sub">
+                    {html.escape(last_pop['en'])}<br>
+                    {html.escape(last_pop['ko'])}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
     if matched_pairs == total_pairs:
         st.success("🎉 모든 문장을 맞췄습니다! 훌륭합니다.")
         st.balloons()
@@ -1521,23 +1573,33 @@ def show_matching_game(song_choice):
         if current_selected is None:
             st.session_state[f"match_selected_{game_key}"] = card
             st.session_state[f"match_message_{game_key}"] = ""
+            st.session_state[f"match_last_pop_{game_key}"] = None
             st.rerun()
 
         elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
             st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
             st.session_state[f"match_selected_{game_key}"] = None
             st.session_state[f"match_message_{game_key}"] = ""
+            if current_selected["kind"] == "en":
+                pop_en = current_selected["text"]
+                pop_ko = card["text"]
+            else:
+                pop_en = card["text"]
+                pop_ko = current_selected["text"]
+            st.session_state[f"match_last_pop_{game_key}"] = {"en": pop_en, "ko": pop_ko}
             st.balloons()
             st.rerun()
 
         elif current_selected["kind"] == card["kind"]:
             st.session_state[f"match_selected_{game_key}"] = card
             st.session_state[f"match_message_{game_key}"] = ""
+            st.session_state[f"match_last_pop_{game_key}"] = None
             st.rerun()
 
         else:
             st.session_state[f"match_selected_{game_key}"] = None
             st.session_state[f"match_message_{game_key}"] = ""
+            st.session_state[f"match_last_pop_{game_key}"] = None
             st.rerun()
 
     left_col, right_col = st.columns(2)
