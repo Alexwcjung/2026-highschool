@@ -1,6 +1,8 @@
 streamlit>=1.30
 requests>=2.31
-
+gTTS
+deep-translator
+googletrans==4.0.0-rc1
 pandas
 numpy
 matplotlib
