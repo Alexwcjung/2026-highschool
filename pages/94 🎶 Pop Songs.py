@@ -140,19 +140,125 @@ if "1. Let It Go" in song_choice:
 
     bg_content = """
     <h3>❄️ Let It Go: 억압된 여왕의 해방</h3>
+
     <p>
     <b>Let It Go</b>는 영화 <i>Frozen</i>의 대표곡으로,
-    엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 장면에서 나오는 노래입니다.
+    엘사가 더 이상 자신의 능력과 감정을 숨기지 않고
+    스스로를 받아들이는 장면에서 나오는 노래입니다.
+    </p>
+
+    <p>
+    엘사는 어릴 때부터 자신의 얼음 마법이 다른 사람을 다치게 할 수 있다는
+    두려움 속에서 살아왔습니다. 그래서 감정을 숨기고,
+    능력을 감추며, 언제나 조심해야 했습니다.
+    </p>
+
+    <p>
+    하지만 대관식 날 엘사의 능력이 사람들 앞에서 드러나고,
+    사람들은 엘사를 두려워합니다.
+    엘사는 모든 것을 피해 눈 덮인 산으로 도망치고,
+    그곳에서 처음으로 자신의 진짜 모습을 마주합니다.
+    바로 이 장면에서 부르는 노래가 <b>Let It Go</b>입니다.
+    </p>
+
+    <p>
+    이 노래는 단순히 “다 잊어버리자”는 의미가 아닙니다.
+    엘사가 그동안 억눌렀던 두려움, 책임감, 타인의 시선에서 벗어나
+    자기 자신을 받아들이는 과정을 보여줍니다.
+    </p>
+
+    <p>
+    수업에서는 <b>let it go</b>, <b>conceal</b>, <b>hold back</b>,
+    <b>storm inside</b>, <b>I'm free</b>, <b>the past is in the past</b>
+    같은 표현을 중심으로 배울 수 있습니다.
     </p>
     """
 
     lyrics_full = [
-        ("The snow glows white on the mountain tonight, not a footprint to be seen", "오늘 밤 산에는 눈이 하얗게 빛나고, 발자국 하나 보이지 않네요"),
-        ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아요"),
-        ("The wind is howling like this swirling storm inside", "내 안의 휘몰아치는 폭풍처럼 바람이 울부짖고 있죠"),
-        ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었어요, 하늘은 내 노력을 알 거예요"),
-        ("Don't let them in, don't let them see, be the good girl you always have to be", "그들을 들이지 마, 보여주지 마, 언제나 그래야만 했던 착한 소녀가 되어라"),
-        ("Conceal, don't feel, don't let them know, well now they know!", "숨기고, 느끼지 마, 알리지 마, 그런데 이제 그들이 알아버렸어!"),
+        (
+            "The snow glows white on the mountain tonight / Not a footprint to be seen",
+            "오늘 밤 산 위에는 눈이 하얗게 빛나고 / 발자국 하나 보이지 않아요"
+        ),
+        (
+            "A kingdom of isolation / And it looks like I'm the queen",
+            "고립된 왕국 / 그리고 내가 그곳의 여왕인 것 같아요"
+        ),
+        (
+            "The wind is howling like this swirling storm inside / Couldn't keep it in, heaven knows I tried",
+            "바람은 내 안에서 휘몰아치는 폭풍처럼 울부짖고 / 더는 감출 수 없었어요, 하늘은 내가 얼마나 노력했는지 알 거예요"
+        ),
+        (
+            "Don't let them in, don't let them see / Be the good girl you always have to be",
+            "그들을 들이지 마, 보여주지 마 / 언제나 그래야만 했던 착한 소녀가 되어라"
+        ),
+        (
+            "Conceal, don't feel, don't let them know / Well, now they know",
+            "숨기고, 느끼지 말고, 그들이 알게 하지 마 / 하지만 이제 그들이 알아버렸어요"
+        ),
+        (
+            "Let it go, let it go / Can't hold it back anymore",
+            "놓아버려, 놓아버려 / 더 이상 붙잡아 둘 수 없어"
+        ),
+        (
+            "Let it go, let it go / Turn away and slam the door",
+            "놓아버려, 놓아버려 / 돌아서서 문을 세게 닫아버려"
+        ),
+        (
+            "I don't care what they're going to say / Let the storm rage on",
+            "사람들이 뭐라고 하든 상관없어 / 폭풍이 계속 몰아치게 둬"
+        ),
+        (
+            "The cold never bothered me anyway",
+            "어차피 추위는 나를 괴롭힌 적이 없으니까"
+        ),
+        (
+            "It's funny how some distance makes everything seem small / And the fears that once controlled me can't get to me at all",
+            "거리를 두고 보니 모든 것이 작아 보이는 게 참 이상해 / 한때 나를 지배했던 두려움도 이제는 나에게 닿지 못해"
+        ),
+        (
+            "It's time to see what I can do / To test the limits and break through",
+            "이제 내가 무엇을 할 수 있는지 볼 시간이야 / 한계를 시험하고 그것을 깨고 나아갈 시간이야"
+        ),
+        (
+            "No right, no wrong, no rules for me / I'm free",
+            "옳고 그름도, 나를 묶는 규칙도 없어 / 나는 자유로워"
+        ),
+        (
+            "Let it go, let it go / I am one with the wind and sky",
+            "놓아버려, 놓아버려 / 나는 바람과 하늘과 하나가 되었어"
+        ),
+        (
+            "Let it go, let it go / You'll never see me cry",
+            "놓아버려, 놓아버려 / 너희는 다시는 내가 우는 모습을 보지 못할 거야"
+        ),
+        (
+            "Here I stand and here I stay / Let the storm rage on",
+            "나는 여기 서 있고, 여기 머물 거야 / 폭풍이 계속 몰아치게 둬"
+        ),
+        (
+            "My power flurries through the air into the ground / My soul is spiraling in frozen fractals all around",
+            "내 힘은 공기를 지나 땅속으로 흩날려 퍼지고 / 내 영혼은 사방의 얼어붙은 결정 속에서 소용돌이쳐"
+        ),
+        (
+            "And one thought crystallizes like an icy blast / I'm never going back, the past is in the past",
+            "그리고 하나의 생각이 얼음바람처럼 선명하게 굳어져 / 나는 절대 돌아가지 않아, 과거는 과거일 뿐이야"
+        ),
+        (
+            "Let it go, let it go / And I'll rise like the break of dawn",
+            "놓아버려, 놓아버려 / 나는 새벽이 밝아오듯 다시 일어설 거야"
+        ),
+        (
+            "Let it go, let it go / That perfect girl is gone",
+            "놓아버려, 놓아버려 / 그 완벽한 소녀는 이제 없어"
+        ),
+        (
+            "Here I stand in the light of day / Let the storm rage on",
+            "나는 밝은 낮의 빛 속에 서 있어 / 폭풍이 계속 몰아치게 둬"
+        ),
+        (
+            "The cold never bothered me anyway",
+            "어차피 추위는 나를 괴롭힌 적이 없으니까"
+        ),
     ]
 
     comprehension_questions = [
@@ -162,19 +268,19 @@ if "1. Let It Go" in song_choice:
             "answer": "Elsa"
         },
         {
-            "q": "2. What is the main feeling of the song?",
-            "options": ["Freedom", "Hunger", "Fear of school", "Anger at friends"],
-            "answer": "Freedom"
+            "q": "2. Where is Elsa during the song?",
+            "options": ["A snowy mountain", "A classroom", "A beach", "A city street"],
+            "answer": "A snowy mountain"
         },
         {
             "q": "3. What does Elsa stop doing?",
-            "options": ["Hiding herself", "Eating food", "Going outside", "Talking to animals"],
+            "options": ["Hiding herself", "Eating food", "Going to school", "Talking to animals"],
             "answer": "Hiding herself"
         },
         {
-            "q": "4. What is the setting of the song?",
-            "options": ["A snowy mountain", "A beach", "A city street", "A classroom"],
-            "answer": "A snowy mountain"
+            "q": "4. What is the main feeling of the song?",
+            "options": ["Freedom", "Hunger", "Boredom", "Jealousy"],
+            "answer": "Freedom"
         },
         {
             "q": "5. What does 'conceal' mean?",
@@ -182,12 +288,183 @@ if "1. Let It Go" in song_choice:
             "answer": "Hide"
         },
         {
-            "q": "6. What does Elsa finally accept?",
+            "q": "6. What does 'hold it back' mean?",
+            "options": ["Stop or control it", "Buy something", "Open the door", "Sing loudly"],
+            "answer": "Stop or control it"
+        },
+        {
+            "q": "7. What does Elsa finally accept?",
             "options": ["Her power and identity", "Her homework", "Her bicycle", "Her new shoes"],
             "answer": "Her power and identity"
         },
     ]
 
+# =========================
+# Tab 1: Background
+# =========================
+with tab1:
+    st.markdown("## 🎬 영화 배경 알기")
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#ffffff 0%,#fff1f7 100%);
+            padding:22px 24px;
+            border-radius:24px;
+            border:1px solid #fbcfe8;
+            margin-bottom:18px;
+            box-shadow:0 6px 18px rgba(244,114,182,0.08);
+        ">
+            <div style="font-size:22px; font-weight:900; color:#be185d; margin-bottom:8px;">
+                ❄️ Let It Go
+            </div>
+            <div style="font-size:16px; color:#475569; line-height:1.7;">
+                노래를 듣기 전에 장면과 인물의 감정을 먼저 이해해 봅시다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.video(video_url)
+
+    st.markdown(
+        f"""
+        <div style="
+            background:white;
+            padding:24px 26px;
+            border-radius:24px;
+            border:1px solid #fbcfe8;
+            margin-top:18px;
+            box-shadow:0 5px 16px rgba(244,114,182,0.07);
+            line-height:1.8;
+            color:#334155;
+            font-size:16px;
+        ">
+            {bg_content}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+# =========================
+# Tab 2: Lyrics
+# =========================
+with tab2:
+    st.markdown("## 🎵 가사와 해석")
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#ffffff 0%,#fff1f7 100%);
+            padding:18px 20px;
+            border-radius:22px;
+            border:1px solid #fbcfe8;
+            margin-bottom:16px;
+            box-shadow:0 6px 18px rgba(244,114,182,0.08);
+        ">
+            <div style="font-size:21px; font-weight:900; color:#be185d;">
+                ❄️ Let It Go
+            </div>
+            <div style="font-size:15px; color:#475569; margin-top:5px;">
+                노래를 들으며 영어 가사와 뜻을 함께 확인해 봅시다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    for eng, kor in lyrics_full:
+        st.markdown(
+            f"""
+            <div style="
+                background:white;
+                padding:13px 17px;
+                border-radius:16px;
+                border:1px solid #fbcfe8;
+                margin-bottom:8px;
+                box-shadow:0 3px 10px rgba(244,114,182,0.05);
+            ">
+                <div style="font-size:16.5px; color:#0f172a; font-weight:800; line-height:1.45;">
+                    {eng}
+                </div>
+                <div style="font-size:15.5px; color:#475569; line-height:1.45; margin-top:4px;">
+                    {kor}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+# =========================
+# Tab 3: Quiz
+# =========================
+with tab3:
+    st.markdown("## 📝 내용 확인 퀴즈")
+
+    st.markdown(
+        """
+        <div style="
+            background:linear-gradient(135deg,#ffffff 0%,#fff1f7 100%);
+            padding:18px 20px;
+            border-radius:22px;
+            border:1px solid #fbcfe8;
+            margin-bottom:16px;
+            box-shadow:0 6px 18px rgba(244,114,182,0.08);
+        ">
+            <div style="font-size:20px; font-weight:900; color:#be185d;">
+                🌸 Let It Go Quiz
+            </div>
+            <div style="font-size:15px; color:#475569; margin-top:5px;">
+                노래의 장면, 감정, 핵심 표현을 확인해 봅시다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    score = 0
+
+    for i, item in enumerate(comprehension_questions):
+        st.markdown(
+            f"""
+            <div style="
+                background:white;
+                padding:16px 18px;
+                border-radius:16px;
+                border:1px solid #fbcfe8;
+                margin-top:12px;
+                margin-bottom:8px;
+                box-shadow:0 3px 10px rgba(244,114,182,0.05);
+            ">
+                <div style="font-size:17px; font-weight:900; color:#0f172a;">
+                    {item["q"]}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        user_answer = st.radio(
+            label="",
+            options=item["options"],
+            key=f"let_it_go_q_{i}",
+            horizontal=True
+        )
+
+        if user_answer == item["answer"]:
+            score += 1
+
+    if st.button("정답 확인", key="let_it_go_check"):
+        st.success(f"총 {len(comprehension_questions)}문제 중 {score}문제를 맞혔습니다.")
+
+        if score == len(comprehension_questions):
+            st.balloons()
+            st.markdown("### 🎉 Excellent! 아주 잘했습니다!")
+        elif score >= len(comprehension_questions) // 2:
+            st.markdown("### 👍 Good! 중요한 내용을 잘 이해했습니다.")
+        else:
+            st.markdown("### 🌱 다시 가사를 보며 천천히 확인해 봅시다.")
 
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
