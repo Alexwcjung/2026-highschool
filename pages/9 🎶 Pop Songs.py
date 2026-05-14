@@ -1400,15 +1400,21 @@ def get_matching_pairs(song_choice):
     return []
 
 
-def build_matching_cards(pairs, seed_text):
-    cards = []
-    for pair in pairs:
-        cards.append({"pair_id": pair["id"], "kind": "en", "text": pair["en"], "label": "🇺🇸 영어"})
-        cards.append({"pair_id": pair["id"], "kind": "ko", "text": pair["ko"], "label": "🇰🇷 한국어"})
+def build_matching_columns(pairs, seed_text):
+    """왼쪽에는 영어 카드만, 오른쪽에는 한국어 카드만 나오도록 만듭니다."""
+    english_cards = []
+    korean_cards = []
 
-    rng = random.Random(seed_text)
-    rng.shuffle(cards)
-    return cards
+    for pair in pairs:
+        english_cards.append({"pair_id": pair["id"], "kind": "en", "text": pair["en"]})
+        korean_cards.append({"pair_id": pair["id"], "kind": "ko", "text": pair["ko"]})
+
+    rng_en = random.Random(seed_text + "_en")
+    rng_ko = random.Random(seed_text + "_ko")
+    rng_en.shuffle(english_cards)
+    rng_ko.shuffle(korean_cards)
+
+    return {"en": english_cards, "ko": korean_cards}
 
 
 def reset_matching_game(game_key):
@@ -1437,7 +1443,7 @@ def show_matching_game(song_choice):
     if f"match_message_{game_key}" not in st.session_state:
         st.session_state[f"match_message_{game_key}"] = ""
     if f"match_cards_{game_key}" not in st.session_state or st.session_state[f"match_cards_{game_key}"] is None:
-        st.session_state[f"match_cards_{game_key}"] = build_matching_cards(pairs, safe_song_key)
+        st.session_state[f"match_cards_{game_key}"] = build_matching_columns(pairs, safe_song_key)
 
     selected = st.session_state[f"match_selected_{game_key}"]
     done = st.session_state[f"match_done_{game_key}"]
@@ -1448,7 +1454,7 @@ def show_matching_game(song_choice):
         <div class="matching-box">
             <div class="matching-title">🧩 문장 매칭 게임</div>
             <div class="matching-guide">
-                영어 카드와 한국어 뜻 카드를 연속으로 눌러 맞춰 보세요.<br>
+                왼쪽 영어 문장과 오른쪽 한국어 뜻을 짝지어 보세요.<br>
                 맞는 짝을 고르면 카드가 팡 사라집니다.
             </div>
         </div>
@@ -1469,7 +1475,7 @@ def show_matching_game(song_choice):
             f"""
             <div class="selected-card-notice">
                 선택한 카드: {html.escape(selected['text'])}<br>
-                이제 뜻이 맞는 다른 언어 카드를 눌러 보세요.
+                이제 반대쪽에서 맞는 짝을 눌러 보세요.
             </div>
             """,
             unsafe_allow_html=True
@@ -1483,38 +1489,51 @@ def show_matching_game(song_choice):
             st.rerun()
         return
 
-    remaining_cards = [card for card in cards if card["pair_id"] not in done]
+    english_cards = [card for card in cards["en"] if card["pair_id"] not in done]
+    korean_cards = [card for card in cards["ko"] if card["pair_id"] not in done]
 
-    cols = st.columns(2)
-    for i, card in enumerate(remaining_cards):
-        with cols[i % 2]:
+    def handle_card_click(card):
+        current_selected = st.session_state[f"match_selected_{game_key}"]
+
+        if current_selected is None:
+            st.session_state[f"match_selected_{game_key}"] = card
+            st.session_state[f"match_message_{game_key}"] = "첫 번째 카드를 골랐습니다. 반대쪽에서 짝을 고르세요."
+            st.rerun()
+
+        elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
+            st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
+            st.session_state[f"match_selected_{game_key}"] = None
+            st.session_state[f"match_message_{game_key}"] = "💥 팡! 맞는 짝입니다. 카드가 사라졌습니다."
+            st.balloons()
+            st.rerun()
+
+        elif current_selected["kind"] == card["kind"]:
+            st.session_state[f"match_selected_{game_key}"] = card
+            st.session_state[f"match_message_{game_key}"] = "같은 쪽 카드를 다시 골랐습니다. 반대쪽에서 짝을 고르세요."
+            st.rerun()
+
+        else:
+            st.session_state[f"match_selected_{game_key}"] = None
+            st.session_state[f"match_message_{game_key}"] = "아쉽습니다. 다시 골라 보세요."
+            st.rerun()
+
+    left_col, right_col = st.columns(2)
+
+    with left_col:
+        for card in english_cards:
             is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
-            prefix = "✅ 선택됨" if is_selected else card["label"]
-            button_label = f"{prefix}\n\n{card['text']}"
+            button_label = f"✅ {card['text']}" if is_selected else card["text"]
 
             if st.button(button_label, key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
-                current_selected = st.session_state[f"match_selected_{game_key}"]
+                handle_card_click(card)
 
-                if current_selected is None:
-                    st.session_state[f"match_selected_{game_key}"] = card
-                    st.session_state[f"match_message_{game_key}"] = "첫 번째 카드를 골랐습니다. 짝이 되는 카드를 고르세요."
-                    st.rerun()
+    with right_col:
+        for card in korean_cards:
+            is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
+            button_label = f"✅ {card['text']}" if is_selected else card["text"]
 
-                elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
-                    st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
-                    st.session_state[f"match_selected_{game_key}"] = None
-                    st.session_state[f"match_message_{game_key}"] = "💥 팡! 맞는 짝입니다. 카드가 사라졌습니다."
-                    st.balloons()
-                    st.rerun()
-
-                elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] == card["kind"]:
-                    st.session_state[f"match_message_{game_key}"] = "같은 카드를 다시 눌렀습니다. 다른 언어 카드를 골라 주세요."
-                    st.rerun()
-
-                else:
-                    st.session_state[f"match_selected_{game_key}"] = None
-                    st.session_state[f"match_message_{game_key}"] = "아쉽습니다. 다시 골라 보세요."
-                    st.rerun()
+            if st.button(button_label, key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                handle_card_click(card)
 
     st.markdown("---")
     if st.button("🔄 게임 다시 섞기", use_container_width=True, key=f"match_restart_{game_key}"):
