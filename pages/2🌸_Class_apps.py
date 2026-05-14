@@ -8,6 +8,7 @@ from wordcloud import WordCloud
 import streamlit.components.v1 as components
 from gtts import gTTS
 import io
+import base64
 from streamlit_drawable_canvas import st_canvas
 import random
 import html
@@ -23,6 +24,37 @@ def create_wordcloud(text):
     wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
     return wordcloud
 
+
+# =========================
+# 학생 안내 문구
+# =========================
+st.markdown("""
+<div style="
+    background: linear-gradient(135deg, #eef7ff, #f7fbff);
+    border: 1px solid #d6e9ff;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+">
+    <h2 style="margin-top:0; color:#1f4e79;">🧰 수업 도구 모음</h2>
+    <p style="font-size:18px; line-height:1.7; margin-bottom:12px;">
+        이 앱은 수업 시간에 바로 사용할 수 있는 간단한 도구 모음입니다.
+        위의 탭을 눌러 필요한 기능을 선택하세요.
+    </p>
+    <ul style="font-size:16px; line-height:1.8; margin-bottom:0;">
+        <li><b>Blackboard</b>: 칠판처럼 글을 크게 보여줍니다.</li>
+        <li><b>Drawing</b>: 화면에 자유롭게 그림을 그릴 수 있습니다.</li>
+        <li><b>QR code</b>: 인터넷 주소를 QR 코드로 바꿉니다.</li>
+        <li><b>Timer</b>: 활동 시간을 정하고 타이머를 사용할 수 있습니다.</li>
+        <li><b>WordCloud</b>: 입력한 글에서 중요한 단어를 구름 모양으로 보여줍니다.</li>
+        <li><b>Emoji</b>: 수업 자료에 사용할 이모지를 쉽게 찾을 수 있습니다.</li>
+        <li><b>Grouping</b>: 학생들을 무작위로 조 편성할 수 있습니다.</li>
+        <li><b>Translation</b>: 영어↔한국어 번역을 하고, 번역된 영어 문장의 발음을 속도별로 들을 수 있습니다.</li>
+    </ul>
+</div>
+""", unsafe_allow_html=True)
+
 # Streamlit tabs
 tabs = st.tabs([
     "✏️Blackboard",
@@ -31,7 +63,6 @@ tabs = st.tabs([
     "⏳Timer",
     "☁️WordCloud",
     "😀Emoji",
-    "🔊Multi-TTS",
     "👥Grouping",
     "🌐Translation"
 ])
@@ -432,43 +463,8 @@ with tabs[5]:
             st.markdown(f"### {category}")
             show_big_emoji_box(emojis, height=390)
 
-# --- Tab 6: TTS ---
+# --- Tab 6: Grouping ---
 with tabs[6]:
-    st.subheader("Text-to-Speech Converter (using Google TTS)")
-    text_input = st.text_area("Enter the text you want to convert to speech:")
-    language = st.selectbox(
-        "Choose a language: 🇰🇷 🇺🇸 🇬🇧 🇷🇺 🇫🇷 🇪🇸 🇯🇵 ",
-        ["Korean", "English (American)", "English (British)", "Russian", "Spanish", "French", "Japanese"]
-    )
-
-    tts_button = st.button("Convert Text to Speech")
-    if tts_button and text_input:
-        lang_codes = {
-            "Korean": ("ko", None),
-            "English (American)": ("en", 'com'),
-            "English (British)": ("en", 'co.uk'),
-            "Russian": ("ru", None),
-            "Spanish": ("es", None),
-            "French": ("fr", None),
-            "Chinese": ("zh-CN", None),
-            "Japanese": ("ja", None)
-        }
-        language_code, tld = lang_codes[language]
-
-        if tld:
-            tts = gTTS(text=text_input, lang=language_code, tld=tld, slow=False)
-        else:
-            tts = gTTS(text=text_input, lang=language_code, slow=False)
-
-        speech = io.BytesIO()
-        tts.write_to_fp(speech)
-        speech.seek(0)
-        st.audio(speech.getvalue(), format='audio/mp3')
-
-    st.markdown("---")
-
-# --- Tab 7: Grouping ---
-with tabs[7]:
     st.subheader("👥 Grouping Tool")
     st.caption("CSV를 올리지 않아도 기본 명단으로 조 편성을 할 수 있습니다.")
     st.caption("CSV를 올릴 경우, 반드시 `Course`, `Names` 열이 있어야 합니다.")
@@ -624,10 +620,28 @@ with tabs[7]:
     else:
         st.error("The file must contain both `Course`, `Names` columns.")
 
-# --- Tab 8: Translation ---
-with tabs[8]:
+# --- Tab 7: Translation ---
+with tabs[7]:
     st.subheader("🌐 Translation Tool")
-    st.caption("영어 ↔ 한국어 번역을 포함해 여러 언어로 번역하고, 영어 문장은 발음도 들어볼 수 있습니다.")
+    st.caption("영어 ↔ 한국어 번역을 할 수 있습니다. 번역 결과가 영어일 때는 발음도 속도별로 들어볼 수 있습니다.")
+
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #fff7ed, #ffffff);
+        border: 1px solid #fed7aa;
+        border-radius: 16px;
+        padding: 16px 18px;
+        margin-bottom: 16px;
+        font-size: 16px;
+        line-height: 1.7;
+    ">
+        <b>사용 방법</b><br>
+        1. 원문 언어와 번역할 언어를 선택하세요.<br>
+        2. 문장을 입력하고 <b>번역하기</b>를 누르세요.<br>
+        3. 번역 결과가 영어이면 <b>발음 듣기</b>로 영어 발음을 연습하세요.<br>
+        4. 학습이 어려우면 <b>느리게</b>, 익숙해지면 <b>보통</b>이나 <b>빠르게</b>로 들어보세요.
+    </div>
+    """, unsafe_allow_html=True)
 
     lang_options = {
         "한국어 Korean": "ko",
@@ -647,13 +661,10 @@ with tabs[8]:
         "포르투갈어 Portuguese": "pt",
     }
 
-    # 번역 결과와 언어 정보를 저장해 두면 버튼을 눌러도 결과가 사라지지 않습니다.
     if "translated_text" not in st.session_state:
         st.session_state["translated_text"] = ""
     if "translation_target_code" not in st.session_state:
         st.session_state["translation_target_code"] = ""
-    if "translation_source_text" not in st.session_state:
-        st.session_state["translation_source_text"] = ""
 
     c1, c2 = st.columns(2)
     with c1:
@@ -670,15 +681,13 @@ with tabs[8]:
         )
 
     source_text = st.text_area(
-        "번역할 지문을 입력하세요",
-        height=220,
+        "번역할 문장을 입력하세요",
+        height=200,
         placeholder="예: I like soccer. / 나는 축구를 좋아합니다.",
         key="translation_source_input"
     )
 
-    translate_btn = st.button("🌐 번역하기", use_container_width=True)
-
-    if translate_btn:
+    if st.button("🌐 번역하기", use_container_width=True):
         if not source_text.strip():
             st.warning("번역할 문장을 먼저 입력하세요.")
         else:
@@ -695,7 +704,6 @@ with tabs[8]:
 
                 st.session_state["translated_text"] = translated
                 st.session_state["translation_target_code"] = target_code
-                st.session_state["translation_source_text"] = source_text
 
             except ModuleNotFoundError:
                 st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
@@ -711,36 +719,75 @@ with tabs[8]:
         translated_result = st.text_area(
             "복사해서 사용하세요",
             value=st.session_state["translated_text"],
-            height=220,
+            height=200,
             key="translation_result"
         )
 
-        st.markdown("### 🔊 영어 발음 듣기")
-        st.caption("번역 결과가 영어일 때는 번역된 영어 문장을 들을 수 있습니다. 영어 원문도 따로 들어볼 수 있습니다.")
+        if st.session_state["translation_target_code"] == "en":
+            st.markdown("### 🔊 발음 듣기")
 
-        tts_col1, tts_col2 = st.columns(2)
+            speed_label = st.radio(
+                "발음 속도",
+                ["느리게", "보통", "빠르게"],
+                index=1,
+                horizontal=True
+            )
 
-        def play_english_tts(tts_text, label="영어 발음"):
-            if not tts_text.strip():
-                st.warning("읽을 영어 문장이 없습니다.")
-                return
-            try:
-                tts = gTTS(text=tts_text, lang="en", tld="com", slow=False)
-                speech = io.BytesIO()
-                tts.write_to_fp(speech)
-                speech.seek(0)
-                st.audio(speech.getvalue(), format="audio/mp3")
-            except Exception as e:
-                st.error(f"{label} 생성 중 오류가 발생했습니다.")
-                st.write(e)
+            speed_map = {
+                "느리게": 0.75,
+                "보통": 1.0,
+                "빠르게": 1.25
+            }
+            playback_rate = speed_map[speed_label]
 
-        with tts_col1:
-            if st.session_state["translation_target_code"] == "en":
-                if st.button("🔊 번역된 영어 발음 듣기", use_container_width=True):
-                    play_english_tts(translated_result, "번역된 영어 발음")
-            else:
-                st.info("번역할 언어를 영어 English로 선택하면 번역된 영어 발음을 들을 수 있습니다.")
+            if st.button("🔊 발음 듣기", use_container_width=True):
+                if not translated_result.strip():
+                    st.warning("읽을 영어 문장이 없습니다.")
+                else:
+                    try:
+                        tts = gTTS(text=translated_result, lang="en", tld="com", slow=False)
+                        speech = io.BytesIO()
+                        tts.write_to_fp(speech)
+                        speech.seek(0)
 
-        with tts_col2:
-            if st.button("🔊 원문 영어 발음 듣기", use_container_width=True):
-                play_english_tts(st.session_state["translation_source_text"], "원문 영어 발음")
+                        audio_base64 = base64.b64encode(speech.getvalue()).decode("utf-8")
+
+                        audio_html = f"""
+                        <div style="
+                            background: #f8fafc;
+                            border: 1px solid #e2e8f0;
+                            border-radius: 16px;
+                            padding: 16px;
+                            margin-top: 8px;
+                        ">
+                            <audio id="english_audio" controls autoplay style="width: 100%;">
+                                <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+                            </audio>
+                            <script>
+                                const audio = document.getElementById("english_audio");
+                                audio.playbackRate = {playback_rate};
+                            </script>
+                            <p style="margin-top:10px; color:#475569; font-size:14px;">
+                                현재 속도: <b>{speed_label}</b>
+                            </p>
+                        </div>
+                        """
+                        components.html(audio_html, height=130)
+
+                    except Exception as e:
+                        st.error("영어 발음 생성 중 오류가 발생했습니다.")
+                        st.write(e)
+        else:
+            st.info("번역할 언어를 영어 English로 선택하면 영어 발음을 들을 수 있습니다.")
+
+    st.markdown("---")
+    st.markdown("### 📌 사용 안내")
+    st.markdown(
+        """
+        - 영어를 한국어로 번역할 때는 원문 언어를 `영어 English`, 번역할 언어를 `한국어 Korean`으로 선택하세요.
+        - 한국어를 영어로 번역할 때는 원문 언어를 `한국어 Korean`, 번역할 언어를 `영어 English`로 선택하세요.
+        - 번역 결과가 영어일 때만 `발음 듣기`가 나타납니다.
+        - 발음 속도는 `느리게`, `보통`, `빠르게` 중에서 선택할 수 있습니다.
+        - 번역 품질은 문맥에 따라 달라질 수 있으므로, 중요한 자료는 교사가 한 번 확인하는 것이 좋습니다.
+        """
+    )
