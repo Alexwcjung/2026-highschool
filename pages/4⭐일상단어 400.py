@@ -1,13 +1,23 @@
 import streamlit as st
-from gtts import gTTS
-import io
+from urllib.parse import quote
+import requests
+import hashlib
 import random
-import base64
-import uuid
 import re
-import json
 import html
+import base64
+import json
+import uuid
 import streamlit.components.v1 as components
+
+# =====================================================
+# Daily English 400 - 단어 동기화 카세트 버전
+# 핵심 구조:
+# 1) gTTS 제거
+# 2) requests로 Google TTS mp3를 직접 받아오기
+# 3) 단어별 mp3가 끝날 때 다음 단어로 이동
+# 4) 현재 단어, 뜻, 이모지를 화면에 크게 동기화 표시
+# =====================================================
 
 # =========================
 # 기본 설정
@@ -320,15 +330,40 @@ st.markdown(
 )
 
 # =========================
-# TTS 함수
+# TTS 함수 - gTTS 대신 requests 사용
 # =========================
-@st.cache_data
+def make_google_tts_url(text, lang="en"):
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello"
+    encoded = quote(clean_text)
+    return f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded}"
+
+
+@st.cache_data(show_spinner=False)
+def get_tts_mp3_bytes(text, lang="en"):
+    """Google TTS mp3를 requests로 직접 받아와 st.audio에서 재생합니다."""
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello"
+
+    url = make_google_tts_url(clean_text, lang=lang)
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://translate.google.com/",
+    }
+    response = requests.get(url, headers=headers, timeout=12)
+    response.raise_for_status()
+
+    audio_bytes = response.content
+    if not audio_bytes or len(audio_bytes) < 500:
+        raise ValueError("음성 파일이 비어 있습니다.")
+    return audio_bytes
+
+
 def make_tts_audio(text, lang="en", tld="com"):
-    fp = io.BytesIO()
-    tts = gTTS(text=text, lang=lang, tld=tld, slow=False)
-    tts.write_to_fp(fp)
-    fp.seek(0)
-    return fp.read()
+    """기존 코드 호환용 함수입니다."""
+    return get_tts_mp3_bytes(text, lang=lang)
 
 
 def remove_speaker_label(sentence):
@@ -337,6 +372,41 @@ def remove_speaker_label(sentence):
 
 def make_dialogue_tts_text(dialogue):
     return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
+
+
+def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
+    text = str(text).strip()
+    if not text:
+        return
+
+    if key is None:
+        key = "audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
+
+    if st.button(label, key=key, use_container_width=True):
+        try:
+            audio_bytes = get_tts_mp3_bytes(text, lang="en")
+            st.audio(audio_bytes, format="audio/mp3")
+        except Exception as e:
+            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
+            if show_link:
+                st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+
+
+def direct_audio_player(text, show_link=True):
+    """단어 카드용: 오디오 플레이어를 바로 보여줍니다."""
+    text = str(text).strip()
+    if not text:
+        return
+
+    try:
+        audio_bytes = get_tts_mp3_bytes(text, lang="en")
+        st.audio(audio_bytes, format="audio/mp3")
+    except Exception as e:
+        st.error("음성 파일을 만들지 못했습니다.")
+        st.caption(f"오류 내용: {e}")
+        if show_link:
+            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
 
 
 def get_word_emoji(word):
@@ -466,431 +536,17 @@ def get_word_emoji(word):
 
 
 # =========================
-# 단어용 HTML 오디오 플레이어
+# 단어·대화 오디오
 # =========================
-def html_word_audio_player(label, text, repeat_count=20, pause_ms=1500, height=48):
-    audio_bytes = make_tts_audio(text)
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-
-    play_btn_id = f"play_btn_{uuid.uuid4().hex}"
-    stop_btn_id = f"stop_btn_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    player_id = f"player_{uuid.uuid4().hex}"
-
-    safe_label = json.dumps(label)
-    safe_text = json.dumps(text)
-    safe_player_id = json.dumps(player_id)
-    safe_src = json.dumps(f"data:audio/mp3;base64,{audio_base64}")
-
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif; display:flex; align-items:center; gap:6px; height:42px;">
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #dcfce7, #dbeafe);
-                border: 1px solid #bbf7d0;
-                border-radius: 999px;
-                padding: 6px 10px;
-                font-weight: 800;
-                font-size: 13px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.06);
-                white-space: nowrap;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 6px 10px;
-                font-weight: 800;
-                font-size: 13px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 2px 5px rgba(0,0,0,0.04);
-                white-space: nowrap;
-            ">
-                ⏹ 중지
-            </button>
-
-            <span id="{status_id}" style="
-                font-size: 12px;
-                color: #075985;
-                font-weight: 700;
-                white-space: nowrap;
-            "></span>
-
-            <script>
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-
-            const maxCount = {repeat_count};
-            const pauseMs = {pause_ms};
-            const labelText = {safe_label};
-            const wordText = {safe_text};
-            const playerId = {safe_player_id};
-            const audioSrc = {safe_src};
-
-            const channel = new BroadcastChannel("daily_english_audio_channel");
-
-            // 중요: Streamlit components.html()은 작은 iframe 안에서 실행됩니다.
-            // window.parent에 오디오를 만들면 탭/화면 전환 때 iframe이 사라지면서 소리가 끊길 수 있습니다.
-            // 그래서 가능한 한 가장 바깥 브라우저 창(window.top)에 공용 오디오를 만들어 유지합니다.
-            let parentWin = window;
-            try {{
-                parentWin = window.top || window.parent || window;
-            }} catch (e) {{
-                parentWin = window.parent || window;
-            }}
-
-            // 가장 바깥 화면에 공용 단어 오디오 플레이어를 1개만 만듭니다.
-            // Streamlit 탭/카테고리 화면을 바꿔도 이 공용 오디오는 최대한 유지됩니다.
-            if (!parentWin.__dailyEnglishWordPlayer) {{
-                const sharedAudio = new parentWin.Audio();
-
-                parentWin.__dailyEnglishWordPlayer = {{
-                    audio: sharedAudio,
-                    timer: null,
-                    token: 0,
-                    count: 0,
-                    maxCount: 0,
-                    pauseMs: 0,
-                    currentPlayerId: null,
-                    labelText: "▶️ 발음",
-                    updateStatus: null,
-                    updateButton: null,
-
-                    safeStatus(message) {{
-                        try {{
-                            if (typeof this.updateStatus === "function") this.updateStatus(message);
-                        }} catch (e) {{}}
-                    }},
-
-                    safeButton(text, disabled) {{
-                        try {{
-                            if (typeof this.updateButton === "function") this.updateButton(text, disabled);
-                        }} catch (e) {{}}
-                    }},
-
-                    clearTimer() {{
-                        if (this.timer) {{
-                            parentWin.clearTimeout(this.timer);
-                            this.timer = null;
-                        }}
-                    }},
-
-                    stop(showMessage = false, requestedPlayerId = null) {{
-                        if (requestedPlayerId && this.currentPlayerId && requestedPlayerId !== this.currentPlayerId) return;
-
-                        this.token += 1;
-                        this.clearTimer();
-                        this.audio.pause();
-                        this.audio.currentTime = 0;
-                        this.count = 0;
-                        this.safeButton(this.labelText, false);
-                        this.safeStatus(showMessage ? "중지됨" : "");
-                        this.currentPlayerId = null;
-                    }},
-
-                    play(options) {{
-                        this.stop(false);
-
-                        this.token += 1;
-                        const myToken = this.token;
-
-                        this.currentPlayerId = options.playerId;
-                        this.labelText = options.labelText;
-                        this.maxCount = options.maxCount;
-                        this.pauseMs = options.pauseMs;
-                        this.updateStatus = options.updateStatus;
-                        this.updateButton = options.updateButton;
-                        this.count = 0;
-
-                        this.audio.src = options.src;
-                        this.safeButton("재생중", true);
-                        this.safeStatus("시작");
-
-                        const playOnce = () => {{
-                            if (myToken !== this.token) return;
-
-                            if (this.count >= this.maxCount) {{
-                                this.safeStatus("완료");
-                                this.safeButton(this.labelText, false);
-                                this.currentPlayerId = null;
-                                return;
-                            }}
-
-                            this.audio.currentTime = 0;
-                            this.audio.play().then(() => {{
-                                if (myToken !== this.token) return;
-                                this.count += 1;
-                                this.safeStatus(this.count + "/" + this.maxCount);
-                            }}).catch((error) => {{
-                                this.safeStatus("다시 클릭");
-                                this.safeButton(this.labelText, false);
-                            }});
-                        }};
-
-                        this.audio.onended = () => {{
-                            if (myToken !== this.token) return;
-
-                            if (this.count < this.maxCount) {{
-                                this.timer = parentWin.setTimeout(playOnce, this.pauseMs);
-                            }} else {{
-                                this.safeStatus("완료");
-                                this.safeButton(this.labelText, false);
-                                this.currentPlayerId = null;
-                            }}
-                        }};
-
-                        playOnce();
-                    }}
-                }};
-            }}
-
-            const sharedPlayer = parentWin.__dailyEnglishWordPlayer;
-
-            function setLocalButton(text, disabled) {{
-                playBtn.innerText = text;
-                playBtn.disabled = disabled;
-            }}
-
-            function setLocalStatus(message) {{
-                status.innerText = message;
-            }}
-
-            function resetLocalUi(message = "") {{
-                setLocalButton(labelText, false);
-                setLocalStatus(message);
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                // 다른 단어/카세트를 새로 누르면 현재 단어 발음은 멈춥니다.
-                // 단, 탭이나 페이지 이동만으로는 STOP_ALL을 받더라도 단어 발음을 끊지 않습니다.
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    if (sharedPlayer.currentPlayerId === playerId) {{
-                        sharedPlayer.stop(false, playerId);
-                    }}
-                    resetLocalUi("");
-                }}
-            }};
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                sharedPlayer.play({{
-                    src: audioSrc,
-                    playerId: playerId,
-                    labelText: labelText,
-                    wordText: wordText,
-                    maxCount: maxCount,
-                    pauseMs: pauseMs,
-                    updateStatus: setLocalStatus,
-                    updateButton: setLocalButton
-                }});
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                sharedPlayer.stop(true, playerId);
-                resetLocalUi("중지됨");
-            }});
-            </script>
-        </div>
-        """,
-        height=height
-    )
-
 def audio_button(label, text, key=None):
-    html_word_audio_player(
-        label=label,
-        text=text,
-        repeat_count=20,
-        pause_ms=1500,
-        height=48
-    )
+    # 버튼을 한 번 더 거치지 않고 오디오 플레이어를 바로 보여줍니다.
+    direct_audio_player(text)
 
 
-# =========================
-# 대화용 HTML 오디오 플레이어
-# =========================
 def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height=105):
-    audio_data_list = []
-
-    for line in dialogue_lines:
-        clean_text = remove_speaker_label(line["en"])
-        audio_bytes = make_tts_audio(clean_text)
-        audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
-        audio_data_list.append({
-            "text": clean_text,
-            "src": f"data:audio/mp3;base64,{audio_base64}"
-        })
-
-    audio_json = json.dumps(audio_data_list)
-    safe_label = json.dumps(label)
-
-    audio_id = f"dialogue_audio_{uuid.uuid4().hex}"
-    play_btn_id = f"dialogue_play_{uuid.uuid4().hex}"
-    stop_btn_id = f"dialogue_stop_{uuid.uuid4().hex}"
-    status_id = f"dialogue_status_{uuid.uuid4().hex}"
-    player_id = f"dialogue_player_{uuid.uuid4().hex}"
-    safe_player_id = json.dumps(player_id)
-
-    components.html(
-        f"""
-        <div style="font-family: Arial, sans-serif;">
-            <audio id="{audio_id}"></audio>
-
-            <button id="{play_btn_id}" style="
-                background: linear-gradient(135deg, #fef3c7, #dbeafe);
-                border: 1px solid #fde68a;
-                border-radius: 999px;
-                padding: 9px 15px;
-                font-weight: 800;
-                font-size: 14px;
-                color: #374151;
-                cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.08);
-                margin-right: 6px;
-            ">
-                {label}
-            </button>
-
-            <button id="{stop_btn_id}" style="
-                background: #fff7ed;
-                border: 1px solid #fed7aa;
-                border-radius: 999px;
-                padding: 9px 15px;
-                font-weight: 800;
-                font-size: 14px;
-                color: #9a3412;
-                cursor: pointer;
-                box-shadow: 0 3px 8px rgba(0,0,0,0.05);
-            ">
-                ⏹ 중지
-            </button>
-
-            <div id="{status_id}" style="
-                margin-top: 8px;
-                font-size: 13px;
-                color: #075985;
-                font-weight: 700;
-            "></div>
-
-            <script>
-            const audio = document.getElementById("{audio_id}");
-            const playBtn = document.getElementById("{play_btn_id}");
-            const stopBtn = document.getElementById("{stop_btn_id}");
-            const status = document.getElementById("{status_id}");
-
-            const dialogueAudios = {audio_json};
-            const linePauseMs = {line_pause_ms};
-            const labelText = {safe_label};
-            const playerId = {safe_player_id};
-
-            let index = 0;
-            let timer = null;
-            let isStopped = false;
-
-            const channel = new BroadcastChannel("daily_english_audio_channel");
-
-            function stopThisAudio(showMessage = false) {{
-                isStopped = true;
-
-                if (timer) {{
-                    clearTimeout(timer);
-                    timer = null;
-                }}
-
-                audio.pause();
-                audio.currentTime = 0;
-                index = 0;
-
-                playBtn.disabled = false;
-                playBtn.innerText = labelText;
-
-                if (showMessage) {{
-                    status.innerText = "⏹ 대화 듣기를 중지했습니다.";
-                }} else {{
-                    status.innerText = "";
-                }}
-            }}
-
-            channel.onmessage = function(event) {{
-                if (!event.data) return;
-
-                if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                    stopThisAudio(false);
-                }}
-            }};
-
-            function playCurrentLine() {{
-                if (isStopped) return;
-
-                if (index >= dialogueAudios.length) {{
-                    status.innerText = "✅ 대화 재생 완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                    return;
-                }}
-
-                audio.src = dialogueAudios[index].src;
-                audio.currentTime = 0;
-
-                audio.play().then(() => {{
-                    status.innerText = "🔊 대화 재생 중: " + (index + 1) + " / " + dialogueAudios.length;
-                }}).catch((error) => {{
-                    status.innerText = "⚠️ 소리 재생이 차단되었습니다. 버튼을 다시 눌러 주세요.";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }});
-            }}
-
-            audio.addEventListener("ended", function() {{
-                if (isStopped) return;
-
-                index += 1;
-
-                if (index < dialogueAudios.length) {{
-                    timer = setTimeout(playCurrentLine, linePauseMs);
-                }} else {{
-                    status.innerText = "✅ 대화 재생 완료";
-                    playBtn.disabled = false;
-                    playBtn.innerText = labelText;
-                }}
-            }});
-
-            playBtn.addEventListener("click", function() {{
-                channel.postMessage({{
-                    type: "STOP_OTHERS",
-                    playerId: playerId
-                }});
-
-                stopThisAudio(false);
-
-                isStopped = false;
-                index = 0;
-                playBtn.disabled = true;
-                playBtn.innerText = "재생 중...";
-                status.innerText = "🔊 대화 듣기를 시작합니다.";
-                playCurrentLine();
-            }});
-
-            stopBtn.addEventListener("click", function() {{
-                stopThisAudio(true);
-            }});
-            </script>
-        </div>
-        """,
-        height=height
-    )
+    # 기존 함수 이름은 유지하되, 내부는 안정적인 st.audio 방식으로 바꿉니다.
+    dialogue_text = make_dialogue_tts_text(dialogue_lines)
+    play_audio_block(dialogue_text, label=label, key="dialogue_" + hashlib.md5(dialogue_text.encode("utf-8")).hexdigest())
 
 
 # =========================
@@ -1568,13 +1224,11 @@ theme_dialogues = merge_categories(theme_dialogues)
 
 
 # =========================
-# 맨 앞 탭 전용 전체 카세트 듣기
-# 브라우저 음성 엔진 사용: gTTS 긴 텍스트 오류 방지
+# 카세트 듣기 - 단어별 mp3 순차 재생 + 현재 단어 동기화 표시
 # =========================
 def flatten_all_words():
     all_items = []
     number = 1
-
     for theme_name, theme_words in word_themes.items():
         for item in theme_words:
             word = item["word"]
@@ -1584,16 +1238,13 @@ def flatten_all_words():
                 "word": word,
                 "meaning": item["meaning"],
                 "emoji": get_word_emoji(word),
-                "script": word
             })
             number += 1
-
     return all_items
 
 
 def make_theme_cassette_items(theme_words, theme_name):
     theme_items = []
-
     for idx, item in enumerate(theme_words, start=1):
         word = item["word"]
         theme_items.append({
@@ -1602,1534 +1253,352 @@ def make_theme_cassette_items(theme_words, theme_name):
             "word": word,
             "meaning": item["meaning"],
             "emoji": get_word_emoji(word),
-            "script": word
         })
-
     return theme_items
 
-def make_daily_example(word, meaning="", theme=""):
+
+def make_cassette_text(items, repeat_word=2):
+    parts = []
+    for item in items:
+        word = item["word"]
+        parts.append(". ".join([word] * repeat_word) + ".")
+    return " ".join(parts)
+
+
+def show_cassette_word_list(items, title="📋 카세트 단어 목록"):
+    st.markdown(f"### {title}")
+    st.caption("카세트를 들으면서 아래 단어, 뜻, 이모지를 눈으로 따라가면 됩니다.")
+
+    for item in items:
+        word = html.escape(str(item["word"]))
+        meaning = html.escape(str(item["meaning"]))
+        theme = html.escape(str(item.get("theme", "")))
+        number = item.get("number", "")
+        emoji = get_word_emoji(item["word"])
+
+        st.markdown(
+            f"""
+            <div style="
+                background:white;
+                border:1px solid #dcfce7;
+                border-radius:16px;
+                padding:11px 14px;
+                margin-bottom:8px;
+                box-shadow:0 2px 8px rgba(0,0,0,0.035);
+            ">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <span style="
+                        min-width:34px;
+                        font-size:13px;
+                        font-weight:900;
+                        color:#166534;
+                        background:#dcfce7;
+                        border-radius:999px;
+                        padding:5px 9px;
+                        text-align:center;
+                    ">{number}</span>
+                    <span style="font-size:26px;">{emoji}</span>
+                    <span style="font-size:24px; font-weight:900; color:#111827;">{word}</span>
+                    <span style="font-size:18px; font-weight:900; color:#374151;">{meaning}</span>
+                </div>
+                <div style="font-size:12px; font-weight:800; color:#64748b; margin-top:5px;">
+                    {theme}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=720):
     """
-    전체 카세트에서 단어 뒤에 붙일 짧은 일상회화 문장입니다.
-    너무 어색한 I like closet 같은 문장을 피하기 위해 자주 쓰는 단어는 따로 예문을 지정합니다.
+    단어별 mp3를 순서대로 재생합니다.
+    각 mp3가 끝나면 다음 단어로 넘어가므로 화면의 단어·뜻·이모지가 발음과 잘 맞습니다.
     """
-    examples = {
-        "subject": "What is your favorite subject?",
-        "math": "I have math today.",
-        "science": "Science is interesting.",
-        "history": "I study history at school.",
-        "music": "I like listening to music.",
-        "art": "Art class is fun.",
-        "P.E.": "We have P.E. on Friday.",
-        "club": "I joined a school club.",
-        "schedule": "Let me check my schedule.",
-        "semester": "This semester is busy.",
-        "assignment": "I have an assignment today.",
-        "project": "We are working on a project.",
-        "presentation": "I have a presentation tomorrow.",
-        "report": "I need to write a report.",
-        "textbook": "Open your textbook.",
-        "workbook": "Please finish your workbook.",
-        "library": "I study in the library.",
-        "cafeteria": "Let's meet at the cafeteria.",
-        "hallway": "Do not run in the hallway.",
-        "attendance": "The teacher checks attendance.",
+    player_id = "daily_cassette_" + uuid.uuid4().hex
 
-        "copy": "Please copy this sentence.",
-        "repeat": "Can you repeat that?",
-        "underline": "Underline the important word.",
-        "circle": "Circle the correct answer.",
-        "choose": "Choose the best answer.",
-        "check": "Please check your answer.",
-        "match": "Match the word and picture.",
-        "complete": "Complete the sentence.",
-        "fill": "Fill in the blank.",
-        "spell": "How do you spell your name?",
-        "pronounce": "Please pronounce this word.",
-        "review": "Let's review the lesson.",
-        "explain": "Can you explain it again?",
-        "describe": "Describe the picture.",
-        "compare": "Compare the two answers.",
-        "discuss": "Let's discuss this topic.",
-        "present": "Please present your idea.",
-        "take notes": "Take notes while you listen.",
-        "turn in": "Turn in your paper.",
-        "hand out": "Please hand out the worksheets.",
+    visual_items = []
+    for idx, (item, audio_b64) in enumerate(zip(items, audio_payloads), start=1):
+        visual_items.append({
+            "number": item.get("number", idx),
+            "theme": str(item.get("theme", "")),
+            "word": str(item.get("word", "")),
+            "meaning": str(item.get("meaning", "")),
+            "emoji": get_word_emoji(item.get("word", "")),
+            "src": "data:audio/mp3;base64," + audio_b64,
+        })
 
-        "living room": "My family talks in the living room.",
-        "bedroom": "My bedroom is small but cozy.",
-        "kitchen": "My mom is in the kitchen.",
-        "balcony": "I can see the street from the balcony.",
-        "floor": "The floor is clean.",
-        "wall": "There is a picture on the wall.",
-        "roof": "The roof is red.",
-        "garden": "There are flowers in the garden.",
-        "yard": "The dog is in the yard.",
-        "sofa": "I sit on the sofa.",
-        "television": "I watch television at night.",
-        "refrigerator": "The milk is in the refrigerator.",
-        "microwave": "Please use the microwave.",
-        "blanket": "I need a warm blanket.",
-        "pillow": "This pillow is soft.",
-        "towel": "I need a clean towel.",
-        "soap": "Please wash your hands with soap.",
-        "mirror": "I look in the mirror.",
-        "closet": "My clothes are in the closet.",
-        "trash": "Please take out the trash.",
-
-        "routine": "This is my morning routine.",
-        "wake up": "I wake up at seven.",
-        "get up": "I get up early.",
-        "brush": "I brush my teeth.",
-        "shower": "I take a shower.",
-        "dress": "I dress quickly in the morning.",
-        "leave": "I leave home at eight.",
-        "arrive": "I arrive at school on time.",
-        "return": "I return home after school.",
-        "finish": "I finish my homework.",
-        "relax": "I relax after dinner.",
-        "weekday": "I go to school on weekdays.",
-        "weekend": "I sleep late on the weekend.",
-        "usually": "I usually eat breakfast.",
-        "often": "I often watch videos.",
-        "sometimes": "I sometimes play soccer.",
-        "always": "I always bring my phone.",
-        "never": "I never skip breakfast.",
-        "habit": "This is a good habit.",
-        "lifestyle": "I want a healthy lifestyle.",
-
-        "hobby": "My hobby is watching movies.",
-        "movie": "Let's watch a movie.",
-        "drama": "This drama is popular.",
-        "song": "I like this song.",
-        "concert": "I want to go to a concert.",
-        "dance": "She likes to dance.",
-        "drawing": "I enjoy drawing.",
-        "painting": "This painting is beautiful.",
-        "comic": "I read comics in my free time.",
-        "novel": "This novel is interesting.",
-        "photography": "I like photography.",
-        "cooking": "Cooking is fun.",
-        "baking": "My sister likes baking.",
-        "camping": "We go camping in summer.",
-        "hiking": "I go hiking with my friends.",
-        "fishing": "My father likes fishing.",
-        "free time": "What do you do in your free time?",
-        "favorite": "This is my favorite song.",
-        "popular": "This game is popular.",
-        "relaxing": "This music is relaxing.",
-
-        "soccer": "I play soccer after school.",
-        "baseball": "Baseball is popular in Korea.",
-        "basketball": "Let's play basketball.",
-        "volleyball": "We play volleyball in P.E.",
-        "tennis": "I like playing tennis.",
-        "badminton": "Badminton is fun.",
-        "swimming": "Swimming is good exercise.",
-        "cycling": "Cycling is my favorite sport.",
-        "skating": "Skating looks difficult.",
-        "boxing": "Boxing is very hard.",
-        "taekwondo": "Taekwondo is a Korean martial art.",
-        "yoga": "Yoga helps me relax.",
-        "fitness": "Fitness is important.",
-        "field": "The players are on the field.",
-        "court": "They are on the tennis court.",
-        "stadium": "The stadium is crowded.",
-        "coach": "The coach is kind.",
-        "competition": "I joined a competition.",
-        "medal": "She won a medal.",
-
-        "season": "What is your favorite season?",
-        "spring": "Spring is warm.",
-        "summer": "Summer is hot.",
-        "fall": "Fall is cool.",
-        "winter": "Winter is cold.",
-        "cloudy": "It is cloudy today.",
-        "rainy": "It is rainy outside.",
-        "snowy": "It is snowy in winter.",
-        "windy": "It is windy today.",
-        "stormy": "The weather is stormy.",
-        "foggy": "It is foggy this morning.",
-        "dry": "The air is dry.",
-        "wet": "My shoes are wet.",
-        "humid": "It is humid today.",
-        "temperature": "The temperature is high.",
-        "degree": "It is thirty degrees.",
-        "forecast": "Check the weather forecast.",
-        "umbrella": "I need an umbrella.",
-        "raincoat": "Wear a raincoat.",
-        "rainbow": "Look at the rainbow.",
-
-        "nature": "I love nature.",
-        "environment": "We should protect the environment.",
-        "plant": "This plant needs water.",
-        "forest": "The forest is quiet.",
-        "lake": "The lake is beautiful.",
-        "ocean": "The ocean is blue.",
-        "island": "Jeju is a beautiful island.",
-        "desert": "The desert is very hot.",
-        "farm": "My uncle has a farm.",
-        "village": "This village is quiet.",
-        "leaf": "A leaf is falling.",
-        "root": "The root is under the ground.",
-        "stone": "There is a stone on the road.",
-        "sand": "The sand is hot.",
-        "soil": "Plants grow in soil.",
-        "plastic": "Do not throw away plastic.",
-        "recycle": "We should recycle bottles.",
-        "protect": "We should protect nature.",
-        "pollution": "Pollution is a serious problem.",
-
-        "restaurant": "Let's go to a restaurant.",
-        "menu": "Can I see the menu?",
-        "seat": "Is this seat taken?",
-        "waiter": "The waiter is friendly.",
-        "waitress": "The waitress brought water.",
-        "order": "I want to order pizza.",
-        "dish": "This dish is delicious.",
-        "meal": "Enjoy your meal.",
-        "soup": "This soup is hot.",
-        "salad": "I want a salad.",
-        "steak": "The steak smells good.",
-        "pizza": "I like pizza.",
-        "pasta": "I want pasta.",
-        "burger": "This burger is big.",
-        "sandwich": "I made a sandwich.",
-        "dessert": "Do you want dessert?",
-        "spicy": "This food is spicy.",
-        "sweet": "This cake is sweet.",
-        "bill": "Can I have the bill?",
-        "receipt": "Can I get a receipt?",
-
-        "shop": "Let's go to the shop.",
-        "market": "I bought fruit at the market.",
-        "mall": "The mall is crowded.",
-        "supermarket": "I go to the supermarket.",
-        "cashier": "Pay the cashier.",
-        "customer": "The customer is waiting.",
-        "price": "What is the price?",
-        "sale": "This shirt is on sale.",
-        "discount": "Can I get a discount?",
-        "coupon": "I have a coupon.",
-        "change": "Here is your change.",
-        "coin": "I found a coin.",
-        "expensive": "This bag is expensive.",
-        "cheap": "This pen is cheap.",
-        "size": "What size do you need?",
-        "color": "What color do you like?",
-        "brand": "This brand is famous.",
-        "exchange": "Can I exchange this?",
-        "refund": "Can I get a refund?",
-
-        "T-shirt": "I wear a T-shirt.",
-        "pants": "These pants are comfortable.",
-        "jeans": "I like these jeans.",
-        "shorts": "I wear shorts in summer.",
-        "skirt": "This skirt is pretty.",
-        "dress": "She wears a dress.",
-        "jacket": "I need a jacket.",
-        "coat": "Wear a coat in winter.",
-        "sweater": "This sweater is warm.",
-        "hoodie": "I like this hoodie.",
-        "uniform": "Students wear uniforms.",
-        "socks": "I need clean socks.",
-        "sneakers": "These sneakers are new.",
-        "boots": "I wear boots in winter.",
-        "sandals": "I wear sandals in summer.",
-        "scarf": "This scarf is warm.",
-        "gloves": "I need gloves.",
-        "belt": "He wears a belt.",
-        "glasses": "She wears glasses.",
-        "comfortable": "These shoes are comfortable.",
-
-        "bus stop": "Where is the bus stop?",
-        "subway": "I take the subway.",
-        "airport": "I go to the airport.",
-        "terminal": "The bus terminal is near here.",
-        "platform": "Wait on the platform.",
-        "route": "This is the bus route.",
-        "direction": "Which direction should I go?",
-        "straight": "Go straight.",
-        "corner": "Turn at the corner.",
-        "block": "Walk two blocks.",
-        "traffic": "There is heavy traffic.",
-        "crosswalk": "Use the crosswalk.",
-        "sidewalk": "Walk on the sidewalk.",
-        "bridge": "Cross the bridge.",
-        "tunnel": "Go through the tunnel.",
-        "entrance": "Where is the entrance?",
-        "exit": "Where is the exit?",
-        "transfer": "I need to transfer.",
-        "lost": "I think I am lost.",
-        "guide": "The guide is helpful.",
-
-        "travel": "I want to travel.",
-        "trip": "Have a nice trip.",
-        "vacation": "I need a vacation.",
-        "tourist": "Many tourists visit Seoul.",
-        "passport": "I need my passport.",
-        "flight": "My flight is at three.",
-        "hotel": "I booked a hotel.",
-        "motel": "We stayed at a motel.",
-        "hostel": "A hostel is cheaper.",
-        "reservation": "I have a reservation.",
-        "check in": "I want to check in.",
-        "check out": "What time is check out?",
-        "luggage": "My luggage is heavy.",
-        "suitcase": "This suitcase is big.",
-        "backpack": "I carry a backpack.",
-        "souvenir": "I bought a souvenir.",
-        "museum": "Let's visit the museum.",
-        "famous": "This place is famous.",
-        "local": "Try the local food.",
-
-        "friendship": "Friendship is important.",
-        "best friend": "He is my best friend.",
-        "teammate": "She is my teammate.",
-        "partner": "Work with your partner.",
-        "message": "Send me a message.",
-        "call": "Can I call you?",
-        "chat": "Let's chat later.",
-        "invite": "I want to invite you.",
-        "visit": "Please visit my house.",
-        "meet": "Nice to meet you.",
-        "hang out": "Let's hang out after school.",
-        "laugh": "We laugh together.",
-        "share": "Please share your idea.",
-        "trust": "I trust my friend.",
-        "promise": "I made a promise.",
-        "secret": "Can you keep a secret?",
-        "joke": "That joke is funny.",
-        "together": "Let's study together.",
-        "alone": "I am alone at home.",
-        "forgive": "Please forgive me.",
-
-        "excited": "I am excited.",
-        "nervous": "I am nervous.",
-        "bored": "I am bored.",
-        "surprised": "I am surprised.",
-        "confused": "I am confused.",
-        "embarrassed": "I am embarrassed.",
-        "proud": "I am proud of you.",
-        "disappointed": "I am disappointed.",
-        "lonely": "I feel lonely.",
-        "relaxed": "I feel relaxed.",
-        "calm": "Stay calm.",
-        "upset": "I am upset.",
-        "interested": "I am interested in music.",
-        "satisfied": "I am satisfied.",
-        "thankful": "I am thankful.",
-        "hopeful": "I feel hopeful.",
-        "mood": "I am in a good mood.",
-        "stress": "I have a lot of stress.",
-        "confidence": "Confidence is important.",
-        "courage": "You have courage.",
-
-        "think": "What do you think?",
-        "believe": "I believe you.",
-        "guess": "Can you guess?",
-        "remember": "I remember your name.",
-        "forget": "Do not forget your homework.",
-        "mean": "What does this mean?",
-        "agree": "I agree with you.",
-        "disagree": "I disagree with him.",
-        "opinion": "What is your opinion?",
-        "idea": "That is a good idea.",
-        "reason": "What is the reason?",
-        "example": "Give me an example.",
-        "fact": "That is a fact.",
-        "choice": "This is your choice.",
-        "decision": "I made a decision.",
-        "advice": "I need your advice.",
-        "suggestion": "Thank you for your suggestion.",
-        "possible": "It is possible.",
-        "impossible": "It is impossible.",
-        "confusing": "This question is confusing.",
-
-        "plan": "What is your plan?",
-        "appointment": "I have an appointment.",
-        "meeting": "I have a meeting.",
-        "date": "What is the date today?",
-        "event": "This event is fun.",
-        "party": "I am going to a party.",
-        "festival": "The festival starts today.",
-        "deadline": "The deadline is tomorrow.",
-        "calendar": "Check your calendar.",
-        "next week": "See you next week.",
-        "join": "Can I join you?",
-        "prepare": "I need to prepare.",
-        "decide": "Please decide now.",
-        "cancel": "I need to cancel it.",
-        "on time": "Please come on time.",
-        "available": "Are you available today?",
-        "reminder": "Set a reminder.",
-
-        "health": "Health is important.",
-        "body": "My body feels tired.",
-        "eye": "My eye hurts.",
-        "ear": "My ear hurts.",
-        "nose": "My nose is runny.",
-        "mouth": "Open your mouth.",
-        "tooth": "My tooth hurts.",
-        "hand": "Raise your hand.",
-        "arm": "My arm hurts.",
-        "leg": "My leg hurts.",
-        "foot": "My foot hurts.",
-        "stomach": "My stomach hurts.",
-        "back": "My back hurts.",
-        "heart": "My heart is beating fast.",
-        "clinic": "I went to the clinic.",
-        "vitamin": "I take vitamins.",
-        "diet": "I need a healthy diet.",
-        "cough": "I have a cough.",
-        "flu": "I have the flu.",
-        "breathe": "Breathe slowly.",
-
-        "smartphone": "I use my smartphone.",
-        "screen": "The screen is bright.",
-        "app": "Open the app.",
-        "website": "Visit the website.",
-        "internet": "The internet is slow.",
-        "Wi-Fi": "Do you have Wi-Fi?",
-        "password": "What is the password?",
-        "text": "Send me a text.",
-        "video call": "Let's have a video call.",
-        "gallery": "Check your gallery.",
-        "news": "I watch the news.",
-        "channel": "Change the channel.",
-        "post": "I wrote a post.",
-        "comment": "Leave a comment.",
-        "upload": "Upload the photo.",
-        "download": "Download the file.",
-        "search": "Search for the word.",
-        "click": "Click the button.",
-        "battery": "My battery is low.",
-        "notification": "I got a notification.",
-
-        "job": "I want a good job.",
-        "work": "I work hard.",
-        "company": "He works at a company.",
-        "office": "She works in an office.",
-        "factory": "My father works in a factory.",
-        "engineer": "I want to be an engineer.",
-        "mechanic": "A mechanic fixes cars.",
-        "chef": "The chef cooks well.",
-        "firefighter": "A firefighter helps people.",
-        "farmer": "A farmer grows food.",
-        "designer": "She is a designer.",
-        "singer": "He is a singer.",
-        "actor": "She is an actor.",
-        "athlete": "He is an athlete.",
-        "dream": "What is your dream?",
-        "future": "Think about your future.",
-        "goal": "My goal is clear.",
-        "skill": "This skill is useful.",
-        "interview": "I have an interview.",
-        "experience": "This is a good experience.",
-    }
-
-    if word in examples:
-        return examples[word]
-
-    if "집" in theme:
-        return f"I use the {word} at home."
-    if "학교" in theme or "교실" in theme:
-        return f"We use {word} in class."
-    if "식당" in theme or "쇼핑" in theme:
-        return f"I need {word}, please."
-    if "교통" in theme or "여행" in theme:
-        return f"I need help with {word}."
-    if "감정" in theme:
-        return f"I feel {word} today."
-    if "운동" in theme:
-        return f"I like {word}."
-    if "건강" in theme:
-        return f"My {word} is important."
-
-    return f"I use the word {word} in daily English."
-
-
-def make_daily_example_ko(word, meaning="", theme=""):
-    """
-    전체 카세트 목록에서 예시 문장의 한국어 뜻을 보여 주기 위한 함수입니다.
-    주요 단어는 자연스러운 한국어 번역을 따로 지정하고,
-    없는 경우에는 단어 뜻을 활용한 안내 문장을 보여 줍니다.
-    """
-    examples_ko = {
-        # 학교생활
-        "subject": "네가 가장 좋아하는 과목은 뭐니?",
-        "math": "나는 오늘 수학 수업이 있어.",
-        "science": "과학은 흥미로워.",
-        "history": "나는 학교에서 역사를 공부해.",
-        "music": "나는 음악 듣는 것을 좋아해.",
-        "art": "미술 수업은 재미있어.",
-        "P.E.": "우리는 금요일에 체육 수업이 있어.",
-        "club": "나는 학교 동아리에 가입했어.",
-        "schedule": "내 일정을 확인해 볼게.",
-        "semester": "이번 학기는 바빠.",
-        "assignment": "나는 오늘 과제가 있어.",
-        "project": "우리는 프로젝트를 하고 있어.",
-        "presentation": "나는 내일 발표가 있어.",
-        "report": "나는 보고서를 써야 해.",
-        "textbook": "교과서를 펴세요.",
-        "workbook": "문제집을 끝내 주세요.",
-        "library": "나는 도서관에서 공부해.",
-        "cafeteria": "급식소에서 만나자.",
-        "hallway": "복도에서 뛰지 마세요.",
-        "attendance": "선생님께서 출석을 확인하신다.",
-
-        # 교실 활동
-        "copy": "이 문장을 베껴 쓰세요.",
-        "repeat": "다시 말해 줄 수 있니?",
-        "underline": "중요한 단어에 밑줄을 그으세요.",
-        "circle": "정답에 동그라미 치세요.",
-        "choose": "가장 좋은 답을 고르세요.",
-        "check": "네 답을 확인해 보세요.",
-        "match": "단어와 그림을 연결하세요.",
-        "complete": "문장을 완성하세요.",
-        "fill": "빈칸을 채우세요.",
-        "spell": "네 이름 철자를 어떻게 쓰니?",
-        "pronounce": "이 단어를 발음해 보세요.",
-        "review": "수업 내용을 복습합시다.",
-        "explain": "다시 설명해 줄 수 있니?",
-        "describe": "그림을 묘사해 보세요.",
-        "compare": "두 답을 비교해 보세요.",
-        "discuss": "이 주제에 대해 토론해 봅시다.",
-        "present": "네 생각을 발표해 보세요.",
-        "take notes": "들으면서 필기하세요.",
-        "turn in": "종이를 제출하세요.",
-        "hand out": "학습지를 나누어 주세요.",
-
-        # 집과 생활
-        "living room": "우리 가족은 거실에서 이야기를 나눈다.",
-        "bedroom": "내 침실은 작지만 아늑해.",
-        "kitchen": "엄마는 부엌에 계셔.",
-        "balcony": "나는 발코니에서 거리를 볼 수 있어.",
-        "floor": "바닥이 깨끗해.",
-        "wall": "벽에 그림이 있어.",
-        "roof": "지붕은 빨간색이야.",
-        "garden": "정원에 꽃들이 있어.",
-        "yard": "개가 마당에 있어.",
-        "sofa": "나는 소파에 앉아.",
-        "television": "나는 밤에 텔레비전을 봐.",
-        "refrigerator": "우유는 냉장고 안에 있어.",
-        "microwave": "전자레인지를 사용하세요.",
-        "blanket": "나는 따뜻한 담요가 필요해.",
-        "pillow": "이 베개는 부드러워.",
-        "towel": "나는 깨끗한 수건이 필요해.",
-        "soap": "비누로 손을 씻으세요.",
-        "mirror": "나는 거울을 봐.",
-        "closet": "내 옷은 옷장 안에 있어.",
-        "trash": "쓰레기를 내다 버려 주세요.",
-
-        # 하루 일과
-        "routine": "이것은 나의 아침 일과야.",
-        "wake up": "나는 7시에 잠에서 깨.",
-        "get up": "나는 일찍 일어나.",
-        "brush": "나는 이를 닦아.",
-        "shower": "나는 샤워를 해.",
-        "dress": "나는 아침에 빨리 옷을 입어.",
-        "leave": "나는 8시에 집을 떠나.",
-        "arrive": "나는 학교에 제시간에 도착해.",
-        "return": "나는 방과 후에 집으로 돌아와.",
-        "finish": "나는 숙제를 끝내.",
-        "relax": "나는 저녁 식사 후에 쉬어.",
-        "weekday": "나는 평일에 학교에 가.",
-        "weekend": "나는 주말에 늦게 자.",
-        "usually": "나는 보통 아침을 먹어.",
-        "often": "나는 자주 영상을 봐.",
-        "sometimes": "나는 가끔 축구를 해.",
-        "always": "나는 항상 휴대폰을 가져와.",
-        "never": "나는 절대 아침을 거르지 않아.",
-        "habit": "이것은 좋은 습관이야.",
-        "lifestyle": "나는 건강한 생활 방식을 원해.",
-
-        # 취미와 여가
-        "hobby": "내 취미는 영화 보기야.",
-        "movie": "영화 보자.",
-        "drama": "이 드라마는 인기가 있어.",
-        "song": "나는 이 노래를 좋아해.",
-        "concert": "나는 콘서트에 가고 싶어.",
-        "dance": "그녀는 춤추는 것을 좋아해.",
-        "drawing": "나는 그림 그리기를 즐겨.",
-        "painting": "이 그림은 아름다워.",
-        "comic": "나는 여가 시간에 만화를 읽어.",
-        "novel": "이 소설은 흥미로워.",
-        "photography": "나는 사진 촬영을 좋아해.",
-        "cooking": "요리는 재미있어.",
-        "baking": "내 여동생은 빵 굽기를 좋아해.",
-        "camping": "우리는 여름에 캠핑을 가.",
-        "hiking": "나는 친구들과 하이킹을 가.",
-        "fishing": "아버지는 낚시를 좋아하셔.",
-        "free time": "너는 여가 시간에 무엇을 하니?",
-        "favorite": "이것은 내가 가장 좋아하는 노래야.",
-        "popular": "이 게임은 인기가 있어.",
-        "relaxing": "이 음악은 편안해.",
-
-        # 운동과 활동
-        "soccer": "나는 방과 후에 축구를 해.",
-        "baseball": "야구는 한국에서 인기가 있어.",
-        "basketball": "농구하자.",
-        "volleyball": "우리는 체육 시간에 배구를 해.",
-        "tennis": "나는 테니스 치는 것을 좋아해.",
-        "badminton": "배드민턴은 재미있어.",
-        "swimming": "수영은 좋은 운동이야.",
-        "cycling": "자전거 타기는 내가 가장 좋아하는 운동이야.",
-        "skating": "스케이트 타기는 어려워 보여.",
-        "boxing": "복싱은 매우 힘들어.",
-        "taekwondo": "태권도는 한국 무술이야.",
-        "yoga": "요가는 내가 쉬는 데 도움이 돼.",
-        "fitness": "체력 운동은 중요해.",
-        "field": "선수들이 경기장에 있어.",
-        "court": "그들은 테니스 코트에 있어.",
-        "stadium": "경기장이 붐벼.",
-        "coach": "코치는 친절해.",
-        "competition": "나는 대회에 참가했어.",
-        "medal": "그녀는 메달을 땄어.",
-
-        # 날씨와 계절
-        "season": "네가 가장 좋아하는 계절은 뭐니?",
-        "spring": "봄은 따뜻해.",
-        "summer": "여름은 더워.",
-        "fall": "가을은 시원해.",
-        "winter": "겨울은 추워.",
-        "cloudy": "오늘은 흐려.",
-        "rainy": "밖에 비가 와.",
-        "snowy": "겨울에는 눈이 와.",
-        "windy": "오늘은 바람이 불어.",
-        "stormy": "날씨가 폭풍우 쳐.",
-        "foggy": "오늘 아침은 안개가 꼈어.",
-        "dry": "공기가 건조해.",
-        "wet": "내 신발이 젖었어.",
-        "humid": "오늘은 습해.",
-        "temperature": "기온이 높아.",
-        "degree": "30도야.",
-        "forecast": "일기예보를 확인해.",
-        "umbrella": "나는 우산이 필요해.",
-        "raincoat": "비옷을 입어.",
-        "rainbow": "무지개를 봐.",
-
-        # 자연과 환경
-        "nature": "나는 자연을 사랑해.",
-        "environment": "우리는 환경을 보호해야 해.",
-        "plant": "이 식물은 물이 필요해.",
-        "forest": "숲은 조용해.",
-        "lake": "호수는 아름다워.",
-        "ocean": "바다는 파래.",
-        "island": "제주는 아름다운 섬이야.",
-        "desert": "사막은 매우 더워.",
-        "farm": "우리 삼촌은 농장을 가지고 있어.",
-        "village": "이 마을은 조용해.",
-        "leaf": "잎이 떨어지고 있어.",
-        "root": "뿌리는 땅 아래에 있어.",
-        "stone": "도로 위에 돌이 있어.",
-        "sand": "모래가 뜨거워.",
-        "soil": "식물은 흙에서 자라.",
-        "plastic": "플라스틱을 버리지 마세요.",
-        "recycle": "우리는 병을 재활용해야 해.",
-        "protect": "우리는 자연을 보호해야 해.",
-        "pollution": "오염은 심각한 문제야.",
-
-        # 식당과 주문
-        "restaurant": "식당에 가자.",
-        "menu": "메뉴를 볼 수 있을까요?",
-        "seat": "이 자리 사용 중인가요?",
-        "waiter": "남자 종업원이 친절해.",
-        "waitress": "여자 종업원이 물을 가져왔어.",
-        "order": "나는 피자를 주문하고 싶어.",
-        "dish": "이 요리는 맛있어.",
-        "meal": "맛있게 드세요.",
-        "soup": "이 수프는 뜨거워.",
-        "salad": "나는 샐러드를 원해.",
-        "steak": "스테이크 냄새가 좋아.",
-        "pizza": "나는 피자를 좋아해.",
-        "pasta": "나는 파스타를 원해.",
-        "burger": "이 버거는 커.",
-        "sandwich": "나는 샌드위치를 만들었어.",
-        "dessert": "디저트 먹을래?",
-        "spicy": "이 음식은 매워.",
-        "sweet": "이 케이크는 달아.",
-        "bill": "계산서를 받을 수 있을까요?",
-        "receipt": "영수증을 받을 수 있을까요?",
-
-        # 쇼핑과 가격
-        "shop": "가게에 가자.",
-        "market": "나는 시장에서 과일을 샀어.",
-        "mall": "쇼핑몰이 붐벼.",
-        "supermarket": "나는 슈퍼마켓에 가.",
-        "cashier": "계산원에게 계산하세요.",
-        "customer": "손님이 기다리고 있어.",
-        "price": "가격이 얼마인가요?",
-        "sale": "이 셔츠는 할인 중이야.",
-        "discount": "할인 받을 수 있을까요?",
-        "coupon": "나는 쿠폰이 있어.",
-        "change": "여기 거스름돈입니다.",
-        "coin": "나는 동전을 찾았어.",
-        "expensive": "이 가방은 비싸.",
-        "cheap": "이 펜은 싸.",
-        "size": "어떤 사이즈가 필요하세요?",
-        "color": "무슨 색을 좋아하세요?",
-        "brand": "이 브랜드는 유명해.",
-        "exchange": "이것을 교환할 수 있을까요?",
-        "refund": "환불 받을 수 있을까요?",
-
-        # 옷과 외모
-        "T-shirt": "나는 티셔츠를 입어.",
-        "pants": "이 바지는 편안해.",
-        "jeans": "나는 이 청바지를 좋아해.",
-        "shorts": "나는 여름에 반바지를 입어.",
-        "skirt": "이 치마는 예뻐.",
-        "dress": "그녀는 원피스를 입어.",
-        "jacket": "나는 재킷이 필요해.",
-        "coat": "겨울에는 코트를 입어.",
-        "sweater": "이 스웨터는 따뜻해.",
-        "hoodie": "나는 이 후드티를 좋아해.",
-        "uniform": "학생들은 교복을 입어.",
-        "socks": "나는 깨끗한 양말이 필요해.",
-        "sneakers": "이 운동화는 새거야.",
-        "boots": "나는 겨울에 부츠를 신어.",
-        "sandals": "나는 여름에 샌들을 신어.",
-        "scarf": "이 목도리는 따뜻해.",
-        "gloves": "나는 장갑이 필요해.",
-        "belt": "그는 벨트를 착용해.",
-        "glasses": "그녀는 안경을 써.",
-        "comfortable": "이 신발은 편안해.",
-
-        # 교통과 길 찾기
-        "bus stop": "버스 정류장이 어디에 있나요?",
-        "subway": "나는 지하철을 타.",
-        "airport": "나는 공항에 가.",
-        "terminal": "버스 터미널은 여기 근처에 있어.",
-        "platform": "승강장에서 기다리세요.",
-        "route": "이것은 버스 경로야.",
-        "direction": "어느 방향으로 가야 하나요?",
-        "straight": "똑바로 가세요.",
-        "corner": "모퉁이에서 도세요.",
-        "block": "두 블록 걸어가세요.",
-        "traffic": "교통이 매우 혼잡해.",
-        "crosswalk": "횡단보도를 이용하세요.",
-        "sidewalk": "인도로 걸으세요.",
-        "bridge": "다리를 건너세요.",
-        "tunnel": "터널을 지나가세요.",
-        "entrance": "입구가 어디인가요?",
-        "exit": "출구가 어디인가요?",
-        "transfer": "나는 갈아타야 해.",
-        "lost": "나는 길을 잃은 것 같아.",
-        "guide": "안내자가 도움이 돼.",
-
-        # 여행과 숙박
-        "travel": "나는 여행하고 싶어.",
-        "trip": "좋은 여행 되세요.",
-        "vacation": "나는 휴가가 필요해.",
-        "tourist": "많은 관광객들이 서울을 방문해.",
-        "passport": "나는 여권이 필요해.",
-        "flight": "내 항공편은 3시야.",
-        "hotel": "나는 호텔을 예약했어.",
-        "motel": "우리는 모텔에 묵었어.",
-        "hostel": "호스텔은 더 저렴해.",
-        "reservation": "나는 예약이 있어.",
-        "check in": "체크인하고 싶어요.",
-        "check out": "체크아웃 시간이 언제인가요?",
-        "luggage": "내 짐은 무거워.",
-        "suitcase": "이 여행 가방은 커.",
-        "backpack": "나는 배낭을 메고 다녀.",
-        "souvenir": "나는 기념품을 샀어.",
-        "museum": "박물관에 가자.",
-        "famous": "이곳은 유명해.",
-        "local": "현지 음식을 먹어 봐.",
-
-        # 친구 관계
-        "friendship": "우정은 중요해.",
-        "best friend": "그는 내 가장 친한 친구야.",
-        "teammate": "그녀는 내 팀 동료야.",
-        "partner": "짝과 함께 활동하세요.",
-        "message": "나에게 메시지를 보내.",
-        "call": "너에게 전화해도 될까?",
-        "chat": "나중에 채팅하자.",
-        "invite": "나는 너를 초대하고 싶어.",
-        "visit": "우리 집에 방문해 주세요.",
-        "meet": "만나서 반가워.",
-        "hang out": "방과 후에 같이 놀자.",
-        "laugh": "우리는 함께 웃어.",
-        "share": "네 생각을 나눠 주세요.",
-        "trust": "나는 내 친구를 믿어.",
-        "promise": "나는 약속을 했어.",
-        "secret": "비밀을 지켜 줄 수 있니?",
-        "joke": "그 농담은 웃겨.",
-        "together": "함께 공부하자.",
-        "alone": "나는 집에 혼자 있어.",
-        "forgive": "나를 용서해 주세요.",
-
-        # 감정 표현
-        "excited": "나는 신이 났어.",
-        "nervous": "나는 긴장돼.",
-        "bored": "나는 지루해.",
-        "surprised": "나는 놀랐어.",
-        "confused": "나는 혼란스러워.",
-        "embarrassed": "나는 당황했어.",
-        "proud": "나는 네가 자랑스러워.",
-        "disappointed": "나는 실망했어.",
-        "lonely": "나는 외로워.",
-        "relaxed": "나는 편안해.",
-        "calm": "침착해.",
-        "upset": "나는 속상해.",
-        "interested": "나는 음악에 관심이 있어.",
-        "satisfied": "나는 만족해.",
-        "thankful": "나는 감사해.",
-        "hopeful": "나는 희망적이야.",
-        "mood": "나는 기분이 좋아.",
-        "stress": "나는 스트레스가 많아.",
-        "confidence": "자신감은 중요해.",
-        "courage": "너는 용기가 있어.",
-
-        # 생각과 의견
-        "think": "너는 어떻게 생각해?",
-        "believe": "나는 너를 믿어.",
-        "guess": "추측해 볼 수 있니?",
-        "remember": "나는 네 이름을 기억해.",
-        "forget": "숙제를 잊지 마.",
-        "mean": "이것은 무슨 뜻이야?",
-        "agree": "나는 너에게 동의해.",
-        "disagree": "나는 그에게 동의하지 않아.",
-        "opinion": "네 의견은 뭐야?",
-        "idea": "그것은 좋은 생각이야.",
-        "reason": "이유가 뭐야?",
-        "example": "예를 들어 줘.",
-        "fact": "그것은 사실이야.",
-        "choice": "이것은 너의 선택이야.",
-        "decision": "나는 결정을 내렸어.",
-        "advice": "나는 네 조언이 필요해.",
-        "suggestion": "네 제안 고마워.",
-        "possible": "그것은 가능해.",
-        "impossible": "그것은 불가능해.",
-        "confusing": "이 문제는 혼란스러워.",
-
-        # 계획과 약속
-        "plan": "네 계획은 뭐야?",
-        "appointment": "나는 약속이 있어.",
-        "meeting": "나는 회의가 있어.",
-        "date": "오늘 날짜가 뭐야?",
-        "event": "이 행사는 재미있어.",
-        "party": "나는 파티에 갈 거야.",
-        "festival": "축제가 오늘 시작해.",
-        "deadline": "마감일은 내일이야.",
-        "calendar": "달력을 확인해.",
-        "next week": "다음 주에 보자.",
-        "join": "나도 함께해도 될까?",
-        "prepare": "나는 준비해야 해.",
-        "decide": "지금 결정해 주세요.",
-        "cancel": "나는 그것을 취소해야 해.",
-        "on time": "제시간에 와 주세요.",
-        "available": "오늘 시간 돼?",
-        "reminder": "알림을 설정해.",
-
-        # 건강한 생활
-        "health": "건강은 중요해.",
-        "body": "내 몸이 피곤해.",
-        "eye": "내 눈이 아파.",
-        "ear": "내 귀가 아파.",
-        "nose": "내 코가 막혔어.",
-        "mouth": "입을 벌리세요.",
-        "tooth": "내 이가 아파.",
-        "hand": "손을 드세요.",
-        "arm": "내 팔이 아파.",
-        "leg": "내 다리가 아파.",
-        "foot": "내 발이 아파.",
-        "stomach": "내 배가 아파.",
-        "back": "내 등이 아파.",
-        "heart": "내 심장이 빨리 뛰어.",
-        "clinic": "나는 의원에 갔어.",
-        "vitamin": "나는 비타민을 먹어.",
-        "diet": "나는 건강한 식단이 필요해.",
-        "cough": "나는 기침이 나.",
-        "flu": "나는 독감에 걸렸어.",
-        "breathe": "천천히 숨 쉬어.",
-
-        # 미디어와 스마트폰
-        "smartphone": "나는 스마트폰을 사용해.",
-        "screen": "화면이 밝아.",
-        "app": "앱을 열어.",
-        "website": "웹사이트를 방문해.",
-        "internet": "인터넷이 느려.",
-        "Wi-Fi": "와이파이가 있나요?",
-        "password": "비밀번호가 뭐예요?",
-        "text": "나에게 문자 보내.",
-        "video call": "영상 통화를 하자.",
-        "gallery": "사진첩을 확인해.",
-        "news": "나는 뉴스를 봐.",
-        "channel": "채널을 바꿔.",
-        "post": "나는 게시물을 썼어.",
-        "comment": "댓글을 남겨.",
-        "upload": "사진을 업로드해.",
-        "download": "파일을 다운로드해.",
-        "search": "그 단어를 검색해.",
-        "click": "버튼을 클릭해.",
-        "battery": "내 배터리가 부족해.",
-        "notification": "나는 알림을 받았어.",
-
-        # 직업과 미래
-        "job": "나는 좋은 직업을 원해.",
-        "work": "나는 열심히 일해.",
-        "company": "그는 회사에서 일해.",
-        "office": "그녀는 사무실에서 일해.",
-        "factory": "아버지는 공장에서 일하셔.",
-        "engineer": "나는 엔지니어가 되고 싶어.",
-        "mechanic": "정비사는 자동차를 고친다.",
-        "chef": "요리사는 요리를 잘해.",
-        "firefighter": "소방관은 사람들을 도와.",
-        "farmer": "농부는 음식을 기른다.",
-        "designer": "그녀는 디자이너야.",
-        "singer": "그는 가수야.",
-        "actor": "그녀는 배우야.",
-        "athlete": "그는 운동선수야.",
-        "dream": "네 꿈은 뭐야?",
-        "future": "너의 미래에 대해 생각해.",
-        "goal": "내 목표는 분명해.",
-        "skill": "이 기술은 유용해.",
-        "interview": "나는 면접이 있어.",
-        "experience": "이것은 좋은 경험이야.",
-    }
-
-    return examples_ko.get(
-        word,
-        f"이 문장은 '{meaning}'이라는 뜻의 단어를 사용한 일상 영어 문장입니다."
-    )
-
-def browser_easy_cassette_player(all_items, title="📼 단어 카세트", intro="", height=600, word_repeat_each=1):
-    """
-    보기 편한 카세트 플레이어.
-    - 큰 재생 버튼
-    - 속도/반복 횟수 선택
-    - 모바일에서도 버튼이 잘리지 않도록 반응형 처리
-    """
-
-    player_id = f"easy_cassette_{uuid.uuid4().hex}"
-    play_btn_id = f"play_{uuid.uuid4().hex}"
-    pause_btn_id = f"pause_{uuid.uuid4().hex}"
-    prev_btn_id = f"prev_{uuid.uuid4().hex}"
-    next_btn_id = f"next_{uuid.uuid4().hex}"
-    progress_id = f"progress_{uuid.uuid4().hex}"
-    visual_bar_id = f"bar_{uuid.uuid4().hex}"
-    percent_id = f"percent_{uuid.uuid4().hex}"
-    status_id = f"status_{uuid.uuid4().hex}"
-    word_id = f"word_{uuid.uuid4().hex}"
-    meaning_id = f"meaning_{uuid.uuid4().hex}"
-    count_id = f"count_{uuid.uuid4().hex}"
-    theme_id = f"theme_{uuid.uuid4().hex}"
-    speed_select_id = f"speed_{uuid.uuid4().hex}"
-    repeat_select_id = f"repeat_{uuid.uuid4().hex}"
-    wrap_id = f"wrap_{uuid.uuid4().hex}"
-
-    cassette_json = json.dumps(all_items, ensure_ascii=False)
-    safe_player_id = json.dumps(player_id)
+    items_json = json.dumps(visual_items, ensure_ascii=False)
     safe_title = html.escape(title)
-    safe_intro = html.escape(intro)
-    max_index = max(len(all_items) - 1, 0)
-    word_repeat_each = max(1, int(word_repeat_each))
+    safe_player_id = json.dumps(player_id)
 
     components.html(
         f"""
-        <style>
-            .easy-cassette-wrap {{
-                font-family: Arial, sans-serif;
-                width: 100%;
-                max-width: 100%;
-                box-sizing: border-box;
-                overflow: hidden;
-                border-radius: 20px;
-                padding: 14px;
-                background: linear-gradient(135deg, #eff6ff 0%, #fff7ed 48%, #fdf2f8 100%);
-                border: 1px solid #bae6fd;
-                box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
-            }}
-            .easy-cassette-top {{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 12px;
-                flex-wrap: wrap;
-                margin-bottom: 12px;
-            }}
-            .easy-cassette-title {{
-                font-size: 16px;
-                font-weight: 900;
-                color: #0f172a;
-                line-height: 1.25;
-            }}
-            .easy-cassette-small {{
-                font-size: 13px;
-                font-weight: 900;
-                color: #475569;
-                background: rgba(255,255,255,0.75);
-                border: 1px solid #dbeafe;
-                border-radius: 999px;
-                padding: 7px 12px;
-            }}
-            .easy-now-card {{
-                background: rgba(255,255,255,0.86);
-                border: 1px solid #dbeafe;
-                border-radius: 24px;
-                padding: 18px 18px;
-                margin: 12px 0;
-                box-sizing: border-box;
-            }}
-            .easy-theme {{
-                display: inline-block;
-                font-size: 13px;
-                font-weight: 900;
-                color: #7c3aed;
-                background: #f3e8ff;
-                border-radius: 999px;
-                padding: 6px 11px;
-                margin-bottom: 9px;
-            }}
-            .easy-word {{
-                font-size: clamp(28px, 7vw, 48px);
-                font-weight: 900;
-                color: #111827;
-                line-height: 1.05;
-                word-break: break-word;
-                letter-spacing: -1px;
-            }}
-            .easy-meaning {{
-                margin-top: 8px;
-                font-size: clamp(16px, 4vw, 22px);
-                font-weight: 900;
-                color: #334155;
-                line-height: 1.25;
-                word-break: keep-all;
-            }}
-            .easy-progress-box {{
-                background: rgba(255,255,255,0.76);
-                border: 1px solid #dbeafe;
-                border-radius: 20px;
-                padding: 13px 14px;
-                margin: 12px 0;
-            }}
-            .easy-bar-bg {{
-                width: 100%;
-                height: 10px;
-                background: #e2e8f0;
-                border-radius: 999px;
-                overflow: hidden;
-                margin: 8px 0 9px 0;
-            }}
-            .easy-bar-fill {{
-                height: 100%;
-                width: 0%;
-                background: linear-gradient(90deg, #38bdf8, #8b5cf6, #ec4899);
-                border-radius: 999px;
-            }}
-            .easy-range {{
-                width: 100%;
-                height: 34px;
-                accent-color: #8b5cf6;
-                cursor: pointer;
-            }}
-            .easy-control-grid {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 9px;
-                margin-top: 12px;
-            }}
-            .easy-sub-grid {{
-                display: grid;
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-                gap: 8px;
-                margin-top: 8px;
-            }}
-            .easy-btn {{
-                width: 100%;
-                min-height: 42px;
-                border-radius: 18px;
-                border: 1px solid #cbd5e1;
-                font-size: 14px;
-                font-weight: 900;
-                cursor: pointer;
-                box-sizing: border-box;
-                white-space: nowrap;
-                box-shadow: 0 3px 9px rgba(15,23,42,0.07);
-            }}
-            .easy-btn-main {{
-                min-height: 46px;
-                font-size: 16px;
-                background: linear-gradient(135deg, #dbeafe, #fce7f3);
-                border-color: #c4b5fd;
-                color: #111827;
-            }}
-            .easy-select-row {{
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 9px;
-                margin-top: 10px;
-            }}
-            .easy-select-box {{
-                background: rgba(255,255,255,0.84);
-                border: 1px solid #dbeafe;
-                border-radius: 18px;
-                padding: 10px 12px;
-                box-sizing: border-box;
-            }}
-            .easy-label {{
-                font-size: 12px;
-                font-weight: 900;
-                color: #64748b;
-                margin-bottom: 5px;
-            }}
-            .easy-select {{
-                width: 100%;
-                border: 0;
-                background: transparent;
-                font-size: 14px;
-                font-weight: 900;
-                color: #0f172a;
-                outline: none;
-            }}
-            .easy-status {{
-                margin-top: 10px;
-                font-size: 14px;
-                font-weight: 900;
-                color: #075985;
-                min-height: 20px;
-                line-height: 1.35;
-            }}
-            @media (max-width: 520px) {{
-                .easy-cassette-wrap {{ padding: 10px 8px; border-radius: 16px; }}
-                .easy-cassette-title {{ font-size: 16px; }}
-                .easy-cassette-small {{ font-size: 12px; padding: 6px 9px; }}
-                .easy-now-card {{ padding: 10px 10px; border-radius: 14px; }}
-                .easy-control-grid {{ grid-template-columns: 1fr; gap: 7px; }}
-                .easy-sub-grid {{ grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }}
-                .easy-btn {{ min-height: 36px; font-size: 11px; border-radius: 12px; padding: 5px 2px; }}
-                .easy-btn-main {{ min-height: 40px; font-size: 13px; }}
-                .easy-select-row {{ grid-template-columns: 1fr 1fr; gap: 7px; }}
-                .easy-select {{ font-size: 12px; }}
-            }}
-        </style>
-
-        <div id="{wrap_id}" class="easy-cassette-wrap">
-            <div class="easy-cassette-top">
-                <div class="easy-cassette-title">{safe_title}</div>
-                <div id="{count_id}" class="easy-cassette-small">1 / {len(all_items)}</div>
+        <div id="{player_id}" style="
+            font-family: Arial, sans-serif;
+            width:100%;
+            box-sizing:border-box;
+            border-radius:28px;
+            padding:18px;
+            background:linear-gradient(135deg,#f0fdf4 0%,#eff6ff 48%,#fff7ed 100%);
+            border:1px solid #bbf7d0;
+            box-shadow:0 8px 22px rgba(15,23,42,0.10);
+            overflow:hidden;
+        ">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                <div style="font-size:24px; font-weight:900; color:#0f172a; line-height:1.25;">{safe_title}</div>
+                <div id="count_{player_id}" style="font-size:13px; font-weight:900; color:#475569; background:rgba(255,255,255,.8); border:1px solid #dcfce7; border-radius:999px; padding:7px 12px;">1 / {len(visual_items)}</div>
             </div>
 
-            <div class="easy-now-card">
-                <div id="{theme_id}" class="easy-theme">Theme</div>
-                <div id="{word_id}" class="easy-word">Ready</div>
-                <div id="{meaning_id}" class="easy-meaning">재생 버튼을 눌러 주세요.</div>
-            </div>
+            <audio id="audio_{player_id}" preload="auto" style="width:100%; margin:6px 0 14px 0;"></audio>
 
-            <div class="easy-progress-box">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:4px;">
-                    <span style="font-size:13px; font-weight:900; color:#075985;">🎚️ 단어 위치</span>
-                    <span id="{percent_id}" style="font-size:13px; font-weight:900; color:#7c3aed;">0%</span>
+            <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+                <div style="
+                    background:rgba(255,255,255,0.88);
+                    border:1px solid #dcfce7;
+                    border-radius:26px;
+                    padding:22px 18px;
+                    text-align:center;
+                ">
+                    <div id="theme_{player_id}" style="display:inline-block; font-size:13px; font-weight:900; color:#15803d; background:#dcfce7; border-radius:999px; padding:6px 12px; margin-bottom:10px;">Theme</div>
+                    <div id="emoji_{player_id}" style="font-size:58px; line-height:1.05; margin:4px 0;">🌱</div>
+                    <div id="word_{player_id}" style="font-size:clamp(46px,9vw,78px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
+                    <div id="meaning_{player_id}" style="font-size:clamp(24px,5vw,38px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
+                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:18px;">
+                        <div id="bar_{player_id}" style="height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#0ea5e9,#8b5cf6); border-radius:999px;"></div>
+                    </div>
                 </div>
-                <div class="easy-bar-bg"><div id="{visual_bar_id}" class="easy-bar-fill"></div></div>
-                <input id="{progress_id}" class="easy-range" type="range" min="0" max="{max_index}" value="0" step="1">
-            </div>
 
-            <div class="easy-control-grid">
-                <button id="{play_btn_id}" class="easy-btn easy-btn-main">▶️ 재생</button>
-                <button id="{pause_btn_id}" class="easy-btn" style="background:#ecfeff; border-color:#67e8f9; color:#155e75;">⏸ 잠깐 멈춤</button>
-            </div>
-
-            <div class="easy-sub-grid">
-                <button id="{prev_btn_id}" class="easy-btn" style="background:#f8fafc; color:#334155;">⏮ 이전</button>
-                <button id="{next_btn_id}" class="easy-btn" style="background:#f8fafc; color:#334155;">다음 ⏭</button>
-            </div>
-
-            <div class="easy-select-row">
-                <div class="easy-select-box">
-                    <div class="easy-label">속도</div>
-                    <select id="{speed_select_id}" class="easy-select">
-                        <option value="0.55">천천히</option>
-                        <option value="0.75" selected>보통</option>
-                        <option value="0.95">조금 빠르게</option>
-                        <option value="1.15">빠르게</option>
-                    </select>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="play_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:18px; font-weight:900; cursor:pointer;">▶️ 카세트 재생</button>
+                    <button id="pause_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #67e8f9; background:#ecfeff; color:#155e75; font-size:18px; font-weight:900; cursor:pointer;">⏸ 잠깐 멈춤</button>
                 </div>
-                <div class="easy-select-box">
-                    <div class="easy-label">전체 반복</div>
-                    <select id="{repeat_select_id}" class="easy-select">
-                        <option value="1">1번</option>
-                        <option value="2">2번</option>
-                        <option value="3" selected>3번</option>
-                    </select>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="prev_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">⏮ 이전</button>
+                    <button id="next_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">다음 ⏭</button>
                 </div>
+
+                <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
+
+                <div id="list_{player_id}" style="
+                    max-height:250px;
+                    overflow-y:auto;
+                    padding:4px;
+                    border-radius:18px;
+                "></div>
             </div>
+        </div>
 
-            <div id="{status_id}" class="easy-status"></div>
+        <script>
+        const items_{player_id} = {items_json};
+        const audio_{player_id} = document.getElementById("audio_{player_id}");
+        const wordEl_{player_id} = document.getElementById("word_{player_id}");
+        const meaningEl_{player_id} = document.getElementById("meaning_{player_id}");
+        const emojiEl_{player_id} = document.getElementById("emoji_{player_id}");
+        const themeEl_{player_id} = document.getElementById("theme_{player_id}");
+        const countEl_{player_id} = document.getElementById("count_{player_id}");
+        const barEl_{player_id} = document.getElementById("bar_{player_id}");
+        const listEl_{player_id} = document.getElementById("list_{player_id}");
+        const statusEl_{player_id} = document.getElementById("status_{player_id}");
+        const playBtn_{player_id} = document.getElementById("play_{player_id}");
+        const pauseBtn_{player_id} = document.getElementById("pause_{player_id}");
+        const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
+        const nextBtn_{player_id} = document.getElementById("next_{player_id}");
+        const playerId_{player_id} = {safe_player_id};
 
-            <script>
-            (function() {{
-                const cassetteItems = {cassette_json};
-                const playBtn = document.getElementById("{play_btn_id}");
-                const pauseBtn = document.getElementById("{pause_btn_id}");
-                const prevBtn = document.getElementById("{prev_btn_id}");
-                const nextBtn = document.getElementById("{next_btn_id}");
-                const progress = document.getElementById("{progress_id}");
-                const visualBar = document.getElementById("{visual_bar_id}");
-                const percentBox = document.getElementById("{percent_id}");
-                const status = document.getElementById("{status_id}");
-                const wordBox = document.getElementById("{word_id}");
-                const meaningBox = document.getElementById("{meaning_id}");
-                const countBox = document.getElementById("{count_id}");
-                const themeBox = document.getElementById("{theme_id}");
-                const speedSelect = document.getElementById("{speed_select_id}");
-                const repeatSelect = document.getElementById("{repeat_select_id}");
-                const wrap = document.getElementById("{wrap_id}");
-                const playerId = {safe_player_id};
-                const channel = new BroadcastChannel("daily_english_audio_channel");
+        let currentIndex_{player_id} = 0;
+        let isPlayingList_{player_id} = false;
 
-                let index = 0;
-                let isPlaying = false;
-                let isPaused = false;
-                let playToken = 0;
-                let repeatRound = 1;
-                const wordRepeatEach = {word_repeat_each};
-                let safetyTimer = null;
-                let jumpTimer = null;
+        function renderList_{player_id}() {{
+            listEl_{player_id}.innerHTML = items_{player_id}.map((it, idx) => `
+                <div id="row_${{playerId_{player_id}}}_${{idx}}" style="
+                    display:flex;
+                    align-items:center;
+                    gap:9px;
+                    padding:9px 11px;
+                    margin-bottom:6px;
+                    border-radius:15px;
+                    background:white;
+                    border:1px solid #dcfce7;
+                    box-shadow:0 2px 7px rgba(0,0,0,0.035);
+                    box-sizing:border-box;
+                ">
+                    <span style="min-width:34px; font-size:12px; font-weight:900; color:#166534; background:#dcfce7; border-radius:999px; padding:5px 8px; text-align:center;">${{it.number}}</span>
+                    <span style="font-size:24px;">${{it.emoji}}</span>
+                    <span style="font-size:21px; font-weight:900; color:#111827; min-width:95px;">${{it.word}}</span>
+                    <span style="font-size:16px; font-weight:900; color:#374151;">${{it.meaning}}</span>
+                </div>
+            `).join("");
+        }}
 
-                function escapeHtml(text) {{
-                    const div = document.createElement("div");
-                    div.innerText = text || "";
-                    return div.innerHTML;
+        function setCurrent_{player_id}(idx) {{
+            if (!items_{player_id}.length) return;
+            idx = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
+            currentIndex_{player_id} = idx;
+            const it = items_{player_id}[idx];
+
+            wordEl_{player_id}.textContent = it.word;
+            meaningEl_{player_id}.textContent = it.meaning;
+            emojiEl_{player_id}.textContent = it.emoji;
+            themeEl_{player_id}.textContent = it.theme || "Daily English";
+            countEl_{player_id}.textContent = (idx + 1) + " / " + items_{player_id}.length;
+
+            const percent = items_{player_id}.length <= 1 ? 100 : (idx / (items_{player_id}.length - 1)) * 100;
+            barEl_{player_id}.style.width = percent + "%";
+
+            for (let i = 0; i < items_{player_id}.length; i++) {{
+                const row = document.getElementById("row_" + playerId_{player_id} + "_" + i);
+                if (!row) continue;
+                if (i === idx) {{
+                    row.style.background = "linear-gradient(135deg,#dcfce7,#dbeafe)";
+                    row.style.borderColor = "#22c55e";
+                    row.style.transform = "scale(1.01)";
+                    row.scrollIntoView({{block:"nearest", behavior:"smooth"}});
+                }} else {{
+                    row.style.background = "white";
+                    row.style.borderColor = "#dcfce7";
+                    row.style.transform = "scale(1)";
                 }}
+            }}
+        }}
 
-                function getEmoji(word) {{
-                    const emojiMap = {{
-                        "I":"🙋","you":"👉","he":"👦","she":"👧","we":"👥","they":"👥","friend":"🤝","teacher":"👩‍🏫","student":"🧑‍🎓",
-                        "go":"➡️","come":"⬅️","walk":"🚶","run":"🏃","sit":"🪑","stand":"🧍","stop":"🛑","start":"▶️","open":"📂","close":"📕",
-                        "eat":"🍽️","drink":"🥤","sleep":"😴","study":"📚","read":"📖","write":"✏️","listen":"👂","speak":"🗣️","help":"🆘",
-                        "happy":"😊","sad":"😢","angry":"😠","tired":"🥱","hungry":"😋","thirsty":"🥤","sick":"🤒","okay":"👌","fine":"🙂",
-                        "food":"🍽️","water":"💧","rice":"🍚","bread":"🍞","milk":"🥛","juice":"🧃","coffee":"☕","tea":"🍵",
-                        "home":"🏠","school":"🏫","bathroom":"🚻","hospital":"🏥","store":"🏪","bus":"🚌","car":"🚗","taxi":"🚕","train":"🚆","bike":"🚲",
-                        "time":"⏰","now":"🕒","today":"📅","tomorrow":"➡️📅","yesterday":"⬅️📅","nine":"9️⃣","ten":"🔟",
-                        "bag":"🎒","phone":"📱","book":"📘","money":"💵","card":"💳","ticket":"🎫",
-                        "please":"🙏","sorry":"🙇","excuse me":"🙋","again":"🔁","slowly":"🐢","question":"❓","answer":"✅"
-                    }};
-                    return emojiMap[word] || "🌱";
-                }}
+        function loadCurrent_{player_id}() {{
+            const it = items_{player_id}[currentIndex_{player_id}];
+            setCurrent_{player_id}(currentIndex_{player_id});
+            if (audio_{player_id}.src !== it.src) {{
+                audio_{player_id}.src = it.src;
+                audio_{player_id}.load();
+            }}
+        }}
 
-                function getEnglishVoice() {{
-                    const voices = window.speechSynthesis.getVoices();
-                    const preferredNames = ["Samantha", "Google US English", "Microsoft Jenny", "Microsoft Aria", "Microsoft Zira", "Karen", "Moira", "Tessa", "Fiona", "Victoria"];
-                    for (const name of preferredNames) {{
-                        const found = voices.find(v => v.name && v.name.toLowerCase().includes(name.toLowerCase()) && v.lang && v.lang.toLowerCase().startsWith("en"));
-                        if (found) return found;
-                    }}
-                    return voices.find(v => v.lang && v.lang.toLowerCase().startsWith("en")) || null;
-                }}
+        function playCurrent_{player_id}() {{
+            if (!items_{player_id}.length) return;
+            isPlayingList_{player_id} = true;
+            loadCurrent_{player_id}();
+            playBtn_{player_id}.textContent = "🔊 재생 중";
+            statusEl_{player_id}.textContent = "현재 단어: " + items_{player_id}[currentIndex_{player_id}].word;
+            audio_{player_id}.play().catch(() => {{
+                statusEl_{player_id}.textContent = "브라우저가 자동 재생을 막았습니다. 재생 버튼을 한 번 더 눌러 주세요.";
+                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+            }});
+        }}
 
-                function updateDisplay() {{
-                    const item = cassetteItems[index];
-                    if (!item) return;
-                    const max = Math.max(cassetteItems.length - 1, 1);
-                    const pct = Math.round((index / max) * 100);
-                    progress.value = index;
-                    visualBar.style.width = pct + "%";
-                    percentBox.innerText = pct + "%";
-                    countBox.innerText = (index + 1) + " / " + cassetteItems.length;
-                    themeBox.innerText = item.theme || "Theme";
-                    wordBox.innerText = item.word + " " + (item.emoji || getEmoji(item.word));
-                    meaningBox.innerHTML = escapeHtml(item.meaning);
-                    status.innerText = "";
-                }}
+        function pauseCurrent_{player_id}() {{
+            isPlayingList_{player_id} = false;
+            audio_{player_id}.pause();
+            playBtn_{player_id}.textContent = "▶️ 이어 듣기";
+            statusEl_{player_id}.textContent = "일시정지";
+        }}
 
-                function clearTimers() {{
-                    if (safetyTimer) {{ clearTimeout(safetyTimer); safetyTimer = null; }}
-                    if (jumpTimer) {{ clearTimeout(jumpTimer); jumpTimer = null; }}
-                }}
+        function moveTo_{player_id}(idx, autoPlay=false) {{
+            isPlayingList_{player_id} = autoPlay;
+            audio_{player_id}.pause();
+            currentIndex_{player_id} = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
+            loadCurrent_{player_id}();
+            if (autoPlay) {{
+                playCurrent_{player_id}();
+            }} else {{
+                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+                statusEl_{player_id}.textContent = "선택된 단어: " + items_{player_id}[currentIndex_{player_id}].word;
+            }}
+        }}
 
-                function stopTape(resetIndex = false, showMessage = false) {{
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    isPlaying = false;
-                    isPaused = false;
-                    repeatRound = 1;
-                    playBtn.innerText = "▶️ 듣기";
-                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                    if (resetIndex) index = 0;
-                    updateDisplay();
-                    if (showMessage) status.innerText = "";
-                }}
+        renderList_{player_id}();
+        loadCurrent_{player_id}();
 
-                channel.onmessage = function(event) {{
-                    if (!event.data) return;
+        playBtn_{player_id}.addEventListener("click", function() {{
+            playCurrent_{player_id}();
+        }});
 
-                    // 다른 카테고리/다른 카세트가 시작되거나,
-                    // 탭/챕터 이동 신호가 오면 현재 듣기를 자동으로 중지합니다.
-                    if (event.data.type === "STOP_ALL") {{
-                        stopTape(false, false);
-                    }}
+        pauseBtn_{player_id}.addEventListener("click", function() {{
+            pauseCurrent_{player_id}();
+        }});
 
-                    if (event.data.type === "STOP_OTHERS" && event.data.playerId !== playerId) {{
-                        stopTape(false, false);
-                    }}
-                }};
+        prevBtn_{player_id}.addEventListener("click", function() {{
+            moveTo_{player_id}(currentIndex_{player_id} - 1, false);
+        }});
 
-                function broadcastStopAll() {{
-                    try {{
-                        channel.postMessage({{ type: "STOP_ALL", playerId: playerId }});
-                    }} catch (e) {{}}
-                }}
+        nextBtn_{player_id}.addEventListener("click", function() {{
+            moveTo_{player_id}(currentIndex_{player_id} + 1, false);
+        }});
 
-                // Streamlit 페이지 이동, 새로고침, 브라우저 탭 이동 시 자동 중지
-                window.addEventListener("pagehide", function() {{ stopTape(false, false); }});
-                window.addEventListener("beforeunload", function() {{ stopTape(false, false); }});
-                document.addEventListener("visibilitychange", function() {{
-                    if (document.hidden) stopTape(false, false);
-                }});
+        audio_{player_id}.addEventListener("ended", function() {{
+            if (!isPlayingList_{player_id}) return;
+            if (currentIndex_{player_id} < items_{player_id}.length - 1) {{
+                currentIndex_{player_id} += 1;
+                playCurrent_{player_id}();
+            }} else {{
+                isPlayingList_{player_id} = false;
+                playBtn_{player_id}.textContent = "▶️ 처음부터 다시";
+                statusEl_{player_id}.textContent = "✅ 카세트 재생 완료";
+                barEl_{player_id}.style.width = "100%";
+            }}
+        }});
+        </script>
+        """,
+        height=height,
+        scrolling=True
+    )
 
-                // 스크롤로 카세트 영역이 화면 밖으로 나가도 재생을 멈추지 않습니다.
-                // 예전에는 IntersectionObserver로 화면 밖 이동 시 stopTape()를 실행했지만,
-                // 모바일에서 단어 목록을 보려고 스크롤하면 카세트가 끊기는 문제가 있어 제거했습니다.
 
-                // Streamlit의 상단 탭이나 왼쪽 페이지 메뉴를 누르면 모든 카세트 중지
-                try {{
-                    const parentDoc = window.parent && window.parent.document;
-                    if (parentDoc && !window.parent.__survivalCassetteAutoStopBound) {{
-                        window.parent.__survivalCassetteAutoStopBound = true;
-                        parentDoc.addEventListener("click", function(e) {{
-                            const target = e.target;
-                            if (!target) return;
-                            const clickedTab = target.closest('[role="tab"]');
-                            const clickedSidebarLink = target.closest('section[data-testid="stSidebar"] a');
-                            const clickedPageLink = target.closest('a[href]');
-                            if (clickedTab || clickedSidebarLink || clickedPageLink) {{
-                                setTimeout(broadcastStopAll, 10);
-                            }}
-                        }}, true);
-                    }}
-                }} catch (e) {{}}
-
-                function speakItem(item, onDone, token) {{
-                    if (!item || token !== playToken) return;
-                    window.speechSynthesis.cancel();
-                    const utterance = new SpeechSynthesisUtterance(item.script || item.word);
-                    utterance.lang = "en-US";
-                    utterance.rate = parseFloat(speedSelect.value || "0.75");
-                    utterance.pitch = 1.05;
-                    const voice = getEnglishVoice();
-                    if (voice) utterance.voice = voice;
-
-                    let done = false;
-                    function finish() {{
-                        if (done) return;
-                        done = true;
-                        if (token !== playToken) return;
-                        onDone();
-                    }}
-                    utterance.onend = finish;
-                    utterance.onerror = finish;
-                    window.speechSynthesis.speak(utterance);
-
-                    const estimatedMs = Math.max(1600, (item.script || item.word || "word").length * 160 / Math.max(parseFloat(speedSelect.value || "0.75"), 0.4));
-                    safetyTimer = setTimeout(finish, estimatedMs);
-                }}
-
-                function speakCurrent(token = playToken, wordRepeatCount = 1) {{
-                    if (!isPlaying || isPaused || token !== playToken) return;
-                    const item = cassetteItems[index];
-                    if (!item) return;
-                    updateDisplay();
-
-                    if (wordRepeatEach > 1) {{
-                        status.innerText = "현재 위치: " + (index + 1) + "번 · 단어 " + wordRepeatCount + "/" + wordRepeatEach + "회 · 전체 반복 " + repeatRound + "/" + repeatSelect.value;
-                    }}
-
-                    speakItem(item, function() {{
-                        if (!isPlaying || isPaused || token !== playToken) return;
-
-                        if (wordRepeatCount < wordRepeatEach) {{
-                            jumpTimer = setTimeout(function() {{ speakCurrent(token, wordRepeatCount + 1); }}, 650);
-                            return;
-                        }}
-
-                        index += 1;
-                        if (index >= cassetteItems.length) {{
-                            const maxRepeat = parseInt(repeatSelect.value || "1");
-                            if (repeatRound < maxRepeat) {{
-                                repeatRound += 1;
-                                index = 0;
-                                updateDisplay();
-                                jumpTimer = setTimeout(function() {{ speakCurrent(token, 1); }}, 600);
-                                return;
-                            }}
-                            stopTape(false, false);
-                            index = cassetteItems.length - 1;
-                            updateDisplay();
-                            status.innerText = "완료";
-                            return;
-                        }}
-                        updateDisplay();
-                        jumpTimer = setTimeout(function() {{ speakCurrent(token, 1); }}, 500);
-                    }}, token);
-                }}
-
-                function startFromCurrent() {{
-                    channel.postMessage({{ type: "STOP_OTHERS", playerId: playerId }});
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    isPlaying = true;
-                    isPaused = false;
-                    playBtn.innerText = "재생 중...";
-                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                    const token = playToken;
-                    speakCurrent(token);
-                }}
-
-                function jumpTo(newIndex, keepPlaying = true) {{
-                    index = Math.max(0, Math.min(cassetteItems.length - 1, newIndex));
-                    repeatRound = 1;
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    updateDisplay();
-                    if (isPlaying && keepPlaying) {{
-                        const token = playToken;
-                        jumpTimer = setTimeout(function() {{ speakCurrent(token); }}, 300);
-                    }}
-                }}
-
-                playBtn.addEventListener("click", function() {{
-                    if (isPaused) {{
-                        window.speechSynthesis.resume();
-                        isPaused = false;
-                        isPlaying = true;
-                        playBtn.innerText = "재생 중...";
-                        pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                        status.innerText = "";
-                        return;
-                    }}
-                    startFromCurrent();
-                }});
-
-                pauseBtn.addEventListener("click", function() {{
-                    if (isPlaying && !isPaused && window.speechSynthesis.speaking) {{
-                        window.speechSynthesis.pause();
-                        isPaused = true;
-                        playBtn.innerText = "▶️ 이어 듣기";
-                        pauseBtn.innerText = "멈춤 중";
-                        status.innerText = "";
-                    }}
-                }});
-
-                replayBtn.addEventListener("click", function() {{
-                    channel.postMessage({{ type: "STOP_OTHERS", playerId: playerId }});
-                    playToken += 1;
-                    clearTimers();
-                    window.speechSynthesis.cancel();
-                    isPlaying = false;
-                    isPaused = false;
-                    playBtn.innerText = "▶️ 듣기";
-                    pauseBtn.innerText = "⏸ 잠깐 멈춤";
-                    updateDisplay();
-                    const token = playToken;
-                    status.innerText = "현재 단어 다시 듣기";
-                    speakItem(cassetteItems[index], function() {{
-                        if (token === playToken) status.innerText = "현재 단어 듣기 완료";
-                    }}, token);
-                }});
-
-                prevBtn.addEventListener("click", function() {{ jumpTo(index - 1, true); }});
-                nextBtn.addEventListener("click", function() {{ jumpTo(index + 1, true); }});
-
-                progress.addEventListener("input", function() {{
-                    index = parseInt(progress.value);
-                    updateDisplay();
-                }});
-                progress.addEventListener("change", function() {{
-                    jumpTo(parseInt(progress.value), true);
-                }});
-                speedSelect.addEventListener("change", function() {{
-                    status.innerText = "";
-                }});
-                repeatSelect.addEventListener("change", function() {{
-                    repeatRound = 1;
-                    status.innerText = "";
-                    updateDisplay();
-                }});
-
-                if (typeof speechSynthesis !== "undefined") {{
-                    speechSynthesis.onvoiceschanged = function() {{ getEnglishVoice(); }};
-                }}
-
-                updateDisplay();
-            }})();
-            </script>
+def show_cassette_audio(items, title):
+    st.markdown(
+        f"""
+        <div class="cassette-box">
+            <div class="cassette-title">{title}</div>
+            <div class="cassette-text">
+                단어별 음성이 끝날 때 다음 단어로 넘어갑니다. 그래서 현재 단어, 뜻, 이모지 화면이 발음 타이밍과 더 잘 맞습니다.
+            </div>
         </div>
         """,
-        height=height
+        unsafe_allow_html=True
     )
 
-
-def browser_daily_cassette_player(all_items, height=620):
-    browser_easy_cassette_player(
-        all_items,
-        title="📼 전체 단어 카세트 듣기",
-        intro="",
-        height=height,
-        word_repeat_each=3
+    repeat_word = st.selectbox(
+        "단어 반복 횟수",
+        [1, 2, 3],
+        index=1,
+        key=f"repeat_{title}"
     )
 
+    if st.button("▶️ 화면 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
+        try:
+            with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+                audio_payloads = []
+                for item in items:
+                    word = str(item["word"]).strip()
+                    tts_text = ". ".join([word] * repeat_word) + "."
+                    audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
+                    audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
 
-def browser_theme_cassette_player(theme_items, theme_name, height=580):
-    browser_easy_cassette_player(
-        theme_items,
-        title=f"📼 {theme_name} 단어 카세트 듣기",
-        intro="",
-        height=height,
-        word_repeat_each=2
-    )
+            js_cassette_visual_player(
+                items=items,
+                audio_payloads=audio_payloads,
+                title=title,
+                height=720
+            )
+        except Exception as e:
+            st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
+
+    with st.expander("📜 실제 재생 단어 보기"):
+        st.write(make_cassette_text(items, repeat_word=repeat_word))
+
+    with st.expander("📋 전체 단어 목록 보기"):
+        show_cassette_word_list(items, "👇 전체 단어·뜻·이모지")
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어만 카세트 듣기")
-
+    st.markdown("## 🎧 전체 단어 카세트 듣기")
     all_items = flatten_all_words()
-    browser_daily_cassette_player(all_items, height=640)
-
-    with st.expander("📜 전체 카세트 단어 목록 보기"):
-        st.write("카세트에서 실제로 들려주는 단어와 뜻을 확인할 수 있습니다.")
-
-        for item in all_items:
-            st.markdown(
-                f"""
-                <div style="
-                    background:white;
-                    border:1px solid #dcfce7;
-                    border-radius:16px;
-                    padding:12px 14px;
-                    margin-bottom:8px;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.035);
-                ">
-                    <div style="font-size:18px; font-weight:900; color:#111827;">
-                        {item['number']}. {item['word']} {item.get('emoji', '🌱')}
-                    </div>
-                    <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
-                        단어 뜻: {item['meaning']}
-                    </div>
-                    <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
-                        {item['theme']}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+    show_cassette_audio(all_items, "📼 전체 단어 카세트 듣기")
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 카테고리 단어만 카세트 듣기")
-
+    st.markdown("### 🎧 이 카테고리 단어 카세트 듣기")
     theme_items = make_theme_cassette_items(theme_words, theme_name)
+    show_cassette_audio(theme_items, f"📼 {theme_name} 단어 카세트")
 
-    browser_theme_cassette_player(
-        theme_items,
-        theme_name,
-        height=620
-    )
 
 # =========================
 # 오늘의 일상 대화 보여주기
