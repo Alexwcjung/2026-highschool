@@ -621,14 +621,32 @@ with tabs[6]:
 # --- Tab 7: Translation ---
 with tabs[7]:
     st.subheader("🌐 Translation Tool")
-
-    st.caption("한국어↔영어 등 여러 언어를 번역하고, 영어 결과는 발음으로 들을 수 있습니다.")
+    st.caption("문장을 입력하고 번역 버튼을 누르면 바로 번역 결과가 나옵니다.")
 
     lang_options = {
         "한국어 Korean": "ko",
         "영어 English": "en",
         "일본어 Japanese": "ja",
         "중국어 Chinese Simplified": "zh-CN",
+        "스페인어 Spanish": "es",
+        "프랑스어 French": "fr",
+        "독일어 German": "de",
+        "러시아어 Russian": "ru",
+        "베트남어 Vietnamese": "vi",
+        "태국어 Thai": "th",
+        "인도네시아어 Indonesian": "id",
+        "아랍어 Arabic": "ar",
+        "힌디어 Hindi": "hi",
+        "이탈리아어 Italian": "it",
+        "포르투갈어 Portuguese": "pt",
+    }
+
+    # googletrans용 언어 코드
+    googletrans_lang_options = {
+        "한국어 Korean": "ko",
+        "영어 English": "en",
+        "일본어 Japanese": "ja",
+        "중국어 Chinese Simplified": "zh-cn",
         "스페인어 Spanish": "es",
         "프랑스어 French": "fr",
         "독일어 German": "de",
@@ -649,8 +667,8 @@ with tabs[7]:
     if "translation_target_code" not in st.session_state:
         st.session_state["translation_target_code"] = ""
 
-    if "translation_error" not in st.session_state:
-        st.session_state["translation_error"] = ""
+    if "translation_method" not in st.session_state:
+        st.session_state["translation_method"] = ""
 
     # 언어 선택
     col1, col2 = st.columns(2)
@@ -679,56 +697,129 @@ with tabs[7]:
         key="translation_source_input"
     )
 
+    def translate_with_deep_translator(text, source_label, target_label):
+        from deep_translator import GoogleTranslator
+
+        source_code = "auto" if source_label == "자동 감지 Auto" else lang_options[source_label]
+        target_code = lang_options[target_label]
+
+        result = GoogleTranslator(
+            source=source_code,
+            target=target_code
+        ).translate(text)
+
+        return result, target_code, "deep-translator"
+
+    def translate_with_googletrans(text, source_label, target_label):
+        from googletrans import Translator
+
+        source_code = "auto" if source_label == "자동 감지 Auto" else googletrans_lang_options[source_label]
+        target_code = googletrans_lang_options[target_label]
+
+        translator = Translator()
+        result = translator.translate(
+            text,
+            src=source_code,
+            dest=target_code
+        )
+
+        return result.text, target_code, "googletrans"
+
     # 번역 버튼
     if st.button("🌐 번역하기", use_container_width=True):
-        st.session_state["translation_error"] = ""
-
         if not source_text.strip():
             st.warning("번역할 문장을 먼저 입력하세요.")
+            st.session_state["translated_text"] = ""
+            st.session_state["translation_target_code"] = ""
+            st.session_state["translation_method"] = ""
         else:
             try:
-                from deep_translator import GoogleTranslator
-
-                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
-                target_code = lang_options[target_lang_label]
-
-                translated = GoogleTranslator(
-                    source=source_code,
-                    target=target_code
-                ).translate(source_text)
+                translated, target_code, method = translate_with_deep_translator(
+                    source_text,
+                    source_lang_label,
+                    target_lang_label
+                )
 
                 st.session_state["translated_text"] = translated
                 st.session_state["translation_target_code"] = target_code
+                st.session_state["translation_method"] = method
 
-                st.success("번역이 완료되었습니다.")
+            except Exception as first_error:
+                try:
+                    translated, target_code, method = translate_with_googletrans(
+                        source_text,
+                        source_lang_label,
+                        target_lang_label
+                    )
 
-            except ModuleNotFoundError:
-                st.session_state["translation_error"] = "deep-translator 패키지가 설치되어 있지 않습니다."
-                st.error("deep-translator 패키지가 설치되어 있지 않습니다.")
-                st.info("Streamlit Cloud를 사용 중이라면 requirements.txt에 아래 내용을 추가한 뒤 앱을 Reboot 하세요.")
-                st.code("deep-translator", language="txt")
+                    st.session_state["translated_text"] = translated
+                    st.session_state["translation_target_code"] = target_code
+                    st.session_state["translation_method"] = method
 
-            except Exception as e:
-                st.session_state["translation_error"] = str(e)
-                st.error("번역 중 오류가 발생했습니다.")
-                st.write(e)
+                except ModuleNotFoundError:
+                    st.session_state["translated_text"] = ""
+                    st.session_state["translation_target_code"] = ""
+                    st.session_state["translation_method"] = ""
 
-    # 번역 결과 출력
+                    st.error("번역 패키지가 설치되어 있지 않습니다.")
+                    st.info("Streamlit Cloud를 사용 중이라면 requirements.txt에 아래 내용을 추가한 뒤 앱을 Reboot 하세요.")
+                    st.code(
+                        "deep-translator\ngoogletrans==4.0.0-rc1",
+                        language="txt"
+                    )
+
+                except Exception as second_error:
+                    st.session_state["translated_text"] = ""
+                    st.session_state["translation_target_code"] = ""
+                    st.session_state["translation_method"] = ""
+
+                    st.error("번역 중 오류가 발생했습니다.")
+                    st.warning("대부분 requirements.txt 패키지 누락, Streamlit Cloud 재부팅 미실행, 또는 일시적인 구글 번역 연결 문제입니다.")
+                    st.markdown("##### 1차 오류")
+                    st.write(first_error)
+                    st.markdown("##### 2차 오류")
+                    st.write(second_error)
+
+    # 번역 결과 바로 출력
     if st.session_state["translated_text"]:
-        st.markdown("#### 번역 결과")
+        safe_translation = html.escape(st.session_state["translated_text"]).replace("\n", "<br>")
 
-        translated_result = st.text_area(
-            "번역 결과",
-            value=st.session_state["translated_text"],
-            height=180,
-            key="translation_result"
+        st.markdown(
+            f"""
+            <div style="
+                background: linear-gradient(135deg, #ffffff, #f1f7ff);
+                border: 1px solid #d8e8ff;
+                border-radius: 18px;
+                padding: 22px 24px;
+                margin-top: 16px;
+                margin-bottom: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            ">
+                <div style="
+                    font-size: 15px;
+                    font-weight: 700;
+                    color: #2563eb;
+                    margin-bottom: 10px;
+                ">🌐 번역 결과</div>
+                <div style="
+                    font-size: 24px;
+                    font-weight: 700;
+                    line-height: 1.65;
+                    color: #111827;
+                    word-break: keep-all;
+                    white-space: normal;
+                ">{safe_translation}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
 
-        st.markdown("#### 복사용")
-        st.code(st.session_state["translated_text"], language=None)
+        # 작은 안내만 표시
+        if st.session_state["translation_method"]:
+            st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
         # 영어로 번역된 경우에만 발음 듣기 제공
-        if st.session_state["translation_target_code"] == "en":
+        if st.session_state["translation_target_code"] in ["en"]:
             st.markdown("#### 🔊 영어 발음 듣기")
 
             speed_label = st.radio(
@@ -742,38 +833,35 @@ with tabs[7]:
             playback_rate = float(speed_label)
 
             if st.button("🔊 발음 듣기", use_container_width=True):
-                if not translated_result.strip():
-                    st.warning("읽을 영어 문장이 없습니다.")
-                else:
-                    try:
-                        tts = gTTS(
-                            text=translated_result,
-                            lang="en",
-                            tld="com",
-                            slow=False
-                        )
+                try:
+                    tts = gTTS(
+                        text=st.session_state["translated_text"],
+                        lang="en",
+                        tld="com",
+                        slow=False
+                    )
 
-                        speech = io.BytesIO()
-                        tts.write_to_fp(speech)
-                        speech.seek(0)
+                    speech = io.BytesIO()
+                    tts.write_to_fp(speech)
+                    speech.seek(0)
 
-                        audio_base64 = base64.b64encode(
-                            speech.getvalue()
-                        ).decode("utf-8")
+                    audio_base64 = base64.b64encode(
+                        speech.getvalue()
+                    ).decode("utf-8")
 
-                        audio_html = f"""
-                        <audio id="english_audio" controls autoplay style="width: 100%;">
-                            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-                        </audio>
+                    audio_html = f"""
+                    <audio id="english_audio" controls autoplay style="width: 100%;">
+                        <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+                    </audio>
 
-                        <script>
-                            const audio = document.getElementById("english_audio");
-                            audio.playbackRate = {playback_rate};
-                        </script>
-                        """
+                    <script>
+                        const audio = document.getElementById("english_audio");
+                        audio.playbackRate = {playback_rate};
+                    </script>
+                    """
 
-                        components.html(audio_html, height=80)
+                    components.html(audio_html, height=80)
 
-                    except Exception as e:
-                        st.error("영어 발음 생성 중 오류가 발생했습니다.")
-                        st.write(e)
+                except Exception as e:
+                    st.error("영어 발음 생성 중 오류가 발생했습니다.")
+                    st.write(e)
