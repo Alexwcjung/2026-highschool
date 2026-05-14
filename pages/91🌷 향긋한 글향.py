@@ -125,101 +125,268 @@ def improve_english_answer(text, topic_name):
 # =========================================================
 st.markdown("""
 <style>
+/* =====================================================
+   Garden Theme: flowers + grass
+   ===================================================== */
 .stApp {
-    background: linear-gradient(180deg, #eef7ff 0%, #f7fff4 45%, #fff8ec 100%);
+    background:
+        radial-gradient(circle at 8% 12%, rgba(244,114,182,0.18) 0, rgba(244,114,182,0.00) 26%),
+        radial-gradient(circle at 92% 10%, rgba(134,239,172,0.22) 0, rgba(134,239,172,0.00) 28%),
+        linear-gradient(180deg, #fff7fb 0%, #f7fff4 48%, #ecfdf5 100%);
 }
+
+/* 페이지 전체 여백 */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* 맨 위 제목 */
 .main-title {
-    background: linear-gradient(135deg, #2563eb, #16a34a, #f59e0b);
-    color: white;
-    padding: 26px;
-    border-radius: 28px;
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(255,241,247,0.98) 48%, rgba(236,253,245,0.98) 100%);
+    color: #0f172a;
+    padding: 34px 26px 30px 26px;
+    border-radius: 34px;
     text-align: center;
-    margin-bottom: 20px;
-    box-shadow: 0 10px 24px rgba(15,23,42,0.18);
+    margin-bottom: 22px;
+    border: 2px solid #fbcfe8;
+    box-shadow: 0 16px 36px rgba(15,23,42,0.10);
+}
+.main-title:before {
+    content: "🌸";
+    position: absolute;
+    left: 26px;
+    top: 16px;
+    font-size: 72px;
+    opacity: 0.23;
+}
+.main-title:after {
+    content: "🌿";
+    position: absolute;
+    right: 28px;
+    bottom: 12px;
+    font-size: 78px;
+    opacity: 0.24;
 }
 .main-title h1 {
     margin: 0;
-    font-size: 44px;
-    font-weight: 900;
+    font-size: 46px;
+    font-weight: 950;
+    letter-spacing: -0.8px;
+    color: #be185d;
 }
-.info-card {
-    background: white;
-    padding: 22px 24px;
+.main-title p {
+    margin-top: 12px;
+    font-size: 18px;
+    color: #475569;
+    font-weight: 800;
+    line-height: 1.65;
+}
+.garden-line {
+    margin-top: 18px;
+    font-size: 26px;
+    letter-spacing: 8px;
+}
+
+/* 선택 영역 */
+.selector-card {
+    background: rgba(255,255,255,0.78);
+    border: 1.5px solid #bbf7d0;
     border-radius: 24px;
-    border: 1px solid #dbeafe;
+    padding: 16px 18px 8px 18px;
     margin-bottom: 18px;
-    box-shadow: 0 6px 18px rgba(15,23,42,0.10);
+    box-shadow: 0 8px 20px rgba(15,23,42,0.06);
+}
+
+/* 소개 카드 */
+.info-card {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #fff7fb 55%, #f0fdf4 100%);
+    padding: 24px 26px;
+    border-radius: 28px;
+    border: 2px solid #fbcfe8;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 24px rgba(15,23,42,0.08);
+}
+.info-card:after {
+    content: "🌱";
+    position: absolute;
+    right: 22px;
+    top: 18px;
+    font-size: 46px;
+    opacity: 0.22;
 }
 .info-card h2 {
     margin-top: 0;
-    color: #1d4ed8;
-}
-.tag {
-    display: inline-block;
-    background: #dcfce7;
+    margin-bottom: 6px;
     color: #166534;
-    padding: 7px 12px;
-    border-radius: 999px;
-    font-weight: 800;
-    margin-right: 8px;
-    margin-bottom: 8px;
+    font-size: 30px;
+    font-weight: 950;
 }
+.info-card p {
+    color: #475569;
+    font-size: 17px;
+    font-weight: 750;
+}
+
+/* 지식 카드 */
 .fact-card {
-    background: linear-gradient(135deg, #fff7ed, #ffffff);
-    padding: 20px;
-    border-radius: 22px;
-    border: 2px solid #fed7aa;
-    box-shadow: 0 5px 14px rgba(15,23,42,0.08);
+    background: linear-gradient(135deg, #fff7fb 0%, #ffffff 45%, #f0fdf4 100%);
+    padding: 22px;
+    border-radius: 26px;
+    border: 2px solid #fbcfe8;
+    box-shadow: 0 8px 20px rgba(15,23,42,0.07);
     margin-bottom: 18px;
 }
 .fact-card h3 {
     margin-top: 0;
-    color: #c2410c;
+    color: #be185d;
+    font-size: 25px;
+    font-weight: 950;
 }
+.tag {
+    display: inline-block;
+    background: linear-gradient(135deg, #dcfce7 0%, #ffffff 100%);
+    color: #166534;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-weight: 900;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border: 1.5px solid #bbf7d0;
+    box-shadow: 0 3px 8px rgba(15,23,42,0.04);
+}
+
+/* Reading 본문 */
 .reading-card {
-    background: white;
+    background:
+        linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,247,251,0.98) 100%);
     padding: 30px;
-    border-radius: 26px;
-    border: 2px solid #93c5fd;
+    border-radius: 30px;
+    border: 2px solid #bfdbfe;
     font-size: 21px;
     line-height: 1.85;
-    box-shadow: 0 6px 18px rgba(15,23,42,0.10);
+    box-shadow: 0 10px 24px rgba(15,23,42,0.08);
 }
 .reading-card b {
     color: #1d4ed8;
 }
+
+/* 해석 카드 */
 .korean-card {
-    background: #fffbeb;
+    background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #f0fdf4 100%);
     padding: 26px;
-    border-radius: 24px;
-    border: 2px solid #facc15;
+    border-radius: 26px;
+    border: 2px solid #fde68a;
     font-size: 20px;
     line-height: 1.75;
+    box-shadow: 0 8px 20px rgba(15,23,42,0.06);
 }
+
+/* 표현 카드 */
 .expression {
-    background: linear-gradient(135deg, #ecfdf5, #ffffff);
-    padding: 14px 16px;
-    border-radius: 16px;
+    background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+    padding: 15px 17px;
+    border-radius: 18px;
     margin-bottom: 10px;
     font-size: 19px;
-    border-left: 7px solid #22c55e;
-    box-shadow: 0 2px 7px rgba(15,23,42,0.05);
+    font-weight: 800;
+    border-left: 8px solid #22c55e;
+    box-shadow: 0 3px 10px rgba(15,23,42,0.05);
 }
+
+/* 섹션 박스 */
 .section-box {
-    background: white;
-    padding: 20px;
-    border-radius: 22px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 5px 14px rgba(15,23,42,0.08);
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffffff 0%, #fff7fb 100%);
+    padding: 20px 22px;
+    border-radius: 24px;
+    border: 1.5px solid #fbcfe8;
+    box-shadow: 0 6px 16px rgba(15,23,42,0.07);
     margin-bottom: 16px;
 }
+.section-box h3 {
+    margin: 0;
+    color: #be185d;
+    font-size: 24px;
+    font-weight: 950;
+}
+.section-box:after {
+    content: "🌿";
+    position: absolute;
+    right: 16px;
+    top: 12px;
+    font-size: 32px;
+    opacity: 0.20;
+}
+
+/* 탭 */
 div[data-testid="stTabs"] button {
     font-size: 18px;
-    font-weight: 800;
+    font-weight: 900;
+    border-radius: 16px 16px 0 0;
 }
+div[data-testid="stTabs"] button[aria-selected="true"] {
+    color: #be185d;
+}
+
+/* 버튼 */
 .stButton > button {
-    border-radius: 14px;
-    font-weight: 800;
+    border-radius: 18px;
+    font-weight: 900;
+    border: 2px solid #bbf7d0;
+    background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+    color: #14532d;
+    box-shadow: 0 5px 14px rgba(15,23,42,0.08);
+}
+.stButton > button:hover {
+    border: 2px solid #f9a8d4;
+    background: linear-gradient(135deg, #fff7fb 0%, #ffffff 100%);
+    color: #be185d;
+}
+
+/* 라디오, 입력창 */
+div[role="radiogroup"] {
+    background: rgba(255,255,255,0.72);
+    padding: 12px 14px;
+    border-radius: 18px;
+    border: 1px solid #e2e8f0;
+}
+textarea {
+    border-radius: 18px !important;
+}
+
+/* 이미지, 비디오 주변 */
+div[data-testid="stImage"] img {
+    border-radius: 26px;
+    box-shadow: 0 10px 24px rgba(15,23,42,0.12);
+}
+
+/* 모바일 */
+@media (max-width: 768px) {
+    .main-title {
+        padding: 28px 18px 24px 18px;
+        border-radius: 26px;
+    }
+    .main-title h1 {
+        font-size: 34px;
+    }
+    .main-title p {
+        font-size: 15px;
+    }
+    .reading-card {
+        font-size: 18px;
+        padding: 22px;
+    }
+    .korean-card {
+        font-size: 17px;
+        padding: 20px;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
@@ -639,11 +806,13 @@ data_bank = {
 # =========================================================
 st.markdown("""
 <div class="main-title">
-    <h1>🌈 Fun English Reading</h1>
+    <h1>🌸 Fun English Reading 🌿</h1>
     <p>People · Places · Knowledge · English</p>
+    <div class="garden-line">🌸 🌱 🌼 🌿 🌷</div>
 </div>
 """, unsafe_allow_html=True)
 
+st.markdown('<div class="selector-card">', unsafe_allow_html=True)
 col_cat, col_topic = st.columns([1, 2])
 
 with col_cat:
@@ -652,13 +821,15 @@ with col_cat:
 with col_topic:
     topic_name = st.selectbox("주제 선택", list(data_bank[category].keys()))
 
+st.markdown('</div>', unsafe_allow_html=True)
+
 data = data_bank[category][topic_name]
 dialogue = data["dialogue"]
 full_english = "\n".join([f"{speaker}: {eng}" for speaker, eng, kor in dialogue])
 
 st.markdown(f"""
 <div class="info-card">
-    <h2>{data["title"]}</h2>
+    <h2>🌿 {data["title"]}</h2>
     <p>{data["subtitle"]}</p>
 </div>
 """, unsafe_allow_html=True)
