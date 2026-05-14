@@ -6,12 +6,10 @@ import qrcode
 from PIL import Image
 from wordcloud import WordCloud
 import streamlit.components.v1 as components
-from gtts import gTTS
-import io
-import base64
 from streamlit_drawable_canvas import st_canvas
 import random
 import html
+import json
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -821,49 +819,63 @@ with tabs[7]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
         # 영어로 번역된 경우에만 발음 듣기 제공
+        # gTTS를 쓰지 않고 브라우저 기본 음성 기능을 사용합니다.
+        # 그래서 Streamlit Cloud / 휴대폰에서 gTTSError가 나지 않습니다.
         if st.session_state["translation_target_code"] == "en":
             st.markdown("#### 🔊 영어 발음 듣기")
 
             speed_label = st.radio(
                 "속도",
-                ["0.25", "0.5", "1", "1.25", "1.5"],
+                ["0.7", "0.85", "1", "1.15", "1.3"],
                 index=2,
                 horizontal=True,
                 key="tts_speed"
             )
 
             playback_rate = float(speed_label)
+            text_for_speech = json.dumps(st.session_state["translated_text"])
 
-            if st.button("🔊 발음 듣기", use_container_width=True):
-                try:
-                    tts = gTTS(
-                        text=st.session_state["translated_text"],
-                        lang="en",
-                        tld="com",
-                        slow=False
-                    )
+            speech_html = f"""
+            <div style="display:flex; gap:8px; flex-wrap:wrap; width:100%;">
+                <button onclick="
+                    window.speechSynthesis.cancel();
+                    var utterance = new SpeechSynthesisUtterance({text_for_speech});
+                    utterance.lang = 'en-US';
+                    utterance.rate = {playback_rate};
+                    utterance.pitch = 1;
+                    window.speechSynthesis.speak(utterance);
+                "
+                style="
+                    flex:1;
+                    min-width:140px;
+                    background-color:#2563eb;
+                    color:white;
+                    border:none;
+                    border-radius:10px;
+                    padding:10px 14px;
+                    font-size:16px;
+                    cursor:pointer;
+                    font-weight:700;
+                ">
+                    🔊 발음 듣기
+                </button>
 
-                    speech = io.BytesIO()
-                    tts.write_to_fp(speech)
-                    speech.seek(0)
+                <button onclick="window.speechSynthesis.cancel();"
+                style="
+                    flex:1;
+                    min-width:100px;
+                    background-color:#dc2626;
+                    color:white;
+                    border:none;
+                    border-radius:10px;
+                    padding:10px 14px;
+                    font-size:16px;
+                    cursor:pointer;
+                    font-weight:700;
+                ">
+                    ⏹ 멈춤
+                </button>
+            </div>
+            """
 
-                    audio_base64 = base64.b64encode(
-                        speech.getvalue()
-                    ).decode("utf-8")
-
-                    audio_html = f"""
-                    <audio id="english_audio" controls autoplay style="width: 100%;">
-                        <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-                    </audio>
-
-                    <script>
-                        const audio = document.getElementById("english_audio");
-                        audio.playbackRate = {playback_rate};
-                    </script>
-                    """
-
-                    components.html(audio_html, height=80)
-
-                except Exception as e:
-                    st.error("영어 발음 생성 중 오류가 발생했습니다.")
-                    st.write(e)
+            components.html(speech_html, height=75)
