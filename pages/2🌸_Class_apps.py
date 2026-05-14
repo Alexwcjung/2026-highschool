@@ -11,8 +11,7 @@ import random
 import html
 import json
 import io
-import asyncio
-import edge_tts
+from gtts import gTTS
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -822,51 +821,35 @@ with tabs[7]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
         # 번역 결과를 영어 발음으로 듣기
-        # gTTS는 429 Too Many Requests 오류가 자주 나기 때문에 edge-tts를 사용합니다.
+        # 브라우저 음성 기능이 안 들리는 경우가 많아서 gTTS mp3 방식으로 처리합니다.
         st.markdown("#### 🔊 영어 발음 듣기")
 
         @st.cache_data(show_spinner=False)
-        def make_edge_tts_mp3(text):
+        def make_english_tts_mp3(text):
             text = str(text).strip()
 
             if not text:
                 return None
 
-            # 너무 긴 문장은 오류 방지를 위해 길이를 제한합니다.
-            if len(text) > 700:
-                text = text[:700]
+            # 너무 긴 문장은 gTTS 오류가 날 수 있어서 길이를 제한합니다.
+            if len(text) > 500:
+                text = text[:500]
 
-            async def _make_audio():
-                communicate = edge_tts.Communicate(
-                    text=text,
-                    voice="en-US-AriaNeural",
-                    rate="+0%",
-                    volume="+0%"
-                )
+            fp = io.BytesIO()
+            tts = gTTS(
+                text=text,
+                lang="en",
+                tld="com",
+                slow=False
+            )
+            tts.write_to_fp(fp)
+            fp.seek(0)
+            return fp.read()
 
-                audio_bytes = b""
-
-                async for chunk in communicate.stream():
-                    if chunk["type"] == "audio":
-                        audio_bytes += chunk["data"]
-
-                return audio_bytes
-
-            try:
-                return asyncio.run(_make_audio())
-            except RuntimeError:
-                # Streamlit 실행 환경에서 이미 event loop가 있는 경우를 대비
-                loop = asyncio.new_event_loop()
-                try:
-                    asyncio.set_event_loop(loop)
-                    return loop.run_until_complete(_make_audio())
-                finally:
-                    loop.close()
-
-        if st.button("🔊 발음 듣기", use_container_width=True, key="listen_translation_edge_tts"):
+        if st.button("🔊 발음 듣기", use_container_width=True, key="listen_translation_gtts"):
             try:
                 with st.spinner("발음 파일을 만드는 중입니다..."):
-                    audio_bytes = make_edge_tts_mp3(
+                    audio_bytes = make_english_tts_mp3(
                         st.session_state["translated_text"]
                     )
 
@@ -877,5 +860,5 @@ with tabs[7]:
 
             except Exception as e:
                 st.error("발음 파일을 만드는 중 오류가 발생했습니다.")
-                st.warning("잠시 후 다시 눌러 주세요. 인터넷 연결이 불안정하면 음성이 만들어지지 않을 수 있습니다.")
+                st.warning("gTTS는 인터넷 연결이 필요합니다. Streamlit Cloud에서 잠시 막힌 경우에는 잠시 후 다시 눌러 주세요.")
                 st.write(e)
