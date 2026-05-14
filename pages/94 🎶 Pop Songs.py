@@ -189,158 +189,202 @@ if "1. Let It Go" in song_choice:
     ]
 
 
-# =========================
-# 5. 화면 출력
-# =========================
+elif "2. Hello" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
 
-if selected_tab == "🎬 배경 학습":
-    st.markdown(
-        """
-        <style>
-            .big-info-box {
-                background-color: #f1f5f9;
-                padding: 32px;
-                border-radius: 18px;
-                border: 1px solid #cbd5e1;
-                line-height: 1.9;
-                margin-bottom: 22px;
-            }
+    bg_content = """
+    <h3>☎️ Hello: 과거의 누군가에게 건네는 늦은 안부</h3>
 
-            .big-info-box h3 {
-                font-size: 2.0rem;
-                color: #4338ca;
-                border-bottom: 3px solid #6366f1;
-                padding-bottom: 12px;
-                margin-top: 0;
-                margin-bottom: 18px;
-            }
+    <p>
+    Adele의 <b>Hello</b>는 시간이 많이 흐른 뒤, 과거의 누군가에게 다시 연락하고 싶은 마음을 담은 노래입니다.
+    노래 속 화자는 상대에게 전화를 걸며 오래전의 관계, 미안함, 후회, 그리고 아직 완전히 치유되지 않은 감정을 떠올립니다.
+    </p>
 
-            .big-info-box p {
-                font-size: 1.25rem;
-                color: #1e293b;
-                margin-bottom: 16px;
-            }
+    <p>
+    이 노래에서 화자는 단순히 “안녕”이라고 말하는 것이 아니라,
+    과거에 하지 못했던 사과를 전하고 싶어 합니다.
+    하지만 두 사람 사이에는 시간의 거리, 마음의 거리, 그리고 실제 거리까지 생겨 있습니다.
+    그래서 반복되는 <b>Hello</b>라는 말은 인사이면서 동시에 조심스러운 사과의 시작처럼 들립니다.
+    </p>
 
-            .small-video-box {
-                max-width: 720px;
-                margin: 0 auto;
-            }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+    <p>
+    수업에서는 <b>I'm sorry</b>, <b>I tried</b>, <b>after all these years</b>,
+    <b>used to be</b>, <b>the other side</b> 같은 표현을 중심으로 배울 수 있습니다.
+    특히 이 노래는 속도가 비교적 느리고 감정이 분명하게 드러나기 때문에,
+    학생들이 가사를 읽으며 화자의 감정과 영어 표현을 함께 이해하기에 좋습니다.
+    </p>
+    """
 
-    st.markdown(
-        f"""
-        <div class="big-info-box">
-            {bg_content}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    lyrics_full = [
+        (
+            "Hello, it's me / I was wondering if after all these years you'd like to meet, to go over everything",
+            "안녕, 나야 / 이 모든 세월이 흐른 뒤에 네가 만나서 모든 일을 다시 이야기해 보고 싶어 할지 궁금했어"
+        ),
+        (
+            "They say that time's supposed to heal ya / But I ain't done much healing",
+            "사람들은 시간이 너를 치유해 줄 거라고 말하지만 / 나는 별로 치유되지 않은 것 같아"
+        ),
+        (
+            "Hello, can you hear me? / I'm in California dreaming about who we used to be",
+            "여보세요, 내 말 들리니? / 나는 캘리포니아에서 예전의 우리 모습을 떠올리고 있어"
+        ),
+        (
+            "When we were younger and free / I've forgotten how it felt before the world fell at our feet",
+            "우리가 더 어리고 자유로웠을 때 / 세상이 우리 발아래 있는 것 같았던 그 느낌을 나는 잊어버렸어"
+        ),
+        (
+            "There's such a difference between us / And a million miles",
+            "우리 사이에는 너무 큰 차이가 있어 / 그리고 백만 마일만큼의 거리도 있어"
+        ),
+        (
+            "Hello from the other side / I must've called a thousand times to tell you",
+            "저편에서 안녕이라고 말해 / 너에게 말하려고 나는 아마 천 번은 전화했을 거야"
+        ),
+        (
+            "I'm sorry, for everything that I've done / But when I call you never seem to be home",
+            "내가 했던 모든 일에 대해 미안해 / 하지만 내가 전화할 때 너는 늘 집에 없는 것 같아"
+        ),
+        (
+            "Hello from the outside / At least I can say that I've tried to tell you",
+            "바깥쪽에서 안녕이라고 말해 / 적어도 나는 너에게 말하려고 노력했다고는 말할 수 있어"
+        ),
+        (
+            "I'm sorry, for breaking your heart / But it don't matter, it clearly doesn't tear you apart anymore",
+            "네 마음을 아프게 해서 미안해 / 하지만 이제는 상관없는 것 같아, 더 이상 너를 아프게 하지 않는 것 같아"
+        ),
+        (
+            "Hello, how are you? / It's so typical of me to talk about myself",
+            "안녕, 어떻게 지내? / 내 이야기만 하는 건 정말 나다운 일이야"
+        ),
+        (
+            "I'm sorry, I hope that you're well / Did you ever make it out of that town where nothing ever happened?",
+            "미안해, 네가 잘 지내길 바라 / 아무 일도 일어나지 않던 그 마을에서 벗어났니?"
+        ),
+        (
+            "It's no secret that the both of us are running out of time",
+            "우리 둘 다 시간이 얼마 남지 않았다는 건 비밀도 아니야"
+        ),
+        (
+            "Hello from the other side / I must've called a thousand times to tell you",
+            "저편에서 안녕이라고 말해 / 너에게 말하려고 나는 아마 천 번은 전화했을 거야"
+        ),
+        (
+            "I'm sorry, for everything that I've done / But when I call you never seem to be home",
+            "내가 했던 모든 일에 대해 미안해 / 하지만 내가 전화할 때 너는 늘 집에 없는 것 같아"
+        ),
+        (
+            "Hello from the outside / At least I can say that I've tried to tell you",
+            "바깥쪽에서 안녕이라고 말해 / 적어도 나는 너에게 말하려고 노력했다고는 말할 수 있어"
+        ),
+        (
+            "I'm sorry, for breaking your heart / But it don't matter, it clearly doesn't tear you apart anymore",
+            "네 마음을 아프게 해서 미안해 / 하지만 이제는 상관없는 것 같아, 더 이상 너를 아프게 하지 않는 것 같아"
+        ),
+        (
+            "Ooooohh, anymore / Ooooohh, anymore / Ooooohh, anymore / Anymore",
+            "오, 더 이상 / 오, 더 이상 / 오, 더 이상 / 더 이상"
+        ),
+        (
+            "Hello from the other side / I must've called a thousand times to tell you",
+            "저편에서 안녕이라고 말해 / 너에게 말하려고 나는 아마 천 번은 전화했을 거야"
+        ),
+        (
+            "I'm sorry, for everything that I've done / But when I call you never seem to be home",
+            "내가 했던 모든 일에 대해 미안해 / 하지만 내가 전화할 때 너는 늘 집에 없는 것 같아"
+        ),
+        (
+            "Hello from the outside / At least I can say that I've tried to tell you",
+            "바깥쪽에서 안녕이라고 말해 / 적어도 나는 너에게 말하려고 노력했다고는 말할 수 있어"
+        ),
+        (
+            "I'm sorry, for breaking your heart / But it don't matter, it clearly doesn't tear you apart anymore",
+            "네 마음을 아프게 해서 미안해 / 하지만 이제는 상관없는 것 같아, 더 이상 너를 아프게 하지 않는 것 같아"
+        ),
+    ]
 
-    st.markdown("### 🎬 Music Video")
+    comprehension_questions = [
+        {
+            "q": "1. 이 노래에서 화자는 누구에게 연락하려고 하나요?",
+            "options": [
+                "과거에 알던 사람",
+                "새로 만난 선생님",
+                "유명한 가수",
+                "캘리포니아의 낯선 사람"
+            ],
+            "answer": "과거에 알던 사람"
+        },
+        {
+            "q": "2. 화자가 상대에게 가장 말하고 싶어 하는 것은 무엇인가요?",
+            "options": [
+                "고맙다는 말",
+                "미안하다는 말",
+                "생일 축하한다는 말",
+                "여행을 가자는 말"
+            ],
+            "answer": "미안하다는 말"
+        },
+        {
+            "q": "3. 노래에서 사람들은 시간이 무엇을 해 준다고 말하나요?",
+            "options": [
+                "상처를 치유해 준다",
+                "사람을 부자로 만들어 준다",
+                "과거를 완전히 바꿔 준다",
+                "슬픔을 바로 없애 준다"
+            ],
+            "answer": "상처를 치유해 준다"
+        },
+        {
+            "q": "4. 화자는 어디에서 예전의 자신들을 떠올리고 있나요?",
+            "options": [
+                "런던",
+                "캘리포니아",
+                "뉴욕",
+                "파리"
+            ],
+            "answer": "캘리포니아"
+        },
+        {
+            "q": "5. 'I must've called a thousand times'는 어떤 의미에 가깝나요?",
+            "options": [
+                "정말 여러 번 연락하려고 했다",
+                "정확히 천 번만 전화했다",
+                "한 번도 전화하지 않았다",
+                "전화번호를 잊어버렸다"
+            ],
+            "answer": "정말 여러 번 연락하려고 했다"
+        },
+        {
+            "q": "6. 'Hello from the other side'에서 'the other side'는 무엇을 상징한다고 볼 수 있나요?",
+            "options": [
+                "멀어진 시간과 마음의 거리",
+                "학교의 반대편 교실",
+                "가수가 사는 집",
+                "무대의 왼쪽"
+            ],
+            "answer": "멀어진 시간과 마음의 거리"
+        },
+        {
+            "q": "7. 화자가 'I tried'라고 말하는 이유는 무엇인가요?",
+            "options": [
+                "상대에게 사과하려고 노력했기 때문에",
+                "노래 대회에 나가려고 했기 때문에",
+                "캘리포니아로 여행을 가고 싶었기 때문에",
+                "새로운 친구를 만들고 싶었기 때문에"
+            ],
+            "answer": "상대에게 사과하려고 노력했기 때문에"
+        },
+        {
+            "q": "8. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "후회와 사과",
+                "여행의 설렘",
+                "복수심과 분노",
+                "시험에 대한 걱정"
+            ],
+            "answer": "후회와 사과"
+        },
+    ]
 
-    st.markdown('<div class="small-video-box">', unsafe_allow_html=True)
-    st.video(video_url)
-    st.markdown('</div>', unsafe_allow_html=True)
-
-
-elif selected_tab == "📖 가사 & 퀴즈":
-    st.markdown("## 🎵 Full Lyrics & Quiz")
-
-    st.markdown(
-        """
-        <div class="quiz-box">
-            <h3 style="margin-top:0;">🎬 영상을 보며 전체 가사를 읽어 봅시다</h3>
-            <p style="font-size:16px; margin-bottom:0;">
-            먼저 영상을 보면서 노래의 분위기를 느껴 봅시다.
-            그다음 영어 가사와 한국어 뜻을 함께 읽고, 아래 이해도 문제를 풀어 봅시다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    # ✅ 두 번째 탭에도 영상 추가
-    st.video(video_url)
-
-    st.markdown("---")
-    st.markdown("## 📖 Lyrics")
-
-    for eng, kor in lyrics_full:
-        st.markdown(
-            f"""
-            <div class="lyrics-container">
-                <div class="eng-line">{eng}</div>
-                <div class="kor-sub">{kor}</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.markdown("---")
-    st.markdown("## 📝 이해도 문제")
-
-    st.markdown(
-        """
-        <div class="quiz-box">
-            <b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>
-            화자의 상황, 감정, 반복되는 표현을 중심으로 생각하면 됩니다.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    score = 0
-    user_answers = []
-
-    safe_song_key = (
-        song_choice
-        .replace(" ", "_")
-        .replace(".", "")
-        .replace("-", "_")
-        .replace("'", "")
-        .replace("&", "and")
-    )
-
-    with st.form(f"comprehension_quiz_form_{safe_song_key}"):
-        for i, item in enumerate(comprehension_questions):
-            st.markdown(f"### {item['q']}")
-
-            answer = st.radio(
-                "정답을 고르세요.",
-                item["options"],
-                key=f"comp_quiz_{safe_song_key}_{i}",
-                label_visibility="collapsed"
-            )
-
-            user_answers.append(answer)
-
-        submitted = st.form_submit_button("✅ 정답 확인하기")
-
-    if submitted:
-        st.markdown("## 📌 결과 확인")
-
-        for i, item in enumerate(comprehension_questions):
-            correct = item["answer"]
-            user_answer = user_answers[i]
-
-            if user_answer == correct:
-                score += 1
-                st.success(f"{i+1}. 정답입니다! ✅")
-            else:
-                st.error(f"{i+1}. 틀렸습니다 ❌")
-                st.markdown(f"정답: **{correct}**")
-
-        st.markdown(
-            f"""
-            <div class="score-box">
-                <h2 style="margin:0;">점수: {score} / {len(comprehension_questions)}</h2>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
 
