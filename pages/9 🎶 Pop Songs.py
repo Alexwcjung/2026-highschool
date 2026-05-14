@@ -133,7 +133,7 @@ st.markdown("""
         0% { transform: scale(1); opacity: 1; filter: brightness(1); }
         35% { transform: scale(1.12) rotate(1deg); opacity: 1; filter: brightness(1.25); }
         65% { transform: scale(0.82) rotate(-1deg); opacity: 0.75; filter: brightness(1.6); }
-        100% { transform: scale(0.05); opacity: 0; filter: brightness(2); }
+        100% { transform: scale(0.05); opacity: 0; filter: brightness(2); max-height:0; padding-top:0; padding-bottom:0; margin-bottom:0; border-width:0; }
     }
 
     .match-blast-card {
@@ -149,6 +149,7 @@ st.markdown("""
         box-shadow: 0 8px 22px rgba(249, 115, 22, 0.28);
         animation: matchBlast 0.75s ease-in forwards;
         transform-origin: center;
+        overflow: hidden;
     }
 
 
@@ -1503,16 +1504,14 @@ def show_matching_game(song_choice):
     if f"match_blast_at_{game_key}" not in st.session_state:
         st.session_state[f"match_blast_at_{game_key}"] = 0.0
 
-    # 맞춘 직후에는 0.75초 동안 카드가 펑 터지는 애니메이션을 보여 주고,
-    # 다음 자동 새로고침 때 실제로 목록에서 제거합니다.
+    # 맞춘 직후에는 카드 자체에 CSS 애니메이션을 적용합니다.
+    # 예전 버전처럼 window.location.reload()로 새로고침하지 않습니다.
+    # 이미 맞춘 카드는 세션에 바로 기록하고, 화면에서는 잠깐 터지는 효과만 보여 줍니다.
     blast_pair = st.session_state.get(f"match_blast_{game_key}")
     blast_at = st.session_state.get(f"match_blast_at_{game_key}", 0.0)
-    if blast_pair is not None and time.time() - blast_at > 0.75:
-        if blast_pair not in st.session_state[f"match_done_{game_key}"]:
-            st.session_state[f"match_done_{game_key}"].append(blast_pair)
+    if blast_pair is not None and time.time() - blast_at > 1.0:
         st.session_state[f"match_blast_{game_key}"] = None
         st.session_state[f"match_blast_at_{game_key}"] = 0.0
-        st.rerun()
 
     # 이전 버전에서 만들어진 세션값이 남아 있으면 cards가 list 형태일 수 있습니다.
     # 현재 버전은 {"en": [...], "ko": [...]} 형태를 사용하므로, 형태가 다르면 새로 만듭니다.
@@ -1559,8 +1558,10 @@ def show_matching_game(song_choice):
             st.rerun()
         return
 
-    english_cards = [card for card in cards["en"] if card["pair_id"] not in done]
-    korean_cards = [card for card in cards["ko"] if card["pair_id"] not in done]
+    # 맞춘 카드는 기본적으로 사라집니다. 단, 방금 맞춘 카드만 1회 렌더링해서
+    # 펑 터지는 애니메이션을 보여 준 뒤 CSS로 화면에서 사라지게 합니다.
+    english_cards = [card for card in cards["en"] if card["pair_id"] not in done or card["pair_id"] == blast_pair]
+    korean_cards = [card for card in cards["ko"] if card["pair_id"] not in done or card["pair_id"] == blast_pair]
 
     def handle_card_click(card):
         current_selected = st.session_state[f"match_selected_{game_key}"]
@@ -1571,6 +1572,10 @@ def show_matching_game(song_choice):
             st.rerun()
 
         elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
+            # 정답이면 즉시 맞춘 목록에 넣고, 이번 화면에서는 펑 터지는 효과만 보여 줍니다.
+            # 별도 브라우저 새로고침을 하지 않기 때문에 F5처럼 화면이 튀지 않습니다.
+            if card["pair_id"] not in st.session_state[f"match_done_{game_key}"]:
+                st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
             st.session_state[f"match_blast_{game_key}"] = card["pair_id"]
             st.session_state[f"match_blast_at_{game_key}"] = time.time()
             st.session_state[f"match_selected_{game_key}"] = None
@@ -1626,19 +1631,6 @@ def show_matching_game(song_choice):
             else:
                 if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True, disabled=blast_pair is not None):
                     handle_card_click(card)
-
-    if blast_pair is not None:
-        components.html(
-            """
-            <script>
-            setTimeout(function() {
-                try { window.parent.location.reload(); }
-                catch(e) { window.location.reload(); }
-            }, 850);
-            </script>
-            """,
-            height=0,
-        )
 
     st.markdown("---")
     if st.button("🔄 게임 다시 섞기", use_container_width=True, key=f"match_restart_{game_key}"):
