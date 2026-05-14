@@ -105,8 +105,12 @@ song_options = [
     "3. A Whole New World - Aladdin OST",
     "4. Stand By Me - Ben E. King",
     "5. Don't Know Why - Norah Jones",
-    "6. Fix you - Cold Play",
+    "6. Fix You - Coldplay",
 ]
+
+# 이전 실행에서 남은 선택값이 목록과 맞지 않으면 자동으로 초기화합니다.
+if st.session_state.selected_song not in song_options:
+    st.session_state.selected_song = song_options[0]
 
 def sync_song():
     st.session_state.quiz_submitted = False
@@ -467,7 +471,7 @@ elif "2. Hello" in song_choice:
             "options": [
                 "새로 만난 선생님",
                 "유명한 가수",
-                "캘리포니아의 낯선 사람"
+                "캘리포니아의 낯선 사람",
                 "과거에 알던 사람",                
             ],
             "answer": "과거에 알던 사람"
@@ -507,7 +511,7 @@ elif "2. Hello" in song_choice:
             "options": [
                 "정확히 천 번만 전화했다",
                 "한 번도 전화하지 않았다",
-                "전화번호를 잊어버렸다"
+                "전화번호를 잊어버렸다",
                 "정말 여러 번 연락하려고 했다",
             ],
             "answer": "정말 여러 번 연락하려고 했다"
@@ -527,7 +531,7 @@ elif "2. Hello" in song_choice:
             "options": [
                 "노래 대회에 나가려고 했기 때문에",
                 "캘리포니아로 여행을 가고 싶었기 때문에",
-                "새로운 친구를 만들고 싶었기 때문에"
+                "새로운 친구를 만들고 싶었기 때문에",
                 "상대에게 사과하려고 노력했기 때문에",
             ],
             "answer": "상대에게 사과하려고 노력했기 때문에"
@@ -678,7 +682,7 @@ elif "3. A Whole New World" in song_choice:
             "options": [
                 "기차",
                 "자전거",
-                "배"
+                "배",
                 "마법 양탄자",
             ],
             "answer": "마법 양탄자"
@@ -698,7 +702,7 @@ elif "3. A Whole New World" in song_choice:
             "options": [
                 "낡은 방",
                 "어려운 시험",
-                "혼자 있는 시간"
+                "혼자 있는 시간",
                 "새로운 시선과 경험",
             ],
             "answer": "새로운 시선과 경험"
@@ -718,7 +722,7 @@ elif "3. A Whole New World" in song_choice:
             "options": [
                 "문",
                 "속도",
-                "약속"
+                "약속",
                 "관점",
             ],
             "answer": "관점"
@@ -748,7 +752,7 @@ elif "3. A Whole New World" in song_choice:
             "options": [
                 "교실에서 보는 시험",
                 "바닷가에서 하는 운동",
-                "시장 안의 장면"
+                "시장 안의 장면",
                 "밤하늘을 나는 마법 양탄자 여행",
             ],
             "answer": "밤하늘을 나는 마법 양탄자 여행"
@@ -901,7 +905,7 @@ elif "4. Stand By Me" in song_choice:
             "options": [ 
                 "멀리 도망가",
                 "앉아 있어",
-                "집에 가"
+                "집에 가",
                 "내 곁에 있어 줘",
             ],
             "answer": "내 곁에 있어 줘"
