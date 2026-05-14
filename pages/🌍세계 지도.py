@@ -340,26 +340,29 @@ def next_quiz_question():
 
 
 def check_quiz_answer(option):
-    """학생이 고른 답을 채점합니다."""
+    """학생이 고른 답을 채점합니다.
+    틀리면 같은 문제를 계속 다시 풀 수 있고, 정답을 맞힌 뒤에만 다음 문제로 넘어갑니다.
+    """
     if st.session_state.get("quiz_answered", False):
         return
 
     if not isinstance(option, dict):
-        st.session_state.quiz_answered = True
-        st.session_state.quiz_result = "❌ 선택지 오류가 있어요. 퀴즈를 다시 시작해 주세요."
+        st.session_state.quiz_answered = False
+        st.session_state.quiz_result = "❌ 선택지 오류가 있어요. 다시 골라 보세요."
         st.session_state.quiz_correct_flag = False
         return
 
     correct = st.session_state.get("quiz_current", {})
 
-    st.session_state.quiz_answered = True
-
     if isinstance(correct, dict) and option.get("iso") == correct.get("iso"):
+        st.session_state.quiz_answered = True
         st.session_state.quiz_correct_count += 1
         st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('ko', '')} / {correct.get('en', '')}"
         st.session_state.quiz_correct_flag = True
     else:
-        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('ko', '')} / {correct.get('en', '')}입니다."
+        # 오답일 때는 정답을 공개하지 않고, 같은 문제를 계속 풀 수 있게 둡니다.
+        st.session_state.quiz_answered = False
+        st.session_state.quiz_result = "❌ 아쉬워요. 다시 골라보세요! 정답을 맞히면 다음 문제로 넘어갈 수 있습니다."
         st.session_state.quiz_correct_flag = False
 
 
@@ -1046,14 +1049,14 @@ with tab_quiz:
             st.markdown(
                 f"""
                 <div class="result-card">
-                    다음 문제에서 다시 도전해 봅시다!<br>
                     {st.session_state.quiz_result}<br>
-                    <span style="font-size:18px; color:#64748b;">대륙: {current.get('continent', '')}</span>
+                    <span style="font-size:18px; color:#64748b;">같은 문제를 다시 풀어 보세요.</span>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
+    # 정답을 맞힌 경우에만 다음 문제 버튼이 나타납니다.
     if st.session_state.quiz_answered:
         next_label = "➡️ 다음 나라" if st.session_state.quiz_index < QUIZ_LENGTH - 1 else "🏁 결과 보기"
         if st.button(next_label, use_container_width=True):
