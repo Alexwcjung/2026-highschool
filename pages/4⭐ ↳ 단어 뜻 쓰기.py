@@ -1298,7 +1298,7 @@ html_code = f"""
 
     #status {{
         position: absolute;
-        top: 15px;
+        top: 78px;
         left: 20px;
         z-index: 20;
         background: rgba(255,255,255,0.94);
@@ -1314,14 +1314,75 @@ html_code = f"""
     #scoreBox {{
         position: absolute;
         top: 15px;
-        right: 20px;
+        left: 20px;
         z-index: 20;
-        background: rgba(255,255,255,0.94);
+        background: rgba(255,255,255,0.95);
         padding: 12px 18px;
         border-radius: 20px;
         font-size: 20px;
         font-weight: bold;
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }}
+
+    #timerBox {{
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        z-index: 25;
+        background: rgba(255,255,255,0.97);
+        padding: 10px 22px;
+        border-radius: 22px;
+        font-size: 42px;
+        font-weight: 900;
+        color: #e11d48;
+        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
+        min-width: 92px;
+        text-align: center;
+        border: 3px solid #fecdd3;
+    }}
+
+    #endOverlay {{
+        display: none;
+        position: absolute;
+        inset: 0;
+        z-index: 100;
+        background: rgba(15, 23, 42, 0.75);
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 24px;
+        box-sizing: border-box;
+    }}
+
+    #endCard {{
+        background: white;
+        border-radius: 30px;
+        padding: 34px 38px;
+        max-width: 620px;
+        width: 92%;
+        box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        border: 5px solid #fde68a;
+    }}
+
+    #endTitle {{
+        font-size: 44px;
+        font-weight: 900;
+        color: #ef4444;
+        margin-bottom: 16px;
+    }}
+
+    #endScore {{
+        font-size: 34px;
+        font-weight: 900;
+        color: #111827;
+        margin-bottom: 12px;
+    }}
+
+    #endMessage {{
+        font-size: 21px;
+        font-weight: 800;
+        color: #475569;
+        line-height: 1.5;
     }}
 
     #inputPanel {{
@@ -1420,17 +1481,25 @@ html_code = f"""
 
         #status {{
             font-size: 15px;
-            max-width: 52%;
+            max-width: 62%;
+            padding: 9px 12px;
+            top: 62px;
+            left: 10px;
+        }}
+
+        #scoreBox {{
+            font-size: 15px;
             padding: 9px 12px;
             top: 10px;
             left: 10px;
         }}
 
-        #scoreBox {{
-            font-size: 16px;
-            padding: 9px 12px;
+        #timerBox {{
+            font-size: 32px;
+            padding: 8px 16px;
             top: 10px;
             right: 10px;
+            min-width: 72px;
         }}
 
         #inputPanel {{
@@ -1460,8 +1529,17 @@ html_code = f"""
 
 <body>
 <div id="gameArea">
+    <div id="scoreBox">✅ 점수: <span id="score">0</span></div>
+    <div id="timerBox"><span id="timeLeft">{time_limit_js}</span></div>
     <div id="status">🎮 게임 시작을 누르세요</div>
-    <div id="scoreBox">점수: <span id="score">0</span></div>
+
+    <div id="endOverlay">
+        <div id="endCard">
+            <div id="endTitle">⏰ 시간 종료!</div>
+            <div id="endScore">정답 개수: <span id="finalScore">0</span>개</div>
+            <div id="endMessage">수고했습니다. 다시 하려면 시작 버튼을 다시 누르세요.</div>
+        </div>
+    </div>
 
     <div id="inputPanel">
         <input id="answerInput" type="text" placeholder="한국어 뜻 입력 예: 고양이" autocomplete="off">
@@ -1479,6 +1557,9 @@ const showHint = {show_hint_js};
 const gameArea = document.getElementById("gameArea");
 const statusBox = document.getElementById("status");
 const scoreSpan = document.getElementById("score");
+const timeLeftSpan = document.getElementById("timeLeft");
+const endOverlay = document.getElementById("endOverlay");
+const finalScoreSpan = document.getElementById("finalScore");
 const answerInput = document.getElementById("answerInput");
 const submitBtn = document.getElementById("submitBtn");
 const startBtn = document.getElementById("startBtn");
@@ -1487,7 +1568,10 @@ const hintBox = document.getElementById("hintBox");
 let activeWords = [];
 let score = 0;
 let gameStarted = false;
+let gameEnded = false;
 let createInterval = null;
+let countdownInterval = null;
+let remainingSeconds = timeLimitSeconds;
 let usedWords = new Set();
 
 // 같은 영어 단어가 한 판에서 다시 나오지 않도록,
@@ -1524,6 +1608,68 @@ let baseSpeed = 0.10 + fallSpeed * 0.06;
 const laneCount = 6;
 let laneBusy = Array(laneCount).fill(false);
 
+function updateTimerDisplay() {{
+    timeLeftSpan.innerText = String(Math.max(remainingSeconds, 0));
+}}
+
+function playEndSignal() {{
+    try {{
+        const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+        audio.play();
+    }} catch (e) {{
+        console.log("Audio failed:", e);
+    }}
+}}
+
+function endGame(messageText = "⏰ 시간이 끝났습니다!") {{
+    if (gameEnded) return;
+
+    gameEnded = true;
+    gameStarted = false;
+
+    if (createInterval) {{
+        clearInterval(createInterval);
+        createInterval = null;
+    }}
+
+    if (countdownInterval) {{
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }}
+
+    activeWords.forEach(item => item.element.remove());
+    activeWords = [];
+
+    answerInput.value = "";
+    answerInput.disabled = true;
+    submitBtn.disabled = true;
+
+    finalScoreSpan.innerText = score;
+    statusBox.innerText = messageText + " 정답 개수: " + score + "개";
+    endOverlay.style.display = "flex";
+    playEndSignal();
+}}
+
+function startCountdown() {{
+    remainingSeconds = timeLimitSeconds;
+    updateTimerDisplay();
+
+    if (countdownInterval) {{
+        clearInterval(countdownInterval);
+    }}
+
+    countdownInterval = setInterval(() => {{
+        if (!gameStarted || gameEnded) return;
+
+        remainingSeconds -= 1;
+        updateTimerDisplay();
+
+        if (remainingSeconds <= 0) {{
+            endGame("⏰ 시간 종료!");
+        }}
+    }}, 1000);
+}}
+
 function normalizeKorean(text) {{
     return text
         .toLowerCase()
@@ -1557,7 +1703,7 @@ function getFreeLane() {{
 }}
 
 function createOneWord() {{
-    if (!gameStarted) return;
+    if (!gameStarted || gameEnded) return;
 
     const activeWordKeys = activeWords.map(item => item.word.toLowerCase().trim());
 
@@ -1568,12 +1714,7 @@ function createOneWord() {{
 
     if (availableWords.length === 0) {{
         if (activeWords.length === 0) {{
-            statusBox.innerText = "🎉 모든 단어를 한 번씩 완료했습니다! 점수: " + score;
-            gameStarted = false;
-            if (createInterval) {{
-                clearInterval(createInterval);
-                createInterval = null;
-            }}
+            endGame("🎉 모든 단어를 한 번씩 완료했습니다!");
         }}
         return;
     }}
@@ -1615,7 +1756,7 @@ function createOneWord() {{
 }}
 
 function createWordsBatch() {{
-    if (!gameStarted) return;
+    if (!gameStarted || gameEnded) return;
 
     for (let i = 0; i < batchCount; i++) {{
         setTimeout(() => {{
@@ -1638,12 +1779,7 @@ function moveWords() {{
     }}
 
     if (gameStarted && usedWords.size >= uniqueWordData.length && activeWords.length === 0) {{
-        statusBox.innerText = "🎉 모든 단어를 한 번씩 완료했습니다! 최종 점수: " + score;
-        gameStarted = false;
-        if (createInterval) {{
-            clearInterval(createInterval);
-            createInterval = null;
-        }}
+        endGame("🎉 모든 단어를 한 번씩 완료했습니다!");
     }}
 
     updateHint();
@@ -1651,7 +1787,7 @@ function moveWords() {{
 }}
 
 function checkAnswer() {{
-    if (!gameStarted) return;
+    if (!gameStarted || gameEnded) return;
 
     const rawAnswer = answerInput.value;
     const userAnswer = normalizeKorean(rawAnswer);
@@ -1734,24 +1870,40 @@ function updateHint() {{
 }}
 
 function startGame() {{
-    if (gameStarted) return;
+    if (createInterval) {{
+        clearInterval(createInterval);
+        createInterval = null;
+    }}
+
+    if (countdownInterval) {{
+        clearInterval(countdownInterval);
+        countdownInterval = null;
+    }}
 
     gameStarted = true;
+    gameEnded = false;
     score = 0;
+    remainingSeconds = timeLimitSeconds;
+
     activeWords.forEach(item => item.element.remove());
     activeWords = [];
     usedWords = new Set();
     laneBusy = Array(laneCount).fill(false);
-    scoreSpan.innerText = score;
-    statusBox.innerText = "✏️ 떨어지는 단어의 한국어 뜻을 입력하세요! 같은 단어는 한 번만 나옵니다.";
 
+    scoreSpan.innerText = score;
+    updateTimerDisplay();
+    endOverlay.style.display = "none";
+
+    answerInput.disabled = false;
+    submitBtn.disabled = false;
+    answerInput.value = "";
     answerInput.focus();
 
-    if (createInterval) {{
-        clearInterval(createInterval);
-    }}
+    statusBox.innerText = "✏️ 떨어지는 단어의 한국어 뜻을 입력하세요! 같은 단어는 한 번만 나옵니다.";
 
+    createWordsBatch();
     createInterval = setInterval(createWordsBatch, spawnInterval);
+    startCountdown();
 }}
 
 submitBtn.addEventListener("click", checkAnswer);
@@ -1764,6 +1916,7 @@ answerInput.addEventListener("keydown", function(event) {{
 
 startBtn.addEventListener("click", startGame);
 
+updateTimerDisplay();
 moveWords();
 </script>
 </body>
