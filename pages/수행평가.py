@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import re
+import json
 from pathlib import Path
 
 st.set_page_config(
@@ -24,40 +25,7 @@ def clean_english_input(text):
 
 
 # =========================
-# 이름 변환
-# =========================
-name_dict = {
-    "정우창": "Woochang Jung",
-    "김민수": "Minsu Kim",
-    "박지민": "Jimin Park",
-    "이준호": "Junho Lee",
-    "최민준": "Minjun Choi",
-    "강민재": "Minjae Kang",
-    "조현우": "Hyunwoo Cho",
-    "윤서준": "Seojun Yoon",
-    "장동현": "Donghyun Jang",
-    "임지훈": "Jihoon Lim",
-}
-
-
-def convert_name_to_english(name_input):
-    name_input = str(name_input).strip()
-
-    if not name_input:
-        return "Woochang"
-
-    if name_input in name_dict:
-        return name_dict[name_input]
-
-    if has_korean(name_input):
-        return "Student"
-
-    cleaned = clean_english_input(name_input)
-    return cleaned if cleaned else "Student"
-
-
-# =========================
-# 취미 변환
+# 한국어 취미 → 영어 변환
 # =========================
 hobby_dict = {
     "축구": "soccer",
@@ -141,9 +109,11 @@ def translate_hobby(hobby_input):
     if hobby_no_space in hobby_dict:
         return hobby_dict[hobby_no_space]
 
+    # 사전에 없는 한국어 입력 시 기본값
     if has_korean(hobby_input):
         return "playing sports"
 
+    # 영어로 입력한 경우
     cleaned = clean_english_input(hobby_input)
     return cleaned if cleaned else "playing sports"
 
@@ -152,14 +122,14 @@ def translate_hobby(hobby_input):
 # 브라우저 음성 버튼
 # gTTS 사용 안 함
 # =========================
-def browser_speech_button(text, key, speed=1.0, label="🔊 듣기"):
-    safe_text = str(text).replace("\\", "\\\\").replace("'", "\\'").replace("\n", " ")
+def speech_button(text, key, speed=1.0, label="🔊 듣기"):
+    text_js = json.dumps(str(text))
     key = re.sub(r"[^a-zA-Z0-9_]", "_", str(key))
 
     html_code = f"""
     <button onclick="
         window.speechSynthesis.cancel();
-        var utterance = new SpeechSynthesisUtterance('{safe_text}');
+        var utterance = new SpeechSynthesisUtterance({text_js});
         utterance.lang = 'en-US';
         utterance.rate = {speed};
         utterance.pitch = 1;
@@ -182,15 +152,15 @@ def browser_speech_button(text, key, speed=1.0, label="🔊 듣기"):
     components.html(html_code, height=45)
 
 
-def browser_speech_controls(text, key, speed=1.0):
-    safe_text = str(text).replace("\\", "\\\\").replace("'", "\\'").replace("\n", " ")
+def simple_speech_controls(text, key, speed=1.0):
+    text_js = json.dumps(str(text))
     key = re.sub(r"[^a-zA-Z0-9_]", "_", str(key))
 
     html_code = f"""
     <div style="display:flex; gap:8px; flex-wrap:wrap;">
         <button onclick="
             window.speechSynthesis.cancel();
-            var utterance = new SpeechSynthesisUtterance('{safe_text}');
+            var utterance = new SpeechSynthesisUtterance({text_js});
             utterance.lang = 'en-US';
             utterance.rate = {speed};
             utterance.pitch = 1;
@@ -208,32 +178,6 @@ def browser_speech_controls(text, key, speed=1.0):
             ▶ 전체 듣기
         </button>
 
-        <button onclick="window.speechSynthesis.pause();"
-        style="
-            background-color:#64748b;
-            color:white;
-            border:none;
-            border-radius:10px;
-            padding:9px 14px;
-            font-size:15px;
-            cursor:pointer;
-        ">
-            ⏸ 잠깐 멈춤
-        </button>
-
-        <button onclick="window.speechSynthesis.resume();"
-        style="
-            background-color:#16a34a;
-            color:white;
-            border:none;
-            border-radius:10px;
-            padding:9px 14px;
-            font-size:15px;
-            cursor:pointer;
-        ">
-            다시 듣기
-        </button>
-
         <button onclick="window.speechSynthesis.cancel();"
         style="
             background-color:#dc2626;
@@ -244,12 +188,12 @@ def browser_speech_controls(text, key, speed=1.0):
             font-size:15px;
             cursor:pointer;
         ">
-            ⏹ 정지
+            ⏹ 멈춤
         </button>
     </div>
     """
 
-    components.html(html_code, height=65)
+    components.html(html_code, height=60)
 
 
 # =========================
@@ -265,7 +209,7 @@ def sentence_card(korean, english, key, speed=1.0):
         st.markdown(f"### {english}")
 
     with col3:
-        browser_speech_button(english, key, speed)
+        speech_button(english, key, speed)
 
 
 # =========================
@@ -314,15 +258,15 @@ st.subheader("1. 자기소개하기")
 
 name_input = st.text_input(
     "내 이름을 한국어 또는 영어로 써 보세요.",
-    placeholder="예: 정우창, 김민수, Woochang"
+    placeholder="예: 정우창, Woochang"
 )
 
-name_english = convert_name_to_english(name_input)
+if name_input.strip():
+    name_for_sentence = name_input.strip()
+else:
+    name_for_sentence = "Woochang"
 
-if name_input:
-    st.info(f"입력한 이름: {name_input} → 영어 표현: {name_english}")
-
-name_sentence = f"I am {name_english}."
+name_sentence = f"I am {name_for_sentence}."
 
 sentence_card(
     "나는 (본인 이름)입니다.",
@@ -345,7 +289,7 @@ hobby_input = st.text_input(
 
 hobby_english = translate_hobby(hobby_input)
 
-if hobby_input:
+if hobby_input.strip():
     st.info(f"입력한 취미: {hobby_input} → 영어 표현: {hobby_english}")
 
 hobby_sentence = f"My hobby is {hobby_english}. I am a student and tall."
@@ -425,7 +369,7 @@ They look happy.
 """
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
-browser_speech_controls(picture_script, "picture_full", speed)
+simple_speech_controls(picture_script, "picture_full", speed)
 
 st.markdown("### There are many people in the street.")
 st.markdown("### I can see trees and buildings too.")
@@ -460,6 +404,6 @@ st.text_area(
     height=250
 )
 
-browser_speech_controls(full_script, "full_script", speed)
+simple_speech_controls(full_script, "full_script", speed)
 
 st.success("영어 문장을 듣고 따라 말하면서 연습해 보세요.")
