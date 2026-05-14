@@ -5,6 +5,10 @@ import hashlib
 import random
 import re
 import html
+import base64
+import json
+import uuid
+import streamlit.components.v1 as components
 
 # =====================================================
 # Survival English 160 - 안정형 버전
@@ -15,7 +19,7 @@ import html
 # 4) Google TTS URL + requests + Streamlit 기본 st.audio() 사용
 # 5) 카세트는 여러 조각 mp3를 하나로 이어 붙여 한 번에 재생
 # 6) 단어 카드는 추가 버튼 없이 오디오 플레이어를 바로 표시
-# 7) 카세트 아래에 단어·뜻·이모지 목록을 JS 없이 표시
+# 7) 카세트는 JS 화면 전환으로 현재 단어·뜻·이모지를 크게 표시
 # =====================================================
 
 st.set_page_config(
@@ -893,35 +897,216 @@ def show_cassette_word_list(items, title="📋 카세트 단어 목록"):
         )
 
 
+def js_cassette_visual_player(items, audio_bytes, title="📼 단어 카세트", repeat_word=2, seconds_per_word=2.0, height=660):
+    """
+    카세트 오디오는 mp3 bytes로 안정적으로 만들고,
+    화면의 현재 단어·뜻·이모지 전환만 JavaScript로 처리합니다.
+    """
+    player_id = "cassette_" + uuid.uuid4().hex
+    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+    visual_items = []
+    for idx, item in enumerate(items, start=1):
+        visual_items.append({
+            "number": item.get("number", idx),
+            "theme": str(item.get("theme", "")),
+            "word": str(item.get("word", "")),
+            "meaning": str(item.get("meaning", "")),
+            "emoji": get_word_emoji(item.get("word", "")),
+        })
+
+    items_json = json.dumps(visual_items, ensure_ascii=False)
+    safe_title = html.escape(title)
+    safe_player_id = json.dumps(player_id)
+    # 반복 횟수가 많을수록 한 단어가 더 오래 들리므로 화면도 조금 천천히 넘깁니다.
+    interval_ms = int(float(seconds_per_word) * 1000)
+
+    components.html(
+        f"""
+        <div id="{player_id}" style="
+            font-family: Arial, sans-serif;
+            width:100%;
+            box-sizing:border-box;
+            border-radius:28px;
+            padding:18px;
+            background:linear-gradient(135deg,#eff6ff 0%,#fff7ed 48%,#fdf2f8 100%);
+            border:1px solid #bae6fd;
+            box-shadow:0 8px 22px rgba(15,23,42,0.10);
+            overflow:hidden;
+        ">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
+                <div style="font-size:24px; font-weight:900; color:#0f172a; line-height:1.25;">{safe_title}</div>
+                <div id="count_{player_id}" style="font-size:13px; font-weight:900; color:#475569; background:rgba(255,255,255,.8); border:1px solid #dbeafe; border-radius:999px; padding:7px 12px;">1 / {len(visual_items)}</div>
+            </div>
+
+            <audio id="audio_{player_id}" controls preload="auto" style="width:100%; margin:6px 0 14px 0;">
+                <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+            </audio>
+
+            <div style="display:grid; grid-template-columns:1fr; gap:12px;">
+                <div style="
+                    background:rgba(255,255,255,0.88);
+                    border:1px solid #dbeafe;
+                    border-radius:26px;
+                    padding:22px 18px;
+                    text-align:center;
+                ">
+                    <div id="theme_{player_id}" style="display:inline-block; font-size:13px; font-weight:900; color:#7c3aed; background:#f3e8ff; border-radius:999px; padding:6px 12px; margin-bottom:10px;">Theme</div>
+                    <div id="emoji_{player_id}" style="font-size:58px; line-height:1.05; margin:4px 0;">🌱</div>
+                    <div id="word_{player_id}" style="font-size:clamp(46px,9vw,78px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
+                    <div id="meaning_{player_id}" style="font-size:clamp(24px,5vw,38px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
+                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:18px;">
+                        <div id="bar_{player_id}" style="height:100%; width:0%; background:linear-gradient(90deg,#38bdf8,#8b5cf6,#ec4899); border-radius:999px;"></div>
+                    </div>
+                </div>
+
+                <div id="list_{player_id}" style="
+                    max-height:250px;
+                    overflow-y:auto;
+                    padding:4px;
+                    border-radius:18px;
+                "></div>
+            </div>
+        </div>
+
+        <script>
+        const items_{player_id} = {items_json};
+        const audio_{player_id} = document.getElementById("audio_{player_id}");
+        const wordEl_{player_id} = document.getElementById("word_{player_id}");
+        const meaningEl_{player_id} = document.getElementById("meaning_{player_id}");
+        const emojiEl_{player_id} = document.getElementById("emoji_{player_id}");
+        const themeEl_{player_id} = document.getElementById("theme_{player_id}");
+        const countEl_{player_id} = document.getElementById("count_{player_id}");
+        const barEl_{player_id} = document.getElementById("bar_{player_id}");
+        const listEl_{player_id} = document.getElementById("list_{player_id}");
+        const intervalMs_{player_id} = {interval_ms};
+        const playerId_{player_id} = {safe_player_id};
+
+        let currentIndex_{player_id} = 0;
+
+        function renderList_{player_id}() {{
+            listEl_{player_id}.innerHTML = items_{player_id}.map((it, idx) => `
+                <div id="row_${{playerId_{player_id}}}_${{idx}}" style="
+                    display:flex;
+                    align-items:center;
+                    gap:9px;
+                    padding:9px 11px;
+                    margin-bottom:6px;
+                    border-radius:15px;
+                    background:white;
+                    border:1px solid #dbeafe;
+                    box-shadow:0 2px 7px rgba(0,0,0,0.035);
+                    box-sizing:border-box;
+                ">
+                    <span style="min-width:34px; font-size:12px; font-weight:900; color:#0369a1; background:#e0f2fe; border-radius:999px; padding:5px 8px; text-align:center;">${{it.number}}</span>
+                    <span style="font-size:24px;">${{it.emoji}}</span>
+                    <span style="font-size:21px; font-weight:900; color:#111827; min-width:95px;">${{it.word}}</span>
+                    <span style="font-size:16px; font-weight:900; color:#374151;">${{it.meaning}}</span>
+                </div>
+            `).join("");
+        }}
+
+        function setCurrent_{player_id}(idx) {{
+            if (!items_{player_id}.length) return;
+            idx = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
+            currentIndex_{player_id} = idx;
+            const it = items_{player_id}[idx];
+
+            wordEl_{player_id}.textContent = it.word;
+            meaningEl_{player_id}.textContent = it.meaning;
+            emojiEl_{player_id}.textContent = it.emoji;
+            themeEl_{player_id}.textContent = it.theme || "Survival English";
+            countEl_{player_id}.textContent = (idx + 1) + " / " + items_{player_id}.length;
+
+            const percent = items_{player_id}.length <= 1 ? 100 : (idx / (items_{player_id}.length - 1)) * 100;
+            barEl_{player_id}.style.width = percent + "%";
+
+            for (let i = 0; i < items_{player_id}.length; i++) {{
+                const row = document.getElementById("row_" + playerId_{player_id} + "_" + i);
+                if (!row) continue;
+                if (i === idx) {{
+                    row.style.background = "linear-gradient(135deg,#dbeafe,#fce7f3)";
+                    row.style.borderColor = "#8b5cf6";
+                    row.style.transform = "scale(1.01)";
+                    row.scrollIntoView({{block:"nearest", behavior:"smooth"}});
+                }} else {{
+                    row.style.background = "white";
+                    row.style.borderColor = "#dbeafe";
+                    row.style.transform = "scale(1)";
+                }}
+            }}
+        }}
+
+        function syncByTime_{player_id}() {{
+            if (!items_{player_id}.length) return;
+            let idx = Math.floor((audio_{player_id}.currentTime * 1000) / intervalMs_{player_id});
+            if (idx >= items_{player_id}.length) idx = items_{player_id}.length - 1;
+            setCurrent_{player_id}(idx);
+        }}
+
+        renderList_{player_id}();
+        setCurrent_{player_id}(0);
+
+        audio_{player_id}.addEventListener("play", syncByTime_{player_id});
+        audio_{player_id}.addEventListener("timeupdate", syncByTime_{player_id});
+        audio_{player_id}.addEventListener("ended", function() {{
+            barEl_{player_id}.style.width = "100%";
+        }});
+        </script>
+        """,
+        height=height,
+        scrolling=True
+    )
+
+
 def show_cassette_audio(items, title):
     st.markdown(
         f"""
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
             <div class="cassette-note">
-                예문은 빼고 단어만 재생합니다. 버튼을 누르면 전체 단어 카세트를 하나의 오디오로 만들어 재생합니다.
-                멈춤은 오디오 바의 일시정지 버튼을 사용하면 됩니다.
+                예문은 빼고 단어만 재생합니다. 오디오가 재생되는 동안 현재 단어, 뜻, 이모지가 크게 바뀝니다.
+                화면 전환은 JavaScript로 처리하지만, 음성 파일 생성은 안정적인 requests 방식입니다.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    repeat_word = st.selectbox(
-        "단어 반복 횟수",
-        [1, 2, 3],
-        index=1,
-        key=f"repeat_{title}"
-    )
+    col_a, col_b = st.columns(2)
+    with col_a:
+        repeat_word = st.selectbox(
+            "단어 반복 횟수",
+            [1, 2, 3],
+            index=1,
+            key=f"repeat_{title}"
+        )
+    with col_b:
+        speed_label = st.selectbox(
+            "화면 전환 속도",
+            ["빠르게", "보통", "천천히"],
+            index=1,
+            key=f"visual_speed_{title}"
+        )
+
+    base_seconds = {"빠르게": 1.25, "보통": 1.65, "천천히": 2.05}[speed_label]
+    seconds_per_word = base_seconds * repeat_word
 
     # 예문은 듣기에 넣지 않습니다. 단어만 반복해서 카세트로 만듭니다.
     text = make_cassette_text(items, repeat_word=repeat_word, include_example=False)
 
-    if st.button("▶️ 카세트 한 번에 듣기", key=f"one_cassette_{title}", use_container_width=True):
+    if st.button("▶️ 화면 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
         try:
             with st.spinner("카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
                 audio_bytes = get_combined_tts_mp3_bytes(text, lang="en", max_chars=155)
-            st.audio(audio_bytes, format="audio/mp3")
+            js_cassette_visual_player(
+                items=items,
+                audio_bytes=audio_bytes,
+                title=title,
+                repeat_word=repeat_word,
+                seconds_per_word=seconds_per_word,
+                height=690
+            )
         except Exception as e:
             st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
@@ -929,7 +1114,8 @@ def show_cassette_audio(items, title):
     with st.expander("📜 실제 재생 대본 보기"):
         st.write(text)
 
-    show_cassette_word_list(items, "👇 들으면서 보는 단어·뜻·이모지")
+    with st.expander("📋 전체 단어 목록 보기"):
+        show_cassette_word_list(items, "👇 전체 단어·뜻·이모지")
 
 
 def show_cassette_player(theme_words, theme_name):
