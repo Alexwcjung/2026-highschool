@@ -10,8 +10,7 @@ from streamlit_drawable_canvas import st_canvas
 import random
 import html
 import json
-import io
-from gtts import gTTS
+import urllib.parse
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -820,45 +819,22 @@ with tabs[7]:
         if st.session_state["translation_method"]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
-        # 번역 결과를 영어 발음으로 듣기
-        # 브라우저 음성 기능이 안 들리는 경우가 많아서 gTTS mp3 방식으로 처리합니다.
+        # 영어 번역 결과 발음 듣기
+        # 앱 안에서 TTS를 직접 만들지 않고, 구글 번역 발음 페이지로 연결합니다.
+        # gTTS 429 오류, 브라우저 음성 무음 문제를 피하기 위한 가장 안정적인 방식입니다.
         st.markdown("#### 🔊 영어 발음 듣기")
 
-        @st.cache_data(show_spinner=False)
-        def make_english_tts_mp3(text):
-            text = str(text).strip()
+        english_text = st.session_state["translated_text"]
+        encoded_text = urllib.parse.quote(english_text)
 
-            if not text:
-                return None
+        google_translate_url = (
+            "https://translate.google.com/?sl=en&tl=ko&text="
+            + encoded_text
+            + "&op=translate"
+        )
 
-            # 너무 긴 문장은 gTTS 오류가 날 수 있어서 길이를 제한합니다.
-            if len(text) > 500:
-                text = text[:500]
-
-            fp = io.BytesIO()
-            tts = gTTS(
-                text=text,
-                lang="en",
-                tld="com",
-                slow=False
-            )
-            tts.write_to_fp(fp)
-            fp.seek(0)
-            return fp.read()
-
-        if st.button("🔊 발음 듣기", use_container_width=True, key="listen_translation_gtts"):
-            try:
-                with st.spinner("발음 파일을 만드는 중입니다..."):
-                    audio_bytes = make_english_tts_mp3(
-                        st.session_state["translated_text"]
-                    )
-
-                if audio_bytes:
-                    st.audio(audio_bytes, format="audio/mp3")
-                else:
-                    st.warning("읽을 번역 결과가 없습니다.")
-
-            except Exception as e:
-                st.error("발음 파일을 만드는 중 오류가 발생했습니다.")
-                st.warning("gTTS는 인터넷 연결이 필요합니다. Streamlit Cloud에서 잠시 막힌 경우에는 잠시 후 다시 눌러 주세요.")
-                st.write(e)
+        st.link_button(
+            "🔊 구글 번역에서 발음 듣기",
+            google_translate_url,
+            use_container_width=True
+        )
