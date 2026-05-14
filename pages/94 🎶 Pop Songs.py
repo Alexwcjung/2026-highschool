@@ -544,7 +544,7 @@ elif "2. Hello" in song_choice:
     ]
 
 elif "3. A Whole New World" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
+    video_url = "https://www.youtube.com/watch?v=9FJssSUxI88&list=RD9FJssSUxI88&start_radio=1"
 
     bg_content = '''
     <h3 style="font-size:2.2rem; margin-bottom:20px; color:#4338ca;">
