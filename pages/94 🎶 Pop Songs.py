@@ -546,56 +546,213 @@ elif "2. Hello" in song_choice:
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
 
-    bg_content = """
-    <h3>🕌 A Whole New World: 새로운 세상으로 떠나는 여행</h3>
-    <p>
-    <b>A Whole New World</b>는 영화 <i>Aladdin</i>의 대표곡으로,
-    알라딘과 자스민이 마법 양탄자를 타고 새로운 세상을 바라보는 장면에서 나오는 노래입니다.
+    bg_content = '''
+    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#4338ca;">
+        🕌 A Whole New World: 새로운 세상을 바라보는 순간
+    </h3>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        <b>A Whole New World</b>는 영화 <i>Aladdin</i>의 대표곡으로,
+        알라딘과 자스민이 마법 양탄자를 타고 밤하늘을 날며
+        새로운 세상을 바라보는 장면에서 나오는 노래입니다.
     </p>
-    """
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        자스민은 궁전 안에서 공주로 살아가지만,
+        정해진 규칙과 역할 속에서 자유롭게 세상을 경험하지 못합니다.
+        알라딘은 그런 자스민에게 궁전 밖의 넓은 세상을 보여 주고,
+        자스민은 처음으로 자신이 알지 못했던 새로운 풍경과 가능성을 마주하게 됩니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        이 노래에서 <b>a whole new world</b>는 단순히 새로운 장소만을 뜻하지 않습니다.
+        새로운 시선, 새로운 경험, 그리고 스스로 선택할 수 있는 자유를 의미합니다.
+        두 사람은 마법 양탄자를 타고 하늘을 날며,
+        두려움보다 설렘이 더 큰 새로운 세계로 함께 나아갑니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        수업에서는 <b>I can show you the world</b>, <b>open your eyes</b>,
+        <b>point of view</b>, <b>crystal clear</b>, <b>new horizons</b>
+        같은 표현을 중심으로 배울 수 있습니다.
+        특히 이 노래는 속도가 비교적 부드럽고 장면이 분명해서,
+        학생들이 영어 표현과 함께 설렘, 자유, 새로운 경험의 감정을 이해하기에 좋습니다.
+    </p>
+    '''
 
     lyrics_full = [
-        ("I can show you the world", "내가 너에게 세상을 보여 줄 수 있어"),
-        ("Shining, shimmering, splendid", "빛나고, 반짝이고, 눈부신 세상"),
-        ("Tell me, princess, now when did you last let your heart decide?", "공주님, 마지막으로 마음이 원하는 대로 한 게 언제였나요?"),
-        ("I can open your eyes", "내가 너의 눈을 뜨게 해 줄 수 있어"),
-        ("Take you wonder by wonder", "놀라운 곳에서 또 다른 놀라운 곳으로 데려가며"),
-        ("Over, sideways and under on a magic carpet ride", "마법 양탄자를 타고 위로, 옆으로, 아래로 날아가며"),
+        (
+            "I can show you the world / Shining, shimmering, splendid",
+            "내가 너에게 세상을 보여 줄 수 있어 / 빛나고, 반짝이고, 눈부신 세상을"
+        ),
+        (
+            "Tell me, princess, now when did / You last let your heart decide?",
+            "말해 봐요, 공주님, 언제였나요 / 마지막으로 마음이 원하는 대로 선택했던 때가?"
+        ),
+        (
+            "I can open your eyes / Take you wonder by wonder",
+            "내가 너의 눈을 뜨게 해 줄 수 있어 / 놀라움에서 또 다른 놀라움으로 데려가며"
+        ),
+        (
+            "Over, sideways and under / On a magic carpet ride",
+            "위로, 옆으로, 아래로 날아가며 / 마법 양탄자를 타고"
+        ),
+        (
+            "A whole new world / A new fantastic point of view",
+            "완전히 새로운 세상 / 새롭고 환상적인 시선"
+        ),
+        (
+            "No one to tell us no / Or where to go",
+            "아무도 우리에게 안 된다고 말하지 않고 / 어디로 가라고 하지도 않아"
+        ),
+        (
+            "Or say we're only dreaming",
+            "우리가 그저 꿈꾸고 있을 뿐이라고 말하지도 않아"
+        ),
+        (
+            "A whole new world / A dazzling place I never knew",
+            "완전히 새로운 세상 / 내가 전에는 알지 못했던 눈부신 곳"
+        ),
+        (
+            "But when I'm way up here, it's crystal clear / That now I'm in a whole new world with you",
+            "하지만 이렇게 높은 곳에 올라오니 모든 것이 분명해 / 지금 나는 너와 함께 완전히 새로운 세상에 있어"
+        ),
+        (
+            "(Now I'm in a whole new world with you)",
+            "이제 나는 너와 함께 완전히 새로운 세상에 있어"
+        ),
+        (
+            "Unbelievable sights / Indescribable feeling",
+            "믿기 어려운 풍경들 / 말로 표현할 수 없는 감정"
+        ),
+        (
+            "Soaring, tumbling, freewheeling / Through an endless diamond sky",
+            "솟아오르고, 구르고, 자유롭게 날아가며 / 끝없이 펼쳐진 다이아몬드 같은 하늘을 지나"
+        ),
+        (
+            "A whole new world / Don't you dare close your eyes",
+            "완전히 새로운 세상 / 절대 눈 감지 마"
+        ),
+        (
+            "A hundred thousand things to see / Hold your breath, it gets better",
+            "볼 것이 셀 수 없이 많아 / 숨을 참고 봐, 더 좋아질 거야"
+        ),
+        (
+            "I'm like a shooting star, I've come so far / I can't go back to where I used to be",
+            "나는 별똥별 같아, 정말 멀리까지 왔어 / 예전의 내가 있던 곳으로 돌아갈 수 없어"
+        ),
+        (
+            "A whole new world / Every turn a surprise",
+            "완전히 새로운 세상 / 방향을 틀 때마다 놀라움이 있어"
+        ),
+        (
+            "With new horizons to pursue / Every moment, red-letter",
+            "따라갈 새로운 지평선들이 있고 / 모든 순간이 특별해"
+        ),
+        (
+            "I'll chase them anywhere, there's time to spare / Let me share this whole new world with you",
+            "나는 어디든 그것들을 따라갈 거야, 시간은 충분해 / 이 완전히 새로운 세상을 너와 함께 나누게 해 줘"
+        ),
+        (
+            "A whole new world / A whole new world",
+            "완전히 새로운 세상 / 완전히 새로운 세상"
+        ),
+        (
+            "That's where we'll be / That's where we'll be",
+            "그곳이 우리가 있을 곳이야 / 그곳이 우리가 있을 곳이야"
+        ),
+        (
+            "A thrilling chase / A wondrous place",
+            "짜릿한 모험 / 놀라운 곳"
+        ),
+        (
+            "For you and me",
+            "너와 나를 위한"
+        ),
     ]
 
     comprehension_questions = [
         {
-            "q": "1. What can the speaker show?",
-            "options": ["The world", "A classroom", "A book", "A phone"],
-            "answer": "The world"
+            "q": "1. 이 노래에서 두 사람은 무엇을 타고 있나요?",
+            "options": [
+                "마법 양탄자",
+                "기차",
+                "자전거",
+                "배"
+            ],
+            "answer": "마법 양탄자"
         },
         {
-            "q": "2. Who is the speaker talking to?",
-            "options": ["A princess", "A teacher", "A king", "A student"],
-            "answer": "A princess"
+            "q": "2. 이 노래에서 알라딘은 자스민에게 무엇을 보여 주고 싶어 하나요?",
+            "options": [
+                "새로운 세상",
+                "학교 교실",
+                "시험 문제",
+                "휴대전화"
+            ],
+            "answer": "새로운 세상"
         },
         {
-            "q": "3. What do they ride?",
-            "options": ["A magic carpet", "A train", "A bicycle", "A boat"],
-            "answer": "A magic carpet"
+            "q": "3. 'A whole new world'가 상징하는 것으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "새로운 시선과 경험",
+                "낡은 방",
+                "어려운 시험",
+                "혼자 있는 시간"
+            ],
+            "answer": "새로운 시선과 경험"
         },
         {
-            "q": "4. What is the feeling of the song?",
-            "options": ["Wonder and excitement", "Fear and anger", "Sadness and regret", "Boredom"],
-            "answer": "Wonder and excitement"
+            "q": "4. 'I can open your eyes'는 어떤 의미에 가깝나요?",
+            "options": [
+                "새로운 것을 보게 해 주다",
+                "잠에서 깨우다",
+                "눈을 감게 하다",
+                "멀리 보내다"
+            ],
+            "answer": "새로운 것을 보게 해 주다"
         },
         {
-            "q": "5. What does 'splendid' mean?",
-            "options": ["Wonderful", "Small", "Dark", "Slow"],
-            "answer": "Wonderful"
+            "q": "5. 'point of view'의 뜻으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "관점",
+                "문",
+                "속도",
+                "약속"
+            ],
+            "answer": "관점"
         },
         {
-            "q": "6. What is the song mainly about?",
-            "options": ["Discovering a new world", "Taking a test", "Buying food", "Cleaning a room"],
-            "answer": "Discovering a new world"
+            "q": "6. 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "설렘과 자유로움",
+                "후회와 슬픔",
+                "분노와 복수",
+                "지루함"
+            ],
+            "answer": "설렘과 자유로움"
+        },
+        {
+            "q": "7. 'I can't go back to where I used to be'는 어떤 의미인가요?",
+            "options": [
+                "예전의 모습으로 돌아갈 수 없다",
+                "집에 갈 길을 잃었다",
+                "학교에 다시 가야 한다",
+                "여행을 취소했다"
+            ],
+            "answer": "예전의 모습으로 돌아갈 수 없다"
+        },
+        {
+            "q": "8. 이 노래의 주요 배경으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "밤하늘을 나는 마법 양탄자 여행",
+                "교실에서 보는 시험",
+                "바닷가에서 하는 운동",
+                "시장 안의 장면"
+            ],
+            "answer": "밤하늘을 나는 마법 양탄자 여행"
         },
     ]
-
 
 elif "4. Stand By Me" in song_choice:
     video_url = "https://www.youtube.com/watch?v=hwZNL7QVJjE"
