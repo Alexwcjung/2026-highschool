@@ -62,7 +62,7 @@ tabs = st.tabs([
     "☁️ 워드클라우드",
     "😀 이모지",
     "👥 조 편성",
-    "🌐 번역"
+    "🌐 번역기"
 ])
 
 # --- Tab 0: Blackboard ---
@@ -622,7 +622,7 @@ with tabs[6]:
 
 # --- Tab 7: Translation ---
 with tabs[7]:
-    st.subheader("🌐 번역 도구")
+    st.subheader("🌐 번역기")
     st.caption("문장을 입력하고 번역 버튼을 누르면 바로 번역 결과가 나옵니다.")
 
     # 영어 English가 첫 번째 선택지로 오도록 배치
