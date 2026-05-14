@@ -193,107 +193,177 @@ elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
 
     bg_content = """
-    <h3>☎️ Hello: 과거의 누군가에게 건네는 안부</h3>
+    <h3>☎️ Hello: 과거의 누군가에게 건네는 늦은 안부</h3>
+
     <p>
-    Adele의 <b>Hello</b>는 오랜 시간이 지난 뒤, 과거의 누군가에게 다시 연락하고 싶은 마음을 담은 노래입니다.
-    화자는 미안함과 후회를 느끼며 상대에게 사과하고 싶어 합니다.
+    Adele의 <b>Hello</b>는 시간이 많이 흐른 뒤, 과거의 누군가에게 다시 연락하고 싶은 마음을 담은 노래입니다.
+    노래 속 화자는 상대에게 전화를 걸며 오래전의 관계, 미안함, 후회, 그리고 아직 완전히 치유되지 않은 감정을 떠올립니다.
+    </p>
+
+    <p>
+    이 노래에서 화자는 단순히 “안녕”이라고 말하는 것이 아니라,
+    과거에 하지 못했던 사과를 전하고 싶어 합니다.
+    하지만 두 사람 사이에는 시간의 거리, 마음의 거리, 그리고 실제 거리까지 생겨 있습니다.
+    그래서 반복되는 <b>Hello</b>라는 말은 인사이면서 동시에 조심스러운 사과의 시작처럼 들립니다.
+    </p>
+
+    <p>
+    수업에서는 <b>I'm sorry</b>, <b>I tried</b>, <b>after all these years</b>, 
+    <b>used to be</b> 같은 표현을 중심으로 배울 수 있습니다.
+    특히 이 노래는 속도가 비교적 느리고 감정이 분명하게 드러나기 때문에,
+    학생들이 가사를 읽으며 화자의 감정을 이해하고 영어 표현을 익히기에 좋습니다.
     </p>
     """
 
     lyrics_full = [
-        ("Hello, it's me", "안녕, 나야"),
-        ("I was wondering if after all these years", "이 모든 세월이 흐른 뒤에 궁금했어"),
-        ("You'd like to meet,", "네가 만나고 싶어 할지"),
-        ("to go over everything", "모든 일을 다시 이야기해 보기 위해"),
-        ("They say that time's", "사람들은 시간이"),
-        ("supposed to heal ya", "너를 치유해 줄 거라고 말해"),
-        ("But I ain't done much healing", "하지만 나는 별로 치유되지 않았어"),
-
-        ("Hello, can you hear me?", "여보세요, 내 말 들리니?"),
-        ("I'm in California dreaming", "나는 캘리포니아에서 꿈꾸고 있어"),
-        ("about who we used to be", "예전의 우리 모습에 대해"),
-        ("When we were younger and free", "우리가 더 어리고 자유로웠을 때"),
-        ("I've forgotten how it felt before", "나는 예전의 그 느낌을 잊어버렸어"),
-        ("the world fell at our feet", "세상이 우리 발아래 있는 것 같았던 그때를"),
-        ("There's such a difference between us", "우리 사이에는 너무 큰 차이가 있어"),
-        ("And a million miles", "그리고 백만 마일만큼의 거리도 있어"),
-
-        ("Hello from the other side", "저편에서 안녕이라고 말해"),
-        ("I must've called a thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
-        ("I'm sorry, for everything that I've done", "내가 했던 모든 일에 대해 미안해"),
-        ("But when I call you never seem to be home", "하지만 내가 전화할 때 너는 집에 없는 것 같아"),
-
-        ("Hello from the outside", "바깥쪽에서 안녕이라고 말해"),
-        ("At least I can say that I've tried to tell you", "적어도 너에게 말하려고 노력했다고는 말할 수 있어"),
-        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안해"),
-        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 이제는 상관없는 것 같아. 더 이상 너를 아프게 하지 않는 것 같아"),
-
-        ("Hello, how are you?", "안녕, 어떻게 지내?"),
-        ("It's so typical of me to talk about myself", "내 이야기만 하는 건 참 나답지"),
-        ("I'm sorry, I hope that you're well", "미안해, 네가 잘 지내길 바라"),
-        ("Did you ever make it out of that town", "너는 그 마을을 벗어났니?"),
-        ("Where nothing ever happened?", "아무 일도 일어나지 않던 그곳에서?"),
-        ("It's no secret that the both of us are running out of time", "우리 둘 다 시간이 얼마 남지 않았다는 건 비밀도 아니야"),
-
-        ("Hello from the other side", "저편에서 안녕이라고 말해"),
-        ("I must've called a thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
-        ("I'm sorry, for everything that I've done", "내가 했던 모든 일에 대해 미안해"),
-        ("But when I call you never seem to be home", "하지만 내가 전화할 때 너는 집에 없는 것 같아"),
-
-        ("Hello from the outside", "바깥쪽에서 안녕이라고 말해"),
-        ("At least I can say that I've tried to tell you", "적어도 너에게 말하려고 노력했다고는 말할 수 있어"),
-        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안해"),
-        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 이제는 상관없는 것 같아. 더 이상 너를 아프게 하지 않는 것 같아"),
-
-        ("Ooooohh, anymore", "오, 더 이상"),
-        ("Ooooohh, anymore", "오, 더 이상"),
-        ("Ooooohh, anymore", "오, 더 이상"),
-        ("Anymore", "더 이상"),
-
-        ("Hello from the other side", "저편에서 안녕이라고 말해"),
-        ("I must've called a thousand times to tell you", "너에게 말하려고 천 번은 전화했을 거야"),
-        ("I'm sorry, for everything that I've done", "내가 했던 모든 일에 대해 미안해"),
-        ("But when I call you never seem to be home", "하지만 내가 전화할 때 너는 집에 없는 것 같아"),
-
-        ("Hello from the outside", "바깥쪽에서 안녕이라고 말해"),
-        ("At least I can say that I've tried to tell you", "적어도 너에게 말하려고 노력했다고는 말할 수 있어"),
-        ("I'm sorry, for breaking your heart", "네 마음을 아프게 해서 미안해"),
-        ("But it don't matter, it clearly doesn't tear you apart anymore", "하지만 이제는 상관없는 것 같아. 더 이상 너를 아프게 하지 않는 것 같아"),
+        (
+            "Hello, it's me / I was wondering if after all these years you'd like to meet, to go over everything",
+            "안녕, 나야 / 이 모든 세월이 흐른 뒤에 네가 만나서 모든 일을 다시 이야기해 보고 싶어 할지 궁금했어"
+        ),
+        (
+            "They say that time's supposed to heal ya / But I ain't done much healing",
+            "사람들은 시간이 너를 치유해 줄 거라고 말하지만 / 나는 별로 치유되지 않은 것 같아"
+        ),
+        (
+            "Hello, can you hear me? / I'm in California dreaming about who we used to be",
+            "여보세요, 내 말 들리니? / 나는 캘리포니아에서 예전의 우리 모습을 떠올리고 있어"
+        ),
+        (
+            "When we were younger and free / I've forgotten how it felt before the world fell at our feet",
+            "우리가 더 어리고 자유로웠을 때 / 세상이 우리 발아래 있는 것 같았던 그 느낌을 나는 잊어버렸어"
+        ),
+        (
+            "There's such a difference between us / And a million miles",
+            "우리 사이에는 너무 큰 차이가 있어 / 그리고 백만 마일만큼의 거리도 있어"
+        ),
+        (
+            "Hello from the other side / I must've called a thousand times to tell you",
+            "저편에서 안녕이라고 말해 / 너에게 말하려고 나는 아마 천 번은 전화했을 거야"
+        ),
+        (
+            "I'm sorry, for everything that I've done / But when I call you never seem to be home",
+            "내가 했던 모든 일에 대해 미안해 / 하지만 내가 전화할 때 너는 늘 집에 없는 것 같아"
+        ),
+        (
+            "Hello from the outside / At least I can say that I've tried to tell you",
+            "바깥쪽에서 안녕이라고 말해 / 적어도 나는 너에게 말하려고 노력했다고는 말할 수 있어"
+        ),
+        (
+            "I'm sorry, for breaking your heart / But it don't matter, it clearly doesn't tear you apart anymore",
+            "네 마음을 아프게 해서 미안해 / 하지만 이제는 상관없는 것 같아, 더 이상 너를 아프게 하지 않는 것 같아"
+        ),
+        (
+            "Hello, how are you? / It's so typical of me to talk about myself",
+            "안녕, 어떻게 지내? / 내 이야기만 하는 건 정말 나다운 일이야"
+        ),
+        (
+            "I'm sorry, I hope that you're well / Did you ever make it out of that town where nothing ever happened?",
+            "미안해, 네가 잘 지내길 바라 / 아무 일도 일어나지 않던 그 마을에서 벗어났니?"
+        ),
+        (
+            "It's no secret that the both of us are running out of time",
+            "우리 둘 다 시간이 얼마 남지 않았다는 건 비밀도 아니야"
+        ),
+        (
+            "Hello from the other side / I must've called a thousand times to tell you",
+            "저편에서 안녕이라고 말해 / 너에게 말하려고 나는 아마 천 번은 전화했을 거야"
+        ),
+        (
+            "I'm sorry, for everything that I've done / But when I call you never seem to be home",
+            "내가 했던 모든 일에 대해 미안해 / 하지만 내가 전화할 때 너는 늘 집에 없는 것 같아"
+        ),
+        (
+            "Hello from the outside / At least I can say that I've tried to tell you",
+            "바깥쪽에서 안녕이라고 말해 / 적어도 나는 너에게 말하려고 노력했다고는 말할 수 있어"
+        ),
+        (
+            "I'm sorry, for breaking your heart / But it don't matter, it clearly doesn't tear you apart anymore",
+            "네 마음을 아프게 해서 미안해 / 하지만 이제는 상관없는 것 같아, 더 이상 너를 아프게 하지 않는 것 같아"
+        ),
+        (
+            "Ooooohh, anymore / Ooooohh, anymore / Ooooohh, anymore / Anymore",
+            "오, 더 이상 / 오, 더 이상 / 오, 더 이상 / 더 이상"
+        ),
+        (
+            "Hello from the other side / I must've called a thousand times to tell you",
+            "저편에서 안녕이라고 말해 / 너에게 말하려고 나는 아마 천 번은 전화했을 거야"
+        ),
+        (
+            "I'm sorry, for everything that I've done / But when I call you never seem to be home",
+            "내가 했던 모든 일에 대해 미안해 / 하지만 내가 전화할 때 너는 늘 집에 없는 것 같아"
+        ),
+        (
+            "Hello from the outside / At least I can say that I've tried to tell you",
+            "바깥쪽에서 안녕이라고 말해 / 적어도 나는 너에게 말하려고 노력했다고는 말할 수 있어"
+        ),
+        (
+            "I'm sorry, for breaking your heart / But it don't matter, it clearly doesn't tear you apart anymore",
+            "네 마음을 아프게 해서 미안해 / 하지만 이제는 상관없는 것 같아, 더 이상 너를 아프게 하지 않는 것 같아"
+        ),
     ]
 
     comprehension_questions = [
         {
-            "q": "1. Who is the speaker trying to contact?",
-            "options": ["A person from the past", "A new teacher", "A famous singer", "A stranger in California"],
-            "answer": "A person from the past"
+            "q": "1. 이 노래에서 화자는 누구에게 연락하려고 하나요?",
+            "options": [
+                "과거에 알던 사람",
+                "새로 만난 선생님",
+                "유명한 가수",
+                "캘리포니아의 낯선 사람"
+            ],
+            "answer": "과거에 알던 사람"
         },
         {
-            "q": "2. What does the speaker mainly want to say?",
-            "options": ["Thank you", "I'm sorry", "Good luck", "Happy birthday"],
-            "answer": "I'm sorry"
+            "q": "2. 화자가 상대에게 가장 말하고 싶어 하는 것은 무엇인가요?",
+            "options": [
+                "고맙다는 말",
+                "미안하다는 말",
+                "생일 축하한다는 말",
+                "여행을 가자는 말"
+            ],
+            "answer": "미안하다는 말"
         },
         {
-            "q": "3. What do people say time is supposed to do?",
-            "options": ["Heal people", "Make people rich", "Stop sadness forever", "Change the past"],
-            "answer": "Heal people"
+            "q": "3. 노래에서 사람들은 시간이 무엇을 해 준다고 말하나요?",
+            "options": [
+                "상처를 치유해 준다",
+                "사람을 부자로 만들어 준다",
+                "과거를 완전히 바꿔 준다",
+                "슬픔을 바로 없애 준다"
+            ],
+            "answer": "상처를 치유해 준다"
         },
         {
-            "q": "4. Where is the speaker dreaming?",
-            "options": ["London", "California", "New York", "Paris"],
-            "answer": "California"
+            "q": "4. 화자는 어디에서 예전의 자신들을 떠올리고 있나요?",
+            "options": [
+                "런던",
+                "캘리포니아",
+                "뉴욕",
+                "파리"
+            ],
+            "answer": "캘리포니아"
         },
         {
-            "q": "5. What does the speaker say about calling?",
-            "options": ["The speaker called many times", "The speaker never called", "The speaker called only once", "The speaker forgot the number"],
-            "answer": "The speaker called many times"
+            "q": "5. 'I must've called a thousand times'는 어떤 의미에 가깝나요?",
+            "options": [
+                "정말 여러 번 연락하려고 했다",
+                "정확히 천 번만 전화했다",
+                "한 번도 전화하지 않았다",
+                "전화번호를 잊어버렸다"
+            ],
+            "answer": "정말 여러 번 연락하려고 했다"
         },
         {
-            "q": "6. What is the main feeling of the song?",
-            "options": ["Regret and apology", "Excitement and joy", "Anger and revenge", "Hope for a vacation"],
-            "answer": "Regret and apology"
+            "q": "6. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "후회와 사과",
+                "여행의 설렘",
+                "복수심과 분노",
+                "시험에 대한 걱정"
+            ],
+            "answer": "후회와 사과"
         },
     ]
-
 
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
