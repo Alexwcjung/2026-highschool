@@ -136,7 +136,7 @@ selected_tab = st.radio(
 # =========================
 
 if "1. Let It Go" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
+    video_url = "https://www.youtube.com/watch?v=RgGRyssdJvw&list=RDRgGRyssdJvw&start_radio=1"
 
     bg_content = '''
     <h3 style="font-size:2.2rem; margin-bottom:20px; color:#be185d;">
