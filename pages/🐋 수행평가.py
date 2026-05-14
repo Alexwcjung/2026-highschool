@@ -72,33 +72,116 @@ JONG = [
 ]
 
 
+COMMON_SURNAMES = {
+    "김": "Kim", "이": "Lee", "박": "Park", "최": "Choi", "정": "Jung",
+    "강": "Kang", "조": "Cho", "윤": "Yoon", "장": "Jang", "임": "Lim",
+    "한": "Han", "오": "Oh", "서": "Seo", "신": "Shin", "권": "Kwon",
+    "황": "Hwang", "안": "Ahn", "송": "Song", "전": "Jeon", "홍": "Hong",
+    "유": "Yoo", "고": "Ko", "문": "Moon", "양": "Yang", "손": "Son",
+    "배": "Bae", "백": "Baek", "허": "Heo", "남": "Nam", "심": "Shim",
+    "노": "Noh", "하": "Ha", "곽": "Kwak", "성": "Sung", "차": "Cha",
+    "주": "Joo", "우": "Woo", "구": "Koo", "민": "Min", "류": "Ryu",
+}
+
+SPECIAL_SYLLABLES = {
+    "우": "Woo", "창": "chang", "민": "min", "수": "su", "지": "ji", "민": "min",
+    "준": "jun", "영": "young", "현": "hyun", "서": "seo", "연": "yeon",
+    "윤": "yoon", "아": "a", "나": "na", "래": "rae", "송": "song", "희": "hee",
+}
+
+
+def romanize_hangul_syllable(ch):
+    """한글 한 글자를 간단히 로마자로 바꿉니다."""
+    if ch in SPECIAL_SYLLABLES:
+        return SPECIAL_SYLLABLES[ch]
+
+    code = ord(ch)
+    if 0xAC00 <= code <= 0xD7A3:
+        s_index = code - 0xAC00
+        cho = s_index // 588
+        jung = (s_index % 588) // 28
+        jong = s_index % 28
+        return CHO[cho] + JUNG[jung] + JONG[jong]
+    return ch
+
+
 def romanize_hangul_name(text):
-    """학생 이름 입력용 간단 로마자 변환. 완벽한 여권식 변환은 아니지만 수업용으로 바로 쓸 수 있게 함."""
+    """
+    이름 입력용 간단 로마자 변환.
+    한글 이름은 성 + 이름 순서로 띄어 씁니다.
+    예: 정우창 → Jung Woochang
+    """
     text = str(text).strip()
     if not text:
-        return "Woochang"
+        return "Jung Woochang"
 
-    result = []
-    for ch in text:
-        code = ord(ch)
-        if 0xAC00 <= code <= 0xD7A3:
-            s_index = code - 0xAC00
-            cho = s_index // 588
-            jung = (s_index % 588) // 28
-            jong = s_index % 28
-            syllable = CHO[cho] + JUNG[jung] + JONG[jong]
-            result.append(syllable)
-        elif ch.isalpha() or ch in [" ", "-"]:
-            result.append(ch)
-        else:
-            result.append(" ")
+    # 이미 영어로 입력한 경우: 단어 첫 글자만 대문자로 정리
+    if not any(0xAC00 <= ord(ch) <= 0xD7A3 for ch in text):
+        cleaned = re.sub(r"\s+", " ", text).strip()
+        return " ".join(part.capitalize() for part in cleaned.split()) or "Jung Woochang"
 
-    romanized = "".join(result)
-    romanized = re.sub(r"\s+", " ", romanized).strip()
-    if not romanized:
-        return "Woochang"
-    return " ".join(part.capitalize() for part in romanized.split())
+    hangul_chars = [ch for ch in text if 0xAC00 <= ord(ch) <= 0xD7A3]
+    if not hangul_chars:
+        return "Jung Woochang"
 
+    last_name = COMMON_SURNAMES.get(hangul_chars[0], romanize_hangul_syllable(hangul_chars[0]).capitalize())
+    first_name_raw = "".join(romanize_hangul_syllable(ch) for ch in hangul_chars[1:])
+    first_name = first_name_raw.capitalize() if first_name_raw else ""
+
+    if first_name:
+        return f"{last_name} {first_name}"
+    return last_name
+
+
+HOBBY_TRANSLATIONS = {
+    "축구": "playing soccer",
+    "야구": "playing baseball",
+    "농구": "playing basketball",
+    "배구": "playing volleyball",
+    "테니스": "playing tennis",
+    "배드민턴": "playing badminton",
+    "수영": "swimming",
+    "자전거": "riding a bike",
+    "자전거 타기": "riding a bike",
+    "게임": "playing games",
+    "게임하기": "playing games",
+    "노래": "singing",
+    "노래 부르기": "singing",
+    "음악": "listening to music",
+    "음악 듣기": "listening to music",
+    "영화": "watching movies",
+    "영화 보기": "watching movies",
+    "드라마": "watching dramas",
+    "드라마 보기": "watching dramas",
+    "독서": "reading books",
+    "책 읽기": "reading books",
+    "그림": "drawing",
+    "그림 그리기": "drawing",
+    "요리": "cooking",
+    "요리하기": "cooking",
+    "빵 굽기": "baking",
+    "캠핑": "camping",
+    "하이킹": "hiking",
+    "낚시": "fishing",
+    "사진": "taking pictures",
+    "사진 찍기": "taking pictures",
+    "자동차 정비": "fixing cars",
+    "정비": "fixing cars",
+    "태권도": "doing taekwondo",
+    "복싱": "boxing",
+    "운동": "exercising",
+    "잠자기": "sleeping",
+    "춤": "dancing",
+    "춤추기": "dancing",
+}
+
+
+def guess_hobby_english(korean_text):
+    """자주 쓰는 취미는 앱 안에서 바로 영어로 보여 주고, 어려운 표현은 구글 번역 확인을 유도합니다."""
+    key = str(korean_text).strip()
+    if not key:
+        return ""
+    return HOBBY_TRANSLATIONS.get(key, "")
 
 # =========================
 # 디자인
@@ -197,10 +280,10 @@ st.subheader("1. 자기소개하기")
 
 name_input = st.text_input(
     "내 이름을 한국어 또는 영어로 써 보세요.",
-    placeholder="예: 정우창, 민수, Jimin"
+    placeholder="예: 정우창, 김민수, Jimin"
 )
 
-name_text = str(name_input).strip() if str(name_input).strip() else "Woochang"
+name_text = str(name_input).strip() if str(name_input).strip() else "정우창"
 romanized_name = romanize_hangul_name(name_text)
 
 if name_input.strip() and romanized_name.lower() != name_text.lower():
@@ -209,7 +292,7 @@ if name_input.strip() and romanized_name.lower() != name_text.lower():
 name_sentence = f"I am {romanized_name}."
 
 sentence_card(
-    "나는 (본인 이름)입니다.",
+    "나는 (성 + 이름)입니다.",
     name_sentence
 )
 
@@ -237,26 +320,33 @@ st.markdown(
 )
 
 hobby_ko_input = st.text_input(
-    "취미를 한국어로 입력하면 구글 번역으로 이동합니다.",
+    "취미를 한국어로 입력하면 영어 문장에 바로 반영됩니다.",
     placeholder="예: 축구, 노래 부르기, 게임하기, 음악 듣기, 자동차 정비"
 )
 
 if hobby_ko_input.strip():
     st.link_button(
-        "🌐 구글 번역에서 취미 영어 표현과 발음 확인하기",
+        "🌐 구글 번역에서 더 정확한 영어 표현과 발음 확인하기",
         make_google_translate_url(hobby_ko_input, source="auto", target="en"),
         use_container_width=True
     )
 else:
     st.info("취미를 한국어로 입력하면 구글 번역으로 연결됩니다.")
 
+auto_hobby_en = guess_hobby_english(hobby_ko_input)
+
 hobby_en_input = st.text_input(
-    "구글 번역에서 나온 영어 취미 표현을 여기에 넣어 보세요.",
+    "영어 취미 표현을 확인하거나 수정하세요.",
+    value=auto_hobby_en,
     placeholder="예: playing soccer, listening to music, playing games"
 )
 
-hobby_en = str(hobby_en_input).strip() if str(hobby_en_input).strip() else "playing soccer"
-hobby_sentence = f"My hobby is {hobby_en}. I am a student and tall."
+hobby_en = str(hobby_en_input).strip()
+
+if hobby_en:
+    hobby_sentence = f"My hobby is {hobby_en}. I am a student and tall."
+else:
+    hobby_sentence = "My hobby is blank. I am a student and tall."
 
 sentence_card(
     f"내 취미는 {hobby_ko_input.strip() if hobby_ko_input.strip() else '(취미)'}입니다. 나는 학생이고 키가 큽니다.",
