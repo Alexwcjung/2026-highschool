@@ -27,6 +27,7 @@ streamlit-mic-recorder
 
 # 음성 인식
 SpeechRecognition
+PyAudio
 
 # Google 연동
 gspread
