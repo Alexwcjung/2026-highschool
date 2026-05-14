@@ -1,6 +1,7 @@
 import streamlit as st
 import random
 import string
+import html
 
 # =========================
 # 1. 기본 설정 및 디자인
