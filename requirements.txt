@@ -4,7 +4,6 @@ requests>=2.31
 gTTS
 deep-translator
 googletrans==4.0.0-rc1
-edge-tts 추가
 
 pandas
 numpy
