@@ -694,23 +694,24 @@ with tabs[7]:
                 st.write(e)
 
     if st.session_state["translated_text"]:
-        st.markdown("### ✅ 번역 결과")
+        st.markdown("#### 번역 결과")
+
         translated_result = st.text_area(
-            "복사해서 사용하세요",
+            "",
             value=st.session_state["translated_text"],
             height=200,
-            key="translation_result"
+            key="translation_result",
+            label_visibility="collapsed"
         )
 
-        if st.session_state["translation_target_code"] == "en":
-            st.markdown("### 🔊 발음 듣기")
-
-            speed_label = st.radio(
-                "발음 속도",
-                ["0.25", "0.5", "1", "1.25", "1.5"],
-                index=2,
-                horizontal=True
-            )
+    if st.session_state["translation_target_code"] == "en":
+        speed_label = st.radio(
+            "",
+            ["0.25", "0.5", "1", "1.25", "1.5"],
+            index=2,
+            horizontal=True,
+            label_visibility="collapsed"
+        )
 
             playback_rate = float(speed_label)
 
