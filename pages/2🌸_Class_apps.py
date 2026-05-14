@@ -744,15 +744,3 @@ with tabs[8]:
         with tts_col2:
             if st.button("🔊 원문 영어 발음 듣기", use_container_width=True):
                 play_english_tts(st.session_state["translation_source_text"], "원문 영어 발음")
-
-    st.markdown("---")
-    st.markdown("### 📌 사용 안내")
-    st.markdown(
-        """
-        - 영어를 한국어로 번역할 때는 원문 언어를 `영어 English`, 번역할 언어를 `한국어 Korean`으로 선택하세요.
-        - 한국어를 영어로 번역할 때는 원문 언어를 `한국어 Korean`, 번역할 언어를 `영어 English`로 선택하세요.
-        - 번역할 언어가 `영어 English`이면 번역된 영어 문장의 발음을 바로 들을 수 있습니다.
-        - 영어 원문을 입력한 경우에는 `원문 영어 발음 듣기`로 원문 발음도 확인할 수 있습니다.
-        - 번역 품질은 문맥에 따라 달라질 수 있으므로, 중요한 자료는 교사가 한 번 확인하는 것이 좋습니다.
-        """
-    )
