@@ -133,6 +133,13 @@ st.markdown("---")
 # =========================
 st.subheader("5. 사진 묘사하기")
 
+# ✅ 여기에서 그림이 문제 위에 나옵니다.
+st.image(
+    "pages/images/수행평가 그림.png",
+    caption="Describe the picture.",
+    use_container_width=True
+)
+
 st.info("⏱️ 20초 안에 사진을 묘사해 봅시다.")
 
 picture_sentences = [
