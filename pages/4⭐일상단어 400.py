@@ -259,11 +259,12 @@ st.markdown(
 
     .stButton > button {
         border-radius: 999px;
-        font-weight: 900;
-        border: 1px solid #d1d5db;
-        padding: 0.8rem 1.2rem;
-        min-height: 54px;
-        font-size: 20px;
+        font-weight: 1000;
+        border: 1px solid #bbf7d0;
+        padding: 1.05rem 1.35rem;
+        min-height: 70px;
+        font-size: 25px;
+        box-shadow: 0 6px 16px rgba(34,197,94,0.16);
     }
 
     .stButton > button:hover {
@@ -323,8 +324,9 @@ st.markdown(
             font-size: 29px !important;
         }
         .stButton > button {
-            min-height: 50px;
-            font-size: 18px;
+            min-height: 62px;
+            font-size: 22px;
+            padding: 0.9rem 1.1rem;
         }
     }
     </style>
@@ -1277,7 +1279,7 @@ def make_cassette_text(items, repeat_word=2):
     return " ".join(parts)
 
 
-def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=520):
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=470):
     """
     단어별 mp3를 순서대로 재생합니다.
     각 mp3가 끝나면 다음 단어로 넘어가므로 화면의 단어·뜻·이모지가 발음과 잘 맞습니다.
@@ -1306,7 +1308,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
             width:100%;
             box-sizing:border-box;
             border-radius:28px;
-            padding:18px;
+            padding:14px;
             background:linear-gradient(135deg,#f0fdf4 0%,#eff6ff 48%,#fff7ed 100%);
             border:1px solid #bbf7d0;
             box-shadow:0 8px 22px rgba(15,23,42,0.10);
@@ -1324,24 +1326,24 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                     background:rgba(255,255,255,0.88);
                     border:1px solid #dcfce7;
                     border-radius:26px;
-                    padding:22px 18px;
+                    padding:16px 14px;
                     text-align:center;
                 ">
                     <div id="theme_{player_id}" style="display:inline-block; font-size:13px; font-weight:900; color:#15803d; background:#dcfce7; border-radius:999px; padding:6px 12px; margin-bottom:10px;">Theme</div>
-                    <div id="emoji_{player_id}" style="font-size:58px; line-height:1.05; margin:4px 0;">🌱</div>
-                    <div id="word_{player_id}" style="font-size:clamp(46px,9vw,78px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
-                    <div id="meaning_{player_id}" style="font-size:clamp(24px,5vw,38px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
-                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:18px;">
+                    <div id="emoji_{player_id}" style="font-size:46px; line-height:1.05; margin:2px 0;">🌱</div>
+                    <div id="word_{player_id}" style="font-size:clamp(36px,7.8vw,62px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
+                    <div id="meaning_{player_id}" style="font-size:clamp(20px,4.4vw,30px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
+                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:12px;">
                         <div id="bar_{player_id}" style="height:100%; width:0%; background:linear-gradient(90deg,#22c55e,#0ea5e9,#8b5cf6); border-radius:999px;"></div>
                     </div>
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr; gap:8px;">
-                    <button id="play_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:16px; font-weight:900; cursor:pointer; box-shadow:0 3px 9px rgba(15,23,42,0.08);">▶️ 재생</button>
+                    <button id="play_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:13px; font-weight:900; cursor:pointer; box-shadow:0 3px 9px rgba(15,23,42,0.08);">▶️ 재생</button>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="prev_{player_id}" style="min-height:42px; border-radius:14px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:14px; font-weight:900; cursor:pointer;">⏮ 이전</button>
-                    <button id="next_{player_id}" style="min-height:42px; border-radius:14px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:14px; font-weight:900; cursor:pointer;">다음 ⏭</button>
+                    <button id="prev_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">⏮ 이전</button>
+                    <button id="next_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">다음 ⏭</button>
                 </div>
 
                 <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
@@ -1492,7 +1494,7 @@ def show_cassette_audio(items, title):
                 items=items,
                 audio_payloads=audio_payloads,
                 title="📼 단어 카세트",
-                height=520
+                height=470
             )
         except Exception as e:
             st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
