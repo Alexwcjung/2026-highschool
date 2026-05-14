@@ -55,27 +55,27 @@ st.markdown("""
 """, unsafe_allow_html=True)
 # Streamlit tabs
 tabs = st.tabs([
-    "✏️Blackboard",
-    "🎨Drawing",
-    "🔳QR code",
-    "⏳Timer",
-    "☁️WordCloud",
-    "😀Emoji",
-    "👥Grouping",
-    "🌐Translation"
+    "✏️ 칠판",
+    "🎨 그림판",
+    "🔳 QR 코드",
+    "⏳ 타이머",
+    "☁️ 워드클라우드",
+    "😀 이모지",
+    "👥 조 편성",
+    "🌐 번역"
 ])
 
 # --- Tab 0: Blackboard ---
 with tabs[0]:
-    st.subheader("📚 Blackboard")
+    st.subheader("📚 칠판")
 
     c1, c2 = st.columns([1, 1])
     with c1:
-        font_size = st.slider("Text size", 12, 124, 32, 2)
+        font_size = st.slider("글자 크기", 12, 124, 32, 2)
     with c2:
-        text_color = st.color_picker("Text color", "#ffffff")
+        text_color = st.color_picker("글자 색", "#ffffff")
 
-    text = st.text_area("✍️ Write on the board", height=100, placeholder="Type your ideas here...")
+    text = st.text_area("✍️ 칠판에 쓸 내용을 입력하세요", height=100, placeholder="수업 안내, 핵심 표현, 질문 등을 입력하세요.")
 
     st.markdown(
         f"""
@@ -97,15 +97,16 @@ with tabs[0]:
 
 # --- Tab 1: Drawing ---
 with tabs[1]:
-    st.caption("Use the canvas below to draw freely. You can change the stroke width and color.")
+    st.subheader("🎨 그림판")
+    st.caption("아래 그림판에 자유롭게 그림을 그릴 수 있습니다. 펜 두께와 색을 바꿀 수 있습니다.")
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
-        stroke_width = st.slider("✏️ Stroke Width", 1, 10, 5)
+        stroke_width = st.slider("✏️ 펜 두께", 1, 10, 5)
     with col2:
-        stroke_color = st.color_picker("🖌 Stroke Color", "#000000")
+        stroke_color = st.color_picker("🖌 펜 색", "#000000")
     with col3:
-        bg_color = st.color_picker("🖼 Background Color", "#FFFFFF")
+        bg_color = st.color_picker("🖼 배경색", "#FFFFFF")
 
     if "clear_canvas" not in st.session_state:
         st.session_state["clear_canvas"] = False
@@ -121,22 +122,23 @@ with tabs[1]:
         key="main_canvas" if not st.session_state["clear_canvas"] else "new_canvas"
     )
 
-    if st.button("🗑️ Clear Canvas"):
+    if st.button("🗑️ 그림판 지우기"):
         st.session_state["clear_canvas"] = not st.session_state["clear_canvas"]
         st.rerun()
 
 # --- Tab 2: QR ---
 with tabs[2]:
-    st.caption("QR code generator")
+    st.subheader("🔳 QR 코드 생성기")
+    st.caption("인터넷 주소를 QR 코드로 바꿀 수 있습니다.")
 
     col1, col2, col3 = st.columns([3, 3, 2])
     with col1:
-        qr_link = st.text_input("📌 Enter URL link:", key="qr_link")
+        qr_link = st.text_input("📌 인터넷 주소를 입력하세요:", key="qr_link")
     with col2:
-        caption = st.text_input("Enter a caption (optional):", key="qr_caption")
+        caption = st.text_input("설명을 입력하세요. 선택 사항입니다:", key="qr_caption")
     with col3:
         st.write("")
-        generate_qr_button = st.button("🔆 Click to Generate QR", key="generate_qr")
+        generate_qr_button = st.button("🔆 QR 코드 만들기", key="generate_qr")
 
     if generate_qr_button and qr_link:
         qr = qrcode.QRCode(
@@ -153,21 +155,21 @@ with tabs[2]:
 
 # --- Tab 3: Timer ---
 with tabs[3]:
-    st.subheader("⏳ Classroom Timer")
-    st.caption("Set the time and click Start.")
+    st.subheader("⏳ 수업 타이머")
+    st.caption("시간을 설정한 뒤 시작 버튼을 누르세요.")
 
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        timer_min = st.number_input("Minutes", min_value=0, max_value=180, value=5, step=1)
+        timer_min = st.number_input("분", min_value=0, max_value=180, value=5, step=1)
 
     with col2:
-        timer_sec = st.number_input("Seconds", min_value=0, max_value=59, value=0, step=5)
+        timer_sec = st.number_input("초", min_value=0, max_value=59, value=0, step=5)
 
     with col3:
         st.write("")
         st.write("")
-        st.info(f"Set time: {timer_min:02d}:{timer_sec:02d}")
+        st.info(f"설정 시간: {timer_min:02d}:{timer_sec:02d}")
 
     total_seconds = timer_min * 60 + timer_sec
 
@@ -201,7 +203,7 @@ with tabs[3]:
             background-color: #2e86de;
             color: white;
             cursor: pointer;
-        ">Start</button>
+        ">시작</button>
 
         <button onclick="pauseTimer()" style="
             font-size: 24px;
@@ -212,7 +214,7 @@ with tabs[3]:
             background-color: #f39c12;
             color: white;
             cursor: pointer;
-        ">Pause</button>
+        ">일시정지</button>
 
         <button onclick="resetTimer()" style="
             font-size: 24px;
@@ -223,7 +225,7 @@ with tabs[3]:
             background-color: #e74c3c;
             color: white;
             cursor: pointer;
-        ">Reset</button>
+        ">초기화</button>
 
         <p id="message" style="
             margin-top: 25px;
@@ -289,27 +291,27 @@ with tabs[3]:
 
 # --- Tab 4: WordCloud ---
 with tabs[4]:
-    st.subheader("☁️ WordCloud Generator")
-    st.caption("Paste text below and generate a word cloud.")
+    st.subheader("☁️ 워드클라우드 만들기")
+    st.caption("아래에 글을 붙여 넣고 워드클라우드를 만들 수 있습니다.")
 
     wc_text = st.text_area(
-        "📋 Paste text here",
+        "📋 글을 붙여 넣으세요",
         height=220,
-        placeholder="Paste your text here...",
+        placeholder="여기에 글을 붙여 넣으세요...",
         key="wc_text"
     )
 
     c1, c2, c3 = st.columns([1, 1, 1])
     with c1:
-        max_words = st.slider("Max words", 30, 300, 120, 10)
+        max_words = st.slider("최대 단어 수", 30, 300, 120, 10)
     with c2:
-        bg = st.selectbox("Background", ["white", "black"], index=0)
+        bg = st.selectbox("배경색", ["white", "black"], index=0)
     with c3:
-        colormap = st.selectbox("Color style", ["viridis", "plasma", "inferno", "magma", "cividis"], index=0)
+        colormap = st.selectbox("색상 스타일", ["viridis", "plasma", "inferno", "magma", "cividis"], index=0)
 
-    if st.button("✨ Generate WordCloud", key="btn_wc"):
+    if st.button("✨ 워드클라우드 만들기", key="btn_wc"):
         if not wc_text.strip():
-            st.warning("Please paste some text first.")
+            st.warning("먼저 글을 붙여 넣어 주세요.")
         else:
             wc = WordCloud(
                 width=1000,
@@ -326,7 +328,7 @@ with tabs[4]:
 
 # --- Tab 5: Emoji ---
 with tabs[5]:
-    st.subheader("😀 Emoji Board")
+    st.subheader("😀 이모지 모음")
     st.caption("큰 이모지 박스에서 필요한 부분을 드래그해서 복사한 뒤 수업 자료, 칠판, 활동지에 붙여 넣으세요.")
 
     EMOJI_CATEGORIES = {
@@ -463,7 +465,7 @@ with tabs[5]:
 
 # --- Tab 6: Grouping ---
 with tabs[6]:
-    st.subheader("👥 Grouping Tool")
+    st.subheader("👥 조 편성 도구")
     st.caption("CSV를 올리지 않아도 기본 명단으로 조 편성을 할 수 있습니다.")
     st.caption("CSV를 올릴 경우, 반드시 `Course`, `Names` 열이 있어야 합니다.")
 
@@ -482,21 +484,21 @@ with tabs[6]:
         ]
     })
 
-    uploaded_file = st.file_uploader("🌱 Step 1: Upload your CSV file (optional)", type=["csv"])
+    uploaded_file = st.file_uploader("🌱 1단계: CSV 파일 올리기. 선택 사항입니다.", type=["csv"])
 
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file)
-        source_label = "✅ Uploaded CSV data"
+        source_label = "✅ 업로드한 CSV 자료 사용 중"
     else:
         df = default_data
-        source_label = "📂 Using default sample data"
+        source_label = "📂 기본 예시 자료 사용 중"
 
     if all(col in df.columns for col in ["Course", "Names"]):
-        st.markdown("### 📋 Current Student List")
+        st.markdown("### 📋 현재 학생 명단")
         st.dataframe(df, use_container_width=True)
 
         course_list = df["Course"].dropna().unique().tolist()
-        selected_course = st.selectbox("🌱 Step 2: Select Course for Grouping", course_list)
+        selected_course = st.selectbox("🌱 2단계: 조 편성할 반 선택", course_list)
 
         course_df = df[df["Course"] == selected_course]
         names = course_df["Names"].dropna().tolist()
@@ -507,13 +509,13 @@ with tabs[6]:
             f"Total **{total_students}** students available for grouping."
         )
 
-        st.markdown("##### 🌱 Step 3: Group Settings")
+        st.markdown("##### 🌱 3단계: 조 편성 설정")
 
         col_in1, col_in2 = st.columns(2)
 
         with col_in1:
             num_group3 = st.number_input(
-                "Number of 3-member groups",
+                "3명 조 개수",
                 min_value=0,
                 value=0,
                 step=1
@@ -521,7 +523,7 @@ with tabs[6]:
 
         with col_in2:
             num_group4 = st.number_input(
-                "Number of 4-member groups",
+                "4명 조 개수",
                 min_value=0,
                 value=0,
                 step=1
@@ -529,18 +531,18 @@ with tabs[6]:
 
         needed_students = num_group3 * 3 + num_group4 * 4
 
-        st.write(f"Selected students needed: **{needed_students}**")
-        st.write(f"Available students: **{total_students}**")
+        st.write(f"필요한 학생 수: **{needed_students}**")
+        st.write(f"현재 학생 수: **{total_students}**")
 
         if needed_students > total_students:
             st.warning("설정한 조 인원 수가 현재 학생 수보다 많습니다. 조 개수를 줄여 주세요.")
 
-        if st.button("🌱 Step 4: Generate Groups"):
+        if st.button("🌱 4단계: 조 편성하기"):
             if total_students == 0:
-                st.warning("No students available for grouping.")
+                st.warning("조 편성할 학생이 없습니다.")
 
             elif num_group3 == 0 and num_group4 == 0:
-                st.warning("Please enter at least one group.")
+                st.warning("조 개수를 하나 이상 입력해 주세요.")
 
             else:
                 names_for_grouping = names.copy()
@@ -587,7 +589,7 @@ with tabs[6]:
                     assigned_count += remaining_count
 
                 if not grouped_data:
-                    st.warning("No groups were created. Please check your settings.")
+                    st.warning("조가 만들어지지 않았습니다. 설정을 확인해 주세요.")
 
                 else:
                     grouped_df = pd.DataFrame(grouped_data)
@@ -609,23 +611,24 @@ with tabs[6]:
                     csv_bytes = csv_text.encode("utf-8-sig")
 
                     st.download_button(
-                        label="📥 Download Grouped CSV",
+                        label="📥 조 편성 결과 CSV 다운로드",
                         data=csv_bytes,
                         file_name=f"grouped_{selected_course.replace(' ', '_')}.csv",
                         mime="text/csv"
                     )
 
     else:
-        st.error("The file must contain both `Course`, `Names` columns.")
+        st.error("파일에는 반드시 `Course`, `Names` 열이 있어야 합니다.")
 
 # --- Tab 7: Translation ---
 with tabs[7]:
-    st.subheader("🌐 Translation Tool")
+    st.subheader("🌐 번역 도구")
     st.caption("문장을 입력하고 번역 버튼을 누르면 바로 번역 결과가 나옵니다.")
 
+    # 영어 English가 첫 번째 선택지로 오도록 배치
     lang_options = {
-        "한국어 Korean": "ko",
         "영어 English": "en",
+        "한국어 Korean": "ko",
         "일본어 Japanese": "ja",
         "중국어 Chinese Simplified": "zh-CN",
         "스페인어 Spanish": "es",
@@ -643,8 +646,8 @@ with tabs[7]:
 
     # googletrans용 언어 코드
     googletrans_lang_options = {
-        "한국어 Korean": "ko",
         "영어 English": "en",
+        "한국어 Korean": "ko",
         "일본어 Japanese": "ja",
         "중국어 Chinese Simplified": "zh-cn",
         "스페인어 Spanish": "es",
@@ -685,7 +688,7 @@ with tabs[7]:
         target_lang_label = st.selectbox(
             "번역할 언어",
             list(lang_options.keys()),
-            index=0,
+            index=0,  # 영어 English가 기본 선택
             key="target_lang_label"
         )
 
@@ -693,7 +696,7 @@ with tabs[7]:
     source_text = st.text_area(
         "번역할 문장을 입력하세요",
         height=180,
-        placeholder="예: I like soccer. / 나는 축구를 좋아합니다.",
+        placeholder="예: 나는 축구를 좋아합니다. / I like soccer.",
         key="translation_source_input"
     )
 
@@ -814,12 +817,11 @@ with tabs[7]:
             unsafe_allow_html=True
         )
 
-        # 작은 안내만 표시
         if st.session_state["translation_method"]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
         # 영어로 번역된 경우에만 발음 듣기 제공
-        if st.session_state["translation_target_code"] in ["en"]:
+        if st.session_state["translation_target_code"] == "en":
             st.markdown("#### 🔊 영어 발음 듣기")
 
             speed_label = st.radio(
