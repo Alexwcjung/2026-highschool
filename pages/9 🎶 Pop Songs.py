@@ -129,16 +129,17 @@ st.markdown("""
 
 
 
-    @keyframes matchBlast {
-        0% { transform: scale(1); opacity: 1; filter: brightness(1); }
-        35% { transform: scale(1.12) rotate(1deg); opacity: 1; filter: brightness(1.25); }
-        65% { transform: scale(0.82) rotate(-1deg); opacity: 0.75; filter: brightness(1.6); }
-        100% { transform: scale(0.05); opacity: 0; filter: brightness(2); max-height:0; padding-top:0; padding-bottom:0; margin-bottom:0; border-width:0; }
+    @keyframes matchSparkleDisappear {
+        0% { transform: scale(1); opacity: 1; filter: brightness(1); max-height: 90px; }
+        20% { transform: scale(1.03); opacity: 1; filter: brightness(1.6); box-shadow: 0 0 0 5px rgba(250, 204, 21, 0.35), 0 0 22px rgba(250, 204, 21, 0.75); }
+        45% { transform: scale(0.98); opacity: 0.9; filter: brightness(1.9); }
+        70% { transform: scale(0.88); opacity: 0.45; filter: brightness(2.2); }
+        100% { transform: scale(0.72); opacity: 0; filter: brightness(2.4); max-height:0; padding-top:0; padding-bottom:0; margin-bottom:0; border-width:0; }
     }
 
     .match-blast-card {
-        background: linear-gradient(135deg, #fef3c7, #fde68a, #fca5a5);
-        border: 3px solid #f97316;
+        background: linear-gradient(135deg, #fef3c7, #fde68a, #fef9c3);
+        border: 3px solid #f59e0b;
         color: #7c2d12;
         padding: 0.75rem 1rem;
         border-radius: 999px;
@@ -146,10 +147,12 @@ st.markdown("""
         font-weight: 900;
         text-align: center;
         margin-bottom: 0.5rem;
-        box-shadow: 0 8px 22px rgba(249, 115, 22, 0.28);
-        animation: matchBlast 0.75s ease-in forwards;
+        max-height: 90px;
+        box-shadow: 0 8px 22px rgba(245, 158, 11, 0.25);
+        animation: matchSparkleDisappear 0.7s ease-in forwards;
         transform-origin: center;
         overflow: hidden;
+        pointer-events: none;
     }
 
 
@@ -1509,7 +1512,7 @@ def show_matching_game(song_choice):
     # 이미 맞춘 카드는 세션에 바로 기록하고, 화면에서는 잠깐 터지는 효과만 보여 줍니다.
     blast_pair = st.session_state.get(f"match_blast_{game_key}")
     blast_at = st.session_state.get(f"match_blast_at_{game_key}", 0.0)
-    if blast_pair is not None and time.time() - blast_at > 1.0:
+    if blast_pair is not None and time.time() - blast_at > 0.7:
         st.session_state[f"match_blast_{game_key}"] = None
         st.session_state[f"match_blast_at_{game_key}"] = 0.0
 
@@ -1559,7 +1562,7 @@ def show_matching_game(song_choice):
         return
 
     # 맞춘 카드는 기본적으로 사라집니다. 단, 방금 맞춘 카드만 1회 렌더링해서
-    # 펑 터지는 애니메이션을 보여 준 뒤 CSS로 화면에서 사라지게 합니다.
+    # 반짝이면서 사라지는 애니메이션을 보여 준 뒤 CSS로 화면에서 사라지게 합니다.
     english_cards = [card for card in cards["en"] if card["pair_id"] not in done or card["pair_id"] == blast_pair]
     korean_cards = [card for card in cards["ko"] if card["pair_id"] not in done or card["pair_id"] == blast_pair]
 
@@ -1572,7 +1575,7 @@ def show_matching_game(song_choice):
             st.rerun()
 
         elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
-            # 정답이면 즉시 맞춘 목록에 넣고, 이번 화면에서는 펑 터지는 효과만 보여 줍니다.
+            # 정답이면 즉시 맞춘 목록에 넣고, 이번 화면에서는 반짝이면서 사라지는 효과만 보여 줍니다.
             # 별도 브라우저 새로고침을 하지 않기 때문에 F5처럼 화면이 튀지 않습니다.
             if card["pair_id"] not in st.session_state[f"match_done_{game_key}"]:
                 st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
@@ -1610,7 +1613,7 @@ def show_matching_game(song_choice):
                     unsafe_allow_html=True
                 )
             else:
-                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True, disabled=blast_pair is not None):
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
                     handle_card_click(card)
 
     with right_col:
@@ -1629,7 +1632,7 @@ def show_matching_game(song_choice):
                     unsafe_allow_html=True
                 )
             else:
-                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True, disabled=blast_pair is not None):
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
                     handle_card_click(card)
 
     st.markdown("---")
