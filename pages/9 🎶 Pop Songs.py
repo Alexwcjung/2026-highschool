@@ -267,7 +267,7 @@ if "1. Let It Go" in song_choice:
             "options": [
                 "Anna",
                 "Olaf",
-                "Kristoff"
+                "Kristoff",
                 "Elsa",              
             ],
             "answer": "Elsa"
