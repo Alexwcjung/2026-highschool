@@ -755,58 +755,197 @@ elif "3. A Whole New World" in song_choice:
     ]
 
 elif "4. Stand By Me" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=hwZNL7QVJjE"
+    video_url = "https://www.youtube.com/watch?v=c5hDjpi_HM0&list=RDc5hDjpi_HM0&start_radio=1"
 
-    bg_content = """
-    <h3>🤝 Stand By Me: 곁에 있어 주는 힘</h3>
-    <p>
-    <b>Stand By Me</b>는 힘들고 어두운 순간에도 누군가가 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다.
-    단순한 표현이 반복되어 학생들이 따라 부르기 좋습니다.
+    bg_content = '''
+    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#15803d;">
+        🤝 Stand By Me: 곁에 있어 주는 힘
+    </h3>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        <b>Stand By Me</b>는 어둡고 불안한 순간에도
+        누군가가 내 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다.
+        제목의 <b>stand by me</b>는 단순히 “내 옆에 서 있어”라는 뜻을 넘어,
+        “내 곁에 있어 줘”, “나를 지켜 줘”, “함께해 줘”라는 의미로 이해할 수 있습니다.
     </p>
-    """
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        노래 속 화자는 밤이 찾아오고 세상이 어두워지는 장면을 떠올립니다.
+        하지만 그는 혼자가 아니라는 믿음 때문에 두려워하지 않습니다.
+        달빛만 보이는 어두운 상황, 하늘이 무너지고 산이 바다로 무너져 내리는 듯한
+        극단적인 상황에서도 사랑하는 사람이 곁에 있다면 괜찮다고 말합니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        이 노래는 어려운 단어가 많지 않고,
+        <b>I won't be afraid</b>, <b>I won't cry</b>, <b>stand by me</b>처럼
+        짧고 반복적인 표현이 많아 학생들이 듣고 따라 부르기에 좋습니다.
+        또한 친구, 가족, 사랑하는 사람의 존재가 주는 안정감과 용기를
+        자연스럽게 이야기해 볼 수 있는 노래입니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        수업에서는 <b>stand by me</b>, <b>I won't be afraid</b>,
+        <b>I won't cry</b>, <b>shed a tear</b>, <b>whenever you're in trouble</b>
+        같은 표현을 중심으로 배울 수 있습니다.
+        특히 이 노래는 느린 속도와 반복 구조 덕분에
+        기초 학습자도 영어 표현을 소리로 익히기에 적합합니다.
+    </p>
+    '''
 
     lyrics_full = [
-        ("When the night has come", "밤이 찾아오고"),
-        ("And the land is dark", "세상이 어두워지고"),
-        ("And the moon is the only light we'll see", "달빛만이 우리가 볼 수 있는 유일한 빛일 때"),
-        ("No, I won't be afraid", "아니, 나는 두려워하지 않을 거야"),
-        ("Oh, I won't be afraid", "오, 나는 두려워하지 않을 거야"),
-        ("Just as long as you stand, stand by me", "네가 내 곁에 있어 준다면"),
+        (
+            "When the night has come / And the land is dark",
+            "밤이 찾아오고 / 세상이 어두워질 때"
+        ),
+        (
+            "And the moon is the only light we'll see",
+            "달빛만이 우리가 볼 수 있는 유일한 빛일 때"
+        ),
+        (
+            "No, I won't be afraid / Oh, I won't be afraid",
+            "아니, 나는 두려워하지 않을 거야 / 오, 나는 두려워하지 않을 거야"
+        ),
+        (
+            "Just as long as you stand / Stand by me",
+            "네가 곁에 있어 준다면 / 내 곁에 있어 준다면"
+        ),
+        (
+            "So darlin', darlin' / Stand by me, oh, stand by me",
+            "그러니 사랑하는 사람아 / 내 곁에 있어 줘, 오, 내 곁에 있어 줘"
+        ),
+        (
+            "Oh, stand, stand by me / Stand by me",
+            "오, 있어 줘, 내 곁에 있어 줘 / 내 곁에 있어 줘"
+        ),
+        (
+            "If the sky that we look upon / Should tumble and fall",
+            "우리가 바라보는 하늘이 / 무너져 내린다 해도"
+        ),
+        (
+            "Or the mountain should crumble to the sea",
+            "산이 부서져 바다로 무너져 내린다 해도"
+        ),
+        (
+            "I won't cry, I won't cry / No, I won't shed a tear",
+            "나는 울지 않을 거야, 울지 않을 거야 / 아니, 눈물 한 방울도 흘리지 않을 거야"
+        ),
+        (
+            "Just as long as you stand / Stand by me",
+            "네가 곁에 있어 준다면 / 내 곁에 있어 준다면"
+        ),
+        (
+            "And darlin', darlin' / Stand by me, oh, stand by me",
+            "그리고 사랑하는 사람아 / 내 곁에 있어 줘, 오, 내 곁에 있어 줘"
+        ),
+        (
+            "Oh, stand now, stand by me / Stand by me",
+            "오, 지금 곁에 있어 줘, 내 곁에 있어 줘 / 내 곁에 있어 줘"
+        ),
+        (
+            "Darlin', darlin' / Stand by me, oh, stand by me",
+            "사랑하는 사람아, 사랑하는 사람아 / 내 곁에 있어 줘, 오, 내 곁에 있어 줘"
+        ),
+        (
+            "Oh, stand now, stand by me / Stand by me",
+            "오, 지금 곁에 있어 줘, 내 곁에 있어 줘 / 내 곁에 있어 줘"
+        ),
+        (
+            "Whenever you're in trouble / Won't you stand by me?",
+            "네가 힘든 순간에 / 내 곁에 있어 주지 않을래?"
+        ),
+        (
+            "Oh, stand by me / Won't you stand now?",
+            "오, 내 곁에 있어 줘 / 지금 내 곁에 있어 주지 않을래?"
+        ),
+        (
+            "Oh, stand, stand by me",
+            "오, 있어 줘, 내 곁에 있어 줘"
+        ),
     ]
 
     comprehension_questions = [
         {
-            "q": "1. When does the song begin?",
-            "options": ["At night", "In the morning", "At school", "At lunch"],
-            "answer": "At night"
+            "q": "1. 이 노래는 어떤 시간적 배경으로 시작하나요?",
+            "options": [
+                "밤",
+                "아침",
+                "점심시간",
+                "학교 수업 시간"
+            ],
+            "answer": "밤"
         },
         {
-            "q": "2. What is the only light they see?",
-            "options": ["The moon", "The sun", "A phone", "A candle"],
-            "answer": "The moon"
+            "q": "2. 노래에서 보이는 유일한 빛은 무엇인가요?",
+            "options": [
+                "달빛",
+                "햇빛",
+                "휴대전화 불빛",
+                "촛불"
+            ],
+            "answer": "달빛"
         },
         {
-            "q": "3. What does the speaker say about fear?",
-            "options": ["I won't be afraid", "I am always afraid", "I like fear", "I fear school"],
-            "answer": "I won't be afraid"
+            "q": "3. 화자는 두려움에 대해 무엇이라고 말하나요?",
+            "options": [
+                "나는 두려워하지 않을 거야",
+                "나는 항상 두려워",
+                "나는 두려움을 좋아해",
+                "나는 학교가 두려워"
+            ],
+            "answer": "나는 두려워하지 않을 거야"
         },
         {
-            "q": "4. What does 'stand by me' mean?",
-            "options": ["Stay with me", "Run away", "Sit down", "Go home"],
-            "answer": "Stay with me"
+            "q": "4. 'Stand by me'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "내 곁에 있어 줘",
+                "멀리 도망가",
+                "앉아 있어",
+                "집에 가"
+            ],
+            "answer": "내 곁에 있어 줘"
         },
         {
-            "q": "5. What is the main theme?",
-            "options": ["Support and friendship", "Shopping", "Competition", "Cooking"],
-            "answer": "Support and friendship"
+            "q": "5. 이 노래의 중심 주제로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "함께 있어 주는 힘과 위로",
+                "쇼핑",
+                "경쟁",
+                "요리"
+            ],
+            "answer": "함께 있어 주는 힘과 위로"
         },
         {
-            "q": "6. Why is the speaker not afraid?",
-            "options": ["Because someone is with him", "Because he has money", "Because it is sunny", "Because he is sleeping"],
-            "answer": "Because someone is with him"
+            "q": "6. 화자가 두려워하지 않는 이유는 무엇인가요?",
+            "options": [
+                "누군가가 곁에 있어 주기 때문에",
+                "돈이 많기 때문에",
+                "날씨가 맑기 때문에",
+                "잠을 자고 있기 때문에"
+            ],
+            "answer": "누군가가 곁에 있어 주기 때문에"
+        },
+        {
+            "q": "7. 'I won't shed a tear'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "눈물 한 방울도 흘리지 않겠다",
+                "많이 웃겠다",
+                "잠을 자겠다",
+                "멀리 떠나겠다"
+            ],
+            "answer": "눈물 한 방울도 흘리지 않겠다"
+        },
+        {
+            "q": "8. 'Whenever you're in trouble'은 어떤 뜻인가요?",
+            "options": [
+                "네가 힘든 순간에는 언제든지",
+                "네가 여행을 갈 때마다",
+                "네가 노래할 때마다",
+                "네가 밥을 먹을 때마다"
+            ],
+            "answer": "네가 힘든 순간에는 언제든지"
         },
     ]
-
 
 elif "5. Don't Know Why" in song_choice:
     video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
