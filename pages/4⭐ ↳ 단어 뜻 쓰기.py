@@ -9,7 +9,7 @@ st.set_page_config(
 )
 
 st.title("💥 Survival English 단어 뜻 터뜨리기 게임")
-st.caption("첫 번째 학습 단어에 맞춰, 위에서 떨어지는 영어 단어의 한국어 뜻을 입력하면 단어가 터집니다!")
+st.caption("생존단어 160개를 바탕으로, 한 판에서 같은 영어 단어가 한 번만 나오도록 만든 단어 뜻 쓰기 게임입니다.")
 
 # -----------------------------
 # 단어 + 한국어 뜻 목록
@@ -19,7 +19,8 @@ word_data = [
         "word": "I",
         "meanings": [
             "나"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "you",
@@ -27,397 +28,438 @@ word_data = [
             "너, 당신",
             "너",
             "당신"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "he",
         "meanings": [
             "그"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "she",
         "meanings": [
             "그녀"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "we",
         "meanings": [
             "우리"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "they",
         "meanings": [
-            "그들",
-            "그녀들"
-        ]
+            "그들"
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "friend",
         "meanings": [
             "친구"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "teacher",
         "meanings": [
             "선생님"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "student",
         "meanings": [
             "학생"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "classmate",
         "meanings": [
             "반 친구"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "family",
         "meanings": [
             "가족"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "father",
         "meanings": [
             "아버지"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "mother",
         "meanings": [
             "어머니"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "brother",
         "meanings": [
             "형제, 남자 형제",
             "형제",
-            "남자 형제",
-            "남자형제",
-            "오빠",
-            "형",
-            "남동생"
-        ]
+            "남자 형제"
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "sister",
         "meanings": [
             "자매, 여자 형제",
             "자매",
-            "여자 형제",
-            "여자형제",
-            "언니",
-            "누나",
-            "여동생"
-        ]
+            "여자 형제"
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "name",
         "meanings": [
             "이름"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "person",
         "meanings": [
             "사람"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "man",
         "meanings": [
             "남자"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "woman",
         "meanings": [
             "여자"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "child",
         "meanings": [
             "아이"
-        ]
+        ],
+        "theme": "🧍 나와 사람"
     },
     {
         "word": "go",
         "meanings": [
             "가다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "come",
         "meanings": [
             "오다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "walk",
         "meanings": [
             "걷다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "run",
         "meanings": [
             "달리다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "sit",
         "meanings": [
             "앉다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "stand",
         "meanings": [
             "서다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "stop",
         "meanings": [
             "멈추다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "start",
         "meanings": [
             "시작하다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "open",
         "meanings": [
             "열다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "close",
         "meanings": [
             "닫다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "eat",
         "meanings": [
             "먹다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "drink",
         "meanings": [
             "마시다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "sleep",
         "meanings": [
             "자다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "study",
         "meanings": [
             "공부하다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "read",
         "meanings": [
             "읽다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "write",
         "meanings": [
             "쓰다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "listen",
         "meanings": [
             "듣다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "speak",
         "meanings": [
             "말하다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "help",
         "meanings": [
             "돕다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "wait",
         "meanings": [
             "기다리다"
-        ]
+        ],
+        "theme": "🏃 기본 동작"
     },
     {
         "word": "happy",
         "meanings": [
             "행복한"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "sad",
         "meanings": [
             "슬픈"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "angry",
         "meanings": [
             "화난"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "tired",
         "meanings": [
             "피곤한"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "hungry",
         "meanings": [
             "배고픈"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "thirsty",
         "meanings": [
             "목마른"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "sick",
         "meanings": [
             "아픈"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "okay",
         "meanings": [
-            "괜찮은",
-            "괜찮다"
-        ]
+            "괜찮은"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "fine",
         "meanings": [
-            "괜찮은",
-            "괜찮다"
-        ]
+            "괜찮은"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "cold",
         "meanings": [
             "추운, 차가운",
             "추운",
-            "차가운",
-            "춥다",
-            "차갑다"
-        ]
+            "차가운"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "hot",
         "meanings": [
             "더운, 뜨거운",
             "더운",
-            "뜨거운",
-            "덥다",
-            "뜨겁다"
-        ]
+            "뜨거운"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "pain",
         "meanings": [
             "통증"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "headache",
         "meanings": [
             "두통"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "stomachache",
         "meanings": [
             "복통"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "fever",
         "meanings": [
             "열"
-        ]
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "hurt",
         "meanings": [
             "아프다, 다치다",
             "아프다",
-            "다치다",
-            "아픈"
-        ]
+            "다치다"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "good",
         "meanings": [
-            "좋은",
-            "좋다"
-        ]
+            "좋은"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "bad",
         "meanings": [
-            "나쁜",
-            "나쁘다"
-        ]
+            "나쁜"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "worried",
         "meanings": [
-            "걱정하는",
-            "걱정되는"
-        ]
+            "걱정하는"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "scared",
         "meanings": [
-            "무서워하는",
-            "무서운"
-        ]
+            "무서워하는"
+        ],
+        "theme": "💖 감정·몸 상태"
     },
     {
         "word": "food",
         "meanings": [
             "음식"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "water",
         "meanings": [
             "물"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "rice",
@@ -425,61 +467,71 @@ word_data = [
             "밥, 쌀",
             "밥",
             "쌀"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "bread",
         "meanings": [
             "빵"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "milk",
         "meanings": [
             "우유"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "juice",
         "meanings": [
             "주스"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "coffee",
         "meanings": [
             "커피"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "tea",
         "meanings": [
             "차"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "apple",
         "meanings": [
             "사과"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "banana",
         "meanings": [
             "바나나"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "egg",
         "meanings": [
             "달걀"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "meat",
         "meanings": [
             "고기"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "chicken",
@@ -487,7 +539,8 @@ word_data = [
             "닭고기, 닭",
             "닭고기",
             "닭"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "fish",
@@ -495,367 +548,423 @@ word_data = [
             "생선, 물고기",
             "생선",
             "물고기"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "breakfast",
         "meanings": [
             "아침 식사"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "lunch",
         "meanings": [
             "점심 식사"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "dinner",
         "meanings": [
             "저녁 식사"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "snack",
         "meanings": [
             "간식"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "medicine",
         "meanings": [
             "약"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "hospital",
         "meanings": [
             "병원"
-        ]
+        ],
+        "theme": "🍎 음식·물"
     },
     {
         "word": "home",
         "meanings": [
             "집"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "school",
         "meanings": [
             "학교"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "classroom",
         "meanings": [
             "교실"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "bathroom",
         "meanings": [
             "화장실"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "hospital",
         "meanings": [
             "병원"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "store",
         "meanings": [
             "가게"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "station",
         "meanings": [
             "역"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "bus",
         "meanings": [
             "버스"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "car",
         "meanings": [
             "자동차"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "taxi",
         "meanings": [
             "택시"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "train",
         "meanings": [
             "기차"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "bike",
         "meanings": [
             "자전거"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "road",
         "meanings": [
             "도로"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "street",
         "meanings": [
             "거리"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "here",
         "meanings": [
             "여기"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "there",
         "meanings": [
             "거기"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "near",
         "meanings": [
-            "가까운",
-            "가깝다"
-        ]
+            "가까운"
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "far",
         "meanings": [
-            "먼",
-            "멀다"
-        ]
+            "먼"
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "left",
         "meanings": [
             "왼쪽"
-        ]
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "right",
         "meanings": [
             "오른쪽, 맞는",
             "오른쪽",
-            "맞는",
-            "맞다"
-        ]
+            "맞는"
+        ],
+        "theme": "🚗 장소·이동"
     },
     {
         "word": "time",
         "meanings": [
             "시간"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "now",
         "meanings": [
             "지금"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "today",
         "meanings": [
             "오늘"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "tomorrow",
         "meanings": [
             "내일"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "yesterday",
         "meanings": [
             "어제"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "morning",
         "meanings": [
             "아침"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "afternoon",
         "meanings": [
             "오후"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "evening",
         "meanings": [
             "저녁"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "night",
         "meanings": [
             "밤"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "nine",
         "meanings": [
             "아홉"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "late",
         "meanings": [
-            "늦은",
-            "늦다"
-        ]
+            "늦은"
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "one",
         "meanings": [
             "하나"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "two",
         "meanings": [
             "둘"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "three",
         "meanings": [
             "셋"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "four",
         "meanings": [
             "넷"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "five",
         "meanings": [
             "다섯"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "six",
         "meanings": [
             "여섯"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "seven",
         "meanings": [
             "일곱"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "eight",
         "meanings": [
             "여덟"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "ten",
         "meanings": [
             "열"
-        ]
+        ],
+        "theme": "⏰ 시간·숫자"
     },
     {
         "word": "bag",
         "meanings": [
             "가방"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "phone",
         "meanings": [
             "전화기"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "book",
         "meanings": [
             "책"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "notebook",
         "meanings": [
             "공책"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "pen",
         "meanings": [
             "펜"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "pencil",
         "meanings": [
             "연필"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "desk",
         "meanings": [
             "책상"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "chair",
         "meanings": [
             "의자"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "door",
         "meanings": [
             "문"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "window",
         "meanings": [
             "창문"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "key",
         "meanings": [
             "열쇠"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "money",
         "meanings": [
             "돈"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "card",
         "meanings": [
             "카드"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "ticket",
@@ -863,43 +972,50 @@ word_data = [
             "표, 티켓",
             "표",
             "티켓"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "clothes",
         "meanings": [
             "옷"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "shoes",
         "meanings": [
             "신발"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "hat",
         "meanings": [
             "모자"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "watch",
         "meanings": [
             "시계"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "cup",
         "meanings": [
             "컵"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "bottle",
         "meanings": [
             "병"
-        ]
+        ],
+        "theme": "🎒 물건·돈"
     },
     {
         "word": "help",
@@ -907,7 +1023,8 @@ word_data = [
             "도움, 돕다",
             "도움",
             "돕다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "please",
@@ -915,73 +1032,85 @@ word_data = [
             "부디, 제발",
             "부디",
             "제발"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "sorry",
         "meanings": [
             "미안합니다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "excuse me",
         "meanings": [
             "실례합니다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "again",
         "meanings": [
             "다시"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "slowly",
         "meanings": [
             "천천히"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "understand",
         "meanings": [
             "이해하다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "question",
         "meanings": [
             "질문"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "problem",
         "meanings": [
             "문제"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "need",
         "meanings": [
             "필요하다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "want",
         "meanings": [
             "원하다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "know",
         "meanings": [
             "알다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "say",
         "meanings": [
             "말하다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "tell",
@@ -989,13 +1118,15 @@ word_data = [
             "말하다, 알려주다",
             "말하다",
             "알려주다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "ask",
         "meanings": [
             "묻다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "answer",
@@ -1003,31 +1134,36 @@ word_data = [
             "대답, 답",
             "대답",
             "답"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "repeat",
         "meanings": [
             "반복하다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "speak",
         "meanings": [
             "말하다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "look",
         "meanings": [
             "보다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     },
     {
         "word": "listen",
         "meanings": [
             "듣다"
-        ]
+        ],
+        "theme": "🆘 도움 요청"
     }
 ]
 
@@ -1046,7 +1182,8 @@ word_count = st.slider(
     "📚 사용할 단어 개수",
     min_value=5,
     max_value=len(word_data),
-    value=15
+    value=30,
+    help="생존단어 160개 목록에서 앞에서부터 선택합니다. 게임에서는 같은 영어 단어가 한 번만 나옵니다."
 )
 
 batch_count = st.slider(
@@ -1071,6 +1208,11 @@ show_hint = st.checkbox(
 )
 
 selected_words = word_data[:word_count]
+
+# 선택된 단어 수와 실제 고유 영어 단어 수 안내
+unique_word_count = len({item["word"].lower() for item in selected_words})
+st.info(f"선택된 생존단어 항목: {len(selected_words)}개 | 실제 게임에서 한 번만 나오는 고유 영어 단어: {unique_word_count}개")
+
 word_data_js = json.dumps(selected_words, ensure_ascii=False)
 show_hint_js = "true" if show_hint else "false"
 
@@ -1325,6 +1467,30 @@ let activeWords = [];
 let score = 0;
 let gameStarted = false;
 let createInterval = null;
+let usedWords = new Set();
+
+// 같은 영어 단어가 한 판에서 다시 나오지 않도록,
+// 중복 항목은 의미만 합치고 단어는 하나로 정리합니다.
+const uniqueWordMap = new Map();
+wordData.forEach(item => {{
+    const key = item.word.toLowerCase().trim();
+    if (!uniqueWordMap.has(key)) {{
+        uniqueWordMap.set(key, {{
+            word: item.word,
+            meanings: [...item.meanings],
+            theme: item.theme || ""
+        }});
+    }} else {{
+        const oldItem = uniqueWordMap.get(key);
+        item.meanings.forEach(m => {{
+            if (!oldItem.meanings.includes(m)) {{
+                oldItem.meanings.push(m);
+            }}
+        }});
+    }}
+}});
+
+const uniqueWordData = Array.from(uniqueWordMap.values());
 
 let fallSpeed = {speed};
 let batchCount = {batch_count};
@@ -1372,12 +1538,34 @@ function getFreeLane() {{
 function createOneWord() {{
     if (!gameStarted) return;
 
+    const activeWordKeys = activeWords.map(item => item.word.toLowerCase().trim());
+
+    const availableWords = uniqueWordData.filter(item => {{
+        const key = item.word.toLowerCase().trim();
+        return !usedWords.has(key) && !activeWordKeys.includes(key);
+    }});
+
+    if (availableWords.length === 0) {{
+        if (activeWords.length === 0) {{
+            statusBox.innerText = "🎉 모든 단어를 한 번씩 완료했습니다! 점수: " + score;
+            gameStarted = false;
+            if (createInterval) {{
+                clearInterval(createInterval);
+                createInterval = null;
+            }}
+        }}
+        return;
+    }}
+
     const lane = getFreeLane();
     if (lane === null) return;
 
     laneBusy[lane] = true;
 
-    const item = wordData[Math.floor(Math.random() * wordData.length)];
+    const item = availableWords[Math.floor(Math.random() * availableWords.length)];
+    const key = item.word.toLowerCase().trim();
+    usedWords.add(key);
+
     const wordDiv = document.createElement("div");
 
     wordDiv.className = "word";
@@ -1396,6 +1584,9 @@ function createOneWord() {{
         speed: baseSpeed + Math.random() * 0.12,
         lane: lane
     }});
+
+    const remaining = Math.max(0, uniqueWordData.length - usedWords.size);
+    statusBox.innerText = "✏️ 뜻을 입력하세요! 남은 새 단어: " + remaining + "개";
 
     setTimeout(() => {{
         laneBusy[lane] = false;
@@ -1421,6 +1612,16 @@ function moveWords() {{
         if (item.y > gameArea.clientHeight - 120) {{
             item.element.remove();
             activeWords.splice(i, 1);
+            statusBox.innerText = "⬇️ 지나간 단어: " + item.word + " = " + item.meanings[0];
+        }}
+    }}
+
+    if (gameStarted && usedWords.size >= uniqueWordData.length && activeWords.length === 0) {{
+        statusBox.innerText = "🎉 모든 단어를 한 번씩 완료했습니다! 최종 점수: " + score;
+        gameStarted = false;
+        if (createInterval) {{
+            clearInterval(createInterval);
+            createInterval = null;
         }}
     }}
 
@@ -1473,7 +1674,7 @@ function popWord(item, index) {{
     score++;
     scoreSpan.innerText = score;
 
-    statusBox.innerText = "✅ 정답! " + item.word + " = " + item.meanings[0];
+    statusBox.innerText = "✅ 정답! " + item.word + " = " + item.meanings[0] + " | 이 단어는 다시 나오지 않습니다.";
 }}
 
 function showEffect(x, y) {{
@@ -1511,9 +1712,12 @@ function startGame() {{
 
     gameStarted = true;
     score = 0;
+    activeWords.forEach(item => item.element.remove());
     activeWords = [];
+    usedWords = new Set();
+    laneBusy = Array(laneCount).fill(false);
     scoreSpan.innerText = score;
-    statusBox.innerText = "✏️ 떨어지는 단어의 한국어 뜻을 입력하세요!";
+    statusBox.innerText = "✏️ 떨어지는 단어의 한국어 뜻을 입력하세요! 같은 단어는 한 번만 나옵니다.";
 
     answerInput.focus();
 
