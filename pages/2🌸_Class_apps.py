@@ -626,90 +626,76 @@ with tabs[7]:
 
 # --- Tab 8: Translation ---
 with tabs[8]:
-    st.subheader("🌐 한국어 → 영어 번역 + TTS")
-    st.caption("한국어 문장을 영어로 번역하고, 번역된 영어 문장을 바로 들을 수 있습니다.")
+    st.subheader("🌐 Translation Tool")
+    st.caption("영어 ↔ 한국어 번역을 포함해 여러 언어로 번역하고, 영어 문장은 발음도 들어볼 수 있습니다.")
 
-    st.markdown(
-        """
-        <div style="
-            background: linear-gradient(135deg, #eef6ff, #f8fbff);
-            border: 1px solid #dbeafe;
-            padding: 18px 20px;
-            border-radius: 18px;
-            margin-bottom: 16px;
-        ">
-            <div style="font-size: 22px; font-weight: 800; color: #1e3a8a;">
-                🇰🇷 Korean → 🇺🇸 English
-            </div>
-            <div style="font-size: 15px; color: #334155; margin-top: 6px;">
-                한국어를 입력하면 영어 번역과 영어 음성이 함께 제공됩니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    lang_options = {
+        "한국어 Korean": "ko",
+        "영어 English": "en",
+        "일본어 Japanese": "ja",
+        "중국어 Chinese Simplified": "zh-CN",
+        "스페인어 Spanish": "es",
+        "프랑스어 French": "fr",
+        "독일어 German": "de",
+        "러시아어 Russian": "ru",
+        "베트남어 Vietnamese": "vi",
+        "태국어 Thai": "th",
+        "인도네시아어 Indonesian": "id",
+        "아랍어 Arabic": "ar",
+        "힌디어 Hindi": "hi",
+        "이탈리아어 Italian": "it",
+        "포르투갈어 Portuguese": "pt",
+    }
 
-    korean_text = st.text_area(
-        "🇰🇷 번역할 한국어를 입력하세요",
+    # 번역 결과와 언어 정보를 저장해 두면 버튼을 눌러도 결과가 사라지지 않습니다.
+    if "translated_text" not in st.session_state:
+        st.session_state["translated_text"] = ""
+    if "translation_target_code" not in st.session_state:
+        st.session_state["translation_target_code"] = ""
+    if "translation_source_text" not in st.session_state:
+        st.session_state["translation_source_text"] = ""
+
+    c1, c2 = st.columns(2)
+    with c1:
+        source_lang_label = st.selectbox(
+            "원문 언어",
+            ["자동 감지 Auto"] + list(lang_options.keys()),
+            index=0
+        )
+    with c2:
+        target_lang_label = st.selectbox(
+            "번역할 언어",
+            list(lang_options.keys()),
+            index=0
+        )
+
+    source_text = st.text_area(
+        "번역할 지문을 입력하세요",
         height=220,
-        placeholder="예: 저는 오늘 학교에서 친구들과 축구를 했습니다.",
-        key="ko_to_en_input"
+        placeholder="예: I like soccer. / 나는 축구를 좋아합니다.",
+        key="translation_source_input"
     )
 
-    col_a, col_b = st.columns([1, 1])
-    with col_a:
-        accent = st.radio(
-            "영어 음성 선택",
-            ["미국식 영어", "영국식 영어"],
-            horizontal=True,
-            key="translation_tts_accent"
-        )
-    with col_b:
-        slow_voice = st.checkbox(
-            "천천히 듣기",
-            value=False,
-            key="translation_tts_slow"
-        )
-
-    translate_btn = st.button("🌐 영어로 번역하고 음성 듣기", use_container_width=True)
+    translate_btn = st.button("🌐 번역하기", use_container_width=True)
 
     if translate_btn:
-        if not korean_text.strip():
-            st.warning("번역할 한국어 문장을 먼저 입력하세요.")
+        if not source_text.strip():
+            st.warning("번역할 문장을 먼저 입력하세요.")
         else:
             try:
                 from deep_translator import GoogleTranslator
 
+                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
+                target_code = lang_options[target_lang_label]
+
                 translated = GoogleTranslator(
-                    source="ko",
-                    target="en"
-                ).translate(korean_text)
+                    source=source_code,
+                    target=target_code
+                ).translate(source_text)
 
-                st.markdown("### ✅ 영어 번역 결과")
-                st.text_area(
-                    "복사해서 사용할 수 있습니다",
-                    value=translated,
-                    height=180,
-                    key="ko_to_en_result"
-                )
-
-                # 영어 TTS 생성
-                tld = "com" if accent == "미국식 영어" else "co.uk"
-                tts = gTTS(
-                    text=translated,
-                    lang="en",
-                    tld=tld,
-                    slow=slow_voice
-                )
-
-                speech = io.BytesIO()
-                tts.write_to_fp(speech)
-                speech.seek(0)
-
-                st.markdown("### 🔊 영어 발음 듣기")
-                st.audio(speech.getvalue(), format="audio/mp3")
-
-                st.success("번역과 영어 음성이 준비되었습니다.")
+                st.session_state["translated_text"] = translated
+                st.session_state["translation_target_code"] = target_code
+                st.session_state["translation_source_text"] = source_text
 
             except ModuleNotFoundError:
                 st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
@@ -717,21 +703,56 @@ with tabs[8]:
                 st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
 
             except Exception as e:
-                st.error("번역 또는 TTS 생성 중 오류가 발생했습니다.")
+                st.error("번역 중 오류가 발생했습니다.")
                 st.write(e)
 
+    if st.session_state["translated_text"]:
+        st.markdown("### ✅ 번역 결과")
+        translated_result = st.text_area(
+            "복사해서 사용하세요",
+            value=st.session_state["translated_text"],
+            height=220,
+            key="translation_result"
+        )
+
+        st.markdown("### 🔊 영어 발음 듣기")
+        st.caption("번역 결과가 영어일 때는 번역된 영어 문장을 들을 수 있습니다. 영어 원문도 따로 들어볼 수 있습니다.")
+
+        tts_col1, tts_col2 = st.columns(2)
+
+        def play_english_tts(tts_text, label="영어 발음"):
+            if not tts_text.strip():
+                st.warning("읽을 영어 문장이 없습니다.")
+                return
+            try:
+                tts = gTTS(text=tts_text, lang="en", tld="com", slow=False)
+                speech = io.BytesIO()
+                tts.write_to_fp(speech)
+                speech.seek(0)
+                st.audio(speech.getvalue(), format="audio/mp3")
+            except Exception as e:
+                st.error(f"{label} 생성 중 오류가 발생했습니다.")
+                st.write(e)
+
+        with tts_col1:
+            if st.session_state["translation_target_code"] == "en":
+                if st.button("🔊 번역된 영어 발음 듣기", use_container_width=True):
+                    play_english_tts(translated_result, "번역된 영어 발음")
+            else:
+                st.info("번역할 언어를 영어 English로 선택하면 번역된 영어 발음을 들을 수 있습니다.")
+
+        with tts_col2:
+            if st.button("🔊 원문 영어 발음 듣기", use_container_width=True):
+                play_english_tts(st.session_state["translation_source_text"], "원문 영어 발음")
+
     st.markdown("---")
-    st.markdown("### 📌 Streamlit Cloud 사용 시 requirements.txt")
-    st.code(
-        """streamlit
-pandas
-numpy
-matplotlib
-qrcode
-pillow
-wordcloud
-gTTS
-streamlit-drawable-canvas
-deep-translator""",
-        language="txt"
+    st.markdown("### 📌 사용 안내")
+    st.markdown(
+        """
+        - 영어를 한국어로 번역할 때는 원문 언어를 `영어 English`, 번역할 언어를 `한국어 Korean`으로 선택하세요.
+        - 한국어를 영어로 번역할 때는 원문 언어를 `한국어 Korean`, 번역할 언어를 `영어 English`로 선택하세요.
+        - 번역할 언어가 `영어 English`이면 번역된 영어 문장의 발음을 바로 들을 수 있습니다.
+        - 영어 원문을 입력한 경우에는 `원문 영어 발음 듣기`로 원문 발음도 확인할 수 있습니다.
+        - 번역 품질은 문맥에 따라 달라질 수 있으므로, 중요한 자료는 교사가 한 번 확인하는 것이 좋습니다.
+        """
     )
