@@ -749,31 +749,31 @@ with tab_learn:
 
     if not learn_pool:
         st.warning("해당 대륙의 나라 데이터가 없습니다.")
+
     else:
+        st.markdown(
+            """
+            <div class="info-box">
+                ✅ 여기의 대표 국가는 <b>세계 뉴스, 역사, 경제, 문화, 여행, 국제 관계</b>에서 자주 등장하는 나라를 중심으로 골랐습니다.<br>
+                ✅ 모든 나라를 외우기보다, 먼저 자주 접하는 나라의 <b>이름과 위치</b>를 익히는 것이 목표입니다.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
         # 보기 좋은 칩 형태
         st.markdown("<div class='continent-card'>", unsafe_allow_html=True)
+
         chip_html = ""
         for c in learn_pool:
             chip_html += f"""
             <span class="country-chip">
-                {c['ko']} <small>/ {c['en']}</small>
+                {c['flag']} {c['ko']} <small>/ {c['en']}</small>
             </span>
             """
+
         st.markdown(chip_html, unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
-
-        # 표 형태
-        st.markdown("### 📋 표로 보기")
-        learn_df = pd.DataFrame([
-            {
-                "대륙": c["continent"],
-                "나라 이름": c["ko"],
-                "영어 이름": c["en"],
-                "국가 코드": c["iso"]
-            }
-            for c in learn_pool
-        ])
-        st.dataframe(learn_df, use_container_width=True, hide_index=True)
 
         # 학습용 지도: 선택 대륙의 나라들을 색칠
         st.markdown("### 🗺️ 지도에서 위치 보기")
@@ -814,14 +814,27 @@ with tab_learn:
             )
         )
 
-        st.plotly_chart(learn_fig, use_container_width=True, config={"displaylogo": False})
+        st.plotly_chart(
+            learn_fig,
+            use_container_width=True,
+            config={"displaylogo": False}
+        )
 
         st.markdown("### 🧠 학생용 암기 문장")
+
         if learn_continent == "전체":
-            st.info("세계 모든 나라를 외우는 것이 아니라, 먼저 뉴스·역사·경제·여행에서 자주 등장하는 대표 국가를 익히는 것이 목표입니다.")
+            st.info(
+                "먼저 세계에서 자주 등장하는 대표 국가를 익혀 둡니다. "
+                "뉴스, 스포츠, 역사, 여행, 경제 이야기에서 자주 만나는 나라들이라 "
+                "기본 세계지리 학습의 출발점으로 좋습니다."
+            )
         else:
             names = ", ".join([c["ko"] for c in learn_pool[:8]])
-            st.info(f"{learn_continent}에는 {names} 등이 있습니다.")
+            st.info(
+                f"{learn_continent}의 대표 국가로는 {names} 등이 있습니다. "
+                f"이 나라들은 뉴스, 역사, 문화, 여행, 경제에서 자주 등장하므로 "
+                f"{learn_continent}의 위치와 특징을 익히는 데 도움이 됩니다."
+            )
 
 
 # =====================================================
