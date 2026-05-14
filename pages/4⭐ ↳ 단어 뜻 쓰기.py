@@ -1324,103 +1324,21 @@ html_code = f"""
         box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }}
 
-    #timerBox {
+    #timerBox {{
         position: absolute;
         top: 15px;
         right: 20px;
         z-index: 25;
         background: rgba(255,255,255,0.97);
-        padding: 10px 20px;
-        border-radius: 24px;
+        padding: 10px 22px;
+        border-radius: 22px;
         font-size: 42px;
         font-weight: 900;
         color: #e11d48;
         box-shadow: 0 5px 14px rgba(0,0,0,0.16);
-        min-width: 140px;
+        min-width: 92px;
         text-align: center;
         border: 3px solid #fecdd3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-    }
-
-    #clockIcon {
-        position: relative;
-        width: 44px;
-        height: 44px;
-        border: 4px solid #e11d48;
-        border-radius: 50%;
-        background: radial-gradient(circle, #fff 0%, #fff7ed 100%);
-        box-shadow: inset 0 0 0 3px rgba(254,205,211,0.65);
-        flex-shrink: 0;
-    }
-
-    #clockIcon::before {
-        content: "";
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: #e11d48;
-        top: 5px;
-        left: 50%;
-        transform: translateX(-50%);
-        box-shadow:
-            0 26px 0 #e11d48,
-            13px 13px 0 #e11d48,
-            -13px 13px 0 #e11d48;
-        opacity: 0.75;
-    }
-
-    #clockHour {
-        position: absolute;
-        width: 5px;
-        height: 14px;
-        background: #be123c;
-        left: 50%;
-        top: 50%;
-        transform-origin: bottom center;
-        transform: translate(-50%, -100%) rotate(315deg);
-        border-radius: 999px;
-    }
-
-    #clockMinute {
-        position: absolute;
-        width: 4px;
-        height: 18px;
-        background: #fb7185;
-        left: 50%;
-        top: 50%;
-        transform-origin: bottom center;
-        transform: translate(-50%, -100%) rotate(40deg);
-        border-radius: 999px;
-    }
-
-    #clockCenter {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: #e11d48;
-        border-radius: 50%;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    #timerBox.time-warning {
-        animation: timerPulse 0.8s infinite alternate;
-    }
-
-    @keyframes timerPulse {
-        from {
-            transform: scale(1);
-            box-shadow: 0 5px 14px rgba(0,0,0,0.16);
-        }
-        to {
-            transform: scale(1.04);
-            box-shadow: 0 8px 24px rgba(225,29,72,0.35);
-        }
     }}
 
     #endOverlay {{
@@ -1576,104 +1494,13 @@ html_code = f"""
             left: 10px;
         }}
 
-        #timerBox {
-        position: absolute;
-        top: 15px;
-        right: 20px;
-        z-index: 25;
-        background: rgba(255,255,255,0.97);
-        padding: 10px 20px;
-        border-radius: 24px;
-        font-size: 42px;
-        font-weight: 900;
-        color: #e11d48;
-        box-shadow: 0 5px 14px rgba(0,0,0,0.16);
-        min-width: 140px;
-        text-align: center;
-        border: 3px solid #fecdd3;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-    }
-
-    #clockIcon {
-        position: relative;
-        width: 44px;
-        height: 44px;
-        border: 4px solid #e11d48;
-        border-radius: 50%;
-        background: radial-gradient(circle, #fff 0%, #fff7ed 100%);
-        box-shadow: inset 0 0 0 3px rgba(254,205,211,0.65);
-        flex-shrink: 0;
-    }
-
-    #clockIcon::before {
-        content: "";
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: #e11d48;
-        top: 5px;
-        left: 50%;
-        transform: translateX(-50%);
-        box-shadow:
-            0 26px 0 #e11d48,
-            13px 13px 0 #e11d48,
-            -13px 13px 0 #e11d48;
-        opacity: 0.75;
-    }
-
-    #clockHour {
-        position: absolute;
-        width: 5px;
-        height: 14px;
-        background: #be123c;
-        left: 50%;
-        top: 50%;
-        transform-origin: bottom center;
-        transform: translate(-50%, -100%) rotate(315deg);
-        border-radius: 999px;
-    }
-
-    #clockMinute {
-        position: absolute;
-        width: 4px;
-        height: 18px;
-        background: #fb7185;
-        left: 50%;
-        top: 50%;
-        transform-origin: bottom center;
-        transform: translate(-50%, -100%) rotate(40deg);
-        border-radius: 999px;
-    }
-
-    #clockCenter {
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: #e11d48;
-        border-radius: 50%;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    #timerBox.time-warning {
-        animation: timerPulse 0.8s infinite alternate;
-    }
-
-    @keyframes timerPulse {
-        from {
-            transform: scale(1);
-            box-shadow: 0 5px 14px rgba(0,0,0,0.16);
-        }
-        to {
-            transform: scale(1.04);
-            box-shadow: 0 8px 24px rgba(225,29,72,0.35);
-        }
-    }}
+        #timerBox {{
+            font-size: 32px;
+            padding: 8px 16px;
+            top: 10px;
+            right: 10px;
+            min-width: 72px;
+        }}
 
         #inputPanel {{
             width: 94%;
@@ -1703,14 +1530,7 @@ html_code = f"""
 <body>
 <div id="gameArea">
     <div id="scoreBox">✅ 점수: <span id="score">0</span></div>
-    <div id="timerBox">
-        <div id="clockIcon">
-            <div id="clockHour"></div>
-            <div id="clockMinute"></div>
-            <div id="clockCenter"></div>
-        </div>
-        <span id="timeLeft">{time_limit_js}</span>
-    </div>
+    <div id="timerBox"><span id="timeLeft">{time_limit_js}</span></div>
     <div id="status">🎮 게임 시작을 누르세요</div>
 
     <div id="endOverlay">
@@ -1738,7 +1558,6 @@ const gameArea = document.getElementById("gameArea");
 const statusBox = document.getElementById("status");
 const scoreSpan = document.getElementById("score");
 const timeLeftSpan = document.getElementById("timeLeft");
-const timerBox = document.getElementById("timerBox");
 const endOverlay = document.getElementById("endOverlay");
 const finalScoreSpan = document.getElementById("finalScore");
 const answerInput = document.getElementById("answerInput");
@@ -2073,7 +1892,6 @@ function startGame() {{
 
     scoreSpan.innerText = score;
     updateTimerDisplay();
-    timerBox.classList.remove("time-warning");
     endOverlay.style.display = "none";
 
     answerInput.disabled = false;
