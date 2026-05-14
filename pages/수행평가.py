@@ -2,6 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import re
 import urllib.parse
+import html
 from pathlib import Path
 
 st.set_page_config(
@@ -24,7 +25,7 @@ def clean_english_input(text):
     return text.strip()
 
 
-def make_google_translate_url(text, source="en", target="ko"):
+def make_google_translate_url(text, source="auto", target="en"):
     encoded_text = urllib.parse.quote(str(text).strip())
     return f"https://translate.google.com/?sl={source}&tl={target}&text={encoded_text}&op=translate"
 
@@ -40,7 +41,7 @@ def translate_to_english_with_deep_translator(text):
 
 
 # =========================
-# 좋아하는 것 변환
+# 좋아하는 것 변환 사전
 # =========================
 like_dict = {
     "축구": "soccer",
@@ -105,6 +106,15 @@ like_dict = {
     "걷기": "walking",
     "산책": "walking",
     "여행": "traveling",
+
+    "자동차": "cars",
+    "자동차 정비": "fixing cars",
+    "자동차정비": "fixing cars",
+    "차": "cars",
+    "정비": "fixing cars",
+    "기계": "machines",
+    "기계 정비": "fixing machines",
+    "기계정비": "fixing machines",
 }
 
 
@@ -112,15 +122,15 @@ def translate_like_item(like_input):
     like_input = str(like_input).strip()
 
     if not like_input:
-        return "soccer", "기본 예시"
+        return "soccer", "기본 예시", False
 
     like_no_space = like_input.replace(" ", "")
 
     if like_input in like_dict:
-        return like_dict[like_input], "기본 단어 사전"
+        return like_dict[like_input], "기본 단어 사전", False
 
     if like_no_space in like_dict:
-        return like_dict[like_no_space], "기본 단어 사전"
+        return like_dict[like_no_space], "기본 단어 사전", False
 
     if has_korean(like_input):
         try:
@@ -128,77 +138,113 @@ def translate_like_item(like_input):
             translated = str(translated).strip()
 
             if translated:
-                return translated, "deep-translator"
+                return translated, "자동 번역", False
+
         except Exception:
-            return "", "google-link"
+            return "", "구글 번역 연결 필요", True
 
     cleaned = clean_english_input(like_input)
-    return cleaned if cleaned else "soccer", "직접 입력"
+    return cleaned if cleaned else "soccer", "직접 입력", False
 
 
 # =========================
-# 브라우저 음성 버튼
-# 사진 묘사 전체 듣기용
+# 앱 안에서 발음 듣기 버튼
 # =========================
 def browser_speech_controls_simple(text, key, speed=1.0):
-    safe_text = (
-        str(text)
-        .replace("\\", "\\\\")
-        .replace("'", "\\'")
-        .replace('"', '\\"')
-        .replace("\n", " ")
-    )
+    safe_text = html.escape(str(text)).replace("\n", " ")
 
     html_code = f"""
-    <div style="display:flex; gap:8px; flex-wrap:wrap; width:100%;">
-        <button onclick="
-            window.speechSynthesis.cancel();
-            var utterance = new SpeechSynthesisUtterance('{safe_text}');
-            utterance.lang = 'en-US';
-            utterance.rate = {speed};
-            utterance.pitch = 1;
-            window.speechSynthesis.speak(utterance);
-        "
+    <div style="
+        display:flex;
+        gap:8px;
+        flex-wrap:wrap;
+        width:100%;
+        margin:4px 0 14px 0;
+    ">
+        <button id="speak_{key}"
         style="
             flex:1;
-            min-width:140px;
+            min-width:120px;
             background-color:#2563eb;
             color:white;
             border:none;
-            border-radius:10px;
-            padding:10px 14px;
+            border-radius:12px;
+            padding:11px 14px;
             font-size:16px;
             cursor:pointer;
-            font-weight:700;
+            font-weight:800;
         ">
             ▶ 듣기
         </button>
 
-        <button onclick="window.speechSynthesis.pause();"
+        <button id="pause_{key}"
         style="
             flex:1;
-            min-width:140px;
+            min-width:120px;
             background-color:#64748b;
             color:white;
             border:none;
-            border-radius:10px;
-            padding:10px 14px;
+            border-radius:12px;
+            padding:11px 14px;
             font-size:16px;
             cursor:pointer;
-            font-weight:700;
+            font-weight:800;
         ">
             ⏸ 잠깐 멈춤
         </button>
+
+        <button id="stop_{key}"
+        style="
+            flex:1;
+            min-width:120px;
+            background-color:#ef4444;
+            color:white;
+            border:none;
+            border-radius:12px;
+            padding:11px 14px;
+            font-size:16px;
+            cursor:pointer;
+            font-weight:800;
+        ">
+            ■ 멈춤
+        </button>
     </div>
+
+    <script>
+    const text_{key} = `{safe_text}`;
+
+    document.getElementById("speak_{key}").onclick = function() {{
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(text_{key});
+        utterance.lang = "en-US";
+        utterance.rate = {speed};
+        utterance.pitch = 1;
+
+        window.speechSynthesis.speak(utterance);
+    }};
+
+    document.getElementById("pause_{key}").onclick = function() {{
+        if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {{
+            window.speechSynthesis.pause();
+        }} else if (window.speechSynthesis.paused) {{
+            window.speechSynthesis.resume();
+        }}
+    }};
+
+    document.getElementById("stop_{key}").onclick = function() {{
+        window.speechSynthesis.cancel();
+    }};
+    </script>
     """
 
-    components.html(html_code, height=65)
+    components.html(html_code, height=78)
 
 
 # =========================
 # 문장 카드
 # =========================
-def sentence_card(korean, english, key):
+def sentence_card(korean, english, key, speed=1.0):
     st.markdown(
         f"""
         <div style="
@@ -206,7 +252,7 @@ def sentence_card(korean, english, key):
             border:1px solid #e5e7eb;
             border-radius:18px;
             padding:18px 20px;
-            margin:10px 0 16px 0;
+            margin:10px 0 10px 0;
             box-shadow:0 3px 10px rgba(0,0,0,0.04);
         ">
             <div style="font-size:17px; color:#374151; font-weight:700; margin-bottom:8px;">
@@ -220,13 +266,7 @@ def sentence_card(korean, english, key):
         unsafe_allow_html=True
     )
 
-    google_url = make_google_translate_url(english, source="en", target="ko")
-
-    st.link_button(
-        "🔊 구글 번역에서 발음 듣기",
-        google_url,
-        use_container_width=True
-    )
+    browser_speech_controls_simple(english, key, speed)
 
 
 # =========================
@@ -243,7 +283,7 @@ st.markdown("---")
 st.subheader("🔊 듣기 속도 조절")
 
 speed_label = st.selectbox(
-    "사진 묘사 전체 듣기 속도를 선택하세요.",
+    "듣기 속도를 선택하세요.",
     [
         "느리게 0.7배",
         "조금 느리게 0.85배",
@@ -264,7 +304,7 @@ speed_dict = {
 
 speed = speed_dict[speed_label]
 
-st.info("개별 문장 발음은 구글 번역 발음 페이지로 연결합니다. 사진 묘사 전체 듣기는 앱 안에서 듣기와 잠깐 멈춤만 제공합니다.")
+st.info("2번에서 한국어 자동 번역이 실패할 때만 구글 번역으로 연결합니다. 나머지 발음은 앱 안에서 바로 들을 수 있습니다.")
 
 st.markdown("---")
 
@@ -278,14 +318,14 @@ name_input = st.text_input(
     placeholder="예: Woochang, Minsu, Jimin"
 )
 
-# 이름은 변환하지 않고 학생이 입력한 그대로 넣음
-name_text = str(name_input).strip() if name_input.strip() else "Woochang"
+name_text = str(name_input).strip() if str(name_input).strip() else "Woochang"
 name_sentence = f"I am {name_text}."
 
 sentence_card(
     "나는 (본인 이름)입니다.",
     name_sentence,
-    "name"
+    "name",
+    speed
 )
 
 st.markdown("---")
@@ -300,27 +340,38 @@ like_input = st.text_input(
     placeholder="예: 축구, 노래, 게임, 음악 듣기, 자동차 정비"
 )
 
-like_english, translate_method = translate_like_item(like_input)
+like_english, translate_method, need_google = translate_like_item(like_input)
 
 if like_input:
-    if translate_method == "google-link":
-        st.warning("앱 안에서 자동 번역이 되지 않았습니다. 아래 버튼으로 구글 번역에서 영어 번역과 발음을 확인하세요.")
-        google_translate_input_url = make_google_translate_url(like_input, source="auto", target="en")
+    if need_google:
+        st.warning("앱 안에서 자동 번역이 되지 않았습니다. 아래 버튼으로 구글 번역에서 영어 표현을 확인하세요.")
+
+        google_translate_input_url = make_google_translate_url(
+            like_input,
+            source="auto",
+            target="en"
+        )
+
         st.link_button(
-            "🌐 구글에서 영어로 번역하고 발음 듣기",
+            "🌐 구글 번역에서 영어 표현 확인하기",
             google_translate_input_url,
             use_container_width=True
         )
+
         like_english = "soccer"
+
+        st.info("일단 예시 문장은 I like soccer. 로 보여 줍니다.")
+
     else:
-        st.info(f"입력한 내용: {like_input} → 영어 표현: {like_english} / 번역 방식: {translate_method}")
+        st.success(f"입력한 내용: {like_input} → 영어 표현: {like_english}")
 
 like_sentence = f"I like {like_english}."
 
 sentence_card(
     "나는 ~을/를 좋아합니다.",
     like_sentence,
-    "like"
+    "like",
+    speed
 )
 
 st.markdown("---")
@@ -333,7 +384,8 @@ st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 sentence_card(
     "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
     "What time is it? I want to go home now.",
-    "time_home"
+    "time_home",
+    speed
 )
 
 st.markdown("---")
@@ -346,7 +398,8 @@ st.subheader("4. 필요한 것 말하기")
 sentence_card(
     "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
     "I want water. I want food too.",
-    "water_food"
+    "water_food",
+    speed
 )
 
 st.markdown("---")
@@ -364,12 +417,13 @@ image_paths = [
 ]
 
 image_path = None
+
 for p in image_paths:
     if p.exists():
         image_path = p
         break
 
-left_col, center_col, right_col = st.columns([1.3, 1.8, 1.3])
+left_col, center_col, right_col = st.columns([1.2, 1.8, 1.2])
 
 with center_col:
     if image_path:
@@ -391,11 +445,30 @@ They look happy.
 """
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
-browser_speech_controls_simple(picture_script, "picture_full", speed)
+browser_speech_controls_simple(
+    picture_script,
+    "picture_full",
+    speed
+)
 
-st.markdown("### There are many people in the street.")
-st.markdown("### I can see trees and buildings too.")
-st.markdown("### Some people are riding bikes and some are sitting in chairs.")
-st.markdown("### They look happy.")
+st.markdown(
+    """
+    <div style="
+        background:#f8fafc;
+        border:1px solid #e5e7eb;
+        border-radius:18px;
+        padding:18px 20px;
+        margin-top:12px;
+    ">
+        <div style="font-size:25px; font-weight:800; line-height:1.7;">
+            There are many people in the street.<br>
+            I can see trees and buildings too.<br>
+            Some people are riding bikes and some are sitting in chairs.<br>
+            They look happy.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 st.success("영어 문장을 듣고 따라 말하면서 연습해 보세요.")
