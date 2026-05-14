@@ -1,8 +1,9 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import re
+from gtts import gTTS
+import io
+import base64
 import urllib.parse
-import json
 from pathlib import Path
 
 st.set_page_config(
@@ -14,130 +15,111 @@ st.set_page_config(
 # =========================
 # 기본 함수
 # =========================
-def has_korean(text):
-    return any("가" <= ch <= "힣" for ch in str(text))
-
-
-def clean_english_input(text):
-    text = str(text).strip()
-    text = re.sub(r"[^a-zA-Z ]", "", text)
-    text = re.sub(r"\s+", " ", text)
-    return text.strip()
-
-
 def make_google_translate_url(text, source="auto", target="en"):
     encoded_text = urllib.parse.quote(str(text).strip())
     return f"https://translate.google.com/?sl={source}&tl={target}&text={encoded_text}&op=translate"
 
 
+@st.cache_data(show_spinner=False)
+def make_english_tts_audio(text, slow=False):
+    """
+    영어 발음 mp3 생성
+    브라우저 TTS가 아니라 gTTS 영어 음성을 사용함
+    """
+    text = str(text).strip()
+
+    if not text:
+        text = "Hello."
+
+    fp = io.BytesIO()
+
+    tts = gTTS(
+        text=text,
+        lang="en",
+        tld="com",
+        slow=slow
+    )
+
+    tts.write_to_fp(fp)
+    fp.seek(0)
+
+    return fp.read()
+
+
 # =========================
 # 앱 안에서 영어 발음 듣기 버튼
 # 듣기 / 멈춤만 있음
-# 영어 음성 우선 선택
 # =========================
-def browser_speech_controls_simple(text, key, speed=1.0):
-    safe_text_js = json.dumps(str(text).replace("\n", " "))
+def english_audio_buttons(text, key, slow=False):
+    try:
+        audio_bytes = make_english_tts_audio(text, slow=slow)
+        audio_base64 = base64.b64encode(audio_bytes).decode()
 
-    html_code = f"""
-    <div style="
-        display:flex;
-        gap:8px;
-        flex-wrap:wrap;
-        width:100%;
-        margin:4px 0 14px 0;
-    ">
-        <button id="speak_{key}"
-        style="
-            flex:1;
-            min-width:120px;
-            background-color:#2563eb;
-            color:white;
-            border:none;
-            border-radius:12px;
-            padding:11px 14px;
-            font-size:16px;
-            cursor:pointer;
-            font-weight:800;
+        html_code = f"""
+        <div style="
+            display:flex;
+            gap:8px;
+            flex-wrap:wrap;
+            width:100%;
+            margin:4px 0 14px 0;
         ">
-            ▶ 듣기
-        </button>
+            <audio id="audio_{key}">
+                <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+            </audio>
 
-        <button id="stop_{key}"
-        style="
-            flex:1;
-            min-width:120px;
-            background-color:#ef4444;
-            color:white;
-            border:none;
-            border-radius:12px;
-            padding:11px 14px;
-            font-size:16px;
-            cursor:pointer;
-            font-weight:800;
-        ">
-            ■ 멈춤
-        </button>
-    </div>
+            <button onclick="
+                var audio = document.getElementById('audio_{key}');
+                audio.currentTime = 0;
+                audio.play();
+            "
+            style="
+                flex:1;
+                min-width:120px;
+                background-color:#2563eb;
+                color:white;
+                border:none;
+                border-radius:12px;
+                padding:11px 14px;
+                font-size:16px;
+                cursor:pointer;
+                font-weight:800;
+            ">
+                ▶ 듣기
+            </button>
 
-    <script>
-    const text_{key} = {safe_text_js};
+            <button onclick="
+                var audio = document.getElementById('audio_{key}');
+                audio.pause();
+                audio.currentTime = 0;
+            "
+            style="
+                flex:1;
+                min-width:120px;
+                background-color:#ef4444;
+                color:white;
+                border:none;
+                border-radius:12px;
+                padding:11px 14px;
+                font-size:16px;
+                cursor:pointer;
+                font-weight:800;
+            ">
+                ■ 멈춤
+            </button>
+        </div>
+        """
 
-    function getEnglishVoice() {{
-        const voices = window.speechSynthesis.getVoices();
+        components.html(html_code, height=72)
 
-        let voice =
-            voices.find(v => v.lang === "en-US") ||
-            voices.find(v => v.lang === "en_US") ||
-            voices.find(v => v.lang === "en-GB") ||
-            voices.find(v => v.lang && v.lang.startsWith("en")) ||
-            voices.find(v => v.name && v.name.toLowerCase().includes("english"));
-
-        return voice || null;
-    }}
-
-    function speakEnglish_{key}() {{
-        window.speechSynthesis.cancel();
-
-        const utterance = new SpeechSynthesisUtterance(text_{key});
-        utterance.lang = "en-US";
-        utterance.rate = {speed};
-        utterance.pitch = 1;
-        utterance.volume = 1;
-
-        const selectedVoice = getEnglishVoice();
-        if (selectedVoice) {{
-            utterance.voice = selectedVoice;
-            utterance.lang = selectedVoice.lang || "en-US";
-        }}
-
-        window.speechSynthesis.speak(utterance);
-    }}
-
-    document.getElementById("speak_{key}").onclick = function() {{
-        const voices = window.speechSynthesis.getVoices();
-
-        if (voices.length === 0) {{
-            window.speechSynthesis.onvoiceschanged = function() {{
-                speakEnglish_{key}();
-            }};
-        }} else {{
-            speakEnglish_{key}();
-        }}
-    }};
-
-    document.getElementById("stop_{key}").onclick = function() {{
-        window.speechSynthesis.cancel();
-    }};
-    </script>
-    """
-
-    components.html(html_code, height=72)
+    except Exception as e:
+        st.error("영어 음성 생성 중 오류가 발생했습니다.")
+        st.caption(str(e))
 
 
 # =========================
 # 문장 카드
 # =========================
-def sentence_card(korean, english, key, speed=1.0):
+def sentence_card(korean, english, key, slow=False, show_audio=True):
     st.markdown(
         f"""
         <div style="
@@ -159,7 +141,8 @@ def sentence_card(korean, english, key, speed=1.0):
         unsafe_allow_html=True
     )
 
-    browser_speech_controls_simple(english, key, speed)
+    if show_audio:
+        english_audio_buttons(english, key, slow=slow)
 
 
 # =========================
@@ -171,33 +154,19 @@ st.caption("영어 문장을 보고 듣고 따라 말해 봅시다.")
 st.markdown("---")
 
 # =========================
-# 듣기 속도 조절
+# 듣기 속도 선택
 # =========================
-st.subheader("🔊 듣기 속도 조절")
+st.subheader("🔊 듣기 속도")
 
 speed_label = st.selectbox(
     "듣기 속도를 선택하세요.",
-    [
-        "느리게 0.7배",
-        "조금 느리게 0.85배",
-        "보통 1.0배",
-        "조금 빠르게 1.15배",
-        "빠르게 1.3배"
-    ],
-    index=2
+    ["보통", "느리게"],
+    index=0
 )
 
-speed_dict = {
-    "느리게 0.7배": 0.7,
-    "조금 느리게 0.85배": 0.85,
-    "보통 1.0배": 1.0,
-    "조금 빠르게 1.15배": 1.15,
-    "빠르게 1.3배": 1.3
-}
+slow_mode = True if speed_label == "느리게" else False
 
-speed = speed_dict[speed_label]
-
-st.info("2번은 구글 번역으로 연결합니다. 1번, 3번, 4번, 5번 발음은 앱 안에서 영어 음성으로 바로 들을 수 있습니다.")
+st.info("1번, 3번, 4번, 5번 발음은 앱 안에서 영어 음성으로 재생됩니다. 2번 취미 입력은 구글 번역으로 연결합니다.")
 
 st.markdown("---")
 
@@ -218,31 +187,52 @@ sentence_card(
     "나는 (본인 이름)입니다.",
     name_sentence,
     "name",
-    speed
+    slow=slow_mode
 )
 
 st.markdown("---")
 
 # =========================
-# 2. 내가 좋아하는 것 말하기
-# 번역은 앱에서 하지 않고 구글 번역으로 연결
+# 2. 내가 좋아하는 것 / 취미 말하기
 # =========================
 st.subheader("2. 내가 좋아하는 것 말하기")
 
-like_input = st.text_input(
-    "내가 좋아하는 것을 한국어로 써 보세요.",
-    placeholder="예: 축구, 노래, 게임, 음악 듣기, 자동차 정비"
+st.markdown(
+    """
+    <div style="
+        background:linear-gradient(135deg,#fff7ed,#fffbeb);
+        border:1px solid #fed7aa;
+        border-radius:18px;
+        padding:18px 20px;
+        margin:10px 0 12px 0;
+        box-shadow:0 3px 10px rgba(0,0,0,0.04);
+    ">
+        <div style="font-size:17px; color:#9a3412; font-weight:800; margin-bottom:8px;">
+            🇰🇷 나의 취미를 말해 봅시다.
+        </div>
+        <div style="font-size:28px; color:#111827; font-weight:800; line-height:1.5;">
+            My hobby is ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).<br>
+            I am a student and tall.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
 )
 
-if like_input.strip():
+hobby_input = st.text_input(
+    "취미를 한국어로 입력하면 구글 번역으로 이동합니다.",
+    placeholder="예: 축구, 노래 부르기, 게임하기, 음악 듣기, 자동차 정비"
+)
+
+if hobby_input.strip():
     google_translate_input_url = make_google_translate_url(
-        like_input,
+        hobby_input,
         source="auto",
         target="en"
     )
 
     st.link_button(
-        "🌐 구글 번역에서 영어 표현과 발음 확인하기",
+        "🌐 구글 번역에서 취미 영어 표현과 발음 확인하기",
         google_translate_input_url,
         use_container_width=True
     )
@@ -259,13 +249,14 @@ if like_input.strip():
             font-weight:700;
             color:#9a3412;
         ">
-            구글 번역에서 영어 표현을 확인한 뒤, 그 표현을 보고 말하기 연습을 하면 됩니다.
+            구글 번역에서 나온 영어 표현을 괄호 안에 넣어 말하면 됩니다.<br>
+            예: My hobby is playing soccer. I am a student and tall.
         </div>
         """,
         unsafe_allow_html=True
     )
 else:
-    st.info("예: 축구, 노래, 게임, 음악 듣기, 자동차 정비처럼 한국어로 입력하세요.")
+    st.info("취미를 입력하면 구글 번역으로 연결됩니다.")
 
 st.markdown("---")
 
@@ -278,7 +269,7 @@ sentence_card(
     "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
     "What time is it? I want to go home now.",
     "time_home",
-    speed
+    slow=slow_mode
 )
 
 st.markdown("---")
@@ -292,7 +283,7 @@ sentence_card(
     "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
     "I want water. I want food too.",
     "water_food",
-    speed
+    slow=slow_mode
 )
 
 st.markdown("---")
@@ -339,10 +330,10 @@ They look happy.
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
 
-browser_speech_controls_simple(
+english_audio_buttons(
     picture_script,
     "picture_full",
-    speed
+    slow=slow_mode
 )
 
 st.markdown(
