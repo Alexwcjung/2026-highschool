@@ -18,127 +18,10 @@ def safe_key(key):
 
 
 # =========================
-# 한국어 포함 여부 확인
-# =========================
-def has_korean(text):
-    return any("가" <= ch <= "힣" for ch in text)
-
-
-# =========================
-# 한글 이름 → 영어 알파벳 변환
-# 간단한 로마자 변환용
-# =========================
-CHOSUNG = [
-    "g", "kk", "n", "d", "tt", "r", "m", "b", "pp", "s",
-    "ss", "", "j", "jj", "ch", "k", "t", "p", "h"
-]
-
-JUNGSUNG = [
-    "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye",
-    "o", "wa", "wae", "oe", "yo", "u", "wo", "we",
-    "wi", "yu", "eu", "ui", "i"
-]
-
-JONGSUNG = [
-    "", "k", "k", "ks", "n", "nj", "nh", "t", "l",
-    "lk", "lm", "lb", "ls", "lt", "lp", "lh", "m",
-    "p", "ps", "t", "t", "ng", "t", "t", "k", "t",
-    "p", "h"
-]
-
-FAMILY_NAME_DICT = {
-    "김": "Kim",
-    "이": "Lee",
-    "박": "Park",
-    "최": "Choi",
-    "정": "Jung",
-    "강": "Kang",
-    "조": "Cho",
-    "윤": "Yoon",
-    "장": "Jang",
-    "임": "Lim",
-    "한": "Han",
-    "오": "Oh",
-    "서": "Seo",
-    "신": "Shin",
-    "권": "Kwon",
-    "황": "Hwang",
-    "안": "Ahn",
-    "송": "Song",
-    "류": "Ryu",
-    "홍": "Hong",
-    "전": "Jeon",
-    "고": "Ko",
-    "문": "Moon",
-    "양": "Yang",
-    "손": "Son",
-    "배": "Bae",
-    "백": "Baek",
-    "허": "Heo",
-    "남": "Nam",
-    "심": "Sim",
-    "노": "Noh",
-    "하": "Ha",
-    "곽": "Kwak",
-    "성": "Sung",
-    "차": "Cha",
-    "주": "Joo",
-    "우": "Woo",
-    "구": "Koo",
-    "민": "Min",
-    "유": "Yoo",
-}
-
-
-def romanize_syllable(ch):
-    code = ord(ch)
-
-    if not (0xAC00 <= code <= 0xD7A3):
-        return ch
-
-    base = code - 0xAC00
-    cho = base // 588
-    jung = (base % 588) // 28
-    jong = base % 28
-
-    return CHOSUNG[cho] + JUNGSUNG[jung] + JONGSUNG[jong]
-
-
-def romanize_korean_name(name_input):
-    name_input = name_input.strip().replace(" ", "")
-
-    if not name_input:
-        return "Woochang"
-
-    # 영어로 입력한 경우 그대로 사용
-    if not has_korean(name_input):
-        return name_input
-
-    # 성 + 이름 분리
-    family = name_input[0]
-    given = name_input[1:]
-
-    if family in FAMILY_NAME_DICT:
-        family_roman = FAMILY_NAME_DICT[family]
-    else:
-        family_roman = romanize_syllable(family).capitalize()
-
-    given_roman = ""
-    for ch in given:
-        given_roman += romanize_syllable(ch)
-
-    given_roman = given_roman.capitalize()
-
-    return f"{family_roman} {given_roman}".strip()
-
-
-# =========================
 # 한국어 취미 → 영어 변환
 # =========================
 hobby_dict = {
     "축구": "soccer",
-    "축구하기": "soccer",
-    "풋살": "futsal",
     "농구": "basketball",
     "야구": "baseball",
     "배구": "volleyball",
@@ -147,57 +30,31 @@ hobby_dict = {
     "배드민턴": "badminton",
     "수영": "swimming",
     "달리기": "running",
-    "조깅": "jogging",
     "자전거": "riding a bike",
-    "자전거타기": "riding a bike",
     "자전거 타기": "riding a bike",
     "등산": "hiking",
     "낚시": "fishing",
-
     "게임": "playing games",
-    "게임하기": "playing games",
-    "컴퓨터게임": "playing computer games",
     "컴퓨터 게임": "playing computer games",
-    "휴대폰게임": "playing mobile games",
-    "휴대폰 게임": "playing mobile games",
-    "모바일게임": "playing mobile games",
-    "모바일 게임": "playing mobile games",
-
     "노래": "singing",
-    "노래부르기": "singing",
     "노래 부르기": "singing",
     "춤": "dancing",
     "춤추기": "dancing",
-
     "음악": "listening to music",
-    "음악듣기": "listening to music",
     "음악 듣기": "listening to music",
-
     "영화": "watching movies",
-    "영화보기": "watching movies",
     "영화 보기": "watching movies",
     "드라마": "watching dramas",
-    "드라마보기": "watching dramas",
-    "드라마 보기": "watching dramas",
     "유튜브": "watching YouTube",
-    "유튜브보기": "watching YouTube",
-    "유튜브 보기": "watching YouTube",
-
     "그림": "drawing",
-    "그림그리기": "drawing",
     "그림 그리기": "drawing",
     "독서": "reading books",
-    "책읽기": "reading books",
     "책 읽기": "reading books",
     "요리": "cooking",
     "사진": "taking pictures",
-    "사진찍기": "taking pictures",
     "사진 찍기": "taking pictures",
-
-    "잠": "sleeping",
     "잠자기": "sleeping",
     "걷기": "walking",
-    "산책": "walking",
     "여행": "traveling",
     "운동": "exercising",
 }
@@ -209,19 +66,11 @@ def translate_hobby(hobby_input):
     if not hobby_input:
         return "soccer"
 
-    hobby_no_space = hobby_input.replace(" ", "")
-
+    # 한국어 사전에 있으면 영어로 변환
     if hobby_input in hobby_dict:
         return hobby_dict[hobby_input]
 
-    if hobby_no_space in hobby_dict:
-        return hobby_dict[hobby_no_space]
-
-    # 한국어인데 사전에 없으면 오류 방지용 기본 표현
-    if has_korean(hobby_input):
-        return "playing sports"
-
-    # 영어로 입력한 경우 그대로 사용
+    # 이미 영어로 쓴 경우 그대로 사용
     return hobby_input
 
 
@@ -273,7 +122,6 @@ def make_tts_button(text, key, speed=1.0):
 
 # =========================
 # 전체 오디오 플레이어
-# 앞뒤 이동 가능
 # =========================
 def make_audio_player(text, key, speed=1.0):
     key = safe_key(key)
@@ -293,9 +141,6 @@ def make_audio_player(text, key, speed=1.0):
     st.components.v1.html(audio_html, height=60)
 
 
-# =========================
-# 문장 카드
-# =========================
 def sentence_card(korean, english, key, speed=1.0):
     col1, col2, col3 = st.columns([2.2, 4, 1.2])
 
@@ -324,13 +169,7 @@ st.subheader("🔊 듣기 속도 조절")
 
 speed_label = st.selectbox(
     "듣기 속도를 선택하세요.",
-    [
-        "느리게 0.7배",
-        "조금 느리게 0.85배",
-        "보통 1.0배",
-        "조금 빠르게 1.15배",
-        "빠르게 1.3배"
-    ],
+    ["느리게 0.7배", "조금 느리게 0.85배", "보통 1.0배", "조금 빠르게 1.15배", "빠르게 1.3배"],
     index=2
 )
 
@@ -351,17 +190,12 @@ st.markdown("---")
 # =========================
 st.subheader("1. 자기소개하기")
 
-name_input = st.text_input(
-    "내 이름을 한국어 또는 영어로 써 보세요.",
-    placeholder="예: 정우창, 김민수, Woochang"
-)
+name = st.text_input("내 이름을 영어로 써 보세요.", placeholder="예: Woochang")
 
-name_english = romanize_korean_name(name_input)
-
-if name_input:
-    st.info(f"입력한 이름: {name_input} → 영어 표현: {name_english}")
-
-name_sentence = f"I am {name_english}."
+if name:
+    name_sentence = f"I am {name}."
+else:
+    name_sentence = "I am Woochang."
 
 sentence_card(
     "나는 (본인 이름)입니다.",
@@ -453,17 +287,13 @@ They look happy.
 st.markdown("### 📢 사진 묘사 전체 듣기")
 st.caption("오디오 바를 움직이면 앞뒤로 이동할 수 있습니다.")
 
-make_audio_player(
-    picture_script,
-    "picture_full",
-    speed
-)
+make_audio_player(picture_script, "picture_full", speed)
 
-# 사진 묘사 대본 크게 표시
-st.markdown("### There are many people in the street.")
-st.markdown("### I can see trees and buildings too.")
-st.markdown("### Some people are riding bikes and some are sitting in chairs.")
-st.markdown("### They look happy.")
+st.text_area(
+    "사진 묘사 대본",
+    picture_script,
+    height=150
+)
 
 st.markdown("---")
 
@@ -487,16 +317,8 @@ Some people are riding bikes and some are sitting in chairs.
 They look happy.
 """
 
-st.text_area(
-    "전체 말하기 대본",
-    full_script,
-    height=250
-)
+st.text_area("전체 말하기 대본", full_script, height=250)
 
-make_audio_player(
-    full_script,
-    "full_script",
-    speed
-)
+make_audio_player(full_script, "full_script", speed)
 
 st.success("영어 문장을 듣고 따라 말하면서 연습해 보세요.")
