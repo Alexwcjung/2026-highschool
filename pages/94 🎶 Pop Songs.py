@@ -910,7 +910,7 @@ elif "4. Stand By Me" in song_choice:
             "options": [
                 "쇼핑",
                 "경쟁",
-                "요리"
+                "요리",
                 "함께 있어 주는 힘과 위로",
 
             ],
