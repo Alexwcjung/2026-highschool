@@ -1632,10 +1632,13 @@ function moveWords() {{
 function checkAnswer() {{
     if (!gameStarted) return;
 
-    const userAnswer = normalizeKorean(answerInput.value);
+    const rawAnswer = answerInput.value;
+    const userAnswer = normalizeKorean(rawAnswer);
 
     if (!userAnswer) {{
         statusBox.innerText = "✏️ 한국어 뜻을 입력하세요!";
+        answerInput.value = "";
+        answerInput.focus();
         return;
     }}
 
@@ -1647,12 +1650,14 @@ function checkAnswer() {{
         if (correct) {{
             popWord(item, i);
             answerInput.value = "";
+            answerInput.focus();
             return;
         }}
     }}
 
-    statusBox.innerText = "🤔 아직 맞는 단어가 없어요: " + answerInput.value;
-    answerInput.select();
+    statusBox.innerText = "🤔 오답입니다. 다시 도전하세요: " + rawAnswer;
+    answerInput.value = "";
+    answerInput.focus();
 }}
 
 function popWord(item, index) {{
