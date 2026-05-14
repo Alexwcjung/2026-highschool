@@ -65,27 +65,72 @@ selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="curren
 # -------------------------
 # 4. 곡별 데이터 (1절 처음부터 순서대로 6문장 구성)
 # -------------------------
+# =========================
+# 노래 선택에 따른 데이터 설정
+# =========================
+
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
-    bg_content = "<h3>❄️ Let It Go: 억압된 여왕의 화려한 해방</h3>"
+
+    bg_content = """
+    <h3>❄️ Let It Go: 억압된 여왕의 해방</h3>
+    <p>
+    <b>Let It Go</b>는 영화 <i>Frozen</i>의 대표곡으로,
+    엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 장면에서 나오는 노래입니다.
+    </p>
+    """
+
     lyrics_full = [
         ("The snow glows white on the mountain tonight, not a footprint to be seen", "오늘 밤 산에는 눈이 하얗게 빛나고, 발자국 하나 보이지 않네요"),
         ("A kingdom of isolation, and it looks like I'm the queen", "고립된 이 왕국에서 내가 여왕인 것 같아요"),
         ("The wind is howling like this swirling storm inside", "내 안의 휘몰아치는 폭풍처럼 바람이 울부짖고 있죠"),
         ("Couldn't keep it in, heaven knows I tried", "더는 숨길 수 없었어요, 하늘은 내 노력을 알 거예요"),
         ("Don't let them in, don't let them see, be the good girl you always have to be", "그들을 들이지 마, 보여주지 마, 언제나 그래야만 했던 착한 소녀가 되어라"),
-        ("Conceal, don't feel, don't let them know, well now they know!", "숨기고, 느끼지 마, 알리지 마, 그런데 이제 그들이 알아버렸어!")
+        ("Conceal, don't feel, don't let them know, well now they know!", "숨기고, 느끼지 마, 알리지 마, 그런데 이제 그들이 알아버렸어!"),
     ]
+
+    comprehension_questions = [
+        {
+            "q": "1. Who sings this song in the movie?",
+            "options": ["Elsa", "Anna", "Olaf", "Kristoff"],
+            "answer": "Elsa"
+        },
+        {
+            "q": "2. What is the main feeling of the song?",
+            "options": ["Freedom", "Hunger", "Fear of school", "Anger at friends"],
+            "answer": "Freedom"
+        },
+        {
+            "q": "3. What does Elsa stop doing?",
+            "options": ["Hiding herself", "Eating food", "Going outside", "Talking to animals"],
+            "answer": "Hiding herself"
+        },
+        {
+            "q": "4. What is the setting of the song?",
+            "options": ["A snowy mountain", "A beach", "A city street", "A classroom"],
+            "answer": "A snowy mountain"
+        },
+        {
+            "q": "5. What does 'conceal' mean?",
+            "options": ["Hide", "Run", "Sing", "Smile"],
+            "answer": "Hide"
+        },
+        {
+            "q": "6. What does Elsa finally accept?",
+            "options": ["Her power and identity", "Her homework", "Her bicycle", "Her new shoes"],
+            "answer": "Her power and identity"
+        },
+    ]
+
 
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
 
     bg_content = """
-    <h3>☎️ Hello: 과거의 나에게 건네는 안부</h3>
-
+    <h3>☎️ Hello: 과거의 누군가에게 건네는 안부</h3>
     <p>
-    Adele의 <b>Hello</b>는 오랜 시간이 지난 뒤, 과거의 누군가에게 다시 말을 걸고 싶은 마음을 담은 노래입니다.
-    화자는 미안함과 후회를 안고 상대에게 연락하려 하지만, 이미 두 사람 사이에는 큰 거리와 시간이 생겨 있습니다.
+    Adele의 <b>Hello</b>는 오랜 시간이 지난 뒤, 과거의 누군가에게 다시 연락하고 싶은 마음을 담은 노래입니다.
+    화자는 미안함과 후회를 느끼며 상대에게 사과하고 싶어 합니다.
     </p>
     """
 
@@ -97,6 +142,7 @@ elif "2. Hello" in song_choice:
         ("They say that time's", "사람들은 시간이"),
         ("supposed to heal ya", "너를 치유해 줄 거라고 말해"),
         ("But I ain't done much healing", "하지만 나는 별로 치유되지 않았어"),
+
         ("Hello, can you hear me?", "여보세요, 내 말 들리니?"),
         ("I'm in California dreaming", "나는 캘리포니아에서 꿈꾸고 있어"),
         ("about who we used to be", "예전의 우리 모습에 대해"),
@@ -152,35 +198,204 @@ elif "2. Hello" in song_choice:
     comprehension_questions = [
         {
             "q": "1. Who is the speaker trying to contact?",
-            "options": ["A person from the past", "A new teacher", "A famous singer", "A stranger in California"],
+            "options": [
+                "A person from the past",
+                "A new teacher",
+                "A famous singer",
+                "A stranger in California"
+            ],
             "answer": "A person from the past"
         },
         {
             "q": "2. What does the speaker mainly want to say?",
-            "options": ["Thank you", "I'm sorry", "Good luck", "Happy birthday"],
+            "options": [
+                "Thank you",
+                "I'm sorry",
+                "Good luck",
+                "Happy birthday"
+            ],
             "answer": "I'm sorry"
         },
         {
             "q": "3. What do people say time is supposed to do?",
-            "options": ["Heal people", "Make people rich", "Stop sadness forever", "Change the past"],
+            "options": [
+                "Heal people",
+                "Make people rich",
+                "Stop sadness forever",
+                "Change the past"
+            ],
             "answer": "Heal people"
         },
         {
             "q": "4. Where is the speaker dreaming?",
-            "options": ["London", "California", "New York", "Paris"],
+            "options": [
+                "London",
+                "California",
+                "New York",
+                "Paris"
+            ],
             "answer": "California"
         },
         {
             "q": "5. What does the speaker say about calling?",
-            "options": ["The speaker called many times", "The speaker never called", "The speaker called only once", "The speaker forgot the number"],
+            "options": [
+                "The speaker called many times",
+                "The speaker never called",
+                "The speaker called only once",
+                "The speaker forgot the number"
+            ],
             "answer": "The speaker called many times"
         },
         {
             "q": "6. What is the main feeling of the song?",
-            "options": ["Regret and apology", "Excitement and joy", "Anger and revenge", "Hope for a vacation"],
+            "options": [
+                "Regret and apology",
+                "Excitement and joy",
+                "Anger and revenge",
+                "Hope for a vacation"
+            ],
             "answer": "Regret and apology"
         },
     ]
+
+
+# =========================
+# 탭 구성
+# 순서 배열 탭 삭제
+# =========================
+
+tab1, tab2 = st.tabs([
+    "🎬 1. Background & Video",
+    "🎵 2. Full Lyrics & Quiz"
+])
+
+
+# =========================
+# 1번째 탭: 노래 소개 + 영상
+# =========================
+
+with tab1:
+    st.markdown(bg_content, unsafe_allow_html=True)
+
+    st.markdown("### 🎬 Music Video")
+    st.video(video_url)
+
+
+# =========================
+# 2번째 탭: 전체 가사 + 이해도 문제
+# =========================
+
+with tab2:
+    st.markdown("## 🎵 Full Lyrics")
+
+    st.markdown(
+        """
+        <div style="
+            background: linear-gradient(135deg, #fff7ed, #fef3c7);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid #fed7aa;
+            margin-bottom: 18px;
+        ">
+            <h3 style="margin-top:0;">📖 전체 가사를 먼저 읽어 봅시다</h3>
+            <p style="font-size:16px; margin-bottom:0;">
+            영어 가사와 한국어 뜻을 함께 보면서 노래의 내용을 이해해 봅시다.
+            문제는 전체 가사를 다 읽은 뒤 아래에서 풀 수 있습니다.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    for eng, kor in lyrics_full:
+        st.markdown(
+            f"""
+            <div style="
+                background:white;
+                padding:12px 14px;
+                border-radius:14px;
+                margin-bottom:8px;
+                border:1px solid #e5e7eb;
+                box-shadow:0 2px 6px rgba(0,0,0,0.04);
+            ">
+                <div style="font-size:17px; font-weight:700; color:#111827;">
+                    {eng}
+                </div>
+                <div style="font-size:15px; color:#4b5563; margin-top:4px;">
+                    {kor}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("---")
+
+    st.markdown("## 📝 Understanding Check")
+
+    st.markdown(
+        """
+        <div style="
+            background:#f0f9ff;
+            padding:15px;
+            border-radius:15px;
+            border:1px solid #bae6fd;
+            margin-bottom:16px;
+        ">
+            <b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>
+            화자의 감정, 노래의 상황, 반복되는 표현을 중심으로 생각하면 됩니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    score = 0
+    user_answers = []
+
+    with st.form("comprehension_quiz_form"):
+        for i, item in enumerate(comprehension_questions):
+            st.markdown(f"### {item['q']}")
+
+            answer = st.radio(
+                "Choose the best answer.",
+                item["options"],
+                key=f"comp_quiz_{song_choice}_{i}",
+                label_visibility="collapsed"
+            )
+
+            user_answers.append(answer)
+
+        submitted = st.form_submit_button("✅ Submit Answers")
+
+    if submitted:
+        st.markdown("## 📌 Results")
+
+        for i, item in enumerate(comprehension_questions):
+            correct = item["answer"]
+            user_answer = user_answers[i]
+
+            if user_answer == correct:
+                score += 1
+                st.success(f"{i+1}. Correct! ✅")
+            else:
+                st.error(f"{i+1}. Wrong ❌")
+                st.markdown(f"정답: **{correct}**")
+
+        st.markdown(
+            f"""
+            <div style="
+                background:linear-gradient(135deg,#dcfce7,#bbf7d0);
+                padding:18px;
+                border-radius:18px;
+                border:1px solid #86efac;
+                margin-top:18px;
+                text-align:center;
+            ">
+                <h2 style="margin:0;">Your Score: {score} / {len(comprehension_questions)}</h2>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
             
 elif "3. A Whole New World" in song_choice:
