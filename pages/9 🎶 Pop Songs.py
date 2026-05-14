@@ -1127,7 +1127,7 @@ elif "5. Don't Know Why" in song_choice:
     ]
 
 elif "6. Fix You" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=k4V3Mo61fJM"
+    video_url = "https://www.youtube.com/watch?v=Z0IZ3MjGFEo&list=RDZ0IZ3MjGFEo&start_radio=1"
 
     bg_content = '''
     <h3 style="font-size:2.2rem; margin-bottom:20px; color:#2563eb;">
