@@ -138,41 +138,41 @@ selected_tab = st.radio(
 if "1. Let It Go" in song_choice:
     video_url = "https://www.youtube.com/watch?v=L0MK7qz13bU"
 
-    bg_content = """
-    <h3>❄️ Let It Go: 억압된 여왕의 해방</h3>
+    bg_content = '''
+    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#be185d;">
+        ❄️ Let It Go: 숨겨 왔던 자신을 받아들이는 순간
+    </h3>
 
-    <p>
-    <b>Let It Go</b>는 영화 <i>Frozen</i>의 대표곡으로,
-    엘사가 더 이상 자신의 능력과 감정을 숨기지 않고
-    스스로를 받아들이는 장면에서 나오는 노래입니다.
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        <b>Let It Go</b>는 영화 <i>Frozen</i>의 대표곡으로,
+        엘사가 더 이상 자신의 능력과 감정을 숨기지 않고
+        스스로를 받아들이는 장면에서 나오는 노래입니다.
     </p>
 
-    <p>
-    엘사는 어릴 때부터 자신의 얼음 마법이 다른 사람을 다치게 할 수 있다는
-    두려움 속에서 살아왔습니다. 그래서 감정을 숨기고,
-    능력을 감추며, 언제나 조심해야 했습니다.
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        엘사는 어릴 때부터 자신의 얼음 마법이 다른 사람을 다치게 할 수 있다는
+        두려움 속에서 살아왔습니다. 그래서 감정을 숨기고,
+        능력을 감추며, 언제나 조심해야 했습니다.
+        하지만 대관식 날 엘사의 능력이 사람들 앞에서 드러나고,
+        사람들은 엘사를 두려워합니다.
     </p>
 
-    <p>
-    하지만 대관식 날 엘사의 능력이 사람들 앞에서 드러나고,
-    사람들은 엘사를 두려워합니다.
-    엘사는 모든 것을 피해 눈 덮인 산으로 도망치고,
-    그곳에서 처음으로 자신의 진짜 모습을 마주합니다.
-    바로 이 장면에서 부르는 노래가 <b>Let It Go</b>입니다.
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        엘사는 모든 것을 피해 눈 덮인 산으로 도망치고,
+        그곳에서 처음으로 자신의 진짜 모습을 마주합니다.
+        이 노래는 단순히 “다 잊어버리자”는 의미가 아니라,
+        그동안 억눌렀던 두려움, 책임감, 타인의 시선에서 벗어나
+        자기 자신을 받아들이는 과정을 보여줍니다.
     </p>
 
-    <p>
-    이 노래는 단순히 “다 잊어버리자”는 의미가 아닙니다.
-    엘사가 그동안 억눌렀던 두려움, 책임감, 타인의 시선에서 벗어나
-    자기 자신을 받아들이는 과정을 보여줍니다.
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        수업에서는 <b>let it go</b>, <b>conceal</b>, <b>hold back</b>,
+        <b>storm inside</b>, <b>I'm free</b>, <b>the past is in the past</b>
+        같은 표현을 중심으로 배울 수 있습니다.
+        특히 이 노래는 자유, 두려움, 자기표현, 자신감에 대해
+        함께 생각해 볼 수 있는 좋은 자료입니다.
     </p>
-
-    <p>
-    수업에서는 <b>let it go</b>, <b>conceal</b>, <b>hold back</b>,
-    <b>storm inside</b>, <b>I'm free</b>, <b>the past is in the past</b>
-    같은 표현을 중심으로 배울 수 있습니다.
-    </p>
-    """
+    '''
 
     lyrics_full = [
         (
@@ -263,208 +263,86 @@ if "1. Let It Go" in song_choice:
 
     comprehension_questions = [
         {
-            "q": "1. Who sings this song in the movie?",
-            "options": ["Elsa", "Anna", "Olaf", "Kristoff"],
+            "q": "1. 이 노래를 부르는 인물은 누구인가요?",
+            "options": [
+                "Elsa",
+                "Anna",
+                "Olaf",
+                "Kristoff"
+            ],
             "answer": "Elsa"
         },
         {
-            "q": "2. Where is Elsa during the song?",
-            "options": ["A snowy mountain", "A classroom", "A beach", "A city street"],
-            "answer": "A snowy mountain"
+            "q": "2. 엘사는 어디에서 이 노래를 부르나요?",
+            "options": [
+                "눈 덮인 산",
+                "교실",
+                "바닷가",
+                "도시 거리"
+            ],
+            "answer": "눈 덮인 산"
         },
         {
-            "q": "3. What does Elsa stop doing?",
-            "options": ["Hiding herself", "Eating food", "Going to school", "Talking to animals"],
-            "answer": "Hiding herself"
+            "q": "3. 엘사가 더 이상 하지 않으려는 것은 무엇인가요?",
+            "options": [
+                "자신을 숨기는 것",
+                "음식을 먹는 것",
+                "학교에 가는 것",
+                "동물과 이야기하는 것"
+            ],
+            "answer": "자신을 숨기는 것"
         },
         {
-            "q": "4. What is the main feeling of the song?",
-            "options": ["Freedom", "Hunger", "Boredom", "Jealousy"],
-            "answer": "Freedom"
+            "q": "4. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "자유와 해방감",
+                "배고픔",
+                "지루함",
+                "질투"
+            ],
+            "answer": "자유와 해방감"
         },
         {
-            "q": "5. What does 'conceal' mean?",
-            "options": ["Hide", "Run", "Sing", "Smile"],
-            "answer": "Hide"
+            "q": "5. 'conceal'의 뜻으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "숨기다",
+                "달리다",
+                "노래하다",
+                "웃다"
+            ],
+            "answer": "숨기다"
         },
         {
-            "q": "6. What does 'hold it back' mean?",
-            "options": ["Stop or control it", "Buy something", "Open the door", "Sing loudly"],
-            "answer": "Stop or control it"
+            "q": "6. 'Can't hold it back anymore'는 어떤 의미에 가깝나요?",
+            "options": [
+                "더 이상 억누를 수 없다",
+                "더 이상 문을 열 수 없다",
+                "더 이상 노래할 수 없다",
+                "더 이상 걸을 수 없다"
+            ],
+            "answer": "더 이상 억누를 수 없다"
         },
         {
-            "q": "7. What does Elsa finally accept?",
-            "options": ["Her power and identity", "Her homework", "Her bicycle", "Her new shoes"],
-            "answer": "Her power and identity"
+            "q": "7. 'I'm free'에서 엘사가 느끼는 감정은 무엇인가요?",
+            "options": [
+                "자유로움",
+                "두려움",
+                "부끄러움",
+                "배고픔"
+            ],
+            "answer": "자유로움"
+        },
+        {
+            "q": "8. 'the past is in the past'는 어떤 의미인가요?",
+            "options": [
+                "과거는 과거일 뿐이다",
+                "과거로 돌아가고 싶다",
+                "과거가 가장 중요하다",
+                "과거를 다시 만들 수 있다"
+            ],
+            "answer": "과거는 과거일 뿐이다"
         },
     ]
-
-# =========================
-# Tab 1: Background
-# =========================
-with tab1:
-    st.markdown("## 🎬 영화 배경 알기")
-
-    st.markdown(
-        """
-        <div style="
-            background:linear-gradient(135deg,#ffffff 0%,#fff1f7 100%);
-            padding:22px 24px;
-            border-radius:24px;
-            border:1px solid #fbcfe8;
-            margin-bottom:18px;
-            box-shadow:0 6px 18px rgba(244,114,182,0.08);
-        ">
-            <div style="font-size:22px; font-weight:900; color:#be185d; margin-bottom:8px;">
-                ❄️ Let It Go
-            </div>
-            <div style="font-size:16px; color:#475569; line-height:1.7;">
-                노래를 듣기 전에 장면과 인물의 감정을 먼저 이해해 봅시다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.video(video_url)
-
-    st.markdown(
-        f"""
-        <div style="
-            background:white;
-            padding:24px 26px;
-            border-radius:24px;
-            border:1px solid #fbcfe8;
-            margin-top:18px;
-            box-shadow:0 5px 16px rgba(244,114,182,0.07);
-            line-height:1.8;
-            color:#334155;
-            font-size:16px;
-        ">
-            {bg_content}
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-# =========================
-# Tab 2: Lyrics
-# =========================
-with tab2:
-    st.markdown("## 🎵 가사와 해석")
-
-    st.markdown(
-        """
-        <div style="
-            background:linear-gradient(135deg,#ffffff 0%,#fff1f7 100%);
-            padding:18px 20px;
-            border-radius:22px;
-            border:1px solid #fbcfe8;
-            margin-bottom:16px;
-            box-shadow:0 6px 18px rgba(244,114,182,0.08);
-        ">
-            <div style="font-size:21px; font-weight:900; color:#be185d;">
-                ❄️ Let It Go
-            </div>
-            <div style="font-size:15px; color:#475569; margin-top:5px;">
-                노래를 들으며 영어 가사와 뜻을 함께 확인해 봅시다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    for eng, kor in lyrics_full:
-        st.markdown(
-            f"""
-            <div style="
-                background:white;
-                padding:13px 17px;
-                border-radius:16px;
-                border:1px solid #fbcfe8;
-                margin-bottom:8px;
-                box-shadow:0 3px 10px rgba(244,114,182,0.05);
-            ">
-                <div style="font-size:16.5px; color:#0f172a; font-weight:800; line-height:1.45;">
-                    {eng}
-                </div>
-                <div style="font-size:15.5px; color:#475569; line-height:1.45; margin-top:4px;">
-                    {kor}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-# =========================
-# Tab 3: Quiz
-# =========================
-with tab3:
-    st.markdown("## 📝 내용 확인 퀴즈")
-
-    st.markdown(
-        """
-        <div style="
-            background:linear-gradient(135deg,#ffffff 0%,#fff1f7 100%);
-            padding:18px 20px;
-            border-radius:22px;
-            border:1px solid #fbcfe8;
-            margin-bottom:16px;
-            box-shadow:0 6px 18px rgba(244,114,182,0.08);
-        ">
-            <div style="font-size:20px; font-weight:900; color:#be185d;">
-                🌸 Let It Go Quiz
-            </div>
-            <div style="font-size:15px; color:#475569; margin-top:5px;">
-                노래의 장면, 감정, 핵심 표현을 확인해 봅시다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    score = 0
-
-    for i, item in enumerate(comprehension_questions):
-        st.markdown(
-            f"""
-            <div style="
-                background:white;
-                padding:16px 18px;
-                border-radius:16px;
-                border:1px solid #fbcfe8;
-                margin-top:12px;
-                margin-bottom:8px;
-                box-shadow:0 3px 10px rgba(244,114,182,0.05);
-            ">
-                <div style="font-size:17px; font-weight:900; color:#0f172a;">
-                    {item["q"]}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        user_answer = st.radio(
-            label="",
-            options=item["options"],
-            key=f"let_it_go_q_{i}",
-            horizontal=True
-        )
-
-        if user_answer == item["answer"]:
-            score += 1
-
-    if st.button("정답 확인", key="let_it_go_check"):
-        st.success(f"총 {len(comprehension_questions)}문제 중 {score}문제를 맞혔습니다.")
-
-        if score == len(comprehension_questions):
-            st.balloons()
-            st.markdown("### 🎉 Excellent! 아주 잘했습니다!")
-        elif score >= len(comprehension_questions) // 2:
-            st.markdown("### 👍 Good! 중요한 내용을 잘 이해했습니다.")
-        else:
-            st.markdown("### 🌱 다시 가사를 보며 천천히 확인해 봅시다.")
 
 elif "2. Hello" in song_choice:
     video_url = "https://www.youtube.com/watch?v=YQHsXMglC9A"
