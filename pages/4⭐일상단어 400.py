@@ -229,24 +229,27 @@ st.markdown(
     .cassette-box {
         background: linear-gradient(135deg, #f0fdf4 0%, #eff6ff 50%, #fff7ed 100%);
         border: 1px solid #bbf7d0;
-        border-radius: 24px;
-        padding: 22px 24px;
-        margin: 18px 0 18px 0;
-        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        border-radius: 28px;
+        padding: 28px 30px;
+        margin: 22px 0 22px 0;
+        box-shadow: 0 8px 22px rgba(0,0,0,0.08);
     }
 
     .cassette-title {
-        font-size: 25px;
-        font-weight: 900;
+        font-size: 36px;
+        font-weight: 1000;
         color: #0f172a;
-        margin-bottom: 8px;
+        margin-bottom: 0px;
+        line-height: 1.25;
+        letter-spacing: -0.5px;
     }
 
     .cassette-text {
-        font-size: 15px;
-        color: #475569;
-        line-height: 1.7;
-        margin-bottom: 14px;
+        display: none;
+    }
+
+    h2, h3 {
+        font-weight: 1000 !important;
     }
 
     div[data-testid="stRadio"] > label {
@@ -256,9 +259,11 @@ st.markdown(
 
     .stButton > button {
         border-radius: 999px;
-        font-weight: 800;
+        font-weight: 900;
         border: 1px solid #d1d5db;
-        padding: 0.45rem 1rem;
+        padding: 0.8rem 1.2rem;
+        min-height: 54px;
+        font-size: 20px;
     }
 
     .stButton > button:hover {
@@ -313,6 +318,13 @@ st.markdown(
         }
         .theme-desc {
             font-size: 15px !important;
+        }
+        .cassette-title {
+            font-size: 29px !important;
+        }
+        .stButton > button {
+            min-height: 50px;
+            font-size: 18px;
         }
     }
     </style>
@@ -1325,11 +1337,11 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                 </div>
 
                 <div style="display:grid; grid-template-columns:1fr; gap:8px;">
-                    <button id="play_{player_id}" style="min-height:56px; border-radius:18px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:19px; font-weight:900; cursor:pointer;">▶️ 재생</button>
+                    <button id="play_{player_id}" style="min-height:74px; border-radius:24px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:28px; font-weight:1000; cursor:pointer; box-shadow:0 5px 14px rgba(15,23,42,0.10);">▶️ 재생</button>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="prev_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">⏮ 이전</button>
-                    <button id="next_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">다음 ⏭</button>
+                    <button id="prev_{player_id}" style="min-height:56px; border-radius:18px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:18px; font-weight:900; cursor:pointer;">⏮ 이전</button>
+                    <button id="next_{player_id}" style="min-height:56px; border-radius:18px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:18px; font-weight:900; cursor:pointer;">다음 ⏭</button>
                 </div>
 
                 <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
@@ -1463,9 +1475,6 @@ def show_cassette_audio(items, title):
         f"""
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
-            <div class="cassette-text">
-                단어 하나가 크게 보이고, 음성이 끝나면 다음 단어로 넘어갑니다. 버튼 하나가 재생 중에는 멈춤 버튼으로 바뀝니다.
-            </div>
         </div>
         """,
         unsafe_allow_html=True
@@ -1478,7 +1487,7 @@ def show_cassette_audio(items, title):
         key=f"repeat_{title}"
     )
 
-    if st.button("▶️ 화면 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
+    if st.button("▶️ 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
         try:
             with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
                 audio_payloads = []
@@ -1502,13 +1511,13 @@ def show_cassette_audio(items, title):
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어 카세트 듣기")
+    st.markdown("## 🎧 전체 단어 한 번에 듣기")
     all_items = flatten_all_words()
-    show_cassette_audio(all_items, "📼 전체 단어 카세트 듣기")
+    show_cassette_audio(all_items, "📼 전체 단어 한 번에 듣기")
 
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 카테고리 단어 카세트 듣기")
+    st.markdown("### 🎧 이 카테고리 단어 한 번에 듣기")
     theme_items = make_theme_cassette_items(theme_words, theme_name)
     show_cassette_audio(theme_items, f"📼 {theme_name} 단어 카세트")
 
