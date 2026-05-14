@@ -175,9 +175,12 @@ st.markdown(
     }
     .stButton > button {
         border-radius: 999px;
-        font-weight: 800;
-        border: 1px solid #d1d5db;
-        padding: 0.45rem 1rem;
+        font-weight: 1000;
+        border: 1px solid #c4b5fd;
+        padding: 1.15rem 1.45rem;
+        min-height: 84px;
+        font-size: 30px;
+        box-shadow: 0 6px 16px rgba(139,92,246,0.16);
     }
     div[data-baseweb="tab-list"] {
         gap: 10px;
@@ -209,6 +212,11 @@ st.markdown(
         .theme-desc { font-size: 16px; }
         button[data-baseweb="tab"] { min-height: 50px; padding: 9px 12px; }
         button[data-baseweb="tab"] p { font-size: 17px !important; }
+        .stButton > button {
+            min-height: 72px;
+            font-size: 27px;
+            padding: 0.95rem 1.15rem;
+        }
     }
     </style>
     """,
@@ -897,12 +905,12 @@ def show_cassette_word_list(items, title="📋 카세트 단어 목록"):
         )
 
 
-def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=700):
+def js_cassette_visual_player(items, audio_payloads, title="🎧 단어 듣기", height=470):
     """
     단어별 mp3를 순서대로 재생합니다.
-    화면은 현재 재생되는 단어 mp3가 시작될 때 바뀌므로 뜻/이모지 타이밍이 더 정확합니다.
+    각 mp3가 끝나면 다음 단어로 넘어가므로 화면의 단어·뜻·이모지가 발음과 잘 맞습니다.
     """
-    player_id = "cassette_" + uuid.uuid4().hex
+    player_id = "survival_cassette_" + uuid.uuid4().hex
 
     visual_items = []
     for idx, (item, audio_b64) in enumerate(zip(items, audio_payloads), start=1):
@@ -916,7 +924,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         })
 
     items_json = json.dumps(visual_items, ensure_ascii=False)
-    safe_title = html.escape(title)
     safe_player_id = json.dumps(player_id)
 
     components.html(
@@ -926,14 +933,13 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
             width:100%;
             box-sizing:border-box;
             border-radius:28px;
-            padding:18px;
+            padding:14px;
             background:linear-gradient(135deg,#eff6ff 0%,#fff7ed 48%,#fdf2f8 100%);
             border:1px solid #bae6fd;
             box-shadow:0 8px 22px rgba(15,23,42,0.10);
             overflow:hidden;
         ">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                <div style="font-size:24px; font-weight:900; color:#0f172a; line-height:1.25;">{safe_title}</div>
+            <div style="display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
                 <div id="count_{player_id}" style="font-size:13px; font-weight:900; color:#475569; background:rgba(255,255,255,.8); border:1px solid #dbeafe; border-radius:999px; padding:7px 12px;">1 / {len(visual_items)}</div>
             </div>
 
@@ -944,35 +950,28 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                     background:rgba(255,255,255,0.88);
                     border:1px solid #dbeafe;
                     border-radius:26px;
-                    padding:22px 18px;
+                    padding:16px 14px;
                     text-align:center;
                 ">
                     <div id="theme_{player_id}" style="display:inline-block; font-size:13px; font-weight:900; color:#7c3aed; background:#f3e8ff; border-radius:999px; padding:6px 12px; margin-bottom:10px;">Theme</div>
-                    <div id="emoji_{player_id}" style="font-size:58px; line-height:1.05; margin:4px 0;">🌱</div>
-                    <div id="word_{player_id}" style="font-size:clamp(46px,9vw,78px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
-                    <div id="meaning_{player_id}" style="font-size:clamp(24px,5vw,38px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
-                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:18px;">
+                    <div id="emoji_{player_id}" style="font-size:46px; line-height:1.05; margin:2px 0;">🛟</div>
+                    <div id="word_{player_id}" style="font-size:clamp(36px,7.8vw,62px); font-weight:1000; color:#111827; line-height:1.05; word-break:break-word; letter-spacing:-1px;">Ready</div>
+                    <div id="meaning_{player_id}" style="font-size:clamp(20px,4.4vw,30px); font-weight:900; color:#334155; margin-top:10px; word-break:keep-all;">재생 버튼을 눌러 주세요.</div>
+                    <div style="width:100%; height:14px; background:#e2e8f0; border-radius:999px; overflow:hidden; margin-top:12px;">
                         <div id="bar_{player_id}" style="height:100%; width:0%; background:linear-gradient(90deg,#38bdf8,#8b5cf6,#ec4899); border-radius:999px;"></div>
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="play_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #c4b5fd; background:linear-gradient(135deg,#dbeafe,#fce7f3); font-size:18px; font-weight:900; cursor:pointer;">▶️ 카세트 재생</button>
-                    <button id="pause_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #67e8f9; background:#ecfeff; color:#155e75; font-size:18px; font-weight:900; cursor:pointer;">⏸ 잠깐 멈춤</button>
+                <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+                    <button id="play_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #c4b5fd; background:linear-gradient(135deg,#dbeafe,#fce7f3); font-size:13px; font-weight:900; cursor:pointer; box-shadow:0 3px 9px rgba(15,23,42,0.08);">▶️ 재생</button>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="prev_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">⏮ 이전</button>
-                    <button id="next_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">다음 ⏭</button>
+                    <button id="prev_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">⏮ 이전</button>
+                    <button id="next_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">다음 ⏭</button>
                 </div>
 
                 <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
 
-                <div id="list_{player_id}" style="
-                    max-height:250px;
-                    overflow-y:auto;
-                    padding:4px;
-                    border-radius:18px;
-                "></div>
             </div>
         </div>
 
@@ -985,38 +984,15 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         const themeEl_{player_id} = document.getElementById("theme_{player_id}");
         const countEl_{player_id} = document.getElementById("count_{player_id}");
         const barEl_{player_id} = document.getElementById("bar_{player_id}");
-        const listEl_{player_id} = document.getElementById("list_{player_id}");
         const statusEl_{player_id} = document.getElementById("status_{player_id}");
         const playBtn_{player_id} = document.getElementById("play_{player_id}");
-        const pauseBtn_{player_id} = document.getElementById("pause_{player_id}");
         const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
         const nextBtn_{player_id} = document.getElementById("next_{player_id}");
         const playerId_{player_id} = {safe_player_id};
 
         let currentIndex_{player_id} = 0;
         let isPlayingList_{player_id} = false;
-
-        function renderList_{player_id}() {{
-            listEl_{player_id}.innerHTML = items_{player_id}.map((it, idx) => `
-                <div id="row_${{playerId_{player_id}}}_${{idx}}" style="
-                    display:flex;
-                    align-items:center;
-                    gap:9px;
-                    padding:9px 11px;
-                    margin-bottom:6px;
-                    border-radius:15px;
-                    background:white;
-                    border:1px solid #dbeafe;
-                    box-shadow:0 2px 7px rgba(0,0,0,0.035);
-                    box-sizing:border-box;
-                ">
-                    <span style="min-width:34px; font-size:12px; font-weight:900; color:#0369a1; background:#e0f2fe; border-radius:999px; padding:5px 8px; text-align:center;">${{it.number}}</span>
-                    <span style="font-size:24px;">${{it.emoji}}</span>
-                    <span style="font-size:21px; font-weight:900; color:#111827; min-width:95px;">${{it.word}}</span>
-                    <span style="font-size:16px; font-weight:900; color:#374151;">${{it.meaning}}</span>
-                </div>
-            `).join("");
-        }}
+        let isFinished_{player_id} = false;
 
         function setCurrent_{player_id}(idx) {{
             if (!items_{player_id}.length) return;
@@ -1032,21 +1008,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
             const percent = items_{player_id}.length <= 1 ? 100 : (idx / (items_{player_id}.length - 1)) * 100;
             barEl_{player_id}.style.width = percent + "%";
-
-            for (let i = 0; i < items_{player_id}.length; i++) {{
-                const row = document.getElementById("row_" + playerId_{player_id} + "_" + i);
-                if (!row) continue;
-                if (i === idx) {{
-                    row.style.background = "linear-gradient(135deg,#dbeafe,#fce7f3)";
-                    row.style.borderColor = "#8b5cf6";
-                    row.style.transform = "scale(1.01)";
-                    row.scrollIntoView({{block:"nearest", behavior:"smooth"}});
-                }} else {{
-                    row.style.background = "white";
-                    row.style.borderColor = "#dbeafe";
-                    row.style.transform = "scale(1)";
-                }}
-            }}
         }}
 
         function loadCurrent_{player_id}() {{
@@ -1061,12 +1022,13 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         function playCurrent_{player_id}() {{
             if (!items_{player_id}.length) return;
             isPlayingList_{player_id} = true;
+            isFinished_{player_id} = false;
             loadCurrent_{player_id}();
-            playBtn_{player_id}.textContent = "🔊 재생 중";
+            playBtn_{player_id}.textContent = "⏸ 멈춤";
             statusEl_{player_id}.textContent = "현재 단어: " + items_{player_id}[currentIndex_{player_id}].word;
             audio_{player_id}.play().catch(() => {{
                 statusEl_{player_id}.textContent = "브라우저가 자동 재생을 막았습니다. 재생 버튼을 한 번 더 눌러 주세요.";
-                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+                playBtn_{player_id}.textContent = "▶️ 재생";
             }});
         }}
 
@@ -1079,26 +1041,30 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
         function moveTo_{player_id}(idx, autoPlay=false) {{
             isPlayingList_{player_id} = autoPlay;
+            isFinished_{player_id} = false;
             audio_{player_id}.pause();
             currentIndex_{player_id} = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
             loadCurrent_{player_id}();
             if (autoPlay) {{
                 playCurrent_{player_id}();
             }} else {{
-                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+                playBtn_{player_id}.textContent = "▶️ 재생";
                 statusEl_{player_id}.textContent = "선택된 단어: " + items_{player_id}[currentIndex_{player_id}].word;
             }}
         }}
 
-        renderList_{player_id}();
         loadCurrent_{player_id}();
 
         playBtn_{player_id}.addEventListener("click", function() {{
-            playCurrent_{player_id}();
-        }});
-
-        pauseBtn_{player_id}.addEventListener("click", function() {{
-            pauseCurrent_{player_id}();
+            if (isPlayingList_{player_id}) {{
+                pauseCurrent_{player_id}();
+            }} else {{
+                if (isFinished_{player_id}) {{
+                    currentIndex_{player_id} = 0;
+                    isFinished_{player_id} = false;
+                }}
+                playCurrent_{player_id}();
+            }}
         }});
 
         prevBtn_{player_id}.addEventListener("click", function() {{
@@ -1116,31 +1082,20 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                 playCurrent_{player_id}();
             }} else {{
                 isPlayingList_{player_id} = false;
+                isFinished_{player_id} = true;
                 playBtn_{player_id}.textContent = "▶️ 처음부터 다시";
-                statusEl_{player_id}.textContent = "✅ 카세트 재생 완료";
+                statusEl_{player_id}.textContent = "✅ 재생 완료";
                 barEl_{player_id}.style.width = "100%";
             }}
         }});
         </script>
         """,
         height=height,
-        scrolling=True
+        scrolling=False
     )
 
 
 def show_cassette_audio(items, title):
-    st.markdown(
-        f"""
-        <div class="cassette-box">
-            <div class="cassette-title">{title}</div>
-            <div class="cassette-note">
-                예문은 빼고 단어만 재생합니다. 단어별 음성이 끝날 때 다음 단어로 넘어가므로 뜻과 화면 타이밍이 더 정확합니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
     repeat_word = st.selectbox(
         "단어 반복 횟수",
         [1, 2, 3],
@@ -1148,9 +1103,11 @@ def show_cassette_audio(items, title):
         key=f"repeat_{title}"
     )
 
-    if st.button("▶️ 화면 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
+    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기"
+
+    if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
         try:
-            with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+            with st.spinner("단어별 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
                 audio_payloads = []
                 for item in items:
                     word = str(item["word"]).strip()
@@ -1161,29 +1118,22 @@ def show_cassette_audio(items, title):
             js_cassette_visual_player(
                 items=items,
                 audio_payloads=audio_payloads,
-                title=title,
-                height=700
+                title="🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기",
+                height=470
             )
         except Exception as e:
-            st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.error("음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
 
-    with st.expander("📜 실제 재생 단어 보기"):
-        st.write(make_cassette_text(items, repeat_word=repeat_word, include_example=False))
-
-    with st.expander("📋 전체 단어 목록 보기"):
-        show_cassette_word_list(items, "👇 전체 단어·뜻·이모지")
 
 def show_cassette_player(theme_words, theme_name):
-    st.markdown("### 🎧 이 카테고리 단어 카세트 듣기")
     theme_items = make_theme_cassette_items(theme_words, theme_name)
-    show_cassette_audio(theme_items, f"📼 {theme_name} 단어 카세트")
+    show_cassette_audio(theme_items, theme_name)
 
 
 def show_all_cassette_tab():
-    st.markdown("## 🎧 전체 단어 카세트 듣기")
     all_items = flatten_survival_words()
-    show_cassette_audio(all_items, "📼 전체 단어 카세트 듣기")
+    show_cassette_audio(all_items, "전체 단어")
 
 
 # =====================================================
@@ -1341,7 +1291,7 @@ st.markdown(
 # =====================================================
 # 탭 구성
 # =====================================================
-tab_names = list(word_themes.keys()) + ["🎧 전체 카세트 듣기"]
+tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기"]
 tabs = st.tabs(tab_names)
 
 for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
