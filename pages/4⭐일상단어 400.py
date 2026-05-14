@@ -1265,52 +1265,7 @@ def make_cassette_text(items, repeat_word=2):
     return " ".join(parts)
 
 
-def show_cassette_word_list(items, title="📋 카세트 단어 목록"):
-    st.markdown(f"### {title}")
-    st.caption("카세트를 들으면서 아래 단어, 뜻, 이모지를 눈으로 따라가면 됩니다.")
-
-    for item in items:
-        word = html.escape(str(item["word"]))
-        meaning = html.escape(str(item["meaning"]))
-        theme = html.escape(str(item.get("theme", "")))
-        number = item.get("number", "")
-        emoji = get_word_emoji(item["word"])
-
-        st.markdown(
-            f"""
-            <div style="
-                background:white;
-                border:1px solid #dcfce7;
-                border-radius:16px;
-                padding:11px 14px;
-                margin-bottom:8px;
-                box-shadow:0 2px 8px rgba(0,0,0,0.035);
-            ">
-                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-                    <span style="
-                        min-width:34px;
-                        font-size:13px;
-                        font-weight:900;
-                        color:#166534;
-                        background:#dcfce7;
-                        border-radius:999px;
-                        padding:5px 9px;
-                        text-align:center;
-                    ">{number}</span>
-                    <span style="font-size:26px;">{emoji}</span>
-                    <span style="font-size:24px; font-weight:900; color:#111827;">{word}</span>
-                    <span style="font-size:18px; font-weight:900; color:#374151;">{meaning}</span>
-                </div>
-                <div style="font-size:12px; font-weight:800; color:#64748b; margin-top:5px;">
-                    {theme}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-
-def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=720):
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=520):
     """
     단어별 mp3를 순서대로 재생합니다.
     각 mp3가 끝나면 다음 단어로 넘어가므로 화면의 단어·뜻·이모지가 발음과 잘 맞습니다.
@@ -1379,12 +1334,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
                 <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
 
-                <div id="list_{player_id}" style="
-                    max-height:250px;
-                    overflow-y:auto;
-                    padding:4px;
-                    border-radius:18px;
-                "></div>
             </div>
         </div>
 
@@ -1397,7 +1346,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         const themeEl_{player_id} = document.getElementById("theme_{player_id}");
         const countEl_{player_id} = document.getElementById("count_{player_id}");
         const barEl_{player_id} = document.getElementById("bar_{player_id}");
-        const listEl_{player_id} = document.getElementById("list_{player_id}");
         const statusEl_{player_id} = document.getElementById("status_{player_id}");
         const playBtn_{player_id} = document.getElementById("play_{player_id}");
         const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
@@ -1408,27 +1356,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         let isPlayingList_{player_id} = false;
         let isFinished_{player_id} = false;
 
-        function renderList_{player_id}() {{
-            listEl_{player_id}.innerHTML = items_{player_id}.map((it, idx) => `
-                <div id="row_${{playerId_{player_id}}}_${{idx}}" style="
-                    display:flex;
-                    align-items:center;
-                    gap:9px;
-                    padding:9px 11px;
-                    margin-bottom:6px;
-                    border-radius:15px;
-                    background:white;
-                    border:1px solid #dcfce7;
-                    box-shadow:0 2px 7px rgba(0,0,0,0.035);
-                    box-sizing:border-box;
-                ">
-                    <span style="min-width:34px; font-size:12px; font-weight:900; color:#166534; background:#dcfce7; border-radius:999px; padding:5px 8px; text-align:center;">${{it.number}}</span>
-                    <span style="font-size:24px;">${{it.emoji}}</span>
-                    <span style="font-size:21px; font-weight:900; color:#111827; min-width:95px;">${{it.word}}</span>
-                    <span style="font-size:16px; font-weight:900; color:#374151;">${{it.meaning}}</span>
-                </div>
-            `).join("");
-        }}
 
         function setCurrent_{player_id}(idx) {{
             if (!items_{player_id}.length) return;
@@ -1444,21 +1371,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
             const percent = items_{player_id}.length <= 1 ? 100 : (idx / (items_{player_id}.length - 1)) * 100;
             barEl_{player_id}.style.width = percent + "%";
-
-            for (let i = 0; i < items_{player_id}.length; i++) {{
-                const row = document.getElementById("row_" + playerId_{player_id} + "_" + i);
-                if (!row) continue;
-                if (i === idx) {{
-                    row.style.background = "linear-gradient(135deg,#dcfce7,#dbeafe)";
-                    row.style.borderColor = "#22c55e";
-                    row.style.transform = "scale(1.01)";
-                    row.scrollIntoView({{block:"nearest", behavior:"smooth"}});
-                }} else {{
-                    row.style.background = "white";
-                    row.style.borderColor = "#dcfce7";
-                    row.style.transform = "scale(1)";
-                }}
-            }}
         }}
 
         function loadCurrent_{player_id}() {{
@@ -1504,7 +1416,6 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
             }}
         }}
 
-        renderList_{player_id}();
         loadCurrent_{player_id}();
 
         playBtn_{player_id}.addEventListener("click", function() {{
@@ -1543,7 +1454,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         </script>
         """,
         height=height,
-        scrolling=True
+        scrolling=False
     )
 
 
@@ -1553,7 +1464,7 @@ def show_cassette_audio(items, title):
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
             <div class="cassette-text">
-                단어별 음성이 끝날 때 다음 단어로 넘어갑니다. 재생 버튼 하나가 재생 중에는 멈춤 버튼으로 바뀝니다.
+                단어 하나가 크게 보이고, 음성이 끝나면 다음 단어로 넘어갑니다. 버튼 하나가 재생 중에는 멈춤 버튼으로 바뀝니다.
             </div>
         </div>
         """,
@@ -1581,17 +1492,13 @@ def show_cassette_audio(items, title):
                 items=items,
                 audio_payloads=audio_payloads,
                 title=title,
-                height=720
+                height=520
             )
         except Exception as e:
             st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
 
-    with st.expander("📜 실제 재생 단어 보기"):
-        st.write(make_cassette_text(items, repeat_word=repeat_word))
 
-    with st.expander("📋 전체 단어 목록 보기"):
-        show_cassette_word_list(items, "👇 전체 단어·뜻·이모지")
 
 
 def show_all_cassette_tab():
