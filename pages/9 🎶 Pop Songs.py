@@ -111,6 +111,20 @@ st.markdown("""
         margin-bottom: 16px;
     }
 
+
+    .match-selected-card {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        border: 3px solid #f59e0b;
+        color: #7c2d12;
+        padding: 0.75rem 1rem;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 0.5rem;
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.22);
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -1349,13 +1363,15 @@ elif "6. Fix You" in song_choice:
 # 5. 문장 매칭 게임 데이터와 함수
 # =========================
 def get_matching_pairs(song_choice):
-    """각 노래의 핵심 영어 문장과 한국어 뜻 4쌍을 반환합니다."""
+    """각 노래의 핵심 영어 문장과 한국어 뜻 6쌍을 반환합니다."""
     if "1. Let It Go" in song_choice:
         return [
             {"id": "let_1", "en": "Let it go", "ko": "놓아버려"},
             {"id": "let_2", "en": "Can't hold it back anymore", "ko": "더 이상 억누를 수 없어"},
             {"id": "let_3", "en": "I'm free", "ko": "나는 자유로워"},
             {"id": "let_4", "en": "The past is in the past", "ko": "과거는 과거일 뿐이야"},
+            {"id": "let_5", "en": "Here I stand", "ko": "나는 여기 서 있어"},
+            {"id": "let_6", "en": "The cold never bothered me anyway", "ko": "어차피 추위는 나를 괴롭힌 적이 없어"},
         ]
 
     if "2. Hello" in song_choice:
@@ -1364,6 +1380,8 @@ def get_matching_pairs(song_choice):
             {"id": "hello_2", "en": "I'm sorry", "ko": "미안해"},
             {"id": "hello_3", "en": "I tried", "ko": "나는 노력했어"},
             {"id": "hello_4", "en": "Hello from the other side", "ko": "저편에서 안녕이라고 말해"},
+            {"id": "hello_5", "en": "Can you hear me?", "ko": "내 말 들리니?"},
+            {"id": "hello_6", "en": "I hope that you're well", "ko": "네가 잘 지내길 바라"},
         ]
 
     if "3. A Whole New World" in song_choice:
@@ -1372,6 +1390,8 @@ def get_matching_pairs(song_choice):
             {"id": "world_2", "en": "A whole new world", "ko": "완전히 새로운 세상"},
             {"id": "world_3", "en": "A new fantastic point of view", "ko": "새롭고 환상적인 시선"},
             {"id": "world_4", "en": "Don't you dare close your eyes", "ko": "절대 눈 감지 마"},
+            {"id": "world_5", "en": "Open your eyes", "ko": "눈을 떠 봐"},
+            {"id": "world_6", "en": "Every turn a surprise", "ko": "방향을 틀 때마다 놀라움이 있어"},
         ]
 
     if "4. Stand By Me" in song_choice:
@@ -1380,6 +1400,8 @@ def get_matching_pairs(song_choice):
             {"id": "stand_2", "en": "I won't be afraid", "ko": "나는 두려워하지 않을 거야"},
             {"id": "stand_3", "en": "I won't cry", "ko": "나는 울지 않을 거야"},
             {"id": "stand_4", "en": "Whenever you're in trouble", "ko": "네가 힘든 순간에는 언제든지"},
+            {"id": "stand_5", "en": "The land is dark", "ko": "세상이 어두워"},
+            {"id": "stand_6", "en": "The moon is the only light", "ko": "달빛만이 유일한 빛이야"},
         ]
 
     if "5. Don't Know Why" in song_choice:
@@ -1388,6 +1410,8 @@ def get_matching_pairs(song_choice):
             {"id": "why_2", "en": "I wished that I could fly away", "ko": "나는 날아가 버릴 수 있기를 바랐어"},
             {"id": "why_3", "en": "You'll be on my mind forever", "ko": "너는 영원히 내 마음속에 있을 거야"},
             {"id": "why_4", "en": "I feel as empty as a drum", "ko": "나는 북처럼 텅 빈 기분이야"},
+            {"id": "why_5", "en": "I waited till I saw the sun", "ko": "나는 해가 보일 때까지 기다렸어"},
+            {"id": "why_6", "en": "Driving down the road alone", "ko": "혼자 길을 따라 운전하며"},
         ]
 
     if "6. Fix You" in song_choice:
@@ -1396,6 +1420,8 @@ def get_matching_pairs(song_choice):
             {"id": "fix_2", "en": "Lights will guide you home", "ko": "빛이 너를 집으로 인도할 거야"},
             {"id": "fix_3", "en": "I will try to fix you", "ko": "나는 너를 다시 일으켜 주려고 노력할 거야"},
             {"id": "fix_4", "en": "If you never try, you'll never know", "ko": "시도하지 않으면 절대 알 수 없어"},
+            {"id": "fix_5", "en": "Tears stream down your face", "ko": "눈물이 네 얼굴을 타고 흘러내려"},
+            {"id": "fix_6", "en": "I will learn from my mistakes", "ko": "나는 내 실수에서 배울 거야"},
         ]
 
     return []
@@ -1451,6 +1477,8 @@ def show_matching_game(song_choice):
         or not isinstance(saved_cards, dict)
         or "en" not in saved_cards
         or "ko" not in saved_cards
+        or len(saved_cards.get("en", [])) != len(pairs)
+        or len(saved_cards.get("ko", [])) != len(pairs)
     ):
         st.session_state[f"match_cards_{game_key}"] = build_matching_columns(pairs, safe_song_key)
 
@@ -1464,7 +1492,7 @@ def show_matching_game(song_choice):
             <div class="matching-title">🧩 문장 매칭 게임</div>
             <div class="matching-guide">
                 왼쪽 영어 문장과 오른쪽 한국어 뜻을 짝지어 보세요.<br>
-                맞는 짝을 고르면 카드가 팡 사라집니다.
+                맞는 짝을 고르면 카드가 팡 사라집니다. 총 6쌍을 맞춰 보세요.
             </div>
         </div>
         """,
@@ -1531,18 +1559,28 @@ def show_matching_game(song_choice):
     with left_col:
         for card in english_cards:
             is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
-            button_label = f"✅ {card['text']}" if is_selected else card["text"]
 
-            if st.button(button_label, key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
-                handle_card_click(card)
+            if is_selected:
+                st.markdown(
+                    f"<div class='match-selected-card'>✅ {html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            else:
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                    handle_card_click(card)
 
     with right_col:
         for card in korean_cards:
             is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
-            button_label = f"✅ {card['text']}" if is_selected else card["text"]
 
-            if st.button(button_label, key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
-                handle_card_click(card)
+            if is_selected:
+                st.markdown(
+                    f"<div class='match-selected-card'>✅ {html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            else:
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                    handle_card_click(card)
 
     st.markdown("---")
     if st.button("🔄 게임 다시 섞기", use_container_width=True, key=f"match_restart_{game_key}"):
