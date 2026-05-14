@@ -286,70 +286,29 @@ def start_new_quiz():
 def make_current_options():
     current = st.session_state.quiz_list[st.session_state.quiz_index]
 
-    wrong_pool = [c for c in QUIZ_COUNTRIES if c["iso"] != current["iso"]]
+    # 현재 문제가 비어 있으면 퀴즈 다시 시작
+    if current is None:
+        start_new_quiz()
+        return
+
+    wrong_pool = [
+        c for c in QUIZ_COUNTRIES
+        if c is not None and c.get("iso") != current.get("iso")
+    ]
+
     wrongs = random.sample(wrong_pool, 3)
 
     options = wrongs + [current]
     random.shuffle(options)
+
+    # 혹시 모를 None 제거
+    options = [o for o in options if o is not None]
 
     st.session_state.quiz_current = current
     st.session_state.quiz_options = options
     st.session_state.quiz_answered = False
     st.session_state.quiz_result = ""
     st.session_state.quiz_correct_flag = False
-
-def next_quiz_question():
-    if st.session_state.quiz_index < QUIZ_LENGTH - 1:
-        st.session_state.quiz_index += 1
-        make_current_options()
-    else:
-        st.session_state.quiz_finished = True
-
-def check_quiz_answer(option):
-    if st.session_state.quiz_answered:
-        return
-
-    st.session_state.quiz_answered = True
-
-    correct = st.session_state.quiz_current
-
-    if option.get("iso") == correct.get("iso"):
-        st.session_state.quiz_correct_count += 1
-        st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('ko', '')} / {correct.get('en', '')}"
-        st.session_state.quiz_correct_flag = True
-    else:
-        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('ko', '')} / {correct.get('en', '')}입니다."
-        st.session_state.quiz_correct_flag = False
-
-if "quiz_level" not in st.session_state:
-    st.session_state.quiz_level = "전체"
-
-if "quiz_finished" not in st.session_state:
-    st.session_state.quiz_finished = False
-
-# 버튼 key 생성용 값입니다.
-# 기존 코드에서 quiz_total을 사용했지만 초기화가 없어 오류가 났습니다.
-if "quiz_total" not in st.session_state:
-    st.session_state.quiz_total = 0
-
-if "quiz_list" not in st.session_state:
-    start_new_quiz()
-
-# 이전 버전 세션값이 남아 있을 경우 자동 초기화
-try:
-    valid_state = (
-        isinstance(st.session_state.quiz_list, list)
-        and len(st.session_state.quiz_list) == QUIZ_LENGTH
-        and isinstance(st.session_state.quiz_index, int)
-        and 0 <= st.session_state.quiz_index < QUIZ_LENGTH
-        and isinstance(st.session_state.quiz_options, list)
-        and len(st.session_state.quiz_options) == 4
-    )
-except Exception:
-    valid_state = False
-
-if not valid_state:
-    start_new_quiz()
 
 # =====================================================
 # 스타일
