@@ -10,8 +10,6 @@ from streamlit_drawable_canvas import st_canvas
 import random
 import html
 import json
-import io
-from gtts import gTTS
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -820,173 +818,61 @@ with tabs[7]:
         if st.session_state["translation_method"]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
-        # =========================
-        # gTTS 발음 듣기 + 429 오류 대비
-        # =========================
-        st.markdown("#### 🔊 번역문 발음 듣기")
-        st.caption("gTTS로 mp3 발음 파일을 만듭니다. 단, gTTS 429 오류가 나면 자동으로 브라우저 음성으로 대체합니다.")
+        # 발음 듣기 버튼 하나만 제공
+        # gTTS를 사용하지 않고 브라우저 기본 음성 기능을 사용합니다.
+        # 그래서 429 Too Many Requests 오류가 나지 않습니다.
+        st.markdown("#### 🔊 발음 듣기")
 
-        def normalize_tts_lang(lang_code):
-            """gTTS에서 안정적으로 쓰기 위한 언어 코드 보정"""
-            if not lang_code:
-                return "en"
+        speech_lang_map = {
+            "en": "en-US",
+            "ko": "ko-KR",
+            "ja": "ja-JP",
+            "zh-CN": "zh-CN",
+            "zh-cn": "zh-CN",
+            "es": "es-ES",
+            "fr": "fr-FR",
+            "de": "de-DE",
+            "ru": "ru-RU",
+            "vi": "vi-VN",
+            "th": "th-TH",
+            "id": "id-ID",
+            "ar": "ar-SA",
+            "hi": "hi-IN",
+            "it": "it-IT",
+            "pt": "pt-PT",
+        }
 
-            lang_code = str(lang_code).strip()
+        target_code = st.session_state.get("translation_target_code", "en")
+        speech_lang = speech_lang_map.get(target_code, "en-US")
+        text_for_speech = json.dumps(st.session_state["translated_text"], ensure_ascii=False)
 
-            lang_map = {
-                "zh-cn": "zh-CN",
-                "zh-CN": "zh-CN",
-                "zh": "zh-CN",
-                "en": "en",
-                "ko": "ko",
-                "ja": "ja",
-                "es": "es",
-                "fr": "fr",
-                "de": "de",
-                "ru": "ru",
-                "vi": "vi",
-                "th": "th",
-                "id": "id",
-                "ar": "ar",
-                "hi": "hi",
-                "it": "it",
-                "pt": "pt",
-            }
+        speech_html = f"""
+        <button onclick="
+            window.speechSynthesis.cancel();
 
-            return lang_map.get(lang_code, "en")
+            var text = {text_for_speech};
+            var utterance = new SpeechSynthesisUtterance(text);
 
-        @st.cache_data(show_spinner=False, ttl=60 * 60 * 24)
-        def make_gtts_audio_bytes_cached(text, lang_code):
-            """같은 문장과 언어는 하루 동안 캐시해서 gTTS 요청을 반복하지 않도록 함"""
-            tts_lang = normalize_tts_lang(lang_code)
-            fp = io.BytesIO()
+            utterance.lang = '{speech_lang}';
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
 
-            if tts_lang == "en":
-                tts = gTTS(text=text, lang="en", tld="com", slow=False)
-            else:
-                tts = gTTS(text=text, lang=tts_lang, slow=False)
+            window.speechSynthesis.speak(utterance);
+        "
+        style="
+            width:100%;
+            background-color:#2563eb;
+            color:white;
+            border:none;
+            border-radius:12px;
+            padding:14px 18px;
+            font-size:18px;
+            cursor:pointer;
+            font-weight:700;
+            margin-top:8px;
+        ">
+            🔊 발음 듣기
+        </button>
+        """
 
-            tts.write_to_fp(fp)
-            fp.seek(0)
-            return fp.getvalue()
-
-        def browser_tts_box(text, lang_code):
-            """gTTS가 막힐 때 쓰는 브라우저 기본 음성 버튼"""
-            tts_lang = normalize_tts_lang(lang_code)
-            browser_lang_map = {
-                "en": "en-US",
-                "ko": "ko-KR",
-                "ja": "ja-JP",
-                "zh-CN": "zh-CN",
-                "es": "es-ES",
-                "fr": "fr-FR",
-                "de": "de-DE",
-                "ru": "ru-RU",
-                "vi": "vi-VN",
-                "th": "th-TH",
-                "id": "id-ID",
-                "ar": "ar-SA",
-                "hi": "hi-IN",
-                "it": "it-IT",
-                "pt": "pt-PT",
-            }
-            browser_lang = browser_lang_map.get(tts_lang, "en-US")
-            text_json = json.dumps(text)
-            lang_json = json.dumps(browser_lang)
-
-            speech_html = f"""
-            <div style="display:flex; gap:8px; flex-wrap:wrap; width:100%;">
-                <button onclick="
-                    window.speechSynthesis.cancel();
-                    var utterance = new SpeechSynthesisUtterance({text_json});
-                    utterance.lang = {lang_json};
-                    utterance.rate = 0.9;
-                    utterance.pitch = 1;
-                    window.speechSynthesis.speak(utterance);
-                "
-                style="
-                    flex:1;
-                    min-width:140px;
-                    background-color:#2563eb;
-                    color:white;
-                    border:none;
-                    border-radius:10px;
-                    padding:10px 14px;
-                    font-size:16px;
-                    cursor:pointer;
-                    font-weight:700;
-                ">
-                    🔊 대체 발음 듣기
-                </button>
-
-                <button onclick="window.speechSynthesis.cancel();"
-                style="
-                    flex:1;
-                    min-width:100px;
-                    background-color:#dc2626;
-                    color:white;
-                    border:none;
-                    border-radius:10px;
-                    padding:10px 14px;
-                    font-size:16px;
-                    cursor:pointer;
-                    font-weight:700;
-                ">
-                    ⏹ 멈춤
-                </button>
-            </div>
-            """
-            components.html(speech_html, height=75)
-
-        target_code_for_tts = st.session_state.get("translation_target_code", "en")
-
-        col_a, col_b = st.columns([1, 1])
-
-        with col_a:
-            make_audio = st.button(
-                "🔊 gTTS 발음 만들기",
-                use_container_width=True,
-                key="make_translation_gtts"
-            )
-
-        with col_b:
-            clear_audio = st.button(
-                "🧹 발음 초기화",
-                use_container_width=True,
-                key="clear_translation_audio"
-            )
-
-        if clear_audio:
-            st.session_state["translation_audio_bytes"] = None
-            st.session_state["translation_tts_error"] = ""
-            st.rerun()
-
-        if make_audio:
-            st.session_state["translation_tts_error"] = ""
-            try:
-                audio_bytes = make_gtts_audio_bytes_cached(
-                    st.session_state["translated_text"],
-                    target_code_for_tts
-                )
-                st.session_state["translation_audio_bytes"] = audio_bytes
-                st.session_state["translation_audio_lang"] = target_code_for_tts
-
-            except Exception as tts_error:
-                st.session_state["translation_audio_bytes"] = None
-                st.session_state["translation_tts_error"] = str(tts_error)
-
-        if st.session_state.get("translation_audio_bytes"):
-            st.success("발음 파일이 만들어졌습니다.")
-            st.audio(
-                st.session_state["translation_audio_bytes"],
-                format="audio/mp3"
-            )
-
-        elif st.session_state.get("translation_tts_error"):
-            st.warning("gTTS 요청이 잠시 막혔습니다. 아래 대체 발음 듣기를 사용하세요.")
-            st.info("429 Too Many Requests는 짧은 시간에 gTTS 요청을 많이 보내면 생깁니다. 잠시 후 다시 누르면 되는 경우가 많습니다.")
-            browser_tts_box(st.session_state["translated_text"], target_code_for_tts)
-
-        else:
-            # gTTS 버튼을 누르기 전에도 바로 들을 수 있는 예비 버튼 제공
-            browser_tts_box(st.session_state["translated_text"], target_code_for_tts)
+        components.html(speech_html, height=75)
