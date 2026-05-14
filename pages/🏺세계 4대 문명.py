@@ -124,12 +124,11 @@ QUIZ_MODES = ["강 이름 맞추기", "문명 이름 맞추기", "현재 지역 
 # 퀴즈 함수
 # =========================
 def make_quiz():
-    """현재 퀴즈 유형에 맞게 새 문제를 만든다."""
     quiz_mode = st.session_state.get("quiz_mode", "강 이름 맞추기")
 
     if quiz_mode not in QUIZ_MODES:
         quiz_mode = "강 이름 맞추기"
-        st.session_state.quiz_mode = quiz_mode
+        st.session_state["quiz_mode"] = quiz_mode
 
     item = random.choice(CIVILIZATIONS)
 
@@ -155,34 +154,27 @@ def make_quiz():
 
     random.shuffle(options)
 
-    st.session_state.quiz_item = item
-    st.session_state.quiz_question = question
-    st.session_state.quiz_correct = correct
-    st.session_state.quiz_options = options
-    st.session_state.quiz_answered = False
-    st.session_state.quiz_result = ""
+    st.session_state["quiz_item"] = item
+    st.session_state["quiz_question"] = question
+    st.session_state["quiz_correct"] = correct
+    st.session_state["quiz_options"] = options
+    st.session_state["quiz_answered"] = False
+    st.session_state["quiz_result"] = ""
 
 
 def init_quiz_state():
-    """
-    세션 상태를 안전하게 초기화한다.
-
-    기존 에러 원인:
-    quiz_options만 있으면 새 문제를 만들지 않았는데,
-    quiz_question이 없는 상태에서 st.session_state.quiz_question을 불러와서
-    AttributeError가 발생했습니다.
-    """
+    # 점수 초기화
     if "score" not in st.session_state:
-        st.session_state.score = 0
+        st.session_state["score"] = 0
 
     if "total" not in st.session_state:
-        st.session_state.total = 0
+        st.session_state["total"] = 0
 
     if "quiz_mode" not in st.session_state:
-        st.session_state.quiz_mode = "강 이름 맞추기"
+        st.session_state["quiz_mode"] = "강 이름 맞추기"
 
-    if st.session_state.quiz_mode not in QUIZ_MODES:
-        st.session_state.quiz_mode = "강 이름 맞추기"
+    if st.session_state.get("quiz_mode") not in QUIZ_MODES:
+        st.session_state["quiz_mode"] = "강 이름 맞추기"
 
     required_keys = [
         "quiz_item",
@@ -193,19 +185,25 @@ def init_quiz_state():
         "quiz_result",
     ]
 
+    # 하나라도 없으면 새 문제 생성
     if any(key not in st.session_state for key in required_keys):
         make_quiz()
 
-    if not isinstance(st.session_state.quiz_options, list) or len(st.session_state.quiz_options) == 0:
+    # quiz_options가 이상하면 새 문제 생성
+    if not isinstance(st.session_state.get("quiz_options"), list):
+        make_quiz()
+
+    elif len(st.session_state.get("quiz_options", [])) == 0:
         make_quiz()
 
 
 def reset_score():
-    st.session_state.score = 0
-    st.session_state.total = 0
+    st.session_state["score"] = 0
+    st.session_state["total"] = 0
     make_quiz()
 
 
+# 페이지 시작 시 반드시 초기화
 init_quiz_state()
 
 # =========================
@@ -577,67 +575,84 @@ with tab4:
 
     score_col1, score_col2, score_col3 = st.columns(3)
     with score_col1:
-        st.metric("점수", f"{st.session_state.score} / {st.session_state.total}")
+        st.metric("점수", f"{st.session_state.get('score', 0)} / {st.session_state.get('total', 0)}")
     with score_col2:
-        acc = round(st.session_state.score / st.session_state.total * 100) if st.session_state.total > 0 else 0
+        total_now = st.session_state.get("total", 0)
+        score_now = st.session_state.get("score", 0)
+        acc = round(score_now / total_now * 100) if total_now > 0 else 0
         st.metric("정답률", f"{acc}%")
     with score_col3:
         if st.button("🔄 점수 초기화", use_container_width=True):
             reset_score()
             st.rerun()
 
+    current_mode = st.session_state.get("quiz_mode", "강 이름 맞추기")
+    if current_mode not in QUIZ_MODES:
+        current_mode = "강 이름 맞추기"
+        st.session_state["quiz_mode"] = current_mode
+
     selected_mode = st.radio(
         "퀴즈 유형",
         QUIZ_MODES,
-        index=QUIZ_MODES.index(st.session_state.quiz_mode),
+        index=QUIZ_MODES.index(current_mode),
         horizontal=True,
         key="quiz_mode_radio"
     )
 
-    if selected_mode != st.session_state.quiz_mode:
-        st.session_state.quiz_mode = selected_mode
+    if selected_mode != st.session_state.get("quiz_mode"):
+        st.session_state["quiz_mode"] = selected_mode
         make_quiz()
         st.rerun()
+
+    # 혹시 모를 누락을 한 번 더 방지
+    if "quiz_question" not in st.session_state:
+        make_quiz()
 
     st.markdown(
         f"""
         <div class="quiz-box">
-            {st.session_state.quiz_question}
+            {st.session_state.get("quiz_question", "문제를 불러오는 중입니다.")}
         </div>
         """,
         unsafe_allow_html=True
     )
 
+    options = st.session_state.get("quiz_options", [])
+    if not options:
+        make_quiz()
+        options = st.session_state.get("quiz_options", [])
+
     opt_cols = st.columns(2)
-    for i, option in enumerate(st.session_state.quiz_options):
+    for i, option in enumerate(options):
         with opt_cols[i % 2]:
             if st.button(
                 option,
-                key=f"civil_quiz_btn_{i}_{st.session_state.total}",
+                key=f"civil_quiz_btn_{i}_{st.session_state.get('total', 0)}",
                 use_container_width=True,
-                disabled=st.session_state.quiz_answered
+                disabled=st.session_state.get("quiz_answered", False)
             ):
-                st.session_state.quiz_answered = True
-                st.session_state.total += 1
+                st.session_state["quiz_answered"] = True
+                st.session_state["total"] = st.session_state.get("total", 0) + 1
 
-                if option == st.session_state.quiz_correct:
-                    st.session_state.score += 1
+                if option == st.session_state.get("quiz_correct"):
+                    st.session_state["score"] = st.session_state.get("score", 0) + 1
 
-                    if st.session_state.quiz_mode == "문명의 기준 맞추기":
-                        st.session_state.quiz_result = "✅ 정답입니다! 문명은 농업, 도시, 국가, 문자, 기술과 문화가 발달한 사회입니다."
+                    if st.session_state.get("quiz_mode") == "문명의 기준 맞추기":
+                        st.session_state["quiz_result"] = "✅ 정답입니다! 문명은 농업, 도시, 국가, 문자, 기술과 문화가 발달한 사회입니다."
                     else:
-                        item = st.session_state.quiz_item
-                        st.session_state.quiz_result = f"✅ 정답입니다! {item['name_ko']} — {item['easy']}"
+                        item = st.session_state.get("quiz_item", {})
+                        st.session_state["quiz_result"] = f"✅ 정답입니다! {item.get('name_ko', '')} — {item.get('easy', '')}"
                 else:
-                    st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 `{st.session_state.quiz_correct}`입니다."
+                    st.session_state["quiz_result"] = f"❌ 아쉬워요. 정답은 `{st.session_state.get('quiz_correct', '')}`입니다."
 
                 st.rerun()
 
-    if st.session_state.quiz_result:
-        if st.session_state.quiz_result.startswith("✅"):
-            st.success(st.session_state.quiz_result)
+    result = st.session_state.get("quiz_result", "")
+    if result:
+        if result.startswith("✅"):
+            st.success(result)
         else:
-            st.error(st.session_state.quiz_result)
+            st.error(result)
 
     if st.button("➡️ 다음 문제", use_container_width=True):
         make_quiz()
