@@ -15,10 +15,10 @@ google-auth
 openpyxl
 textstat
 deep-translator
+googletrans==4.0.0-rc1
 
 scipy
 seaborn
 streamlit-mic-recorder
 SpeechRecognition
 countryinfo
-deep-translator
