@@ -812,7 +812,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="selector-card">', unsafe_allow_html=True)
 col_cat, col_topic = st.columns([1, 2])
 
 with col_cat:
