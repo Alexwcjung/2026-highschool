@@ -10,6 +10,8 @@ from streamlit_drawable_canvas import st_canvas
 import random
 import html
 import json
+import io
+from gtts import gTTS
 
 st.set_page_config(
     page_title="Classroom Tools",
@@ -818,61 +820,45 @@ with tabs[7]:
         if st.session_state["translation_method"]:
             st.caption(f"번역 방식: {st.session_state['translation_method']}")
 
-        # 발음 듣기 버튼 하나만 제공
-        # gTTS를 사용하지 않고 브라우저 기본 음성 기능을 사용합니다.
-        # 그래서 429 Too Many Requests 오류가 나지 않습니다.
-        st.markdown("#### 🔊 발음 듣기")
+        # 번역 결과를 영어 발음으로 듣기
+        # 브라우저 음성 기능이 안 들리는 경우가 많아서 gTTS mp3 방식으로 처리합니다.
+        st.markdown("#### 🔊 영어 발음 듣기")
 
-        speech_lang_map = {
-            "en": "en-US",
-            "ko": "ko-KR",
-            "ja": "ja-JP",
-            "zh-CN": "zh-CN",
-            "zh-cn": "zh-CN",
-            "es": "es-ES",
-            "fr": "fr-FR",
-            "de": "de-DE",
-            "ru": "ru-RU",
-            "vi": "vi-VN",
-            "th": "th-TH",
-            "id": "id-ID",
-            "ar": "ar-SA",
-            "hi": "hi-IN",
-            "it": "it-IT",
-            "pt": "pt-PT",
-        }
+        @st.cache_data(show_spinner=False)
+        def make_english_tts_mp3(text):
+            text = str(text).strip()
 
-        target_code = st.session_state.get("translation_target_code", "en")
-        speech_lang = speech_lang_map.get(target_code, "en-US")
-        text_for_speech = json.dumps(st.session_state["translated_text"], ensure_ascii=False)
+            if not text:
+                return None
 
-        speech_html = f"""
-        <button onclick="
-            window.speechSynthesis.cancel();
+            # 너무 긴 문장은 gTTS 오류가 날 수 있어서 길이를 제한합니다.
+            if len(text) > 500:
+                text = text[:500]
 
-            var text = {text_for_speech};
-            var utterance = new SpeechSynthesisUtterance(text);
+            fp = io.BytesIO()
+            tts = gTTS(
+                text=text,
+                lang="en",
+                tld="com",
+                slow=False
+            )
+            tts.write_to_fp(fp)
+            fp.seek(0)
+            return fp.read()
 
-            utterance.lang = '{speech_lang}';
-            utterance.rate = 0.9;
-            utterance.pitch = 1;
+        if st.button("🔊 발음 듣기", use_container_width=True, key="listen_translation_gtts"):
+            try:
+                with st.spinner("발음 파일을 만드는 중입니다..."):
+                    audio_bytes = make_english_tts_mp3(
+                        st.session_state["translated_text"]
+                    )
 
-            window.speechSynthesis.speak(utterance);
-        "
-        style="
-            width:100%;
-            background-color:#2563eb;
-            color:white;
-            border:none;
-            border-radius:12px;
-            padding:14px 18px;
-            font-size:18px;
-            cursor:pointer;
-            font-weight:700;
-            margin-top:8px;
-        ">
-            🔊 발음 듣기
-        </button>
-        """
+                if audio_bytes:
+                    st.audio(audio_bytes, format="audio/mp3")
+                else:
+                    st.warning("읽을 번역 결과가 없습니다.")
 
-        components.html(speech_html, height=75)
+            except Exception as e:
+                st.error("발음 파일을 만드는 중 오류가 발생했습니다.")
+                st.warning("gTTS는 인터넷 연결이 필요합니다. Streamlit Cloud에서 잠시 막힌 경우에는 잠시 후 다시 눌러 주세요.")
+                st.write(e)
