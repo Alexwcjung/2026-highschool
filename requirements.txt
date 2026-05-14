@@ -27,7 +27,6 @@ streamlit-mic-recorder
 
 # 음성 인식
 SpeechRecognition
-PyAudio
 
 # Google 연동
 gspread
@@ -40,4 +39,8 @@ openpyxl
 textstat
 
 # 국가 정보
-countryinfo
+countryinfo  이거 수정
+
+gTTS
+deep-translator
+googletrans==4.0.0-rc1
