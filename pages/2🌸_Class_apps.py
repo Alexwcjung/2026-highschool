@@ -622,6 +622,8 @@ with tabs[6]:
 with tabs[7]:
     st.subheader("🌐 Translation Tool")
 
+    st.caption("한국어↔영어 등 여러 언어를 번역하고, 영어 결과는 발음으로 들을 수 있습니다.")
+
     lang_options = {
         "한국어 Korean": "ko",
         "영어 English": "en",
@@ -646,6 +648,9 @@ with tabs[7]:
 
     if "translation_target_code" not in st.session_state:
         st.session_state["translation_target_code"] = ""
+
+    if "translation_error" not in st.session_state:
+        st.session_state["translation_error"] = ""
 
     # 언어 선택
     col1, col2 = st.columns(2)
@@ -676,18 +681,15 @@ with tabs[7]:
 
     # 번역 버튼
     if st.button("🌐 번역하기", use_container_width=True):
+        st.session_state["translation_error"] = ""
+
         if not source_text.strip():
             st.warning("번역할 문장을 먼저 입력하세요.")
         else:
             try:
                 from deep_translator import GoogleTranslator
 
-                source_code = (
-                    "auto"
-                    if source_lang_label == "자동 감지 Auto"
-                    else lang_options[source_lang_label]
-                )
-
+                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
                 target_code = lang_options[target_lang_label]
 
                 translated = GoogleTranslator(
@@ -698,11 +700,16 @@ with tabs[7]:
                 st.session_state["translated_text"] = translated
                 st.session_state["translation_target_code"] = target_code
 
+                st.success("번역이 완료되었습니다.")
+
             except ModuleNotFoundError:
-                st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
-                st.code("pip install deep-translator", language="bash")
+                st.session_state["translation_error"] = "deep-translator 패키지가 설치되어 있지 않습니다."
+                st.error("deep-translator 패키지가 설치되어 있지 않습니다.")
+                st.info("Streamlit Cloud를 사용 중이라면 requirements.txt에 아래 내용을 추가한 뒤 앱을 Reboot 하세요.")
+                st.code("deep-translator", language="txt")
 
             except Exception as e:
+                st.session_state["translation_error"] = str(e)
                 st.error("번역 중 오류가 발생했습니다.")
                 st.write(e)
 
@@ -711,21 +718,24 @@ with tabs[7]:
         st.markdown("#### 번역 결과")
 
         translated_result = st.text_area(
-            "",
+            "번역 결과",
             value=st.session_state["translated_text"],
             height=180,
-            key="translation_result",
-            label_visibility="collapsed"
+            key="translation_result"
         )
+
+        st.markdown("#### 복사용")
+        st.code(st.session_state["translated_text"], language=None)
 
         # 영어로 번역된 경우에만 발음 듣기 제공
         if st.session_state["translation_target_code"] == "en":
+            st.markdown("#### 🔊 영어 발음 듣기")
+
             speed_label = st.radio(
-                "",
+                "속도",
                 ["0.25", "0.5", "1", "1.25", "1.5"],
                 index=2,
                 horizontal=True,
-                label_visibility="collapsed",
                 key="tts_speed"
             )
 
@@ -762,7 +772,7 @@ with tabs[7]:
                         </script>
                         """
 
-                        components.html(audio_html, height=70)
+                        components.html(audio_html, height=80)
 
                     except Exception as e:
                         st.error("영어 발음 생성 중 오류가 발생했습니다.")
