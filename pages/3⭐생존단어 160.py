@@ -13,6 +13,7 @@ import re
 # 3) gTTS 서버 생성 방식 삭제
 # 4) Google TTS URL + requests + Streamlit 기본 st.audio() 사용
 # 5) 카세트는 여러 조각 mp3를 하나로 이어 붙여 한 번에 재생
+# 6) 단어 카드는 추가 버튼 없이 오디오 플레이어를 바로 표시
 # =====================================================
 
 st.set_page_config(
@@ -288,8 +289,8 @@ def get_combined_tts_mp3_bytes(text, lang="en", max_chars=155):
 
 def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
     """
-    버튼을 눌렀을 때만 mp3를 받아옵니다.
-    이렇게 해야 단어 카드가 많아도 앱이 처음부터 멈추지 않습니다.
+    대화처럼 긴 오디오는 버튼을 눌렀을 때만 mp3를 받아옵니다.
+    단어 카드는 아래 direct_audio_player()를 사용해서 오디오 바를 바로 보여줍니다.
     """
     text = str(text).strip()
     if not text:
@@ -307,6 +308,25 @@ def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
             st.caption(f"오류 내용: {e}")
             if show_link:
                 st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+
+
+def direct_audio_player(text, show_link=True):
+    """
+    단어 카드용: expander나 추가 버튼 없이 오디오 플레이어를 바로 보여줍니다.
+    학생은 오디오 바의 재생 버튼만 한 번 누르면 됩니다.
+    """
+    text = str(text).strip()
+    if not text:
+        return
+
+    try:
+        audio_bytes = get_tts_mp3_bytes(text, lang="en")
+        st.audio(audio_bytes, format="audio/mp3")
+    except Exception as e:
+        st.error("음성 파일을 만들지 못했습니다.")
+        st.caption(f"오류 내용: {e}")
+        if show_link:
+            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
 
 
 def remove_speaker_label(sentence):
@@ -952,8 +972,7 @@ def show_word_cards(theme_words, theme_name):
                 st.markdown(f"<div class='emoji-text'>{get_word_emoji(item['word'])}</div>", unsafe_allow_html=True)
 
             with col4:
-                with st.expander("🔊 듣기"):
-                    play_audio_block(item["word"], label="🔊 단어 발음", key=f"word_audio_{theme_name}_{idx}_{item['word']}")
+                direct_audio_player(item["word"])
 
             st.markdown('</div>', unsafe_allow_html=True)
 
