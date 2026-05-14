@@ -1443,7 +1443,15 @@ def show_matching_game(song_choice):
         st.session_state[f"match_done_{game_key}"] = []
     if f"match_message_{game_key}" not in st.session_state:
         st.session_state[f"match_message_{game_key}"] = ""
-    if f"match_cards_{game_key}" not in st.session_state or st.session_state[f"match_cards_{game_key}"] is None:
+    # 이전 버전에서 만들어진 세션값이 남아 있으면 cards가 list 형태일 수 있습니다.
+    # 현재 버전은 {"en": [...], "ko": [...]} 형태를 사용하므로, 형태가 다르면 새로 만듭니다.
+    saved_cards = st.session_state.get(f"match_cards_{game_key}")
+    if (
+        saved_cards is None
+        or not isinstance(saved_cards, dict)
+        or "en" not in saved_cards
+        or "ko" not in saved_cards
+    ):
         st.session_state[f"match_cards_{game_key}"] = build_matching_columns(pairs, safe_song_key)
 
     selected = st.session_state[f"match_selected_{game_key}"]
