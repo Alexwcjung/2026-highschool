@@ -26,7 +26,6 @@ def create_wordcloud(text):
 
 
 st.title("🧰 수업 도구 모음")
-# =========================
 # 학생 안내 문구
 # =========================
 st.markdown("""
@@ -38,7 +37,6 @@ st.markdown("""
     margin-bottom: 18px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 ">
-    <h2 style="margin-top:0; color:#1f4e79;"></h2>
     <p style="font-size:18px; line-height:1.7; margin-bottom:12px;">
         이 앱은 수업 시간에 바로 사용할 수 있는 간단한 도구 모음입니다.
         위의 탭을 눌러 필요한 기능을 선택하세요.
