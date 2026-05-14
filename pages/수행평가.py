@@ -1,6 +1,5 @@
 import streamlit as st
-from gtts import gTTS
-import io
+import requests
 import urllib.parse
 from pathlib import Path
 
@@ -18,52 +17,56 @@ def make_google_translate_url(text, source="auto", target="en"):
     return f"https://translate.google.com/?sl={source}&tl={target}&text={encoded_text}&op=translate"
 
 
-def make_tts_audio(text, lang="en", tld="com", slow=False):
-    """
-    gTTS 영어 음성을 BytesIO로 만들고 st.audio에서 바로 재생
-    """
-    text = str(text).strip()
-
-    if not text:
-        text = "Hello."
-
-    speech = io.BytesIO()
-
-    tts = gTTS(
-        text=text,
-        lang=lang,
-        tld=tld,
-        slow=slow
-    )
-
-    tts.write_to_fp(speech)
-    speech.seek(0)
-
-    return speech.getvalue()
+def make_google_tts_url(text, lang="en"):
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello."
+    encoded = urllib.parse.quote(clean_text)
+    return f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded}"
 
 
-def english_audio_player(text, slow=False):
-    """
-    앱 안에서 영어 발음 재생
-    """
+@st.cache_data(show_spinner=False)
+def get_tts_mp3_bytes(text, lang="en"):
+    """Google TTS mp3를 requests로 직접 받아와 st.audio에서 바로 재생합니다."""
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello."
+
+    url = make_google_tts_url(clean_text, lang=lang)
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://translate.google.com/",
+    }
+
+    response = requests.get(url, headers=headers, timeout=12)
+    response.raise_for_status()
+
+    audio_bytes = response.content
+    if not audio_bytes or len(audio_bytes) < 500:
+        raise ValueError("음성 파일이 비어 있습니다.")
+
+    return audio_bytes
+
+
+def english_audio_player(text):
+    """앱 안에서 영어 발음 오디오를 바로 보여줍니다."""
     try:
-        audio_bytes = make_tts_audio(
-            text=text,
-            lang="en",
-            tld="com",
-            slow=slow
-        )
+        audio_bytes = get_tts_mp3_bytes(text, lang="en")
         st.audio(audio_bytes, format="audio/mp3")
-
     except Exception as e:
         st.error("영어 발음 오디오를 만들지 못했습니다.")
-        st.caption(str(e))
+        st.caption(f"오류 내용: {e}")
+        st.link_button(
+            "🔊 새 창에서 듣기",
+            make_google_tts_url(text, lang="en"),
+            use_container_width=True
+        )
 
 
 # =========================
 # 문장 카드
 # =========================
-def sentence_card(korean, english, slow=False):
+def sentence_card(korean, english):
     st.markdown(
         f"""
         <div style="
@@ -85,7 +88,7 @@ def sentence_card(korean, english, slow=False):
         unsafe_allow_html=True
     )
 
-    english_audio_player(english, slow=slow)
+    english_audio_player(english)
 
 
 # =========================
@@ -96,22 +99,9 @@ st.caption("영어 문장을 보고 듣고 따라 말해 봅시다.")
 
 st.markdown("---")
 
-# =========================
-# 듣기 속도 선택
-# =========================
-st.subheader("🔊 듣기 속도")
-
-speed_label = st.selectbox(
-    "듣기 속도를 선택하세요.",
-    ["보통", "느리게"],
-    index=0
-)
-
-slow_mode = speed_label == "느리게"
-
 st.info(
-    "1번, 3번, 4번, 5번은 앱 안에서 영어 발음으로 재생됩니다. "
-    "2번 취미 입력은 구글 번역으로 이동해서 영어 표현과 발음을 확인합니다."
+    "1번, 3번, 4번, 5번은 앱 안에서 영어 발음으로 바로 재생됩니다. "
+    "2번 취미 입력은 학생이 한국어로 입력하면 구글 번역으로 이동해서 영어 표현과 발음을 확인합니다."
 )
 
 st.markdown("---")
@@ -131,8 +121,7 @@ name_sentence = f"I am {name_text}."
 
 sentence_card(
     "나는 (본인 이름)입니다.",
-    name_sentence,
-    slow=slow_mode
+    name_sentence
 )
 
 st.markdown("---")
@@ -152,8 +141,9 @@ st.markdown(
         margin:10px 0 12px 0;
         box-shadow:0 3px 10px rgba(0,0,0,0.04);
     ">
-        <div style="font-size:17px; color:#9a3412; font-weight:800; margin-bottom:8px;">
-            🇰🇷 나의 취미를 말해 봅시다.
+        <div style="font-size:17px; color:#9a3412; font-weight:800; margin-bottom:8px; line-height:1.6;">
+            🇰🇷 내 취미는 ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )입니다.<br>
+            나는 학생이고 키가 큽니다.
         </div>
         <div style="font-size:28px; color:#111827; font-weight:800; line-height:1.5;">
             My hobby is ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).<br>
@@ -193,6 +183,7 @@ if hobby_input.strip():
             font-size:17px;
             font-weight:700;
             color:#9a3412;
+            line-height:1.7;
         ">
             구글 번역에서 나온 영어 표현을 괄호 안에 넣어 말하면 됩니다.<br>
             예: My hobby is playing soccer. I am a student and tall.
@@ -212,8 +203,7 @@ st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 
 sentence_card(
     "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
-    "What time is it? I want to go home now.",
-    slow=slow_mode
+    "What time is it? I want to go home now."
 )
 
 st.markdown("---")
@@ -225,8 +215,7 @@ st.subheader("4. 필요한 것 말하기")
 
 sentence_card(
     "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
-    "I want water. I want food too.",
-    slow=slow_mode
+    "I want water. I want food too."
 )
 
 st.markdown("---")
@@ -276,10 +265,7 @@ picture_script = (
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
 
-english_audio_player(
-    picture_script,
-    slow=slow_mode
-)
+english_audio_player(picture_script)
 
 st.markdown(
     """
