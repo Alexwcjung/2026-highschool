@@ -1369,9 +1369,8 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                     </div>
                 </div>
 
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="play_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:18px; font-weight:900; cursor:pointer;">▶️ 카세트 재생</button>
-                    <button id="pause_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #67e8f9; background:#ecfeff; color:#155e75; font-size:18px; font-weight:900; cursor:pointer;">⏸ 잠깐 멈춤</button>
+                <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+                    <button id="play_{player_id}" style="min-height:56px; border-radius:18px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:19px; font-weight:900; cursor:pointer;">▶️ 재생</button>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
                     <button id="prev_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">⏮ 이전</button>
@@ -1401,13 +1400,13 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         const listEl_{player_id} = document.getElementById("list_{player_id}");
         const statusEl_{player_id} = document.getElementById("status_{player_id}");
         const playBtn_{player_id} = document.getElementById("play_{player_id}");
-        const pauseBtn_{player_id} = document.getElementById("pause_{player_id}");
         const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
         const nextBtn_{player_id} = document.getElementById("next_{player_id}");
         const playerId_{player_id} = {safe_player_id};
 
         let currentIndex_{player_id} = 0;
         let isPlayingList_{player_id} = false;
+        let isFinished_{player_id} = false;
 
         function renderList_{player_id}() {{
             listEl_{player_id}.innerHTML = items_{player_id}.map((it, idx) => `
@@ -1474,12 +1473,13 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         function playCurrent_{player_id}() {{
             if (!items_{player_id}.length) return;
             isPlayingList_{player_id} = true;
+            isFinished_{player_id} = false;
             loadCurrent_{player_id}();
-            playBtn_{player_id}.textContent = "🔊 재생 중";
+            playBtn_{player_id}.textContent = "⏸ 멈춤";
             statusEl_{player_id}.textContent = "현재 단어: " + items_{player_id}[currentIndex_{player_id}].word;
             audio_{player_id}.play().catch(() => {{
                 statusEl_{player_id}.textContent = "브라우저가 자동 재생을 막았습니다. 재생 버튼을 한 번 더 눌러 주세요.";
-                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+                playBtn_{player_id}.textContent = "▶️ 재생";
             }});
         }}
 
@@ -1492,13 +1492,14 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
         function moveTo_{player_id}(idx, autoPlay=false) {{
             isPlayingList_{player_id} = autoPlay;
+            isFinished_{player_id} = false;
             audio_{player_id}.pause();
             currentIndex_{player_id} = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
             loadCurrent_{player_id}();
             if (autoPlay) {{
                 playCurrent_{player_id}();
             }} else {{
-                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+                playBtn_{player_id}.textContent = "▶️ 재생";
                 statusEl_{player_id}.textContent = "선택된 단어: " + items_{player_id}[currentIndex_{player_id}].word;
             }}
         }}
@@ -1507,11 +1508,15 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         loadCurrent_{player_id}();
 
         playBtn_{player_id}.addEventListener("click", function() {{
-            playCurrent_{player_id}();
-        }});
-
-        pauseBtn_{player_id}.addEventListener("click", function() {{
-            pauseCurrent_{player_id}();
+            if (isPlayingList_{player_id}) {{
+                pauseCurrent_{player_id}();
+            }} else {{
+                if (isFinished_{player_id}) {{
+                    currentIndex_{player_id} = 0;
+                    isFinished_{player_id} = false;
+                }}
+                playCurrent_{player_id}();
+            }}
         }});
 
         prevBtn_{player_id}.addEventListener("click", function() {{
@@ -1529,6 +1534,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                 playCurrent_{player_id}();
             }} else {{
                 isPlayingList_{player_id} = false;
+                isFinished_{player_id} = true;
                 playBtn_{player_id}.textContent = "▶️ 처음부터 다시";
                 statusEl_{player_id}.textContent = "✅ 카세트 재생 완료";
                 barEl_{player_id}.style.width = "100%";
@@ -1547,7 +1553,7 @@ def show_cassette_audio(items, title):
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
             <div class="cassette-text">
-                단어별 음성이 끝날 때 다음 단어로 넘어갑니다. 그래서 현재 단어, 뜻, 이모지 화면이 발음 타이밍과 더 잘 맞습니다.
+                단어별 음성이 끝날 때 다음 단어로 넘어갑니다. 재생 버튼 하나가 재생 중에는 멈춤 버튼으로 바뀝니다.
             </div>
         </div>
         """,
