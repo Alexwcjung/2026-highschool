@@ -1,5 +1,7 @@
 import streamlit as st
 from urllib.parse import quote
+import requests
+import hashlib
 import random
 import re
 
@@ -206,25 +208,45 @@ st.markdown(
 )
 
 # =====================================================
-# TTS 함수 - gTTS 제거 버전
+# TTS 함수 - JavaScript/gTTS 제거 + requests로 mp3 직접 받아오기
 # =====================================================
 def make_google_tts_url(text, lang="en"):
+    clean_text = str(text).strip()
+    if not clean_text:
+        clean_text = "Hello"
+
+    # Google Translate TTS는 너무 긴 문장을 싫어하므로 호출부에서 짧게 자릅니다.
+    encoded = quote(clean_text)
+    return f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded}"
+
+
+@st.cache_data(show_spinner=False)
+def get_tts_mp3_bytes(text, lang="en"):
     """
-    gTTS를 서버에서 만들지 않고, Google Translate TTS 주소를 오디오 소스로 사용합니다.
-    - JavaScript 없음
-    - streamlit.components 없음
-    - Streamlit Cloud에서 gTTS 에러가 날 때 더 안정적
+    st.audio(url)이 재생되지 않는 경우가 있어서,
+    requests로 mp3 파일을 직접 받아온 뒤 st.audio(bytes)로 재생합니다.
     """
     clean_text = str(text).strip()
     if not clean_text:
         clean_text = "Hello"
 
-    # Google TTS URL은 너무 길면 재생이 안 될 수 있어서 호출부에서 짧게 나눕니다.
-    encoded = quote(clean_text)
-    return f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded}"
+    url = make_google_tts_url(clean_text, lang=lang)
+    headers = {
+        "User-Agent": "Mozilla/5.0",
+        "Referer": "https://translate.google.com/",
+    }
+
+    response = requests.get(url, headers=headers, timeout=12)
+    response.raise_for_status()
+
+    audio_bytes = response.content
+    if not audio_bytes or len(audio_bytes) < 500:
+        raise ValueError("음성 파일이 비어 있습니다.")
+
+    return audio_bytes
 
 
-def split_tts_chunks(text, max_chars=170):
+def split_tts_chunks(text, max_chars=130):
     """긴 카세트 대본을 TTS가 재생 가능한 짧은 덩어리로 나눕니다."""
     words = str(text).split()
     chunks = []
@@ -244,19 +266,27 @@ def split_tts_chunks(text, max_chars=170):
     return chunks
 
 
-def play_audio_block(text, label="🔊 듣기", show_link=True):
-    """JavaScript 없이 Streamlit 기본 오디오 플레이어로 출력합니다."""
+def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
+    """
+    버튼을 눌렀을 때만 mp3를 받아옵니다.
+    이렇게 해야 단어 카드가 많아도 앱이 처음부터 멈추지 않습니다.
+    """
     text = str(text).strip()
     if not text:
         return
 
-    st.caption(label)
-    tts_url = make_google_tts_url(text, lang="en")
-    st.audio(tts_url, format="audio/mp3")
+    if key is None:
+        key = "audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
 
-    # 일부 학교/기관망에서 Google TTS 오디오가 막히는 경우를 위한 보조 버튼
-    if show_link:
-        st.link_button("🔊 새 창에서 듣기", tts_url, use_container_width=True)
+    if st.button(label, key=key, use_container_width=True):
+        try:
+            audio_bytes = get_tts_mp3_bytes(text, lang="en")
+            st.audio(audio_bytes, format="audio/mp3")
+        except Exception as e:
+            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
+            if show_link:
+                st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
 
 
 def remove_speaker_label(sentence):
@@ -782,7 +812,7 @@ def show_cassette_audio(items, title):
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
             <div class="cassette-note">
-                자바스크립트와 gTTS 파일 생성 방식을 제거한 안정형 버전입니다. 아래 오디오 바에서 ▶ 버튼을 눌러 재생하세요.
+                자바스크립트와 gTTS를 제거했습니다. 버튼을 누르면 mp3를 직접 받아와서 재생합니다.
                 멈춤은 오디오 바의 일시정지 버튼을 사용하면 됩니다.
             </div>
         </div>
@@ -808,10 +838,10 @@ def show_cassette_audio(items, title):
     with st.expander("📜 실제 재생 대본 보기"):
         st.write(text)
 
-    st.info("카세트는 Google TTS 길이 제한 때문에 여러 개의 오디오로 나누어 재생됩니다. 1번부터 차례대로 누르면 됩니다.")
+    st.info("카세트는 길이 제한 때문에 여러 개의 오디오로 나누어 재생됩니다. 1번부터 차례대로 누르면 됩니다.")
 
     for i, chunk in enumerate(chunks, start=1):
-        play_audio_block(chunk, label=f"🎧 카세트 {i} / {len(chunks)}", show_link=False)
+        play_audio_block(chunk, label=f"🎧 카세트 {i} / {len(chunks)}", show_link=False, key=f"cassette_{title}_{i}")
 
 
 def show_cassette_player(theme_words, theme_name):
@@ -873,7 +903,7 @@ def show_dialogue(theme_name):
     st.markdown('</div>', unsafe_allow_html=True)
 
     dialogue_text = make_dialogue_tts_text(dialogue)
-    play_audio_block(dialogue_text, label="🔊 대화 전체 듣기")
+    play_audio_block(dialogue_text, label="🔊 대화 전체 듣기", key=f"dialogue_{theme_name}")
 
 
 # =====================================================
@@ -904,9 +934,9 @@ def show_word_cards(theme_words, theme_name):
 
             with col4:
                 with st.expander("🔊 듣기"):
-                    play_audio_block(item["word"], label="단어 발음")
+                    play_audio_block(item["word"], label="🔊 단어 발음", key=f"word_audio_{theme_name}_{idx}_{item['word']}")
                     st.caption(get_example_sentence(item["word"]))
-                    play_audio_block(get_example_sentence(item["word"]), label="예문 발음")
+                    play_audio_block(get_example_sentence(item["word"]), label="🔊 예문 발음", key=f"example_audio_{theme_name}_{idx}_{item['word']}")
 
             st.markdown('</div>', unsafe_allow_html=True)
 
