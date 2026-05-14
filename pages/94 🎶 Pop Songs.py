@@ -565,20 +565,26 @@ if selected_tab == "🎬 배경 학습":
 
 
 elif selected_tab == "📖 가사 & 퀴즈":
-    st.markdown("## 🎵 Full Lyrics")
+    st.markdown("## 🎵 Full Lyrics & Quiz")
 
     st.markdown(
         """
         <div class="quiz-box">
-            <h3 style="margin-top:0;">📖 전체 가사를 먼저 읽어 봅시다</h3>
+            <h3 style="margin-top:0;">🎬 영상을 보며 전체 가사를 읽어 봅시다</h3>
             <p style="font-size:16px; margin-bottom:0;">
-            영어 가사와 한국어 뜻을 함께 보면서 노래의 내용을 이해해 봅시다.
-            문제는 전체 가사를 다 읽은 뒤 아래에서 풀 수 있습니다.
+            먼저 영상을 보면서 노래의 분위기를 느껴 봅시다.
+            그다음 영어 가사와 한국어 뜻을 함께 읽고, 아래 이해도 문제를 풀어 봅시다.
             </p>
         </div>
         """,
         unsafe_allow_html=True
     )
+
+    # ✅ 두 번째 탭에도 같은 영상 넣기
+    st.video(video_url)
+
+    st.markdown("---")
+    st.markdown("## 📖 Lyrics")
 
     for eng, kor in lyrics_full:
         st.markdown(
@@ -592,13 +598,13 @@ elif selected_tab == "📖 가사 & 퀴즈":
         )
 
     st.markdown("---")
-    st.markdown("## 📝 Understanding Check")
+    st.markdown("## 📝 이해도 문제")
 
     st.markdown(
         """
         <div class="quiz-box">
             <b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>
-            화자의 감정, 노래의 상황, 반복되는 표현을 중심으로 생각하면 됩니다.
+            화자의 상황, 감정, 반복되는 표현을 중심으로 생각하면 됩니다.
         </div>
         """,
         unsafe_allow_html=True
@@ -613,6 +619,7 @@ elif selected_tab == "📖 가사 & 퀴즈":
         .replace(".", "")
         .replace("-", "_")
         .replace("'", "")
+        .replace("&", "and")
     )
 
     with st.form(f"comprehension_quiz_form_{safe_song_key}"):
@@ -620,7 +627,7 @@ elif selected_tab == "📖 가사 & 퀴즈":
             st.markdown(f"### {item['q']}")
 
             answer = st.radio(
-                "Choose the best answer.",
+                "정답을 고르세요.",
                 item["options"],
                 key=f"comp_quiz_{safe_song_key}_{i}",
                 label_visibility="collapsed"
@@ -628,10 +635,10 @@ elif selected_tab == "📖 가사 & 퀴즈":
 
             user_answers.append(answer)
 
-        submitted = st.form_submit_button("✅ Submit Answers")
+        submitted = st.form_submit_button("✅ 정답 확인하기")
 
     if submitted:
-        st.markdown("## 📌 Results")
+        st.markdown("## 📌 결과 확인")
 
         for i, item in enumerate(comprehension_questions):
             correct = item["answer"]
@@ -639,15 +646,15 @@ elif selected_tab == "📖 가사 & 퀴즈":
 
             if user_answer == correct:
                 score += 1
-                st.success(f"{i+1}. Correct! ✅")
+                st.success(f"{i+1}. 정답입니다! ✅")
             else:
-                st.error(f"{i+1}. Wrong ❌")
+                st.error(f"{i+1}. 틀렸습니다 ❌")
                 st.markdown(f"정답: **{correct}**")
 
         st.markdown(
             f"""
             <div class="score-box">
-                <h2 style="margin:0;">Your Score: {score} / {len(comprehension_questions)}</h2>
+                <h2 style="margin:0;">점수: {score} / {len(comprehension_questions)}</h2>
             </div>
             """,
             unsafe_allow_html=True
