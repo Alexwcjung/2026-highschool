@@ -2,12 +2,18 @@ import streamlit as st
 import plotly.graph_objects as go
 import random
 
+# =========================
+# 기본 설정
+# =========================
 st.set_page_config(
     page_title="세계 4대 문명 학습",
     page_icon="🏺",
     layout="wide"
 )
 
+# =========================
+# 데이터
+# =========================
 CIVILIZATIONS = [
     {
         "name_ko": "메소포타미아 문명",
@@ -80,15 +86,51 @@ RIVERS = [
 ]
 
 CIVILIZATION_STANDARDS = [
-    {"title": "농업", "emoji": "🌾", "short": "강 주변에서 농사를 짓고 식량이 늘어남", "detail": "강은 물과 비옥한 땅을 제공했습니다. 농업이 발달하면서 식량이 남고, 사람들은 한곳에 정착할 수 있었습니다."},
-    {"title": "도시", "emoji": "🏙️", "short": "사람들이 모여 큰 마을과 도시를 만듦", "detail": "식량이 남자 모든 사람이 농사만 짓지 않아도 되었습니다. 장인, 상인, 관리, 군인 등이 생기면서 도시가 발달했습니다."},
-    {"title": "국가와 지배자", "emoji": "👑", "short": "왕, 관리, 군대, 법 같은 조직이 생김", "detail": "사람이 많이 모이면 물 관리, 세금, 다툼 해결이 필요합니다. 그래서 왕과 관리, 법, 군대 같은 정치 조직이 나타났습니다."},
-    {"title": "문자", "emoji": "✍️", "short": "세금, 거래, 법, 제사를 기록하기 위해 문자를 사용함", "detail": "문자는 문명의 중요한 기준입니다. 물자와 세금을 기록하고, 법과 종교 의식을 남기기 위해 문자가 발달했습니다."},
-    {"title": "기술과 문화", "emoji": "🛠️", "short": "건축, 청동기, 달력, 수학, 종교 등이 발달함", "detail": "문명은 단순히 먹고사는 수준을 넘어 건축, 도구, 종교, 예술, 과학 지식 같은 복잡한 문화를 만들어 냅니다."},
+    {
+        "title": "농업",
+        "emoji": "🌾",
+        "short": "강 주변에서 농사를 짓고 식량이 늘어남",
+        "detail": "강은 물과 비옥한 땅을 제공했습니다. 농업이 발달하면서 식량이 남고, 사람들은 한곳에 정착할 수 있었습니다."
+    },
+    {
+        "title": "도시",
+        "emoji": "🏙️",
+        "short": "사람들이 모여 큰 마을과 도시를 만듦",
+        "detail": "식량이 남자 모든 사람이 농사만 짓지 않아도 되었습니다. 장인, 상인, 관리, 군인 등이 생기면서 도시가 발달했습니다."
+    },
+    {
+        "title": "국가와 지배자",
+        "emoji": "👑",
+        "short": "왕, 관리, 군대, 법 같은 조직이 생김",
+        "detail": "사람이 많이 모이면 물 관리, 세금, 다툼 해결이 필요합니다. 그래서 왕과 관리, 법, 군대 같은 정치 조직이 나타났습니다."
+    },
+    {
+        "title": "문자",
+        "emoji": "✍️",
+        "short": "세금, 거래, 법, 제사를 기록하기 위해 문자를 사용함",
+        "detail": "문자는 문명의 중요한 기준입니다. 물자와 세금을 기록하고, 법과 종교 의식을 남기기 위해 문자가 발달했습니다."
+    },
+    {
+        "title": "기술과 문화",
+        "emoji": "🛠️",
+        "short": "건축, 청동기, 달력, 수학, 종교 등이 발달함",
+        "detail": "문명은 단순히 먹고사는 수준을 넘어 건축, 도구, 종교, 예술, 과학 지식 같은 복잡한 문화를 만들어 냅니다."
+    },
 ]
 
+QUIZ_MODES = ["강 이름 맞추기", "문명 이름 맞추기", "현재 지역 맞추기", "문명의 기준 맞추기"]
+
+# =========================
+# 퀴즈 함수
+# =========================
 def make_quiz():
+    """현재 퀴즈 유형에 맞게 새 문제를 만든다."""
     quiz_mode = st.session_state.get("quiz_mode", "강 이름 맞추기")
+
+    if quiz_mode not in QUIZ_MODES:
+        quiz_mode = "강 이름 맞추기"
+        st.session_state.quiz_mode = quiz_mode
+
     item = random.choice(CIVILIZATIONS)
 
     if quiz_mode == "강 이름 맞추기":
@@ -120,20 +162,55 @@ def make_quiz():
     st.session_state.quiz_answered = False
     st.session_state.quiz_result = ""
 
-if "score" not in st.session_state:
-    st.session_state.score = 0
-if "total" not in st.session_state:
-    st.session_state.total = 0
-if "quiz_mode" not in st.session_state:
-    st.session_state.quiz_mode = "강 이름 맞추기"
-if "quiz_options" not in st.session_state:
-    make_quiz()
+
+def init_quiz_state():
+    """
+    세션 상태를 안전하게 초기화한다.
+
+    기존 에러 원인:
+    quiz_options만 있으면 새 문제를 만들지 않았는데,
+    quiz_question이 없는 상태에서 st.session_state.quiz_question을 불러와서
+    AttributeError가 발생했습니다.
+    """
+    if "score" not in st.session_state:
+        st.session_state.score = 0
+
+    if "total" not in st.session_state:
+        st.session_state.total = 0
+
+    if "quiz_mode" not in st.session_state:
+        st.session_state.quiz_mode = "강 이름 맞추기"
+
+    if st.session_state.quiz_mode not in QUIZ_MODES:
+        st.session_state.quiz_mode = "강 이름 맞추기"
+
+    required_keys = [
+        "quiz_item",
+        "quiz_question",
+        "quiz_correct",
+        "quiz_options",
+        "quiz_answered",
+        "quiz_result",
+    ]
+
+    if any(key not in st.session_state for key in required_keys):
+        make_quiz()
+
+    if not isinstance(st.session_state.quiz_options, list) or len(st.session_state.quiz_options) == 0:
+        make_quiz()
+
 
 def reset_score():
     st.session_state.score = 0
     st.session_state.total = 0
     make_quiz()
 
+
+init_quiz_state()
+
+# =========================
+# CSS
+# =========================
 st.markdown(
     """
     <style>
@@ -145,8 +222,19 @@ st.markdown(
         margin-bottom: 18px;
         box-shadow: 0 8px 20px rgba(0,0,0,0.07);
     }
-    .title-box h1 { margin: 0; font-size: 40px; font-weight: 900; color: #0f172a; }
-    .title-box p { margin-top: 10px; font-size: 18px; color: #334155; font-weight: 700; line-height: 1.6; }
+    .title-box h1 {
+        margin: 0;
+        font-size: 40px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+    .title-box p {
+        margin-top: 10px;
+        font-size: 18px;
+        color: #334155;
+        font-weight: 700;
+        line-height: 1.6;
+    }
     .definition-box {
         background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
         border: 1.5px solid #bfdbfe;
@@ -155,8 +243,19 @@ st.markdown(
         margin-bottom: 18px;
         box-shadow: 0 5px 16px rgba(0,0,0,0.05);
     }
-    .definition-box h2 { margin: 0 0 10px 0; font-size: 28px; color: #1e3a8a; font-weight: 900; }
-    .definition-box p { margin: 0; font-size: 18px; line-height: 1.7; color: #334155; font-weight: 750; }
+    .definition-box h2 {
+        margin: 0 0 10px 0;
+        font-size: 28px;
+        color: #1e3a8a;
+        font-weight: 900;
+    }
+    .definition-box p {
+        margin: 0;
+        font-size: 18px;
+        line-height: 1.7;
+        color: #334155;
+        font-weight: 750;
+    }
     .standard-card, .civil-card {
         background: white;
         border: 1.5px solid #e2e8f0;
@@ -165,37 +264,96 @@ st.markdown(
         box-shadow: 0 5px 15px rgba(0,0,0,0.05);
         margin-bottom: 14px;
     }
-    .standard-card { min-height: 190px; }
-    .civil-card { min-height: 290px; }
-    .standard-card h3, .civil-card h3 { margin: 0 0 8px 0; font-size: 22px; font-weight: 900; color: #111827; }
-    .standard-card .short { font-size: 16px; font-weight: 900; color: #9a3412; margin-bottom: 8px; }
-    .standard-card p, .civil-card p { font-size: 15px; color: #334155; line-height: 1.6; font-weight: 650; }
+    .standard-card {
+        min-height: 190px;
+    }
+    .civil-card {
+        min-height: 290px;
+    }
+    .standard-card h3, .civil-card h3 {
+        margin: 0 0 8px 0;
+        font-size: 22px;
+        font-weight: 900;
+        color: #111827;
+    }
+    .standard-card .short {
+        font-size: 16px;
+        font-weight: 900;
+        color: #9a3412;
+        margin-bottom: 8px;
+    }
+    .standard-card p, .civil-card p {
+        font-size: 15px;
+        color: #334155;
+        line-height: 1.6;
+        font-weight: 650;
+    }
     .tag {
-        display: inline-block; background: #f1f5f9; border: 1px solid #e2e8f0; color: #334155;
-        border-radius: 999px; padding: 5px 10px; margin: 3px; font-size: 13px; font-weight: 800;
+        display: inline-block;
+        background: #f1f5f9;
+        border: 1px solid #e2e8f0;
+        color: #334155;
+        border-radius: 999px;
+        padding: 5px 10px;
+        margin: 3px;
+        font-size: 13px;
+        font-weight: 800;
     }
     .mini-box {
-        background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 18px;
-        padding: 15px 18px; margin-bottom: 12px; color: #334155; font-weight: 750; line-height: 1.6;
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 15px 18px;
+        margin-bottom: 12px;
+        color: #334155;
+        font-weight: 750;
+        line-height: 1.6;
     }
     .quiz-box {
-        background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 24px;
-        padding: 20px; margin-top: 10px; margin-bottom: 16px; text-align: center;
-        font-size: 24px; color: #1e3a8a; font-weight: 900;
+        background: #eff6ff;
+        border: 1.5px solid #bfdbfe;
+        border-radius: 24px;
+        padding: 20px;
+        margin-top: 10px;
+        margin-bottom: 16px;
+        text-align: center;
+        font-size: 24px;
+        color: #1e3a8a;
+        font-weight: 900;
     }
     @media (max-width: 768px) {
-        .title-box { padding: 20px 18px; border-radius: 22px; }
-        .title-box h1 { font-size: 29px; }
-        .title-box p { font-size: 15px; }
-        .definition-box h2 { font-size: 23px; }
-        .definition-box p { font-size: 15px; }
-        .civil-card, .standard-card { min-height: auto; }
+        .title-box {
+            padding: 20px 18px;
+            border-radius: 22px;
+        }
+        .title-box h1 {
+            font-size: 29px;
+        }
+        .title-box p {
+            font-size: 15px;
+        }
+        .definition-box h2 {
+            font-size: 23px;
+        }
+        .definition-box p {
+            font-size: 15px;
+        }
+        .civil-card, .standard-card {
+            min-height: auto;
+        }
+        .quiz-box {
+            font-size: 19px;
+            padding: 16px;
+        }
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
+# =========================
+# 제목
+# =========================
 st.markdown(
     """
     <div class="title-box">
@@ -209,8 +367,17 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-tab0, tab1, tab2, tab3, tab4 = st.tabs(["📘 문명이란?", "🗺️ 지도 보기", "🏺 문명 카드", "🕰️ 비교 정리", "🎮 확인 퀴즈"])
+tab0, tab1, tab2, tab3, tab4 = st.tabs([
+    "📘 문명이란?",
+    "🗺️ 지도 보기",
+    "🏺 문명 카드",
+    "🕰️ 비교 정리",
+    "🎮 확인 퀴즈"
+])
 
+# =========================
+# Tab 0. 문명이란?
+# =========================
 with tab0:
     st.markdown(
         """
@@ -249,6 +416,9 @@ with tab0:
         unsafe_allow_html=True
     )
 
+# =========================
+# Tab 1. 지도 보기
+# =========================
 with tab1:
     st.markdown("### 🗺️ 4대 문명은 어디에서 시작되었을까요?")
 
@@ -267,11 +437,19 @@ with tab1:
             lon=[c["lon"] for c in CIVILIZATIONS],
             lat=[c["lat"] for c in CIVILIZATIONS],
             mode="markers+text",
-            marker=dict(size=28, color=[c["color"] for c in CIVILIZATIONS], line=dict(width=2, color="white"), opacity=0.9),
+            marker=dict(
+                size=28,
+                color=[c["color"] for c in CIVILIZATIONS],
+                line=dict(width=2, color="white"),
+                opacity=0.9
+            ),
             text=[f"{c['emoji']} {c['name_ko']}" for c in CIVILIZATIONS],
             textposition="top center",
             textfont=dict(size=15, color="#111827"),
-            hovertext=[f"{c['name_ko']}<br>{c['name_en']}<br>강: {c['river']}<br>현재 위치: {c['modern']}<br>{c['period']}" for c in CIVILIZATIONS],
+            hovertext=[
+                f"{c['name_ko']}<br>{c['name_en']}<br>강: {c['river']}<br>현재 위치: {c['modern']}<br>{c['period']}"
+                for c in CIVILIZATIONS
+            ],
             hoverinfo="text",
             name="4대 문명"
         ))
@@ -292,7 +470,14 @@ with tab1:
     fig.update_layout(
         height=640,
         margin=dict(l=0, r=0, t=0, b=0),
-        legend=dict(orientation="h", yanchor="bottom", y=0.01, xanchor="left", x=0.01, bgcolor="rgba(255,255,255,0.8)"),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=0.01,
+            xanchor="left",
+            x=0.01,
+            bgcolor="rgba(255,255,255,0.8)"
+        ),
         geo=dict(
             projection_type="natural earth",
             showland=True,
@@ -311,7 +496,11 @@ with tab1:
         )
     )
 
-    st.plotly_chart(fig, use_container_width=True, config={"scrollZoom": True, "displaylogo": False})
+    st.plotly_chart(
+        fig,
+        use_container_width=True,
+        config={"scrollZoom": True, "displaylogo": False}
+    )
 
     if show_label:
         st.markdown(
@@ -324,6 +513,9 @@ with tab1:
             unsafe_allow_html=True
         )
 
+# =========================
+# Tab 2. 문명 카드
+# =========================
 with tab2:
     st.markdown("### 🏺 문명별 핵심 카드")
 
@@ -346,6 +538,9 @@ with tab2:
                 unsafe_allow_html=True
             )
 
+# =========================
+# Tab 3. 비교 정리
+# =========================
 with tab3:
     st.markdown("### 🕰️ 한눈에 비교하기")
 
@@ -358,6 +553,7 @@ with tab3:
             "시기": c["period"],
             "핵심 키워드": ", ".join(c["keywords"])
         })
+
     st.dataframe(rows, use_container_width=True, hide_index=True)
 
     st.markdown(
@@ -373,6 +569,9 @@ with tab3:
         unsafe_allow_html=True
     )
 
+# =========================
+# Tab 4. 확인 퀴즈
+# =========================
 with tab4:
     st.markdown("### 🎮 세계 4대 문명 확인 퀴즈")
 
@@ -389,7 +588,8 @@ with tab4:
 
     selected_mode = st.radio(
         "퀴즈 유형",
-        ["강 이름 맞추기", "문명 이름 맞추기", "현재 지역 맞추기", "문명의 기준 맞추기"],
+        QUIZ_MODES,
+        index=QUIZ_MODES.index(st.session_state.quiz_mode),
         horizontal=True,
         key="quiz_mode_radio"
     )
@@ -422,6 +622,7 @@ with tab4:
 
                 if option == st.session_state.quiz_correct:
                     st.session_state.score += 1
+
                     if st.session_state.quiz_mode == "문명의 기준 맞추기":
                         st.session_state.quiz_result = "✅ 정답입니다! 문명은 농업, 도시, 국가, 문자, 기술과 문화가 발달한 사회입니다."
                     else:
