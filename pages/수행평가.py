@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 import re
 import urllib.parse
-import html
+import json
 from pathlib import Path
 
 st.set_page_config(
@@ -30,128 +30,13 @@ def make_google_translate_url(text, source="auto", target="en"):
     return f"https://translate.google.com/?sl={source}&tl={target}&text={encoded_text}&op=translate"
 
 
-@st.cache_data(show_spinner=False)
-def translate_to_english_with_deep_translator(text):
-    from deep_translator import GoogleTranslator
-
-    return GoogleTranslator(
-        source="auto",
-        target="en"
-    ).translate(str(text).strip())
-
-
 # =========================
-# 좋아하는 것 변환 사전
-# =========================
-like_dict = {
-    "축구": "soccer",
-    "풋살": "futsal",
-    "농구": "basketball",
-    "야구": "baseball",
-    "배구": "volleyball",
-    "테니스": "tennis",
-    "탁구": "table tennis",
-    "배드민턴": "badminton",
-    "수영": "swimming",
-    "달리기": "running",
-    "자전거": "riding a bike",
-    "자전거타기": "riding a bike",
-    "자전거 타기": "riding a bike",
-    "등산": "hiking",
-    "낚시": "fishing",
-    "운동": "exercising",
-
-    "게임": "playing games",
-    "게임하기": "playing games",
-    "컴퓨터게임": "playing computer games",
-    "컴퓨터 게임": "playing computer games",
-    "휴대폰게임": "playing mobile games",
-    "휴대폰 게임": "playing mobile games",
-    "모바일게임": "playing mobile games",
-    "모바일 게임": "playing mobile games",
-
-    "노래": "singing",
-    "노래부르기": "singing",
-    "노래 부르기": "singing",
-    "춤": "dancing",
-    "춤추기": "dancing",
-
-    "음악": "listening to music",
-    "음악듣기": "listening to music",
-    "음악 듣기": "listening to music",
-
-    "영화": "watching movies",
-    "영화보기": "watching movies",
-    "영화 보기": "watching movies",
-    "드라마": "watching dramas",
-    "드라마보기": "watching dramas",
-    "드라마 보기": "watching dramas",
-    "유튜브": "watching YouTube",
-    "유튜브보기": "watching YouTube",
-    "유튜브 보기": "watching YouTube",
-
-    "그림": "drawing",
-    "그림그리기": "drawing",
-    "그림 그리기": "drawing",
-    "독서": "reading books",
-    "책읽기": "reading books",
-    "책 읽기": "reading books",
-    "요리": "cooking",
-    "사진": "taking pictures",
-    "사진찍기": "taking pictures",
-    "사진 찍기": "taking pictures",
-
-    "잠": "sleeping",
-    "잠자기": "sleeping",
-    "걷기": "walking",
-    "산책": "walking",
-    "여행": "traveling",
-
-    "자동차": "cars",
-    "자동차 정비": "fixing cars",
-    "자동차정비": "fixing cars",
-    "차": "cars",
-    "정비": "fixing cars",
-    "기계": "machines",
-    "기계 정비": "fixing machines",
-    "기계정비": "fixing machines",
-}
-
-
-def translate_like_item(like_input):
-    like_input = str(like_input).strip()
-
-    if not like_input:
-        return "soccer", "기본 예시", False
-
-    like_no_space = like_input.replace(" ", "")
-
-    if like_input in like_dict:
-        return like_dict[like_input], "기본 단어 사전", False
-
-    if like_no_space in like_dict:
-        return like_dict[like_no_space], "기본 단어 사전", False
-
-    if has_korean(like_input):
-        try:
-            translated = translate_to_english_with_deep_translator(like_input)
-            translated = str(translated).strip()
-
-            if translated:
-                return translated, "자동 번역", False
-
-        except Exception:
-            return "", "구글 번역 연결 필요", True
-
-    cleaned = clean_english_input(like_input)
-    return cleaned if cleaned else "soccer", "직접 입력", False
-
-
-# =========================
-# 앱 안에서 발음 듣기 버튼
+# 앱 안에서 영어 발음 듣기 버튼
+# 듣기 / 멈춤만 있음
+# 영어 음성 우선 선택
 # =========================
 def browser_speech_controls_simple(text, key, speed=1.0):
-    safe_text = html.escape(str(text)).replace("\n", " ")
+    safe_text_js = json.dumps(str(text).replace("\n", " "))
 
     html_code = f"""
     <div style="
@@ -177,22 +62,6 @@ def browser_speech_controls_simple(text, key, speed=1.0):
             ▶ 듣기
         </button>
 
-        <button id="pause_{key}"
-        style="
-            flex:1;
-            min-width:120px;
-            background-color:#64748b;
-            color:white;
-            border:none;
-            border-radius:12px;
-            padding:11px 14px;
-            font-size:16px;
-            cursor:pointer;
-            font-weight:800;
-        ">
-            ⏸ 잠깐 멈춤
-        </button>
-
         <button id="stop_{key}"
         style="
             flex:1;
@@ -211,24 +80,48 @@ def browser_speech_controls_simple(text, key, speed=1.0):
     </div>
 
     <script>
-    const text_{key} = `{safe_text}`;
+    const text_{key} = {safe_text_js};
 
-    document.getElementById("speak_{key}").onclick = function() {{
+    function getEnglishVoice() {{
+        const voices = window.speechSynthesis.getVoices();
+
+        let voice =
+            voices.find(v => v.lang === "en-US") ||
+            voices.find(v => v.lang === "en_US") ||
+            voices.find(v => v.lang === "en-GB") ||
+            voices.find(v => v.lang && v.lang.startsWith("en")) ||
+            voices.find(v => v.name && v.name.toLowerCase().includes("english"));
+
+        return voice || null;
+    }}
+
+    function speakEnglish_{key}() {{
         window.speechSynthesis.cancel();
 
         const utterance = new SpeechSynthesisUtterance(text_{key});
         utterance.lang = "en-US";
         utterance.rate = {speed};
         utterance.pitch = 1;
+        utterance.volume = 1;
+
+        const selectedVoice = getEnglishVoice();
+        if (selectedVoice) {{
+            utterance.voice = selectedVoice;
+            utterance.lang = selectedVoice.lang || "en-US";
+        }}
 
         window.speechSynthesis.speak(utterance);
-    }};
+    }}
 
-    document.getElementById("pause_{key}").onclick = function() {{
-        if (window.speechSynthesis.speaking && !window.speechSynthesis.paused) {{
-            window.speechSynthesis.pause();
-        }} else if (window.speechSynthesis.paused) {{
-            window.speechSynthesis.resume();
+    document.getElementById("speak_{key}").onclick = function() {{
+        const voices = window.speechSynthesis.getVoices();
+
+        if (voices.length === 0) {{
+            window.speechSynthesis.onvoiceschanged = function() {{
+                speakEnglish_{key}();
+            }};
+        }} else {{
+            speakEnglish_{key}();
         }}
     }};
 
@@ -238,7 +131,7 @@ def browser_speech_controls_simple(text, key, speed=1.0):
     </script>
     """
 
-    components.html(html_code, height=78)
+    components.html(html_code, height=72)
 
 
 # =========================
@@ -304,7 +197,7 @@ speed_dict = {
 
 speed = speed_dict[speed_label]
 
-st.info("2번에서 한국어 자동 번역이 실패할 때만 구글 번역으로 연결합니다. 나머지 발음은 앱 안에서 바로 들을 수 있습니다.")
+st.info("2번은 구글 번역으로 연결합니다. 1번, 3번, 4번, 5번 발음은 앱 안에서 영어 음성으로 바로 들을 수 있습니다.")
 
 st.markdown("---")
 
@@ -332,47 +225,47 @@ st.markdown("---")
 
 # =========================
 # 2. 내가 좋아하는 것 말하기
+# 번역은 앱에서 하지 않고 구글 번역으로 연결
 # =========================
 st.subheader("2. 내가 좋아하는 것 말하기")
 
 like_input = st.text_input(
-    "내가 좋아하는 것을 한국어 또는 영어로 써 보세요.",
+    "내가 좋아하는 것을 한국어로 써 보세요.",
     placeholder="예: 축구, 노래, 게임, 음악 듣기, 자동차 정비"
 )
 
-like_english, translate_method, need_google = translate_like_item(like_input)
+if like_input.strip():
+    google_translate_input_url = make_google_translate_url(
+        like_input,
+        source="auto",
+        target="en"
+    )
 
-if like_input:
-    if need_google:
-        st.warning("앱 안에서 자동 번역이 되지 않았습니다. 아래 버튼으로 구글 번역에서 영어 표현을 확인하세요.")
+    st.link_button(
+        "🌐 구글 번역에서 영어 표현과 발음 확인하기",
+        google_translate_input_url,
+        use_container_width=True
+    )
 
-        google_translate_input_url = make_google_translate_url(
-            like_input,
-            source="auto",
-            target="en"
-        )
-
-        st.link_button(
-            "🌐 구글 번역에서 영어 표현 확인하기",
-            google_translate_input_url,
-            use_container_width=True
-        )
-
-        like_english = "soccer"
-
-        st.info("일단 예시 문장은 I like soccer. 로 보여 줍니다.")
-
-    else:
-        st.success(f"입력한 내용: {like_input} → 영어 표현: {like_english}")
-
-like_sentence = f"I like {like_english}."
-
-sentence_card(
-    "나는 ~을/를 좋아합니다.",
-    like_sentence,
-    "like",
-    speed
-)
+    st.markdown(
+        """
+        <div style="
+            background:#fff7ed;
+            border:1px solid #fed7aa;
+            border-radius:16px;
+            padding:15px 18px;
+            margin-top:10px;
+            font-size:17px;
+            font-weight:700;
+            color:#9a3412;
+        ">
+            구글 번역에서 영어 표현을 확인한 뒤, 그 표현을 보고 말하기 연습을 하면 됩니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.info("예: 축구, 노래, 게임, 음악 듣기, 자동차 정비처럼 한국어로 입력하세요.")
 
 st.markdown("---")
 
@@ -391,7 +284,7 @@ sentence_card(
 st.markdown("---")
 
 # =========================
-# 4. 물과 음식 말하기
+# 4. 필요한 것 말하기
 # =========================
 st.subheader("4. 필요한 것 말하기")
 
@@ -445,6 +338,7 @@ They look happy.
 """
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
+
 browser_speech_controls_simple(
     picture_script,
     "picture_full",
