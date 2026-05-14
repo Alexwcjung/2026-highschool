@@ -104,7 +104,8 @@ song_options = [
     "2. Hello - Adele",
     "3. A Whole New World - Aladdin OST",
     "4. Stand By Me - Ben E. King",
-    "5. Don't Know Why - Norah Jones"
+    "5. Don't Know Why - Norah Jones",
+    "6. Fix you - Cold Play",
 ]
 
 def sync_song():
