@@ -2,7 +2,6 @@ import streamlit as st
 from gtts import gTTS
 import base64
 import io
-import re
 
 st.set_page_config(
     page_title="Speaking Practice",
@@ -11,18 +10,9 @@ st.set_page_config(
 )
 
 # =========================
-# 안전한 key 만들기 함수
-# =========================
-def safe_key(key):
-    return re.sub(r"[^a-zA-Z0-9_]", "_", key)
-
-
-# =========================
 # TTS 함수
 # =========================
-def make_tts_button(text, key, speed=1.0):
-    key = safe_key(key)
-
+def make_tts_button(text, key):
     tts = gTTS(text=text, lang="en", tld="com")
     fp = io.BytesIO()
     tts.write_to_fp(fp)
@@ -34,13 +24,7 @@ def make_tts_button(text, key, speed=1.0):
     <audio id="audio_{key}">
         <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
     </audio>
-
-    <button onclick="
-        var audio = document.getElementById('audio_{key}');
-        audio.playbackRate = {speed};
-        audio.currentTime = 0;
-        audio.play();
-    "
+    <button onclick="document.getElementById('audio_{key}').play()"
         style="
             background-color:#2563eb;
             color:white;
@@ -49,7 +33,6 @@ def make_tts_button(text, key, speed=1.0):
             padding:8px 14px;
             font-size:15px;
             cursor:pointer;
-            width:100%;
         ">
         🔊 듣기
     </button>
@@ -58,8 +41,8 @@ def make_tts_button(text, key, speed=1.0):
     st.components.v1.html(audio_html, height=45)
 
 
-def sentence_card(korean, english, key, speed=1.0):
-    col1, col2, col3 = st.columns([2.2, 4, 1.2])
+def sentence_card(korean, english, key):
+    col1, col2, col3 = st.columns([2, 3, 1])
 
     with col1:
         st.markdown(f"**🇰🇷 {korean}**")
@@ -68,7 +51,7 @@ def sentence_card(korean, english, key, speed=1.0):
         st.markdown(f"### {english}")
 
     with col3:
-        make_tts_button(english, key, speed)
+        make_tts_button(english, key)
 
 
 # =========================
@@ -76,29 +59,6 @@ def sentence_card(korean, english, key, speed=1.0):
 # =========================
 st.title("🎤 영어 말하기 수행평가 연습")
 st.caption("영어 문장을 보고 듣고 따라 말해 봅시다.")
-
-st.markdown("---")
-
-# =========================
-# 듣기 속도 조절
-# =========================
-st.subheader("🔊 듣기 속도 조절")
-
-speed_label = st.selectbox(
-    "듣기 속도를 선택하세요.",
-    ["느리게 0.7배", "조금 느리게 0.85배", "보통 1.0배", "조금 빠르게 1.15배", "빠르게 1.3배"],
-    index=2
-)
-
-speed_dict = {
-    "느리게 0.7배": 0.7,
-    "조금 느리게 0.85배": 0.85,
-    "보통 1.0배": 1.0,
-    "조금 빠르게 1.15배": 1.15,
-    "빠르게 1.3배": 1.3
-}
-
-speed = speed_dict[speed_label]
 
 st.markdown("---")
 
@@ -117,8 +77,7 @@ else:
 sentence_card(
     "나는 (본인 이름)입니다.",
     name_sentence,
-    "name",
-    speed
+    "name"
 )
 
 st.markdown("---")
@@ -138,8 +97,7 @@ else:
 sentence_card(
     "나의 취미는 ~입니다. 나는 학생이고 키가 큽니다.",
     hobby_sentence,
-    "hobby",
-    speed
+    "hobby"
 )
 
 st.markdown("---")
@@ -152,8 +110,7 @@ st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 sentence_card(
     "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
     "What time is it? I want to go home now.",
-    "time_home",
-    speed
+    "time_home"
 )
 
 st.markdown("---")
@@ -166,8 +123,7 @@ st.subheader("4. 필요한 것 말하기")
 sentence_card(
     "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
     "I want water. I want food too.",
-    "water_food",
-    speed
+    "water_food"
 )
 
 st.markdown("---")
@@ -177,15 +133,12 @@ st.markdown("---")
 # =========================
 st.subheader("5. 사진 묘사하기")
 
-# ✅ 사진 크기 줄이기: 가운데 열에만 사진 표시
-left_col, center_col, right_col = st.columns([1, 2, 1])
-
-with center_col:
-    st.image(
-        "pages/images/수행평가 그림.png",
-        caption="Describe the picture.",
-        use_container_width=True
-    )
+# ✅ 여기에서 그림이 문제 위에 나옵니다.
+st.image(
+    "pages/images/수행평가 그림.png",
+    caption="Describe the picture.",
+    use_container_width=True
+)
 
 st.info("⏱️ 20초 안에 사진을 묘사해 봅시다.")
 
@@ -218,7 +171,7 @@ picture_sentences = [
 ]
 
 for korean, english, key in picture_sentences:
-    sentence_card(korean, english, key, speed)
+    sentence_card(korean, english, key)
 
 st.markdown("---")
 
@@ -245,6 +198,6 @@ They look happy.
 
 st.text_area("전체 말하기 대본", full_script, height=250)
 
-make_tts_button(full_script, "full_script", speed)
+make_tts_button(full_script, "full_script")
 
 st.success("영어 문장을 듣고 따라 말하면서 연습해 보세요.")
