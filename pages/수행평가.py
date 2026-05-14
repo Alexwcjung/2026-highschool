@@ -1,9 +1,7 @@
 import streamlit as st
-import streamlit.components.v1 as components
 from gtts import gTTS
+import io
 import urllib.parse
-import base64
-import hashlib
 from pathlib import Path
 
 st.set_page_config(
@@ -13,13 +11,6 @@ st.set_page_config(
 )
 
 # =========================
-# TTS 저장 폴더
-# =========================
-AUDIO_DIR = Path("tts_audio")
-AUDIO_DIR.mkdir(exist_ok=True)
-
-
-# =========================
 # 기본 함수
 # =========================
 def make_google_translate_url(text, source="auto", target="en"):
@@ -27,117 +18,52 @@ def make_google_translate_url(text, source="auto", target="en"):
     return f"https://translate.google.com/?sl={source}&tl={target}&text={encoded_text}&op=translate"
 
 
-def safe_file_name(text, slow=False):
-    raw = str(text) + str(slow)
-    return hashlib.md5(raw.encode("utf-8")).hexdigest() + ".mp3"
-
-
-def make_english_mp3_file(text, slow=False):
+def make_tts_audio(text, lang="en", tld="com", slow=False):
     """
-    영어 mp3 파일을 직접 생성함.
-    브라우저 음성 기능을 쓰지 않으므로 KR 음성으로 읽히지 않음.
+    gTTS 영어 음성을 BytesIO로 만들고 st.audio에서 바로 재생
     """
     text = str(text).strip()
 
     if not text:
         text = "Hello."
 
-    file_name = safe_file_name(text, slow)
-    file_path = AUDIO_DIR / file_name
+    speech = io.BytesIO()
 
-    if not file_path.exists():
-        tts = gTTS(
+    tts = gTTS(
+        text=text,
+        lang=lang,
+        tld=tld,
+        slow=slow
+    )
+
+    tts.write_to_fp(speech)
+    speech.seek(0)
+
+    return speech.getvalue()
+
+
+def english_audio_player(text, slow=False):
+    """
+    앱 안에서 영어 발음 재생
+    """
+    try:
+        audio_bytes = make_tts_audio(
             text=text,
             lang="en",
             tld="com",
             slow=slow
         )
-        tts.save(str(file_path))
-
-    return file_path
-
-
-def mp3_file_to_base64(file_path):
-    with open(file_path, "rb") as f:
-        audio_bytes = f.read()
-    return base64.b64encode(audio_bytes).decode("utf-8")
-
-
-# =========================
-# 영어 듣기 / 멈춤 버튼
-# =========================
-def english_audio_buttons(text, key, slow=False):
-    try:
-        file_path = make_english_mp3_file(text, slow=slow)
-        audio_base64 = mp3_file_to_base64(file_path)
-
-        html_code = f"""
-        <div style="
-            display:flex;
-            gap:8px;
-            flex-wrap:wrap;
-            width:100%;
-            margin:4px 0 14px 0;
-        ">
-            <audio id="audio_{key}" preload="auto">
-                <source src="data:audio/mpeg;base64,{audio_base64}" type="audio/mpeg">
-            </audio>
-
-            <button onclick="
-                var audio = document.getElementById('audio_{key}');
-                audio.pause();
-                audio.currentTime = 0;
-                audio.play();
-            "
-            style="
-                flex:1;
-                min-width:120px;
-                background-color:#2563eb;
-                color:white;
-                border:none;
-                border-radius:12px;
-                padding:11px 14px;
-                font-size:16px;
-                cursor:pointer;
-                font-weight:800;
-            ">
-                ▶ 듣기
-            </button>
-
-            <button onclick="
-                var audio = document.getElementById('audio_{key}');
-                audio.pause();
-                audio.currentTime = 0;
-            "
-            style="
-                flex:1;
-                min-width:120px;
-                background-color:#ef4444;
-                color:white;
-                border:none;
-                border-radius:12px;
-                padding:11px 14px;
-                font-size:16px;
-                cursor:pointer;
-                font-weight:800;
-            ">
-                ■ 멈춤
-            </button>
-        </div>
-        """
-
-        components.html(html_code, height=76)
+        st.audio(audio_bytes, format="audio/mp3")
 
     except Exception as e:
-        st.error("영어 음성 파일을 만들지 못했습니다.")
-        st.caption("Streamlit Cloud에서 gTTS 접속이 막히면 이 오류가 날 수 있습니다.")
+        st.error("영어 발음 오디오를 만들지 못했습니다.")
         st.caption(str(e))
 
 
 # =========================
 # 문장 카드
 # =========================
-def sentence_card(korean, english, key, slow=False):
+def sentence_card(korean, english, slow=False):
     st.markdown(
         f"""
         <div style="
@@ -159,7 +85,7 @@ def sentence_card(korean, english, key, slow=False):
         unsafe_allow_html=True
     )
 
-    english_audio_buttons(english, key, slow=slow)
+    english_audio_player(english, slow=slow)
 
 
 # =========================
@@ -171,7 +97,7 @@ st.caption("영어 문장을 보고 듣고 따라 말해 봅시다.")
 st.markdown("---")
 
 # =========================
-# 듣기 속도
+# 듣기 속도 선택
 # =========================
 st.subheader("🔊 듣기 속도")
 
@@ -181,10 +107,10 @@ speed_label = st.selectbox(
     index=0
 )
 
-slow_mode = True if speed_label == "느리게" else False
+slow_mode = speed_label == "느리게"
 
 st.info(
-    "1번, 3번, 4번, 5번은 앱 안에서 영어 mp3로 재생됩니다. "
+    "1번, 3번, 4번, 5번은 앱 안에서 영어 발음으로 재생됩니다. "
     "2번 취미 입력은 구글 번역으로 이동해서 영어 표현과 발음을 확인합니다."
 )
 
@@ -206,14 +132,13 @@ name_sentence = f"I am {name_text}."
 sentence_card(
     "나는 (본인 이름)입니다.",
     name_sentence,
-    "name_audio",
     slow=slow_mode
 )
 
 st.markdown("---")
 
 # =========================
-# 2. 취미 말하기
+# 2. 내가 좋아하는 것 / 취미 말하기
 # =========================
 st.subheader("2. 내가 좋아하는 것 말하기")
 
@@ -276,7 +201,7 @@ if hobby_input.strip():
         unsafe_allow_html=True
     )
 else:
-    st.info("취미를 입력하면 구글 번역으로 연결됩니다. 2번 발음은 구글 번역에서 확인합니다.")
+    st.info("취미를 입력하면 구글 번역으로 연결됩니다.")
 
 st.markdown("---")
 
@@ -288,7 +213,6 @@ st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 sentence_card(
     "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
     "What time is it? I want to go home now.",
-    "time_home_audio",
     slow=slow_mode
 )
 
@@ -302,7 +226,6 @@ st.subheader("4. 필요한 것 말하기")
 sentence_card(
     "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
     "I want water. I want food too.",
-    "water_food_audio",
     slow=slow_mode
 )
 
@@ -353,9 +276,8 @@ picture_script = (
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
 
-english_audio_buttons(
+english_audio_player(
     picture_script,
-    "picture_full_audio",
     slow=slow_mode
 )
 
