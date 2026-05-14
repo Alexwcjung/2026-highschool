@@ -622,6 +622,7 @@ with tabs[6]:
 # --- Tab 7: Translation ---
 with tabs[7]:
     st.subheader("🌐 Translation Tool")
+
     lang_options = {
         "한국어 Korean": "ko",
         "영어 English": "en",
@@ -640,32 +641,41 @@ with tabs[7]:
         "포르투갈어 Portuguese": "pt",
     }
 
+    # 세션 상태 초기화
     if "translated_text" not in st.session_state:
         st.session_state["translated_text"] = ""
+
     if "translation_target_code" not in st.session_state:
         st.session_state["translation_target_code"] = ""
 
-    c1, c2 = st.columns(2)
-    with c1:
+    # 언어 선택
+    col1, col2 = st.columns(2)
+
+    with col1:
         source_lang_label = st.selectbox(
             "원문 언어",
             ["자동 감지 Auto"] + list(lang_options.keys()),
-            index=0
+            index=0,
+            key="source_lang_label"
         )
-    with c2:
+
+    with col2:
         target_lang_label = st.selectbox(
             "번역할 언어",
             list(lang_options.keys()),
-            index=0
+            index=0,
+            key="target_lang_label"
         )
 
+    # 입력창
     source_text = st.text_area(
         "번역할 문장을 입력하세요",
-        height=200,
+        height=180,
         placeholder="예: I like soccer. / 나는 축구를 좋아합니다.",
         key="translation_source_input"
     )
 
+    # 번역 버튼
     if st.button("🌐 번역하기", use_container_width=True):
         if not source_text.strip():
             st.warning("번역할 문장을 먼저 입력하세요.")
@@ -673,7 +683,12 @@ with tabs[7]:
             try:
                 from deep_translator import GoogleTranslator
 
-                source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
+                source_code = (
+                    "auto"
+                    if source_lang_label == "자동 감지 Auto"
+                    else lang_options[source_lang_label]
+                )
+
                 target_code = lang_options[target_lang_label]
 
                 translated = GoogleTranslator(
@@ -687,31 +702,33 @@ with tabs[7]:
             except ModuleNotFoundError:
                 st.error("번역 기능을 사용하려면 deep-translator 패키지를 설치해야 합니다.")
                 st.code("pip install deep-translator", language="bash")
-                st.info("Streamlit Cloud에서는 requirements.txt에 deep-translator를 추가하세요.")
 
             except Exception as e:
                 st.error("번역 중 오류가 발생했습니다.")
                 st.write(e)
 
+    # 번역 결과 출력
     if st.session_state["translated_text"]:
         st.markdown("#### 번역 결과")
 
         translated_result = st.text_area(
             "",
             value=st.session_state["translated_text"],
-            height=200,
+            height=180,
             key="translation_result",
             label_visibility="collapsed"
         )
 
-    if st.session_state["translation_target_code"] == "en":
-        speed_label = st.radio(
-            "",
-            ["0.25", "0.5", "1", "1.25", "1.5"],
-            index=2,
-            horizontal=True,
-            label_visibility="collapsed"
-        )
+        # 영어로 번역된 경우에만 발음 듣기 제공
+        if st.session_state["translation_target_code"] == "en":
+            speed_label = st.radio(
+                "",
+                ["0.25", "0.5", "1", "1.25", "1.5"],
+                index=2,
+                horizontal=True,
+                label_visibility="collapsed",
+                key="tts_speed"
+            )
 
             playback_rate = float(speed_label)
 
@@ -720,38 +737,34 @@ with tabs[7]:
                     st.warning("읽을 영어 문장이 없습니다.")
                 else:
                     try:
-                        tts = gTTS(text=translated_result, lang="en", tld="com", slow=False)
+                        tts = gTTS(
+                            text=translated_result,
+                            lang="en",
+                            tld="com",
+                            slow=False
+                        )
+
                         speech = io.BytesIO()
                         tts.write_to_fp(speech)
                         speech.seek(0)
 
-                        audio_base64 = base64.b64encode(speech.getvalue()).decode("utf-8")
+                        audio_base64 = base64.b64encode(
+                            speech.getvalue()
+                        ).decode("utf-8")
 
                         audio_html = f"""
-                        <div style="
-                            background: #f8fafc;
-                            border: 1px solid #e2e8f0;
-                            border-radius: 16px;
-                            padding: 16px;
-                            margin-top: 8px;
-                        ">
-                            <audio id="english_audio" controls autoplay style="width: 100%;">
-                                <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-                            </audio>
-                            <script>
-                                const audio = document.getElementById("english_audio");
-                                audio.playbackRate = {playback_rate};
-                            </script>
-                            <p style="margin-top:10px; color:#475569; font-size:14px;">
-                                현재 속도: <b>{speed_label}x</b>
-                            </p>
-                        </div>
+                        <audio id="english_audio" controls autoplay style="width: 100%;">
+                            <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
+                        </audio>
+
+                        <script>
+                            const audio = document.getElementById("english_audio");
+                            audio.playbackRate = {playback_rate};
+                        </script>
                         """
-                        components.html(audio_html, height=130)
+
+                        components.html(audio_html, height=70)
 
                     except Exception as e:
                         st.error("영어 발음 생성 중 오류가 발생했습니다.")
                         st.write(e)
-        else:
-            st.info("번역할 언어를 영어 English로 선택하면 영어 발음을 들을 수 있습니다.")
-
