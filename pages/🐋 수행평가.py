@@ -73,7 +73,7 @@ JONG = [
 
 
 COMMON_SURNAMES = {
-    "김": "Kim", "이": "Lee", "박": "Park", "최": "Choi", "정": "Jung",
+    "김": "Kim", "이": "Lee", "박": "Park", "최": "Choi", "정": "Jeong",
     "강": "Kang", "조": "Cho", "윤": "Yoon", "장": "Jang", "임": "Lim",
     "한": "Han", "오": "Oh", "서": "Seo", "신": "Shin", "권": "Kwon",
     "황": "Hwang", "안": "Ahn", "송": "Song", "전": "Jeon", "홍": "Hong",
@@ -109,20 +109,20 @@ def romanize_hangul_name(text):
     """
     이름 입력용 간단 로마자 변환.
     한글 이름은 성 + 이름 순서로 띄어 씁니다.
-    예: 정우창 → Jung Woochang
+    예: 정우창 → Jeong Woochang
     """
     text = str(text).strip()
     if not text:
-        return "Jung Woochang"
+        return "Jeong Woochang"
 
     # 이미 영어로 입력한 경우: 단어 첫 글자만 대문자로 정리
     if not any(0xAC00 <= ord(ch) <= 0xD7A3 for ch in text):
         cleaned = re.sub(r"\s+", " ", text).strip()
-        return " ".join(part.capitalize() for part in cleaned.split()) or "Jung Woochang"
+        return " ".join(part.capitalize() for part in cleaned.split()) or "Jeong Woochang"
 
     hangul_chars = [ch for ch in text if 0xAC00 <= ord(ch) <= 0xD7A3]
     if not hangul_chars:
-        return "Jung Woochang"
+        return "Jeong Woochang"
 
     last_name = COMMON_SURNAMES.get(hangul_chars[0], romanize_hangul_syllable(hangul_chars[0]).capitalize())
     first_name_raw = "".join(romanize_hangul_syllable(ch) for ch in hangul_chars[1:])
