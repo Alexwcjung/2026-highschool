@@ -4,6 +4,7 @@ import requests
 import hashlib
 import random
 import re
+import html
 
 # =====================================================
 # Survival English 160 - 안정형 버전
@@ -14,6 +15,7 @@ import re
 # 4) Google TTS URL + requests + Streamlit 기본 st.audio() 사용
 # 5) 카세트는 여러 조각 mp3를 하나로 이어 붙여 한 번에 재생
 # 6) 단어 카드는 추가 버튼 없이 오디오 플레이어를 바로 표시
+# 7) 카세트 아래에 단어·뜻·이모지 목록을 JS 없이 표시
 # =====================================================
 
 st.set_page_config(
@@ -846,6 +848,51 @@ def make_cassette_text(items, repeat_word=2, include_example=False):
     return " ".join(parts)
 
 
+def show_cassette_word_list(items, title="📋 카세트 단어 목록"):
+    st.markdown(f"### {title}")
+    st.caption("카세트를 들으면서 아래 단어, 뜻, 이모지를 눈으로 따라가면 됩니다.")
+
+    for item in items:
+        word = html.escape(str(item["word"]))
+        meaning = html.escape(str(item["meaning"]))
+        theme = html.escape(str(item.get("theme", "")))
+        number = item.get("number", "")
+        emoji = get_word_emoji(item["word"])
+
+        st.markdown(
+            f"""
+            <div style="
+                background:white;
+                border:1px solid #dbeafe;
+                border-radius:16px;
+                padding:11px 14px;
+                margin-bottom:8px;
+                box-shadow:0 2px 8px rgba(0,0,0,0.035);
+            ">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <span style="
+                        min-width:34px;
+                        font-size:13px;
+                        font-weight:900;
+                        color:#0369a1;
+                        background:#e0f2fe;
+                        border-radius:999px;
+                        padding:5px 9px;
+                        text-align:center;
+                    ">{number}</span>
+                    <span style="font-size:26px;">{emoji}</span>
+                    <span style="font-size:24px; font-weight:900; color:#111827;">{word}</span>
+                    <span style="font-size:18px; font-weight:900; color:#374151;">{meaning}</span>
+                </div>
+                <div style="font-size:12px; font-weight:800; color:#64748b; margin-top:5px;">
+                    {theme}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+
 def show_cassette_audio(items, title):
     st.markdown(
         f"""
@@ -870,9 +917,6 @@ def show_cassette_audio(items, title):
     # 예문은 듣기에 넣지 않습니다. 단어만 반복해서 카세트로 만듭니다.
     text = make_cassette_text(items, repeat_word=repeat_word, include_example=False)
 
-    with st.expander("📜 실제 재생 대본 보기"):
-        st.write(text)
-
     if st.button("▶️ 카세트 한 번에 듣기", key=f"one_cassette_{title}", use_container_width=True):
         try:
             with st.spinner("카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
@@ -881,6 +925,11 @@ def show_cassette_audio(items, title):
         except Exception as e:
             st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
+
+    with st.expander("📜 실제 재생 대본 보기"):
+        st.write(text)
+
+    show_cassette_word_list(items, "👇 들으면서 보는 단어·뜻·이모지")
 
 
 def show_cassette_player(theme_words, theme_name):
@@ -893,35 +942,6 @@ def show_all_cassette_tab():
     st.markdown("## 🎧 전체 단어 카세트 듣기")
     all_items = flatten_survival_words()
     show_cassette_audio(all_items, "📼 전체 단어 카세트 듣기")
-
-    with st.expander("📜 전체 카세트 단어 목록 보기"):
-        for item in all_items:
-            st.markdown(
-                f"""
-                <div style="
-                    background:white;
-                    border:1px solid #dbeafe;
-                    border-radius:16px;
-                    padding:12px 14px;
-                    margin-bottom:8px;
-                    box-shadow:0 2px 8px rgba(0,0,0,0.035);
-                ">
-                    <div style="font-size:18px; font-weight:900; color:#111827;">
-                        {item['number']}. {get_word_emoji(item['word'])} {item['word']}
-                    </div>
-                    <div style="font-size:15px; font-weight:800; color:#374151; margin-top:4px;">
-                        뜻: {item['meaning']}
-                    </div>
-                    <div style="font-size:13px; font-weight:700; color:#64748b; margin-top:4px;">
-                        예문: {item['example']}
-                    </div>
-                    <div style="font-size:12px; color:#94a3b8; margin-top:4px;">
-                        {item['theme']}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
 
 # =====================================================
