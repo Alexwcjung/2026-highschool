@@ -1479,7 +1479,7 @@ def show_cassette_audio(items, title):
         key=f"repeat_{title}"
     )
 
-    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기"
+    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 테마별 전체 단어 듣기"
 
     if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
         try:
