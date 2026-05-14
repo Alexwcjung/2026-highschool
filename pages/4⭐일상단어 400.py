@@ -261,9 +261,9 @@ st.markdown(
         border-radius: 999px;
         font-weight: 1000;
         border: 1px solid #bbf7d0;
-        padding: 1.05rem 1.35rem;
-        min-height: 70px;
-        font-size: 25px;
+        padding: 1.15rem 1.45rem;
+        min-height: 84px;
+        font-size: 30px;
         box-shadow: 0 6px 16px rgba(34,197,94,0.16);
     }
 
@@ -324,9 +324,9 @@ st.markdown(
             font-size: 29px !important;
         }
         .stButton > button {
-            min-height: 62px;
-            font-size: 22px;
-            padding: 0.9rem 1.1rem;
+            min-height: 72px;
+            font-size: 27px;
+            padding: 0.95rem 1.15rem;
         }
     }
     </style>
@@ -1314,8 +1314,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
             box-shadow:0 8px 22px rgba(15,23,42,0.10);
             overflow:hidden;
         ">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
-                <div style="font-size:24px; font-weight:900; color:#0f172a; line-height:1.25;">{safe_title}</div>
+            <div style="display:flex; justify-content:flex-end; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px;">
                 <div id="count_{player_id}" style="font-size:13px; font-weight:900; color:#475569; background:rgba(255,255,255,.8); border:1px solid #dcfce7; border-radius:999px; padding:7px 12px;">1 / {len(visual_items)}</div>
             </div>
 
@@ -1480,7 +1479,9 @@ def show_cassette_audio(items, title):
         key=f"repeat_{title}"
     )
 
-    if st.button("▶️ 단어 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
+    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기"
+
+    if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
         try:
             with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
                 audio_payloads = []
@@ -1493,7 +1494,7 @@ def show_cassette_audio(items, title):
             js_cassette_visual_player(
                 items=items,
                 audio_payloads=audio_payloads,
-                title="📼 단어 카세트",
+                title="🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기",
                 height=470
             )
         except Exception as e:
@@ -1608,7 +1609,7 @@ def show_word_cards(theme_words, theme_name):
 # =========================
 # 탭 구성
 # =========================
-tab_names = list(word_themes.keys()) + ["🎧 전체 단어 한 번에 듣기"]
+tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기"]
 tabs = st.tabs(tab_names)
 
 for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
