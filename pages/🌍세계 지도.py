@@ -284,31 +284,122 @@ def start_new_quiz():
     make_current_options()
 
 def make_current_options():
-    current = st.session_state.quiz_list[st.session_state.quiz_index]
+    """현재 문제와 4지선다 선택지를 새로 만듭니다."""
+    quiz_list = st.session_state.get("quiz_list", [])
+    quiz_index = st.session_state.get("quiz_index", 0)
 
-    # 현재 문제가 비어 있으면 퀴즈 다시 시작
-    if current is None:
+    # 세션에 이전 오류값(None 등)이 남아 있을 때 안전하게 다시 시작합니다.
+    if (
+        not isinstance(quiz_list, list)
+        or len(quiz_list) == 0
+        or not isinstance(quiz_index, int)
+        or quiz_index < 0
+        or quiz_index >= len(quiz_list)
+    ):
+        start_new_quiz()
+        return
+
+    current = quiz_list[quiz_index]
+
+    if not isinstance(current, dict) or not current.get("iso"):
         start_new_quiz()
         return
 
     wrong_pool = [
         c for c in QUIZ_COUNTRIES
-        if c is not None and c.get("iso") != current.get("iso")
+        if isinstance(c, dict) and c.get("iso") and c.get("iso") != current.get("iso")
     ]
 
-    wrongs = random.sample(wrong_pool, 3)
+    if len(wrong_pool) < 3:
+        wrong_pool = [
+            c for c in QUIZ_COUNTRIES
+            if isinstance(c, dict) and c.get("iso") != current.get("iso")
+        ]
 
+    wrongs = random.sample(wrong_pool, 3)
     options = wrongs + [current]
     random.shuffle(options)
 
-    # 혹시 모를 None 제거
-    options = [o for o in options if o is not None]
+    # 혹시 모를 비정상 값 제거
+    options = [o for o in options if isinstance(o, dict) and o.get("iso")]
 
     st.session_state.quiz_current = current
     st.session_state.quiz_options = options
     st.session_state.quiz_answered = False
     st.session_state.quiz_result = ""
     st.session_state.quiz_correct_flag = False
+
+
+def next_quiz_question():
+    """다음 문제로 이동하거나 퀴즈를 종료합니다."""
+    if st.session_state.quiz_index < QUIZ_LENGTH - 1:
+        st.session_state.quiz_index += 1
+        make_current_options()
+    else:
+        st.session_state.quiz_finished = True
+
+
+def check_quiz_answer(option):
+    """학생이 고른 답을 채점합니다."""
+    if st.session_state.get("quiz_answered", False):
+        return
+
+    if not isinstance(option, dict):
+        st.session_state.quiz_answered = True
+        st.session_state.quiz_result = "❌ 선택지 오류가 있어요. 퀴즈를 다시 시작해 주세요."
+        st.session_state.quiz_correct_flag = False
+        return
+
+    correct = st.session_state.get("quiz_current", {})
+
+    st.session_state.quiz_answered = True
+
+    if isinstance(correct, dict) and option.get("iso") == correct.get("iso"):
+        st.session_state.quiz_correct_count += 1
+        st.session_state.quiz_result = f"✅ 정답입니다! {correct.get('ko', '')} / {correct.get('en', '')}"
+        st.session_state.quiz_correct_flag = True
+    else:
+        st.session_state.quiz_result = f"❌ 아쉬워요. 정답은 {correct.get('ko', '')} / {correct.get('en', '')}입니다."
+        st.session_state.quiz_correct_flag = False
+
+
+# =====================================================
+# 퀴즈 세션 초기화
+# =====================================================
+if "quiz_level" not in st.session_state:
+    st.session_state.quiz_level = "전체"
+
+if "quiz_finished" not in st.session_state:
+    st.session_state.quiz_finished = False
+
+if "quiz_total" not in st.session_state:
+    st.session_state.quiz_total = 0
+
+# 이전 실행에서 None 또는 잘못된 값이 세션에 남아 있으면 자동으로 새로 시작합니다.
+def is_valid_quiz_state():
+    try:
+        quiz_list = st.session_state.get("quiz_list")
+        quiz_index = st.session_state.get("quiz_index")
+        quiz_options = st.session_state.get("quiz_options")
+        quiz_current = st.session_state.get("quiz_current")
+
+        return (
+            isinstance(quiz_list, list)
+            and len(quiz_list) == QUIZ_LENGTH
+            and all(isinstance(q, dict) and q.get("iso") for q in quiz_list)
+            and isinstance(quiz_index, int)
+            and 0 <= quiz_index < QUIZ_LENGTH
+            and isinstance(quiz_options, list)
+            and len(quiz_options) == 4
+            and all(isinstance(o, dict) and o.get("iso") for o in quiz_options)
+            and isinstance(quiz_current, dict)
+            and quiz_current.get("iso")
+        )
+    except Exception:
+        return False
+
+if not is_valid_quiz_state():
+    start_new_quiz()
 
 # =====================================================
 # 스타일
@@ -912,7 +1003,17 @@ with tab_quiz:
     option_cols = st.columns(2)
     option_labels = ["A", "B", "C", "D"]
 
-    for i, option in enumerate(st.session_state.quiz_options):
+    safe_options = [
+        o for o in st.session_state.get("quiz_options", [])
+        if isinstance(o, dict) and o.get("iso")
+    ]
+
+    if len(safe_options) != 4:
+        st.warning("퀴즈 선택지에 오류가 있어 새 문제를 다시 불러옵니다.")
+        make_current_options()
+        st.rerun()
+
+    for i, option in enumerate(safe_options):
         with option_cols[i % 2]:
             ko_name = option.get("ko", "")
             en_name = option.get("en", "")
@@ -1008,7 +1109,7 @@ with tab_summary:
         - 먼저 `대륙별 나라 학습` 탭에서 대륙별 대표 국가를 익힙니다.
         - 그다음 `나라 맞추기 퀴즈` 탭에서 선택한 대륙의 나라 위치를 맞혀 봅니다.
         - 전체 세계지도, 바다, 강 이름은 마지막 `세계 지도 지식용` 탭에서 참고 자료로 확인합니다.
-                - 정답을 맞히면 풍선과 반짝이는 축하 효과가 나옵니다.
+        - 정답을 맞히면 풍선과 반짝이는 축하 효과가 나옵니다.
         """
     )
 
