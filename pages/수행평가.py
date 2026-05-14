@@ -1,6 +1,7 @@
 import streamlit as st
 import streamlit.components.v1 as components
 import re
+import urllib.parse
 from pathlib import Path
 
 st.set_page_config(
@@ -23,45 +24,26 @@ def clean_english_input(text):
     return text.strip()
 
 
-# =========================
-# 이름 변환
-# =========================
-name_dict = {
-    "정우창": "Woochang Jung",
-    "김민수": "Minsu Kim",
-    "박지민": "Jimin Park",
-    "이준호": "Junho Lee",
-    "최민준": "Minjun Choi",
-    "강민재": "Minjae Kang",
-    "조현우": "Hyunwoo Cho",
-    "윤서준": "Seojun Yoon",
-    "장동현": "Donghyun Jang",
-    "임지훈": "Jihoon Lim",
-}
+def make_google_translate_url(text, source="en", target="ko"):
+    encoded_text = urllib.parse.quote(str(text).strip())
+    return f"https://translate.google.com/?sl={source}&tl={target}&text={encoded_text}&op=translate"
 
 
-def convert_name_to_english(name_input):
-    name_input = str(name_input).strip()
+@st.cache_data(show_spinner=False)
+def translate_to_english_with_deep_translator(text):
+    from deep_translator import GoogleTranslator
 
-    if not name_input:
-        return "Woochang"
-
-    if name_input in name_dict:
-        return name_dict[name_input]
-
-    if has_korean(name_input):
-        return "Student"
-
-    cleaned = clean_english_input(name_input)
-    return cleaned if cleaned else "Student"
+    return GoogleTranslator(
+        source="auto",
+        target="en"
+    ).translate(str(text).strip())
 
 
 # =========================
-# 취미 변환
+# 좋아하는 것 변환
 # =========================
-hobby_dict = {
+like_dict = {
     "축구": "soccer",
-    "축구하기": "soccer",
     "풋살": "futsal",
     "농구": "basketball",
     "야구": "baseball",
@@ -71,12 +53,12 @@ hobby_dict = {
     "배드민턴": "badminton",
     "수영": "swimming",
     "달리기": "running",
-    "조깅": "jogging",
     "자전거": "riding a bike",
     "자전거타기": "riding a bike",
     "자전거 타기": "riding a bike",
     "등산": "hiking",
     "낚시": "fishing",
+    "운동": "exercising",
 
     "게임": "playing games",
     "게임하기": "playing games",
@@ -123,71 +105,52 @@ hobby_dict = {
     "걷기": "walking",
     "산책": "walking",
     "여행": "traveling",
-    "운동": "exercising",
 }
 
 
-def translate_hobby(hobby_input):
-    hobby_input = str(hobby_input).strip()
+def translate_like_item(like_input):
+    like_input = str(like_input).strip()
 
-    if not hobby_input:
-        return "soccer"
+    if not like_input:
+        return "soccer", "기본 예시"
 
-    hobby_no_space = hobby_input.replace(" ", "")
+    like_no_space = like_input.replace(" ", "")
 
-    if hobby_input in hobby_dict:
-        return hobby_dict[hobby_input]
+    if like_input in like_dict:
+        return like_dict[like_input], "기본 단어 사전"
 
-    if hobby_no_space in hobby_dict:
-        return hobby_dict[hobby_no_space]
+    if like_no_space in like_dict:
+        return like_dict[like_no_space], "기본 단어 사전"
 
-    if has_korean(hobby_input):
-        return "playing sports"
+    if has_korean(like_input):
+        try:
+            translated = translate_to_english_with_deep_translator(like_input)
+            translated = str(translated).strip()
 
-    cleaned = clean_english_input(hobby_input)
-    return cleaned if cleaned else "playing sports"
+            if translated:
+                return translated, "deep-translator"
+        except Exception:
+            return "", "google-link"
+
+    cleaned = clean_english_input(like_input)
+    return cleaned if cleaned else "soccer", "직접 입력"
 
 
 # =========================
 # 브라우저 음성 버튼
-# gTTS 사용 안 함
+# 사진 묘사 전체 듣기용
 # =========================
-def browser_speech_button(text, key, speed=1.0, label="🔊 듣기"):
-    safe_text = str(text).replace("\\", "\\\\").replace("'", "\\'").replace("\n", " ")
-    key = re.sub(r"[^a-zA-Z0-9_]", "_", str(key))
+def browser_speech_controls_simple(text, key, speed=1.0):
+    safe_text = (
+        str(text)
+        .replace("\\", "\\\\")
+        .replace("'", "\\'")
+        .replace('"', '\\"')
+        .replace("\n", " ")
+    )
 
     html_code = f"""
-    <button onclick="
-        window.speechSynthesis.cancel();
-        var utterance = new SpeechSynthesisUtterance('{safe_text}');
-        utterance.lang = 'en-US';
-        utterance.rate = {speed};
-        utterance.pitch = 1;
-        window.speechSynthesis.speak(utterance);
-    "
-    style="
-        background-color:#2563eb;
-        color:white;
-        border:none;
-        border-radius:10px;
-        padding:8px 12px;
-        font-size:14px;
-        cursor:pointer;
-        width:100%;
-    ">
-        {label}
-    </button>
-    """
-
-    components.html(html_code, height=45)
-
-
-def browser_speech_controls(text, key, speed=1.0):
-    safe_text = str(text).replace("\\", "\\\\").replace("'", "\\'").replace("\n", " ")
-    key = re.sub(r"[^a-zA-Z0-9_]", "_", str(key))
-
-    html_code = f"""
-    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <div style="display:flex; gap:8px; flex-wrap:wrap; width:100%;">
         <button onclick="
             window.speechSynthesis.cancel();
             var utterance = new SpeechSynthesisUtterance('{safe_text}');
@@ -197,54 +160,34 @@ def browser_speech_controls(text, key, speed=1.0):
             window.speechSynthesis.speak(utterance);
         "
         style="
+            flex:1;
+            min-width:140px;
             background-color:#2563eb;
             color:white;
             border:none;
             border-radius:10px;
-            padding:9px 14px;
-            font-size:15px;
+            padding:10px 14px;
+            font-size:16px;
             cursor:pointer;
+            font-weight:700;
         ">
-            ▶ 전체 듣기
+            ▶ 듣기
         </button>
 
         <button onclick="window.speechSynthesis.pause();"
         style="
+            flex:1;
+            min-width:140px;
             background-color:#64748b;
             color:white;
             border:none;
             border-radius:10px;
-            padding:9px 14px;
-            font-size:15px;
+            padding:10px 14px;
+            font-size:16px;
             cursor:pointer;
+            font-weight:700;
         ">
             ⏸ 잠깐 멈춤
-        </button>
-
-        <button onclick="window.speechSynthesis.resume();"
-        style="
-            background-color:#16a34a;
-            color:white;
-            border:none;
-            border-radius:10px;
-            padding:9px 14px;
-            font-size:15px;
-            cursor:pointer;
-        ">
-            다시 듣기
-        </button>
-
-        <button onclick="window.speechSynthesis.cancel();"
-        style="
-            background-color:#dc2626;
-            color:white;
-            border:none;
-            border-radius:10px;
-            padding:9px 14px;
-            font-size:15px;
-            cursor:pointer;
-        ">
-            ⏹ 정지
         </button>
     </div>
     """
@@ -255,17 +198,35 @@ def browser_speech_controls(text, key, speed=1.0):
 # =========================
 # 문장 카드
 # =========================
-def sentence_card(korean, english, key, speed=1.0):
-    col1, col2, col3 = st.columns([2.2, 4, 1.3])
+def sentence_card(korean, english, key):
+    st.markdown(
+        f"""
+        <div style="
+            background:linear-gradient(135deg,#ffffff,#f8fafc);
+            border:1px solid #e5e7eb;
+            border-radius:18px;
+            padding:18px 20px;
+            margin:10px 0 16px 0;
+            box-shadow:0 3px 10px rgba(0,0,0,0.04);
+        ">
+            <div style="font-size:17px; color:#374151; font-weight:700; margin-bottom:8px;">
+                🇰🇷 {korean}
+            </div>
+            <div style="font-size:28px; color:#111827; font-weight:800; line-height:1.5;">
+                {english}
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-    with col1:
-        st.markdown(f"**🇰🇷 {korean}**")
+    google_url = make_google_translate_url(english, source="en", target="ko")
 
-    with col2:
-        st.markdown(f"### {english}")
-
-    with col3:
-        browser_speech_button(english, key, speed)
+    st.link_button(
+        "🔊 구글 번역에서 발음 듣기",
+        google_url,
+        use_container_width=True
+    )
 
 
 # =========================
@@ -282,7 +243,7 @@ st.markdown("---")
 st.subheader("🔊 듣기 속도 조절")
 
 speed_label = st.selectbox(
-    "듣기 속도를 선택하세요.",
+    "사진 묘사 전체 듣기 속도를 선택하세요.",
     [
         "느리게 0.7배",
         "조금 느리게 0.85배",
@@ -303,7 +264,7 @@ speed_dict = {
 
 speed = speed_dict[speed_label]
 
-st.info("이 버전은 gTTS를 사용하지 않고, 휴대폰/브라우저의 기본 음성 기능을 사용합니다.")
+st.info("개별 문장 발음은 구글 번역 발음 페이지로 연결합니다. 사진 묘사 전체 듣기는 앱 안에서 듣기와 잠깐 멈춤만 제공합니다.")
 
 st.markdown("---")
 
@@ -313,48 +274,53 @@ st.markdown("---")
 st.subheader("1. 자기소개하기")
 
 name_input = st.text_input(
-    "내 이름을 한국어 또는 영어로 써 보세요.",
-    placeholder="예: 정우창, 김민수, Woochang"
+    "내 이름을 영어로 써 보세요.",
+    placeholder="예: Woochang, Minsu, Jimin"
 )
 
-name_english = convert_name_to_english(name_input)
-
-if name_input:
-    st.info(f"입력한 이름: {name_input} → 영어 표현: {name_english}")
-
-name_sentence = f"I am {name_english}."
+# 이름은 변환하지 않고 학생이 입력한 그대로 넣음
+name_text = str(name_input).strip() if name_input.strip() else "Woochang"
+name_sentence = f"I am {name_text}."
 
 sentence_card(
     "나는 (본인 이름)입니다.",
     name_sentence,
-    "name",
-    speed
+    "name"
 )
 
 st.markdown("---")
 
 # =========================
-# 2. 취미 말하기
+# 2. 내가 좋아하는 것 말하기
 # =========================
-st.subheader("2. 나의 취미 말하기")
+st.subheader("2. 내가 좋아하는 것 말하기")
 
-hobby_input = st.text_input(
-    "나의 취미를 한국어 또는 영어로 써 보세요.",
-    placeholder="예: 축구, 노래, 게임, 음악 듣기"
+like_input = st.text_input(
+    "내가 좋아하는 것을 한국어 또는 영어로 써 보세요.",
+    placeholder="예: 축구, 노래, 게임, 음악 듣기, 자동차 정비"
 )
 
-hobby_english = translate_hobby(hobby_input)
+like_english, translate_method = translate_like_item(like_input)
 
-if hobby_input:
-    st.info(f"입력한 취미: {hobby_input} → 영어 표현: {hobby_english}")
+if like_input:
+    if translate_method == "google-link":
+        st.warning("앱 안에서 자동 번역이 되지 않았습니다. 아래 버튼으로 구글 번역에서 영어 번역과 발음을 확인하세요.")
+        google_translate_input_url = make_google_translate_url(like_input, source="auto", target="en")
+        st.link_button(
+            "🌐 구글에서 영어로 번역하고 발음 듣기",
+            google_translate_input_url,
+            use_container_width=True
+        )
+        like_english = "soccer"
+    else:
+        st.info(f"입력한 내용: {like_input} → 영어 표현: {like_english} / 번역 방식: {translate_method}")
 
-hobby_sentence = f"My hobby is {hobby_english}. I am a student and tall."
+like_sentence = f"I like {like_english}."
 
 sentence_card(
-    "나의 취미는 ~입니다. 나는 학생이고 키가 큽니다.",
-    hobby_sentence,
-    "hobby",
-    speed
+    "나는 ~을/를 좋아합니다.",
+    like_sentence,
+    "like"
 )
 
 st.markdown("---")
@@ -367,8 +333,7 @@ st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 sentence_card(
     "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
     "What time is it? I want to go home now.",
-    "time_home",
-    speed
+    "time_home"
 )
 
 st.markdown("---")
@@ -381,8 +346,7 @@ st.subheader("4. 필요한 것 말하기")
 sentence_card(
     "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
     "I want water. I want food too.",
-    "water_food",
-    speed
+    "water_food"
 )
 
 st.markdown("---")
@@ -395,6 +359,8 @@ st.subheader("5. 사진 묘사하기")
 image_paths = [
     Path("pages/images/speaking_test.png"),
     Path("pages/images/수행평가 그림.png"),
+    Path("images/speaking_test.png"),
+    Path("images/수행평가 그림.png"),
 ]
 
 image_path = None
@@ -413,7 +379,7 @@ with center_col:
             use_container_width=True
         )
     else:
-        st.warning("사진 파일을 찾을 수 없습니다. pages/images/speaking_test.png 로 저장하는 것을 추천합니다.")
+        st.warning("사진 파일을 찾을 수 없습니다. pages/images/speaking_test.png 또는 images/speaking_test.png 로 저장하세요.")
 
 st.info("⏱️ 20초 안에 사진을 묘사해 봅시다.")
 
@@ -425,41 +391,11 @@ They look happy.
 """
 
 st.markdown("### 📢 사진 묘사 전체 듣기")
-browser_speech_controls(picture_script, "picture_full", speed)
+browser_speech_controls_simple(picture_script, "picture_full", speed)
 
 st.markdown("### There are many people in the street.")
 st.markdown("### I can see trees and buildings too.")
 st.markdown("### Some people are riding bikes and some are sitting in chairs.")
 st.markdown("### They look happy.")
-
-st.markdown("---")
-
-# =========================
-# 전체 듣기
-# =========================
-st.subheader("📢 전체 말하기 대본 듣기")
-
-full_script = f"""
-{name_sentence}
-
-{hobby_sentence}
-
-What time is it? I want to go home now.
-
-I want water. I want food too.
-
-There are many people in the street.
-I can see trees and buildings too.
-Some people are riding bikes and some are sitting in chairs.
-They look happy.
-"""
-
-st.text_area(
-    "전체 말하기 대본",
-    full_script,
-    height=250
-)
-
-browser_speech_controls(full_script, "full_script", speed)
 
 st.success("영어 문장을 듣고 따라 말하면서 연습해 보세요.")
