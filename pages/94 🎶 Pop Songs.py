@@ -949,55 +949,174 @@ elif "4. Stand By Me" in song_choice:
     ]
 
 elif "5. Don't Know Why" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=tO4dxvguQDk"
+    video_url = "https://www.youtube.com/watch?v=nhLdJeLTM48&list=RDnhLdJeLTM48&start_radio=1"
 
-    bg_content = """
-    <h3>🌙 Don't Know Why: 이유를 알 수 없는 마음</h3>
-    <p>
-    <b>Don't Know Why</b>는 조용하고 부드러운 분위기의 노래로,
-    마음속 아쉬움과 설명하기 어려운 감정을 담고 있습니다.
-    느린 속도의 노래라 듣기 활동에 활용하기 좋습니다.
+    bg_content = '''
+    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#7c3aed;">
+        🌙 Don't Know Why: 이유를 알 수 없는 마음
+    </h3>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        <b>Don't Know Why</b>는 Norah Jones의 대표곡으로,
+        조용하고 부드러운 멜로디 속에 설명하기 어려운 아쉬움과 후회를 담고 있는 노래입니다.
+        노래 속 화자는 누군가에게 가지 않았던 자신의 행동을 떠올리며,
+        왜 그렇게 했는지 스스로도 알 수 없다고 말합니다.
     </p>
-    """
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        이 노래는 큰 사건을 직접적으로 설명하기보다,
+        마음속에 남아 있는 감정의 흔적을 천천히 보여 줍니다.
+        해가 뜰 때까지 기다렸지만 결국 가지 못했고,
+        새벽이 밝아오는 순간에는 차라리 멀리 날아가 버리고 싶어 합니다.
+        그래서 이 노래에는 후회, 망설임, 외로움, 그리움이 조용하게 섞여 있습니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        특히 <b>I don't know why I didn't come</b>이라는 문장이 반복되면서,
+        화자가 자신의 마음을 명확히 설명하지 못하는 상태가 잘 드러납니다.
+        이 반복 표현은 학생들이 듣고 따라 말하기 좋고,
+        <b>I don't know why</b>, <b>I wished that I could</b>,
+        <b>on my mind</b>, <b>empty as a drum</b> 같은 표현을 배우기에도 좋습니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        수업에서는 이 노래를 통해 느린 영어 발음, 감정 표현,
+        후회와 그리움을 나타내는 문장을 함께 배울 수 있습니다.
+        속도가 빠르지 않고 분위기가 차분해서,
+        학생들이 영어 소리를 듣고 가사의 의미를 천천히 따라가기에 적합합니다.
+    </p>
+    '''
 
     lyrics_full = [
-        ("I waited 'til I saw the sun", "나는 해가 보일 때까지 기다렸어"),
-        ("I don't know why I didn't come", "왜 내가 가지 않았는지 모르겠어"),
-        ("I left you by the house of fun", "나는 너를 즐거움의 집 옆에 남겨 두었어"),
-        ("I don't know why I didn't come", "왜 내가 가지 않았는지 모르겠어"),
-        ("When I saw the break of day", "새벽이 밝아오는 것을 보았을 때"),
-        ("I wished that I could fly away", "나는 날아가 버릴 수 있기를 바랐어"),
+        (
+            "I waited 'til I saw the sun / I don't know why I didn't come",
+            "나는 해가 보일 때까지 기다렸어 / 왜 내가 가지 않았는지 모르겠어"
+        ),
+        (
+            "I left you by the house of fun / Don't know why I didn't come",
+            "나는 너를 즐거움의 집 곁에 남겨 두었어 / 왜 내가 가지 않았는지 모르겠어"
+        ),
+        (
+            "Don't know why I didn't come",
+            "왜 내가 가지 않았는지 모르겠어"
+        ),
+        (
+            "When I saw the break of day / I wished that I could fly away",
+            "새벽이 밝아오는 것을 보았을 때 / 나는 날아가 버릴 수 있기를 바랐어"
+        ),
+        (
+            "Instead of kneeling in the sand / Catching tear-drops in my hand",
+            "모래 위에 무릎 꿇고 있는 대신 / 손으로 눈물방울을 받으며"
+        ),
+        (
+            "My heart is drenched in wine / But you'll be on my mind forever",
+            "내 마음은 와인에 흠뻑 젖어 있지만 / 너는 영원히 내 마음속에 있을 거야"
+        ),
+        (
+            "Out across the endless sea / I would die in ecstasy",
+            "끝없는 바다 저편으로 / 나는 황홀함 속에서 죽을 수도 있을 것 같아"
+        ),
+        (
+            "But I'll be a bag of bones / Driving down the road alone",
+            "하지만 나는 뼈만 남은 사람처럼 / 혼자 길을 따라 운전하게 되겠지"
+        ),
+        (
+            "My heart is drenched in wine / But you'll be on my mind forever",
+            "내 마음은 와인에 흠뻑 젖어 있지만 / 너는 영원히 내 마음속에 있을 거야"
+        ),
+        (
+            "Something has to make you run / I don't know why I didn't come",
+            "무언가가 너를 떠나게 만들었겠지 / 왜 내가 가지 않았는지 모르겠어"
+        ),
+        (
+            "I feel as empty as a drum / I don't know why I didn't come",
+            "나는 북처럼 텅 빈 기분이야 / 왜 내가 가지 않았는지 모르겠어"
+        ),
+        (
+            "Don't know why I didn't come / I don't know why I didn't come",
+            "왜 내가 가지 않았는지 모르겠어 / 왜 내가 가지 않았는지 모르겠어"
+        ),
     ]
 
     comprehension_questions = [
         {
-            "q": "1. What did the speaker wait for?",
-            "options": ["The sun", "The bus", "A teacher", "A phone call"],
-            "answer": "The sun"
+            "q": "1. 화자는 무엇을 볼 때까지 기다렸나요?",
+            "options": [
+                "버스",
+                "해",
+                "선생님",
+                "전화"
+            ],
+            "answer": "해"
         },
         {
-            "q": "2. What does the speaker not know?",
-            "options": ["Why she didn't come", "How to read", "Where school is", "What food to eat"],
-            "answer": "Why she didn't come"
+            "q": "2. 화자가 계속 모르겠다고 말하는 것은 무엇인가요?",
+            "options": [
+                "무엇을 먹을지",
+                "학교가 어디인지",
+                "왜 자신이 가지 않았는지",
+                "어떻게 읽는지"
+            ],
+            "answer": "왜 자신이 가지 않았는지"
         },
         {
-            "q": "3. What did the speaker wish?",
-            "options": ["To fly away", "To sleep early", "To buy a car", "To study math"],
-            "answer": "To fly away"
+            "q": "3. 'break of day'의 뜻으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "한밤중",
+                "점심시간",
+                "새벽",
+                "겨울"
+            ],
+            "answer": "새벽"
         },
         {
-            "q": "4. What is the mood of the song?",
-            "options": ["Quiet and regretful", "Angry and loud", "Fast and funny", "Excited and wild"],
-            "answer": "Quiet and regretful"
+            "q": "4. 화자는 새벽을 보았을 때 무엇을 바랐나요?",
+            "options": [
+                "일찍 자는 것",
+                "차를 사는 것",
+                "수학을 공부하는 것",
+                "날아가 버리는 것"
+            ],
+            "answer": "날아가 버리는 것"
         },
         {
-            "q": "5. What does 'break of day' mean?",
-            "options": ["Dawn", "Midnight", "Lunch time", "Winter"],
-            "answer": "Dawn"
+            "q": "5. 이 노래의 분위기로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "조용하고 후회스러운 분위기",
+                "화나고 시끄러운 분위기",
+                "빠르고 웃긴 분위기",
+                "신나고 거친 분위기"
+            ],
+            "answer": "조용하고 후회스러운 분위기"
         },
         {
-            "q": "6. What is repeated in the song?",
-            "options": ["I don't know why I didn't come", "I love soccer", "Let it go", "Stand by me"],
+            "q": "6. 'You'll be on my mind forever'는 어떤 의미인가요?",
+            "options": [
+                "너는 곧 잊혀질 거야",
+                "너는 영원히 내 마음속에 있을 거야",
+                "너는 나와 함께 여행할 거야",
+                "너는 노래를 부를 거야"
+            ],
+            "answer": "너는 영원히 내 마음속에 있을 거야"
+        },
+        {
+            "q": "7. 'I feel as empty as a drum'은 어떤 감정에 가깝나요?",
+            "options": [
+                "배부름",
+                "자신감",
+                "공허함",
+                "분노"
+            ],
+            "answer": "공허함"
+        },
+        {
+            "q": "8. 이 노래에서 반복되는 핵심 문장은 무엇인가요?",
+            "options": [
+                "Stand by me",
+                "Let it go",
+                "A whole new world",
+                "I don't know why I didn't come"
+            ],
             "answer": "I don't know why I didn't come"
         },
     ]
