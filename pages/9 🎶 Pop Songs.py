@@ -1121,6 +1121,182 @@ elif "5. Don't Know Why" in song_choice:
         },
     ]
 
+elif "6. Fix You" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=k4V3Mo61fJM"
+
+    bg_content = '''
+    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#2563eb;">
+        💡 Fix You: 힘든 순간에 건네는 위로
+    </h3>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        Coldplay의 <b>Fix You</b>는 실패, 상실, 지침, 슬픔을 겪는 사람에게
+        따뜻한 위로를 건네는 노래입니다. 노래 속 화자는 상대가 최선을 다했지만
+        원하는 결과를 얻지 못했을 때, 그리고 잃어버린 것을 되돌릴 수 없을 때의
+        아픔을 조용히 바라봅니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        이 노래에서 반복되는 <b>Lights will guide you home</b>은
+        어두운 순간에도 길을 비춰 주는 희망을 상징합니다.
+        또한 <b>I will try to fix you</b>는 상대를 완벽하게 고쳐 주겠다는 뜻이라기보다,
+        힘든 시간을 혼자 견디지 않도록 곁에서 도와주고 싶다는 마음으로 이해할 수 있습니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        수업에서는 <b>try your best</b>, <b>don't succeed</b>,
+        <b>what you want / what you need</b>, <b>stuck in reverse</b>,
+        <b>learn from my mistakes</b> 같은 표현을 중심으로 배울 수 있습니다.
+        특히 이 노래는 속도가 비교적 느리고 감정선이 분명해서,
+        학생들이 영어 표현과 함께 위로, 희망, 회복의 의미를 이해하기에 좋습니다.
+    </p>
+    '''
+
+    lyrics_full = [
+        (
+            "When you try your best, but you don't succeed / When you get what you want, but not what you need",
+            "네가 최선을 다했지만 성공하지 못할 때 / 원하는 것을 얻었지만 정작 필요한 것은 얻지 못할 때"
+        ),
+        (
+            "When you feel so tired, but you can't sleep / Stuck in reverse",
+            "너무 지쳤지만 잠들 수 없을 때 / 거꾸로 갇혀 있는 것처럼 느껴질 때"
+        ),
+        (
+            "And the tears come streaming down your face / When you lose something you can't replace",
+            "눈물이 네 얼굴을 타고 흘러내릴 때 / 대신할 수 없는 무언가를 잃었을 때"
+        ),
+        (
+            "When you love someone, but it goes to waste / Could it be worse?",
+            "누군가를 사랑했지만 그 마음이 헛되어 버렸을 때 / 이보다 더 나쁠 수 있을까?"
+        ),
+        (
+            "Lights will guide you home / And ignite your bones",
+            "빛이 너를 집으로 인도할 거야 / 그리고 네 안의 힘을 다시 밝혀 줄 거야"
+        ),
+        (
+            "And I will try to fix you",
+            "그리고 나는 너를 다시 일으켜 주려고 노력할 거야"
+        ),
+        (
+            "And high up above or down below / When you're too in love to let it go",
+            "저 높은 곳에 있든 아주 낮은 곳에 있든 / 너무 사랑해서 놓아주기 어려울 때"
+        ),
+        (
+            "But if you never try, you'll never know / Just what you're worth",
+            "하지만 시도하지 않으면 절대 알 수 없어 / 네가 얼마나 소중한 사람인지"
+        ),
+        (
+            "Lights will guide you home / And ignite your bones",
+            "빛이 너를 집으로 인도할 거야 / 그리고 네 안의 힘을 다시 밝혀 줄 거야"
+        ),
+        (
+            "And I will try to fix you",
+            "그리고 나는 너를 다시 일으켜 주려고 노력할 거야"
+        ),
+        (
+            "Tears stream down your face / When you lose something you cannot replace",
+            "눈물이 네 얼굴을 타고 흘러내려 / 대신할 수 없는 무언가를 잃었을 때"
+        ),
+        (
+            "Tears stream down your face, and I / Tears stream down your face",
+            "눈물이 네 얼굴을 타고 흘러내리고, 나는 / 눈물이 네 얼굴을 타고 흘러내려"
+        ),
+        (
+            "I promise you I will learn from my mistakes / Tears stream down your face, and I",
+            "나는 내 실수에서 배우겠다고 약속할게 / 눈물이 네 얼굴을 타고 흘러내리고, 나는"
+        ),
+        (
+            "Lights will guide you home / And ignite your bones",
+            "빛이 너를 집으로 인도할 거야 / 그리고 네 안의 힘을 다시 밝혀 줄 거야"
+        ),
+        (
+            "And I will try to fix you",
+            "그리고 나는 너를 다시 일으켜 주려고 노력할 거야"
+        ),
+    ]
+
+    comprehension_questions = [
+        {
+            "q": "1. 이 노래에서 화자는 어떤 사람을 위로하고 있나요?",
+            "options": [
+                "시험을 준비하는 사람",
+                "여행을 떠나는 사람",
+                "힘들고 지친 사람",
+                "운동을 시작한 사람"
+            ],
+            "answer": "힘들고 지친 사람"
+        },
+        {
+            "q": "2. 'When you try your best, but you don't succeed'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "최선을 다했지만 성공하지 못할 때",
+                "아무 노력도 하지 않았을 때",
+                "원하는 것을 모두 얻었을 때",
+                "잠을 충분히 잤을 때"
+            ],
+            "answer": "최선을 다했지만 성공하지 못할 때"
+        },
+        {
+            "q": "3. 'what you want'와 'what you need'의 차이로 알맞은 것은 무엇인가요?",
+            "options": [
+                "둘 다 항상 같은 뜻이다",
+                "want는 원하는 것, need는 정말 필요한 것이다",
+                "want는 먹는 것, need는 노래하는 것이다",
+                "need는 필요 없는 것이다"
+            ],
+            "answer": "want는 원하는 것, need는 정말 필요한 것이다"
+        },
+        {
+            "q": "4. 'Lights will guide you home'은 무엇을 상징한다고 볼 수 있나요?",
+            "options": [
+                "휴대전화 불빛",
+                "가게의 간판",
+                "어두운 길에서의 희망과 방향",
+                "자동차 헤드라이트만"
+            ],
+            "answer": "어두운 길에서의 희망과 방향"
+        },
+        {
+            "q": "5. 'If you never try, you'll never know'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "절대 시도하면 안 된다",
+                "시도하지 않으면 알 수 없다",
+                "모든 것을 이미 알고 있다",
+                "실패하면 끝이다"
+            ],
+            "answer": "시도하지 않으면 알 수 없다"
+        },
+        {
+            "q": "6. 'I will learn from my mistakes'는 어떤 태도를 보여 주나요?",
+            "options": [
+                "실수를 숨기려는 태도",
+                "남을 탓하려는 태도",
+                "포기하려는 태도",
+                "실수에서 배우려는 태도"
+            ],
+            "answer": "실수에서 배우려는 태도"
+        },
+        {
+            "q": "7. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "위로와 희망",
+                "웃음과 장난",
+                "분노와 복수",
+                "경쟁과 승리"
+            ],
+            "answer": "위로와 희망"
+        },
+        {
+            "q": "8. 'I will try to fix you'는 어떤 의미에 가깝나요?",
+            "options": [
+                "너를 혼내겠다",
+                "너를 완전히 바꾸겠다",
+                "너를 떠나겠다",
+                "너를 도와 다시 일어서게 하고 싶다"
+            ],
+            "answer": "너를 도와 다시 일어서게 하고 싶다"
+        },
+    ]
 
 # =========================
 # 5. 화면 출력
