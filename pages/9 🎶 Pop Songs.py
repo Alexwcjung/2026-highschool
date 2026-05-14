@@ -127,36 +127,90 @@ st.markdown("""
 
 
     .pop-effect-box {
-        background: linear-gradient(135deg, #fef3c7, #fee2e2, #fce7f3);
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #fff7ed, #fee2e2, #fce7f3);
         border: 2px solid #fb7185;
-        border-radius: 22px;
-        padding: 18px 20px;
+        border-radius: 24px;
+        padding: 20px;
         margin: 16px 0 20px 0;
         text-align: center;
-        box-shadow: 0 10px 24px rgba(244, 63, 94, 0.18);
-        animation: popBlast 0.75s ease-out;
+        box-shadow: 0 12px 28px rgba(244, 63, 94, 0.22);
+        animation: popBoxFade 1.2s ease-out forwards;
     }
 
-    .pop-effect-main {
-        font-size: 2.2rem;
+    .pop-bang {
+        font-size: 3rem;
         font-weight: 1000;
         color: #be123c;
-        line-height: 1.25;
+        line-height: 1.1;
+        animation: bangJump 0.8s ease-out forwards;
     }
 
-    .pop-effect-sub {
-        margin-top: 8px;
+    .pop-card-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 14px;
+    }
+
+    .pop-vanish-card {
+        background: white;
+        border: 3px solid #fb7185;
+        border-radius: 18px;
+        padding: 14px 16px;
         font-size: 1.1rem;
         font-weight: 900;
         color: #7f1d1d;
-        line-height: 1.5;
+        box-shadow: 0 8px 18px rgba(244, 63, 94, 0.18);
+        animation: cardVanish 1.1s ease-in-out forwards;
     }
 
-    @keyframes popBlast {
-        0% { transform: scale(0.55) rotate(-3deg); opacity: 0; }
-        35% { transform: scale(1.13) rotate(2deg); opacity: 1; }
-        60% { transform: scale(0.95) rotate(-1deg); }
+    .pop-spark {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: #fb7185;
+        opacity: 0;
+        animation: sparkFly 0.9s ease-out forwards;
+    }
+
+    .pop-spark.s1 { left: 48%; top: 48%; --x: -130px; --y: -60px; background:#f59e0b; }
+    .pop-spark.s2 { left: 50%; top: 48%; --x: 130px; --y: -70px; background:#ec4899; }
+    .pop-spark.s3 { left: 48%; top: 50%; --x: -110px; --y: 65px; background:#6366f1; }
+    .pop-spark.s4 { left: 50%; top: 50%; --x: 115px; --y: 70px; background:#22c55e; }
+    .pop-spark.s5 { left: 49%; top: 49%; --x: 0px; --y: -115px; background:#06b6d4; }
+
+    @keyframes bangJump {
+        0% { transform: scale(0.45) rotate(-8deg); opacity: 0; }
+        35% { transform: scale(1.25) rotate(4deg); opacity: 1; }
+        70% { transform: scale(0.96) rotate(-2deg); opacity: 1; }
         100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    @keyframes cardVanish {
+        0% { transform: scale(1); opacity: 1; }
+        45% { transform: scale(1.08); opacity: 1; }
+        100% { transform: scale(0.2) rotate(8deg); opacity: 0; }
+    }
+
+    @keyframes sparkFly {
+        0% { transform: translate(0,0) scale(0.3); opacity: 0; }
+        25% { opacity: 1; }
+        100% { transform: translate(var(--x), var(--y)) scale(1.2); opacity: 0; }
+    }
+
+    @keyframes popBoxFade {
+        0% { opacity: 1; }
+        78% { opacity: 1; }
+        100% { opacity: 0.18; }
+    }
+
+    @media (max-width: 640px) {
+        .pop-card-wrap { grid-template-columns: 1fr; }
+        .pop-bang { font-size: 2.4rem; }
+        .pop-vanish-card { font-size: 1rem; padding: 12px 14px; }
     }
 
 </style>
@@ -1546,10 +1600,15 @@ def show_matching_game(song_choice):
         st.markdown(
             f"""
             <div class="pop-effect-box">
-                <div class="pop-effect-main">💥 팡! 정답!</div>
-                <div class="pop-effect-sub">
-                    {html.escape(last_pop['en'])}<br>
-                    {html.escape(last_pop['ko'])}
+                <span class="pop-spark s1"></span>
+                <span class="pop-spark s2"></span>
+                <span class="pop-spark s3"></span>
+                <span class="pop-spark s4"></span>
+                <span class="pop-spark s5"></span>
+                <div class="pop-bang">💥 팡!</div>
+                <div class="pop-card-wrap">
+                    <div class="pop-vanish-card">{html.escape(last_pop['en'])}</div>
+                    <div class="pop-vanish-card">{html.escape(last_pop['ko'])}</div>
                 </div>
             </div>
             """,
@@ -1587,7 +1646,6 @@ def show_matching_game(song_choice):
                 pop_en = card["text"]
                 pop_ko = current_selected["text"]
             st.session_state[f"match_last_pop_{game_key}"] = {"en": pop_en, "ko": pop_ko}
-            st.balloons()
             st.rerun()
 
         elif current_selected["kind"] == card["kind"]:
