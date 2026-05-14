@@ -353,6 +353,8 @@ elif "2. Hello" in song_choice:
                 """,
                 unsafe_allow_html=True
             )
+
+    ]
             
 elif "3. A Whole New World" in song_choice:
     video_url = "https://www.youtube.com/watch?v=eitDnP0_83k"
