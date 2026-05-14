@@ -897,29 +897,27 @@ def show_cassette_word_list(items, title="📋 카세트 단어 목록"):
         )
 
 
-def js_cassette_visual_player(items, audio_bytes, title="📼 단어 카세트", repeat_word=2, seconds_per_word=2.0, height=660):
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=700):
     """
-    카세트 오디오는 mp3 bytes로 안정적으로 만들고,
-    화면의 현재 단어·뜻·이모지 전환만 JavaScript로 처리합니다.
+    단어별 mp3를 순서대로 재생합니다.
+    화면은 현재 재생되는 단어 mp3가 시작될 때 바뀌므로 뜻/이모지 타이밍이 더 정확합니다.
     """
     player_id = "cassette_" + uuid.uuid4().hex
-    audio_base64 = base64.b64encode(audio_bytes).decode("utf-8")
 
     visual_items = []
-    for idx, item in enumerate(items, start=1):
+    for idx, (item, audio_b64) in enumerate(zip(items, audio_payloads), start=1):
         visual_items.append({
             "number": item.get("number", idx),
             "theme": str(item.get("theme", "")),
             "word": str(item.get("word", "")),
             "meaning": str(item.get("meaning", "")),
             "emoji": get_word_emoji(item.get("word", "")),
+            "src": "data:audio/mp3;base64," + audio_b64,
         })
 
     items_json = json.dumps(visual_items, ensure_ascii=False)
     safe_title = html.escape(title)
     safe_player_id = json.dumps(player_id)
-    # 반복 횟수가 많을수록 한 단어가 더 오래 들리므로 화면도 조금 천천히 넘깁니다.
-    interval_ms = int(float(seconds_per_word) * 1000)
 
     components.html(
         f"""
@@ -939,9 +937,7 @@ def js_cassette_visual_player(items, audio_bytes, title="📼 단어 카세트",
                 <div id="count_{player_id}" style="font-size:13px; font-weight:900; color:#475569; background:rgba(255,255,255,.8); border:1px solid #dbeafe; border-radius:999px; padding:7px 12px;">1 / {len(visual_items)}</div>
             </div>
 
-            <audio id="audio_{player_id}" controls preload="auto" style="width:100%; margin:6px 0 14px 0;">
-                <source src="data:audio/mp3;base64,{audio_base64}" type="audio/mp3">
-            </audio>
+            <audio id="audio_{player_id}" preload="auto" style="width:100%; margin:6px 0 14px 0;"></audio>
 
             <div style="display:grid; grid-template-columns:1fr; gap:12px;">
                 <div style="
@@ -959,6 +955,17 @@ def js_cassette_visual_player(items, audio_bytes, title="📼 단어 카세트",
                         <div id="bar_{player_id}" style="height:100%; width:0%; background:linear-gradient(90deg,#38bdf8,#8b5cf6,#ec4899); border-radius:999px;"></div>
                     </div>
                 </div>
+
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="play_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #c4b5fd; background:linear-gradient(135deg,#dbeafe,#fce7f3); font-size:18px; font-weight:900; cursor:pointer;">▶️ 카세트 재생</button>
+                    <button id="pause_{player_id}" style="min-height:52px; border-radius:18px; border:1px solid #67e8f9; background:#ecfeff; color:#155e75; font-size:18px; font-weight:900; cursor:pointer;">⏸ 잠깐 멈춤</button>
+                </div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <button id="prev_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">⏮ 이전</button>
+                    <button id="next_{player_id}" style="min-height:46px; border-radius:16px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:15px; font-weight:900; cursor:pointer;">다음 ⏭</button>
+                </div>
+
+                <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
 
                 <div id="list_{player_id}" style="
                     max-height:250px;
@@ -979,10 +986,15 @@ def js_cassette_visual_player(items, audio_bytes, title="📼 단어 카세트",
         const countEl_{player_id} = document.getElementById("count_{player_id}");
         const barEl_{player_id} = document.getElementById("bar_{player_id}");
         const listEl_{player_id} = document.getElementById("list_{player_id}");
-        const intervalMs_{player_id} = {interval_ms};
+        const statusEl_{player_id} = document.getElementById("status_{player_id}");
+        const playBtn_{player_id} = document.getElementById("play_{player_id}");
+        const pauseBtn_{player_id} = document.getElementById("pause_{player_id}");
+        const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
+        const nextBtn_{player_id} = document.getElementById("next_{player_id}");
         const playerId_{player_id} = {safe_player_id};
 
         let currentIndex_{player_id} = 0;
+        let isPlayingList_{player_id} = false;
 
         function renderList_{player_id}() {{
             listEl_{player_id}.innerHTML = items_{player_id}.map((it, idx) => `
@@ -1037,20 +1049,77 @@ def js_cassette_visual_player(items, audio_bytes, title="📼 단어 카세트",
             }}
         }}
 
-        function syncByTime_{player_id}() {{
+        function loadCurrent_{player_id}() {{
+            const it = items_{player_id}[currentIndex_{player_id}];
+            setCurrent_{player_id}(currentIndex_{player_id});
+            if (audio_{player_id}.src !== it.src) {{
+                audio_{player_id}.src = it.src;
+                audio_{player_id}.load();
+            }}
+        }}
+
+        function playCurrent_{player_id}() {{
             if (!items_{player_id}.length) return;
-            let idx = Math.floor((audio_{player_id}.currentTime * 1000) / intervalMs_{player_id});
-            if (idx >= items_{player_id}.length) idx = items_{player_id}.length - 1;
-            setCurrent_{player_id}(idx);
+            isPlayingList_{player_id} = true;
+            loadCurrent_{player_id}();
+            playBtn_{player_id}.textContent = "🔊 재생 중";
+            statusEl_{player_id}.textContent = "현재 단어: " + items_{player_id}[currentIndex_{player_id}].word;
+            audio_{player_id}.play().catch(() => {{
+                statusEl_{player_id}.textContent = "브라우저가 자동 재생을 막았습니다. 재생 버튼을 한 번 더 눌러 주세요.";
+                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+            }});
+        }}
+
+        function pauseCurrent_{player_id}() {{
+            isPlayingList_{player_id} = false;
+            audio_{player_id}.pause();
+            playBtn_{player_id}.textContent = "▶️ 이어 듣기";
+            statusEl_{player_id}.textContent = "일시정지";
+        }}
+
+        function moveTo_{player_id}(idx, autoPlay=false) {{
+            isPlayingList_{player_id} = autoPlay;
+            audio_{player_id}.pause();
+            currentIndex_{player_id} = Math.max(0, Math.min(idx, items_{player_id}.length - 1));
+            loadCurrent_{player_id}();
+            if (autoPlay) {{
+                playCurrent_{player_id}();
+            }} else {{
+                playBtn_{player_id}.textContent = "▶️ 카세트 재생";
+                statusEl_{player_id}.textContent = "선택된 단어: " + items_{player_id}[currentIndex_{player_id}].word;
+            }}
         }}
 
         renderList_{player_id}();
-        setCurrent_{player_id}(0);
+        loadCurrent_{player_id}();
 
-        audio_{player_id}.addEventListener("play", syncByTime_{player_id});
-        audio_{player_id}.addEventListener("timeupdate", syncByTime_{player_id});
+        playBtn_{player_id}.addEventListener("click", function() {{
+            playCurrent_{player_id}();
+        }});
+
+        pauseBtn_{player_id}.addEventListener("click", function() {{
+            pauseCurrent_{player_id}();
+        }});
+
+        prevBtn_{player_id}.addEventListener("click", function() {{
+            moveTo_{player_id}(currentIndex_{player_id} - 1, false);
+        }});
+
+        nextBtn_{player_id}.addEventListener("click", function() {{
+            moveTo_{player_id}(currentIndex_{player_id} + 1, false);
+        }});
+
         audio_{player_id}.addEventListener("ended", function() {{
-            barEl_{player_id}.style.width = "100%";
+            if (!isPlayingList_{player_id}) return;
+            if (currentIndex_{player_id} < items_{player_id}.length - 1) {{
+                currentIndex_{player_id} += 1;
+                playCurrent_{player_id}();
+            }} else {{
+                isPlayingList_{player_id} = false;
+                playBtn_{player_id}.textContent = "▶️ 처음부터 다시";
+                statusEl_{player_id}.textContent = "✅ 카세트 재생 완료";
+                barEl_{player_id}.style.width = "100%";
+            }}
         }});
         </script>
         """,
@@ -1065,58 +1134,45 @@ def show_cassette_audio(items, title):
         <div class="cassette-box">
             <div class="cassette-title">{title}</div>
             <div class="cassette-note">
-                예문은 빼고 단어만 재생합니다. 오디오가 재생되는 동안 현재 단어, 뜻, 이모지가 크게 바뀝니다.
-                화면 전환은 JavaScript로 처리하지만, 음성 파일 생성은 안정적인 requests 방식입니다.
+                예문은 빼고 단어만 재생합니다. 단어별 음성이 끝날 때 다음 단어로 넘어가므로 뜻과 화면 타이밍이 더 정확합니다.
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    col_a, col_b = st.columns(2)
-    with col_a:
-        repeat_word = st.selectbox(
-            "단어 반복 횟수",
-            [1, 2, 3],
-            index=1,
-            key=f"repeat_{title}"
-        )
-    with col_b:
-        speed_label = st.selectbox(
-            "화면 전환 속도",
-            ["빠르게", "보통", "천천히"],
-            index=1,
-            key=f"visual_speed_{title}"
-        )
-
-    base_seconds = {"빠르게": 1.25, "보통": 1.65, "천천히": 2.05}[speed_label]
-    seconds_per_word = base_seconds * repeat_word
-
-    # 예문은 듣기에 넣지 않습니다. 단어만 반복해서 카세트로 만듭니다.
-    text = make_cassette_text(items, repeat_word=repeat_word, include_example=False)
+    repeat_word = st.selectbox(
+        "단어 반복 횟수",
+        [1, 2, 3],
+        index=1,
+        key=f"repeat_{title}"
+    )
 
     if st.button("▶️ 화면 카세트 만들기", key=f"visual_cassette_{title}", use_container_width=True):
         try:
-            with st.spinner("카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
-                audio_bytes = get_combined_tts_mp3_bytes(text, lang="en", max_chars=155)
+            with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+                audio_payloads = []
+                for item in items:
+                    word = str(item["word"]).strip()
+                    tts_text = ". ".join([word] * repeat_word) + "."
+                    audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
+                    audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
+
             js_cassette_visual_player(
                 items=items,
-                audio_bytes=audio_bytes,
+                audio_payloads=audio_payloads,
                 title=title,
-                repeat_word=repeat_word,
-                seconds_per_word=seconds_per_word,
-                height=690
+                height=700
             )
         except Exception as e:
             st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
 
-    with st.expander("📜 실제 재생 대본 보기"):
-        st.write(text)
+    with st.expander("📜 실제 재생 단어 보기"):
+        st.write(make_cassette_text(items, repeat_word=repeat_word, include_example=False))
 
     with st.expander("📋 전체 단어 목록 보기"):
         show_cassette_word_list(items, "👇 전체 단어·뜻·이모지")
-
 
 def show_cassette_player(theme_words, theme_name):
     st.markdown("### 🎧 이 카테고리 단어 카세트 듣기")
