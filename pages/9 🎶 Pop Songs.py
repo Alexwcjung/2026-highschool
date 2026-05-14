@@ -1504,20 +1504,6 @@ def show_matching_game(song_choice):
     st.progress(matched_pairs / total_pairs if total_pairs else 0)
     st.markdown(f"### 현재 점수: {matched_pairs} / {total_pairs}쌍")
 
-    if st.session_state[f"match_message_{game_key}"]:
-        st.info(st.session_state[f"match_message_{game_key}"])
-
-    if selected:
-        st.markdown(
-            f"""
-            <div class="selected-card-notice">
-                선택한 카드: {html.escape(selected['text'])}<br>
-                이제 반대쪽에서 맞는 짝을 눌러 보세요.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
     if matched_pairs == total_pairs:
         st.success("🎉 모든 문장을 맞췄습니다! 훌륭합니다.")
         st.balloons()
@@ -1534,24 +1520,24 @@ def show_matching_game(song_choice):
 
         if current_selected is None:
             st.session_state[f"match_selected_{game_key}"] = card
-            st.session_state[f"match_message_{game_key}"] = "첫 번째 카드를 골랐습니다. 반대쪽에서 짝을 고르세요."
+            st.session_state[f"match_message_{game_key}"] = ""
             st.rerun()
 
         elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
             st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
             st.session_state[f"match_selected_{game_key}"] = None
-            st.session_state[f"match_message_{game_key}"] = "💥 팡! 맞는 짝입니다. 카드가 사라졌습니다."
+            st.session_state[f"match_message_{game_key}"] = ""
             st.balloons()
             st.rerun()
 
         elif current_selected["kind"] == card["kind"]:
             st.session_state[f"match_selected_{game_key}"] = card
-            st.session_state[f"match_message_{game_key}"] = "같은 쪽 카드를 다시 골랐습니다. 반대쪽에서 짝을 고르세요."
+            st.session_state[f"match_message_{game_key}"] = ""
             st.rerun()
 
         else:
             st.session_state[f"match_selected_{game_key}"] = None
-            st.session_state[f"match_message_{game_key}"] = "아쉽습니다. 다시 골라 보세요."
+            st.session_state[f"match_message_{game_key}"] = ""
             st.rerun()
 
     left_col, right_col = st.columns(2)
