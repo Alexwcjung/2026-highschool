@@ -26,8 +26,36 @@ def create_wordcloud(text):
 
 
 st.title("🧰 수업 도구 모음")
-st.caption("칠판, 그림판, QR 코드, 타이머, 워드클라우드, 이모지, 조 편성, 번역을 한곳에서 사용할 수 있습니다.")
-
+# =========================
+# 학생 안내 문구
+# =========================
+st.markdown("""
+<div style="
+    background: linear-gradient(135deg, #eef7ff, #f7fbff);
+    border: 1px solid #d6e9ff;
+    border-radius: 18px;
+    padding: 22px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+">
+    <h2 style="margin-top:0; color:#1f4e79;">🧰 수업 도구 모음</h2>
+    <p style="font-size:18px; line-height:1.7; margin-bottom:12px;">
+        이 앱은 수업 시간에 바로 사용할 수 있는 간단한 도구 모음입니다.
+        위의 탭을 눌러 필요한 기능을 선택하세요.
+    </p>
+    <ul style="font-size:16px; line-height:1.8; margin-bottom:0;">
+        <li><b>Blackboard</b>: 칠판처럼 글을 크게 보여줍니다.</li>
+        <li><b>Drawing</b>: 화면에 자유롭게 그림을 그릴 수 있습니다.</li>
+        <li><b>QR code</b>: 인터넷 주소를 QR 코드로 바꿉니다.</li>
+        <li><b>Timer</b>: 활동 시간을 정하고 타이머를 사용할 수 있습니다.</li>
+        <li><b>WordCloud</b>: 입력한 글에서 중요한 단어를 구름 모양으로 보여줍니다.</li>
+        <li><b>Emoji</b>: 수업 자료에 사용할 이모지를 쉽게 찾을 수 있습니다.</li>
+        <li><b>Multi-TTS</b>: 여러 언어의 문장을 음성으로 들을 수 있습니다.</li>
+        <li><b>Grouping</b>: 학생들을 무작위로 조 편성할 수 있습니다.</li>
+        <li><b>Translation</b>: 영어↔한국어 번역을 하고, 영어 문장의 발음도 들을 수 있습니다.</li>
+    </ul>
+</div>
+""", unsafe_allow_html=True)
 # Streamlit tabs
 tabs = st.tabs([
     "✏️Blackboard",
