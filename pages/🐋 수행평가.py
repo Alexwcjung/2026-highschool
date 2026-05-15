@@ -55,6 +55,55 @@ def english_audio_player(text):
 
 
 # =========================
+# 문제 언어: 한국어 / 베트남어 → 영어
+# =========================
+PROBLEM_TEXT = {
+    "ko": {
+        "flag": "🇰🇷",
+        "label": "한국어 → 영어",
+        "intro": "영어 문장을 보고, 듣고, 따라 말해 봅시다.",
+        "name_input": "내 이름을 한국어 또는 영어로 써 보세요.",
+        "name_placeholder": "예: 정우창, 김민수, Jimin",
+        "name_problem": "나는 (성 + 이름)입니다.",
+        "hobby_problem_1": "내 취미는 (        )입니다.",
+        "hobby_problem_2": "나는 학생이고 키가 큽니다.",
+        "hobby_input": "취미를 한국어 또는 베트남어로 입력하면 영어 문장에 바로 반영됩니다.",
+        "hobby_placeholder": "예: 축구, 노래 부르기, 게임하기, 음악 듣기, đá bóng, nghe nhạc",
+        "hobby_translate": "🌐 구글 번역에서 더 정확한 영어 표현과 발음 확인하기",
+        "hobby_empty_info": "취미를 한국어 또는 베트남어로 입력하면 구글 번역으로 연결됩니다.",
+        "hobby_en_input": "영어 취미 표현을 확인하거나 수정하세요.",
+        "hobby_sentence_problem": "내 취미는 {hobby}입니다. 나는 학생이고 키가 큽니다.",
+        "time_problem": "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
+        "need_problem": "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
+        "picture_timer": "⏱️ 20초 안에 사진을 묘사해 봅시다.",
+        "picture_listen": "📢 사진 묘사 전체 듣기",
+        "final_success": "영어 문장을 듣고 따라 말하면서 연습해 보세요.",
+    },
+    "vi": {
+        "flag": "🇻🇳",
+        "label": "베트남어 → 영어",
+        "intro": "Hãy nhìn câu tiếng Anh, nghe và luyện nói theo.",
+        "name_input": "Hãy viết tên của em bằng tiếng Việt, tiếng Hàn hoặc tiếng Anh.",
+        "name_placeholder": "Ví dụ: Jeong Woochang, Nguyễn Văn An, 정우창",
+        "name_problem": "Tôi là (họ + tên).",
+        "hobby_problem_1": "Sở thích của tôi là (        ).",
+        "hobby_problem_2": "Tôi là học sinh và cao.",
+        "hobby_input": "Nhập sở thích bằng tiếng Việt hoặc tiếng Hàn, rồi kiểm tra câu tiếng Anh.",
+        "hobby_placeholder": "Ví dụ: đá bóng, nghe nhạc, chơi game, đọc sách, 축구, 음악 듣기",
+        "hobby_translate": "🌐 Kiểm tra cách nói tiếng Anh và phát âm bằng Google Dịch",
+        "hobby_empty_info": "Nhập sở thích bằng tiếng Việt hoặc tiếng Hàn để mở Google Dịch.",
+        "hobby_en_input": "Kiểm tra hoặc sửa cách nói sở thích bằng tiếng Anh.",
+        "hobby_sentence_problem": "Sở thích của tôi là {hobby}. Tôi là học sinh và cao.",
+        "time_problem": "Bây giờ là mấy giờ? Tôi muốn về nhà bây giờ.",
+        "need_problem": "Tôi muốn uống nước. Tôi cũng muốn ăn đồ ăn.",
+        "picture_timer": "⏱️ Hãy miêu tả bức tranh trong 20 giây.",
+        "picture_listen": "📢 Nghe toàn bộ phần miêu tả tranh",
+        "final_success": "Hãy nghe câu tiếng Anh và luyện nói theo.",
+    }
+}
+
+
+# =========================
 # 한글 이름 간단 로마자 변환
 # =========================
 CHO = [
@@ -84,7 +133,7 @@ COMMON_SURNAMES = {
 }
 
 SPECIAL_SYLLABLES = {
-    "우": "Woo", "창": "chang", "민": "min", "수": "su", "지": "ji", "민": "min",
+    "우": "Woo", "창": "chang", "민": "min", "수": "su", "지": "ji",
     "준": "jun", "영": "young", "현": "hyun", "서": "seo", "연": "yeon",
     "윤": "yoon", "아": "a", "나": "na", "래": "rae", "송": "song", "희": "hee",
 }
@@ -115,7 +164,7 @@ def romanize_hangul_name(text):
     if not text:
         return "Jeong Woochang"
 
-    # 이미 영어로 입력한 경우: 단어 첫 글자만 대문자로 정리
+    # 이미 영어/베트남어 알파벳으로 입력한 경우: 단어 첫 글자만 대문자로 정리
     if not any(0xAC00 <= ord(ch) <= 0xD7A3 for ch in text):
         cleaned = re.sub(r"\s+", " ", text).strip()
         return " ".join(part.capitalize() for part in cleaned.split()) or "Jeong Woochang"
@@ -133,7 +182,11 @@ def romanize_hangul_name(text):
     return last_name
 
 
+# =========================
+# 취미 간단 변환: 한국어/베트남어 → 영어
+# =========================
 HOBBY_TRANSLATIONS = {
+    # Korean
     "축구": "playing soccer",
     "야구": "playing baseball",
     "농구": "playing basketball",
@@ -173,15 +226,49 @@ HOBBY_TRANSLATIONS = {
     "잠자기": "sleeping",
     "춤": "dancing",
     "춤추기": "dancing",
+
+    # Vietnamese
+    "đá bóng": "playing soccer",
+    "bóng đá": "playing soccer",
+    "chơi bóng đá": "playing soccer",
+    "bóng rổ": "playing basketball",
+    "chơi bóng rổ": "playing basketball",
+    "bóng chuyền": "playing volleyball",
+    "chơi bóng chuyền": "playing volleyball",
+    "cầu lông": "playing badminton",
+    "chơi cầu lông": "playing badminton",
+    "bơi": "swimming",
+    "đạp xe": "riding a bike",
+    "chơi game": "playing games",
+    "trò chơi": "playing games",
+    "hát": "singing",
+    "nghe nhạc": "listening to music",
+    "xem phim": "watching movies",
+    "xem drama": "watching dramas",
+    "đọc sách": "reading books",
+    "vẽ": "drawing",
+    "nấu ăn": "cooking",
+    "làm bánh": "baking",
+    "cắm trại": "camping",
+    "đi bộ đường dài": "hiking",
+    "câu cá": "fishing",
+    "chụp ảnh": "taking pictures",
+    "sửa xe": "fixing cars",
+    "taekwondo": "doing taekwondo",
+    "quyền anh": "boxing",
+    "tập thể dục": "exercising",
+    "ngủ": "sleeping",
+    "nhảy": "dancing",
 }
 
 
-def guess_hobby_english(korean_text):
+def guess_hobby_english(input_text):
     """자주 쓰는 취미는 앱 안에서 바로 영어로 보여 주고, 어려운 표현은 구글 번역 확인을 유도합니다."""
-    key = str(korean_text).strip()
+    key = str(input_text).strip().lower()
     if not key:
         return ""
     return HOBBY_TRANSLATIONS.get(key, "")
+
 
 # =========================
 # 디자인
@@ -218,7 +305,7 @@ st.markdown(
         margin:10px 0 10px 0;
         box-shadow:0 3px 10px rgba(0,0,0,0.04);
     }
-    .ko-line {
+    .problem-line {
         font-size:17px;
         color:#374151;
         font-weight:800;
@@ -245,11 +332,11 @@ st.markdown(
 )
 
 
-def sentence_card(korean, english):
+def sentence_card(problem_sentence, english, flag="🇰🇷"):
     st.markdown(
         f"""
         <div class="sentence-card">
-            <div class="ko-line">🇰🇷 {korean}</div>
+            <div class="problem-line">{flag} {problem_sentence}</div>
             <div class="en-line">{english}</div>
         </div>
         """,
@@ -265,11 +352,23 @@ st.markdown(
     """
     <div class="main-title">
         <h1>🎤 영어 말하기 수행평가 연습</h1>
-        <p>영어 문장을 보고, 듣고, 따라 말해 봅시다.</p>
+        <p>한국어 또는 베트남어 문제를 보고 영어로 말해 봅시다.</p>
     </div>
     """,
     unsafe_allow_html=True
 )
+
+problem_choice = st.radio(
+    "문제 언어를 선택하세요.",
+    ["한국어 → 영어", "베트남어 → 영어"],
+    horizontal=True
+)
+
+problem_lang = "vi" if problem_choice == "베트남어 → 영어" else "ko"
+TXT = PROBLEM_TEXT[problem_lang]
+FLAG = TXT["flag"]
+
+st.info(f"현재 선택: **{TXT['label']}**")
 
 st.markdown("---")
 
@@ -279,8 +378,8 @@ st.markdown("---")
 st.subheader("1. 자기소개하기")
 
 name_input = st.text_input(
-    "내 이름을 한국어 또는 영어로 써 보세요.",
-    placeholder="예: 정우창, 김민수, Jimin"
+    TXT["name_input"],
+    placeholder=TXT["name_placeholder"]
 )
 
 name_text = str(name_input).strip() if str(name_input).strip() else "정우창"
@@ -292,8 +391,9 @@ if name_input.strip() and romanized_name.lower() != name_text.lower():
 name_sentence = f"I am {romanized_name}."
 
 sentence_card(
-    "나는 (성 + 이름)입니다.",
-    name_sentence
+    TXT["name_problem"],
+    name_sentence,
+    flag=FLAG
 )
 
 st.markdown("---")
@@ -304,11 +404,11 @@ st.markdown("---")
 st.subheader("2. 내가 좋아하는 것 말하기")
 
 st.markdown(
-    """
+    f"""
     <div class="orange-card">
-        <div class="ko-line" style="color:#9a3412;">
-            🇰🇷 내 취미는 ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; )입니다.<br>
-            나는 학생이고 키가 큽니다.
+        <div class="problem-line" style="color:#9a3412;">
+            {FLAG} {TXT["hobby_problem_1"]}<br>
+            {TXT["hobby_problem_2"]}
         </div>
         <div class="en-line">
             My hobby is ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).<br>
@@ -319,24 +419,24 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-hobby_ko_input = st.text_input(
-    "취미를 한국어로 입력하면 영어 문장에 바로 반영됩니다.",
-    placeholder="예: 축구, 노래 부르기, 게임하기, 음악 듣기, 자동차 정비"
+hobby_input = st.text_input(
+    TXT["hobby_input"],
+    placeholder=TXT["hobby_placeholder"]
 )
 
-if hobby_ko_input.strip():
+if hobby_input.strip():
     st.link_button(
-        "🌐 구글 번역에서 더 정확한 영어 표현과 발음 확인하기",
-        make_google_translate_url(hobby_ko_input, source="auto", target="en"),
+        TXT["hobby_translate"],
+        make_google_translate_url(hobby_input, source="auto", target="en"),
         use_container_width=True
     )
 else:
-    st.info("취미를 한국어로 입력하면 구글 번역으로 연결됩니다.")
+    st.info(TXT["hobby_empty_info"])
 
-auto_hobby_en = guess_hobby_english(hobby_ko_input)
+auto_hobby_en = guess_hobby_english(hobby_input)
 
 hobby_en_input = st.text_input(
-    "영어 취미 표현을 확인하거나 수정하세요.",
+    TXT["hobby_en_input"],
     value=auto_hobby_en,
     placeholder="예: playing soccer, listening to music, playing games"
 )
@@ -348,9 +448,11 @@ if hobby_en:
 else:
     hobby_sentence = "My hobby is blank. I am a student and tall."
 
+hobby_problem_word = hobby_input.strip() if hobby_input.strip() else "(취미)"
 sentence_card(
-    f"내 취미는 {hobby_ko_input.strip() if hobby_ko_input.strip() else '(취미)'}입니다. 나는 학생이고 키가 큽니다.",
-    hobby_sentence
+    TXT["hobby_sentence_problem"].format(hobby=hobby_problem_word),
+    hobby_sentence,
+    flag=FLAG
 )
 
 st.markdown("---")
@@ -361,8 +463,9 @@ st.markdown("---")
 st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 
 sentence_card(
-    "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
-    "What time is it? I want to go home now."
+    TXT["time_problem"],
+    "What time is it? I want to go home now.",
+    flag=FLAG
 )
 
 st.markdown("---")
@@ -373,8 +476,9 @@ st.markdown("---")
 st.subheader("4. 필요한 것 말하기")
 
 sentence_card(
-    "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
-    "I want water. I want food too."
+    TXT["need_problem"],
+    "I want water. I want food too.",
+    flag=FLAG
 )
 
 st.markdown("---")
@@ -412,7 +516,7 @@ with center_col:
             "pages/images/speaking_test.png 또는 images/speaking_test.png 로 저장하세요."
         )
 
-st.info("⏱️ 20초 안에 사진을 묘사해 봅시다.")
+st.info(TXT["picture_timer"])
 
 picture_script = (
     "There are many people in the street. "
@@ -421,7 +525,7 @@ picture_script = (
     "They look happy."
 )
 
-st.markdown("### 📢 사진 묘사 전체 듣기")
+st.markdown(f"### {TXT['picture_listen']}")
 english_audio_player(picture_script)
 
 st.markdown(
@@ -444,4 +548,4 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-st.success("영어 문장을 듣고 따라 말하면서 연습해 보세요.")
+st.success(TXT["final_success"])
