@@ -61,20 +61,22 @@ PROBLEM_TEXT = {
     "ko": {
         "flag": "🇰🇷",
         "label": "한국어 → 영어",
-        "intro": "영어 문장을 보고, 듣고, 따라 말해 봅시다.",
+        "question_label": "문제",
+        "answer_label": "영어로 말하기",
         "name_input": "내 이름을 한국어 또는 영어로 써 보세요.",
         "name_placeholder": "예: 정우창, 김민수, Jimin",
         "name_problem": "나는 (성 + 이름)입니다.",
         "hobby_problem_1": "내 취미는 (        )입니다.",
         "hobby_problem_2": "나는 학생이고 키가 큽니다.",
-        "hobby_input": "취미를 한국어 또는 베트남어로 입력하면 영어 문장에 바로 반영됩니다.",
-        "hobby_placeholder": "예: 축구, 노래 부르기, 게임하기, 음악 듣기, đá bóng, nghe nhạc",
-        "hobby_translate": "🌐 구글 번역에서 더 정확한 영어 표현과 발음 확인하기",
-        "hobby_empty_info": "취미를 한국어 또는 베트남어로 입력하면 구글 번역으로 연결됩니다.",
-        "hobby_en_input": "영어 취미 표현을 확인하거나 수정하세요.",
+        "hobby_input": "취미를 한국어로 입력하세요. 입력 후 구글 번역에서 영어 표현을 확인합니다.",
+        "hobby_placeholder": "예: 축구, 노래 부르기, 게임하기, 음악 듣기, 자동차 정비",
+        "hobby_translate": "🌐 구글 번역에서 영어 표현 확인하기",
+        "hobby_empty_info": "취미를 입력하면 구글 번역 버튼이 나타납니다.",
+        "hobby_en_input": "구글 번역에서 확인한 영어 취미 표현을 여기에 입력하세요.",
         "hobby_sentence_problem": "내 취미는 {hobby}입니다. 나는 학생이고 키가 큽니다.",
         "time_problem": "지금 몇 시인가요? 저는 지금 집에 가고 싶습니다.",
         "need_problem": "물을 마시고 싶어요. 음식도 먹고 싶습니다.",
+        "picture_problem": "사진을 보고 영어로 묘사하세요.",
         "picture_timer": "⏱️ 20초 안에 사진을 묘사해 봅시다.",
         "picture_listen": "📢 사진 묘사 전체 듣기",
         "final_success": "영어 문장을 듣고 따라 말하면서 연습해 보세요.",
@@ -82,20 +84,22 @@ PROBLEM_TEXT = {
     "vi": {
         "flag": "🇻🇳",
         "label": "베트남어 → 영어",
-        "intro": "Hãy nhìn câu tiếng Anh, nghe và luyện nói theo.",
+        "question_label": "Câu hỏi",
+        "answer_label": "Nói bằng tiếng Anh",
         "name_input": "Hãy viết tên của em bằng tiếng Việt, tiếng Hàn hoặc tiếng Anh.",
         "name_placeholder": "Ví dụ: Jeong Woochang, Nguyễn Văn An, 정우창",
         "name_problem": "Tôi là (họ + tên).",
         "hobby_problem_1": "Sở thích của tôi là (        ).",
         "hobby_problem_2": "Tôi là học sinh và cao.",
-        "hobby_input": "Nhập sở thích bằng tiếng Việt hoặc tiếng Hàn, rồi kiểm tra câu tiếng Anh.",
-        "hobby_placeholder": "Ví dụ: đá bóng, nghe nhạc, chơi game, đọc sách, 축구, 음악 듣기",
-        "hobby_translate": "🌐 Kiểm tra cách nói tiếng Anh và phát âm bằng Google Dịch",
-        "hobby_empty_info": "Nhập sở thích bằng tiếng Việt hoặc tiếng Hàn để mở Google Dịch.",
-        "hobby_en_input": "Kiểm tra hoặc sửa cách nói sở thích bằng tiếng Anh.",
+        "hobby_input": "Nhập sở thích bằng tiếng Việt. Sau đó kiểm tra cách nói tiếng Anh bằng Google Dịch.",
+        "hobby_placeholder": "Ví dụ: đá bóng, nghe nhạc, chơi game, đọc sách, sửa xe",
+        "hobby_translate": "🌐 Kiểm tra cách nói tiếng Anh bằng Google Dịch",
+        "hobby_empty_info": "Nhập sở thích, nút Google Dịch sẽ xuất hiện.",
+        "hobby_en_input": "Nhập cách nói sở thích bằng tiếng Anh sau khi kiểm tra Google Dịch.",
         "hobby_sentence_problem": "Sở thích của tôi là {hobby}. Tôi là học sinh và cao.",
         "time_problem": "Bây giờ là mấy giờ? Tôi muốn về nhà bây giờ.",
         "need_problem": "Tôi muốn uống nước. Tôi cũng muốn ăn đồ ăn.",
+        "picture_problem": "Hãy nhìn bức tranh và miêu tả bằng tiếng Anh.",
         "picture_timer": "⏱️ Hãy miêu tả bức tranh trong 20 giây.",
         "picture_listen": "📢 Nghe toàn bộ phần miêu tả tranh",
         "final_success": "Hãy nghe câu tiếng Anh và luyện nói theo.",
@@ -119,7 +123,6 @@ JONG = [
     "lm", "lb", "ls", "lt", "lp", "lh", "m", "p", "ps", "t",
     "t", "ng", "t", "t", "k", "t", "p", "t"
 ]
-
 
 COMMON_SURNAMES = {
     "김": "Kim", "이": "Lee", "박": "Park", "최": "Choi", "정": "Jeong",
@@ -305,15 +308,35 @@ st.markdown(
         margin:10px 0 10px 0;
         box-shadow:0 3px 10px rgba(0,0,0,0.04);
     }
+    .problem-label {
+        display:inline-block;
+        background:#e0f2fe;
+        color:#075985;
+        font-size:14px;
+        font-weight:900;
+        padding:5px 10px;
+        border-radius:999px;
+        margin-bottom:8px;
+    }
+    .answer-label {
+        display:inline-block;
+        background:#dcfce7;
+        color:#166534;
+        font-size:14px;
+        font-weight:900;
+        padding:5px 10px;
+        border-radius:999px;
+        margin-top:12px;
+        margin-bottom:8px;
+    }
     .problem-line {
-        font-size:17px;
+        font-size:18px;
         color:#374151;
         font-weight:800;
-        margin-bottom:8px;
         line-height:1.6;
     }
     .en-line {
-        font-size:28px;
+        font-size:30px;
         color:#111827;
         font-weight:900;
         line-height:1.5;
@@ -332,11 +355,14 @@ st.markdown(
 )
 
 
-def sentence_card(problem_sentence, english, flag="🇰🇷"):
+def sentence_card(problem_sentence, english, flag="🇰🇷", question_label="문제", answer_label="영어로 말하기"):
     st.markdown(
         f"""
         <div class="sentence-card">
-            <div class="problem-line">{flag} {problem_sentence}</div>
+            <div class="problem-label">{flag} {question_label}</div>
+            <div class="problem-line">{problem_sentence}</div>
+
+            <div class="answer-label">🇺🇸 {answer_label}</div>
             <div class="en-line">{english}</div>
         </div>
         """,
@@ -352,7 +378,7 @@ st.markdown(
     """
     <div class="main-title">
         <h1>🎤 영어 말하기 수행평가 연습</h1>
-        <p>한국어 또는 베트남어 문제를 보고 영어로 말해 봅시다.</p>
+        <p>문제는 한국어 또는 베트남어로 보고, 정답은 영어로 말해 봅시다.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -367,8 +393,10 @@ problem_choice = st.radio(
 problem_lang = "vi" if problem_choice == "베트남어 → 영어" else "ko"
 TXT = PROBLEM_TEXT[problem_lang]
 FLAG = TXT["flag"]
+QUESTION_LABEL = TXT["question_label"]
+ANSWER_LABEL = TXT["answer_label"]
 
-st.info(f"현재 선택: **{TXT['label']}**")
+st.info(f"현재 선택: **{TXT['label']}** / 정답 문장은 항상 **영어**로 나옵니다.")
 
 st.markdown("---")
 
@@ -393,7 +421,9 @@ name_sentence = f"I am {romanized_name}."
 sentence_card(
     TXT["name_problem"],
     name_sentence,
-    flag=FLAG
+    flag=FLAG,
+    question_label=QUESTION_LABEL,
+    answer_label=ANSWER_LABEL
 )
 
 st.markdown("---")
@@ -406,10 +436,13 @@ st.subheader("2. 내가 좋아하는 것 말하기")
 st.markdown(
     f"""
     <div class="orange-card">
+        <div class="problem-label">{FLAG} {QUESTION_LABEL}</div>
         <div class="problem-line" style="color:#9a3412;">
-            {FLAG} {TXT["hobby_problem_1"]}<br>
+            {TXT["hobby_problem_1"]}<br>
             {TXT["hobby_problem_2"]}
         </div>
+
+        <div class="answer-label">🇺🇸 {ANSWER_LABEL}</div>
         <div class="en-line">
             My hobby is ( &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ).<br>
             I am a student and tall.
@@ -433,7 +466,7 @@ if hobby_input.strip():
 else:
     st.info(TXT["hobby_empty_info"])
 
-auto_hobby_en = guess_hobby_english(hobby_input)
+auto_hobby_en = ""
 
 hobby_en_input = st.text_input(
     TXT["hobby_en_input"],
@@ -442,6 +475,8 @@ hobby_en_input = st.text_input(
 )
 
 hobby_en = str(hobby_en_input).strip()
+
+st.caption("🔊 아래 발음 듣기는 구글 번역 결과가 아니라, 영어 문장만 읽습니다: My hobby is ~. I am a student and tall.")
 
 if hobby_en:
     hobby_sentence = f"My hobby is {hobby_en}. I am a student and tall."
@@ -452,7 +487,9 @@ hobby_problem_word = hobby_input.strip() if hobby_input.strip() else "(취미)"
 sentence_card(
     TXT["hobby_sentence_problem"].format(hobby=hobby_problem_word),
     hobby_sentence,
-    flag=FLAG
+    flag=FLAG,
+    question_label=QUESTION_LABEL,
+    answer_label=ANSWER_LABEL
 )
 
 st.markdown("---")
@@ -465,7 +502,9 @@ st.subheader("3. 시간 묻기와 하고 싶은 말하기")
 sentence_card(
     TXT["time_problem"],
     "What time is it? I want to go home now.",
-    flag=FLAG
+    flag=FLAG,
+    question_label=QUESTION_LABEL,
+    answer_label=ANSWER_LABEL
 )
 
 st.markdown("---")
@@ -478,7 +517,9 @@ st.subheader("4. 필요한 것 말하기")
 sentence_card(
     TXT["need_problem"],
     "I want water. I want food too.",
-    flag=FLAG
+    flag=FLAG,
+    question_label=QUESTION_LABEL,
+    answer_label=ANSWER_LABEL
 )
 
 st.markdown("---")
@@ -525,27 +566,15 @@ picture_script = (
     "They look happy."
 )
 
+sentence_card(
+    TXT["picture_problem"],
+    picture_script,
+    flag=FLAG,
+    question_label=QUESTION_LABEL,
+    answer_label=ANSWER_LABEL
+)
+
 st.markdown(f"### {TXT['picture_listen']}")
 english_audio_player(picture_script)
-
-st.markdown(
-    """
-    <div style="
-        background:#f8fafc;
-        border:1px solid #e5e7eb;
-        border-radius:18px;
-        padding:18px 20px;
-        margin-top:12px;
-    ">
-        <div style="font-size:25px; font-weight:800; line-height:1.7; color:#111827;">
-            There are many people in the street.<br>
-            I can see trees and buildings too.<br>
-            Some people are riding bikes and some are sitting in chairs.<br>
-            They look happy.
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
 st.success(TXT["final_success"])
