@@ -622,32 +622,11 @@ with tabs[6]:
 # --- Tab 7: Translation ---
 with tabs[7]:
     st.subheader("🌐 번역기")
-    st.caption("앱 안에서 번역 패키지를 실행하지 않고, 구글 번역과 발음 듣기 화면으로 바로 연결합니다.")
+    st.caption("앱 안에서 번역 패키지를 실행하지 않고, 구글 번역 페이지로 연결합니다. 발음도 구글 번역에서 들을 수 있습니다.")
 
-    # Streamlit Cloud에서 deep-translator / googletrans 오류가 자주 발생하므로
-    # 이 탭은 외부 구글 번역 링크를 만드는 방식으로 구성했습니다.
-    # 따라서 requirements.txt에 deep-translator, googletrans를 넣지 않아도 됩니다.
-
+    # 구글 번역 URL용 언어 코드
+    # 영어 English가 첫 번째 선택지입니다.
     lang_options = {
-        "자동 감지 Auto": "auto",
-        "영어 English": "en",
-        "한국어 Korean": "ko",
-        "일본어 Japanese": "ja",
-        "중국어 Chinese Simplified": "zh-CN",
-        "스페인어 Spanish": "es",
-        "프랑스어 French": "fr",
-        "독일어 German": "de",
-        "러시아어 Russian": "ru",
-        "베트남어 Vietnamese": "vi",
-        "태국어 Thai": "th",
-        "인도네시아어 Indonesian": "id",
-        "아랍어 Arabic": "ar",
-        "힌디어 Hindi": "hi",
-        "이탈리아어 Italian": "it",
-        "포르투갈어 Portuguese": "pt",
-    }
-
-    target_lang_options = {
         "영어 English": "en",
         "한국어 Korean": "ko",
         "일본어 Japanese": "ja",
@@ -670,7 +649,7 @@ with tabs[7]:
     with col1:
         source_lang_label = st.selectbox(
             "원문 언어",
-            list(lang_options.keys()),
+            ["자동 감지 Auto"] + list(lang_options.keys()),
             index=0,
             key="source_lang_label_link_only"
         )
@@ -678,8 +657,8 @@ with tabs[7]:
     with col2:
         target_lang_label = st.selectbox(
             "번역할 언어",
-            list(target_lang_options.keys()),
-            index=0,  # 영어 English가 기본 선택
+            list(lang_options.keys()),
+            index=0,
             key="target_lang_label_link_only"
         )
 
@@ -690,9 +669,13 @@ with tabs[7]:
         key="translation_source_input_link_only"
     )
 
-    def make_google_translate_url(text, source_code, target_code):
-        encoded_text = urllib.parse.quote(text.strip())
-        return (
+    source_code = "auto" if source_lang_label == "자동 감지 Auto" else lang_options[source_lang_label]
+    target_code = lang_options[target_lang_label]
+
+    if source_text.strip():
+        encoded_text = urllib.parse.quote(source_text.strip())
+
+        google_translate_url = (
             "https://translate.google.com/?sl="
             + source_code
             + "&tl="
@@ -702,38 +685,8 @@ with tabs[7]:
             + "&op=translate"
         )
 
-    source_code = lang_options[source_lang_label]
-    target_code = target_lang_options[target_lang_label]
-
-    st.markdown("---")
-
-    if source_text.strip():
-        google_translate_url = make_google_translate_url(
-            source_text,
-            source_code,
-            target_code
-        )
-
-        st.success("아래 버튼을 누르면 구글 번역 화면이 열립니다. 열린 화면에서 스피커 버튼을 누르면 발음을 들을 수 있습니다.")
-
-        st.link_button(
-            "🌐 구글 번역으로 열기 + 발음 듣기",
-            google_translate_url,
-            use_container_width=True
-        )
-
-        # 영어 발음 연습을 자주 쓰는 경우를 위해 영어 번역 전용 버튼도 따로 제공합니다.
-        english_translate_url = make_google_translate_url(
-            source_text,
-            source_code,
-            "en"
-        )
-
-        st.link_button(
-            "🔊 영어로 번역하고 발음 듣기",
-            english_translate_url,
-            use_container_width=True
-        )
+        # st.link_button을 쓰지 않습니다. 낮은 Streamlit 버전에서도 작동하도록 HTML 링크로 처리합니다.
+        safe_url = html.escape(google_translate_url, quote=True)
 
         st.markdown(
             f"""
@@ -741,23 +694,39 @@ with tabs[7]:
                 background: linear-gradient(135deg, #ffffff, #f1f7ff);
                 border: 1px solid #d8e8ff;
                 border-radius: 18px;
-                padding: 18px 20px;
+                padding: 22px 24px;
                 margin-top: 16px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-                font-size: 16px;
-                line-height: 1.7;
+                margin-bottom: 16px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.06);
             ">
-                <b>사용 방법</b><br>
-                1. 번역할 문장을 입력합니다.<br>
-                2. 버튼을 누르면 구글 번역 페이지가 열립니다.<br>
-                3. 번역 결과 아래의 🔊 스피커 버튼을 눌러 발음을 듣습니다.<br><br>
-                <span style="color:#2563eb; font-weight:700;">
-                이 방식은 앱 안에서 번역 패키지를 실행하지 않기 때문에 Streamlit Cloud 오류가 훨씬 적습니다.
-                </span>
+                <div style="font-size:18px; font-weight:800; color:#1f2937; margin-bottom:10px;">
+                    🌐 구글 번역으로 이동
+                </div>
+                <div style="font-size:15px; line-height:1.7; color:#374151; margin-bottom:16px;">
+                    아래 버튼을 누르면 입력한 문장이 구글 번역에 자동으로 들어갑니다.<br>
+                    이동한 뒤 스피커 아이콘을 누르면 발음도 들을 수 있습니다.
+                </div>
+                <a href="{safe_url}" target="_blank" style="
+                    display:block;
+                    text-align:center;
+                    background:#2563eb;
+                    color:white;
+                    text-decoration:none;
+                    font-size:20px;
+                    font-weight:800;
+                    padding:14px 18px;
+                    border-radius:14px;
+                ">
+                    🔊 구글 번역에서 번역하고 발음 듣기
+                </a>
             </div>
             """,
             unsafe_allow_html=True
         )
 
+        with st.expander("🔗 링크가 열리지 않을 때 사용할 주소 보기"):
+            st.write(google_translate_url)
+            st.caption("위 주소를 복사해서 새 창에 붙여 넣어도 됩니다.")
+
     else:
-        st.info("번역할 문장을 입력하면 구글 번역 연결 버튼이 나타납니다.")
+        st.info("번역할 문장을 입력하면 구글 번역으로 이동하는 버튼이 나타납니다.")
