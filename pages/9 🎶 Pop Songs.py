@@ -234,6 +234,7 @@ song_options = [
     "4. Stand By Me - Ben E. King",
     "5. Don't Know Why - Norah Jones",
     "6. Fix You - Coldplay",
+    "7. The Scientist - Coldplay",
 ]
 
 # 이전 실행에서 남은 선택값이 목록과 맞지 않으면 자동으로 초기화합니다.
@@ -1436,6 +1437,190 @@ elif "6. Fix You" in song_choice:
     ]
 
 
+elif "7. The Scientist" in song_choice:
+    video_url = "https://www.youtube.com/watch?v=kV82ahVRPFg&list=RDkV82ahVRPFg&start_radio=1"
+
+    bg_content = '''
+    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#0f766e;">
+        🧪 The Scientist: 다시 처음으로 돌아가고 싶은 마음
+    </h3>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        Coldplay의 <b>The Scientist</b>는 사랑하는 사람과 멀어진 뒤,
+        관계를 다시 처음부터 되돌리고 싶은 마음을 담은 노래입니다.
+        제목에는 <b>scientist</b>라는 단어가 나오지만, 이 노래의 중심은 과학 지식이 아니라
+        이성으로 설명하기 어려운 후회, 그리움, 미안함입니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        노래 속 화자는 상대를 찾아가 <b>I'm sorry</b>, <b>I need you</b>라고 말하고 싶어 합니다.
+        하지만 두 사람의 관계는 이미 복잡하게 꼬여 있고, 화자는 계속 같은 자리를 맴도는 듯한
+        느낌을 받습니다. 그래서 <b>running in circles</b>, <b>chasing our tails</b> 같은 표현은
+        앞으로 나아가지 못하고 반복되는 마음을 잘 보여 줍니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        반복되는 <b>Nobody said it was easy</b>는 사랑과 관계가 쉽지 않다는 사실을 인정하는 말입니다.
+        그리고 <b>take me back to the start</b>는 단순히 시간을 되돌리고 싶다는 뜻을 넘어,
+        처음의 순수했던 마음과 관계로 다시 돌아가고 싶다는 간절한 마음으로 이해할 수 있습니다.
+    </p>
+
+    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">
+        수업에서는 <b>tell you I'm sorry</b>, <b>set you apart</b>, <b>go back to the start</b>,
+        <b>running in circles</b>, <b>nobody said it was easy</b>, <b>science and progress</b>
+        같은 표현을 중심으로 배울 수 있습니다. 속도가 비교적 느리고 반복 표현이 많아
+        학생들이 감정과 표현을 함께 익히기에 좋은 곡입니다.
+    </p>
+    '''
+
+    lyrics_full = [
+        (
+            "Come up to meet you, tell you I'm sorry / You don't know how lovely you are",
+            "너를 만나러 와서 미안하다고 말하려 해 / 너는 네가 얼마나 사랑스러운지 몰라"
+        ),
+        (
+            "I had to find you / Tell you I need you / Tell you I set you apart",
+            "나는 너를 찾아야 했어 / 네가 필요하다고 말하려고 / 네가 특별하다고 말하려고"
+        ),
+        (
+            "Tell me your secrets / And ask me your questions / Oh, let's go back to the start",
+            "네 비밀을 말해 줘 / 그리고 나에게 질문해 줘 / 오, 우리 처음으로 돌아가자"
+        ),
+        (
+            "Running in circles / Coming up tails / Heads on a science apart",
+            "원을 그리며 맴돌고 / 동전의 뒷면만 나오는 것처럼 / 머리는 과학의 문제에 매여 있어"
+        ),
+        (
+            "Nobody said it was easy / It's such a shame for us to part",
+            "아무도 그것이 쉽다고 말하지 않았어 / 우리가 헤어지는 건 정말 안타까운 일이야"
+        ),
+        (
+            "Nobody said it was easy / No one ever said it would be this hard",
+            "아무도 그것이 쉽다고 말하지 않았어 / 아무도 이렇게 힘들 거라고 말하지 않았어"
+        ),
+        (
+            "Oh, take me back to the start",
+            "오, 나를 처음으로 데려가 줘"
+        ),
+        (
+            "I was just guessing / At numbers and figures / Pulling the puzzles apart",
+            "나는 그저 추측하고 있었어 / 숫자와 수치들을 보면서 / 퍼즐을 하나하나 풀어 헤치며"
+        ),
+        (
+            "Questions of science / Science and progress / Do not speak as loud as my heart",
+            "과학의 질문들 / 과학과 진보는 / 내 마음만큼 크게 말하지 못해"
+        ),
+        (
+            "Tell me you love me / Come back and haunt me / Oh, and I rush to the start",
+            "나를 사랑한다고 말해 줘 / 돌아와서 나를 계속 떠오르게 해 줘 / 오, 나는 처음으로 달려가"
+        ),
+        (
+            "Running in circles / Chasing our tails / Coming back as we are",
+            "원을 그리며 맴돌고 / 우리 꼬리를 쫓으며 / 결국 원래 모습 그대로 돌아와"
+        ),
+        (
+            "Nobody said it was easy / Oh, it's such a shame for us to part",
+            "아무도 그것이 쉽다고 말하지 않았어 / 오, 우리가 헤어지는 건 정말 안타까운 일이야"
+        ),
+        (
+            "Nobody said it was easy / No one ever said it would be so hard",
+            "아무도 그것이 쉽다고 말하지 않았어 / 아무도 그렇게 힘들 거라고 말하지 않았어"
+        ),
+        (
+            "I'm going back to the start",
+            "나는 처음으로 돌아가고 있어"
+        ),
+        (
+            "Oh / Oh / Oh / Oh",
+            "오 / 오 / 오 / 오"
+        ),
+    ]
+
+    comprehension_questions = [
+        {
+            "q": "1. 이 노래에서 화자가 가장 먼저 전하고 싶어 하는 말은 무엇인가요?",
+            "options": [
+                "축하한다는 말",
+                "미안하다는 말",
+                "잘 가라는 말",
+                "공부하라는 말"
+            ],
+            "answer": "미안하다는 말"
+        },
+        {
+            "q": "2. 'You don't know how lovely you are'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "너는 네가 얼마나 사랑스러운지 몰라",
+                "너는 과학을 잘 몰라",
+                "너는 길을 잘 몰라",
+                "너는 너무 바빠"
+            ],
+            "answer": "너는 네가 얼마나 사랑스러운지 몰라"
+        },
+        {
+            "q": "3. 'Let's go back to the start'는 어떤 마음을 나타내나요?",
+            "options": [
+                "모든 것을 포기하고 싶은 마음",
+                "처음으로 돌아가 다시 시작하고 싶은 마음",
+                "학교에 늦지 않으려는 마음",
+                "새로운 과학 실험을 하고 싶은 마음"
+            ],
+            "answer": "처음으로 돌아가 다시 시작하고 싶은 마음"
+        },
+        {
+            "q": "4. 'Running in circles'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "운동장을 빠르게 도는 것만 뜻한다",
+                "계속 같은 자리를 맴도는 것",
+                "원을 그리는 수학 문제",
+                "목적지에 바로 도착하는 것"
+            ],
+            "answer": "계속 같은 자리를 맴도는 것"
+        },
+        {
+            "q": "5. 'Nobody said it was easy'는 어떤 의미인가요?",
+            "options": [
+                "아무도 그것이 쉽다고 말하지 않았다",
+                "모두가 그것이 쉽다고 말했다",
+                "쉬운 일만 하자는 뜻이다",
+                "아무도 노래를 부르지 않았다"
+            ],
+            "answer": "아무도 그것이 쉽다고 말하지 않았다"
+        },
+        {
+            "q": "6. 'Science and progress do not speak as loud as my heart'의 의미로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "과학이 마음보다 더 중요하다는 뜻",
+                "이성과 지식보다 마음의 소리가 더 크게 느껴진다는 뜻",
+                "과학 수업이 너무 시끄럽다는 뜻",
+                "진보는 항상 빠르다는 뜻"
+            ],
+            "answer": "이성과 지식보다 마음의 소리가 더 크게 느껴진다는 뜻"
+        },
+        {
+            "q": "7. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "후회와 그리움",
+                "승리와 자신감",
+                "분노와 복수",
+                "여행의 설렘"
+            ],
+            "answer": "후회와 그리움"
+        },
+        {
+            "q": "8. 제목 'The Scientist'와 노래 내용의 관계로 가장 알맞은 것은 무엇인가요?",
+            "options": [
+                "과학 시험 정답을 알려 주는 노래이다",
+                "과학자가 실험실에서 성공하는 노래이다",
+                "이성적으로 풀 수 없는 마음과 관계를 노래한다",
+                "우주 과학을 설명하는 노래이다"
+            ],
+            "answer": "이성적으로 풀 수 없는 마음과 관계를 노래한다"
+        },
+    ]
+
+
+
 # =========================
 # 5. 문장 매칭 게임 데이터와 함수
 # =========================
@@ -1499,6 +1684,16 @@ def get_matching_pairs(song_choice):
             {"id": "fix_4", "en": "If you never try, you'll never know", "ko": "시도하지 않으면 절대 알 수 없어"},
             {"id": "fix_5", "en": "Tears stream down your face", "ko": "눈물이 네 얼굴을 타고 흘러내려"},
             {"id": "fix_6", "en": "I will learn from my mistakes", "ko": "나는 내 실수에서 배울 거야"},
+        ]
+
+    if "7. The Scientist" in song_choice:
+        return [
+            {"id": "sci_1", "en": "Tell you I'm sorry", "ko": "미안하다고 말하다"},
+            {"id": "sci_2", "en": "You don't know how lovely you are", "ko": "너는 네가 얼마나 사랑스러운지 몰라"},
+            {"id": "sci_3", "en": "Let's go back to the start", "ko": "우리 처음으로 돌아가자"},
+            {"id": "sci_4", "en": "Running in circles", "ko": "같은 자리를 맴돌고 있어"},
+            {"id": "sci_5", "en": "Nobody said it was easy", "ko": "아무도 그것이 쉽다고 말하지 않았어"},
+            {"id": "sci_6", "en": "I'm going back to the start", "ko": "나는 처음으로 돌아가고 있어"},
         ]
 
     return []
@@ -1775,6 +1970,20 @@ def get_key_expressions(song_choice):
             {"id": "fix_exp_8", "en": "Lights will guide you home", "ko": "빛이 너를 집으로 인도할 거야"},
             {"id": "fix_exp_9", "en": "If you never try, you'll never know", "ko": "시도하지 않으면 절대 알 수 없어"},
             {"id": "fix_exp_10", "en": "Learn from my mistakes", "ko": "내 실수에서 배우다"},
+        ]
+
+    if "7. The Scientist" in song_choice:
+        return [
+            {"id": "sci_exp_1", "en": "Tell you I'm sorry", "ko": "미안하다고 말하다"},
+            {"id": "sci_exp_2", "en": "How lovely you are", "ko": "네가 얼마나 사랑스러운지"},
+            {"id": "sci_exp_3", "en": "I had to find you", "ko": "나는 너를 찾아야 했어"},
+            {"id": "sci_exp_4", "en": "I need you", "ko": "네가 필요해"},
+            {"id": "sci_exp_5", "en": "Set you apart", "ko": "너를 특별하게 여기다 / 구별하다"},
+            {"id": "sci_exp_6", "en": "Go back to the start", "ko": "처음으로 돌아가다"},
+            {"id": "sci_exp_7", "en": "Running in circles", "ko": "같은 자리를 맴돌다"},
+            {"id": "sci_exp_8", "en": "Nobody said it was easy", "ko": "아무도 그것이 쉽다고 말하지 않았다"},
+            {"id": "sci_exp_9", "en": "Science and progress", "ko": "과학과 진보"},
+            {"id": "sci_exp_10", "en": "Speak as loud as my heart", "ko": "내 마음만큼 크게 말하다"},
         ]
 
     return []
