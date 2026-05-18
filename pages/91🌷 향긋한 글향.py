@@ -799,6 +799,50 @@ data_bank = {
             "reflection_prompt": "Gyeongbokgung을 통해 내가 배울 점은 무엇인가요?"
         }
     }
+,
+    "교과서": {
+        "📘 교과서": {
+            "title": "교과서",
+            "subtitle": "November 25th, 2075 · Future lunch and a new food machine",
+            "video_url": "",
+            "image_path": None,
+            "facts": [
+                "Date: November 25th, 2075",
+                "Topic: a new food machine at school",
+                "Key idea: future food can be fast, healthy, and personalized"
+            ],
+            "dialogue": [
+                ("Textbook", "November 25th, 2075", "2075년 11월 25일"),
+                ("Textbook", "Today's lunch was impressive.", "오늘의 점심은 인상적이었다."),
+                ("Textbook", "A new food machine had just arrived, and I was the first student to try it.", "새로운 음식 기계가 막 도착했고, 나는 그것을 처음으로 사용해 본 학생이었다."),
+                ("Textbook", "Once I chose a menu option, a healthy meal came out.", "내가 메뉴 선택지를 고르자마자 건강한 식사가 나왔다."),
+                ("Textbook", "Whatever meal I chose, it contained all the nutrients I needed.", "내가 어떤 식사를 고르든, 그것에는 내가 필요로 하는 모든 영양소가 들어 있었다."),
+                ("Textbook", "I was excited to be the first to press the button for the various options.", "나는 다양한 선택지를 위한 버튼을 처음으로 누르게 되어 신이 났다."),
+                ("Textbook", "Today, I chose a hamburger made from lab-grown beef.", "오늘 나는 실험실에서 배양한 소고기로 만든 햄버거를 선택했다."),
+                ("Textbook", "It contained all the nutrients needed for a teenager like me, including protein and minerals.", "그것에는 나 같은 십 대에게 필요한 단백질과 미네랄을 포함한 모든 영양소가 들어 있었다."),
+                ("Textbook", "Of course, it was also very delicious.", "물론 그것은 아주 맛있기도 했다."),
+                ("Textbook", "I tried low-fat ice cream for dessert which contained healthy nutrients.", "나는 디저트로 건강한 영양소가 들어 있는 저지방 아이스크림을 먹어 보았다."),
+                ("Textbook", "What surprised me more was the speed of service.", "나를 더 놀라게 한 것은 서비스의 속도였다."),
+                ("Textbook", "I don't think I'll have to wait in lines anymore!", "나는 더 이상 줄을 서서 기다릴 필요가 없을 것 같다!"),
+                ("Textbook", "I'm looking forward to trying spicy tteokbokki tomorrow.", "나는 내일 매운 떡볶이를 먹어 보는 것이 기대된다.")
+            ],
+            "key_expressions": [
+                "Today's lunch was impressive.",
+                "A new food machine had just arrived.",
+                "Once I chose a menu option, a healthy meal came out.",
+                "Whatever meal I chose, it contained all the nutrients I needed.",
+                "What surprised me more was the speed of service.",
+                "I'm looking forward to trying spicy tteokbokki tomorrow."
+            ],
+            "questions": [
+                ("1. What had just arrived at school?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
+                ("2. What did the student choose today?", ["A hamburger made from lab-grown beef", "Spicy tteokbokki", "Pizza", "Fried chicken"], "A hamburger made from lab-grown beef"),
+                ("3. What surprised the student more?", ["The speed of service", "The size of the classroom", "The weather", "The color of the button"], "The speed of service")
+            ],
+            "reflection_prompt": "교과서 지문을 통해 내가 배울 점은 무엇인가요?"
+        }
+    }
+
 }
 
 # =========================================================
@@ -848,10 +892,10 @@ with tab_video:
 
     video_url = data["video_url"]
 
-    if video_url.startswith("http"):
+    if video_url and str(video_url).startswith("http"):
         st.video(video_url)
     else:
-        st.info("video_url에 유튜브 링크를 넣으세요.")
+        st.info("동영상 링크가 없는 자료입니다.")
 
 # =========================================================
 # 그림
@@ -861,10 +905,10 @@ with tab_image:
 
     image_path = data["image_path"]
 
-    if image_path.exists():
+    if image_path and image_path.exists():
         st.image(str(image_path), use_container_width=True)
     else:
-        st.error(f"이미지 파일을 찾을 수 없습니다: {image_path}")
+        st.info("이미지 파일이 없는 자료입니다.")
 
 # =========================================================
 # Reading
