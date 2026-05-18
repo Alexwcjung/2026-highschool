@@ -175,28 +175,44 @@ def make_gtts_audio(text):
 def play_dialogue_audio(lines, key):
     """
     대화 전체 듣기:
-    - 줄마다 따로 오디오를 만들지 않음
     - 대화 전체를 하나의 mp3처럼 재생
+    - 한국어 해석 보기 버튼을 눌러 화면이 다시 실행되어도 오디오가 사라지지 않도록
+      st.session_state에 생성된 음성 파일을 저장합니다.
     """
+    audio_state_key = f"{key}_audio_bytes"
+    audio_text_key = f"{key}_audio_text"
+
     if st.button("🔊 대화 전체 듣기", key=key, use_container_width=True):
         try:
             dialogue_text = make_dialogue_tts_text(lines)
             audio_bytes = make_gtts_audio(dialogue_text)
 
-            st.markdown(
-                """
-                <div class="audio-box">
-                    대화 전체 음성입니다. 한 번에 이어서 들을 수 있습니다.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            st.audio(audio_bytes, format="audio/mp3")
+            st.session_state[audio_state_key] = audio_bytes
+            st.session_state[audio_text_key] = dialogue_text
 
         except Exception as e:
             st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
+
+    # 버튼을 누른 뒤 생성된 오디오는 session_state에 남아 있으므로,
+    # 한국어 해석 보기/숨기기 때문에 rerun되어도 계속 표시됩니다.
+    if audio_state_key in st.session_state:
+        st.markdown(
+            """
+            <div class="audio-box">
+                대화 전체 음성입니다. 한국어 해석을 켜고 꺼도 이 오디오는 유지됩니다.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        st.audio(st.session_state[audio_state_key], format="audio/mp3")
+
+        if st.button("🧹 듣기 파일 숨기기", key=f"{key}_clear_audio", use_container_width=True):
+            if audio_state_key in st.session_state:
+                del st.session_state[audio_state_key]
+            if audio_text_key in st.session_state:
+                del st.session_state[audio_text_key]
+            st.rerun()
 
 
 # =========================
