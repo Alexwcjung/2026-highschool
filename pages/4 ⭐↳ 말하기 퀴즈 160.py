@@ -970,77 +970,122 @@ def word_card_speaking_game(word_themes):
 
         const aliases = {
             "i": ["i", "eye", "hi", "ai", "a"],
-            "you": ["you", "u", "yew", "yo", "ya", "your"],
-            "he": ["he", "hi", "hey"],
-            "she": ["she", "see", "sea", "shi", "seat"],
+            "you": ["you", "u", "yew", "yo", "ya", "your", "yu", "유"],
+            "he": ["he", "hi", "hey", "hee"],
+            "she": ["she", "see", "sea", "shi", "seat", "sheet"],
             "we": ["we", "wee", "wi", "me", "be"],
             "they": ["they", "day", "dey", "the", "there", "their", "that"],
-            "one": ["one", "won"],
-            "two": ["two", "to", "too"],
-            "three": ["three", "tree", "free"],
-            "four": ["four", "for"],
-            "five": ["five", "fife"],
-            "six": ["six", "sex", "sick"],
-            "seven": ["seven", "seben"],
-            "eight": ["eight", "ate"],
+            "one": ["one", "won", "wan"],
+            "two": ["two", "to", "too", "tu"],
+            "three": ["three", "tree", "free", "sree"],
+            "four": ["four", "for", "fore"],
+            "five": ["five", "fife", "pipe"],
+            "six": ["six", "sex", "sick", "sicks"],
+            "seven": ["seven", "seben", "sevn"],
+            "eight": ["eight", "ate", "eit"],
             "ten": ["ten", "tin"],
-            "here": ["here", "hear"],
-            "there": ["there", "their"],
-            "right": ["right", "write", "light"],
-            "wait": ["wait", "weight"],
-            "know": ["know", "no"],
-            "night": ["night", "knight"],
-            "okay": ["okay", "ok", "kay"],
-            "phone": ["phone", "fone"],
-            "coffee": ["coffee", "coffe"],
-            "please": ["please", "plz"],
-            "excuse": ["excuse", "excus"],
-            "me": ["me"],
-            "go": ["go", "goal"],
-            "come": ["come", "com"],
-            "run": ["run", "ran"],
-            "sit": ["sit", "seat"],
-            "stand": ["stand", "stan"],
-            "stop": ["stop", "stap"],
-            "open": ["open", "opin"],
-            "close": ["close", "clothes", "cloze"],
-            "eat": ["eat", "it"],
-            "drink": ["drink", "dring"],
-            "sleep": ["sleep", "slip"],
-            "read": ["read", "reed"],
-            "write": ["write", "right"],
-            "help": ["help", "hell"],
-            "friend": ["friend", "freind"],
-            "teacher": ["teacher", "techer"],
-            "student": ["student", "studen"],
-            "classmate": ["classmate", "class mate"],
-            "family": ["family", "famly"],
-            "father": ["father", "fader"],
-            "mother": ["mother", "mader"],
-            "brother": ["brother", "brader"],
-            "sister": ["sister", "seester"],
+            "here": ["here", "hear", "hir"],
+            "there": ["there", "their", "der", "dare"],
+            "right": ["right", "write", "light", "rite"],
+            "wait": ["wait", "weight", "wet"],
+            "know": ["know", "no", "now"],
+            "night": ["night", "knight", "nite"],
+            "okay": ["okay", "ok", "kay", "okey"],
+            "phone": ["phone", "fone", "pon"],
+            "coffee": ["coffee", "coffe", "copy"],
+            "please": ["please", "plz", "plis", "place"],
+            "excuse": ["excuse", "excus", "excuseme"],
+            "me": ["me", "mi"],
+            "go": ["go", "goal", "고"],
+            "come": ["come", "com", "gum"],
+            "run": ["run", "ran", "learn"],
+            "sit": ["sit", "seat", "set"],
+            "stand": ["stand", "stan", "stend"],
+            "stop": ["stop", "stap", "stub"],
+            "start": ["start", "stard", "stut"],
+            "open": ["open", "opin", "oben"],
+            "close": ["close", "clothes", "cloze", "closed"],
+            "eat": ["eat", "it", "e"],
+            "drink": ["drink", "dring", "drank"],
+            "sleep": ["sleep", "slip", "sleap"],
+            "read": ["read", "reed", "rid"],
+            "write": ["write", "right", "light"],
+            "help": ["help", "hell", "halp"],
+            "friend": ["friend", "freind", "frend"],
+            "teacher": ["teacher", "techer", "ticher"],
+            "student": ["student", "studen", "studant"],
+            "classmate": ["classmate", "classmate", "classmate", "classmate", "classmate", "classmate", "class mate"],
+            "family": ["family", "famly", "femily"],
+            "father": ["father", "fader", "pader"],
+            "mother": ["mother", "mader", "moder"],
+            "brother": ["brother", "brader", "broder"],
+            "sister": ["sister", "seester", "sistar"],
             "person": ["person", "parson"],
-            "woman": ["woman", "women"],
-            "walk": ["walk", "work"],
-            "study": ["study", "stady"],
-            "listen": ["listen", "lisen"],
-            "speak": ["speak", "speek"],
+            "woman": ["woman", "women", "wuman"],
+            "walk": ["walk", "work", "wok"],
+            "study": ["study", "stady", "steady"],
+            "listen": ["listen", "lisen", "lesson"],
+            "speak": ["speak", "speek", "spik"],
             "happy": ["happy", "happi"],
-            "hungry": ["hungry", "hangry"],
-            "thirsty": ["thirsty", "thirsti"],
-            "stomachache": ["stomachache", "stomach ache"],
-            "headache": ["headache", "head ache"],
-            "breakfast": ["breakfast", "brekfast"],
-            "medicine": ["medicine", "medisin"],
-            "hospital": ["hospital", "hospitel"],
+            "sad": ["sad", "set"],
+            "angry": ["angry", "angri", "hungry"],
+            "tired": ["tired", "tyred", "tire"],
+            "hungry": ["hungry", "hangry", "angry"],
+            "thirsty": ["thirsty", "thirsti", "firsty"],
+            "stomachache": ["stomachache", "stomachache", "stomach ache", "stomachegg"],
+            "headache": ["headache", "head ache", "hedache"],
+            "breakfast": ["breakfast", "brekfast", "break first"],
+            "medicine": ["medicine", "medisin", "medicen"],
+            "hospital": ["hospital", "hospitel", "hostpital"],
+            "bathroom": ["bathroom", "bath room", "batroom"],
+            "station": ["station", "stashion", "staytion"],
+            "bottle": ["bottle", "bottel", "battle"],
+            "question": ["question", "kwestion", "queshon"],
+            "understand": ["understand", "understend", "understanded"],
+            "answer": ["answer", "anser", "andser"],
+            "again": ["again", "agen", "agein"],
+            "slowly": ["slowly", "slowli", "slowy"],
+            "water": ["water", "wader", "워터"],
+            "school": ["school", "skool", "스쿨"],
+            "home": ["home", "holm"],
+            "food": ["food", "fud", "put"],
+            "rice": ["rice", "rise", "lice"],
+            "bread": ["bread", "bred"],
+            "milk": ["milk", "melk"],
+            "juice": ["juice", "juse"],
+            "apple": ["apple", "appel"],
+            "banana": ["banana", "bananna"],
+            "chicken": ["chicken", "chiken"],
+            "classroom": ["classroom", "class room"],
             "bathroom": ["bathroom", "bath room"],
-            "station": ["station", "stashion"],
-            "bottle": ["bottle", "bottel"],
-            "question": ["question", "kwestion"],
-            "understand": ["understand", "understend"],
-            "answer": ["answer", "anser"],
-            "again": ["again", "agen"],
-            "slowly": ["slowly", "slowli"]
+            "store": ["store", "stole"],
+            "train": ["train", "trane"],
+            "bike": ["bike", "back", "baik"],
+            "road": ["road", "load"],
+            "street": ["street", "strit"],
+            "left": ["left", "lift"],
+            "morning": ["morning", "mornin"],
+            "afternoon": ["afternoon", "after noon"],
+            "evening": ["evening", "evning"],
+            "money": ["money", "moni"],
+            "ticket": ["ticket", "tiket"],
+            "clothes": ["clothes", "close", "cloths"],
+            "shoes": ["shoes", "shoe", "슈즈"],
+            "repeat": ["repeat", "repeet"],
+            "look": ["look", "luk"],
+            "ask": ["ask", "axe"],
+            "tell": ["tell", "tel"],
+            "say": ["say", "sei"],
+            "want": ["want", "wanna", "won"],
+            "need": ["need", "nid"],
+            "problem": ["problem", "problum"],
+            "sorry": ["sorry", "sori"],
+            "child": ["child", "chaild"],
+            "man": ["man", "men"],
+            "hot": ["hot", "hut"],
+            "cold": ["cold", "called"],
+            "good": ["good", "gud"],
+            "bad": ["bad", "bed"]
         };
 
         if (!aliases[aw]) return false;
@@ -1058,6 +1103,18 @@ def word_card_speaking_game(word_themes):
         return sw !== aw;
     }
 
+    function prefixOverlap(a, b) {
+        a = String(a || "");
+        b = String(b || "");
+        let n = Math.min(a.length, b.length);
+        let count = 0;
+        for (let i = 0; i < n; i++) {
+            if (a.charAt(i) === b.charAt(i)) count += 1;
+            else break;
+        }
+        return count;
+    }
+
     function isUnderstandableWord(spokenWord, answerWord) {
         if (!spokenWord || !answerWord) return false;
 
@@ -1068,47 +1125,67 @@ def word_card_speaking_game(word_themes):
         if (sw === aw) return true;
         if (aliasMatch(sw, aw)) return true;
 
-        // I / you / he / she / we / they처럼 의미가 크게 바뀌는 대명사는 너무 관대하게 보지 않습니다.
+        // I / you / he / she / we / they처럼 의미가 크게 바뀌는 대명사는 alias가 아니면 통과시키지 않습니다.
         if (clearlyWrongPronoun(sw, aw)) return false;
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
         const soundSw = soundKey(sw);
         const soundAw = soundKey(aw);
+        const soundDist = editDistance(soundSw, soundAw);
+        const soundSim = wordSimilarity(soundSw, soundAw);
 
         const sameFirst = sw.charAt(0) === aw.charAt(0);
         const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
+        const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
         const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
         const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
+        const overlap = prefixOverlap(sw, aw);
 
-        // Daily 400과 비슷하게 조금 더 관대하게 처리합니다.
-        // 단, 완전히 다른 단어까지 정답 처리하지 않도록 첫소리 조건은 남겨 둡니다.
-        if (!sameFirst && !soundSameFirst) {
-            if (!(sim >= 0.86 && dist <= 2)) return false;
-        }
+        // 학생이 단어를 아는지 확인하는 활동이므로, 발음상 비슷하면 정답으로 넓게 인정합니다.
+        // 다만 첫소리나 자음 뼈대가 전혀 다른 단어는 너무 쉽게 통과시키지 않습니다.
+        const hasSoundClue = sameFirst || sameFirstTwo || soundSameFirst || soundSameLast || overlap >= 2 || soundSim >= 0.50;
 
-        // 자음 뼈대가 같으면 발음/인식 차이로 보고 허용합니다.
+        // 긴 단어를 일부만 말했거나 브라우저가 일부만 인식한 경우도 허용합니다.
+        if (aw.length >= 5 && sw.length >= 3 && (aw.includes(sw) || sw.includes(aw))) return true;
+
+        // 자음 뼈대가 같거나 거의 같으면 발음/인식 차이로 보고 허용합니다.
         if (soundSw && soundAw && soundSw === soundAw) return true;
+        if (soundSw && soundAw && soundDist <= 1 && soundSim >= 0.55) return true;
 
-        // 1~2글자 단어는 완전 일치 또는 alias만 허용합니다.
-        if (aw.length <= 2) return false;
+        // 1~2글자 단어는 너무 짧아서 완전 일치 또는 alias 중심으로 봅니다.
+        // 단, he→hi, we→wee 같은 경우는 alias에서 처리됩니다.
+        if (aw.length <= 2) {
+            return sim >= 0.80 && (sameFirst || soundSameFirst);
+        }
 
-        // 3~4글자 단어: 첫소리가 비슷하고 1글자 정도 차이면 허용합니다.
-        // 끝소리를 너무 강제하지 않아 Daily 400보다 체감상 덜 빡빡하게 만듭니다.
+        // 3~4글자 단어: 한 단어 인식이 특히 인색하게 느껴지므로 넓게 허용합니다.
+        // 예: bike→back, rice→rise, sit→seat 등
         if (aw.length <= 4) {
-            return (sameFirst || soundSameFirst) && (dist <= 1 || sim >= 0.76 || (soundSameLast && sim >= 0.70));
+            return hasSoundClue && (
+                dist <= 2 ||
+                sim >= 0.50 ||
+                soundSim >= 0.45 ||
+                (sameFirst && sameLast)
+            );
         }
 
-        // 5~6글자 단어: 1~2글자 차이 또는 유사도 기준 허용
+        // 5~6글자 단어: 2~3글자 차이까지 허용합니다.
         if (aw.length <= 6) {
-            return (sameFirst || soundSameFirst) && (dist <= 2 || sim >= 0.74);
+            return hasSoundClue && (
+                dist <= 3 ||
+                sim >= 0.52 ||
+                soundSim >= 0.45 ||
+                (sameFirstTwo && sim >= 0.45)
+            );
         }
 
-        // 7글자 이상 긴 단어: 앞부분 또는 소리 뼈대가 어느 정도 맞으면 허용
-        return (sameFirst || soundSameFirst) && (
-            dist <= 3 ||
-            sim >= 0.70 ||
-            (sameFirstTwo && sim >= 0.66)
+        // 7글자 이상 긴 단어: 일부 음절을 다르게 인식해도 전체 흐름이 비슷하면 허용합니다.
+        return hasSoundClue && (
+            dist <= 4 ||
+            sim >= 0.48 ||
+            soundSim >= 0.42 ||
+            (sameFirstTwo && sim >= 0.42)
         );
     }
 
@@ -1135,6 +1212,8 @@ def word_card_speaking_game(word_themes):
 
         if (s.includes(a)) return true;
 
+        // 두 단어 이상인 경우도 순서대로 비슷하게 말하면 정답 처리합니다.
+        // 예: excuse me → excuse, me 중 하나가 살짝 다르게 인식되어도 통과
         let pos = 0;
 
         for (const sw of spokenWords) {
@@ -1161,15 +1240,23 @@ def word_card_speaking_game(word_themes):
 
         for (const sw of spokenWords) {
             for (const aw of answerWords) {
+                const swNorm = normalizeText(sw).replace(/\s+/g, "");
+                const awNorm = normalizeText(aw).replace(/\s+/g, "");
+                const soundSw = soundKey(swNorm);
+                const soundAw = soundKey(awNorm);
+
                 if (isUnderstandableWord(sw, aw)) {
                     best = Math.max(best, 1);
                 } else {
-                    best = Math.max(best, wordSimilarity(normalizeText(sw), normalizeText(aw)));
+                    best = Math.max(
+                        best,
+                        wordSimilarity(swNorm, awNorm),
+                        wordSimilarity(soundSw, soundAw) * 0.92
+                    );
                 }
             }
         }
 
-        // 정확히 들어간 경우 가산점
         const s = normalizeText(transcript);
         const a = normalizeText(answer);
         if (s.includes(a) || a.includes(s)) best += 0.2;
@@ -1191,7 +1278,7 @@ def word_card_speaking_game(word_themes):
 
                 if (!bestTranscript) bestTranscript = candidate;
 
-                // 정답 판정이 되는 후보가 있으면 바로 선택
+                // 정답 판정이 되는 후보가 있으면 바로 선택합니다.
                 if (isCorrectSpeech(candidate, answer)) {
                     return {
                         transcript: candidate,
@@ -1366,7 +1453,7 @@ def word_card_speaking_game(word_themes):
             answerBox.style.display = "none";
             transcriptBox.style.color = "#334155";
             resultBox.style.display = "block";
-            resultBox.innerText = "다시 시도해 주세요.";
+            resultBox.innerText = "조금 비슷하게 말하면 정답 처리됩니다. 다시 한 번 말해 보세요.";
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
             resultBox.style.color = "#92400e";
@@ -1426,7 +1513,7 @@ def word_card_speaking_game(word_themes):
         recognition.lang = "en-US";
         recognition.interimResults = true;
         recognition.continuous = false;
-        recognition.maxAlternatives = 20;
+        recognition.maxAlternatives = 30;
 
         isListening = true;
         micBtn.disabled = true;
