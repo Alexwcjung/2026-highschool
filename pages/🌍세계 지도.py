@@ -496,7 +496,7 @@ st.markdown(
     div.stButton > button {
         border-radius: 24px;
         font-weight: 1000 !important;
-        min-height: 116px;
+        min-height: 124px;
         font-size: 2.15rem !important;
         line-height: 1.35;
         border: 3px solid #93c5fd;
@@ -530,6 +530,20 @@ st.markdown(
     div.stButton > button:hover p {
         color: #1e3a8a !important;
     }
+
+    .next-guide {
+        background: #f8fafc;
+        border: 2px dashed #cbd5e1;
+        border-radius: 22px;
+        padding: 22px 12px;
+        text-align: center;
+        color: #64748b;
+        font-size: 18px;
+        font-weight: 900;
+        line-height: 1.55;
+        margin-top: 8px;
+    }
+
 
     @keyframes sparklePop {
         0% { transform: scale(0.6); opacity: 0; }
@@ -951,7 +965,30 @@ with tab_quiz:
         )
     )
 
-    st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
+    map_col, next_col = st.columns([5.2, 1])
+
+    with map_col:
+        st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
+
+    with next_col:
+        st.write("")
+        st.write("")
+        st.write("")
+        st.write("")
+        if st.session_state.quiz_answered:
+            next_label = "➡️\n다음" if st.session_state.quiz_index < QUIZ_LENGTH - 1 else "🏁\n결과"
+            if st.button(next_label, use_container_width=True, key="next_button_side"):
+                next_quiz_question()
+                st.rerun()
+        else:
+            st.markdown(
+                """
+                <div class="next-guide">
+                    정답을 맞히면<br>➡️ 다음 버튼
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
     st.markdown("## 정답을 골라 보세요")
 
@@ -1008,12 +1045,6 @@ with tab_quiz:
                 unsafe_allow_html=True
             )
 
-    # 정답을 맞힌 경우에만 다음 문제 버튼이 나타납니다.
-    if st.session_state.quiz_answered:
-        next_label = "➡️ 다음 나라" if st.session_state.quiz_index < QUIZ_LENGTH - 1 else "🏁 결과 보기"
-        if st.button(next_label, use_container_width=True):
-            next_quiz_question()
-            st.rerun()
 
 # =====================================================
 # 4번 탭: 수업용 정리
