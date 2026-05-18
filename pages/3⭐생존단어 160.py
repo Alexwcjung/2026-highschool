@@ -866,6 +866,22 @@ def remove_unknown_word(word):
         del st.session_state.unknown_word_info[word]
 
 
+
+def clear_review_checkbox_keys():
+    """
+    복습 희망 전체 삭제 후에도 체크박스 key 상태가 남아 있으면
+    다시 체크해도 목록에 들어가지 않는 문제가 생깁니다.
+    따라서 전체 삭제 시 체크박스 key까지 함께 삭제합니다.
+    """
+    keys_to_delete = [
+        key for key in list(st.session_state.keys())
+        if "_unknown_" in str(key)
+    ]
+
+    for key in keys_to_delete:
+        del st.session_state[key]
+
+
 def toggle_unknown_word(word, meaning, theme_name):
     if word in st.session_state.unknown_words:
         remove_unknown_word(word)
@@ -1305,6 +1321,7 @@ def show_word_cards(theme_words, theme_name):
         word = item["word"]
         meaning = item["meaning"]
         checked = word in st.session_state.unknown_words
+        checkbox_key = f"{theme_name}_unknown_{idx}_{word}"
 
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
@@ -1341,13 +1358,18 @@ def show_word_cards(theme_words, theme_name):
             )
 
         with col5:
-            st.checkbox(
+            review_checked = st.checkbox(
                 "복습 희망",
                 value=checked,
-                key=f"{theme_name}_unknown_{idx}_{word}",
-                on_change=toggle_unknown_word,
-                args=(word, meaning, theme_name)
+                key=checkbox_key
             )
+
+            # 체크박스 화면 상태와 실제 복습 희망 목록을 매번 동기화합니다.
+            # 이렇게 해야 전체 삭제 후 다시 체크해도 바로 목록에 들어갑니다.
+            if review_checked and word not in st.session_state.unknown_words:
+                add_unknown_word(word, meaning, theme_name)
+            elif not review_checked and word in st.session_state.unknown_words:
+                remove_unknown_word(word)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1603,6 +1625,15 @@ def show_unknown_words_tab():
         with col5:
             if st.button("삭제", key=f"delete_unknown_{idx}_{word}", use_container_width=True):
                 remove_unknown_word(word)
+
+                # 해당 단어의 체크박스 상태도 함께 지웁니다.
+                keys_to_delete = [
+                    key for key in list(st.session_state.keys())
+                    if "_unknown_" in str(key) and str(key).endswith(f"_{word}")
+                ]
+                for key in keys_to_delete:
+                    del st.session_state[key]
+
                 st.rerun()
 
         st.caption(f"분류: {theme_name}")
