@@ -125,9 +125,6 @@ def improve_english_answer(text, topic_name):
 # =========================================================
 st.markdown("""
 <style>
-/* =====================================================
-   Garden Theme: flowers + grass
-   ===================================================== */
 .stApp {
     background:
         radial-gradient(circle at 8% 12%, rgba(244,114,182,0.18) 0, rgba(244,114,182,0.00) 26%),
@@ -135,13 +132,11 @@ st.markdown("""
         linear-gradient(180deg, #fff7fb 0%, #f7fff4 48%, #ecfdf5 100%);
 }
 
-/* 페이지 전체 여백 */
 .block-container {
     padding-top: 2rem;
     padding-bottom: 3rem;
 }
 
-/* 맨 위 제목 */
 .main-title {
     position: relative;
     overflow: hidden;
@@ -191,17 +186,6 @@ st.markdown("""
     letter-spacing: 8px;
 }
 
-/* 선택 영역 */
-.selector-card {
-    background: rgba(255,255,255,0.78);
-    border: 1.5px solid #bbf7d0;
-    border-radius: 24px;
-    padding: 16px 18px 8px 18px;
-    margin-bottom: 18px;
-    box-shadow: 0 8px 20px rgba(15,23,42,0.06);
-}
-
-/* 소개 카드 */
 .info-card {
     position: relative;
     overflow: hidden;
@@ -233,7 +217,6 @@ st.markdown("""
     font-weight: 750;
 }
 
-/* 지식 카드 */
 .fact-card {
     background: linear-gradient(135deg, #fff7fb 0%, #ffffff 45%, #f0fdf4 100%);
     padding: 22px;
@@ -261,7 +244,6 @@ st.markdown("""
     box-shadow: 0 3px 8px rgba(15,23,42,0.04);
 }
 
-/* Reading 본문 */
 .reading-card {
     background:
         linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(255,247,251,0.98) 100%);
@@ -272,22 +254,35 @@ st.markdown("""
     line-height: 1.85;
     box-shadow: 0 10px 24px rgba(15,23,42,0.08);
 }
-.reading-card b {
+
+.line-box {
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #e5e7eb;
+}
+
+.eng-line {
+    font-size: 22px;
+    font-weight: 850;
     color: #1d4ed8;
+    line-height: 1.6;
 }
 
-/* 해석 카드 */
-.korean-card {
-    background: linear-gradient(135deg, #fffbeb 0%, #ffffff 50%, #f0fdf4 100%);
-    padding: 26px;
-    border-radius: 26px;
-    border: 2px solid #fde68a;
-    font-size: 20px;
-    line-height: 1.75;
-    box-shadow: 0 8px 20px rgba(15,23,42,0.06);
+.kor-line {
+    margin-top: 6px;
+    margin-left: 8px;
+    padding-left: 12px;
+    border-left: 5px solid #fde68a;
+    font-size: 19px;
+    font-weight: 700;
+    color: #374151;
+    line-height: 1.65;
+    background: rgba(255, 251, 235, 0.65);
+    border-radius: 10px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
-/* 표현 카드 */
 .expression {
     background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
     padding: 15px 17px;
@@ -299,7 +294,6 @@ st.markdown("""
     box-shadow: 0 3px 10px rgba(15,23,42,0.05);
 }
 
-/* 섹션 박스 */
 .section-box {
     position: relative;
     overflow: hidden;
@@ -325,7 +319,6 @@ st.markdown("""
     opacity: 0.20;
 }
 
-/* 탭 */
 div[data-testid="stTabs"] button {
     font-size: 18px;
     font-weight: 900;
@@ -335,7 +328,6 @@ div[data-testid="stTabs"] button[aria-selected="true"] {
     color: #be185d;
 }
 
-/* 버튼 */
 .stButton > button {
     border-radius: 18px;
     font-weight: 900;
@@ -350,7 +342,6 @@ div[data-testid="stTabs"] button[aria-selected="true"] {
     color: #be185d;
 }
 
-/* 라디오, 입력창 */
 div[role="radiogroup"] {
     background: rgba(255,255,255,0.72);
     padding: 12px 14px;
@@ -361,13 +352,11 @@ textarea {
     border-radius: 18px !important;
 }
 
-/* 이미지, 비디오 주변 */
 div[data-testid="stImage"] img {
     border-radius: 26px;
     box-shadow: 0 10px 24px rgba(15,23,42,0.12);
 }
 
-/* 모바일 */
 @media (max-width: 768px) {
     .main-title {
         padding: 28px 18px 24px 18px;
@@ -383,9 +372,11 @@ div[data-testid="stImage"] img {
         font-size: 18px;
         padding: 22px;
     }
-    .korean-card {
-        font-size: 17px;
-        padding: 20px;
+    .eng-line {
+        font-size: 19px;
+    }
+    .kor-line {
+        font-size: 16px;
     }
 }
 </style>
@@ -393,7 +384,6 @@ div[data-testid="stImage"] img {
 
 # =========================================================
 # 자료
-# 이미지 파일은 pages/images 폴더에 넣으면 됩니다.
 # =========================================================
 data_bank = {
     "인물": {
@@ -540,263 +530,6 @@ data_bank = {
                 ("3. What becomes power in real games?", ["Basics", "Only luck", "Noise", "A phone"], "Basics")
             ],
             "reflection_prompt": "Son Heung-min을 통해 내가 배울 점은 무엇인가요?"
-        },
-
-        "🎤 IU": {
-            "title": "Music Talk with IU",
-            "subtitle": "Creativity, sincerity, and expression",
-            "video_url": "여기에_IU_유튜브_링크",
-            "image_path": BASE_DIR / "images" / "iu.png",
-            "facts": [
-                "Korean singer-songwriter and actor",
-                "Known for emotional lyrics, storytelling, and sincere expression",
-                "Lesson: honest feelings can become powerful words"
-            ],
-            "dialogue": [
-                ("IU", "Hi! Do you like music?", "안녕! 너는 음악을 좋아하니?"),
-                ("Me", "Yes, I do. Music makes me happy.", "네. 음악은 저를 행복하게 해요."),
-                ("IU", "That is wonderful. What kind of music do you like?", "멋지다. 어떤 음악을 좋아하니?"),
-                ("Me", "I like songs with warm messages.", "저는 따뜻한 메시지가 있는 노래를 좋아해요."),
-                ("IU", "A good song can comfort people.", "좋은 노래는 사람들을 위로할 수 있어."),
-                ("Me", "I want to express my feelings better.", "저도 제 감정을 더 잘 표현하고 싶어요."),
-                ("IU", "Then you need to listen to your heart.", "그렇다면 너의 마음에 귀 기울여야 해."),
-                ("Me", "Sometimes I do not know what I feel.", "가끔은 제가 무엇을 느끼는지 잘 모르겠어요."),
-                ("IU", "That is okay. Write one small sentence first.", "괜찮아. 먼저 짧은 문장 하나를 써 봐."),
-                ("Me", "Can a small sentence become a song?", "짧은 문장이 노래가 될 수 있나요?"),
-                ("IU", "Yes. Honest feelings can become powerful words.", "그럼. 솔직한 감정은 힘 있는 말이 될 수 있어."),
-                ("Me", "I am shy about showing my writing.", "제 글을 보여주는 것이 부끄러워요."),
-                ("IU", "Many people feel that way. But sincerity touches people.", "많은 사람들이 그렇게 느껴. 하지만 진심은 사람들에게 닿아."),
-                ("Me", "So I should not hide my feelings all the time?", "그러면 제 감정을 항상 숨기지 않아도 되나요?"),
-                ("IU", "Right. You can express them slowly and honestly.", "맞아. 천천히, 솔직하게 표현하면 돼."),
-                ("Me", "I will try to express myself.", "저도 제 자신을 표현해 볼게요."),
-                ("IU", "Good. Be honest, keep writing, and trust your voice.", "좋아. 솔직해지고, 계속 쓰고, 너의 목소리를 믿어.")
-            ],
-            "key_expressions": [
-                "Music can comfort people.",
-                "Listen to your heart.",
-                "Honest feelings can become powerful words.",
-                "Sincerity touches people.",
-                "Trust your voice."
-            ],
-            "questions": [
-                ("1. What makes the student happy?", ["Music", "Math", "Rain", "Homework"], "Music"),
-                ("2. What can honest feelings become?", ["Powerful words", "A problem", "A mistake", "A game"], "Powerful words"),
-                ("3. What does IU tell the student to trust?", ["Your voice", "Only luck", "A phone", "Other people"], "Your voice")
-            ],
-            "reflection_prompt": "IU를 통해 내가 배울 점은 무엇인가요?"
-        },
-
-        "⛸️ Kim Yuna": {
-            "title": "Skating Talk with Kim Yuna",
-            "subtitle": "Focus, balance, and mental strength",
-            "video_url": "여기에_김연아_유튜브_링크",
-            "image_path": BASE_DIR / "images" / "kim_yuna.png",
-            "facts": [
-                "South Korean figure skating champion",
-                "Known for graceful performances, strong technique, and calmness under pressure",
-                "Lesson: preparation helps control nervousness"
-            ],
-            "dialogue": [
-                ("Kim Yuna", "Hi! Do you like watching figure skating?", "안녕! 너는 피겨스케이팅 보는 것을 좋아하니?"),
-                ("Me", "Yes, I do. It looks beautiful and difficult.", "네. 아름답고 어려워 보여요."),
-                ("Kim Yuna", "You are right. It needs balance, practice, and focus.", "맞아. 균형, 연습, 집중이 필요해."),
-                ("Me", "Were you nervous before a competition?", "경기 전에 긴장했나요?"),
-                ("Kim Yuna", "Of course. Everyone can feel nervous before an important moment.", "물론이지. 중요한 순간 전에는 누구나 긴장할 수 있어."),
-                ("Me", "How did you control your mind?", "마음을 어떻게 다스렸나요?"),
-                ("Kim Yuna", "I focused on what I practiced. I trusted my training.", "내가 연습한 것에 집중했어. 내 훈련을 믿었지."),
-                ("Me", "Sometimes I worry too much before a test.", "저는 시험 전에 가끔 너무 많이 걱정해요."),
-                ("Kim Yuna", "That is natural. But worry alone does not help.", "그건 자연스러운 일이야. 하지만 걱정만으로는 도움이 되지 않아."),
-                ("Me", "Then what should I do?", "그럼 어떻게 해야 할까요?"),
-                ("Kim Yuna", "Prepare step by step, breathe slowly, and focus on one thing at a time.", "차근차근 준비하고, 천천히 숨 쉬고, 한 번에 하나에 집중해."),
-                ("Me", "I want to be calm under pressure.", "압박감 속에서도 침착해지고 싶어요."),
-                ("Kim Yuna", "Calmness comes from practice and trust in yourself.", "침착함은 연습과 자신에 대한 믿음에서 나와."),
-                ("Me", "I will practice more and worry less.", "더 연습하고 덜 걱정할게요."),
-                ("Kim Yuna", "Good. Do your best, but also enjoy your own growth.", "좋아. 최선을 다하되, 너의 성장도 즐겨 봐.")
-            ],
-            "key_expressions": [
-                "It needs balance, practice, and focus.",
-                "Trust your training.",
-                "Worry alone does not help.",
-                "Focus on one thing at a time.",
-                "Enjoy your own growth."
-            ],
-            "questions": [
-                ("1. What does figure skating need?", ["Balance, practice, and focus", "Only luck", "No practice", "A loud voice"], "Balance, practice, and focus"),
-                ("2. What did Kim Yuna focus on?", ["What she practiced", "Other people's mistakes", "Only the result", "Her phone"], "What she practiced"),
-                ("3. What should the student do before a test?", ["Prepare step by step", "Only worry", "Give up", "Forget everything"], "Prepare step by step")
-            ],
-            "reflection_prompt": "Kim Yuna를 통해 내가 배울 점은 무엇인가요?"
-        },
-
-        "🎤 BTS Jungkook": {
-            "title": "Music Talk with Jungkook",
-            "subtitle": "Practice, stage, and growth",
-            "video_url": "여기에_정국_유튜브_링크",
-            "image_path": BASE_DIR / "images" / "jungkook.png",
-            "facts": [
-                "Korean singer and performer known worldwide",
-                "Known for strong stage performance, steady practice, and self-improvement",
-                "Lesson: focus on your own growth, not comparison"
-            ],
-            "dialogue": [
-                ("Jungkook", "Hi! Do you like music and dancing?", "안녕! 너는 음악과 춤을 좋아하니?"),
-                ("Me", "Yes, I do. I like singing and watching performances.", "네. 저는 노래하는 것과 공연 보는 것을 좋아해요."),
-                ("Jungkook", "That is great. Performing can be exciting, but it takes a lot of practice.", "멋지다. 공연은 신날 수 있지만 많은 연습이 필요해."),
-                ("Me", "Do you practice every day?", "매일 연습하나요?"),
-                ("Jungkook", "I try to practice often. Small practice every day can make a big difference.", "자주 연습하려고 해. 매일의 작은 연습이 큰 차이를 만들 수 있어."),
-                ("Me", "Sometimes I feel nervous in front of people.", "가끔 사람들 앞에서 긴장돼요."),
-                ("Jungkook", "That is natural. Even performers can feel nervous before a stage.", "그건 자연스러운 일이야. 공연자들도 무대 전에 긴장할 수 있어."),
-                ("Me", "How can I become more confident?", "어떻게 하면 더 자신감을 가질 수 있을까요?"),
-                ("Jungkook", "Prepare well, breathe slowly, and focus on the message you want to share.", "잘 준비하고, 천천히 숨 쉬고, 네가 전하고 싶은 메시지에 집중해."),
-                ("Me", "I worry that I am not talented enough.", "제가 충분히 재능이 없을까 봐 걱정돼요."),
-                ("Jungkook", "Talent is helpful, but effort and attitude are also very important.", "재능도 도움이 되지만 노력과 태도도 매우 중요해."),
-                ("Me", "I want to improve little by little.", "조금씩 발전하고 싶어요."),
-                ("Jungkook", "That is the right mindset. Do not compare yourself too much with others.", "그게 좋은 마음가짐이야. 다른 사람과 너무 많이 비교하지 마."),
-                ("Me", "I will focus on my own growth.", "제 성장에 집중할게요."),
-                ("Jungkook", "Good. Keep practicing, enjoy the process, and trust your own voice.", "좋아. 계속 연습하고, 과정을 즐기고, 너만의 목소리를 믿어.")
-            ],
-            "key_expressions": [
-                "Small practice can make a big difference.",
-                "I feel nervous.",
-                "How can I become more confident?",
-                "Effort and attitude are important.",
-                "Focus on my own growth.",
-                "Trust your own voice."
-            ],
-            "questions": [
-                ("1. What does the student like?", ["Singing and watching performances", "Only sleeping", "Cooking alone", "Reading maps"], "Singing and watching performances"),
-                ("2. What can small practice do?", ["Make a big difference", "Make people forget everything", "Stop growth", "Make practice useless"], "Make a big difference"),
-                ("3. What does Jungkook tell the student to trust?", ["Your own voice", "Only luck", "A computer", "Other people's opinions"], "Your own voice")
-            ],
-            "reflection_prompt": "Jungkook을 통해 내가 배울 점은 무엇인가요?"
-        }
-    },
-
-    "장소": {
-        "🏜️ Grand Canyon": {
-            "title": "A Trip to the Grand Canyon",
-            "subtitle": "Nature, time, and wonder",
-            "video_url": "여기에_그랜드캐니언_유튜브_링크",
-            "image_path": BASE_DIR / "images" / "grand_canyon.png",
-            "facts": [
-                "Located in Arizona, USA",
-                "Formed mainly by the Colorado River and erosion over a very long time",
-                "Representative feature: colorful rock layers that show Earth's history"
-            ],
-            "dialogue": [
-                ("Guide", "Welcome to the Grand Canyon.", "그랜드캐니언에 오신 것을 환영합니다."),
-                ("Me", "Wow, it is huge and beautiful.", "와, 정말 크고 아름다워요."),
-                ("Guide", "Nature can make us feel small.", "자연은 우리를 작게 느끼게 할 수 있어요."),
-                ("Me", "I feel amazed when I look down.", "아래를 내려다보니 정말 경이로워요."),
-                ("Guide", "This canyon was shaped over a very long time.", "이 협곡은 아주 오랜 시간에 걸쳐 형성되었어요."),
-                ("Me", "How was it made?", "어떻게 만들어졌나요?"),
-                ("Guide", "The Colorado River and erosion slowly cut through the rocks.", "콜로라도강과 침식 작용이 천천히 바위를 깎아냈어요."),
-                ("Me", "So water can change the land?", "그러면 물이 땅을 바꿀 수 있나요?"),
-                ("Guide", "Yes. Small forces can make huge changes over time.", "네. 작은 힘도 오랜 시간 동안 큰 변화를 만들 수 있어요."),
-                ("Me", "That is surprising.", "놀라워요."),
-                ("Guide", "The colorful rock layers show different periods of Earth's history.", "알록달록한 암석층은 지구 역사의 여러 시기를 보여줘요."),
-                ("Me", "It is like reading a book made of rocks.", "바위로 된 책을 읽는 것 같아요."),
-                ("Guide", "Exactly. Nature has many stories.", "맞아요. 자연에는 많은 이야기가 있어요."),
-                ("Me", "I want to protect nature.", "저는 자연을 보호하고 싶어요."),
-                ("Guide", "Good. When we understand nature, we can respect it more.", "좋아요. 자연을 이해할 때 우리는 자연을 더 존중할 수 있어요.")
-            ],
-            "key_expressions": [
-                "Nature can make us feel small.",
-                "Erosion can change the land.",
-                "Small forces can make huge changes.",
-                "Rock layers show history.",
-                "Protect nature."
-            ],
-            "questions": [
-                ("1. Where is the Grand Canyon?", ["Arizona, USA", "London, UK", "Seoul, Korea", "Paris, France"], "Arizona, USA"),
-                ("2. What helped shape the Grand Canyon?", ["The Colorado River and erosion", "Only people", "A machine", "A building"], "The Colorado River and erosion"),
-                ("3. What do rock layers show?", ["Earth's history", "Only sports", "Modern fashion", "A school rule"], "Earth's history")
-            ],
-            "reflection_prompt": "Grand Canyon을 통해 내가 배울 점은 무엇인가요?"
-        },
-
-        "🗽 New York": {
-            "title": "A Visit to New York",
-            "subtitle": "Dreams, diversity, and city life",
-            "video_url": "여기에_뉴욕_유튜브_링크",
-            "image_path": BASE_DIR / "images" / "new_york.png",
-            "facts": [
-                "One of the most famous cities in the United States",
-                "Known for Times Square, the Statue of Liberty, Central Park, and diverse cultures",
-                "Representative feature: a global city where many cultures meet"
-            ],
-            "dialogue": [
-                ("Guide", "Welcome to New York.", "뉴욕에 오신 것을 환영합니다."),
-                ("Me", "There are so many people here.", "여기에는 정말 많은 사람들이 있어요."),
-                ("Guide", "People from many cultures live here.", "다양한 문화의 사람들이 이곳에 살고 있어요."),
-                ("Me", "It feels busy and exciting.", "바쁘고 신나게 느껴져요."),
-                ("Guide", "New York is often called a global city.", "뉴욕은 종종 세계적인 도시라고 불려요."),
-                ("Me", "What does global city mean?", "세계적인 도시라는 것은 무슨 뜻인가요?"),
-                ("Guide", "It means people, ideas, money, art, and culture from many countries meet here.", "많은 나라의 사람, 생각, 돈, 예술, 문화가 이곳에서 만난다는 뜻이에요."),
-                ("Me", "That sounds powerful.", "강력하게 들려요."),
-                ("Guide", "Yes. Places like Times Square show energy, and the Statue of Liberty shows freedom.", "맞아요. 타임스퀘어는 에너지를 보여주고, 자유의 여신상은 자유를 보여줘요."),
-                ("Me", "I want to see both places.", "두 곳 모두 보고 싶어요."),
-                ("Guide", "You should. But remember, a big city can also be difficult.", "그래요. 하지만 큰 도시는 힘들 수도 있다는 것을 기억하세요."),
-                ("Me", "Why is it difficult?", "왜 힘든가요?"),
-                ("Guide", "Life can be fast, expensive, and competitive.", "삶이 빠르고, 비싸고, 경쟁적일 수 있어요."),
-                ("Me", "Still, I want to follow my dream.", "그래도 저는 제 꿈을 따라가고 싶어요."),
-                ("Guide", "Then stay curious, keep learning, and respect different cultures.", "그렇다면 호기심을 갖고, 계속 배우고, 다양한 문화를 존중하세요.")
-            ],
-            "key_expressions": [
-                "People from many cultures live here.",
-                "New York is a global city.",
-                "The Statue of Liberty shows freedom.",
-                "Life can be competitive.",
-                "Respect different cultures."
-            ],
-            "questions": [
-                ("1. What kind of city is New York?", ["A global city", "A small village", "A quiet farm", "A desert"], "A global city"),
-                ("2. What does the Statue of Liberty show?", ["Freedom", "Homework", "Sports", "Silence"], "Freedom"),
-                ("3. What should the student respect?", ["Different cultures", "Only one idea", "Noise", "Fear"], "Different cultures")
-            ],
-            "reflection_prompt": "New York을 통해 내가 배울 점은 무엇인가요?"
-        },
-
-        "🏯 Gyeongbokgung": {
-            "title": "A Visit to Gyeongbokgung",
-            "subtitle": "History, culture, and Korean identity",
-            "video_url": "여기에_경복궁_유튜브_링크",
-            "image_path": BASE_DIR / "images" / "gyeongbokgung.png",
-            "facts": [
-                "Gyeongbokgung was first built in 1395 during the Joseon Dynasty.",
-                "It was the main royal palace of Joseon.",
-                "Representative feature: Geunjeongjeon Hall and traditional palace architecture."
-            ],
-            "dialogue": [
-                ("Guide", "Welcome to Gyeongbokgung.", "경복궁에 오신 것을 환영합니다."),
-                ("Me", "This palace is beautiful.", "이 궁궐은 아름다워요."),
-                ("Guide", "Gyeongbokgung was first built in 1395 during the Joseon Dynasty.", "경복궁은 조선 시대인 1395년에 처음 지어졌어요."),
-                ("Me", "So it is a very old palace.", "그러면 아주 오래된 궁궐이네요."),
-                ("Guide", "Yes. It was the main royal palace of Joseon.", "맞아요. 조선의 중심 궁궐이었어요."),
-                ("Me", "What does the name Gyeongbokgung mean?", "경복궁이라는 이름은 무슨 뜻인가요?"),
-                ("Guide", "It means a palace greatly blessed by heaven.", "하늘이 크게 복을 내린 궁궐이라는 뜻이에요."),
-                ("Me", "That meaning is impressive.", "그 뜻이 인상적이에요."),
-                ("Guide", "The palace shows Korean history, architecture, and royal culture.", "이 궁궐은 한국의 역사, 건축, 왕실 문화를 보여줘요."),
-                ("Me", "I can see old buildings and traditional colors.", "오래된 건물과 전통적인 색을 볼 수 있어요."),
-                ("Guide", "One important building is Geunjeongjeon Hall, where important state events were held.", "중요한 건물 중 하나는 근정전이고, 중요한 국가 행사가 열렸던 곳이에요."),
-                ("Me", "It feels like history is alive here.", "이곳에서는 역사가 살아 있는 것 같아요."),
-                ("Guide", "That is right. Places like this help us remember the past.", "맞아요. 이런 장소는 우리가 과거를 기억하도록 도와줘요."),
-                ("Me", "I want to learn more about Korean culture.", "한국 문화에 대해 더 배우고 싶어요."),
-                ("Guide", "Good. When we understand the past, we can build a better future.", "좋아요. 과거를 이해할 때 더 나은 미래를 만들 수 있어요.")
-            ],
-            "key_expressions": [
-                "It was first built in 1395.",
-                "It was the main royal palace of Joseon.",
-                "It shows Korean history and culture.",
-                "History is alive here.",
-                "Build a better future."
-            ],
-            "questions": [
-                ("1. When was Gyeongbokgung first built?", ["1395", "1910", "2020", "1600"], "1395"),
-                ("2. What dynasty built Gyeongbokgung?", ["Joseon Dynasty", "Roman Empire", "Ming Dynasty", "British Empire"], "Joseon Dynasty"),
-                ("3. What does the palace show?", ["Korean history and culture", "Only sports", "Only food", "Only music"], "Korean history and culture")
-            ],
-            "reflection_prompt": "Gyeongbokgung을 통해 내가 배울 점은 무엇인가요?"
         }
     }
 }
@@ -819,8 +552,6 @@ with col_cat:
 
 with col_topic:
     topic_name = st.selectbox("주제 선택", list(data_bank[category].keys()))
-
-st.markdown('</div>', unsafe_allow_html=True)
 
 data = data_bank[category][topic_name]
 dialogue = data["dialogue"]
@@ -868,6 +599,7 @@ with tab_image:
 
 # =========================================================
 # Reading
+# 영어 한 문장 아래에 한국어 해석이 바로 나오도록 수정
 # =========================================================
 with tab_reading:
     st.markdown("## 📖 Reading")
@@ -879,31 +611,31 @@ with tab_reading:
     st.markdown(fact_html, unsafe_allow_html=True)
 
     reading_html = '<div class="reading-card">'
+
     for speaker, eng, kor in dialogue:
-        reading_html += f"<b>{speaker}:</b> {eng}<br><br>"
+        reading_html += f"""
+        <div class="line-box">
+            <div class="eng-line">
+                <b>{speaker}:</b> {eng}
+            </div>
+            <div class="kor-line">
+                🇰🇷 {kor}
+            </div>
+        </div>
+        """
+
     reading_html += "</div>"
     st.markdown(reading_html, unsafe_allow_html=True)
 
     st.markdown("---")
 
     listening_key = f"{category}_{topic_name}_show_listening"
-    korean_key = f"{category}_{topic_name}_show_korean"
 
     if listening_key not in st.session_state:
         st.session_state[listening_key] = False
 
-    if korean_key not in st.session_state:
-        st.session_state[korean_key] = False
-
-    col1, col2 = st.columns(2)
-
-    with col1:
-        if st.button("🎧 듣기", use_container_width=True, key=f"{category}_{topic_name}_listening_btn"):
-            st.session_state[listening_key] = not st.session_state[listening_key]
-
-    with col2:
-        if st.button("🇰🇷 해석", use_container_width=True, key=f"{category}_{topic_name}_korean_btn"):
-            st.session_state[korean_key] = not st.session_state[korean_key]
+    if st.button("🎧 듣기", use_container_width=True, key=f"{category}_{topic_name}_listening_btn"):
+        st.session_state[listening_key] = not st.session_state[listening_key]
 
     if st.session_state[listening_key]:
         st.markdown("### 🎧 전체 듣기")
@@ -913,15 +645,6 @@ with tab_reading:
         for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
             with st.expander(f"{i}. {speaker}: {eng}"):
                 st.audio(make_tts(eng, lang="en"), format="audio/mp3")
-
-    if st.session_state[korean_key]:
-        st.markdown("### 🇰🇷 해석")
-
-        korean_html = '<div class="korean-card">'
-        for speaker, eng, kor in dialogue:
-            korean_html += f"<b>{speaker}:</b> {kor}<br><br>"
-        korean_html += "</div>"
-        st.markdown(korean_html, unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("### ⭐ Key Expressions")
