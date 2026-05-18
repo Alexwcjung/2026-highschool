@@ -2,6 +2,7 @@ import streamlit as st
 from gtts import gTTS
 import io
 import re
+import html
 
 # =========================
 # 기본 설정
@@ -117,6 +118,55 @@ st.markdown(
         font-weight: 900 !important;
     }
 
+
+    .matching-box {
+        background: linear-gradient(135deg,#eef2ff 0%,#f0f9ff 50%,#fdf2f8 100%);
+        padding: 22px 24px;
+        border-radius: 20px;
+        border: 1px solid #c7d2fe;
+        margin-top: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 5px 16px rgba(99,102,241,0.08);
+    }
+
+    .matching-title {
+        font-size: 28px;
+        font-weight: 1000;
+        color: #4338ca;
+        margin-bottom: 8px;
+    }
+
+    .matching-guide {
+        font-size: 16px;
+        font-weight: 800;
+        color: #475569;
+        line-height: 1.7;
+    }
+
+    .selected-card-notice {
+        background-color: #fef3c7;
+        padding: 13px 15px;
+        border-radius: 14px;
+        border: 1px solid #facc15;
+        color: #92400e;
+        font-size: 15px;
+        font-weight: 900;
+        margin-bottom: 14px;
+        line-height: 1.5;
+    }
+
+    .match-progress-box {
+        background: linear-gradient(135deg,#dcfce7,#dbeafe);
+        border: 1px solid #bbf7d0;
+        border-radius: 16px;
+        padding: 13px 15px;
+        margin: 12px 0 16px 0;
+        font-size: 17px;
+        font-weight: 900;
+        color: #14532d;
+        text-align: center;
+    }
+
     @media (max-width: 520px) {
         .main-title {
             font-size: 33px;
@@ -213,6 +263,176 @@ def play_dialogue_audio(lines, key):
             if audio_text_key in st.session_state:
                 del st.session_state[audio_text_key]
             st.rerun()
+
+
+
+# =========================
+# 문장 매칭 활동 함수
+# =========================
+def clean_text_for_display(text):
+    return html.escape(str(text).strip())
+
+
+def safe_key(text):
+    return re.sub(r"[^a-zA-Z0-9가-힣_]+", "_", str(text))
+
+
+def shuffle_options(options, seed):
+    import random
+    rng = random.Random(seed)
+    options = list(options)
+    rng.shuffle(options)
+    return options
+
+
+def show_sentence_matching_activity(dialogue_data, key_prefix):
+    """
+    팝송 파일의 '문장 매칭 게임'과 같은 방식입니다.
+    왼쪽 영어 전체 문장과 오른쪽 한국어 해석을 차례로 눌러 짝을 맞춥니다.
+    """
+    st.markdown(
+        """
+        <div class="matching-box">
+            <div class="matching-title">🧩 문장 매칭하기</div>
+            <div class="matching-guide">
+                왼쪽의 영어 문장 전체와 오른쪽의 한국어 해석을 차례로 눌러 짝을 맞추세요.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    match_key = safe_key(key_prefix)
+
+    pairs = []
+    for i, line in enumerate(dialogue_data["lines"], start=1):
+        pairs.append({
+            "id": f"{match_key}_{i}",
+            "en": line["en"],
+            "ko": line["ko"],
+        })
+
+    st.session_state.setdefault(f"match_done_{match_key}", [])
+    st.session_state.setdefault(f"match_selected_{match_key}", None)
+    st.session_state.setdefault(f"match_message_{match_key}", "")
+    st.session_state.setdefault(f"match_show_answer_{match_key}", False)
+
+    done = st.session_state[f"match_done_{match_key}"]
+    selected = st.session_state[f"match_selected_{match_key}"]
+
+    total = len(pairs)
+    current_score = len(done)
+
+    st.markdown(
+        f'<div class="match-progress-box">현재 맞춘 문장: {current_score} / {total}</div>',
+        unsafe_allow_html=True
+    )
+
+    if selected:
+        st.markdown(
+            f'<div class="selected-card-notice">선택됨: {clean_text_for_display(selected["text"])}</div>',
+            unsafe_allow_html=True
+        )
+
+    if st.session_state[f"match_message_{match_key}"]:
+        msg = st.session_state[f"match_message_{match_key}"]
+        if "정답" in msg:
+            st.success(msg)
+        elif "오답" in msg:
+            st.error(msg)
+        else:
+            st.info(msg)
+
+    en_cards = [
+        {"id": p["id"], "text": p["en"], "kind": "en"}
+        for p in pairs
+        if p["id"] not in done
+    ]
+
+    ko_cards = [
+        {"id": p["id"], "text": p["ko"], "kind": "ko"}
+        for p in pairs
+        if p["id"] not in done
+    ]
+
+    en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
+    ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
+
+    col_en, col_ko = st.columns(2)
+
+    with col_en:
+        st.markdown("### English")
+        for card in en_cards:
+            if st.button(card["text"], key=f"match_en_{match_key}_{card['id']}", use_container_width=True):
+                current_selected = st.session_state[f"match_selected_{match_key}"]
+
+                if current_selected is None:
+                    st.session_state[f"match_selected_{match_key}"] = card
+                    st.session_state[f"match_message_{match_key}"] = "오른쪽에서 알맞은 한국어 해석을 고르세요."
+                else:
+                    if current_selected["id"] == card["id"] and current_selected["kind"] != card["kind"]:
+                        if card["id"] not in done:
+                            done.append(card["id"])
+                        st.session_state[f"match_selected_{match_key}"] = None
+                        st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
+                    else:
+                        st.session_state[f"match_selected_{match_key}"] = card
+                        st.session_state[f"match_message_{match_key}"] = "영어 문장을 다시 선택했습니다. 오른쪽 해석을 고르세요."
+
+                st.rerun()
+
+    with col_ko:
+        st.markdown("### Korean")
+        for card in ko_cards:
+            if st.button(card["text"], key=f"match_ko_{match_key}_{card['id']}", use_container_width=True):
+                current_selected = st.session_state[f"match_selected_{match_key}"]
+
+                if current_selected is None:
+                    st.session_state[f"match_selected_{match_key}"] = card
+                    st.session_state[f"match_message_{match_key}"] = "왼쪽에서 알맞은 영어 문장을 고르세요."
+                else:
+                    if current_selected["id"] == card["id"] and current_selected["kind"] != card["kind"]:
+                        if card["id"] not in done:
+                            done.append(card["id"])
+                        st.session_state[f"match_selected_{match_key}"] = None
+                        st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
+                    else:
+                        st.session_state[f"match_selected_{match_key}"] = card
+                        st.session_state[f"match_message_{match_key}"] = "한국어 해석을 다시 선택했습니다. 왼쪽 영어 문장을 고르세요."
+
+                st.rerun()
+
+    if len(done) == total:
+        st.success("🎉 모든 문장을 맞췄습니다! 대화문 전체를 잘 이해했습니다.")
+        st.balloons()
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        if st.button("🔄 문장 매칭 다시 하기", key=f"match_reset_{match_key}", use_container_width=True):
+            st.session_state[f"match_done_{match_key}"] = []
+            st.session_state[f"match_selected_{match_key}"] = None
+            st.session_state[f"match_message_{match_key}"] = ""
+            st.session_state[f"match_show_answer_{match_key}"] = False
+            st.rerun()
+
+    with c2:
+        if st.button("👀 정답 전체 보기", key=f"match_answer_{match_key}", use_container_width=True):
+            st.session_state[f"match_show_answer_{match_key}"] = not st.session_state.get(f"match_show_answer_{match_key}", False)
+            st.rerun()
+
+    if st.session_state.get(f"match_show_answer_{match_key}", False):
+        st.markdown("### ✅ 정답 전체")
+        for i, p in enumerate(pairs, start=1):
+            st.markdown(
+                f"""
+                <div class="line-card">
+                    <div class="en-line">{i}. {clean_text_for_display(p["en"])}</div>
+                    <div class="ko-line">{clean_text_for_display(p["ko"])}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
 
 
 # =========================
@@ -459,3 +679,6 @@ for i, tab in enumerate(tabs):
                 """,
                 unsafe_allow_html=True
             )
+
+        st.divider()
+        show_sentence_matching_activity(d, key_prefix=f"dialogue_matching_{i}_{d['ko_title']}")
