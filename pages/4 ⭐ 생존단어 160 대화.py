@@ -1,7 +1,6 @@
 import streamlit as st
-from urllib.parse import quote
-import requests
-import hashlib
+from gtts import gTTS
+import io
 import re
 
 # =========================
@@ -90,6 +89,17 @@ st.markdown(
         line-height: 1.7;
     }
 
+    .audio-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e3a8a;
+        border-radius: 18px;
+        padding: 14px 16px;
+        margin: 10px 0 18px 0;
+        font-size: 15px;
+        font-weight: 800;
+    }
+
     .stButton > button {
         border-radius: 999px;
         font-weight: 900;
@@ -129,63 +139,68 @@ st.markdown(
 # =========================
 # TTS 함수
 # =========================
-def make_google_tts_url(text, lang="en"):
-    clean_text = str(text).strip()
-    if not clean_text:
-        clean_text = "Hello"
-    encoded = quote(clean_text)
-    return f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl={lang}&q={encoded}"
-
-
-@st.cache_data(show_spinner=False)
-def get_tts_mp3_bytes(text, lang="en"):
-    clean_text = str(text).strip()
-    if not clean_text:
-        clean_text = "Hello"
-
-    url = make_google_tts_url(clean_text, lang=lang)
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://translate.google.com/",
-    }
-
-    response = requests.get(url, headers=headers, timeout=12)
-    response.raise_for_status()
-
-    audio_bytes = response.content
-    if not audio_bytes or len(audio_bytes) < 500:
-        raise ValueError("음성 파일이 비어 있습니다.")
-
-    return audio_bytes
-
-
 def remove_speaker_label(sentence):
+    """
+    음성에서는 A:, B:를 빼고 자연스럽게 읽게 합니다.
+    """
     return re.sub(r"^[A-Z]:\s*", "", sentence).strip()
 
 
 def make_dialogue_tts_text(lines):
     """
-    음성은 A:, B:를 빼고 자연스럽게 읽도록 만듭니다.
+    대화 전체를 하나의 음성 텍스트로 만듭니다.
+    Google TTS URL 방식이 아니라 gTTS를 사용하므로 긴 대화에서도 더 안정적입니다.
     """
-    return " ".join([remove_speaker_label(line["en"]) for line in lines])
+    clean_lines = []
+
+    for line in lines:
+        text = remove_speaker_label(line["en"])
+        clean_lines.append(text)
+
+    return " ".join(clean_lines)
+
+
+@st.cache_data(show_spinner=False)
+def make_gtts_audio(text):
+    """
+    대화 전체 mp3 생성
+    """
+    fp = io.BytesIO()
+    tts = gTTS(text=text, lang="en", tld="com", slow=False)
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    return fp.read()
 
 
 def play_dialogue_audio(lines, key):
-    dialogue_text = make_dialogue_tts_text(lines)
-
+    """
+    대화 전체 듣기:
+    - 줄마다 따로 오디오를 만들지 않음
+    - 대화 전체를 하나의 mp3처럼 재생
+    """
     if st.button("🔊 대화 전체 듣기", key=key, use_container_width=True):
         try:
-            audio_bytes = get_tts_mp3_bytes(dialogue_text, lang="en")
+            dialogue_text = make_dialogue_tts_text(lines)
+            audio_bytes = make_gtts_audio(dialogue_text)
+
+            st.markdown(
+                """
+                <div class="audio-box">
+                    대화 전체 음성입니다. 한 번에 이어서 들을 수 있습니다.
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
             st.audio(audio_bytes, format="audio/mp3")
+
         except Exception as e:
-            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
-            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(dialogue_text, lang="en"), use_container_width=True)
 
 
 # =========================
 # 생존 160 단어 활용 대화문 10개
-# 대화체 중심, 줄임말 포함
 # =========================
 dialogues = [
     {
@@ -199,7 +214,7 @@ dialogues = [
             {"en": "B: Yeah. He is my classmate, and she is my friend.", "ko": "B: 응. 그는 내 반 친구고, 그녀는 내 친구야."},
             {"en": "A: Nice. We can study together.", "ko": "A: 좋다. 우리 같이 공부할 수 있겠다."},
             {"en": "B: Sure. They are nice, and our teacher is kind.", "ko": "B: 물론이지. 그들도 착하고, 우리 선생님도 친절해."},
-            {"en": "A: My family is excited. My father, mother, brother, and sister all said, 'Good luck!'", "ko": "A: 우리 가족도 기대하고 있어. 아버지, 어머니, 형, 누나가 모두 '잘해!'라고 했어."},
+            {"en": "A: My family is excited. My father, mother, brother, and sister all said, good luck!", "ko": "A: 우리 가족도 기대하고 있어. 아버지, 어머니, 형, 누나가 모두 잘하라고 했어."},
             {"en": "B: That's sweet. You're a good person.", "ko": "B: 따뜻하다. 너 좋은 사람이구나."},
             {"en": "A: I was a shy child, so I'm a little nervous.", "ko": "A: 내가 어릴 때는 수줍은 아이였어서 조금 긴장돼."},
             {"en": "B: Don't worry. That man and that woman are new teachers, too.", "ko": "B: 걱정하지 마. 저 남자분과 저 여자분도 새로 오신 선생님들이야."},
@@ -276,7 +291,7 @@ dialogues = [
     {
         "title": "6. Time Check",
         "ko_title": "시간 확인",
-        "words": "time, now, today, tomorrow, yesterday, morning, afternoon, evening, night, early, late, one, two, three, four, five, six, seven, eight, ten",
+        "words": "time, now, today, tomorrow, yesterday, morning, afternoon, evening, night, early, late, one, two, three, four, five, six, seven, eight, nine, ten",
         "lines": [
             {"en": "A: What time is it now?", "ko": "A: 지금 몇 시야?"},
             {"en": "B: It's seven in the morning.", "ko": "B: 아침 7시야."},
@@ -285,7 +300,7 @@ dialogues = [
             {"en": "A: What do we have today?", "ko": "A: 오늘 뭐 있어?"},
             {"en": "B: One test in the morning, two classes in the afternoon, and three meetings in the evening.", "ko": "B: 아침에 시험 하나, 오후에 수업 두 개, 저녁에 모임 세 개 있어."},
             {"en": "A: Wow. Four, five, six things already.", "ko": "A: 와. 벌써 네 개, 다섯 개, 여섯 개 일이네."},
-            {"en": "B: And tomorrow we have eight pages to read.", "ko": "B: 그리고 내일은 여덟 쪽을 읽어야 해."},
+            {"en": "B: And tomorrow we have eight or nine pages to read.", "ko": "B: 그리고 내일은 여덟 쪽이나 아홉 쪽을 읽어야 해."},
             {"en": "A: I need ten hours of sleep tonight.", "ko": "A: 오늘 밤에는 열 시간 자야겠다."},
             {"en": "B: Same here. Let's not stay up late.", "ko": "B: 나도. 늦게까지 깨어 있지 말자."},
         ],
@@ -355,7 +370,7 @@ dialogues = [
             {"en": "A: What kind of work do you want?", "ko": "A: 어떤 일을 하고 싶어?"},
             {"en": "B: My dream is to be an engineer at a good company, maybe in an office or a factory.", "ko": "B: 내 꿈은 좋은 회사에서 엔지니어가 되는 거야. 사무실이나 공장에서 일할 수도 있고."},
             {"en": "A: Nice. I once wanted to be a mechanic, a chef, a firefighter, a farmer, a designer, a singer, an actor, and even an athlete.", "ko": "A: 멋지다. 나는 한때 정비사, 요리사, 소방관, 농부, 디자이너, 가수, 배우, 심지어 운동선수도 되고 싶었어."},
-            {"en": "B: That's great experience. Just prepare your skills, upload your post, download the file, search the news, click the channel, read the comments, and don't be late.", "ko": "B: 좋은 경험이네. 기술을 준비하고, 게시물을 올리고, 파일을 내려받고, 뉴스를 검색하고, 채널을 클릭하고, 댓글을 읽고, 늦지 않으면 돼."},
+            {"en": "B: That's great experience. Just prepare your skills and don't be late.", "ko": "B: 좋은 경험이네. 기술을 준비하고 늦지 않으면 돼."},
             {"en": "A: I'll text you if I need to change or cancel the date.", "ko": "A: 날짜를 바꾸거나 취소해야 하면 문자할게."},
             {"en": "B: Promise me you'll be on time and available for the event, party, or festival.", "ko": "B: 행사, 파티, 축제에 시간 맞춰 오고 가능하다고 약속해 줘."},
             {"en": "A: I promise. My future goal is clear now.", "ko": "A: 약속할게. 이제 내 미래 목표가 분명해졌어."},
@@ -372,7 +387,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-tab_names = [f"{d['title'].split('.')[0]}. {d['ko_title']}" for d in dialogues]
+tab_names = [f"{i + 1}. {d['ko_title']}" for i, d in enumerate(dialogues)]
 tabs = st.tabs(tab_names)
 
 for i, tab in enumerate(tabs):
@@ -405,6 +420,7 @@ for i, tab in enumerate(tabs):
 
         for line in d["lines"]:
             st.markdown('<div class="line-card">', unsafe_allow_html=True)
+
             st.markdown(
                 f"<div class='en-line'>{line['en']}</div>",
                 unsafe_allow_html=True
