@@ -436,7 +436,7 @@ if "1. Let It Go" in song_choice:
     ]
 
 elif "2. Hello" in song_choice:
-    video_url = "https://www.youtube.com/watch?v=IND0m6m4H4Q&list=RDIND0m6m4H4Q&start_radio=1"
+    video_url = "https://www.youtube.com/watch?v=h7NBamHcX58&list=RDh7NBamHcX58&start_radio=1"
 
     bg_content = '''
     <h3 style="font-size:2.2rem; margin-bottom:20px; color:#4338ca;">
