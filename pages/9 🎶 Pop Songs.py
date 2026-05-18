@@ -188,50 +188,74 @@ def try_translate_ko_to_en(korean_text: str) -> str:
 
 def make_polished_feedback(song_title: str, question: str, student_answer: str):
     """
-    학생 답변을 그대로 영어 문장 안에 넣지 않습니다.
-    한국어 피드백은 학생 답변의 길이와 내용 유형을 바탕으로 다듬어 제시합니다.
-    영어 피드백은 한국어 피드백을 번역하거나 자연스러운 영어 피드백으로 대체합니다.
+    학생 답변을 평가하는 방식이 아니라,
+    학생이 쓴 내용을 바탕으로 한국어 문단을 조금 더 풍부하게 다듬고,
+    그 한국어 문단을 영어로 번역해 줍니다.
+    마지막에는 쓰기 조언만 제시합니다.
+
+    주의:
+    - 영어 번역에는 학생의 한국어 원문을 그대로 섞어 넣지 않습니다.
+    - deep-translator가 설치되어 있으면 번역을 시도합니다.
+    - 번역 실패 시에는 한국어가 섞이지 않는 안전한 영어 문단을 제공합니다.
     """
     answer = str(student_answer).strip()
-    word_count = len(answer.split())
-    char_count = len(answer)
+    question = str(question).strip()
 
-    if char_count < 10:
-        ko = (
-            "아직 생각이 짧게 적혀 있습니다. 노래를 들으며 떠오른 사람, 장면, 감정을 한 가지씩 더 자세히 적어 보면 좋겠습니다. "
-            "예를 들어 ‘누가 떠올랐는지’, ‘그때 어떤 감정이었는지’, ‘지금은 그 일을 어떻게 바라보는지’를 차례로 쓰면 글이 더 자연스럽고 깊어집니다."
-        )
-    elif char_count < 45:
-        ko = (
-            "짧지만 자신의 감정을 솔직하게 표현한 답변입니다. 다만 글이 조금 더 풍부해지려면, 단순히 기억을 말하는 데서 멈추지 않고 "
-            "그 기억이 지금의 나에게 어떤 의미가 되었는지까지 이어 쓰면 좋겠습니다. 노래 속 화자의 감정과 자신의 경험을 연결하면 더 좋은 reflective writing이 됩니다."
+    # 너무 짧은 답변일 때도 학생 답변을 바탕으로 자연스럽게 확장
+    if len(answer) < 10:
+        polished_ko = (
+            "이 노래를 들으며 아직 생각을 길게 정리하지는 못했지만, "
+            "마음속에 떠오르는 감정이 있다는 점이 중요합니다. "
+            "노래 속 화자의 마음처럼, 나에게도 쉽게 말하지 못한 기억이나 "
+            "다시 생각해 보고 싶은 순간이 있을 수 있습니다. "
+            "그 감정을 조금 더 자세히 들여다보면, 단순한 감상이 아니라 "
+            "나 자신을 이해하는 글로 발전할 수 있습니다."
         )
     else:
-        ko = (
-            "이 답변은 노래를 들으며 떠오른 개인적인 기억과 감정을 비교적 잘 담고 있습니다. 단순히 과거의 일을 설명하는 데서 끝나지 않고, "
-            "그 경험을 통해 자신의 관계, 감정, 선택을 다시 돌아보려는 태도가 드러납니다. 글을 조금 더 다듬는다면, 구체적인 장면 하나를 먼저 제시한 뒤 "
-            "그때의 감정과 지금의 깨달음을 차례로 연결해 보세요. 그러면 글이 더 자연스럽고 진정성 있게 느껴집니다."
+        # 학생 원문을 그대로 베끼기보다, “학생이 쓴 내용”으로 받아 자연스럽게 문단화
+        polished_ko = (
+            f"이 노래를 들으며 나는 다음과 같은 생각을 하게 되었습니다. "
+            f"{answer} "
+            f"이 경험은 단순히 지나간 일을 떠올리는 데서 끝나지 않습니다. "
+            f"그때의 감정과 지금의 마음을 함께 돌아보게 하며, "
+            f"사람과의 관계가 언제나 쉽지만은 않다는 사실도 생각하게 합니다. "
+            f"노래 속 화자가 처음으로 돌아가고 싶어 하거나, 누군가에게 미안함과 그리움을 전하려는 것처럼, "
+            f"나 역시 과거의 한 장면을 다시 바라보며 그때 미처 표현하지 못했던 마음을 생각해 볼 수 있었습니다. "
+            f"이런 성찰은 나의 감정을 더 깊이 이해하고, 앞으로의 관계를 조금 더 성숙하게 바라보는 계기가 됩니다."
         )
 
-    # The Scientist처럼 과거 관계 관련 질문일 때 조금 더 맞춤 피드백
-    if "Scientist" in song_title or "옛" in question or "그리운" in question or "relationship" in question.lower():
-        if char_count >= 10:
-            ko = (
-                "이 답변은 노래 속 화자처럼 과거의 관계를 다시 돌아보는 느낌이 잘 드러납니다. 특히 누군가와의 관계가 쉽지 않았다는 점, "
-                "마음을 여는 일이 어렵게 느껴졌다는 점을 통해 단순한 추억이 아니라 감정적으로 의미 있는 경험을 떠올리고 있다는 것을 알 수 있습니다. "
-                "조금 더 좋은 글로 만들려면, 그 사람이 왜 기억에 남는지, 그때 내가 무엇을 몰랐는지, 지금 돌아보면 무엇을 배웠는지를 차례로 적어 보세요."
-            )
+    # The Scientist 관련 질문이면 조금 더 관계·그리움 중심으로 다듬기
+    if ("Scientist" in song_title or "그리운" in question or "옛" in question or "처음" in question or "관계" in question) and len(answer) >= 10:
+        polished_ko = (
+            f"이 노래를 들으며 나는 과거의 관계와 그때의 감정을 다시 떠올리게 되었습니다. "
+            f"{answer} "
+            f"그 기억은 단순한 추억이라기보다, 마음을 쉽게 열지 못했던 순간과 "
+            f"서로를 충분히 이해하지 못했던 시간을 돌아보게 합니다. "
+            f"노래 속 화자가 ‘처음으로 돌아가고 싶다’고 말하는 것처럼, "
+            f"나 역시 그때로 돌아간다면 조금 더 솔직하게 말하고, 상대의 마음을 더 천천히 이해하려 했을 것 같습니다. "
+            f"결국 이 노래는 사랑이나 관계가 생각처럼 쉽지 않지만, "
+            f"그 어려움 속에서도 우리는 자신의 감정과 선택을 배울 수 있다는 점을 느끼게 해 줍니다."
+        )
 
-    en = try_translate_ko_to_en(ko)
+    english_translation = try_translate_ko_to_en(polished_ko)
+
+    # 번역 실패 또는 번역 결과에 한국어가 남아 있을 경우 안전한 영어 문단으로 대체
+    if re.search(r"[가-힣]", english_translation):
+        english_translation = (
+            "While listening to this song, I looked back on a past relationship and the emotions I felt at that time. "
+            "The memory was not just a simple memory; it helped me think about moments when it was difficult to open my heart "
+            "and when two people could not fully understand each other. Like the speaker in the song who wants to go back to the start, "
+            "I also wondered what I might say or do differently if I could return to that moment. In the end, this song reminds me that "
+            "love and relationships are not always easy, but they can help us understand our feelings and grow as a person."
+        )
 
     advice = (
-        "쓰기 조언: 다음 문장 구조를 활용해 보세요. "
-        "① While listening to this song, I thought about ~. "
-        "② At that time, I felt ~ because ~. "
-        "③ Looking back now, I realize that ~."
+        "쓰기 조언: 글을 더 좋게 만들고 싶다면 ① 떠오른 사람이나 장면, ② 그때의 감정, ③ 지금 돌아보며 깨달은 점을 차례로 써 보세요. "
+        "영어로 쓸 때는 다음 구조를 활용하면 좋습니다: "
+        "While listening to this song, I thought about ~. / At that time, I felt ~ because ~. / Looking back now, I realize that ~."
     )
 
-    return ko, en, advice
+    return polished_ko, english_translation, advice
 
 
 # =========================================================
@@ -681,6 +705,10 @@ if selected_tab == "🎬 배경 학습":
 # =========================================================
 
 elif selected_tab == "📖 가사 & 퀴즈":
+    st.subheader("🎬 노래 영상")
+    st.video(data["video_url"])
+    st.markdown("---")
+
     st.subheader("📖 가사와 한국어 해석")
     for en, ko in data["lyrics"]:
         st.markdown(
@@ -910,8 +938,8 @@ elif selected_tab == "✍️ 생각 적기":
         <div class="game-card">
         <div class="big-guide">
         질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요.<br>
-        답변을 제출하면 한국어 피드백을 먼저 다듬어 보여 주고, 그 내용을 자연스러운 영어로 함께 제시합니다.<br>
-        영어 피드백에는 학생이 쓴 한국어 문장이 그대로 섞여 들어가지 않도록 처리했습니다.
+        답변을 제출하면 학생이 쓴 내용을 바탕으로 한국어 글을 조금 더 풍부하게 다듬고, 그 글을 자연스러운 영어로 번역해 줍니다.<br>
+        맨 밑에는 글을 더 발전시키기 위한 쓰기 조언만 제시합니다.
         </div>
         </div>
         """,
@@ -941,13 +969,13 @@ elif selected_tab == "✍️ 생각 적기":
         else:
             ko_feedback, en_feedback, advice = make_polished_feedback(song_choice, selected_question, answer)
 
-            st.markdown("### 🇰🇷 다듬은 한국어 피드백")
+            st.markdown("### 🇰🇷 다듬은 한국어 글")
             st.markdown(
                 f'<div class="feedback-ko">{clean_text_for_display(ko_feedback)}</div>',
                 unsafe_allow_html=True
             )
 
-            st.markdown("### 🇺🇸 English Feedback")
+            st.markdown("### 🇺🇸 English Translation")
             st.markdown(
                 f'<div class="feedback-en">{clean_text_for_display(en_feedback)}</div>',
                 unsafe_allow_html=True
@@ -959,9 +987,3 @@ elif selected_tab == "✍️ 생각 적기":
                 unsafe_allow_html=True
             )
 
-            st.markdown("### 예시 영어 문장")
-            st.info(
-                "While listening to this song, I thought about someone from my past. "
-                "At that time, I did not fully understand my own feelings. "
-                "Looking back now, I realize that relationships can be difficult, but they can also teach us something important."
-            )
