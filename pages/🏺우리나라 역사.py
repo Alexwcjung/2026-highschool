@@ -36,6 +36,12 @@ HISTORY_FLOW = [
         "one": "통일 신라와 발해",
     },
     {
+        "name": "후삼국",
+        "emoji": "🔥",
+        "years": "892년 ~ 936년",
+        "one": "후고구려·후백제·신라의 경쟁",
+    },
+    {
         "name": "고려",
         "emoji": "📜",
         "years": "918년 ~ 1392년",
@@ -57,6 +63,7 @@ HISTORY_FLOW = [
 
 # =====================================================
 # 고대~조선 설명
+# - 건국 인물 탭을 따로 만들지 않고, 2번째 탭에 함께 표시합니다.
 # =====================================================
 PREMODERN_PERIODS = [
     {
@@ -64,54 +71,71 @@ PREMODERN_PERIODS = [
         "emoji": "🐻",
         "years": "기원전 2333년 전설적 건국 ~ 기원전 108년",
         "period": "우리 역사상 첫 국가",
+        "founders": [
+            {
+                "person": "단군왕검",
+                "role": "고조선을 세웠다고 전해지는 인물",
+                "explain": "하늘의 뜻과 인간 세상의 질서를 연결하는 상징적 존재로 전해집니다."
+            }
+        ],
         "core": "청동기 문화를 바탕으로 성장한 우리나라 최초의 국가입니다.",
         "details": [
             "단군왕검이 세웠다고 전해집니다.",
             "홍익인간은 널리 인간을 이롭게 한다는 뜻입니다.",
             "8조법을 통해 당시 사회에 법과 질서가 있었음을 알 수 있습니다.",
-            "청동기 문화와 고인돌이 중요한 특징입니다.",
-            "고조선은 이후 한반도 여러 나라와 고대 국가 형성의 출발점으로 이해할 수 있습니다."
+            "청동기 문화와 고인돌이 중요한 특징입니다."
         ],
-        "founders": ["단군왕검"],
         "keywords": ["단군왕검", "홍익인간", "청동기", "고인돌", "8조법"]
     },
     {
-        "name": "여러 나라의 성장",
-        "emoji": "🌾",
-        "years": "기원전 1세기 전후",
-        "period": "부여 · 옥저 · 동예 · 삼한",
-        "core": "고조선 이후 한반도와 만주 일대에서 여러 정치 집단과 나라가 성장했습니다.",
-        "details": [
-            "부여는 만주 지역에서 성장했고, 왕 아래 여러 가들이 힘을 가진 연맹 왕국이었습니다.",
-            "옥저와 동예는 한반도 북동부 지역에서 성장했습니다.",
-            "삼한은 한반도 남부의 마한·진한·변한을 말합니다.",
-            "마한 지역에서는 훗날 백제가 성장했고, 진한 지역에서는 신라가 성장했습니다.",
-            "변한 지역은 철 생산이 활발했고, 훗날 가야 세력과 연결됩니다."
-        ],
-        "founders": ["여러 부족장과 정치 집단"],
-        "keywords": ["부여", "옥저", "동예", "삼한", "마한", "진한", "변한", "철"]
-    },
-    {
-        "name": "삼국 시대",
+        "name": "삼국 시대와 가야",
         "emoji": "⚔️",
         "years": "기원전 1세기경 ~ 668년",
-        "period": "고구려 · 백제 · 신라",
-        "core": "세 나라가 한반도와 만주 일대에서 서로 경쟁하며 성장한 시대입니다.",
+        "period": "고구려 · 백제 · 신라 · 가야",
+        "founders": [
+            {
+                "person": "주몽",
+                "role": "고구려 건국 인물",
+                "explain": "고구려를 세운 인물로 전해지며, 북방의 강한 기상과 영토 확장의 이미지를 상징합니다."
+            },
+            {
+                "person": "온조",
+                "role": "백제 건국 인물",
+                "explain": "백제를 세운 인물로 전해지며, 한강 유역을 중심으로 백제가 성장하는 출발점이 됩니다."
+            },
+            {
+                "person": "박혁거세",
+                "role": "신라 건국 인물",
+                "explain": "신라를 세운 인물로 전해지며, 신라 초기 국가 형성의 상징적 인물입니다."
+            },
+            {
+                "person": "김수로",
+                "role": "가야 건국 인물",
+                "explain": "금관가야를 세운 인물로 전해지며, 가야의 철기 문화와 교류를 떠올리게 하는 인물입니다."
+            }
+        ],
+        "core": "고구려·백제·신라가 한반도와 만주 일대에서 경쟁하고, 가야도 남부 지역에서 독자적인 문화를 발전시킨 시대입니다.",
         "details": [
-            "고구려는 주몽이 세웠다고 전해지며, 북쪽의 강한 군사력을 바탕으로 넓은 영토를 차지했습니다.",
-            "백제는 온조가 세웠다고 전해지며, 한강 유역을 바탕으로 성장했고 일본과 문화 교류가 활발했습니다.",
-            "신라는 박혁거세가 세웠다고 전해지며, 삼국 중 늦게 발전했지만 결국 삼국 통일을 주도했습니다.",
-            "가야는 김수로왕 이야기와 함께 전해지며, 철 생산과 교역이 발달했습니다.",
+            "고구려는 북쪽의 강한 군사력을 바탕으로 넓은 영토를 차지했습니다.",
+            "백제는 한강 유역을 바탕으로 성장했고 일본과 문화 교류가 활발했습니다.",
+            "신라는 삼국 중 늦게 발전했지만, 결국 삼국 통일을 주도했습니다.",
+            "가야는 낙동강 유역을 중심으로 철기 문화와 교역이 발달했습니다.",
             "불교가 수용되면서 왕권 강화와 문화 발전에 큰 영향을 주었습니다."
         ],
-        "founders": ["고구려: 주몽", "백제: 온조", "신라: 박혁거세", "가야: 김수로"],
-        "keywords": ["주몽", "온조", "박혁거세", "김수로", "고구려", "백제", "신라", "가야", "불교", "한강 유역"]
+        "keywords": ["주몽", "온조", "박혁거세", "김수로", "고구려", "백제", "신라", "가야", "불교", "한강 유역", "철기 문화"]
     },
     {
         "name": "남북국 시대",
         "emoji": "🌅",
         "years": "7세기 후반 ~ 10세기",
         "period": "통일 신라 · 발해",
+        "founders": [
+            {
+                "person": "대조영",
+                "role": "발해 건국 인물",
+                "explain": "고구려 계승 의식을 바탕으로 발해를 세운 인물입니다."
+            }
+        ],
         "core": "남쪽에는 통일 신라, 북쪽에는 고구려를 계승한 발해가 있던 시대입니다.",
         "details": [
             "통일 신라는 삼국 통일 이후 불국사와 석굴암 같은 뛰어난 문화를 남겼습니다.",
@@ -119,31 +143,72 @@ PREMODERN_PERIODS = [
             "발해는 해동성국이라고 불릴 정도로 강성했습니다.",
             "이 시기를 남북국 시대라고 부르기도 합니다."
         ],
-        "founders": ["발해: 대조영"],
         "keywords": ["통일 신라", "발해", "대조영", "불국사", "석굴암", "해동성국"]
     },
     {
-        "name": "후삼국과 고려",
-        "emoji": "📜",
-        "years": "후삼국: 892년경 ~ 936년 / 고려: 918년 ~ 1392년",
-        "period": "궁예 · 견훤 · 왕건",
-        "core": "후삼국의 혼란을 왕건이 통일하고 고려를 세웠습니다.",
+        "name": "후삼국 시대",
+        "emoji": "🔥",
+        "years": "892년 ~ 936년",
+        "period": "후고구려 · 후백제 · 신라",
+        "founders": [
+            {
+                "person": "궁예",
+                "role": "후고구려 건국 인물",
+                "explain": "혼란한 신라 말기에 후고구려를 세우며 새로운 세력을 형성했습니다."
+            },
+            {
+                "person": "견훤",
+                "role": "후백제 건국 인물",
+                "explain": "후백제를 세워 옛 백제 지역을 중심으로 세력을 키웠습니다."
+            },
+            {
+                "person": "왕건",
+                "role": "고려 건국 인물",
+                "explain": "후삼국을 통일하고 고려를 세운 인물입니다."
+            }
+        ],
+        "core": "신라 말 혼란 속에서 후고구려와 후백제가 등장하고, 왕건의 고려가 후삼국을 통일한 시대입니다.",
         "details": [
-            "후고구려는 궁예가 세웠고, 뒤에 왕건이 고려를 세웠습니다.",
-            "후백제는 견훤이 세웠습니다.",
-            "왕건은 후삼국을 통일하고 새 왕조 고려를 열었습니다.",
+            "신라 말 왕권이 약해지고 지방 세력이 성장했습니다.",
+            "궁예는 후고구려를 세웠고, 견훤은 후백제를 세웠습니다.",
+            "왕건은 고려를 세운 뒤 후삼국을 통일했습니다.",
+            "후삼국 시대는 고려로 이어지는 중요한 과도기입니다."
+        ],
+        "keywords": ["후삼국", "궁예", "견훤", "왕건", "후고구려", "후백제", "고려"]
+    },
+    {
+        "name": "고려",
+        "emoji": "📜",
+        "years": "918년 ~ 1392년",
+        "period": "왕건 건국",
+        "founders": [
+            {
+                "person": "왕건",
+                "role": "고려 건국 인물",
+                "explain": "송악을 기반으로 고려를 세우고 후삼국을 통일했습니다."
+            }
+        ],
+        "core": "왕건이 세운 나라로, 불교 문화와 인쇄술이 크게 발달했습니다.",
+        "details": [
+            "왕건은 후삼국을 통일하고 새 왕조를 열었습니다.",
             "불교가 국가와 사회에 큰 영향을 주었습니다.",
             "팔만대장경은 몽골 침입을 극복하려는 마음과 뛰어난 목판 인쇄술을 보여 줍니다.",
             "세계적으로 이른 시기에 금속활자를 사용했습니다."
         ],
-        "founders": ["후고구려: 궁예", "후백제: 견훤", "고려: 왕건"],
-        "keywords": ["궁예", "견훤", "왕건", "후삼국", "불교", "팔만대장경", "금속활자", "몽골 침입"]
+        "keywords": ["왕건", "불교", "팔만대장경", "금속활자", "몽골 침입"]
     },
     {
         "name": "조선",
         "emoji": "👑",
         "years": "1392년 ~ 1897년",
         "period": "이성계 건국",
+        "founders": [
+            {
+                "person": "이성계",
+                "role": "조선 건국 인물",
+                "explain": "고려 말의 혼란 속에서 새 왕조 조선을 세운 인물입니다."
+            }
+        ],
         "core": "유교를 바탕으로 나라를 운영했고, 훈민정음이 창제되었습니다.",
         "details": [
             "이성계가 세운 나라입니다.",
@@ -152,84 +217,7 @@ PREMODERN_PERIODS = [
             "임진왜란과 병자호란 등 큰 전쟁을 겪었습니다.",
             "후기에는 실학이 등장하고 근대 사회로 변화하려는 움직임이 나타났습니다."
         ],
-        "founders": ["조선: 이성계"],
         "keywords": ["이성계", "유교", "세종대왕", "훈민정음", "임진왜란", "실학"]
-    },
-]
-
-# =====================================================
-# 건국 인물 정리
-# =====================================================
-FOUNDATION_FIGURES = [
-    {
-        "country": "고조선",
-        "figure": "단군왕검",
-        "years": "기원전 2333년 전설적 건국",
-        "summary": "고조선을 세웠다고 전해지는 인물입니다.",
-        "keywords": ["홍익인간", "청동기", "우리 역사상 첫 국가"]
-    },
-    {
-        "country": "고구려",
-        "figure": "주몽",
-        "years": "기원전 37년 전설적 건국",
-        "summary": "고구려를 세웠다고 전해지는 인물입니다. 북방의 강한 국가로 성장하는 출발점과 연결됩니다.",
-        "keywords": ["졸본", "북방", "강한 군사력"]
-    },
-    {
-        "country": "백제",
-        "figure": "온조",
-        "years": "기원전 18년 전설적 건국",
-        "summary": "백제를 세웠다고 전해지는 인물입니다. 백제는 한강 유역을 중심으로 성장했습니다.",
-        "keywords": ["한강 유역", "문화 교류", "해상 활동"]
-    },
-    {
-        "country": "신라",
-        "figure": "박혁거세",
-        "years": "기원전 57년 전설적 건국",
-        "summary": "신라를 세웠다고 전해지는 인물입니다. 신라는 경주 지역에서 성장했습니다.",
-        "keywords": ["경주", "진한", "삼국 통일"]
-    },
-    {
-        "country": "가야",
-        "figure": "김수로",
-        "years": "전설적 건국",
-        "summary": "금관가야의 시조로 전해지는 인물입니다. 가야는 철 생산과 교역이 발달했습니다.",
-        "keywords": ["금관가야", "철", "교역"]
-    },
-    {
-        "country": "발해",
-        "figure": "대조영",
-        "years": "698년 건국",
-        "summary": "고구려 계승 의식을 바탕으로 발해를 세운 인물입니다.",
-        "keywords": ["고구려 계승", "만주", "해동성국"]
-    },
-    {
-        "country": "후고구려",
-        "figure": "궁예",
-        "years": "901년 건국",
-        "summary": "후삼국 시대 후고구려를 세운 인물입니다.",
-        "keywords": ["후삼국", "태봉", "왕건"]
-    },
-    {
-        "country": "후백제",
-        "figure": "견훤",
-        "years": "900년 건국",
-        "summary": "후삼국 시대 후백제를 세운 인물입니다.",
-        "keywords": ["후삼국", "완산주", "백제 계승"]
-    },
-    {
-        "country": "고려",
-        "figure": "왕건",
-        "years": "918년 건국",
-        "summary": "고려를 세우고 후삼국을 통일한 인물입니다.",
-        "keywords": ["후삼국 통일", "불교", "개경"]
-    },
-    {
-        "country": "조선",
-        "figure": "이성계",
-        "years": "1392년 건국",
-        "summary": "조선을 세운 인물입니다. 조선은 유교를 바탕으로 나라를 운영했습니다.",
-        "keywords": ["유교", "한양", "새 왕조"]
     },
 ]
 
@@ -463,12 +451,24 @@ if "total" not in st.session_state:
 if "quiz_mode" not in st.session_state:
     st.session_state.quiz_mode = "흐름 맞추기"
 
+def get_founder_quiz_items():
+    items = []
+    for period in PREMODERN_PERIODS:
+        for founder in period.get("founders", []):
+            items.append({
+                "period": period["name"],
+                "person": founder["person"],
+                "role": founder["role"],
+                "explain": founder["explain"]
+            })
+    return items
+
 def make_quiz():
     mode = st.session_state.get("quiz_mode", "흐름 맞추기")
 
     if mode == "흐름 맞추기":
         question = "다음 중 우리나라 역사 흐름으로 가장 알맞은 것은?"
-        correct = "선사 → 고조선 → 삼국 → 남북국 → 고려 → 조선 → 근현대"
+        correct = "선사 → 고조선 → 삼국 → 남북국 → 후삼국 → 고려 → 조선 → 근현대"
         options = [
             correct,
             "조선 → 고려 → 삼국 → 고조선 → 대한민국",
@@ -481,18 +481,30 @@ def make_quiz():
         question = f"다음 설명에 해당하는 시대는?<br><br>{item['core']}"
         correct = item["name"]
         options = [x["name"] for x in PREMODERN_PERIODS]
-        options = random.sample(options, 4)
+        options = random.sample(options, min(4, len(options)))
+        if correct not in options:
+            options[0] = correct
+
+    elif mode == "건국 인물 맞추기":
+        founder_items = get_founder_quiz_items()
+        item = random.choice(founder_items)
+        question = f"다음 설명에 해당하는 인물은?<br><br>{item['role']}<br>{item['explain']}"
+        correct = item["person"]
+        options = [x["person"] for x in founder_items]
+        options = list(dict.fromkeys(options))
+        options = random.sample(options, min(4, len(options)))
         if correct not in options:
             options[0] = correct
 
     elif mode == "연도 맞추기":
         all_items = PREMODERN_PERIODS + MODERN_STEPS + PRESIDENTS
         item = random.choice(all_items)
-        item_name = item.get("name", item.get("title", ""))
+        item_name = item.get("name", item.get("title", item.get("name", "")))
         question = f"{item_name}의 시기 또는 재임 기간은?"
         correct = item["years"]
         options = [x["years"] for x in all_items]
-        options = random.sample(options, 4)
+        options = list(dict.fromkeys(options))
+        options = random.sample(options, min(4, len(options)))
         if correct not in options:
             options[0] = correct
 
@@ -515,21 +527,13 @@ def make_quiz():
         if correct not in options:
             options[0] = correct
 
-    elif mode == "건국 인물 맞추기":
-        item = random.choice(FOUNDATION_FIGURES)
-        question = f"다음 나라를 세운 인물로 알맞은 것은?<br><br><b>{item['country']}</b>"
-        correct = item["figure"]
-        options = [x["figure"] for x in FOUNDATION_FIGURES]
-        options = random.sample(options, 4)
-        if correct not in options:
-            options[0] = correct
-
     else:
         item = random.choice(PRESIDENTS)
         question = f"{item['name']} 대통령의 재임 시기는?"
         correct = item["years"]
         options = [x["years"] for x in PRESIDENTS]
-        options = random.sample(options, 4)
+        options = list(dict.fromkeys(options))
+        options = random.sample(options, min(4, len(options)))
         if correct not in options:
             options[0] = correct
 
@@ -552,12 +556,11 @@ def reset_score():
 # 화면
 # =====================================================
 st.title("🇰🇷 우리나라 역사와 근현대사")
-st.caption("각 시대와 단계마다 연도/시기와 주요 인물을 함께 표시했습니다.")
+st.caption("각 시대와 단계마다 연도/시기, 핵심 인물, 주요 내용을 함께 정리했습니다.")
 
-tab1, tab2, tab_founders, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "🧭 큰 흐름",
     "🏛️ 고조선~조선",
-    "👑 건국 인물",
     "🇰🇷 근현대사",
     "👤 대통령 정리",
     "📌 한눈에 정리",
@@ -567,19 +570,20 @@ tab1, tab2, tab_founders, tab3, tab4, tab5, tab6 = st.tabs([
 with tab1:
     st.subheader("🧭 우리나라 역사 큰 흐름")
 
-    cols = st.columns(len(HISTORY_FLOW))
+    cols = st.columns(4)
     for i, item in enumerate(HISTORY_FLOW):
-        with cols[i]:
+        with cols[i % 4]:
             with st.container(border=True):
                 st.markdown(f"### {item['emoji']}")
                 st.markdown(f"**{item['name']}**")
                 st.caption(item["years"])
                 st.markdown(item["one"])
 
-    st.info("암기 순서: 선사 → 고조선 → 삼국 → 남북국 → 고려 → 조선 → 근현대")
+    st.info("암기 순서: 선사 → 고조선 → 삼국 → 남북국 → 후삼국 → 고려 → 조선 → 근현대")
 
 with tab2:
     st.subheader("🏛️ 고조선부터 조선까지")
+    st.caption("건국 인물은 별도 탭으로 분리하지 않고, 각 시대 설명 안에 함께 넣었습니다.")
 
     for item in PREMODERN_PERIODS:
         with st.container(border=True):
@@ -588,46 +592,22 @@ with tab2:
             st.markdown(f"**구분:** {item['period']}")
             st.markdown(f"**핵심:** {item['core']}")
 
-            st.markdown("**설명**")
+            if item.get("founders"):
+                st.markdown("### 👑 건국·관련 인물")
+                founder_cols = st.columns(min(3, len(item["founders"])))
+                for idx, founder in enumerate(item["founders"]):
+                    with founder_cols[idx % min(3, len(item["founders"]))]:
+                        with st.container(border=True):
+                            st.markdown(f"#### {founder['person']}")
+                            st.markdown(f"**{founder['role']}**")
+                            st.caption(founder["explain"])
+
+            st.markdown("### 📖 설명")
             for d in item["details"]:
                 st.markdown(f"- {d}")
 
-            if item.get("founders"):
-                st.markdown("**건국·관련 인물**")
-                st.write(" · ".join(item["founders"]))
-
-            st.markdown("**키워드**")
+            st.markdown("### 🔑 키워드")
             st.write(" · ".join(item["keywords"]))
-
-with tab_founders:
-    st.subheader("👑 건국 인물 정리")
-    st.info("온조, 박혁거세처럼 학생들이 헷갈리기 쉬운 건국 인물을 따로 정리했습니다.")
-
-    cols = st.columns(3)
-    for i, item in enumerate(FOUNDATION_FIGURES):
-        with cols[i % 3]:
-            with st.container(border=True):
-                st.markdown(f"### {item['country']}")
-                st.markdown(f"**건국 인물:** {item['figure']}")
-                st.caption(item["years"])
-                st.markdown(item["summary"])
-                st.caption(" · ".join(item["keywords"]))
-
-    st.markdown("### 표로 한눈에 보기")
-    st.dataframe(
-        [
-            {
-                "나라": x["country"],
-                "건국 인물": x["figure"],
-                "시기": x["years"],
-                "핵심": x["summary"],
-                "키워드": ", ".join(x["keywords"])
-            }
-            for x in FOUNDATION_FIGURES
-        ],
-        use_container_width=True,
-        hide_index=True
-    )
 
 with tab3:
     st.subheader("🇰🇷 근현대사 조금 더 자세히")
@@ -669,6 +649,7 @@ with tab5:
                 "시대": x["name"],
                 "연도/시기": x["years"],
                 "구분": x["period"],
+                "건국·관련 인물": ", ".join([f["person"] for f in x.get("founders", [])]),
                 "핵심": x["core"],
                 "키워드": ", ".join(x["keywords"])
             }
@@ -678,18 +659,19 @@ with tab5:
         hide_index=True
     )
 
-    st.markdown("### 건국 인물")
+    st.markdown("### 건국·관련 인물")
+    founder_rows = []
+    for x in PREMODERN_PERIODS:
+        for f in x.get("founders", []):
+            founder_rows.append({
+                "시대": x["name"],
+                "인물": f["person"],
+                "관련 내용": f["role"],
+                "간단 설명": f["explain"]
+            })
+
     st.dataframe(
-        [
-            {
-                "나라": x["country"],
-                "건국 인물": x["figure"],
-                "시기": x["years"],
-                "핵심": x["summary"],
-                "키워드": ", ".join(x["keywords"])
-            }
-            for x in FOUNDATION_FIGURES
-        ],
+        founder_rows,
         use_container_width=True,
         hide_index=True
     )
@@ -740,9 +722,9 @@ with tab6:
 
     selected_mode = st.radio(
         "퀴즈 유형",
-        ["흐름 맞추기", "시대 설명 맞추기", "연도 맞추기", "근현대사 맞추기", "건국 인물 맞추기", "대통령 맞추기", "재임 시기 맞추기"],
+        ["흐름 맞추기", "시대 설명 맞추기", "건국 인물 맞추기", "연도 맞추기", "근현대사 맞추기", "대통령 맞추기", "재임 시기 맞추기"],
         horizontal=True,
-        key="history_quiz_radio_v3"
+        key="history_quiz_radio_v4"
     )
 
     if selected_mode != st.session_state.quiz_mode:
@@ -757,7 +739,7 @@ with tab6:
         with cols[i % 2]:
             if st.button(
                 option,
-                key=f"history_quiz_v3_{i}_{st.session_state.total}",
+                key=f"history_quiz_v4_{i}_{st.session_state.total}",
                 use_container_width=True,
                 disabled=st.session_state.quiz_answered
             ):
