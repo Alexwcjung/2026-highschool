@@ -735,6 +735,7 @@ with tabs[7]:
 
 
 
+
 # --- Tab 8: Student Requests ---
 with tabs[8]:
     st.subheader("📝 학생 요청 · 희망곡 게시판")
@@ -754,59 +755,50 @@ with tabs[8]:
         </div>
         <div style="font-size:16px; line-height:1.8; color:#374151;">
             희망곡, 다음 시간에 하고 싶은 활동, 어려웠던 표현, 질문, 앱 기능 건의 등을 자유롭게 적을 수 있습니다.<br>
-            아래에는 <b>구글 닥스 바로가기</b>와 <b>앱 안의 큰 도화지 게시판</b> 두 가지 방식을 모두 넣었습니다.
+            아래에는 <b>Google Docs 바로가기</b>와 <b>앱 안의 큰 도화지 게시판</b> 두 가지 방식을 넣었습니다.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
     # =========================
-    # 1. Google Docs link
+    # 1. Fixed Google Docs link
     # =========================
     st.markdown("### 📄 Google Docs로 바로 연결하기")
-    st.caption("선생님이 Google Docs 주소를 넣어 두면 학생들이 버튼을 눌러 바로 문서에 들어갈 수 있습니다.")
+    st.caption("학생들이 버튼을 누르면 선생님이 준비한 Google Docs 문서로 바로 이동합니다.")
 
-    google_doc_url = st.text_input(
-        "Google Docs 주소",
-        placeholder="예: https://docs.google.com/document/d/...",
-        key="student_google_doc_url"
-    )
+    safe_doc_url = html.escape("https://docs.google.com/document/d/1kjXveuOIiRQnrcWiyvSsS0DeXSqEe4bphDr0_DSkQyk/edit?tab=t.0", quote=True)
 
-    if google_doc_url.strip():
-        safe_doc_url = html.escape(google_doc_url.strip(), quote=True)
-
-        st.markdown(
-            f"""
-            <div style="
-                background:#ffffff;
-                border:1px solid #e5e7eb;
-                border-radius:18px;
-                padding:24px;
-                margin-top:14px;
-                margin-bottom:24px;
-                text-align:center;
-                box-shadow:0 4px 12px rgba(0,0,0,0.06);
-            ">
-                <div style="font-size:15px; color:#6b7280; margin-bottom:14px;">
-                    Read the document here. Click the button below to edit.
-                </div>
-                <a href="{safe_doc_url}" target="_blank" style="
-                    display:inline-block;
-                    background:#0ea5e9;
-                    color:white;
-                    text-decoration:none;
-                    font-size:18px;
-                    font-weight:900;
-                    padding:14px 26px;
-                    border-radius:9px;
-                ">
-                    📝 Open & edit in Google Docs
-                </a>
+    st.markdown(
+        f"""
+        <div style="
+            background:#ffffff;
+            border:1px solid #e5e7eb;
+            border-radius:18px;
+            padding:24px;
+            margin-top:14px;
+            margin-bottom:24px;
+            text-align:center;
+            box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        ">
+            <div style="font-size:15px; color:#6b7280; margin-bottom:14px;">
+                Read the document here. Click the button below to edit.
             </div>
-            """,
-            unsafe_allow_html=True
-        )
-    else:
-        st.info("Google Docs 주소를 넣으면 학생들이 누를 수 있는 큰 파란색 버튼이 나타납니다.")
+            <a href="{safe_doc_url}" target="_blank" style="
+                display:inline-block;
+                background:#0ea5e9;
+                color:white;
+                text-decoration:none;
+                font-size:18px;
+                font-weight:900;
+                padding:14px 26px;
+                border-radius:9px;
+            ">
+                📝 Open & edit in Google Docs
+            </a>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.markdown("---")
 
@@ -814,55 +806,44 @@ with tabs[8]:
     # 2. Big request canvas board
     # =========================
     st.markdown("### 🎨 큰 도화지 요청 게시판")
-    st.caption("학생들이 쓴 내용이 아래 도화지에 카드처럼 쌓입니다. 단, 새로고침하면 사라질 수 있으므로 필요하면 CSV로 다운로드하세요.")
+    st.caption("학생들이 쓴 내용이 아래 도화지에 카드처럼 쌓입니다. 새로고침이나 서버 재시작 시 사라질 수 있으므로 필요하면 CSV로 다운로드하세요.")
 
     if "student_canvas_requests" not in st.session_state:
         st.session_state["student_canvas_requests"] = []
 
-    col1, col2 = st.columns([1, 1])
-
-    with col1:
-        student_info = st.text_input(
-            "반 / 번호 / 이름",
-            placeholder="예: 1학년 3반 12번 홍길동",
-            key="canvas_student_info"
-        )
-
-    with col2:
+    # form을 사용하면 제출 후 입력창을 안전하게 비울 수 있습니다.
+    with st.form("student_request_canvas_form", clear_on_submit=True):
         request_category = st.selectbox(
             "종류",
             ["희망곡", "수업 활동 요청", "질문", "앱 기능 건의", "기타"],
             key="canvas_request_category"
         )
 
-    request_content = st.text_area(
-        "자유롭게 적어 주세요",
-        height=140,
-        placeholder=(
-            "예: 다음 시간에 Coldplay - Yellow 배우고 싶어요.\n"
-            "예: 가사 빈칸 맞추기 게임을 더 하고 싶어요.\n"
-            "예: 발음 듣기 버튼이 있으면 좋겠어요."
-        ),
-        key="canvas_request_content"
-    )
+        request_content = st.text_area(
+            "자유롭게 적어 주세요",
+            height=150,
+            placeholder=(
+                "예: 다음 시간에 Coldplay - Yellow 배우고 싶어요.\n"
+                "예: 가사 빈칸 맞추기 게임을 더 하고 싶어요.\n"
+                "예: 발음 듣기 버튼이 있으면 좋겠어요."
+            ),
+            key="canvas_request_content"
+        )
 
-    submit_canvas_request = st.button(
-        "📌 도화지에 붙이기",
-        use_container_width=True,
-        key="submit_canvas_request"
-    )
+        submit_canvas_request = st.form_submit_button(
+            "📌 도화지에 붙이기",
+            use_container_width=True
+        )
 
     if submit_canvas_request:
         if not request_content.strip():
             st.warning("내용을 먼저 적어 주세요.")
         else:
             st.session_state["student_canvas_requests"].append({
-                "학생": student_info.strip() if student_info.strip() else "익명",
                 "종류": request_category,
                 "내용": request_content.strip()
             })
             st.success("도화지에 붙였습니다! ✅")
-            st.session_state["canvas_request_content"] = ""
             st.rerun()
 
     # Big canvas display
@@ -888,15 +869,13 @@ with tabs[8]:
     """, unsafe_allow_html=True)
 
     if st.session_state["student_canvas_requests"]:
-        # 카드들을 3열로 배치
         requests = st.session_state["student_canvas_requests"]
         cols = st.columns(3)
 
         for idx, item in enumerate(requests, start=1):
             with cols[(idx - 1) % 3]:
-                safe_student = html.escape(item["학생"])
-                safe_category = html.escape(item["종류"])
-                safe_content = html.escape(item["내용"]).replace("\n", "<br>")
+                safe_category = html.escape(item.get("종류", "기타"))
+                safe_content = html.escape(item.get("내용", "")).replace("\n", "<br>")
 
                 st.markdown(
                     f"""
@@ -906,16 +885,13 @@ with tabs[8]:
                         border-radius:18px;
                         padding:16px 18px;
                         margin-bottom:16px;
-                        min-height:150px;
+                        min-height:145px;
                         box-shadow:0 5px 12px rgba(0,0,0,0.08);
                     ">
-                        <div style="font-size:15px; font-weight:900; color:#0369a1; margin-bottom:6px;">
+                        <div style="font-size:15px; font-weight:900; color:#0369a1; margin-bottom:10px;">
                             #{idx} · {safe_category}
                         </div>
-                        <div style="font-size:14px; color:#6b7280; margin-bottom:10px;">
-                            {safe_student}
-                        </div>
-                        <div style="font-size:17px; line-height:1.7; color:#1f2937; font-weight:700;">
+                        <div style="font-size:18px; line-height:1.7; color:#1f2937; font-weight:700;">
                             {safe_content}
                         </div>
                     </div>
@@ -945,7 +921,6 @@ with tabs[8]:
 
     st.markdown("---")
 
-    # Download / clear
     if st.session_state["student_canvas_requests"]:
         request_df = pd.DataFrame(st.session_state["student_canvas_requests"])
         csv_data = request_df.to_csv(index=False).encode("utf-8-sig")
