@@ -49,6 +49,7 @@ st.markdown("""
         <li><b>이모지</b>: 수업 자료에 사용할 이모지를 쉽게 찾을 수 있습니다.</li>
         <li><b>조 편성</b>: 학생들을 무작위로 조 편성할 수 있습니다.</li>
         <li><b>번역기</b>: 영어↔한국어 번역을 하고, 영어 문장의 발음도 들을 수 있습니다.</li>
+        <li><b>학생 요청</b>: 희망곡, 수업 요청, 질문, 건의사항을 자유롭게 적을 수 있습니다.</li>
     </ul>
 </div>
 """, unsafe_allow_html=True)
@@ -61,7 +62,8 @@ tabs = st.tabs([
     "☁️ 워드클라우드",
     "😀 이모지",
     "👥 조 편성",
-    "🌐 번역기"
+    "🌐 번역기",
+    "📝 학생 요청"
 ])
 
 # --- Tab 0: Blackboard ---
@@ -730,3 +732,150 @@ with tabs[7]:
 
     else:
         st.info("번역할 문장을 입력하면 구글 번역으로 이동하는 버튼이 나타납니다.")
+
+
+# --- Tab 8: Student Requests ---
+with tabs[8]:
+    st.subheader("📝 학생 요청 게시판")
+    st.caption("희망곡, 수업에서 해 보고 싶은 활동, 질문, 건의사항을 자유롭게 적어 보세요.")
+
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #fff7ed, #fefce8);
+        border: 1px solid #fed7aa;
+        border-radius: 18px;
+        padding: 20px 22px;
+        margin-bottom: 18px;
+        line-height: 1.7;
+    ">
+        <div style="font-size:20px; font-weight:900; color:#9a3412; margin-bottom:8px;">
+            💬 자유롭게 적어도 됩니다
+        </div>
+        <div style="font-size:16px; color:#374151;">
+            예시: 다음 시간에 배우고 싶은 노래, 어려웠던 표현, 수업에서 해 보고 싶은 게임,
+            선생님께 하고 싶은 질문, 앱에 추가되면 좋을 기능 등
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # 세션에 학생 요청 목록 저장
+    if "student_request_list" not in st.session_state:
+        st.session_state["student_request_list"] = []
+
+    col_a, col_b = st.columns([1, 1])
+
+    with col_a:
+        request_class = st.text_input(
+            "반 / 번호",
+            placeholder="예: 1학년 3반 12번",
+            key="request_class"
+        )
+
+    with col_b:
+        request_name = st.text_input(
+            "이름",
+            placeholder="예: 홍길동",
+            key="request_name"
+        )
+
+    request_type = st.selectbox(
+        "요청 종류",
+        [
+            "희망곡",
+            "수업 활동 요청",
+            "질문",
+            "앱 기능 건의",
+            "기타"
+        ],
+        key="request_type"
+    )
+
+    request_text = st.text_area(
+        "내용을 적어 주세요",
+        height=180,
+        placeholder=(
+            "예: Coldplay의 Yellow를 배우고 싶어요.\\n"
+            "예: 가사 빈칸 맞추기 게임을 더 하고 싶어요.\\n"
+            "예: 발음 듣기 버튼이 있으면 좋겠어요."
+        ),
+        key="request_text"
+    )
+
+    submit_request = st.button("📩 요청 제출하기", use_container_width=True, key="submit_student_request")
+
+    if submit_request:
+        if not request_text.strip():
+            st.warning("내용을 먼저 적어 주세요.")
+        else:
+            new_request = {
+                "반/번호": request_class.strip(),
+                "이름": request_name.strip(),
+                "요청 종류": request_type,
+                "내용": request_text.strip()
+            }
+            st.session_state["student_request_list"].append(new_request)
+            st.success("요청이 제출되었습니다. 고마워요! ✅")
+
+            # 입력창 초기화를 위해 rerun 전에 값을 비웁니다.
+            st.session_state["request_text"] = ""
+
+    st.markdown("---")
+    st.markdown("### 📋 제출된 요청 목록")
+
+    if st.session_state["student_request_list"]:
+        request_df = pd.DataFrame(st.session_state["student_request_list"])
+        st.dataframe(request_df, use_container_width=True)
+
+        csv_data = request_df.to_csv(index=False).encode("utf-8-sig")
+        st.download_button(
+            label="📥 요청 목록 CSV 다운로드",
+            data=csv_data,
+            file_name="student_requests.csv",
+            mime="text/csv",
+            use_container_width=True
+        )
+
+        if st.button("🗑️ 화면의 요청 목록 초기화", key="clear_student_requests", use_container_width=True):
+            st.session_state["student_request_list"] = []
+            st.rerun()
+    else:
+        st.info("아직 제출된 요청이 없습니다.")
+
+    st.markdown("---")
+    st.markdown("### 🔗 구글폼 또는 구글시트로 받기")
+
+    st.caption(
+        "여러 학생의 요청을 장기적으로 모으려면 구글폼을 하나 만든 뒤, 아래에 링크를 넣어 두는 방식이 가장 안정적입니다. "
+        "학생이 버튼을 누르면 구글폼으로 이동해서 희망곡이나 요청을 제출할 수 있습니다."
+    )
+
+    google_form_url = st.text_input(
+        "구글폼 또는 구글시트 링크",
+        placeholder="예: https://forms.gle/...",
+        key="google_form_url"
+    )
+
+    if google_form_url.strip():
+        safe_google_url = html.escape(google_form_url.strip(), quote=True)
+        st.markdown(
+            f"""
+            <a href="{safe_google_url}" target="_blank" style="
+                display:block;
+                text-align:center;
+                background:#16a34a;
+                color:white;
+                text-decoration:none;
+                font-size:20px;
+                font-weight:900;
+                padding:15px 18px;
+                border-radius:14px;
+                margin-top:12px;
+            ">
+                🌱 구글폼 / 구글시트에 요청 남기기
+            </a>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        st.info("구글폼 링크를 넣으면 학생들이 외부 폼으로 바로 이동할 수 있는 버튼이 생깁니다.")
+
