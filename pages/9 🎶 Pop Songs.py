@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 import random
 import html
 import re
@@ -33,6 +34,12 @@ st.markdown("""
     margin-bottom:22px;
     font-size:2.4rem;
     font-weight:900;
+}
+.info-box p {
+    font-size:1.35rem;
+    line-height:2.1;
+    color:#1e293b;
+    margin-bottom:20px;
 }
 .info-box p {
     font-size:1.35rem;
@@ -785,7 +792,7 @@ tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "📝 Key Expression 
 selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
 
 if selected_tab == "🎬 배경 학습":
-    st.markdown(f'<div class="info-box">{data["bg"]}</div>', unsafe_allow_html=True)
+    show_background(song_choice, data)
     st.video(data["video_url"])
     st.markdown("""
     <div class="game-card"><div class="big-guide">노래를 듣기 전에 배경을 먼저 읽고, 화자의 감정과 상황을 생각해 보세요.</div></div>
