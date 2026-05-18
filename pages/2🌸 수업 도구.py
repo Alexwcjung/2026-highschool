@@ -734,148 +734,235 @@ with tabs[7]:
         st.info("번역할 문장을 입력하면 구글 번역으로 이동하는 버튼이 나타납니다.")
 
 
+
 # --- Tab 8: Student Requests ---
 with tabs[8]:
-    st.subheader("📝 학생 요청 게시판")
-    st.caption("희망곡, 수업에서 해 보고 싶은 활동, 질문, 건의사항을 자유롭게 적어 보세요.")
+    st.subheader("📝 학생 요청 · 희망곡 게시판")
+    st.caption("희망곡, 수업에서 해 보고 싶은 활동, 질문, 건의사항을 자유롭게 남길 수 있습니다.")
 
     st.markdown("""
     <div style="
-        background: linear-gradient(135deg, #fff7ed, #fefce8);
-        border: 1px solid #fed7aa;
-        border-radius: 18px;
-        padding: 20px 22px;
+        background: linear-gradient(135deg, #eef7ff, #f8fbff);
+        border: 1px solid #d6e9ff;
+        border-radius: 20px;
+        padding: 22px 24px;
         margin-bottom: 18px;
-        line-height: 1.7;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     ">
-        <div style="font-size:20px; font-weight:900; color:#9a3412; margin-bottom:8px;">
-            💬 자유롭게 적어도 됩니다
+        <div style="font-size:22px; font-weight:900; color:#1d4ed8; margin-bottom:10px;">
+            💬 학생들이 자유롭게 남기는 공간
         </div>
-        <div style="font-size:16px; color:#374151;">
-            예시: 다음 시간에 배우고 싶은 노래, 어려웠던 표현, 수업에서 해 보고 싶은 게임,
-            선생님께 하고 싶은 질문, 앱에 추가되면 좋을 기능 등
+        <div style="font-size:16px; line-height:1.8; color:#374151;">
+            희망곡, 다음 시간에 하고 싶은 활동, 어려웠던 표현, 질문, 앱 기능 건의 등을 자유롭게 적을 수 있습니다.<br>
+            아래에는 <b>구글 닥스 바로가기</b>와 <b>앱 안의 큰 도화지 게시판</b> 두 가지 방식을 모두 넣었습니다.
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # 세션에 학생 요청 목록 저장
-    if "student_request_list" not in st.session_state:
-        st.session_state["student_request_list"] = []
+    # =========================
+    # 1. Google Docs link
+    # =========================
+    st.markdown("### 📄 Google Docs로 바로 연결하기")
+    st.caption("선생님이 Google Docs 주소를 넣어 두면 학생들이 버튼을 눌러 바로 문서에 들어갈 수 있습니다.")
 
-    col_a, col_b = st.columns([1, 1])
-
-    with col_a:
-        request_class = st.text_input(
-            "반 / 번호",
-            placeholder="예: 1학년 3반 12번",
-            key="request_class"
-        )
-
-    with col_b:
-        request_name = st.text_input(
-            "이름",
-            placeholder="예: 홍길동",
-            key="request_name"
-        )
-
-    request_type = st.selectbox(
-        "요청 종류",
-        [
-            "희망곡",
-            "수업 활동 요청",
-            "질문",
-            "앱 기능 건의",
-            "기타"
-        ],
-        key="request_type"
+    google_doc_url = st.text_input(
+        "Google Docs 주소",
+        placeholder="예: https://docs.google.com/document/d/...",
+        key="student_google_doc_url"
     )
 
-    request_text = st.text_area(
-        "내용을 적어 주세요",
-        height=180,
-        placeholder=(
-            "예: Coldplay의 Yellow를 배우고 싶어요.\\n"
-            "예: 가사 빈칸 맞추기 게임을 더 하고 싶어요.\\n"
-            "예: 발음 듣기 버튼이 있으면 좋겠어요."
-        ),
-        key="request_text"
-    )
+    if google_doc_url.strip():
+        safe_doc_url = html.escape(google_doc_url.strip(), quote=True)
 
-    submit_request = st.button("📩 요청 제출하기", use_container_width=True, key="submit_student_request")
-
-    if submit_request:
-        if not request_text.strip():
-            st.warning("내용을 먼저 적어 주세요.")
-        else:
-            new_request = {
-                "반/번호": request_class.strip(),
-                "이름": request_name.strip(),
-                "요청 종류": request_type,
-                "내용": request_text.strip()
-            }
-            st.session_state["student_request_list"].append(new_request)
-            st.success("요청이 제출되었습니다. 고마워요! ✅")
-
-            # 입력창 초기화를 위해 rerun 전에 값을 비웁니다.
-            st.session_state["request_text"] = ""
-
-    st.markdown("---")
-    st.markdown("### 📋 제출된 요청 목록")
-
-    if st.session_state["student_request_list"]:
-        request_df = pd.DataFrame(st.session_state["student_request_list"])
-        st.dataframe(request_df, use_container_width=True)
-
-        csv_data = request_df.to_csv(index=False).encode("utf-8-sig")
-        st.download_button(
-            label="📥 요청 목록 CSV 다운로드",
-            data=csv_data,
-            file_name="student_requests.csv",
-            mime="text/csv",
-            use_container_width=True
-        )
-
-        if st.button("🗑️ 화면의 요청 목록 초기화", key="clear_student_requests", use_container_width=True):
-            st.session_state["student_request_list"] = []
-            st.rerun()
-    else:
-        st.info("아직 제출된 요청이 없습니다.")
-
-    st.markdown("---")
-    st.markdown("### 🔗 구글폼 또는 구글시트로 받기")
-
-    st.caption(
-        "여러 학생의 요청을 장기적으로 모으려면 구글폼을 하나 만든 뒤, 아래에 링크를 넣어 두는 방식이 가장 안정적입니다. "
-        "학생이 버튼을 누르면 구글폼으로 이동해서 희망곡이나 요청을 제출할 수 있습니다."
-    )
-
-    google_form_url = st.text_input(
-        "구글폼 또는 구글시트 링크",
-        placeholder="예: https://forms.gle/...",
-        key="google_form_url"
-    )
-
-    if google_form_url.strip():
-        safe_google_url = html.escape(google_form_url.strip(), quote=True)
         st.markdown(
             f"""
-            <a href="{safe_google_url}" target="_blank" style="
-                display:block;
+            <div style="
+                background:#ffffff;
+                border:1px solid #e5e7eb;
+                border-radius:18px;
+                padding:24px;
+                margin-top:14px;
+                margin-bottom:24px;
                 text-align:center;
-                background:#16a34a;
-                color:white;
-                text-decoration:none;
-                font-size:20px;
-                font-weight:900;
-                padding:15px 18px;
-                border-radius:14px;
-                margin-top:12px;
+                box-shadow:0 4px 12px rgba(0,0,0,0.06);
             ">
-                🌱 구글폼 / 구글시트에 요청 남기기
-            </a>
+                <div style="font-size:15px; color:#6b7280; margin-bottom:14px;">
+                    Read the document here. Click the button below to edit.
+                </div>
+                <a href="{safe_doc_url}" target="_blank" style="
+                    display:inline-block;
+                    background:#0ea5e9;
+                    color:white;
+                    text-decoration:none;
+                    font-size:18px;
+                    font-weight:900;
+                    padding:14px 26px;
+                    border-radius:9px;
+                ">
+                    📝 Open & edit in Google Docs
+                </a>
+            </div>
             """,
             unsafe_allow_html=True
         )
     else:
-        st.info("구글폼 링크를 넣으면 학생들이 외부 폼으로 바로 이동할 수 있는 버튼이 생깁니다.")
+        st.info("Google Docs 주소를 넣으면 학생들이 누를 수 있는 큰 파란색 버튼이 나타납니다.")
+
+    st.markdown("---")
+
+    # =========================
+    # 2. Big request canvas board
+    # =========================
+    st.markdown("### 🎨 큰 도화지 요청 게시판")
+    st.caption("학생들이 쓴 내용이 아래 도화지에 카드처럼 쌓입니다. 단, 새로고침하면 사라질 수 있으므로 필요하면 CSV로 다운로드하세요.")
+
+    if "student_canvas_requests" not in st.session_state:
+        st.session_state["student_canvas_requests"] = []
+
+    col1, col2 = st.columns([1, 1])
+
+    with col1:
+        student_info = st.text_input(
+            "반 / 번호 / 이름",
+            placeholder="예: 1학년 3반 12번 홍길동",
+            key="canvas_student_info"
+        )
+
+    with col2:
+        request_category = st.selectbox(
+            "종류",
+            ["희망곡", "수업 활동 요청", "질문", "앱 기능 건의", "기타"],
+            key="canvas_request_category"
+        )
+
+    request_content = st.text_area(
+        "자유롭게 적어 주세요",
+        height=140,
+        placeholder=(
+            "예: 다음 시간에 Coldplay - Yellow 배우고 싶어요.\n"
+            "예: 가사 빈칸 맞추기 게임을 더 하고 싶어요.\n"
+            "예: 발음 듣기 버튼이 있으면 좋겠어요."
+        ),
+        key="canvas_request_content"
+    )
+
+    submit_canvas_request = st.button(
+        "📌 도화지에 붙이기",
+        use_container_width=True,
+        key="submit_canvas_request"
+    )
+
+    if submit_canvas_request:
+        if not request_content.strip():
+            st.warning("내용을 먼저 적어 주세요.")
+        else:
+            st.session_state["student_canvas_requests"].append({
+                "학생": student_info.strip() if student_info.strip() else "익명",
+                "종류": request_category,
+                "내용": request_content.strip()
+            })
+            st.success("도화지에 붙였습니다! ✅")
+            st.session_state["canvas_request_content"] = ""
+            st.rerun()
+
+    # Big canvas display
+    st.markdown("""
+    <div style="
+        background: linear-gradient(135deg, #fff7ed 0%, #fefce8 45%, #ecfeff 100%);
+        border: 3px dashed #f59e0b;
+        border-radius: 28px;
+        padding: 26px;
+        margin-top: 22px;
+        min-height: 420px;
+        box-shadow: inset 0 0 20px rgba(251, 191, 36, 0.12);
+    ">
+        <div style="
+            font-size:28px;
+            font-weight:900;
+            color:#92400e;
+            margin-bottom:18px;
+            text-align:center;
+        ">
+            🧡 우리 반 희망곡 · 질문 · 요청 도화지
+        </div>
+    """, unsafe_allow_html=True)
+
+    if st.session_state["student_canvas_requests"]:
+        # 카드들을 3열로 배치
+        requests = st.session_state["student_canvas_requests"]
+        cols = st.columns(3)
+
+        for idx, item in enumerate(requests, start=1):
+            with cols[(idx - 1) % 3]:
+                safe_student = html.escape(item["학생"])
+                safe_category = html.escape(item["종류"])
+                safe_content = html.escape(item["내용"]).replace("\n", "<br>")
+
+                st.markdown(
+                    f"""
+                    <div style="
+                        background:#ffffff;
+                        border:1px solid #fde68a;
+                        border-radius:18px;
+                        padding:16px 18px;
+                        margin-bottom:16px;
+                        min-height:150px;
+                        box-shadow:0 5px 12px rgba(0,0,0,0.08);
+                    ">
+                        <div style="font-size:15px; font-weight:900; color:#0369a1; margin-bottom:6px;">
+                            #{idx} · {safe_category}
+                        </div>
+                        <div style="font-size:14px; color:#6b7280; margin-bottom:10px;">
+                            {safe_student}
+                        </div>
+                        <div style="font-size:17px; line-height:1.7; color:#1f2937; font-weight:700;">
+                            {safe_content}
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+    else:
+        st.markdown(
+            """
+            <div style="
+                background:rgba(255,255,255,0.75);
+                border-radius:18px;
+                padding:40px;
+                text-align:center;
+                font-size:22px;
+                font-weight:800;
+                color:#78716c;
+            ">
+                아직 붙은 요청이 없습니다.<br>
+                첫 번째 희망곡이나 질문을 남겨 보세요.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # Download / clear
+    if st.session_state["student_canvas_requests"]:
+        request_df = pd.DataFrame(st.session_state["student_canvas_requests"])
+        csv_data = request_df.to_csv(index=False).encode("utf-8-sig")
+
+        c_down, c_clear = st.columns(2)
+
+        with c_down:
+            st.download_button(
+                label="📥 도화지 내용 CSV 다운로드",
+                data=csv_data,
+                file_name="student_request_canvas.csv",
+                mime="text/csv",
+                use_container_width=True
+            )
+
+        with c_clear:
+            if st.button("🗑️ 도화지 비우기", use_container_width=True, key="clear_canvas_requests"):
+                st.session_state["student_canvas_requests"] = []
+                st.rerun()
 
