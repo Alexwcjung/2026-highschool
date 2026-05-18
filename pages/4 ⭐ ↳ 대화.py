@@ -136,6 +136,8 @@ st.markdown(
         margin-bottom: 8px;
     }
 
+    .big-guide { font-size:1.12rem; font-weight:800; color:#475569; line-height:1.7; }
+
     .matching-guide {
         font-size: 16px;
         font-weight: 800;
@@ -276,34 +278,28 @@ def shuffle_options(options, seed):
 
 def show_sentence_matching_activity(dialogue_data, key_prefix):
     """
-    팝송 파일의 문장 매칭 게임 방식:
-    - 왼쪽 영어 문장 전체와 오른쪽 한국어 해석 전체를 짝짓기
-    - 하나를 클릭하면 선택된 카드가 primary 색으로 강조됨
-    - 맞는 한국어 박스를 클릭하면 두 카드가 함께 사라짐
+    팝송 파일의 문장 매칭 게임 방식 그대로 적용:
+    - 왼쪽 영어 문장과 오른쪽 한국어 해석을 차례로 클릭
+    - 하나 클릭하면 선택 안내 박스가 뜸
+    - 맞는 짝을 클릭하면 두 카드가 함께 사라짐
     - 틀리면 선택이 풀리고 다시 시도
     """
     st.markdown(
-        """
-        <div class="matching-box">
-            <div class="matching-title">🧩 문장 매칭하기</div>
-            <div class="matching-guide">
-                왼쪽 영어 문장 전체와 오른쪽 한국어 해석을 차례로 눌러 짝을 맞추세요.<br>
-                선택한 문장은 색이 바뀌고, 정답을 맞히면 영어와 한국어 카드가 함께 사라집니다.
-            </div>
-        </div>
-        """,
+        '<div class="matching-box"><div class="matching-title">🧩 문장 매칭 게임</div>'
+        '<div class="big-guide">왼쪽 영어 문장과 오른쪽 한국어 해석을 차례로 눌러 짝을 맞추세요.</div></div>',
         unsafe_allow_html=True
     )
 
     match_key = safe_key(key_prefix)
 
-    pairs = []
-    for i, line in enumerate(dialogue_data["lines"], start=1):
-        pairs.append({
+    pairs = [
+        {
             "id": f"{match_key}_{i}",
             "en": line["en"],
-            "ko": line["ko"],
-        })
+            "ko": line["ko"]
+        }
+        for i, line in enumerate(dialogue_data["lines"], start=1)
+    ]
 
     st.session_state.setdefault(f"match_done_{match_key}", [])
     st.session_state.setdefault(f"match_selected_{match_key}", None)
@@ -327,11 +323,6 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
     en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
     ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
 
-    st.markdown(
-        f'<div class="match-progress-box">맞춘 개수: {len(done)} / {len(pairs)}</div>',
-        unsafe_allow_html=True
-    )
-
     if selected:
         st.markdown(
             f'<div class="selected-card-notice">선택됨: {clean_text_for_display(selected["text"])}</div>',
@@ -339,44 +330,26 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
         )
 
     if st.session_state[f"match_message_{match_key}"]:
-        msg = st.session_state[f"match_message_{match_key}"]
-        if "정답" in msg:
-            st.success(msg)
-        elif "아쉬워요" in msg:
-            st.error(msg)
-        else:
-            st.info(msg)
-
-    def is_selected(card):
-        current = st.session_state[f"match_selected_{match_key}"]
-        return bool(current and current["id"] == card["id"] and current["kind"] == card["kind"])
+        st.info(st.session_state[f"match_message_{match_key}"])
 
     col_en, col_ko = st.columns(2)
 
     with col_en:
         st.markdown("### English")
         for card in en_cards:
-            label = card["text"]
-            button_type = "secondary"
-            if is_selected(card):
-                label = "✅ 선택됨 · " + label
-                button_type = "primary"
-
             if st.button(
-                label,
+                card["text"],
                 key=f"match_en_{match_key}_{card['id']}",
-                use_container_width=True,
-                type=button_type
+                use_container_width=True
             ):
-                current_selected = st.session_state[f"match_selected_{match_key}"]
-
-                if current_selected is None:
+                if st.session_state[f"match_selected_{match_key}"] is None:
                     st.session_state[f"match_selected_{match_key}"] = card
                     st.session_state[f"match_message_{match_key}"] = "오른쪽에서 알맞은 한국어 해석을 고르세요."
                 else:
-                    if current_selected["id"] == card["id"] and current_selected["kind"] != card["kind"]:
-                        if card["id"] not in done:
-                            done.append(card["id"])
+                    prev = st.session_state[f"match_selected_{match_key}"]
+
+                    if prev["id"] == card["id"] and prev["kind"] != card["kind"]:
+                        done.append(card["id"])
                         st.session_state[f"match_selected_{match_key}"] = None
                         st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
                     else:
@@ -388,31 +361,22 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
     with col_ko:
         st.markdown("### Korean")
         for card in ko_cards:
-            label = card["text"]
-            button_type = "secondary"
-            if is_selected(card):
-                label = "✅ 선택됨 · " + label
-                button_type = "primary"
-
             if st.button(
-                label,
+                card["text"],
                 key=f"match_ko_{match_key}_{card['id']}",
-                use_container_width=True,
-                type=button_type
+                use_container_width=True
             ):
-                current_selected = st.session_state[f"match_selected_{match_key}"]
-
-                if current_selected is None:
+                if st.session_state[f"match_selected_{match_key}"] is None:
                     st.session_state[f"match_selected_{match_key}"] = card
                     st.session_state[f"match_message_{match_key}"] = "왼쪽에서 알맞은 영어 문장을 고르세요."
                 else:
-                    if current_selected["id"] == card["id"] and current_selected["kind"] != card["kind"]:
-                        if card["id"] not in done:
-                            done.append(card["id"])
+                    prev = st.session_state[f"match_selected_{match_key}"]
+
+                    if prev["id"] == card["id"] and prev["kind"] != card["kind"]:
+                        done.append(card["id"])
                         st.session_state[f"match_selected_{match_key}"] = None
                         st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
                     else:
-                        # 팝송 파일처럼 틀리면 선택이 풀리고 다시 고르게 함
                         st.session_state[f"match_selected_{match_key}"] = None
                         st.session_state[f"match_message_{match_key}"] = "아쉬워요. 다시 짝을 맞춰 보세요. ❌"
 
@@ -429,7 +393,6 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
 
     if len(done) == len(pairs):
         st.success("모든 문장을 맞췄습니다! 훌륭합니다. 🎉")
-        st.balloons()
 
 
 # =========================
