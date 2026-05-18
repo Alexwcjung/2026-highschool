@@ -435,9 +435,9 @@ data_bank = {
                 "Never give up."
             ],
             "questions": [
-                ("1. 로날도는 무엇으로 잘 알려져 있나요?", ["철저한 자기 관리", "요리", "그림 그리기", "소설 쓰기"], "철저한 자기 관리"),
-                ("2. 로날도가 말한 좋은 습관은 무엇인가요?", ["훈련, 충분한 수면, 조심스러운 식단", "하루 종일 TV 보기", "절대 쉬지 않기", "게임만 하기"], "훈련, 충분한 수면, 조심스러운 식단"),
-                ("3. 학생은 어떻게 연습해야 하나요?", ["분명한 목표를 가지고", "아무 생각 없이", "한 달에 한 번만", "이길 때만"], "분명한 목표를 가지고")
+                ("1. 로날도는 무엇으로 잘 알려져 있나요?", ["Strict self-management", "Cooking", "Painting", "Writing novels"], "Strict self-management"),
+                ("2. 로날도가 말한 좋은 습관은 무엇인가요?", ["Training, sleeping well, and eating carefully", "Watching TV all day", "Never resting", "Playing games only"], "Training, sleeping well, and eating carefully"),
+                ("3. 학생은 어떻게 연습해야 하나요?", ["With a clear goal", "Without thinking", "Only once a month", "Only when winning"], "With a clear goal")
             ],
             "reflection_prompt": "Ronaldo를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -485,9 +485,9 @@ data_bank = {
                 "Never be afraid of the next challenge."
             ],
             "questions": [
-                ("1. 조던은 시카고 불스와 함께 NBA에서 몇 번 우승했나요?", ["여섯 번", "두 번", "열 번", "한 번"], "여섯 번"),
-                ("2. 조던은 훌륭한 선수들이 실패를 무엇으로 사용한다고 말하나요?", ["동기", "핑계", "게임", "비밀"], "동기"),
-                ("3. 진짜 승부욕은 무엇을 뜻하나요?", ["준비, 집중, 책임감", "이기고 싶어 하는 마음만", "화를 내는 것", "절대 연습하지 않는 것"], "준비, 집중, 책임감")
+                ("1. 조던은 시카고 불스와 함께 NBA에서 몇 번 우승했나요?", ["Six", "Two", "Ten", "One"], "Six"),
+                ("2. 조던은 훌륭한 선수들이 실패를 무엇으로 사용한다고 말하나요?", ["Motivation", "An excuse", "A game", "A secret"], "Motivation"),
+                ("3. 진짜 승부욕은 무엇을 뜻하나요?", ["Preparation, focus, and responsibility", "Only wanting to win", "Getting angry", "Never practicing"], "Preparation, focus, and responsibility")
             ],
             "reflection_prompt": "Jordan을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -535,9 +535,9 @@ data_bank = {
                 "Discipline, teamwork, and attitude are important."
             ],
             "questions": [
-                ("1. 손흥민이 탄탄한 기본기를 만들도록 도와준 사람은 누구인가요?", ["아버지", "가수", "영화감독", "요리사"], "아버지"),
-                ("2. 손흥민은 어떤 기본 기술을 연습했나요?", ["볼 컨트롤과 슈팅", "요리와 그림", "노래와 춤", "잠자기와 쉬기"], "볼 컨트롤과 슈팅"),
-                ("3. 실제 경기에서 힘이 되는 것은 무엇인가요?", ["기본기", "운만", "소음", "휴대폰"], "기본기")
+                ("1. 손흥민이 탄탄한 기본기를 만들도록 도와준 사람은 누구인가요?", ["His father", "A singer", "A movie director", "A chef"], "His father"),
+                ("2. 손흥민은 어떤 기본 기술을 연습했나요?", ["Ball control and shooting", "Cooking and drawing", "Singing and dancing", "Sleeping and resting"], "Ball control and shooting"),
+                ("3. 실제 경기에서 힘이 되는 것은 무엇인가요?", ["Basics", "Only luck", "Noise", "A phone"], "Basics")
             ],
             "reflection_prompt": "Son Heung-min을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -579,9 +579,9 @@ data_bank = {
                 "Trust your voice."
             ],
             "questions": [
-                ("1. 학생을 행복하게 만드는 것은 무엇인가요?", ["음악", "수학", "비", "숙제"], "음악"),
-                ("2. 솔직한 감정은 무엇이 될 수 있나요?", ["힘 있는 말", "문제", "실수", "게임"], "힘 있는 말"),
-                ("3. 아이유는 학생에게 무엇을 믿으라고 말하나요?", ["너의 목소리", "운만", "휴대폰", "다른 사람들"], "너의 목소리")
+                ("1. 학생을 행복하게 만드는 것은 무엇인가요?", ["Music", "Math", "Rain", "Homework"], "Music"),
+                ("2. 솔직한 감정은 무엇이 될 수 있나요?", ["Powerful words", "A problem", "A mistake", "A game"], "Powerful words"),
+                ("3. 아이유는 학생에게 무엇을 믿으라고 말하나요?", ["Your voice", "Only luck", "A phone", "Other people"], "Your voice")
             ],
             "reflection_prompt": "IU를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -621,9 +621,9 @@ data_bank = {
                 "Enjoy your own growth."
             ],
             "questions": [
-                ("1. 피겨스케이팅에는 무엇이 필요한가요?", ["균형, 연습, 집중", "운만", "연습 없음", "큰 목소리"], "균형, 연습, 집중"),
-                ("2. 김연아는 무엇에 집중했나요?", ["자신이 연습한 것", "다른 사람의 실수", "결과만", "휴대폰"], "자신이 연습한 것"),
-                ("3. 학생은 시험 전에 어떻게 해야 하나요?", ["차근차근 준비하기", "걱정만 하기", "포기하기", "모든 것을 잊기"], "차근차근 준비하기")
+                ("1. 피겨스케이팅에는 무엇이 필요한가요?", ["Balance, practice, and focus", "Only luck", "No practice", "A loud voice"], "Balance, practice, and focus"),
+                ("2. 김연아는 무엇에 집중했나요?", ["What she practiced", "Other people's mistakes", "Only the result", "Her phone"], "What she practiced"),
+                ("3. 학생은 시험 전에 어떻게 해야 하나요?", ["Prepare step by step", "Only worry", "Give up", "Forget everything"], "Prepare step by step")
             ],
             "reflection_prompt": "Kim Yuna를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -664,9 +664,9 @@ data_bank = {
                 "Trust your own voice."
             ],
             "questions": [
-                ("1. 학생은 무엇을 좋아하나요?", ["노래하는 것과 공연 보는 것", "잠만 자기", "혼자 요리하기", "지도 읽기"], "노래하는 것과 공연 보는 것"),
-                ("2. 매일의 작은 연습은 무엇을 만들 수 있나요?", ["큰 차이", "모든 것을 잊게 함", "성장 멈춤", "연습을 쓸모없게 만듦"], "큰 차이"),
-                ("3. 정국은 학생에게 무엇을 믿으라고 말하나요?", ["너만의 목소리", "운만", "컴퓨터", "다른 사람의 의견"], "너만의 목소리")
+                ("1. 학생은 무엇을 좋아하나요?", ["Singing and watching performances", "Only sleeping", "Cooking alone", "Reading maps"], "Singing and watching performances"),
+                ("2. 매일의 작은 연습은 무엇을 만들 수 있나요?", ["Make a big difference", "Make people forget everything", "Stop growth", "Make practice useless"], "Make a big difference"),
+                ("3. 정국은 학생에게 무엇을 믿으라고 말하나요?", ["Your own voice", "Only luck", "A computer", "Other people's opinions"], "Your own voice")
             ],
             "reflection_prompt": "Jungkook을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -708,9 +708,9 @@ data_bank = {
                 "Protect nature."
             ],
             "questions": [
-                ("1. 그랜드캐니언은 어디에 있나요?", ["미국 애리조나", "영국 런던", "한국 서울", "프랑스 파리"], "미국 애리조나"),
-                ("2. 그랜드캐니언 형성에 도움을 준 것은 무엇인가요?", ["콜로라도강과 침식 작용", "사람들만", "기계", "건물"], "콜로라도강과 침식 작용"),
-                ("3. 암석층은 무엇을 보여 주나요?", ["지구의 역사", "스포츠만", "현대 패션", "학교 규칙"], "지구의 역사")
+                ("1. 그랜드캐니언은 어디에 있나요?", ["Arizona, USA", "London, UK", "Seoul, Korea", "Paris, France"], "Arizona, USA"),
+                ("2. 그랜드캐니언 형성에 도움을 준 것은 무엇인가요?", ["The Colorado River and erosion", "Only people", "A machine", "A building"], "The Colorado River and erosion"),
+                ("3. 암석층은 무엇을 보여 주나요?", ["Earth's history", "Only sports", "Modern fashion", "A school rule"], "Earth's history")
             ],
             "reflection_prompt": "Grand Canyon을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -750,9 +750,9 @@ data_bank = {
                 "Respect different cultures."
             ],
             "questions": [
-                ("1. 뉴욕은 어떤 도시인가요?", ["세계적인 도시", "작은 마을", "조용한 농장", "사막"], "세계적인 도시"),
-                ("2. 자유의 여신상은 무엇을 보여 주나요?", ["자유", "숙제", "스포츠", "침묵"], "자유"),
-                ("3. 학생은 무엇을 존중해야 하나요?", ["다양한 문화", "하나의 생각만", "소음", "두려움"], "다양한 문화")
+                ("1. 뉴욕은 어떤 도시인가요?", ["A global city", "A small village", "A quiet farm", "A desert"], "A global city"),
+                ("2. 자유의 여신상은 무엇을 보여 주나요?", ["Freedom", "Homework", "Sports", "Silence"], "Freedom"),
+                ("3. 학생은 무엇을 존중해야 하나요?", ["Different cultures", "Only one idea", "Noise", "Fear"], "Different cultures")
             ],
             "reflection_prompt": "New York을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -792,9 +792,9 @@ data_bank = {
                 "Build a better future."
             ],
             "questions": [
-                ("1. 경복궁은 처음 언제 지어졌나요?", ["1395년", "1910년", "2020년", "1600년"], "1395년"),
-                ("2. 경복궁은 어느 시대에 지어졌나요?", ["조선 시대", "로마 제국", "명나라", "대영 제국"], "조선 시대"),
-                ("3. 경복궁은 무엇을 보여 주나요?", ["한국의 역사와 문화", "스포츠만", "음식만", "음악만"], "한국의 역사와 문화")
+                ("1. 경복궁은 처음 언제 지어졌나요?", ["1395", "1910", "2020", "1600"], "1395"),
+                ("2. 경복궁은 어느 시대에 지어졌나요?", ["Joseon Dynasty", "Roman Empire", "Ming Dynasty", "British Empire"], "Joseon Dynasty"),
+                ("3. 경복궁은 무엇을 보여 주나요?", ["Korean history and culture", "Only sports", "Only food", "Only music"], "Korean history and culture")
             ],
             "reflection_prompt": "Gyeongbokgung을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -835,9 +835,9 @@ data_bank = {
                 "I'm looking forward to trying spicy tteokbokki tomorrow."
             ],
             "questions": [
-                ("1. 학교에 막 도착한 것은 무엇인가요?", ["새로운 음식 기계", "새로운 로봇 선생님", "새로운 학교 버스", "새로운 도서관"], "새로운 음식 기계"),
-                ("2. 학생은 오늘 무엇을 선택했나요?", ["실험실에서 배양한 소고기로 만든 햄버거", "매운 떡볶이", "피자", "치킨"], "실험실에서 배양한 소고기로 만든 햄버거"),
-                ("3. 학생을 더 놀라게 한 것은 무엇인가요?", ["서비스의 속도", "교실의 크기", "날씨", "버튼의 색깔"], "서비스의 속도")
+                ("1. 학교에 막 도착한 것은 무엇인가요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
+                ("2. 학생은 오늘 무엇을 선택했나요?", ["A hamburger made from lab-grown beef", "Spicy tteokbokki", "Pizza", "Fried chicken"], "A hamburger made from lab-grown beef"),
+                ("3. 학생을 더 놀라게 한 것은 무엇인가요?", ["The speed of service", "The size of the classroom", "The weather", "The color of the button"], "The speed of service")
             ],
             "reflection_prompt": "교과서 지문을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -1202,12 +1202,10 @@ with tab_activity:
     # 활동 1. Key Expressions 단어 테스트
     # -----------------------------------------------------
     st.markdown('<div class="section-box"><h3>활동 1. Key Expressions 단어 테스트</h3></div>', unsafe_allow_html=True)
-    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요.")
-
-    vocab_answers = []
+    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요. 각 문제 옆의 답 확인을 누르면 바로 확인할 수 있습니다.")
 
     for i, (word, meaning) in enumerate(key_words, start=1):
-        c1, c2 = st.columns([1.2, 2.8])
+        c1, c2, c3 = st.columns([1.25, 2.25, 1.5])
         with c1:
             st.markdown(
                 f"""
@@ -1223,28 +1221,15 @@ with tab_activity:
             user_meaning = st.text_input(
                 "한국어 뜻",
                 key=f"{category}_{topic_name}_activity1_vocab_{i}",
-                placeholder="예: 습관, 목표, 영양소"
+                placeholder="예: 습관, 목표, 영양소",
+                label_visibility="collapsed"
             )
-        vocab_answers.append((word, meaning, user_meaning))
-
-    if st.button("활동 1 정답 확인", key=f"{category}_{topic_name}_activity1_check"):
-        vocab_score = 0
-        for i, (word, meaning, user_meaning) in enumerate(vocab_answers, start=1):
-            if is_correct_korean_answer(user_meaning, meaning):
-                vocab_score += 1
-                st.success(f"{i}번 정답: {word} = {meaning}")
-            else:
-                st.error(f"{i}번 정답: {word} = {meaning}")
-
-        st.markdown(f"### 활동 1 점수: {vocab_score} / {len(vocab_answers)}")
-
-        if vocab_score == len(vocab_answers):
-            st.balloons()
-            st.success("완벽합니다! 핵심 단어를 잘 이해했습니다.")
-        elif vocab_score >= max(1, len(vocab_answers) // 2):
-            st.info("좋습니다. 틀린 단어만 다시 확인해 봅시다.")
-        else:
-            st.warning("Reading을 다시 읽고 핵심 단어를 한 번 더 확인해 봅시다.")
+        with c3:
+            if st.button("답 확인", key=f"{category}_{topic_name}_activity1_check_{i}"):
+                if is_correct_korean_answer(user_meaning, meaning):
+                    st.success("정답")
+                else:
+                    st.error(f"정답: {meaning}")
 
     st.markdown("---")
 
@@ -1252,9 +1237,7 @@ with tab_activity:
     # 활동 2. 지문 해석 빈칸 쓰기
     # -----------------------------------------------------
     st.markdown('<div class="section-box"><h3>활동 2. 지문 해석 빈칸 쓰기</h3></div>', unsafe_allow_html=True)
-    st.caption("지문은 그대로 읽고, 아래 줄별 해석의 빈칸에 핵심 단어의 한국어 뜻을 적으세요.")
-
-    translation_answers = []
+    st.caption("지문은 그대로 읽고, 아래 줄별 해석의 빈칸에 핵심 단어의 한국어 뜻을 적으세요. 빈칸마다 바로 답을 확인할 수 있습니다.")
 
     for line_no, (speaker, eng, kor) in enumerate(dialogue, start=1):
         matched_words = []
@@ -1275,7 +1258,7 @@ with tab_activity:
 
         st.markdown(
             f"""
-            <div style="margin-bottom: 18px; padding: 17px 18px; border-radius: 20px;
+            <div style="margin-bottom: 12px; padding: 17px 18px; border-radius: 20px;
                         border: 1.5px solid #dbeafe; background: rgba(255,255,255,0.90);
                         box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
                 <div style="font-size: 20px; font-weight: 900; color: #1d4ed8; line-height: 1.65;">
@@ -1293,39 +1276,34 @@ with tab_activity:
         )
 
         if matched_words:
-            cols = st.columns(min(3, len(matched_words)))
             for j, (word, correct_meaning) in enumerate(matched_words, start=1):
-                with cols[(j - 1) % len(cols)]:
+                b1, b2, b3 = st.columns([1.4, 2.2, 1.4])
+                with b1:
+                    st.markdown(
+                        f"""
+                        <div style="padding: 10px 12px; border-radius: 14px; background: #f0fdf4;
+                                    border: 1.5px solid #bbf7d0; font-size: 17px; font-weight: 900;
+                                    color: #166534; margin-top: 4px;">
+                            {line_no}-{j}. {word}
+                        </div>
+                        """,
+                        unsafe_allow_html=True
+                    )
+                with b2:
                     user_blank = st.text_input(
                         f"{line_no}-{j}번 뜻",
                         key=f"{category}_{topic_name}_activity2_line_{line_no}_blank_{j}",
-                        placeholder=f"{word}의 뜻"
+                        placeholder=f"{word}의 한국어 뜻",
+                        label_visibility="collapsed"
                     )
-                translation_answers.append((line_no, j, word, correct_meaning, user_blank))
+                with b3:
+                    if st.button("답 확인", key=f"{category}_{topic_name}_activity2_check_{line_no}_{j}"):
+                        if is_correct_korean_answer(user_blank, correct_meaning):
+                            st.success("정답")
+                        else:
+                            st.error(f"정답: {correct_meaning}")
         else:
             st.caption("이 줄에는 핵심 단어 빈칸이 없습니다.")
-
-    if st.button("활동 2 정답 확인", key=f"{category}_{topic_name}_activity2_check"):
-        if not translation_answers:
-            st.info("이 지문에서는 자동으로 만든 해석 빈칸이 없습니다.")
-        else:
-            translation_score = 0
-            for line_no, blank_no, word, correct_meaning, user_blank in translation_answers:
-                if is_correct_korean_answer(user_blank, correct_meaning):
-                    translation_score += 1
-                    st.success(f"{line_no}-{blank_no}번 정답: {word} = {correct_meaning}")
-                else:
-                    st.error(f"{line_no}-{blank_no}번 정답: {word} = {correct_meaning}")
-
-            st.markdown(f"### 활동 2 점수: {translation_score} / {len(translation_answers)}")
-
-            if translation_score == len(translation_answers):
-                st.balloons()
-                st.success("훌륭합니다! 지문 해석과 핵심 단어를 잘 연결했습니다.")
-            elif translation_score >= max(1, len(translation_answers) // 2):
-                st.info("좋습니다. 틀린 빈칸만 다시 확인해 봅시다.")
-            else:
-                st.warning("Reading 탭에서 원문과 해석을 다시 읽어 봅시다.")
 
     st.markdown("---")
 
@@ -1333,36 +1311,24 @@ with tab_activity:
     # 활동 3. Reading Check
     # -----------------------------------------------------
     st.markdown('<div class="section-box"><h3>활동 3. 내용 확인 문제</h3></div>', unsafe_allow_html=True)
-
-    user_choices = []
+    st.caption("문제는 한국어로 읽고, 영어 보기 중에서 정답을 고르세요. 각 문제마다 바로 확인할 수 있습니다.")
 
     for i, (question, options, answer) in enumerate(data["questions"], start=1):
-        choice = st.radio(
-            question,
-            options,
-            key=f"{category}_{topic_name}_q{i}"
-        )
-        user_choices.append((choice, answer))
-
-    if st.button("활동 3 정답 확인", key=f"{category}_{topic_name}_check"):
-        score = 0
-
-        for i, (choice, answer) in enumerate(user_choices, start=1):
-            if choice == answer:
-                score += 1
-                st.success(f"{i}번 정답")
-            else:
-                st.error(f"{i}번 정답: {answer}")
-
-        st.markdown(f"### 활동 3 점수: {score} / {len(data['questions'])}")
-
-        if score == len(data["questions"]):
-            st.balloons()
-            st.success("잘했습니다!")
-        elif score >= 2:
-            st.info("좋습니다.")
-        else:
-            st.warning("Reading을 다시 읽어 봅시다.")
+        q_col, check_col = st.columns([3.2, 1.4])
+        with q_col:
+            choice = st.radio(
+                question,
+                options,
+                key=f"{category}_{topic_name}_q{i}"
+            )
+        with check_col:
+            st.write("")
+            st.write("")
+            if st.button("답 확인", key=f"{category}_{topic_name}_activity3_check_{i}"):
+                if choice == answer:
+                    st.success("정답")
+                else:
+                    st.error(f"정답: {answer}")
 
     st.markdown("---")
 
