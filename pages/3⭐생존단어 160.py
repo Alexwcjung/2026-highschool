@@ -1619,7 +1619,7 @@ def show_unknown_words_tab():
 # 탭 구성
 # =========================
 # 전체 카세트 듣기는 제일 마지막 탭에 배치
-tab_names = list(word_themes.keys()) + ["🎧 전체 카세트 듣기"]
+tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기", "⭐ 복습 희망"]
 tabs = st.tabs(tab_names)
 
 for tab, theme_name in zip(tabs[:-2], word_themes.keys()):
@@ -1639,8 +1639,10 @@ for tab, theme_name in zip(tabs[:-2], word_themes.keys()):
         show_cassette_player(theme_words, theme_name)
         show_word_cards(theme_words, theme_name)
 
+# 기존 전체 카세트 듣기 탭은 그대로 유지
 with tabs[-2]:
     show_all_cassette_tab()
 
+# 복습 희망 단어 탭은 전체 카세트 오른쪽에 따로 추가
 with tabs[-1]:
     show_unknown_words_tab()
