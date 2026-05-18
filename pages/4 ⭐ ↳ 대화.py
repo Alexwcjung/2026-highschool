@@ -167,6 +167,11 @@ st.markdown(
         text-align: center;
     }
 
+    div[data-testid="stTabs"] button[role="tab"] p {
+        font-size: 18px !important;
+        font-weight: 900 !important;
+    }
+
     @media (max-width: 520px) {
         .main-title {
             font-size: 33px;
@@ -225,44 +230,28 @@ def make_gtts_audio(text):
 def play_dialogue_audio(lines, key):
     """
     대화 전체 듣기:
+    - 줄마다 따로 오디오를 만들지 않음
     - 대화 전체를 하나의 mp3처럼 재생
-    - 한국어 해석 보기 버튼을 눌러 화면이 다시 실행되어도 오디오가 사라지지 않도록
-      st.session_state에 생성된 음성 파일을 저장합니다.
     """
-    audio_state_key = f"{key}_audio_bytes"
-    audio_text_key = f"{key}_audio_text"
-
     if st.button("🔊 대화 전체 듣기", key=key, use_container_width=True):
         try:
             dialogue_text = make_dialogue_tts_text(lines)
             audio_bytes = make_gtts_audio(dialogue_text)
 
-            st.session_state[audio_state_key] = audio_bytes
-            st.session_state[audio_text_key] = dialogue_text
+            st.markdown(
+                """
+                <div class="audio-box">
+                    대화 전체 음성입니다. 한 번에 이어서 들을 수 있습니다.
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            st.audio(audio_bytes, format="audio/mp3")
 
         except Exception as e:
             st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
-
-    # 버튼을 누른 뒤 생성된 오디오는 session_state에 남아 있으므로,
-    # 한국어 해석 보기/숨기기 때문에 rerun되어도 계속 표시됩니다.
-    if audio_state_key in st.session_state:
-        st.markdown(
-            """
-            <div class="audio-box">
-                대화 전체 음성입니다. 한국어 해석을 켜고 꺼도 이 오디오는 유지됩니다.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-        st.audio(st.session_state[audio_state_key], format="audio/mp3")
-
-        if st.button("🧹 듣기 파일 숨기기", key=f"{key}_clear_audio", use_container_width=True):
-            if audio_state_key in st.session_state:
-                del st.session_state[audio_state_key]
-            if audio_text_key in st.session_state:
-                del st.session_state[audio_text_key]
-            st.rerun()
 
 
 
@@ -287,15 +276,19 @@ def shuffle_options(options, seed):
 
 def show_sentence_matching_activity(dialogue_data, key_prefix):
     """
-    팝송 파일의 '문장 매칭 게임'과 같은 방식입니다.
-    왼쪽 영어 전체 문장과 오른쪽 한국어 해석을 차례로 눌러 짝을 맞춥니다.
+    팝송 파일의 문장 매칭 게임 방식:
+    - 왼쪽 영어 문장 전체와 오른쪽 한국어 해석 전체를 짝짓기
+    - 하나를 클릭하면 선택된 카드가 primary 색으로 강조됨
+    - 맞는 한국어 박스를 클릭하면 두 카드가 함께 사라짐
+    - 틀리면 선택이 풀리고 다시 시도
     """
     st.markdown(
         """
         <div class="matching-box">
             <div class="matching-title">🧩 문장 매칭하기</div>
             <div class="matching-guide">
-                왼쪽의 영어 문장 전체와 오른쪽의 한국어 해석을 차례로 눌러 짝을 맞추세요.
+                왼쪽 영어 문장 전체와 오른쪽 한국어 해석을 차례로 눌러 짝을 맞추세요.<br>
+                선택한 문장은 색이 바뀌고, 정답을 맞히면 영어와 한국어 카드가 함께 사라집니다.
             </div>
         </div>
         """,
@@ -315,33 +308,9 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
     st.session_state.setdefault(f"match_done_{match_key}", [])
     st.session_state.setdefault(f"match_selected_{match_key}", None)
     st.session_state.setdefault(f"match_message_{match_key}", "")
-    st.session_state.setdefault(f"match_show_answer_{match_key}", False)
 
     done = st.session_state[f"match_done_{match_key}"]
     selected = st.session_state[f"match_selected_{match_key}"]
-
-    total = len(pairs)
-    current_score = len(done)
-
-    st.markdown(
-        f'<div class="match-progress-box">현재 맞춘 문장: {current_score} / {total}</div>',
-        unsafe_allow_html=True
-    )
-
-    if selected:
-        st.markdown(
-            f'<div class="selected-card-notice">선택됨: {clean_text_for_display(selected["text"])}</div>',
-            unsafe_allow_html=True
-        )
-
-    if st.session_state[f"match_message_{match_key}"]:
-        msg = st.session_state[f"match_message_{match_key}"]
-        if "정답" in msg:
-            st.success(msg)
-        elif "오답" in msg:
-            st.error(msg)
-        else:
-            st.info(msg)
 
     en_cards = [
         {"id": p["id"], "text": p["en"], "kind": "en"}
@@ -358,12 +327,47 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
     en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
     ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
 
+    st.markdown(
+        f'<div class="match-progress-box">맞춘 개수: {len(done)} / {len(pairs)}</div>',
+        unsafe_allow_html=True
+    )
+
+    if selected:
+        st.markdown(
+            f'<div class="selected-card-notice">선택됨: {clean_text_for_display(selected["text"])}</div>',
+            unsafe_allow_html=True
+        )
+
+    if st.session_state[f"match_message_{match_key}"]:
+        msg = st.session_state[f"match_message_{match_key}"]
+        if "정답" in msg:
+            st.success(msg)
+        elif "아쉬워요" in msg:
+            st.error(msg)
+        else:
+            st.info(msg)
+
+    def is_selected(card):
+        current = st.session_state[f"match_selected_{match_key}"]
+        return bool(current and current["id"] == card["id"] and current["kind"] == card["kind"])
+
     col_en, col_ko = st.columns(2)
 
     with col_en:
         st.markdown("### English")
         for card in en_cards:
-            if st.button(card["text"], key=f"match_en_{match_key}_{card['id']}", use_container_width=True):
+            label = card["text"]
+            button_type = "secondary"
+            if is_selected(card):
+                label = "✅ 선택됨 · " + label
+                button_type = "primary"
+
+            if st.button(
+                label,
+                key=f"match_en_{match_key}_{card['id']}",
+                use_container_width=True,
+                type=button_type
+            ):
                 current_selected = st.session_state[f"match_selected_{match_key}"]
 
                 if current_selected is None:
@@ -384,7 +388,18 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
     with col_ko:
         st.markdown("### Korean")
         for card in ko_cards:
-            if st.button(card["text"], key=f"match_ko_{match_key}_{card['id']}", use_container_width=True):
+            label = card["text"]
+            button_type = "secondary"
+            if is_selected(card):
+                label = "✅ 선택됨 · " + label
+                button_type = "primary"
+
+            if st.button(
+                label,
+                key=f"match_ko_{match_key}_{card['id']}",
+                use_container_width=True,
+                type=button_type
+            ):
                 current_selected = st.session_state[f"match_selected_{match_key}"]
 
                 if current_selected is None:
@@ -397,42 +412,24 @@ def show_sentence_matching_activity(dialogue_data, key_prefix):
                         st.session_state[f"match_selected_{match_key}"] = None
                         st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
                     else:
-                        st.session_state[f"match_selected_{match_key}"] = card
-                        st.session_state[f"match_message_{match_key}"] = "한국어 해석을 다시 선택했습니다. 왼쪽 영어 문장을 고르세요."
+                        # 팝송 파일처럼 틀리면 선택이 풀리고 다시 고르게 함
+                        st.session_state[f"match_selected_{match_key}"] = None
+                        st.session_state[f"match_message_{match_key}"] = "아쉬워요. 다시 짝을 맞춰 보세요. ❌"
 
                 st.rerun()
 
-    if len(done) == total:
-        st.success("🎉 모든 문장을 맞췄습니다! 대화문 전체를 잘 이해했습니다.")
+    st.progress(len(done) / len(pairs))
+    st.write(f"맞춘 개수: {len(done)} / {len(pairs)}")
+
+    if st.button("매칭 게임 다시 시작", key=f"match_reset_{match_key}", use_container_width=True):
+        st.session_state[f"match_done_{match_key}"] = []
+        st.session_state[f"match_selected_{match_key}"] = None
+        st.session_state[f"match_message_{match_key}"] = ""
+        st.rerun()
+
+    if len(done) == len(pairs):
+        st.success("모든 문장을 맞췄습니다! 훌륭합니다. 🎉")
         st.balloons()
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        if st.button("🔄 문장 매칭 다시 하기", key=f"match_reset_{match_key}", use_container_width=True):
-            st.session_state[f"match_done_{match_key}"] = []
-            st.session_state[f"match_selected_{match_key}"] = None
-            st.session_state[f"match_message_{match_key}"] = ""
-            st.session_state[f"match_show_answer_{match_key}"] = False
-            st.rerun()
-
-    with c2:
-        if st.button("👀 정답 전체 보기", key=f"match_answer_{match_key}", use_container_width=True):
-            st.session_state[f"match_show_answer_{match_key}"] = not st.session_state.get(f"match_show_answer_{match_key}", False)
-            st.rerun()
-
-    if st.session_state.get(f"match_show_answer_{match_key}", False):
-        st.markdown("### ✅ 정답 전체")
-        for i, p in enumerate(pairs, start=1):
-            st.markdown(
-                f"""
-                <div class="line-card">
-                    <div class="en-line">{i}. {clean_text_for_display(p["en"])}</div>
-                    <div class="ko-line">{clean_text_for_display(p["ko"])}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
 
 
 # =========================
@@ -630,55 +627,68 @@ for i, tab in enumerate(tabs):
     with tab:
         d = dialogues[i]
 
-        st.markdown(
-            f"""
-            <div class="dialogue-header">
-                <div class="dialogue-title">{d['title']}</div>
-                <div class="dialogue-desc">{d['ko_title']} · 일상 대화체 표현 연습</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+        sub_dialogue_tab, sub_matching_tab = st.tabs(["📖 대화문", "🧩 문장 매칭"])
 
-        c1, c2 = st.columns([1, 1])
-
-        with c1:
-            play_dialogue_audio(d["lines"], key=f"dialogue_audio_{i}")
-
-        with c2:
-            show_korean = st.toggle(
-                "🇰🇷 한국어 해석 보기",
-                value=False,
-                key=f"show_korean_{i}"
-            )
-
-        st.divider()
-
-        for line in d["lines"]:
-            st.markdown('<div class="line-card">', unsafe_allow_html=True)
-
-            st.markdown(
-                f"<div class='en-line'>{line['en']}</div>",
-                unsafe_allow_html=True
-            )
-
-            if show_korean:
-                st.markdown(
-                    f"<div class='ko-line'>{line['ko']}</div>",
-                    unsafe_allow_html=True
-                )
-
-            st.markdown('</div>', unsafe_allow_html=True)
-
-        with st.expander("사용된 단어 보기"):
+        with sub_dialogue_tab:
             st.markdown(
                 f"""
-                <div class="word-box">
-                    {d['words']}
+                <div class="dialogue-header">
+                    <div class="dialogue-title">{d['title']}</div>
+                    <div class="dialogue-desc">{d['ko_title']} · 일상 대화체 표현 연습</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
 
-        st.divider()
-        show_sentence_matching_activity(d, key_prefix=f"dialogue_matching_{i}_{d['ko_title']}")
+            c1, c2 = st.columns([1, 1])
+
+            with c1:
+                play_dialogue_audio(d["lines"], key=f"dialogue_audio_{i}")
+
+            with c2:
+                show_korean = st.toggle(
+                    "🇰🇷 한국어 해석 보기",
+                    value=False,
+                    key=f"show_korean_{i}"
+                )
+
+            st.divider()
+
+            for line in d["lines"]:
+                st.markdown('<div class="line-card">', unsafe_allow_html=True)
+
+                st.markdown(
+                    f"<div class='en-line'>{line['en']}</div>",
+                    unsafe_allow_html=True
+                )
+
+                if show_korean:
+                    st.markdown(
+                        f"<div class='ko-line'>{line['ko']}</div>",
+                        unsafe_allow_html=True
+                    )
+
+                st.markdown('</div>', unsafe_allow_html=True)
+
+            with st.expander("사용된 단어 보기"):
+                st.markdown(
+                    f"""
+                    <div class="word-box">
+                        {d['words']}
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+        with sub_matching_tab:
+            st.markdown(
+                f"""
+                <div class="dialogue-header">
+                    <div class="dialogue-title">🧩 {d['ko_title']} 문장 매칭</div>
+                    <div class="dialogue-desc">대화문을 보지 않고 영어 문장과 한국어 해석을 맞춰 봅시다.</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            show_sentence_matching_activity(d, key_prefix=f"dialogue_matching_{i}_{d['ko_title']}")
