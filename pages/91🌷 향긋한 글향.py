@@ -2,6 +2,7 @@ import streamlit as st
 from pathlib import Path
 from gtts import gTTS
 import io
+import random
 
 # =========================================================
 # 기본 설정
@@ -34,91 +35,126 @@ def detect_language(text):
     return "ko" if korean_count > english_count else "en"
 
 
+def join_ideas(ideas):
+    if len(ideas) == 1:
+        return ideas[0]
+    if len(ideas) == 2:
+        return ideas[0] + " and " + ideas[1]
+    return ", ".join(ideas[:-1]) + ", and " + ideas[-1]
+
+
 def make_korean_to_english(text, topic_name):
     ideas = []
+    korean_points = []
 
     if "포기" in text:
         ideas.append("I should not give up easily")
+        korean_points.append("쉽게 포기하지 않겠다는 태도가 잘 드러납니다.")
     if "연습" in text or "훈련" in text:
-        ideas.append("I should keep practicing")
+        ideas.append("I should keep practicing step by step")
+        korean_points.append("꾸준한 연습의 중요성을 잘 이해했습니다.")
     if "노력" in text or "최선" in text:
-        ideas.append("I should do my best")
+        ideas.append("I should do my best even when it is difficult")
+        korean_points.append("어려운 상황에서도 최선을 다하려는 마음이 좋습니다.")
     if "믿" in text or "자신감" in text:
         ideas.append("I should believe in myself")
+        korean_points.append("자신을 믿는 태도가 핵심 교훈으로 잘 연결됩니다.")
     if "성실" in text or "꾸준" in text:
         ideas.append("I should be hardworking and consistent")
+        korean_points.append("성실함과 꾸준함을 배움으로 연결한 점이 좋습니다.")
     if "도전" in text:
-        ideas.append("I should challenge myself")
+        ideas.append("I should challenge myself without fear")
+        korean_points.append("도전을 두려워하지 않겠다는 생각이 잘 표현되었습니다.")
     if "꿈" in text or "목표" in text:
-        ideas.append("I should work hard for my dream")
+        ideas.append("I should work hard for my dream and goal")
+        korean_points.append("꿈과 목표를 향한 태도가 분명합니다.")
     if "팀" in text or "협동" in text or "동료" in text:
-        ideas.append("I should respect teamwork")
+        ideas.append("I should respect teamwork and my teammates")
+        korean_points.append("협동과 존중의 가치를 잘 파악했습니다.")
     if "실수" in text or "실패" in text:
-        ideas.append("I should learn from mistakes")
+        ideas.append("I should learn from mistakes and failure")
+        korean_points.append("실패를 성장의 기회로 바라본 점이 좋습니다.")
     if "창의" in text or "상상" in text:
-        ideas.append("I should think creatively")
+        ideas.append("I should think creatively and express my ideas")
+        korean_points.append("창의성과 표현의 가치를 잘 연결했습니다.")
     if "자연" in text or "여행" in text:
         ideas.append("I should learn from travel and nature")
+        korean_points.append("자연과 경험에서 배움을 찾은 점이 좋습니다.")
     if "문화" in text or "역사" in text:
         ideas.append("I should respect culture and history")
+        korean_points.append("문화와 역사를 존중하는 태도가 잘 드러납니다.")
 
     if not ideas:
-        ideas = ["I should learn a positive attitude", "I should keep trying"]
+        ideas = ["I should learn a positive attitude", "I should keep trying in my own life"]
+        korean_points = ["핵심 생각은 좋습니다. 다음에는 구체적인 단어를 하나 더 넣으면 더 풍부해집니다.", "예를 들어 노력, 자신감, 도전, 존중 같은 표현을 넣어 보세요."]
 
-    if len(ideas) == 1:
-        idea_sentence = ideas[0]
-    elif len(ideas) == 2:
-        idea_sentence = ideas[0] + " and " + ideas[1]
-    else:
-        idea_sentence = ", ".join(ideas[:-1]) + ", and " + ideas[-1]
-
-    return (
+    idea_sentence = join_ideas(ideas)
+    english_feedback = (
         f"Through {topic_name}, I learned that {idea_sentence}. "
-        f"I want to remember this lesson and apply it to my life."
+        f"This lesson is meaningful because it reminds me that small actions can change my future. "
+        f"I want to remember this lesson, practice it in my daily life, and become a better person."
     )
+
+    korean_feedback = " ".join(korean_points[:3])
+    korean_feedback += " 문장을 조금 더 길게 쓰고, 왜 그렇게 생각했는지 이유를 한 문장 더 붙이면 더 좋은 답이 됩니다."
+
+    return korean_feedback, english_feedback
 
 
 def improve_english_answer(text, topic_name):
     lower_text = text.lower()
     ideas = []
+    korean_points = []
 
     if "give up" in lower_text:
         ideas.append("I should not give up easily")
-    if "practice" in lower_text:
-        ideas.append("I should keep practicing")
-    if "believe" in lower_text:
+        korean_points.append("포기하지 않겠다는 핵심 메시지가 잘 보입니다.")
+    if "practice" in lower_text or "train" in lower_text:
+        ideas.append("I should keep practicing step by step")
+        korean_points.append("연습과 성장의 관계를 잘 표현했습니다.")
+    if "believe" in lower_text or "confidence" in lower_text:
         ideas.append("I should believe in myself")
-    if "hard" in lower_text or "hardworking" in lower_text:
+        korean_points.append("자신감과 자기 믿음이 잘 드러납니다.")
+    if "hard" in lower_text or "hardworking" in lower_text or "effort" in lower_text:
         ideas.append("I should work hard for my goal")
+        korean_points.append("노력의 중요성을 잘 연결했습니다.")
     if "best" in lower_text:
-        ideas.append("I should do my best")
+        ideas.append("I should do my best even when it is difficult")
+        korean_points.append("최선을 다하려는 태도가 좋습니다.")
     if "dream" in lower_text or "goal" in lower_text:
         ideas.append("I should keep working toward my dream")
+        korean_points.append("꿈과 목표를 향한 방향이 분명합니다.")
     if "team" in lower_text:
         ideas.append("I should respect teamwork")
+        korean_points.append("팀워크의 가치를 잘 파악했습니다.")
     if "mistake" in lower_text or "failure" in lower_text:
-        ideas.append("I should learn from mistakes")
+        ideas.append("I should learn from mistakes and failure")
+        korean_points.append("실패를 배움으로 바꾼 점이 좋습니다.")
     if "creative" in lower_text or "idea" in lower_text:
-        ideas.append("I should think creatively")
+        ideas.append("I should think creatively and express my ideas")
+        korean_points.append("창의적인 표현의 의미를 잘 잡았습니다.")
     if "travel" in lower_text or "nature" in lower_text:
         ideas.append("I should learn from travel and nature")
+        korean_points.append("경험과 자연에서 배움을 찾은 점이 좋습니다.")
     if "culture" in lower_text or "history" in lower_text:
         ideas.append("I should respect culture and history")
+        korean_points.append("문화와 역사의 가치를 잘 이해했습니다.")
 
     if not ideas:
         ideas = ["I should have a positive attitude", "I should keep trying"]
+        korean_points = ["전체적인 생각은 좋습니다. 다음에는 본문에서 배운 핵심 단어를 한두 개 넣어 보세요."]
 
-    if len(ideas) == 1:
-        idea_sentence = ideas[0]
-    elif len(ideas) == 2:
-        idea_sentence = ideas[0] + " and " + ideas[1]
-    else:
-        idea_sentence = ", ".join(ideas[:-1]) + ", and " + ideas[-1]
-
-    return (
+    idea_sentence = join_ideas(ideas)
+    improved_english = (
         f"Through {topic_name}, I learned that {idea_sentence}. "
-        f"This lesson is meaningful because it can help me grow in my own life."
+        f"This lesson is important because it can help me grow not only in class but also in my daily life. "
+        f"I will try to remember this message and use it when I face a difficult moment."
     )
+
+    korean_feedback = " ".join(korean_points[:3])
+    korean_feedback += " 영어 문장은 의미가 전달됩니다. 더 자연스럽게 하려면 'because'로 이유를 붙이고, 마지막에 앞으로의 다짐을 한 문장 추가하면 좋습니다."
+
+    return korean_feedback, improved_english
 
 # =========================================================
 # 디자인
@@ -1056,6 +1092,31 @@ def is_correct_korean_answer(user_answer, correct_answer):
             return True
     return False
 
+
+def reset_keys_by_prefix(prefixes):
+    """현재 주제의 특정 활동 입력값과 채점 결과를 초기화합니다."""
+    if isinstance(prefixes, str):
+        prefixes = [prefixes]
+
+    for key in list(st.session_state.keys()):
+        if any(str(key).startswith(prefix) for prefix in prefixes):
+            del st.session_state[key]
+
+
+def show_pass_status(score, total, checked, pass_ratio=0.7):
+    """70% 이상이면 통과로 표시합니다. 아직 모두 확인하지 않았으면 진행 상황만 보여줍니다."""
+    pass_count = max(1, int(total * pass_ratio + 0.9999))
+
+    st.markdown(f"### 현재 정답 개수: {score}/{total}")
+    st.caption(f"답 확인을 누른 문제: {checked}/{total} · 통과 기준: {pass_count}/{total} 이상")
+
+    if checked < total:
+        st.info("아직 답 확인을 누르지 않은 문제가 있습니다. 모든 문제의 답 확인을 누르면 통과 여부가 표시됩니다.")
+    elif score >= pass_count:
+        st.success(f"통과입니다! {score}/{total}개를 맞혔습니다.")
+    else:
+        st.warning(f"아직 통과 기준에 부족합니다. 다시 풀기를 눌러 한 번 더 도전해 보세요. 현재 점수: {score}/{total}")
+
 # =========================================================
 # 화면
 # =========================================================
@@ -1198,13 +1259,34 @@ with tab_activity:
 
     key_words = get_key_words(topic_name, data)
 
+    all_activity_prefixes = [
+        f"{category}_{topic_name}_activity1_",
+        f"{category}_{topic_name}_activity2_",
+        f"{category}_{topic_name}_activity3_",
+        f"{category}_{topic_name}_q",
+        f"{category}_{topic_name}_reflection",
+    ]
+    if st.button("🔄 활동 전체 다시 풀기", key=f"reset_all_activities_{category}_{topic_name}", use_container_width=True):
+        reset_keys_by_prefix(all_activity_prefixes)
+        st.rerun()
+
     # -----------------------------------------------------
     # 활동 1. Key Expressions 단어 테스트
     # -----------------------------------------------------
     st.markdown('<div class="section-box"><h3>활동 1. Key Expressions 단어 테스트</h3></div>', unsafe_allow_html=True)
-    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요. 각 문제 옆의 답 확인을 누르면 바로 확인할 수 있습니다.")
+    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요. 각 문제 옆의 답 확인을 누르면 바로 확인할 수 있고, 맞춘 개수가 아래에 표시됩니다.")
+
+    activity1_prefix = f"{category}_{topic_name}_activity1_"
+    if st.button("🔄 활동 1 전체 다시 풀기", key=f"reset_activity1_{category}_{topic_name}", use_container_width=True):
+        reset_keys_by_prefix(activity1_prefix)
+        st.rerun()
+
+    activity1_status_keys = []
 
     for i, (word, meaning) in enumerate(key_words, start=1):
+        status_key = f"{category}_{topic_name}_activity1_status_{i}"
+        activity1_status_keys.append(status_key)
+
         c1, c2, c3 = st.columns([1.25, 2.25, 1.5])
         with c1:
             st.markdown(
@@ -1226,10 +1308,17 @@ with tab_activity:
             )
         with c3:
             if st.button("답 확인", key=f"{category}_{topic_name}_activity1_check_{i}"):
-                if is_correct_korean_answer(user_meaning, meaning):
+                st.session_state[status_key] = is_correct_korean_answer(user_meaning, meaning)
+
+            if status_key in st.session_state:
+                if st.session_state[status_key]:
                     st.success("정답")
                 else:
                     st.error(f"정답: {meaning}")
+
+    activity1_score = sum(1 for key in activity1_status_keys if st.session_state.get(key) is True)
+    activity1_checked = sum(1 for key in activity1_status_keys if key in st.session_state)
+    show_pass_status(activity1_score, len(activity1_status_keys), activity1_checked)
 
     st.markdown("---")
 
@@ -1237,7 +1326,14 @@ with tab_activity:
     # 활동 2. 지문 해석 빈칸 쓰기
     # -----------------------------------------------------
     st.markdown('<div class="section-box"><h3>활동 2. 지문 해석 빈칸 쓰기</h3></div>', unsafe_allow_html=True)
-    st.caption("지문은 그대로 읽고, 아래 줄별 해석의 빈칸에 핵심 단어의 한국어 뜻을 적으세요. 빈칸마다 바로 답을 확인할 수 있습니다.")
+    st.caption("지문은 그대로 읽고, 아래 줄별 해석의 빈칸에 핵심 단어의 한국어 뜻을 적으세요. 각 빈칸의 답 확인을 누르면 바로 확인할 수 있고, 맞춘 개수가 아래에 표시됩니다.")
+
+    activity2_prefix = f"{category}_{topic_name}_activity2_"
+    if st.button("🔄 활동 2 전체 다시 풀기", key=f"reset_activity2_{category}_{topic_name}", use_container_width=True):
+        reset_keys_by_prefix(activity2_prefix)
+        st.rerun()
+
+    activity2_status_keys = []
 
     for line_no, (speaker, eng, kor) in enumerate(dialogue, start=1):
         matched_words = []
@@ -1277,6 +1373,9 @@ with tab_activity:
 
         if matched_words:
             for j, (word, correct_meaning) in enumerate(matched_words, start=1):
+                status_key = f"{category}_{topic_name}_activity2_status_{line_no}_{j}"
+                activity2_status_keys.append(status_key)
+
                 b1, b2, b3 = st.columns([1.4, 2.2, 1.4])
                 with b1:
                     st.markdown(
@@ -1298,12 +1397,19 @@ with tab_activity:
                     )
                 with b3:
                     if st.button("답 확인", key=f"{category}_{topic_name}_activity2_check_{line_no}_{j}"):
-                        if is_correct_korean_answer(user_blank, correct_meaning):
+                        st.session_state[status_key] = is_correct_korean_answer(user_blank, correct_meaning)
+
+                    if status_key in st.session_state:
+                        if st.session_state[status_key]:
                             st.success("정답")
                         else:
                             st.error(f"정답: {correct_meaning}")
         else:
             st.caption("이 줄에는 핵심 단어 빈칸이 없습니다.")
+
+    activity2_score = sum(1 for key in activity2_status_keys if st.session_state.get(key) is True)
+    activity2_checked = sum(1 for key in activity2_status_keys if key in st.session_state)
+    show_pass_status(activity2_score, len(activity2_status_keys), activity2_checked)
 
     st.markdown("---")
 
@@ -1311,24 +1417,45 @@ with tab_activity:
     # 활동 3. Reading Check
     # -----------------------------------------------------
     st.markdown('<div class="section-box"><h3>활동 3. 내용 확인 문제</h3></div>', unsafe_allow_html=True)
-    st.caption("문제는 한국어로 읽고, 영어 보기 중에서 정답을 고르세요. 각 문제마다 바로 확인할 수 있습니다.")
+    st.caption("문제는 한국어로 읽고, 영어 보기 중에서 정답을 고르세요. 보기는 문제마다 다른 위치에 나오도록 섞었습니다.")
+
+    activity3_prefix = f"{category}_{topic_name}_activity3_"
+    activity3_radio_prefix = f"{category}_{topic_name}_q"
+    if st.button("🔄 활동 3 전체 다시 풀기", key=f"reset_activity3_{category}_{topic_name}", use_container_width=True):
+        reset_keys_by_prefix([activity3_prefix, activity3_radio_prefix])
+        st.rerun()
+
+    activity3_status_keys = []
 
     for i, (question, options, answer) in enumerate(data["questions"], start=1):
+        status_key = f"{category}_{topic_name}_activity3_status_{i}"
+        activity3_status_keys.append(status_key)
+
+        mixed_options = list(options)
+        random.Random(f"{category}-{topic_name}-{i}").shuffle(mixed_options)
+
         q_col, check_col = st.columns([3.2, 1.4])
         with q_col:
             choice = st.radio(
                 question,
-                options,
+                mixed_options,
                 key=f"{category}_{topic_name}_q{i}"
             )
         with check_col:
             st.write("")
             st.write("")
             if st.button("답 확인", key=f"{category}_{topic_name}_activity3_check_{i}"):
-                if choice == answer:
+                st.session_state[status_key] = (choice == answer)
+
+            if status_key in st.session_state:
+                if st.session_state[status_key]:
                     st.success("정답")
                 else:
                     st.error(f"정답: {answer}")
+
+    activity3_score = sum(1 for key in activity3_status_keys if st.session_state.get(key) is True)
+    activity3_checked = sum(1 for key in activity3_status_keys if key in st.session_state)
+    show_pass_status(activity3_score, len(activity3_status_keys), activity3_checked)
 
     st.markdown("---")
 
@@ -1354,11 +1481,17 @@ with tab_activity:
             answer_lang = detect_language(text)
 
             if answer_lang == "ko":
-                st.markdown("### 영어로 바꾸면")
-                st.success(make_korean_to_english(text, clean_name))
+                korean_feedback, english_feedback = make_korean_to_english(text, clean_name)
+                st.markdown("### 🇰🇷 한국어 피드백")
+                st.info(korean_feedback)
+                st.markdown("### 🇺🇸 영어로 바꾸면")
+                st.success(english_feedback)
             else:
-                st.markdown("### 다듬은 영어")
-                st.success(improve_english_answer(text, clean_name))
+                korean_feedback, improved_english = improve_english_answer(text, clean_name)
+                st.markdown("### 🇰🇷 한국어 피드백")
+                st.info(korean_feedback)
+                st.markdown("### 🇺🇸 더 자연스러운 영어")
+                st.success(improved_english)
 
             st.markdown("### 추천 표현")
-            st.write("I should keep trying. / I should believe in myself. / I learned something important.")
+            st.write("I learned that effort is important. / I should keep trying. / This lesson can help me grow. / I want to apply this lesson to my life.")
