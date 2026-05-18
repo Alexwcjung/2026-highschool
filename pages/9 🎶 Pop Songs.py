@@ -3,6 +3,8 @@ import streamlit.components.v1 as components
 import random
 import html
 import re
+import json
+import uuid
 
 st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
 
@@ -1067,67 +1069,438 @@ elif selected_tab == "📝 Key Expression 뜻 맞추기":
 
 
 elif selected_tab == "🧩 문장 매칭 게임":
-    st.markdown('<div class="matching-box"><div class="matching-title">🧩 문장 매칭 게임</div><div class="big-guide">왼쪽 영어 표현과 오른쪽 한국어 뜻을 차례로 눌러 짝을 맞추세요.</div></div>', unsafe_allow_html=True)
     match_key = safe_key(song_choice)
-    pairs = [{"id": f"{match_key}_{i}", "en": en, "ko": ko} for i, (en, ko) in enumerate(data["matching"], start=1)]
-    st.session_state.setdefault(f"match_done_{match_key}", [])
-    st.session_state.setdefault(f"match_selected_{match_key}", None)
-    st.session_state.setdefault(f"match_message_{match_key}", "")
-    done = st.session_state[f"match_done_{match_key}"]
-    selected = st.session_state[f"match_selected_{match_key}"]
-    en_cards = [{"id": p["id"], "text": p["en"], "kind": "en"} for p in pairs if p["id"] not in done]
-    ko_cards = [{"id": p["id"], "text": p["ko"], "kind": "ko"} for p in pairs if p["id"] not in done]
+
+    pairs = [
+        {
+            "id": f"pair_{i}",
+            "en": en,
+            "ko": ko
+        }
+        for i, (en, ko) in enumerate(data["matching"], start=1)
+    ]
+
+    en_cards = [{"id": p["id"], "text": p["en"]} for p in pairs]
+    ko_cards = [{"id": p["id"], "text": p["ko"]} for p in pairs]
+
     en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
     ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
-    if selected:
-        st.markdown(f'<div class="selected-card-notice">선택됨: {clean_text_for_display(selected["text"])}</div>', unsafe_allow_html=True)
-    if st.session_state[f"match_message_{match_key}"]:
-        st.info(st.session_state[f"match_message_{match_key}"])
-    col_en, col_ko = st.columns(2)
-    with col_en:
-        st.markdown("### English")
-        for card in en_cards:
-            if st.button(card["text"], key=f"match_en_{match_key}_{card['id']}", use_container_width=True):
-                if st.session_state[f"match_selected_{match_key}"] is None:
-                    st.session_state[f"match_selected_{match_key}"] = card
-                    st.session_state[f"match_message_{match_key}"] = "오른쪽에서 알맞은 한국어 뜻을 고르세요."
-                else:
-                    prev = st.session_state[f"match_selected_{match_key}"]
-                    if prev["id"] == card["id"] and prev["kind"] != card["kind"]:
-                        done.append(card["id"])
-                        st.session_state[f"match_selected_{match_key}"] = None
-                        st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
-                    else:
-                        st.session_state[f"match_selected_{match_key}"] = card
-                        st.session_state[f"match_message_{match_key}"] = "영어 표현을 다시 선택했습니다. 오른쪽 뜻을 고르세요."
-                st.rerun()
-    with col_ko:
-        st.markdown("### Korean")
-        for card in ko_cards:
-            if st.button(card["text"], key=f"match_ko_{match_key}_{card['id']}", use_container_width=True):
-                if st.session_state[f"match_selected_{match_key}"] is None:
-                    st.session_state[f"match_selected_{match_key}"] = card
-                    st.session_state[f"match_message_{match_key}"] = "왼쪽에서 알맞은 영어 표현을 고르세요."
-                else:
-                    prev = st.session_state[f"match_selected_{match_key}"]
-                    if prev["id"] == card["id"] and prev["kind"] != card["kind"]:
-                        done.append(card["id"])
-                        st.session_state[f"match_selected_{match_key}"] = None
-                        st.session_state[f"match_message_{match_key}"] = "정답입니다! ✅"
-                    else:
-                        st.session_state[f"match_selected_{match_key}"] = None
-                        st.session_state[f"match_message_{match_key}"] = "아쉬워요. 다시 짝을 맞춰 보세요. ❌"
-                st.rerun()
-    st.progress(len(done) / len(pairs))
-    st.write(f"맞춘 개수: {len(done)} / {len(pairs)}")
-    if st.button("매칭 게임 다시 시작", key=f"match_reset_{match_key}", use_container_width=True):
-        st.session_state[f"match_done_{match_key}"] = []
-        st.session_state[f"match_selected_{match_key}"] = None
-        st.session_state[f"match_message_{match_key}"] = ""
-        st.rerun()
-    if len(done) == len(pairs):
-        st.success("모든 문장을 맞췄습니다! 훌륭합니다. 🎉")
 
+    payload = {
+        "en": en_cards,
+        "ko": ko_cards,
+        "total": len(pairs),
+    }
+
+    data_json = json.dumps(payload, ensure_ascii=False)
+    component_id = "match_" + uuid.uuid4().hex
+
+    components.html(
+        f"""
+        <div id="{component_id}" class="match-app">
+            <div class="match-head">
+                <div class="match-title">🧩 문장 매칭 게임</div>
+                <div class="match-guide">
+                    왼쪽 영어 표현과 오른쪽 한국어 뜻을 차례로 눌러 짝을 맞추세요.<br>
+                    선택한 박스는 색칠되고, 정답이면 두 박스가 반짝이며 함께 사라집니다.
+                </div>
+            </div>
+
+            <div class="match-status">
+                <div id="status_{component_id}">먼저 영어 또는 한국어 박스를 하나 선택하세요.</div>
+                <div id="score_{component_id}">맞춘 개수: 0 / {len(pairs)}</div>
+            </div>
+
+            <div class="match-board">
+                <div class="match-col">
+                    <div class="col-title">English</div>
+                    <div id="en_{component_id}" class="card-wrap"></div>
+                </div>
+                <div class="match-col">
+                    <div class="col-title">Korean</div>
+                    <div id="ko_{component_id}" class="card-wrap"></div>
+                </div>
+            </div>
+
+            <div class="progress-outer">
+                <div id="bar_{component_id}" class="progress-inner"></div>
+            </div>
+
+            <button id="reset_{component_id}" class="reset-btn">매칭 게임 다시 시작</button>
+        </div>
+
+        <style>
+            #{component_id}.match-app {{
+                font-family: Arial, sans-serif;
+                width: 100%;
+                box-sizing: border-box;
+                background: linear-gradient(135deg,#eef2ff 0%,#f0f9ff 50%,#fdf2f8 100%);
+                border: 1px solid #c7d2fe;
+                border-radius: 22px;
+                padding: 22px;
+                margin: 8px 0 22px 0;
+                color: #1e293b;
+            }}
+
+            #{component_id} .match-head {{
+                background: rgba(255,255,255,0.72);
+                border: 1px solid #dbeafe;
+                border-radius: 18px;
+                padding: 18px 20px;
+                margin-bottom: 16px;
+            }}
+
+            #{component_id} .match-title {{
+                font-size: 30px;
+                font-weight: 1000;
+                color: #4338ca;
+                margin-bottom: 8px;
+            }}
+
+            #{component_id} .match-guide {{
+                font-size: 16px;
+                font-weight: 800;
+                color: #475569;
+                line-height: 1.7;
+            }}
+
+            #{component_id} .match-status {{
+                display: grid;
+                grid-template-columns: 1.5fr 0.8fr;
+                gap: 10px;
+                margin-bottom: 14px;
+                align-items: center;
+            }}
+
+            #{component_id} .match-status > div {{
+                background: #ffffff;
+                border: 1px solid #dbeafe;
+                border-radius: 14px;
+                padding: 12px 14px;
+                font-size: 15px;
+                font-weight: 900;
+                color: #1d4ed8;
+                min-height: 24px;
+            }}
+
+            #{component_id} .match-board {{
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }}
+
+            #{component_id} .match-col {{
+                background: rgba(255,255,255,0.72);
+                border: 1px solid #e5e7eb;
+                border-radius: 18px;
+                padding: 14px;
+            }}
+
+            #{component_id} .col-title {{
+                font-size: 22px;
+                font-weight: 1000;
+                color: #111827;
+                margin-bottom: 12px;
+            }}
+
+            #{component_id} .card-wrap {{
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }}
+
+            #{component_id} .match-card {{
+                width: 100%;
+                text-align: left;
+                border: 2px solid #c7d2fe;
+                background: #ffffff;
+                color: #1e293b;
+                border-radius: 16px;
+                padding: 14px 15px;
+                font-size: 17px;
+                font-weight: 900;
+                line-height: 1.55;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+                transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
+                position: relative;
+                overflow: hidden;
+            }}
+
+            #{component_id} .match-card:hover {{
+                transform: translateY(-2px);
+                border-color: #818cf8;
+                box-shadow: 0 8px 18px rgba(99,102,241,0.16);
+            }}
+
+            #{component_id} .match-card.selected {{
+                background: linear-gradient(135deg,#fef3c7 0%,#fde68a 100%);
+                border-color: #f59e0b;
+                color: #78350f;
+                box-shadow: 0 0 0 4px rgba(245,158,11,0.18), 0 8px 20px rgba(245,158,11,0.22);
+                transform: scale(1.015);
+            }}
+
+            #{component_id} .match-card.wrong {{
+                animation: shake_{component_id} .28s ease-in-out;
+                background: #fee2e2;
+                border-color: #ef4444;
+                color: #7f1d1d;
+            }}
+
+            #{component_id} .match-card.correct {{
+                background: linear-gradient(135deg,#dcfce7,#bbf7d0);
+                border-color: #22c55e;
+                color: #14532d;
+                animation: sparkleDisappear_{component_id} .68s ease forwards;
+            }}
+
+            #{component_id} .match-card.correct::after {{
+                content: "✨";
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 34px;
+                background: radial-gradient(circle, rgba(255,255,255,0.95), rgba(255,255,255,0.20), rgba(255,255,255,0));
+                animation: sparkleFlash_{component_id} .68s ease forwards;
+                pointer-events: none;
+            }}
+
+            @keyframes sparkleDisappear_{component_id} {{
+                0% {{ opacity: 1; transform: scale(1); max-height: 220px; margin-bottom: 0; }}
+                35% {{ opacity: 1; transform: scale(1.04); }}
+                70% {{ opacity: .55; transform: scale(.96); max-height: 220px; }}
+                100% {{ opacity: 0; transform: scale(.86); max-height: 0; padding-top: 0; padding-bottom: 0; border-width: 0; margin: 0; }}
+            }}
+
+            @keyframes sparkleFlash_{component_id} {{
+                0% {{ opacity: 0; transform: scale(.6) rotate(0deg); }}
+                35% {{ opacity: 1; transform: scale(1.25) rotate(8deg); }}
+                100% {{ opacity: 0; transform: scale(1.7) rotate(-10deg); }}
+            }}
+
+            @keyframes shake_{component_id} {{
+                0%, 100% {{ transform: translateX(0); }}
+                25% {{ transform: translateX(-5px); }}
+                50% {{ transform: translateX(5px); }}
+                75% {{ transform: translateX(-3px); }}
+            }}
+
+            #{component_id} .progress-outer {{
+                width: 100%;
+                height: 14px;
+                background: #e5e7eb;
+                border-radius: 999px;
+                overflow: hidden;
+                margin: 16px 0 12px 0;
+            }}
+
+            #{component_id} .progress-inner {{
+                height: 100%;
+                width: 0%;
+                background: linear-gradient(90deg,#60a5fa,#a78bfa,#f472b6);
+                border-radius: 999px;
+                transition: width .28s ease;
+            }}
+
+            #{component_id} .reset-btn {{
+                width: 100%;
+                border: 1px solid #c7d2fe;
+                background: #ffffff;
+                color: #4338ca;
+                border-radius: 999px;
+                min-height: 46px;
+                font-size: 16px;
+                font-weight: 1000;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+            }}
+
+            #{component_id} .reset-btn:hover {{
+                background: #eef2ff;
+            }}
+
+            #{component_id} .done-message {{
+                background: linear-gradient(135deg,#dcfce7,#bbf7d0);
+                border: 1px solid #86efac;
+                color: #14532d;
+                border-radius: 16px;
+                padding: 16px;
+                margin-top: 14px;
+                font-size: 20px;
+                font-weight: 1000;
+                text-align: center;
+                animation: pop_{component_id} .45s ease;
+            }}
+
+            @keyframes pop_{component_id} {{
+                0% {{ transform: scale(.92); opacity: 0; }}
+                100% {{ transform: scale(1); opacity: 1; }}
+            }}
+
+            @media (max-width: 720px) {{
+                #{component_id} .match-board {{
+                    grid-template-columns: 1fr;
+                }}
+                #{component_id} .match-status {{
+                    grid-template-columns: 1fr;
+                }}
+                #{component_id} .match-card {{
+                    font-size: 15px;
+                }}
+            }}
+        </style>
+
+        <script>
+            const data_{component_id} = {data_json};
+            const root_{component_id} = document.getElementById("{component_id}");
+            const enBox_{component_id} = document.getElementById("en_{component_id}");
+            const koBox_{component_id} = document.getElementById("ko_{component_id}");
+            const status_{component_id} = document.getElementById("status_{component_id}");
+            const score_{component_id} = document.getElementById("score_{component_id}");
+            const bar_{component_id} = document.getElementById("bar_{component_id}");
+            const reset_{component_id} = document.getElementById("reset_{component_id}");
+
+            let selected_{component_id} = null;
+            let done_{component_id} = new Set();
+            let locked_{component_id} = false;
+
+            function escapeHtml_{component_id}(str) {{
+                return String(str)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+            }}
+
+            function makeCard_{component_id}(card, kind) {{
+                const btn = document.createElement("button");
+                btn.className = "match-card";
+                btn.dataset.id = card.id;
+                btn.dataset.kind = kind;
+                btn.innerHTML = escapeHtml_{component_id}(card.text);
+                btn.addEventListener("click", () => handleClick_{component_id}(btn, card, kind));
+                return btn;
+            }}
+
+            function render_{component_id}() {{
+                enBox_{component_id}.innerHTML = "";
+                koBox_{component_id}.innerHTML = "";
+
+                data_{component_id}.en.forEach(card => {{
+                    if (!done_{component_id}.has(card.id)) {{
+                        enBox_{component_id}.appendChild(makeCard_{component_id}(card, "en"));
+                    }}
+                }});
+
+                data_{component_id}.ko.forEach(card => {{
+                    if (!done_{component_id}.has(card.id)) {{
+                        koBox_{component_id}.appendChild(makeCard_{component_id}(card, "ko"));
+                    }}
+                }});
+
+                updateScore_{component_id}();
+            }}
+
+            function updateScore_{component_id}() {{
+                const count = done_{component_id}.size;
+                const total = data_{component_id}.total;
+                score_{component_id}.textContent = "맞춘 개수: " + count + " / " + total;
+                bar_{component_id}.style.width = ((count / total) * 100) + "%";
+
+                if (count === total) {{
+                    status_{component_id}.textContent = "모든 문장을 맞췄습니다! 훌륭합니다. 🎉";
+                    if (!root_{component_id}.querySelector(".done-message")) {{
+                        const msg = document.createElement("div");
+                        msg.className = "done-message";
+                        msg.textContent = "🎉 모든 문장을 맞췄습니다!";
+                        root_{component_id}.appendChild(msg);
+                    }}
+                }}
+            }}
+
+            function clearSelection_{component_id}() {{
+                root_{component_id}.querySelectorAll(".match-card.selected").forEach(el => el.classList.remove("selected"));
+                selected_{component_id} = null;
+            }}
+
+            function handleClick_{component_id}(el, card, kind) {{
+                if (locked_{component_id}) return;
+                if (done_{component_id}.has(card.id)) return;
+
+                if (!selected_{component_id}) {{
+                    selected_{component_id} = {{ el, card, kind }};
+                    el.classList.add("selected");
+                    status_{component_id}.textContent = kind === "en"
+                        ? "오른쪽에서 알맞은 한국어 뜻을 고르세요."
+                        : "왼쪽에서 알맞은 영어 표현을 고르세요.";
+                    return;
+                }}
+
+                if (selected_{component_id}.el === el) {{
+                    clearSelection_{component_id}();
+                    status_{component_id}.textContent = "선택을 취소했습니다. 다시 하나를 고르세요.";
+                    return;
+                }}
+
+                if (selected_{component_id}.card.id === card.id && selected_{component_id}.kind !== kind) {{
+                    locked_{component_id} = true;
+                    selected_{component_id}.el.classList.remove("selected");
+                    el.classList.remove("selected");
+
+                    selected_{component_id}.el.classList.add("correct");
+                    el.classList.add("correct");
+                    status_{component_id}.textContent = "정답입니다! 두 박스가 함께 사라집니다. ✅";
+
+                    const matchedId = card.id;
+
+                    setTimeout(() => {{
+                        done_{component_id}.add(matchedId);
+                        selected_{component_id} = null;
+                        locked_{component_id} = false;
+                        render_{component_id}();
+
+                        if (done_{component_id}.size < data_{component_id}.total) {{
+                            status_{component_id}.textContent = "좋아요. 다음 문장을 맞춰 보세요.";
+                        }}
+                    }}, 680);
+                }} else {{
+                    locked_{component_id} = true;
+                    selected_{component_id}.el.classList.add("wrong");
+                    el.classList.add("wrong");
+                    status_{component_id}.textContent = "아쉬워요. 다시 짝을 맞춰 보세요. ❌";
+
+                    setTimeout(() => {{
+                        selected_{component_id}.el.classList.remove("selected", "wrong");
+                        el.classList.remove("wrong");
+                        selected_{component_id} = null;
+                        locked_{component_id} = false;
+                    }}, 360);
+                }}
+            }}
+
+            reset_{component_id}.addEventListener("click", () => {{
+                selected_{component_id} = null;
+                done_{component_id} = new Set();
+                locked_{component_id} = false;
+
+                const doneMsg = root_{component_id}.querySelector(".done-message");
+                if (doneMsg) doneMsg.remove();
+
+                status_{component_id}.textContent = "먼저 영어 또는 한국어 박스를 하나 선택하세요.";
+                render_{component_id}();
+            }});
+
+            render_{component_id}();
+        </script>
+        """,
+        height=760,
+        scrolling=True
+    )
+    
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
     st.markdown('<div class="game-card"><div class="big-guide">질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요.<br>학생이 쓴 내용을 바탕으로 한국어 글을 조금 더 풍부하게 다듬고, 그 글을 자연스러운 영어로 번역해 줍니다.<br>맨 밑에는 글을 더 발전시키기 위한 쓰기 조언만 제시합니다.</div></div>', unsafe_allow_html=True)
