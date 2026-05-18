@@ -954,36 +954,117 @@ elif selected_tab == "📖 가사 & 퀴즈":
 
 elif selected_tab == "📝 Key Expression 뜻 맞추기":
     st.subheader("📝 Key Expression 뜻 맞추기")
-    st.markdown('<div class="game-card"><div class="big-guide">영어 핵심 표현을 보고 알맞은 한국어 뜻을 고르세요.<br>각 노래마다 중요한 표현 10개를 연습합니다.</div></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="game-card"><div class="big-guide">'
+        '영어 표현을 보고 한국어 뜻을 고르는 문제와, 한국어 뜻을 보고 영어 표현을 고르는 문제가 섞여 나옵니다.<br>'
+        '각 노래마다 중요한 표현 10개를 양방향으로 연습합니다.'
+        '</div></div>',
+        unsafe_allow_html=True
+    )
+
     key_key = safe_key(song_choice)
     expressions = data["key_expressions"]
+
+    all_english_options = [en for en, _ in expressions]
     all_korean_options = [ko for _, ko in expressions]
+
     user_answers = []
+
     for i, (en, ko) in enumerate(expressions, start=1):
-        distractors = [x for x in all_korean_options if x != ko]
-        rng = random.Random(f"{key_key}_{i}")
-        wrongs = rng.sample(distractors, k=min(3, len(distractors)))
-        options = shuffle_options(wrongs + [ko], seed=f"{key_key}_keygame_{i}")
-        st.markdown(f"### {i}. {en}")
-        picked = st.radio("한국어 뜻을 고르세요.", options, key=f"keygame_{key_key}_{i}", index=None)
-        user_answers.append((en, picked, ko))
+        # 곡명과 번호를 seed로 사용해 문제 방향을 섞습니다.
+        # 새로고침해도 같은 곡에서는 문제 방향이 안정적으로 유지됩니다.
+        direction_rng = random.Random(f"{key_key}_direction_{i}")
+        direction = direction_rng.choice(["en_to_ko", "ko_to_en"])
+
+        rng = random.Random(f"{key_key}_keygame_{i}")
+
+        if direction == "en_to_ko":
+            # 영어 표현 → 한국어 뜻 고르기
+            distractors = [x for x in all_korean_options if x != ko]
+            wrongs = rng.sample(distractors, k=min(3, len(distractors)))
+            options = shuffle_options(wrongs + [ko], seed=f"{key_key}_keygame_options_{i}")
+
+            st.markdown(f"### {i}. {en}")
+            picked = st.radio(
+                "알맞은 한국어 뜻을 고르세요.",
+                options,
+                key=f"keygame_{key_key}_{i}",
+                index=None
+            )
+
+            user_answers.append({
+                "direction": "en_to_ko",
+                "question": en,
+                "picked": picked,
+                "answer": ko,
+                "en": en,
+                "ko": ko,
+            })
+
+        else:
+            # 한국어 뜻 → 영어 표현 고르기
+            distractors = [x for x in all_english_options if x != en]
+            wrongs = rng.sample(distractors, k=min(3, len(distractors)))
+            options = shuffle_options(wrongs + [en], seed=f"{key_key}_keygame_options_{i}")
+
+            st.markdown(f"### {i}. {ko}")
+            picked = st.radio(
+                "알맞은 영어 표현을 고르세요.",
+                options,
+                key=f"keygame_{key_key}_{i}",
+                index=None
+            )
+
+            user_answers.append({
+                "direction": "ko_to_en",
+                "question": ko,
+                "picked": picked,
+                "answer": en,
+                "en": en,
+                "ko": ko,
+            })
+
     c1, c2 = st.columns(2)
+
     with c1:
-        submit_key = st.button("Key Expression 정답 확인", key=f"keygame_submit_{key_key}", use_container_width=True)
+        submit_key = st.button(
+            "Key Expression 정답 확인",
+            key=f"keygame_submit_{key_key}",
+            use_container_width=True
+        )
+
     with c2:
-        if st.button("Key Expression 다시 풀기", key=f"keygame_reset_{key_key}", use_container_width=True):
+        if st.button(
+            "Key Expression 다시 풀기",
+            key=f"keygame_reset_{key_key}",
+            use_container_width=True
+        ):
             for k in list(st.session_state.keys()):
                 if k.startswith(f"keygame_{key_key}_"):
                     del st.session_state[k]
             st.rerun()
+
     if submit_key:
-        score = sum(1 for _, picked, answer in user_answers if picked == answer)
-        st.markdown(f'<div class="score-box">점수: {score} / {len(user_answers)}</div>', unsafe_allow_html=True)
-        for idx, (en, picked, answer) in enumerate(user_answers, start=1):
+        score = sum(1 for item in user_answers if item["picked"] == item["answer"])
+        st.markdown(
+            f'<div class="score-box">점수: {score} / {len(user_answers)}</div>',
+            unsafe_allow_html=True
+        )
+
+        for idx, item in enumerate(user_answers, start=1):
+            en = item["en"]
+            ko = item["ko"]
+            picked = item["picked"]
+            answer = item["answer"]
+
             if picked == answer:
-                st.success(f"{idx}번 정답 ✅  {en} = {answer}")
+                st.success(f"{idx}번 정답 ✅  {en} = {ko}")
             else:
-                st.error(f"{idx}번 오답 ❌  {en} = {answer}")
+                st.error(
+                    f"{idx}번 오답 ❌  정답: {answer}\n\n"
+                    f"전체 표현: {en} = {ko}"
+                )
+
 
 elif selected_tab == "🧩 문장 매칭 게임":
     st.markdown('<div class="matching-box"><div class="matching-title">🧩 문장 매칭 게임</div><div class="big-guide">왼쪽 영어 표현과 오른쪽 한국어 뜻을 차례로 눌러 짝을 맞추세요.</div></div>', unsafe_allow_html=True)
