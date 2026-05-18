@@ -1128,6 +1128,123 @@ def show_history(country_key):
     )
 
 
+
+WORLD_WAR_ALLIANCES = {
+    "ww1": {
+        "title": "제1차 세계대전 동맹 지도",
+        "left_name": "협상국",
+        "right_name": "동맹국",
+        "left_color": "#2563eb",
+        "right_color": "#dc2626",
+        "left_countries": [
+            "United Kingdom", "France", "Russia", "Italy", "Serbia",
+            "Belgium", "United States", "Japan", "Romania", "Greece", "Portugal"
+        ],
+        "right_countries": [
+            "Germany", "Austria", "Hungary", "Turkey", "Bulgaria"
+        ]
+    },
+    "ww2": {
+        "title": "제2차 세계대전 동맹 지도",
+        "left_name": "연합국",
+        "right_name": "추축국",
+        "left_color": "#2563eb",
+        "right_color": "#dc2626",
+        "left_countries": [
+            "United States", "United Kingdom", "France", "Russia", "China",
+            "Canada", "Australia", "New Zealand", "India", "Poland",
+            "Netherlands", "Belgium", "Norway", "Greece"
+        ],
+        "right_countries": [
+            "Germany", "Italy", "Japan", "Hungary", "Romania", "Bulgaria"
+        ]
+    }
+}
+
+def create_alliance_map(war_key):
+    info = WORLD_WAR_ALLIANCES[war_key]
+
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Choropleth(
+            locations=info["left_countries"],
+            locationmode="country names",
+            z=[1] * len(info["left_countries"]),
+            text=[f"{country} - {info['left_name']}" for country in info["left_countries"]],
+            colorscale=[[0, info["left_color"]], [1, info["left_color"]]],
+            showscale=False,
+            marker_line_color="white",
+            marker_line_width=0.7,
+            hovertemplate="%{text}<extra></extra>",
+            name=info["left_name"],
+            showlegend=True
+        )
+    )
+
+    fig.add_trace(
+        go.Choropleth(
+            locations=info["right_countries"],
+            locationmode="country names",
+            z=[1] * len(info["right_countries"]),
+            text=[f"{country} - {info['right_name']}" for country in info["right_countries"]],
+            colorscale=[[0, info["right_color"]], [1, info["right_color"]]],
+            showscale=False,
+            marker_line_color="white",
+            marker_line_width=0.7,
+            hovertemplate="%{text}<extra></extra>",
+            name=info["right_name"],
+            showlegend=True
+        )
+    )
+
+    # 범례가 더 잘 보이도록 더미 마커 추가
+    fig.add_trace(
+        go.Scattergeo(
+            lon=[None], lat=[None],
+            mode="markers",
+            marker=dict(size=12, color=info["left_color"]),
+            name=info["left_name"],
+            showlegend=True
+        )
+    )
+    fig.add_trace(
+        go.Scattergeo(
+            lon=[None], lat=[None],
+            mode="markers",
+            marker=dict(size=12, color=info["right_color"]),
+            name=info["right_name"],
+            showlegend=True
+        )
+    )
+
+    fig.update_layout(
+        height=440,
+        margin=dict(l=0, r=0, t=50, b=0),
+        title=dict(text=info["title"], x=0.5, xanchor="center", font=dict(size=18)),
+        geo=dict(
+            projection_type="natural earth",
+            showland=True,
+            landcolor="#f8fafc",
+            showocean=True,
+            oceancolor="#dbeafe",
+            showcountries=True,
+            countrycolor="#94a3b8",
+            coastlinecolor="#64748b",
+            showcoastlines=True,
+            showframe=False
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=0.02,
+            xanchor="center",
+            x=0.5
+        )
+    )
+
+    return fig
+
 def show_world_wars():
     st.markdown(
         """
@@ -1141,6 +1258,34 @@ def show_world_wars():
         """,
         unsafe_allow_html=True
     )
+
+    st.markdown("### 🗺️ 세계대전 동맹 지도")
+
+    st.markdown(
+        """
+        <div class="notice-box">
+            아래 지도는 이해를 돕기 위한 <b>대표 국가 중심의 현대 국경 기준 표시</b>입니다.<br>
+            제1차 세계대전은 <b>협상국 vs 동맹국</b>, 제2차 세계대전은 <b>연합국 vs 추축국</b>으로 구분했습니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    map_col1, map_col2 = st.columns(2)
+
+    with map_col1:
+        st.plotly_chart(
+            create_alliance_map("ww1"),
+            use_container_width=True,
+            config={"scrollZoom": False, "displaylogo": False}
+        )
+
+    with map_col2:
+        st.plotly_chart(
+            create_alliance_map("ww2"),
+            use_container_width=True,
+            config={"scrollZoom": False, "displaylogo": False}
+        )
 
     st.markdown("### 📌 세계대전 핵심 정리")
 
@@ -1349,7 +1494,7 @@ st.markdown(
         <p>
             첫 탭에서는 <b>세계 4대 문명</b>을, 그다음 탭에서는 <b>한국·중국·일본·미국·영국 역사</b>를 살펴봅니다.<br>
             각 나라 탭에는 <b>시대별 통합 표</b>, <b>핵심 인물 업적 정리표</b>, <b>현대사 상세 표</b>를 넣었습니다.
-            마지막 탭에서는 <b>세계대전 1·2차</b>를 정리했습니다.
+            마지막 탭에서는 <b>세계대전 1·2차</b>를 정리하고, 협상국·동맹국 / 연합국·추축국 지도를 함께 보여줍니다.
         </p>
     </div>
     """,
