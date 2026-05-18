@@ -922,28 +922,38 @@ with tab_reading:
     fact_html += "</div>"
     st.markdown(fact_html, unsafe_allow_html=True)
 
-    # 영어 한 문장 바로 아래에 한국어 해석이 나오도록 표시
-    st.markdown('<div class="reading-card">', unsafe_allow_html=True)
+    st.markdown("### 📘 문장별 읽기")
+    st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다.")
 
-    for speaker, eng, kor in dialogue:
-        st.markdown(
-            f"""
-            <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px dashed #e5e7eb;">
-                <div style="font-size: 22px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
-                    <b>{speaker}:</b> {eng}
-                </div>
-                <div style="margin-top: 7px; margin-left: 8px; padding: 7px 10px 7px 14px;
-                            border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75);
-                            border-radius: 10px; font-size: 19px; font-weight: 700;
-                            color: #374151; line-height: 1.65;">
-                    🇰🇷 {kor}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    # 영어 한 문장 + 바로 아래 한국어 해석 + 오른쪽 문장별 듣기 버튼
+    for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
+        line_col, audio_col = st.columns([8.5, 1.5])
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        with line_col:
+            st.markdown(
+                f"""
+                <div style="margin-bottom: 14px; padding: 16px 18px; border-radius: 20px;
+                            border: 1.5px solid #dbeafe; background: rgba(255,255,255,0.88);
+                            box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+                    <div style="font-size: 22px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
+                        <b>{speaker}:</b> {eng}
+                    </div>
+                    <div style="margin-top: 7px; padding: 7px 10px 7px 14px;
+                                border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75);
+                                border-radius: 10px; font-size: 19px; font-weight: 700;
+                                color: #374151; line-height: 1.65;">
+                        🇰🇷 {kor}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with audio_col:
+            st.write("")
+            st.write("")
+            if st.button("🔊", key=f"{category}_{topic_name}_sentence_audio_{i}", help="이 문장 듣기"):
+                st.audio(make_tts(eng, lang="en"), format="audio/mp3")
 
     st.markdown("---")
 
@@ -952,17 +962,11 @@ with tab_reading:
     if listening_key not in st.session_state:
         st.session_state[listening_key] = False
 
-    if st.button("🎧 듣기", use_container_width=True, key=f"{category}_{topic_name}_listening_btn"):
+    if st.button("🎧 전체 듣기", use_container_width=True, key=f"{category}_{topic_name}_listening_btn"):
         st.session_state[listening_key] = not st.session_state[listening_key]
 
     if st.session_state[listening_key]:
-        st.markdown("### 🎧 전체 듣기")
         st.audio(make_tts(full_english, lang="en"), format="audio/mp3")
-
-        st.markdown("### 문장별 듣기")
-        for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
-            with st.expander(f"{i}. {speaker}: {eng}"):
-                st.audio(make_tts(eng, lang="en"), format="audio/mp3")
 
     st.markdown("---")
     st.markdown("### ⭐ Key Expressions")
