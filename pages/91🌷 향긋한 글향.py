@@ -1210,14 +1210,13 @@ with tab_reading:
         with line_col:
             korean_html = ""
             if show_korean_reading:
-                korean_html = f"""
-                    <div style="margin-top: 7px; padding: 7px 10px 7px 14px;
-                                border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75);
-                                border-radius: 10px; font-size: 19px; font-weight: 700;
-                                color: #374151; line-height: 1.65;">
-                        🇰🇷 {kor}
-                    </div>
-                """
+                # 줄바꿈과 앞쪽 공백이 많으면 Streamlit이 HTML을 코드처럼 보여줄 수 있어 한 줄 HTML로 처리합니다.
+                korean_html = (
+                    f'<div style="margin-top:7px; padding:7px 10px 7px 14px; '
+                    f'border-left:5px solid #fde68a; background:rgba(255,251,235,0.75); '
+                    f'border-radius:10px; font-size:19px; font-weight:700; '
+                    f'color:#374151; line-height:1.65;">🇰🇷 {kor}</div>'
+                )
 
             st.markdown(
                 f"""
