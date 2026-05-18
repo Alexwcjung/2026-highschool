@@ -435,9 +435,9 @@ data_bank = {
                 "Never give up."
             ],
             "questions": [
-                ("1. What is Ronaldo known for?", ["Strict self-management", "Cooking", "Painting", "Writing novels"], "Strict self-management"),
-                ("2. What habits does Ronaldo mention?", ["Training, sleeping well, and eating carefully", "Watching TV all day", "Never resting", "Playing games only"], "Training, sleeping well, and eating carefully"),
-                ("3. How should the student practice?", ["With a clear goal", "Without thinking", "Only once a month", "Only when winning"], "With a clear goal")
+                ("1. 로날도는 무엇으로 잘 알려져 있나요?", ["철저한 자기 관리", "요리", "그림 그리기", "소설 쓰기"], "철저한 자기 관리"),
+                ("2. 로날도가 말한 좋은 습관은 무엇인가요?", ["훈련, 충분한 수면, 조심스러운 식단", "하루 종일 TV 보기", "절대 쉬지 않기", "게임만 하기"], "훈련, 충분한 수면, 조심스러운 식단"),
+                ("3. 학생은 어떻게 연습해야 하나요?", ["분명한 목표를 가지고", "아무 생각 없이", "한 달에 한 번만", "이길 때만"], "분명한 목표를 가지고")
             ],
             "reflection_prompt": "Ronaldo를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -485,9 +485,9 @@ data_bank = {
                 "Never be afraid of the next challenge."
             ],
             "questions": [
-                ("1. How many NBA championships did Jordan win with the Chicago Bulls?", ["Six", "Two", "Ten", "One"], "Six"),
-                ("2. What does Jordan say great players use failure as?", ["Motivation", "An excuse", "A game", "A secret"], "Motivation"),
-                ("3. What does real competitiveness mean?", ["Preparation, focus, and responsibility", "Only wanting to win", "Getting angry", "Never practicing"], "Preparation, focus, and responsibility")
+                ("1. 조던은 시카고 불스와 함께 NBA에서 몇 번 우승했나요?", ["여섯 번", "두 번", "열 번", "한 번"], "여섯 번"),
+                ("2. 조던은 훌륭한 선수들이 실패를 무엇으로 사용한다고 말하나요?", ["동기", "핑계", "게임", "비밀"], "동기"),
+                ("3. 진짜 승부욕은 무엇을 뜻하나요?", ["준비, 집중, 책임감", "이기고 싶어 하는 마음만", "화를 내는 것", "절대 연습하지 않는 것"], "준비, 집중, 책임감")
             ],
             "reflection_prompt": "Jordan을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -535,9 +535,9 @@ data_bank = {
                 "Discipline, teamwork, and attitude are important."
             ],
             "questions": [
-                ("1. Who helped Son build strong basics?", ["His father", "A singer", "A movie director", "A chef"], "His father"),
-                ("2. What basic skills did Son practice?", ["Ball control and shooting", "Cooking and drawing", "Singing and dancing", "Sleeping and resting"], "Ball control and shooting"),
-                ("3. What becomes power in real games?", ["Basics", "Only luck", "Noise", "A phone"], "Basics")
+                ("1. 손흥민이 탄탄한 기본기를 만들도록 도와준 사람은 누구인가요?", ["아버지", "가수", "영화감독", "요리사"], "아버지"),
+                ("2. 손흥민은 어떤 기본 기술을 연습했나요?", ["볼 컨트롤과 슈팅", "요리와 그림", "노래와 춤", "잠자기와 쉬기"], "볼 컨트롤과 슈팅"),
+                ("3. 실제 경기에서 힘이 되는 것은 무엇인가요?", ["기본기", "운만", "소음", "휴대폰"], "기본기")
             ],
             "reflection_prompt": "Son Heung-min을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -579,9 +579,9 @@ data_bank = {
                 "Trust your voice."
             ],
             "questions": [
-                ("1. What makes the student happy?", ["Music", "Math", "Rain", "Homework"], "Music"),
-                ("2. What can honest feelings become?", ["Powerful words", "A problem", "A mistake", "A game"], "Powerful words"),
-                ("3. What does IU tell the student to trust?", ["Your voice", "Only luck", "A phone", "Other people"], "Your voice")
+                ("1. 학생을 행복하게 만드는 것은 무엇인가요?", ["음악", "수학", "비", "숙제"], "음악"),
+                ("2. 솔직한 감정은 무엇이 될 수 있나요?", ["힘 있는 말", "문제", "실수", "게임"], "힘 있는 말"),
+                ("3. 아이유는 학생에게 무엇을 믿으라고 말하나요?", ["너의 목소리", "운만", "휴대폰", "다른 사람들"], "너의 목소리")
             ],
             "reflection_prompt": "IU를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -621,9 +621,9 @@ data_bank = {
                 "Enjoy your own growth."
             ],
             "questions": [
-                ("1. What does figure skating need?", ["Balance, practice, and focus", "Only luck", "No practice", "A loud voice"], "Balance, practice, and focus"),
-                ("2. What did Kim Yuna focus on?", ["What she practiced", "Other people's mistakes", "Only the result", "Her phone"], "What she practiced"),
-                ("3. What should the student do before a test?", ["Prepare step by step", "Only worry", "Give up", "Forget everything"], "Prepare step by step")
+                ("1. 피겨스케이팅에는 무엇이 필요한가요?", ["균형, 연습, 집중", "운만", "연습 없음", "큰 목소리"], "균형, 연습, 집중"),
+                ("2. 김연아는 무엇에 집중했나요?", ["자신이 연습한 것", "다른 사람의 실수", "결과만", "휴대폰"], "자신이 연습한 것"),
+                ("3. 학생은 시험 전에 어떻게 해야 하나요?", ["차근차근 준비하기", "걱정만 하기", "포기하기", "모든 것을 잊기"], "차근차근 준비하기")
             ],
             "reflection_prompt": "Kim Yuna를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -664,9 +664,9 @@ data_bank = {
                 "Trust your own voice."
             ],
             "questions": [
-                ("1. What does the student like?", ["Singing and watching performances", "Only sleeping", "Cooking alone", "Reading maps"], "Singing and watching performances"),
-                ("2. What can small practice do?", ["Make a big difference", "Make people forget everything", "Stop growth", "Make practice useless"], "Make a big difference"),
-                ("3. What does Jungkook tell the student to trust?", ["Your own voice", "Only luck", "A computer", "Other people's opinions"], "Your own voice")
+                ("1. 학생은 무엇을 좋아하나요?", ["노래하는 것과 공연 보는 것", "잠만 자기", "혼자 요리하기", "지도 읽기"], "노래하는 것과 공연 보는 것"),
+                ("2. 매일의 작은 연습은 무엇을 만들 수 있나요?", ["큰 차이", "모든 것을 잊게 함", "성장 멈춤", "연습을 쓸모없게 만듦"], "큰 차이"),
+                ("3. 정국은 학생에게 무엇을 믿으라고 말하나요?", ["너만의 목소리", "운만", "컴퓨터", "다른 사람의 의견"], "너만의 목소리")
             ],
             "reflection_prompt": "Jungkook을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -708,9 +708,9 @@ data_bank = {
                 "Protect nature."
             ],
             "questions": [
-                ("1. Where is the Grand Canyon?", ["Arizona, USA", "London, UK", "Seoul, Korea", "Paris, France"], "Arizona, USA"),
-                ("2. What helped shape the Grand Canyon?", ["The Colorado River and erosion", "Only people", "A machine", "A building"], "The Colorado River and erosion"),
-                ("3. What do rock layers show?", ["Earth's history", "Only sports", "Modern fashion", "A school rule"], "Earth's history")
+                ("1. 그랜드캐니언은 어디에 있나요?", ["미국 애리조나", "영국 런던", "한국 서울", "프랑스 파리"], "미국 애리조나"),
+                ("2. 그랜드캐니언 형성에 도움을 준 것은 무엇인가요?", ["콜로라도강과 침식 작용", "사람들만", "기계", "건물"], "콜로라도강과 침식 작용"),
+                ("3. 암석층은 무엇을 보여 주나요?", ["지구의 역사", "스포츠만", "현대 패션", "학교 규칙"], "지구의 역사")
             ],
             "reflection_prompt": "Grand Canyon을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -750,9 +750,9 @@ data_bank = {
                 "Respect different cultures."
             ],
             "questions": [
-                ("1. What kind of city is New York?", ["A global city", "A small village", "A quiet farm", "A desert"], "A global city"),
-                ("2. What does the Statue of Liberty show?", ["Freedom", "Homework", "Sports", "Silence"], "Freedom"),
-                ("3. What should the student respect?", ["Different cultures", "Only one idea", "Noise", "Fear"], "Different cultures")
+                ("1. 뉴욕은 어떤 도시인가요?", ["세계적인 도시", "작은 마을", "조용한 농장", "사막"], "세계적인 도시"),
+                ("2. 자유의 여신상은 무엇을 보여 주나요?", ["자유", "숙제", "스포츠", "침묵"], "자유"),
+                ("3. 학생은 무엇을 존중해야 하나요?", ["다양한 문화", "하나의 생각만", "소음", "두려움"], "다양한 문화")
             ],
             "reflection_prompt": "New York을 통해 내가 배울 점은 무엇인가요?"
         },
@@ -792,9 +792,9 @@ data_bank = {
                 "Build a better future."
             ],
             "questions": [
-                ("1. When was Gyeongbokgung first built?", ["1395", "1910", "2020", "1600"], "1395"),
-                ("2. What dynasty built Gyeongbokgung?", ["Joseon Dynasty", "Roman Empire", "Ming Dynasty", "British Empire"], "Joseon Dynasty"),
-                ("3. What does the palace show?", ["Korean history and culture", "Only sports", "Only food", "Only music"], "Korean history and culture")
+                ("1. 경복궁은 처음 언제 지어졌나요?", ["1395년", "1910년", "2020년", "1600년"], "1395년"),
+                ("2. 경복궁은 어느 시대에 지어졌나요?", ["조선 시대", "로마 제국", "명나라", "대영 제국"], "조선 시대"),
+                ("3. 경복궁은 무엇을 보여 주나요?", ["한국의 역사와 문화", "스포츠만", "음식만", "음악만"], "한국의 역사와 문화")
             ],
             "reflection_prompt": "Gyeongbokgung을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -835,9 +835,9 @@ data_bank = {
                 "I'm looking forward to trying spicy tteokbokki tomorrow."
             ],
             "questions": [
-                ("1. What had just arrived at school?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
-                ("2. What did the student choose today?", ["A hamburger made from lab-grown beef", "Spicy tteokbokki", "Pizza", "Fried chicken"], "A hamburger made from lab-grown beef"),
-                ("3. What surprised the student more?", ["The speed of service", "The size of the classroom", "The weather", "The color of the button"], "The speed of service")
+                ("1. 학교에 막 도착한 것은 무엇인가요?", ["새로운 음식 기계", "새로운 로봇 선생님", "새로운 학교 버스", "새로운 도서관"], "새로운 음식 기계"),
+                ("2. 학생은 오늘 무엇을 선택했나요?", ["실험실에서 배양한 소고기로 만든 햄버거", "매운 떡볶이", "피자", "치킨"], "실험실에서 배양한 소고기로 만든 햄버거"),
+                ("3. 학생을 더 놀라게 한 것은 무엇인가요?", ["서비스의 속도", "교실의 크기", "날씨", "버튼의 색깔"], "서비스의 속도")
             ],
             "reflection_prompt": "교과서 지문을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -852,90 +852,175 @@ data_bank = {
 # =========================================================
 key_word_bank = {
     "⚽ Ronaldo": [
-        ("habit", "습관"),
-        ("routine", "루틴"),
-        ("practice", "연습하다"),
-        ("goal", "목표"),
-        ("believe", "믿다"),
-        ("give up", "포기하다"),
+        ("impressive", "인상적인"),
+        ("favorite", "가장 좋아하는"),
+        ("fast", "빠른"),
+        ("strong", "강한"),
+        ("hardworking", "성실한"),
+        ("talent", "재능"),
+        ("daily habit", "매일의 습관"),
+        ("routine", "루틴 / 규칙적인 습관"),
+        ("training", "훈련"),
+        ("stay focused", "집중을 유지하다"),
+        ("confidence", "자신감"),
+        ("clear goal", "분명한 목표"),
+        ("practice smart", "똑똑하게 연습하다"),
+        ("believe in yourself", "너 자신을 믿다"),
+        ("never give up", "절대 포기하지 않다"),
     ],
     "🏀 Jordan": [
-        ("championship", "우승"),
+        ("basketball", "농구"),
+        ("championship", "우승 / 선수권 대회"),
+        ("Chicago Bulls", "시카고 불스"),
         ("failure", "실패"),
         ("motivation", "동기"),
+        ("miss a shot", "슛을 놓치다"),
+        ("mistake", "실수"),
         ("confidence", "자신감"),
+        ("competitive", "승부욕이 강한"),
         ("competitiveness", "승부욕"),
+        ("preparation", "준비"),
+        ("focus", "집중"),
+        ("responsibility", "책임감"),
         ("challenge", "도전"),
+        ("effort", "노력"),
     ],
     "⚽ Son Heung-min": [
-        ("teamwork", "팀워크"),
+        ("soccer", "축구"),
+        ("team", "팀"),
         ("respect", "존중"),
-        ("basic", "기본기"),
+        ("communication", "소통"),
+        ("hard work", "노력"),
+        ("father", "아버지"),
+        ("strong basics", "탄탄한 기본기"),
+        ("ball control", "볼 컨트롤"),
+        ("shooting", "슈팅"),
+        ("real game", "실제 경기"),
         ("teammate", "팀 동료"),
-        ("humble", "겸손한"),
+        ("stay humble", "겸손함을 유지하다"),
         ("discipline", "훈련 / 절제"),
+        ("attitude", "태도"),
     ],
     "🎤 IU": [
         ("music", "음악"),
+        ("happy", "행복한"),
+        ("warm message", "따뜻한 메시지"),
         ("comfort", "위로하다"),
+        ("express", "표현하다"),
         ("feeling", "감정"),
+        ("listen to your heart", "너의 마음에 귀 기울이다"),
+        ("sentence", "문장"),
         ("honest", "솔직한"),
+        ("powerful words", "힘 있는 말"),
         ("sincerity", "진심"),
-        ("voice", "목소리"),
+        ("touch people", "사람들의 마음에 닿다"),
+        ("trust your voice", "너의 목소리를 믿다"),
     ],
     "⛸️ Kim Yuna": [
+        ("figure skating", "피겨스케이팅"),
+        ("beautiful", "아름다운"),
+        ("difficult", "어려운"),
         ("balance", "균형"),
         ("practice", "연습"),
-        ("focus", "집중하다"),
+        ("focus", "집중"),
         ("nervous", "긴장한"),
-        ("pressure", "압박감"),
+        ("competition", "경기 / 대회"),
+        ("control your mind", "마음을 다스리다"),
+        ("trust your training", "너의 훈련을 믿다"),
+        ("worry", "걱정하다"),
+        ("step by step", "차근차근"),
+        ("under pressure", "압박감 속에서"),
         ("growth", "성장"),
     ],
     "🎤 BTS Jungkook": [
-        ("practice", "연습"),
-        ("stage", "무대"),
+        ("music", "음악"),
+        ("dancing", "춤"),
+        ("singing", "노래하기"),
+        ("performance", "공연"),
+        ("practice", "연습하다 / 연습"),
+        ("make a big difference", "큰 차이를 만들다"),
         ("nervous", "긴장한"),
+        ("stage", "무대"),
         ("confident", "자신감 있는"),
+        ("message", "메시지"),
+        ("talent", "재능"),
         ("effort", "노력"),
+        ("attitude", "태도"),
+        ("compare", "비교하다"),
         ("growth", "성장"),
     ],
     "🏜️ Grand Canyon": [
+        ("welcome", "환영하다"),
+        ("huge", "거대한"),
+        ("beautiful", "아름다운"),
         ("nature", "자연"),
+        ("feel small", "작게 느끼다"),
         ("canyon", "협곡"),
+        ("shape", "형성하다"),
+        ("Colorado River", "콜로라도강"),
         ("erosion", "침식"),
+        ("change the land", "땅을 바꾸다"),
         ("rock layer", "암석층"),
-        ("history", "역사"),
-        ("protect", "보호하다"),
+        ("Earth's history", "지구의 역사"),
+        ("protect nature", "자연을 보호하다"),
+        ("respect", "존중하다"),
     ],
     "🗽 New York": [
+        ("New York", "뉴욕"),
+        ("people", "사람들"),
         ("culture", "문화"),
+        ("busy", "바쁜"),
+        ("exciting", "신나는"),
         ("global city", "세계적인 도시"),
+        ("idea", "생각 / 아이디어"),
+        ("art", "예술"),
+        ("Times Square", "타임스퀘어"),
+        ("energy", "에너지"),
+        ("Statue of Liberty", "자유의 여신상"),
         ("freedom", "자유"),
+        ("expensive", "비싼"),
         ("competitive", "경쟁적인"),
-        ("respect", "존중하다"),
-        ("diverse", "다양한"),
+        ("respect different cultures", "다양한 문화를 존중하다"),
     ],
     "🏯 Gyeongbokgung": [
         ("palace", "궁궐"),
-        ("dynasty", "왕조"),
-        ("royal", "왕실의"),
-        ("architecture", "건축"),
+        ("beautiful", "아름다운"),
+        ("Joseon Dynasty", "조선 시대 / 조선 왕조"),
+        ("old", "오래된"),
+        ("main royal palace", "중심 궁궐"),
+        ("mean", "뜻하다"),
+        ("blessed by heaven", "하늘이 복을 내린"),
+        ("impressive", "인상적인"),
         ("history", "역사"),
-        ("future", "미래"),
+        ("architecture", "건축"),
+        ("royal culture", "왕실 문화"),
+        ("traditional color", "전통적인 색"),
+        ("state event", "국가 행사"),
+        ("remember the past", "과거를 기억하다"),
+        ("better future", "더 나은 미래"),
     ],
     "📘 교과서": [
         ("impressive", "인상적인"),
         ("food machine", "음식 기계"),
+        ("arrive", "도착하다"),
+        ("first student", "첫 번째 학생"),
+        ("try", "시도하다 / 먹어 보다"),
         ("menu option", "메뉴 선택지"),
+        ("healthy meal", "건강한 식사"),
+        ("whatever", "무엇이든 / 어떤 ~든"),
+        ("contain", "포함하다 / 들어 있다"),
         ("nutrient", "영양소"),
+        ("various", "다양한"),
         ("lab-grown beef", "실험실에서 배양한 소고기"),
         ("teenager", "십 대"),
         ("protein", "단백질"),
         ("mineral", "미네랄"),
         ("low-fat", "저지방의"),
+        ("dessert", "디저트"),
         ("speed of service", "서비스의 속도"),
         ("wait in lines", "줄을 서서 기다리다"),
         ("look forward to", "기대하다"),
+        ("spicy tteokbokki", "매운 떡볶이"),
     ],
 }
 
@@ -1247,7 +1332,7 @@ with tab_activity:
     # -----------------------------------------------------
     # 활동 3. Reading Check
     # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>활동 3. Reading Check</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-box"><h3>활동 3. 내용 확인 문제</h3></div>', unsafe_allow_html=True)
 
     user_choices = []
 
