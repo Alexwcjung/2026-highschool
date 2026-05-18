@@ -67,6 +67,36 @@ st.markdown("""
 .feedback-ko { background:#fefce8; border:1px solid #fde68a; padding:18px; border-radius:16px; line-height:1.8; margin-top:14px; }
 .feedback-en { background:#eff6ff; border:1px solid #bfdbfe; padding:18px; border-radius:16px; line-height:1.8; margin-top:14px; }
 .advice-box { background:#f0fdf4; border:1px solid #bbf7d0; padding:18px; border-radius:16px; line-height:1.8; margin-top:14px; }
+
+/* 배경 학습 전용 큰 글씨 카드 */
+.bg-card {
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+    padding: 34px 38px;
+    border-radius: 24px;
+    border: 2px solid #c7d2fe;
+    margin-bottom: 26px;
+    box-shadow: 0 8px 24px rgba(99, 102, 241, 0.08);
+}
+.bg-title {
+    font-size: 2.35rem;
+    font-weight: 900;
+    color: #3730a3;
+    margin-bottom: 22px;
+    padding-bottom: 14px;
+    border-bottom: 4px solid #6366f1;
+}
+.bg-p {
+    font-size: 1.35rem;
+    line-height: 2.05;
+    color: #1e293b;
+    margin-bottom: 18px;
+    font-weight: 560;
+}
+.bg-key {
+    color: #1e3a8a;
+    font-weight: 900;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -772,6 +802,90 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                        '처음으로 돌아갈 수 있다면 다시 말하고 싶은 말은 무엇인가요?',
                                                        '사랑이나 관계가 생각보다 쉽지 않았다고 느낀 경험이 있나요?']}}
 
+
+BACKGROUND_CONTENT = {
+    "1. Let It Go - Frozen OST": {
+        "title": "❄️ Let It Go: 숨겨 왔던 자신을 받아들이는 순간",
+        "paragraphs": [
+            "Let It Go는 영화 Frozen의 대표곡으로, 엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 장면에서 나오는 노래입니다. 엘사는 왕국의 공주이지만, 자신의 얼음 마법이 다른 사람을 다치게 할 수 있다는 두려움 때문에 늘 조심하며 살아왔습니다.",
+            "어릴 때부터 엘사는 감정을 숨기고, 능력을 감추고, ‘착한 아이’처럼 행동해야 한다는 압박을 받았습니다. 하지만 대관식 날 능력이 사람들 앞에서 드러나자, 사람들은 엘사를 이해하기보다 두려워합니다. 결국 엘사는 모든 시선과 책임을 피해 눈 덮인 산으로 도망칩니다.",
+            "산 위에서 엘사는 처음으로 자신의 진짜 모습을 마주합니다. 이 노래는 단순히 ‘다 잊어버리자’는 의미가 아니라, 그동안 억눌렀던 두려움, 책임감, 타인의 시선에서 벗어나 자기 자신을 받아들이는 과정을 보여 줍니다.",
+            "수업에서는 let it go, conceal, hold back, storm inside, I'm free, the past is in the past 같은 표현을 중심으로 배울 수 있습니다. 특히 이 노래는 자유, 두려움, 자기표현, 자신감에 대해 학생들과 이야기하기 좋은 자료입니다."
+        ],
+    },
+    "2. Hello - Adele": {
+        "title": "☎️ Hello: 과거의 누군가에게 건네는 늦은 안부",
+        "paragraphs": [
+            "Adele의 Hello는 시간이 많이 흐른 뒤, 과거의 누군가에게 다시 연락하고 싶은 마음을 담은 노래입니다. 노래 속 화자는 상대에게 전화를 걸며 오래전의 관계, 미안함, 후회, 그리고 아직 완전히 치유되지 않은 감정을 떠올립니다.",
+            "이 노래에서 화자는 단순히 ‘안녕’이라고 말하는 것이 아닙니다. 과거에 하지 못했던 사과를 조심스럽게 꺼내고 싶어 합니다. 하지만 두 사람 사이에는 시간의 거리, 마음의 거리, 그리고 실제 거리까지 생겨 있습니다.",
+            "반복되는 Hello라는 말은 인사이면서 동시에 사과의 시작처럼 들립니다. 화자는 내가 너무 늦은 것은 아닐까, 상대는 이미 괜찮아진 것은 아닐까 생각하면서도, 적어도 자신은 말하려고 노력했다고 고백합니다.",
+            "수업에서는 I'm sorry, I tried, after all these years, used to be, the other side 같은 표현을 중심으로 배울 수 있습니다. 학생들은 이 노래를 통해 사과, 후회, 시간의 흐름, 그리고 관계의 거리감을 영어 표현과 함께 이해할 수 있습니다."
+        ],
+    },
+    "3. A Whole New World - Aladdin OST": {
+        "title": "🕌 A Whole New World: 새로운 세상을 바라보는 순간",
+        "paragraphs": [
+            "A Whole New World는 영화 Aladdin의 대표곡으로, 알라딘과 자스민이 마법 양탄자를 타고 밤하늘을 날며 새로운 세상을 바라보는 장면에서 나오는 노래입니다. 이 장면은 단순한 낭만적인 비행이 아니라, 자스민이 처음으로 궁전 밖의 세상을 직접 경험하는 순간입니다.",
+            "자스민은 공주로서 화려한 삶을 살지만, 정해진 규칙과 역할 속에서 자유롭게 세상을 경험하지 못했습니다. 알라딘은 그런 자스민에게 궁전 밖의 넓은 세상과 새로운 가능성을 보여 줍니다.",
+            "이 노래에서 a whole new world는 새로운 장소만을 뜻하지 않습니다. 새로운 시선, 새로운 경험, 그리고 스스로 선택할 수 있는 자유를 의미합니다. 두 사람은 두려움보다 설렘이 더 큰 세계로 함께 나아갑니다.",
+            "수업에서는 I can show you the world, open your eyes, point of view, crystal clear, new horizons 같은 표현을 중심으로 배울 수 있습니다. 학생들에게 ‘내가 경험해 보고 싶은 새로운 세상’이나 ‘나에게 새로운 관점을 보여 준 사람’을 생각하게 할 수 있습니다."
+        ],
+    },
+    "4. Stand By Me - Ben E. King": {
+        "title": "🤝 Stand By Me: 곁에 있어 주는 힘",
+        "paragraphs": [
+            "Stand By Me는 어둡고 불안한 순간에도 누군가가 내 곁에 있어 준다면 두렵지 않다는 메시지를 담은 노래입니다. 제목의 stand by me는 단순히 ‘내 옆에 서 있어’가 아니라, ‘내 곁에 있어 줘’, ‘나를 지켜 줘’, ‘함께해 줘’라는 의미로 이해할 수 있습니다.",
+            "노래는 밤이 찾아오고 세상이 어두워지는 장면으로 시작합니다. 달빛만 보이는 상황은 불안과 두려움을 상징하지만, 화자는 혼자가 아니라는 믿음 때문에 두려워하지 않겠다고 말합니다.",
+            "하늘이 무너지고 산이 바다로 무너져 내리는 듯한 극단적인 표현은 삶에서 마주할 수 있는 큰 어려움을 나타냅니다. 하지만 사랑하는 사람이 곁에 있다면 그 모든 상황도 견딜 수 있다고 노래합니다.",
+            "수업에서는 I won't be afraid, I won't cry, shed a tear, whenever you're in trouble 같은 표현을 중심으로 배울 수 있습니다. 친구, 가족, 사랑하는 사람이 주는 안정감과 용기를 이야기하기에 좋은 노래입니다."
+        ],
+    },
+    "5. Don't Know Why - Norah Jones": {
+        "title": "🌙 Don't Know Why: 이유를 알 수 없는 마음",
+        "paragraphs": [
+            "Don't Know Why는 Norah Jones의 대표곡으로, 조용하고 부드러운 멜로디 속에 설명하기 어려운 아쉬움과 후회를 담고 있는 노래입니다. 노래 속 화자는 누군가에게 가지 않았던 자신의 행동을 떠올리며, 왜 그렇게 했는지 스스로도 알 수 없다고 말합니다.",
+            "이 노래는 큰 사건을 직접적으로 설명하지 않습니다. 대신 마음속에 남아 있는 감정의 흔적을 천천히 보여 줍니다. 해가 뜰 때까지 기다렸지만 결국 가지 못했고, 새벽이 밝아오는 순간에는 차라리 멀리 날아가 버리고 싶어 합니다.",
+            "I don't know why I didn't come이라는 문장이 반복되면서, 화자가 자신의 마음을 명확히 설명하지 못하는 상태가 잘 드러납니다. 이 반복 속에는 후회, 망설임, 외로움, 그리움이 조용하게 섞여 있습니다.",
+            "수업에서는 I don't know why, I wished that I could, on my mind, empty as a drum 같은 표현을 중심으로 배울 수 있습니다. 학생들이 이유를 설명하기 어려운 감정과 후회를 영어로 표현해 보는 활동으로 연결하기 좋습니다."
+        ],
+    },
+    "6. Fix You - Coldplay": {
+        "title": "💡 Fix You: 힘든 순간에 건네는 위로",
+        "paragraphs": [
+            "Coldplay의 Fix You는 실패, 상실, 지침, 슬픔을 겪는 사람에게 따뜻한 위로를 건네는 노래입니다. 노래 속 화자는 상대가 최선을 다했지만 원하는 결과를 얻지 못했을 때, 그리고 잃어버린 것을 되돌릴 수 없을 때의 아픔을 조용히 바라봅니다.",
+            "반복되는 Lights will guide you home은 어두운 순간에도 길을 비춰 주는 희망을 상징합니다. 또한 I will try to fix you는 상대를 완벽하게 고쳐 주겠다는 뜻이라기보다, 힘든 시간을 혼자 견디지 않도록 곁에서 도와주고 싶다는 마음으로 이해할 수 있습니다.",
+            "이 노래는 실패를 부끄러운 것으로만 보지 않습니다. 오히려 실수에서 배우고, 무너진 자리에서 다시 일어설 수 있다는 가능성을 보여 줍니다. 그래서 이 노래는 위로와 회복의 메시지를 전달합니다.",
+            "수업에서는 try your best, don't succeed, what you want / what you need, stuck in reverse, learn from my mistakes 같은 표현을 중심으로 배울 수 있습니다. 학생들에게 ‘나를 다시 일으켜 준 사람’이나 ‘내가 누군가에게 해 줄 수 있는 위로’를 생각하게 할 수 있습니다."
+        ],
+    },
+    "7. The Scientist - Coldplay": {
+        "title": "🔬 The Scientist: 처음으로 돌아가고 싶은 마음",
+        "paragraphs": [
+            "Coldplay의 The Scientist는 지나간 관계와 후회를 돌아보며, 처음으로 돌아가 다시 말하고 싶은 마음을 담은 노래입니다. 노래 속 화자는 사랑과 이별을 과학처럼 분석하려 하지만, 마음은 숫자와 공식처럼 쉽게 설명되지 않는다는 것을 깨닫습니다.",
+            "Come up to meet you, tell you I'm sorry는 상대를 다시 만나 사과하고 싶은 마음을 보여 줍니다. Tell you I need you, Tell you I set you apart는 상대가 자신에게 얼마나 특별한 존재였는지를 뒤늦게 깨닫는 표현입니다.",
+            "반복되는 Let's go back to the start와 Take me back to the start는 단순히 과거로 돌아가고 싶다는 뜻을 넘어, 관계가 어긋나기 전의 순수한 순간으로 돌아가고 싶은 마음을 나타냅니다. 이 노래의 핵심 감정은 후회, 그리움, 미안함, 그리고 다시 시작하고 싶은 마음입니다.",
+            "수업에서는 tell you I'm sorry, I need you, set you apart, go back to the start, nobody said it was easy 같은 표현을 중심으로 배울 수 있습니다. 또한 ‘다시 돌아가고 싶은 순간’, ‘그때 하지 못한 말’, ‘관계가 왜 생각보다 어려운가’를 주제로 reflective writing을 하기에 좋습니다."
+        ],
+    },
+}
+
+
+def show_background(song_choice, data):
+    """배경 학습 탭만 HTML/컴포넌트 없이 안정적으로 크게 출력합니다."""
+    bg = BACKGROUND_CONTENT.get(song_choice)
+    if bg is None:
+        bg = {
+            "title": "🎵 배경 학습",
+            "paragraphs": [str(data.get("bg", "")).replace("<br>", " ").replace("<p>", "").replace("</p>", "")]
+        }
+
+    st.markdown('<div class="bg-card">', unsafe_allow_html=True)
+    st.markdown(f'<div class="bg-title">{bg["title"]}</div>', unsafe_allow_html=True)
+    for p in bg["paragraphs"]:
+        st.markdown(f'<div class="bg-p">{p}</div>', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+
 if "selected_song" not in st.session_state:
     st.session_state.selected_song = list(SONGS.keys())[0]
 if "current_tab" not in st.session_state:
@@ -794,9 +908,17 @@ selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="curren
 if selected_tab == "🎬 배경 학습":
     show_background(song_choice, data)
     st.video(data["video_url"])
-    st.markdown("""
-    <div class="game-card"><div class="big-guide">노래를 듣기 전에 배경을 먼저 읽고, 화자의 감정과 상황을 생각해 보세요.</div></div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        """
+        <div class="game-card">
+            <div class="big-guide">
+            노래를 듣기 전에 배경을 먼저 읽고, 화자의 감정과 상황을 생각해 보세요.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 elif selected_tab == "📖 가사 & 퀴즈":
     st.subheader("🎬 노래 영상")
