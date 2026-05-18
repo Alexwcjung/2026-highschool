@@ -443,17 +443,19 @@ st.markdown(
     }
     .quiz-hero {
         background: linear-gradient(135deg, #f0f9ff 0%, #ecfeff 45%, #fff7ed 100%);
-        border: 1.5px solid #bae6fd;
+        border: 2px solid #60a5fa;
         border-radius: 30px;
-        padding: 26px 28px;
-        margin-bottom: 18px;
+        padding: 24px 28px;
+        margin-bottom: 14px;
         box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+        text-align: center;
     }
     .quiz-hero h2 {
         margin: 0;
-        font-size: 34px;
-        font-weight: 950;
+        font-size: 44px;
+        font-weight: 1000;
         color: #0f172a;
+        letter-spacing: -0.5px;
     }
     .quiz-hero p {
         margin-top: 10px;
@@ -637,7 +639,7 @@ st.markdown(
         .title-box { padding: 20px 18px; border-radius: 22px; }
         .title-box h1 { font-size: 34px; }
         .title-box p { font-size: 15px; }
-        .quiz-hero h2 { font-size: 26px; }
+        .quiz-hero h2 { font-size: 30px; }
         .question-card .big { font-size: 23px; }
         div.stButton > button { font-size: 1.45rem !important; min-height: 86px; }
         div.stButton > button p { font-size: 1.45rem !important; font-weight: 1000 !important; }
@@ -919,40 +921,10 @@ with tab_quiz:
         """
         <div class="quiz-hero">
             <h2>🎮 세계 지도 나라 맞추기</h2>
-            <p>
-                지도에서 색칠된 나라를 보고 정답을 골라 보세요.<br>
-                대륙을 선택하고, 랜덤으로 나오는 10문제를 풀어 보세요.
-            </p>
         </div>
         """,
         unsafe_allow_html=True
     )
-
-    top1, top2 = st.columns([1.2, 2.8])
-
-    with top1:
-        selected_level = st.selectbox(
-            "🌎 대륙 선택",
-            ["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"],
-            index=["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"].index(st.session_state.quiz_level)
-        )
-        if selected_level != st.session_state.quiz_level:
-            st.session_state.quiz_level = selected_level
-            st.session_state.quiz_finished = False
-            start_new_quiz()
-            st.rerun()
-
-    with top2:
-        current_number = st.session_state.quiz_index + 1
-        st.markdown(
-            f"""
-            <div class="score-card">
-                <div class="score-label">현재 퀴즈</div>
-                <div class="score-value">{current_number} / {QUIZ_LENGTH} &nbsp;&nbsp; | &nbsp;&nbsp; 정답 {st.session_state.quiz_correct_count}개</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
 
     if st.session_state.quiz_finished:
         st.markdown(
@@ -975,16 +947,6 @@ with tab_quiz:
 
     current = st.session_state.quiz_current
 
-    st.markdown(
-        """
-        <div class="question-card">
-            <div class="small">색칠된 나라는 어디일까요?</div>
-            <div class="big">🌍 지도 속 파란 나라를 찾아보세요</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
     map_data = pd.DataFrame([
         {
             "iso_alpha": current["iso"],
@@ -1003,7 +965,7 @@ with tab_quiz:
     )
 
     qfig.update_layout(
-        height=520,
+        height=600,
         margin=dict(l=0, r=0, t=0, b=0),
         coloraxis_showscale=False,
         geo=dict(
@@ -1022,7 +984,7 @@ with tab_quiz:
 
     st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
 
-    st.markdown("### 🧩 정답을 골라 보세요")
+    st.markdown("## 🧩 정답을 골라 보세요")
 
     option_cols = st.columns(2)
     option_labels = ["A", "B", "C", "D"]
