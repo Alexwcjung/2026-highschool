@@ -1111,27 +1111,14 @@ with tab_reading:
 with tab_activity:
     st.markdown("## ✍️ 활동")
 
-    # -----------------------------------------------------
-    # 1. 지문 다시 읽기
-    # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>1. 지문 다시 읽기</h3></div>', unsafe_allow_html=True)
-    st.caption("아래 지문을 다시 읽고, 다음 핵심 단어의 한국어 뜻을 써 보세요.")
-
-    activity_reading_html = '<div class="reading-card">'
-    for speaker, eng, kor in dialogue:
-        activity_reading_html += f"<p><b>{speaker}:</b> {eng}</p>"
-    activity_reading_html += "</div>"
-    st.markdown(activity_reading_html, unsafe_allow_html=True)
-
-    st.markdown("---")
-
-    # -----------------------------------------------------
-    # 2. Key Words 빈칸 활동
-    # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>2. Key Words 뜻 쓰기</h3></div>', unsafe_allow_html=True)
-    st.caption("영어 핵심 단어를 보고 한국어 뜻을 빈칸에 적으세요.")
-
     key_words = get_key_words(topic_name, data)
+
+    # -----------------------------------------------------
+    # 활동 1. Key Expressions 단어 테스트
+    # -----------------------------------------------------
+    st.markdown('<div class="section-box"><h3>활동 1. Key Expressions 단어 테스트</h3></div>', unsafe_allow_html=True)
+    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요.")
+
     vocab_answers = []
 
     for i, (word, meaning) in enumerate(key_words, start=1):
@@ -1150,12 +1137,12 @@ with tab_activity:
         with c2:
             user_meaning = st.text_input(
                 "한국어 뜻",
-                key=f"{category}_{topic_name}_vocab_{i}",
+                key=f"{category}_{topic_name}_activity1_vocab_{i}",
                 placeholder="예: 습관, 목표, 영양소"
             )
         vocab_answers.append((word, meaning, user_meaning))
 
-    if st.button("단어 정답 확인", key=f"{category}_{topic_name}_vocab_check"):
+    if st.button("활동 1 정답 확인", key=f"{category}_{topic_name}_activity1_check"):
         vocab_score = 0
         for i, (word, meaning, user_meaning) in enumerate(vocab_answers, start=1):
             if is_correct_korean_answer(user_meaning, meaning):
@@ -1164,7 +1151,7 @@ with tab_activity:
             else:
                 st.error(f"{i}번 정답: {word} = {meaning}")
 
-        st.markdown(f"### 단어 점수: {vocab_score} / {len(vocab_answers)}")
+        st.markdown(f"### 활동 1 점수: {vocab_score} / {len(vocab_answers)}")
 
         if vocab_score == len(vocab_answers):
             st.balloons()
@@ -1177,9 +1164,90 @@ with tab_activity:
     st.markdown("---")
 
     # -----------------------------------------------------
-    # 3. Reading Check
+    # 활동 2. 지문 해석 빈칸 쓰기
     # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>3. Reading Check</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-box"><h3>활동 2. 지문 해석 빈칸 쓰기</h3></div>', unsafe_allow_html=True)
+    st.caption("지문은 그대로 읽고, 아래 줄별 해석의 빈칸에 핵심 단어의 한국어 뜻을 적으세요.")
+
+    translation_answers = []
+
+    for line_no, (speaker, eng, kor) in enumerate(dialogue, start=1):
+        matched_words = []
+        blank_kor = kor
+
+        # 긴 표현부터 먼저 바꾸어야 겹치는 단어가 있을 때 자연스럽게 빈칸이 만들어집니다.
+        sorted_key_words = sorted(key_words, key=lambda x: len(str(x[1])), reverse=True)
+
+        for word, meaning in sorted_key_words:
+            meaning_options = [m.strip() for m in str(meaning).split("/") if m.strip()]
+            for meaning_option in meaning_options:
+                if meaning_option and meaning_option in blank_kor:
+                    blank_number = len(matched_words) + 1
+                    blank_label = f"____({blank_number})____"
+                    blank_kor = blank_kor.replace(meaning_option, blank_label, 1)
+                    matched_words.append((word, meaning_option))
+                    break
+
+        st.markdown(
+            f"""
+            <div style="margin-bottom: 18px; padding: 17px 18px; border-radius: 20px;
+                        border: 1.5px solid #dbeafe; background: rgba(255,255,255,0.90);
+                        box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+                <div style="font-size: 20px; font-weight: 900; color: #1d4ed8; line-height: 1.65;">
+                    {line_no}. <b>{speaker}:</b> {eng}
+                </div>
+                <div style="margin-top: 8px; padding: 9px 12px 9px 14px;
+                            border-left: 5px solid #fde68a; background: rgba(255,251,235,0.78);
+                            border-radius: 12px; font-size: 18px; font-weight: 800;
+                            color: #374151; line-height: 1.7;">
+                    🇰🇷 {blank_kor}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        if matched_words:
+            cols = st.columns(min(3, len(matched_words)))
+            for j, (word, correct_meaning) in enumerate(matched_words, start=1):
+                with cols[(j - 1) % len(cols)]:
+                    user_blank = st.text_input(
+                        f"{line_no}-{j}번 뜻",
+                        key=f"{category}_{topic_name}_activity2_line_{line_no}_blank_{j}",
+                        placeholder=f"{word}의 뜻"
+                    )
+                translation_answers.append((line_no, j, word, correct_meaning, user_blank))
+        else:
+            st.caption("이 줄에는 핵심 단어 빈칸이 없습니다.")
+
+    if st.button("활동 2 정답 확인", key=f"{category}_{topic_name}_activity2_check"):
+        if not translation_answers:
+            st.info("이 지문에서는 자동으로 만든 해석 빈칸이 없습니다.")
+        else:
+            translation_score = 0
+            for line_no, blank_no, word, correct_meaning, user_blank in translation_answers:
+                if is_correct_korean_answer(user_blank, correct_meaning):
+                    translation_score += 1
+                    st.success(f"{line_no}-{blank_no}번 정답: {word} = {correct_meaning}")
+                else:
+                    st.error(f"{line_no}-{blank_no}번 정답: {word} = {correct_meaning}")
+
+            st.markdown(f"### 활동 2 점수: {translation_score} / {len(translation_answers)}")
+
+            if translation_score == len(translation_answers):
+                st.balloons()
+                st.success("훌륭합니다! 지문 해석과 핵심 단어를 잘 연결했습니다.")
+            elif translation_score >= max(1, len(translation_answers) // 2):
+                st.info("좋습니다. 틀린 빈칸만 다시 확인해 봅시다.")
+            else:
+                st.warning("Reading 탭에서 원문과 해석을 다시 읽어 봅시다.")
+
+    st.markdown("---")
+
+    # -----------------------------------------------------
+    # 활동 3. Reading Check
+    # -----------------------------------------------------
+    st.markdown('<div class="section-box"><h3>활동 3. Reading Check</h3></div>', unsafe_allow_html=True)
 
     user_choices = []
 
@@ -1191,7 +1259,7 @@ with tab_activity:
         )
         user_choices.append((choice, answer))
 
-    if st.button("정답 확인", key=f"{category}_{topic_name}_check"):
+    if st.button("활동 3 정답 확인", key=f"{category}_{topic_name}_check"):
         score = 0
 
         for i, (choice, answer) in enumerate(user_choices, start=1):
@@ -1201,7 +1269,7 @@ with tab_activity:
             else:
                 st.error(f"{i}번 정답: {answer}")
 
-        st.markdown(f"### 점수: {score} / {len(data['questions'])}")
+        st.markdown(f"### 활동 3 점수: {score} / {len(data['questions'])}")
 
         if score == len(data["questions"]):
             st.balloons()
@@ -1214,9 +1282,9 @@ with tab_activity:
     st.markdown("---")
 
     # -----------------------------------------------------
-    # 4. Reflection Writing
+    # 활동 4. Reflection Writing
     # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>4. Reflection Writing</h3></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section-box"><h3>활동 4. Reflection Writing</h3></div>', unsafe_allow_html=True)
 
     reflection = st.text_area(
         data["reflection_prompt"],
