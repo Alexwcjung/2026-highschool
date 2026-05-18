@@ -845,6 +845,132 @@ data_bank = {
 
 }
 
+
+# =========================================================
+# Key Expressions를 단어 중심으로 바꾸기 위한 자료
+# - 활동 탭에서 영어 단어의 한국어 뜻을 쓰는 빈칸 문제로 사용합니다.
+# =========================================================
+key_word_bank = {
+    "⚽ Ronaldo": [
+        ("habit", "습관"),
+        ("routine", "루틴"),
+        ("practice", "연습하다"),
+        ("goal", "목표"),
+        ("believe", "믿다"),
+        ("give up", "포기하다"),
+    ],
+    "🏀 Jordan": [
+        ("championship", "우승"),
+        ("failure", "실패"),
+        ("motivation", "동기"),
+        ("confidence", "자신감"),
+        ("competitiveness", "승부욕"),
+        ("challenge", "도전"),
+    ],
+    "⚽ Son Heung-min": [
+        ("teamwork", "팀워크"),
+        ("respect", "존중"),
+        ("basic", "기본기"),
+        ("teammate", "팀 동료"),
+        ("humble", "겸손한"),
+        ("discipline", "훈련 / 절제"),
+    ],
+    "🎤 IU": [
+        ("music", "음악"),
+        ("comfort", "위로하다"),
+        ("feeling", "감정"),
+        ("honest", "솔직한"),
+        ("sincerity", "진심"),
+        ("voice", "목소리"),
+    ],
+    "⛸️ Kim Yuna": [
+        ("balance", "균형"),
+        ("practice", "연습"),
+        ("focus", "집중하다"),
+        ("nervous", "긴장한"),
+        ("pressure", "압박감"),
+        ("growth", "성장"),
+    ],
+    "🎤 BTS Jungkook": [
+        ("practice", "연습"),
+        ("stage", "무대"),
+        ("nervous", "긴장한"),
+        ("confident", "자신감 있는"),
+        ("effort", "노력"),
+        ("growth", "성장"),
+    ],
+    "🏜️ Grand Canyon": [
+        ("nature", "자연"),
+        ("canyon", "협곡"),
+        ("erosion", "침식"),
+        ("rock layer", "암석층"),
+        ("history", "역사"),
+        ("protect", "보호하다"),
+    ],
+    "🗽 New York": [
+        ("culture", "문화"),
+        ("global city", "세계적인 도시"),
+        ("freedom", "자유"),
+        ("competitive", "경쟁적인"),
+        ("respect", "존중하다"),
+        ("diverse", "다양한"),
+    ],
+    "🏯 Gyeongbokgung": [
+        ("palace", "궁궐"),
+        ("dynasty", "왕조"),
+        ("royal", "왕실의"),
+        ("architecture", "건축"),
+        ("history", "역사"),
+        ("future", "미래"),
+    ],
+    "📘 교과서": [
+        ("impressive", "인상적인"),
+        ("food machine", "음식 기계"),
+        ("menu option", "메뉴 선택지"),
+        ("nutrient", "영양소"),
+        ("lab-grown beef", "실험실에서 배양한 소고기"),
+        ("teenager", "십 대"),
+        ("protein", "단백질"),
+        ("mineral", "미네랄"),
+        ("low-fat", "저지방의"),
+        ("speed of service", "서비스의 속도"),
+        ("wait in lines", "줄을 서서 기다리다"),
+        ("look forward to", "기대하다"),
+    ],
+}
+
+
+def get_key_words(topic_name, data):
+    """주제별 핵심 단어를 가져옵니다. 없으면 기존 key_expressions에서 간단히 추출합니다."""
+    if topic_name in key_word_bank:
+        return key_word_bank[topic_name]
+
+    fallback = []
+    for exp in data.get("key_expressions", []):
+        word = str(exp).replace(".", "").strip()
+        if word:
+            fallback.append((word, ""))
+    return fallback
+
+
+def normalize_answer(text):
+    """학생 답안 비교를 조금 관대하게 하기 위한 정리 함수입니다."""
+    return str(text).strip().lower().replace(" ", "").replace("/", "")
+
+
+def is_correct_korean_answer(user_answer, correct_answer):
+    user_norm = normalize_answer(user_answer)
+    correct_options = [part.strip() for part in str(correct_answer).split("/")]
+
+    if not user_norm:
+        return False
+
+    for option in correct_options:
+        option_norm = normalize_answer(option)
+        if option_norm and (user_norm == option_norm or option_norm in user_norm or user_norm in option_norm):
+            return True
+    return False
+
 # =========================================================
 # 화면
 # =========================================================
@@ -969,10 +1095,15 @@ with tab_reading:
         st.audio(make_tts(full_english, lang="en"), format="audio/mp3")
 
     st.markdown("---")
-    st.markdown("### ⭐ Key Expressions")
+    st.markdown("### ⭐ Key Words")
+    st.caption("활동 탭의 빈칸 문제에 나오는 핵심 단어입니다.")
 
-    for exp in data["key_expressions"]:
-        st.markdown(f'<div class="expression">{exp}</div>', unsafe_allow_html=True)
+    key_words = get_key_words(topic_name, data)
+    for word, meaning in key_words:
+        st.markdown(
+            f'<div class="expression"><b>{word}</b> <span style="color:#64748b;">= {meaning}</span></div>',
+            unsafe_allow_html=True
+        )
 
 # =========================================================
 # 활동
@@ -980,7 +1111,75 @@ with tab_reading:
 with tab_activity:
     st.markdown("## ✍️ 활동")
 
-    st.markdown('<div class="section-box"><h3>1. Reading Check</h3></div>', unsafe_allow_html=True)
+    # -----------------------------------------------------
+    # 1. 지문 다시 읽기
+    # -----------------------------------------------------
+    st.markdown('<div class="section-box"><h3>1. 지문 다시 읽기</h3></div>', unsafe_allow_html=True)
+    st.caption("아래 지문을 다시 읽고, 다음 핵심 단어의 한국어 뜻을 써 보세요.")
+
+    activity_reading_html = '<div class="reading-card">'
+    for speaker, eng, kor in dialogue:
+        activity_reading_html += f"<p><b>{speaker}:</b> {eng}</p>"
+    activity_reading_html += "</div>"
+    st.markdown(activity_reading_html, unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # -----------------------------------------------------
+    # 2. Key Words 빈칸 활동
+    # -----------------------------------------------------
+    st.markdown('<div class="section-box"><h3>2. Key Words 뜻 쓰기</h3></div>', unsafe_allow_html=True)
+    st.caption("영어 핵심 단어를 보고 한국어 뜻을 빈칸에 적으세요.")
+
+    key_words = get_key_words(topic_name, data)
+    vocab_answers = []
+
+    for i, (word, meaning) in enumerate(key_words, start=1):
+        c1, c2 = st.columns([1.2, 2.8])
+        with c1:
+            st.markdown(
+                f"""
+                <div style="padding: 12px 14px; border-radius: 16px; background: #eff6ff;
+                            border: 1.5px solid #bfdbfe; font-size: 19px; font-weight: 900;
+                            color: #1d4ed8; margin-top: 4px;">
+                    {i}. {word}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        with c2:
+            user_meaning = st.text_input(
+                "한국어 뜻",
+                key=f"{category}_{topic_name}_vocab_{i}",
+                placeholder="예: 습관, 목표, 영양소"
+            )
+        vocab_answers.append((word, meaning, user_meaning))
+
+    if st.button("단어 정답 확인", key=f"{category}_{topic_name}_vocab_check"):
+        vocab_score = 0
+        for i, (word, meaning, user_meaning) in enumerate(vocab_answers, start=1):
+            if is_correct_korean_answer(user_meaning, meaning):
+                vocab_score += 1
+                st.success(f"{i}번 정답: {word} = {meaning}")
+            else:
+                st.error(f"{i}번 정답: {word} = {meaning}")
+
+        st.markdown(f"### 단어 점수: {vocab_score} / {len(vocab_answers)}")
+
+        if vocab_score == len(vocab_answers):
+            st.balloons()
+            st.success("완벽합니다! 핵심 단어를 잘 이해했습니다.")
+        elif vocab_score >= max(1, len(vocab_answers) // 2):
+            st.info("좋습니다. 틀린 단어만 다시 확인해 봅시다.")
+        else:
+            st.warning("Reading을 다시 읽고 핵심 단어를 한 번 더 확인해 봅시다.")
+
+    st.markdown("---")
+
+    # -----------------------------------------------------
+    # 3. Reading Check
+    # -----------------------------------------------------
+    st.markdown('<div class="section-box"><h3>3. Reading Check</h3></div>', unsafe_allow_html=True)
 
     user_choices = []
 
@@ -1014,7 +1213,10 @@ with tab_activity:
 
     st.markdown("---")
 
-    st.markdown('<div class="section-box"><h3>2. Reflection Writing</h3></div>', unsafe_allow_html=True)
+    # -----------------------------------------------------
+    # 4. Reflection Writing
+    # -----------------------------------------------------
+    st.markdown('<div class="section-box"><h3>4. Reflection Writing</h3></div>', unsafe_allow_html=True)
 
     reflection = st.text_area(
         data["reflection_prompt"],
