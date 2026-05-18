@@ -516,20 +516,40 @@ st.markdown(
     /* 모든 버튼 기본 모양 */
     div.stButton > button {
         border-radius: 24px;
-        font-weight: 1000;
-        min-height: 92px;
-        font-size: 1.65rem;
+        font-weight: 1000 !important;
+        min-height: 104px;
+        font-size: 1.95rem !important;
         line-height: 1.35;
         border: 3px solid #93c5fd;
         background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
         color: #0f172a;
         box-shadow: 0 8px 18px rgba(15, 23, 42, 0.12);
     }
+
+    /* Streamlit 버튼 내부 글자 크기 강제 적용 */
+    div.stButton > button p {
+        font-size: 1.95rem !important;
+        font-weight: 1000 !important;
+        line-height: 1.35 !important;
+        color: #0f172a !important;
+    }
+
+    /* 퀴즈 보기 버튼이 더 또렷하게 보이도록 */
+    div.stButton > button div,
+    div.stButton > button span {
+        font-size: 1.95rem !important;
+        font-weight: 1000 !important;
+    }
+
     div.stButton > button:hover {
         border: 3px solid #2563eb;
         background: linear-gradient(135deg, #dbeafe 0%, #f0f9ff 100%);
         color: #1e3a8a;
         transform: translateY(-1px);
+    }
+
+    div.stButton > button:hover p {
+        color: #1e3a8a !important;
     }
 
     @keyframes sparklePop {
@@ -619,7 +639,8 @@ st.markdown(
         .title-box p { font-size: 15px; }
         .quiz-hero h2 { font-size: 26px; }
         .question-card .big { font-size: 23px; }
-        div.stButton > button { font-size: 1.25rem; min-height: 78px; }
+        div.stButton > button { font-size: 1.45rem !important; min-height: 86px; }
+        div.stButton > button p { font-size: 1.45rem !important; font-weight: 1000 !important; }
     }
     </style>
     """,
