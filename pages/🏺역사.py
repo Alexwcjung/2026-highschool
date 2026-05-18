@@ -1047,21 +1047,24 @@ def show_history(country_key):
         height=420
     )
 
-    st.markdown("### 🏛️ 현대사 자세히 보기")
+    st.markdown("### 🏛️ 현대사 자세히 보기 - 연도순")
 
     modern_df = pd.DataFrame(MODERN_HISTORY[country_key])
+    modern_df.insert(0, "순서", range(1, len(modern_df) + 1))
+
     st.dataframe(
         modern_df,
         use_container_width=True,
         hide_index=True,
         column_config={
+            "순서": st.column_config.NumberColumn("순서", width="small"),
             "시기": st.column_config.TextColumn("시기", width="small"),
             "지도자": st.column_config.TextColumn("대통령·지도자", width="medium"),
             "정치 흐름": st.column_config.TextColumn("정치 흐름(연도)", width="medium"),
             "주요 내용": st.column_config.TextColumn("주요 내용", width="large"),
             "핵심 사건": st.column_config.TextColumn("핵심 사건", width="large"),
         },
-        height=520
+        height=540
     )
 
     st.markdown(
