@@ -156,6 +156,52 @@ st.markdown("""
     }
 
 
+
+    .expression-box {
+        background: linear-gradient(135deg, #fff7ed 0%, #fefce8 50%, #ecfeff 100%);
+        padding: 24px;
+        border-radius: 20px;
+        border: 1px solid #fed7aa;
+        margin-top: 18px;
+        margin-bottom: 22px;
+    }
+
+    .expression-title {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #c2410c;
+        margin-bottom: 10px;
+    }
+
+    .expression-guide {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #475569;
+        line-height: 1.7;
+    }
+
+    .expression-question-card {
+        background-color: #ffffff;
+        border: 2px solid #fdba74;
+        border-radius: 18px;
+        padding: 18px;
+        margin: 18px 0 12px 0;
+        box-shadow: 0 6px 16px rgba(251, 146, 60, 0.12);
+    }
+
+    .expression-en {
+        font-size: 1.55rem;
+        font-weight: 900;
+        color: #1e3a8a;
+        margin-bottom: 8px;
+    }
+
+    .expression-small {
+        font-size: 0.95rem;
+        color: #64748b;
+        font-weight: 700;
+    }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -196,7 +242,7 @@ if st.session_state.selected_song not in song_options:
 
 def sync_song():
     st.session_state.quiz_submitted = False
-    # 노래가 바뀌면 마지막 탭 게임 상태도 초기화합니다.
+    # 노래가 바뀌면 문장 매칭 게임과 Key Expression 게임 상태도 초기화합니다.
     for k in list(st.session_state.keys()):
         if k.startswith("match_") or k.startswith("expr_"):
             del st.session_state[k]
@@ -212,7 +258,7 @@ song_choice = st.selectbox(
 st.session_state.selected_song = song_choice
 
 # 순서 배열 삭제함
-tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "🧩 Key Expression 게임"]
+tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "📝 Key Expression 뜻 맞추기", "🧩 문장 매칭 게임"]
 
 selected_tab = st.radio(
     "학습 단계",
@@ -1391,99 +1437,101 @@ elif "6. Fix You" in song_choice:
 
 
 # =========================
-# 5. Key Expression 뜻 맞추기 게임 데이터와 함수
+# 5. 문장 매칭 게임 데이터와 함수
 # =========================
-def get_key_expressions(song_choice):
-    """각 노래의 핵심 영어 표현과 한국어 뜻 10개를 반환합니다."""
+def get_matching_pairs(song_choice):
+    """각 노래의 핵심 영어 문장과 한국어 뜻 6쌍을 반환합니다."""
     if "1. Let It Go" in song_choice:
         return [
-            {"id": "let_1", "en": "Let it go", "ko": "놓아버려 / 털어내"},
+            {"id": "let_1", "en": "Let it go", "ko": "놓아버려"},
             {"id": "let_2", "en": "Can't hold it back anymore", "ko": "더 이상 억누를 수 없어"},
-            {"id": "let_3", "en": "Turn away", "ko": "돌아서다"},
-            {"id": "let_4", "en": "Slam the door", "ko": "문을 세게 닫다"},
-            {"id": "let_5", "en": "I don't care", "ko": "나는 상관하지 않아"},
-            {"id": "let_6", "en": "Let the storm rage on", "ko": "폭풍이 계속 몰아치게 둬"},
-            {"id": "let_7", "en": "The cold never bothered me", "ko": "추위는 나를 괴롭힌 적이 없어"},
-            {"id": "let_8", "en": "Break through", "ko": "뚫고 나아가다 / 한계를 넘다"},
-            {"id": "let_9", "en": "I'm free", "ko": "나는 자유로워"},
-            {"id": "let_10", "en": "The past is in the past", "ko": "과거는 과거일 뿐이야"},
+            {"id": "let_3", "en": "I'm free", "ko": "나는 자유로워"},
+            {"id": "let_4", "en": "The past is in the past", "ko": "과거는 과거일 뿐이야"},
+            {"id": "let_5", "en": "Here I stand", "ko": "나는 여기 서 있어"},
+            {"id": "let_6", "en": "The cold never bothered me anyway", "ko": "어차피 추위는 나를 괴롭힌 적이 없어"},
         ]
 
     if "2. Hello" in song_choice:
         return [
             {"id": "hello_1", "en": "Hello, it's me", "ko": "안녕, 나야"},
-            {"id": "hello_2", "en": "I was wondering", "ko": "궁금했어"},
-            {"id": "hello_3", "en": "After all these years", "ko": "이 모든 세월이 지난 뒤에"},
-            {"id": "hello_4", "en": "Go over everything", "ko": "모든 일을 다시 살펴보다 / 이야기하다"},
+            {"id": "hello_2", "en": "I'm sorry", "ko": "미안해"},
+            {"id": "hello_3", "en": "I tried", "ko": "나는 노력했어"},
+            {"id": "hello_4", "en": "Hello from the other side", "ko": "저편에서 안녕이라고 말해"},
             {"id": "hello_5", "en": "Can you hear me?", "ko": "내 말 들리니?"},
-            {"id": "hello_6", "en": "Used to be", "ko": "예전에 ~였다"},
-            {"id": "hello_7", "en": "A million miles", "ko": "아주 먼 거리"},
-            {"id": "hello_8", "en": "I'm sorry", "ko": "미안해"},
-            {"id": "hello_9", "en": "I tried", "ko": "나는 노력했어"},
-            {"id": "hello_10", "en": "Break your heart", "ko": "네 마음을 아프게 하다"},
+            {"id": "hello_6", "en": "I hope that you're well", "ko": "네가 잘 지내길 바라"},
         ]
 
     if "3. A Whole New World" in song_choice:
         return [
             {"id": "world_1", "en": "I can show you the world", "ko": "내가 너에게 세상을 보여 줄 수 있어"},
-            {"id": "world_2", "en": "Shining, shimmering, splendid", "ko": "빛나고 반짝이고 눈부신"},
-            {"id": "world_3", "en": "Let your heart decide", "ko": "네 마음이 결정하게 하다"},
-            {"id": "world_4", "en": "Open your eyes", "ko": "눈을 뜨게 하다 / 새로운 것을 보게 하다"},
-            {"id": "world_5", "en": "A magic carpet ride", "ko": "마법 양탄자 여행"},
-            {"id": "world_6", "en": "A whole new world", "ko": "완전히 새로운 세상"},
-            {"id": "world_7", "en": "A new fantastic point of view", "ko": "새롭고 환상적인 관점"},
-            {"id": "world_8", "en": "Crystal clear", "ko": "매우 분명한"},
-            {"id": "world_9", "en": "Don't you dare close your eyes", "ko": "절대 눈 감지 마"},
-            {"id": "world_10", "en": "New horizons to pursue", "ko": "따라갈 새로운 지평선 / 새로운 목표"},
+            {"id": "world_2", "en": "A whole new world", "ko": "완전히 새로운 세상"},
+            {"id": "world_3", "en": "A new fantastic point of view", "ko": "새롭고 환상적인 시선"},
+            {"id": "world_4", "en": "Don't you dare close your eyes", "ko": "절대 눈 감지 마"},
+            {"id": "world_5", "en": "Open your eyes", "ko": "눈을 떠 봐"},
+            {"id": "world_6", "en": "Every turn a surprise", "ko": "방향을 틀 때마다 놀라움이 있어"},
         ]
 
     if "4. Stand By Me" in song_choice:
         return [
             {"id": "stand_1", "en": "Stand by me", "ko": "내 곁에 있어 줘"},
-            {"id": "stand_2", "en": "The night has come", "ko": "밤이 찾아왔다"},
-            {"id": "stand_3", "en": "The land is dark", "ko": "세상이 어둡다"},
-            {"id": "stand_4", "en": "The only light", "ko": "유일한 빛"},
-            {"id": "stand_5", "en": "I won't be afraid", "ko": "나는 두려워하지 않을 거야"},
-            {"id": "stand_6", "en": "Just as long as", "ko": "~하기만 한다면"},
-            {"id": "stand_7", "en": "Tumble and fall", "ko": "무너져 내리다"},
-            {"id": "stand_8", "en": "Crumble to the sea", "ko": "부서져 바다로 무너지다"},
-            {"id": "stand_9", "en": "Shed a tear", "ko": "눈물을 흘리다"},
-            {"id": "stand_10", "en": "Whenever you're in trouble", "ko": "네가 힘든 순간에는 언제든지"},
+            {"id": "stand_2", "en": "I won't be afraid", "ko": "나는 두려워하지 않을 거야"},
+            {"id": "stand_3", "en": "I won't cry", "ko": "나는 울지 않을 거야"},
+            {"id": "stand_4", "en": "Whenever you're in trouble", "ko": "네가 힘든 순간에는 언제든지"},
+            {"id": "stand_5", "en": "The land is dark", "ko": "세상이 어두워"},
+            {"id": "stand_6", "en": "The moon is the only light", "ko": "달빛만이 유일한 빛이야"},
         ]
 
     if "5. Don't Know Why" in song_choice:
         return [
             {"id": "why_1", "en": "I don't know why", "ko": "나는 왜 그런지 모르겠어"},
-            {"id": "why_2", "en": "I waited till I saw the sun", "ko": "나는 해가 보일 때까지 기다렸어"},
-            {"id": "why_3", "en": "I didn't come", "ko": "나는 가지 않았어"},
-            {"id": "why_4", "en": "The break of day", "ko": "새벽"},
-            {"id": "why_5", "en": "Fly away", "ko": "날아가 버리다"},
-            {"id": "why_6", "en": "Instead of", "ko": "~ 대신에"},
-            {"id": "why_7", "en": "On my mind", "ko": "내 마음속에 / 계속 생각나는"},
-            {"id": "why_8", "en": "Endless sea", "ko": "끝없는 바다"},
-            {"id": "why_9", "en": "Driving down the road alone", "ko": "혼자 길을 따라 운전하며"},
-            {"id": "why_10", "en": "As empty as a drum", "ko": "북처럼 텅 빈"},
+            {"id": "why_2", "en": "I wished that I could fly away", "ko": "나는 날아가 버릴 수 있기를 바랐어"},
+            {"id": "why_3", "en": "You'll be on my mind forever", "ko": "너는 영원히 내 마음속에 있을 거야"},
+            {"id": "why_4", "en": "I feel as empty as a drum", "ko": "나는 북처럼 텅 빈 기분이야"},
+            {"id": "why_5", "en": "I waited till I saw the sun", "ko": "나는 해가 보일 때까지 기다렸어"},
+            {"id": "why_6", "en": "Driving down the road alone", "ko": "혼자 길을 따라 운전하며"},
         ]
 
     if "6. Fix You" in song_choice:
         return [
-            {"id": "fix_1", "en": "Try your best", "ko": "최선을 다하다"},
-            {"id": "fix_2", "en": "Don't succeed", "ko": "성공하지 못하다"},
-            {"id": "fix_3", "en": "What you want", "ko": "네가 원하는 것"},
-            {"id": "fix_4", "en": "What you need", "ko": "네게 필요한 것"},
-            {"id": "fix_5", "en": "Stuck in reverse", "ko": "거꾸로 갇힌 / 뒤로만 가는 상태"},
-            {"id": "fix_6", "en": "Tears stream down your face", "ko": "눈물이 네 얼굴을 타고 흘러내리다"},
-            {"id": "fix_7", "en": "Lose something you can't replace", "ko": "대신할 수 없는 것을 잃다"},
-            {"id": "fix_8", "en": "Lights will guide you home", "ko": "빛이 너를 집으로 인도할 거야"},
-            {"id": "fix_9", "en": "If you never try, you'll never know", "ko": "시도하지 않으면 절대 알 수 없어"},
-            {"id": "fix_10", "en": "Learn from my mistakes", "ko": "내 실수에서 배우다"},
+            {"id": "fix_1", "en": "When you try your best", "ko": "네가 최선을 다할 때"},
+            {"id": "fix_2", "en": "Lights will guide you home", "ko": "빛이 너를 집으로 인도할 거야"},
+            {"id": "fix_3", "en": "I will try to fix you", "ko": "나는 너를 다시 일으켜 주려고 노력할 거야"},
+            {"id": "fix_4", "en": "If you never try, you'll never know", "ko": "시도하지 않으면 절대 알 수 없어"},
+            {"id": "fix_5", "en": "Tears stream down your face", "ko": "눈물이 네 얼굴을 타고 흘러내려"},
+            {"id": "fix_6", "en": "I will learn from my mistakes", "ko": "나는 내 실수에서 배울 거야"},
         ]
 
     return []
 
 
-def make_safe_song_key(song_choice):
-    return (
+def build_matching_columns(pairs, seed_text):
+    """왼쪽에는 영어 카드만, 오른쪽에는 한국어 카드만 나오도록 만듭니다."""
+    english_cards = []
+    korean_cards = []
+
+    for pair in pairs:
+        english_cards.append({"pair_id": pair["id"], "kind": "en", "text": pair["en"]})
+        korean_cards.append({"pair_id": pair["id"], "kind": "ko", "text": pair["ko"]})
+
+    rng_en = random.Random(seed_text + "_en")
+    rng_ko = random.Random(seed_text + "_ko")
+    rng_en.shuffle(english_cards)
+    rng_ko.shuffle(korean_cards)
+
+    return {"en": english_cards, "ko": korean_cards}
+
+
+def reset_matching_game(game_key):
+    st.session_state[f"match_selected_{game_key}"] = None
+    st.session_state[f"match_done_{game_key}"] = []
+    st.session_state[f"match_message_{game_key}"] = ""
+    st.session_state[f"match_cards_{game_key}"] = None
+    st.session_state[f"match_blast_{game_key}"] = None
+    st.session_state[f"match_blast_at_{game_key}"] = 0.0
+
+
+def show_matching_game(song_choice):
+    safe_song_key = (
         song_choice
         .replace(" ", "_")
         .replace(".", "")
@@ -1491,43 +1539,293 @@ def make_safe_song_key(song_choice):
         .replace("'", "")
         .replace("&", "and")
     )
+    game_key = safe_song_key
+    pairs = get_matching_pairs(song_choice)
 
+    if f"match_selected_{game_key}" not in st.session_state:
+        st.session_state[f"match_selected_{game_key}"] = None
+    if f"match_done_{game_key}" not in st.session_state:
+        st.session_state[f"match_done_{game_key}"] = []
+    if f"match_message_{game_key}" not in st.session_state:
+        st.session_state[f"match_message_{game_key}"] = ""
+    if f"match_blast_{game_key}" not in st.session_state:
+        st.session_state[f"match_blast_{game_key}"] = None
+    if f"match_blast_at_{game_key}" not in st.session_state:
+        st.session_state[f"match_blast_at_{game_key}"] = 0.0
 
-def reset_expression_game(game_key):
-    for k in list(st.session_state.keys()):
-        if k.startswith(f"expr_answer_{game_key}_") or k in [
-            f"expr_order_{game_key}",
-            f"expr_result_{game_key}",
-            f"expr_round_{game_key}",
-        ]:
-            del st.session_state[k]
+    # 맞춘 직후에는 카드 자체에 CSS 애니메이션을 적용합니다.
+    # 예전 버전처럼 window.location.reload()로 새로고침하지 않습니다.
+    # 이미 맞춘 카드는 세션에 바로 기록하고, 화면에서는 잠깐 터지는 효과만 보여 줍니다.
+    blast_pair = st.session_state.get(f"match_blast_{game_key}")
+    blast_at = st.session_state.get(f"match_blast_at_{game_key}", 0.0)
+    if blast_pair is not None and time.time() - blast_at > 0.7:
+        st.session_state[f"match_blast_{game_key}"] = None
+        st.session_state[f"match_blast_at_{game_key}"] = 0.0
 
+    # 이전 버전에서 만들어진 세션값이 남아 있으면 cards가 list 형태일 수 있습니다.
+    # 현재 버전은 {"en": [...], "ko": [...]} 형태를 사용하므로, 형태가 다르면 새로 만듭니다.
+    saved_cards = st.session_state.get(f"match_cards_{game_key}")
+    if (
+        saved_cards is None
+        or not isinstance(saved_cards, dict)
+        or "en" not in saved_cards
+        or "ko" not in saved_cards
+        or len(saved_cards.get("en", [])) != len(pairs)
+        or len(saved_cards.get("ko", [])) != len(pairs)
+    ):
+        st.session_state[f"match_cards_{game_key}"] = build_matching_columns(pairs, safe_song_key)
 
-def show_expression_quiz_game(song_choice):
-    """영어 표현을 보고 한국어 뜻을 고르는 10문항 게임입니다."""
-    expressions = get_key_expressions(song_choice)
-    safe_song_key = make_safe_song_key(song_choice)
-
-    if f"expr_round_{safe_song_key}" not in st.session_state:
-        st.session_state[f"expr_round_{safe_song_key}"] = 1
-
-    round_no = st.session_state[f"expr_round_{safe_song_key}"]
-    game_key = f"{safe_song_key}_{round_no}"
-
-    if f"expr_order_{game_key}" not in st.session_state:
-        order = list(range(len(expressions)))
-        random.Random(game_key).shuffle(order)
-        st.session_state[f"expr_order_{game_key}"] = order
-
-    order = st.session_state[f"expr_order_{game_key}"]
-    all_korean_options = [item["ko"] for item in expressions]
+    selected = st.session_state[f"match_selected_{game_key}"]
+    done = st.session_state[f"match_done_{game_key}"]
+    cards = st.session_state[f"match_cards_{game_key}"]
+    blast_pair = st.session_state.get(f"match_blast_{game_key}")
 
     st.markdown(
         """
         <div class="matching-box">
-            <div class="matching-title">🧩 Key Expression 뜻 맞추기</div>
+            <div class="matching-title">🧩 문장 매칭 게임</div>
             <div class="matching-guide">
-                영어 표현을 보고 알맞은 한국어 뜻을 고르세요.<br>
+                왼쪽 영어 문장과 오른쪽 한국어 뜻을 짝지어 보세요.<br>
+                맞는 짝을 고르면 카드가 사라집니다. 총 6쌍을 맞춰 보세요.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    total_pairs = len(pairs)
+    matched_pairs = len(done)
+    st.progress(matched_pairs / total_pairs if total_pairs else 0)
+    st.markdown(f"### 현재 점수: {matched_pairs} / {total_pairs}쌍")
+
+
+    if matched_pairs == total_pairs:
+        st.success("🎉 모든 문장을 맞췄습니다! 훌륭합니다.")
+        st.balloons()
+        if st.button("🔄 다시 하기", use_container_width=True, key=f"match_restart_done_{game_key}"):
+            reset_matching_game(game_key)
+            st.rerun()
+        return
+
+    # 맞춘 카드는 기본적으로 사라집니다. 단, 방금 맞춘 카드만 1회 렌더링해서
+    # 반짝이면서 사라지는 애니메이션을 보여 준 뒤 CSS로 화면에서 사라지게 합니다.
+    english_cards = [card for card in cards["en"] if card["pair_id"] not in done or card["pair_id"] == blast_pair]
+    korean_cards = [card for card in cards["ko"] if card["pair_id"] not in done or card["pair_id"] == blast_pair]
+
+    def handle_card_click(card):
+        current_selected = st.session_state[f"match_selected_{game_key}"]
+
+        if current_selected is None:
+            st.session_state[f"match_selected_{game_key}"] = card
+            st.session_state[f"match_message_{game_key}"] = ""
+            st.rerun()
+
+        elif current_selected["pair_id"] == card["pair_id"] and current_selected["kind"] != card["kind"]:
+            # 정답이면 즉시 맞춘 목록에 넣고, 이번 화면에서는 반짝이면서 사라지는 효과만 보여 줍니다.
+            # 별도 브라우저 새로고침을 하지 않기 때문에 F5처럼 화면이 튀지 않습니다.
+            if card["pair_id"] not in st.session_state[f"match_done_{game_key}"]:
+                st.session_state[f"match_done_{game_key}"].append(card["pair_id"])
+            st.session_state[f"match_blast_{game_key}"] = card["pair_id"]
+            st.session_state[f"match_blast_at_{game_key}"] = time.time()
+            st.session_state[f"match_selected_{game_key}"] = None
+            st.session_state[f"match_message_{game_key}"] = ""
+            st.rerun()
+
+        elif current_selected["kind"] == card["kind"]:
+            st.session_state[f"match_selected_{game_key}"] = card
+            st.session_state[f"match_message_{game_key}"] = ""
+            st.rerun()
+
+        else:
+            st.session_state[f"match_selected_{game_key}"] = None
+            st.session_state[f"match_message_{game_key}"] = ""
+            st.rerun()
+
+    left_col, right_col = st.columns(2)
+
+    with left_col:
+        for card in english_cards:
+            is_blast = blast_pair == card["pair_id"]
+            is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
+
+            if is_blast:
+                st.markdown(
+                    f"<div class='match-blast-card'>{html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            elif is_selected:
+                st.markdown(
+                    f"<div class='match-selected-card'>✅ {html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            else:
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                    handle_card_click(card)
+
+    with right_col:
+        for card in korean_cards:
+            is_blast = blast_pair == card["pair_id"]
+            is_selected = selected and selected["pair_id"] == card["pair_id"] and selected["kind"] == card["kind"]
+
+            if is_blast:
+                st.markdown(
+                    f"<div class='match-blast-card'>{html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            elif is_selected:
+                st.markdown(
+                    f"<div class='match-selected-card'>✅ {html.escape(card['text'])}</div>",
+                    unsafe_allow_html=True
+                )
+            else:
+                if st.button(card["text"], key=f"match_card_{game_key}_{card['pair_id']}_{card['kind']}", use_container_width=True):
+                    handle_card_click(card)
+
+    st.markdown("---")
+    if st.button("🔄 게임 다시 섞기", use_container_width=True, key=f"match_restart_{game_key}"):
+        reset_matching_game(game_key)
+        st.rerun()
+
+
+
+# =========================
+# 6. Key Expression 뜻 맞추기 게임 데이터와 함수
+# =========================
+def get_key_expressions(song_choice):
+    """각 노래의 Key Expression 10개와 한국어 뜻을 반환합니다."""
+    if "1. Let It Go" in song_choice:
+        return [
+            {"id": "let_exp_1", "en": "Let it go", "ko": "놓아버려"},
+            {"id": "let_exp_2", "en": "Hold it back", "ko": "억누르다 / 참다"},
+            {"id": "let_exp_3", "en": "Turn away", "ko": "돌아서다"},
+            {"id": "let_exp_4", "en": "Slam the door", "ko": "문을 쾅 닫다"},
+            {"id": "let_exp_5", "en": "I don't care", "ko": "나는 신경 쓰지 않아"},
+            {"id": "let_exp_6", "en": "Rage on", "ko": "계속 거세게 몰아치다"},
+            {"id": "let_exp_7", "en": "The fears that once controlled me", "ko": "한때 나를 지배했던 두려움들"},
+            {"id": "let_exp_8", "en": "Break through", "ko": "뚫고 나아가다 / 극복하다"},
+            {"id": "let_exp_9", "en": "I'm free", "ko": "나는 자유로워"},
+            {"id": "let_exp_10", "en": "The past is in the past", "ko": "과거는 과거일 뿐이야"},
+        ]
+
+    if "2. Hello" in song_choice:
+        return [
+            {"id": "hello_exp_1", "en": "Hello, it's me", "ko": "안녕, 나야"},
+            {"id": "hello_exp_2", "en": "After all these years", "ko": "이 모든 세월이 흐른 뒤에"},
+            {"id": "hello_exp_3", "en": "Go over everything", "ko": "모든 일을 다시 살펴보다"},
+            {"id": "hello_exp_4", "en": "Time is supposed to heal you", "ko": "시간이 너를 치유해 줄 거라고 여겨진다"},
+            {"id": "hello_exp_5", "en": "Can you hear me?", "ko": "내 말 들리니?"},
+            {"id": "hello_exp_6", "en": "Who we used to be", "ko": "예전의 우리 모습"},
+            {"id": "hello_exp_7", "en": "A million miles", "ko": "아주 먼 거리"},
+            {"id": "hello_exp_8", "en": "I must've called a thousand times", "ko": "나는 정말 여러 번 전화했을 거야"},
+            {"id": "hello_exp_9", "en": "I'm sorry", "ko": "미안해"},
+            {"id": "hello_exp_10", "en": "I hope that you're well", "ko": "네가 잘 지내길 바라"},
+        ]
+
+    if "3. A Whole New World" in song_choice:
+        return [
+            {"id": "world_exp_1", "en": "I can show you the world", "ko": "내가 너에게 세상을 보여 줄 수 있어"},
+            {"id": "world_exp_2", "en": "Shining, shimmering, splendid", "ko": "빛나고, 반짝이고, 눈부신"},
+            {"id": "world_exp_3", "en": "Let your heart decide", "ko": "네 마음이 결정하게 하다"},
+            {"id": "world_exp_4", "en": "Open your eyes", "ko": "눈을 뜨게 하다 / 새롭게 보게 하다"},
+            {"id": "world_exp_5", "en": "A whole new world", "ko": "완전히 새로운 세상"},
+            {"id": "world_exp_6", "en": "A new fantastic point of view", "ko": "새롭고 환상적인 관점"},
+            {"id": "world_exp_7", "en": "Crystal clear", "ko": "아주 분명한"},
+            {"id": "world_exp_8", "en": "Indescribable feeling", "ko": "말로 표현할 수 없는 감정"},
+            {"id": "world_exp_9", "en": "Don't you dare close your eyes", "ko": "절대 눈 감지 마"},
+            {"id": "world_exp_10", "en": "New horizons to pursue", "ko": "따라갈 새로운 지평선들"},
+        ]
+
+    if "4. Stand By Me" in song_choice:
+        return [
+            {"id": "stand_exp_1", "en": "Stand by me", "ko": "내 곁에 있어 줘"},
+            {"id": "stand_exp_2", "en": "The night has come", "ko": "밤이 찾아왔다"},
+            {"id": "stand_exp_3", "en": "The land is dark", "ko": "세상이 어둡다"},
+            {"id": "stand_exp_4", "en": "The only light we'll see", "ko": "우리가 볼 유일한 빛"},
+            {"id": "stand_exp_5", "en": "I won't be afraid", "ko": "나는 두려워하지 않을 거야"},
+            {"id": "stand_exp_6", "en": "Just as long as", "ko": "~하기만 한다면"},
+            {"id": "stand_exp_7", "en": "Tumble and fall", "ko": "무너져 내리다"},
+            {"id": "stand_exp_8", "en": "Crumble to the sea", "ko": "부서져 바다로 무너지다"},
+            {"id": "stand_exp_9", "en": "Shed a tear", "ko": "눈물을 흘리다"},
+            {"id": "stand_exp_10", "en": "Whenever you're in trouble", "ko": "네가 힘든 순간에는 언제든지"},
+        ]
+
+    if "5. Don't Know Why" in song_choice:
+        return [
+            {"id": "why_exp_1", "en": "I don't know why", "ko": "나는 왜 그런지 모르겠어"},
+            {"id": "why_exp_2", "en": "I waited till I saw the sun", "ko": "나는 해가 보일 때까지 기다렸어"},
+            {"id": "why_exp_3", "en": "The break of day", "ko": "새벽"},
+            {"id": "why_exp_4", "en": "I wished that I could fly away", "ko": "나는 날아가 버릴 수 있기를 바랐어"},
+            {"id": "why_exp_5", "en": "Instead of", "ko": "~하는 대신에"},
+            {"id": "why_exp_6", "en": "On my mind", "ko": "내 마음속에 / 계속 생각나는"},
+            {"id": "why_exp_7", "en": "Forever", "ko": "영원히"},
+            {"id": "why_exp_8", "en": "Out across the endless sea", "ko": "끝없는 바다 저편으로"},
+            {"id": "why_exp_9", "en": "Driving down the road alone", "ko": "혼자 길을 따라 운전하며"},
+            {"id": "why_exp_10", "en": "As empty as a drum", "ko": "북처럼 텅 빈"},
+        ]
+
+    if "6. Fix You" in song_choice:
+        return [
+            {"id": "fix_exp_1", "en": "Try your best", "ko": "최선을 다하다"},
+            {"id": "fix_exp_2", "en": "Don't succeed", "ko": "성공하지 못하다"},
+            {"id": "fix_exp_3", "en": "What you want", "ko": "네가 원하는 것"},
+            {"id": "fix_exp_4", "en": "What you need", "ko": "네게 필요한 것"},
+            {"id": "fix_exp_5", "en": "Stuck in reverse", "ko": "거꾸로 갇힌 것 같은"},
+            {"id": "fix_exp_6", "en": "Tears stream down your face", "ko": "눈물이 네 얼굴을 타고 흘러내려"},
+            {"id": "fix_exp_7", "en": "Lose something you can't replace", "ko": "대신할 수 없는 것을 잃다"},
+            {"id": "fix_exp_8", "en": "Lights will guide you home", "ko": "빛이 너를 집으로 인도할 거야"},
+            {"id": "fix_exp_9", "en": "If you never try, you'll never know", "ko": "시도하지 않으면 절대 알 수 없어"},
+            {"id": "fix_exp_10", "en": "Learn from my mistakes", "ko": "내 실수에서 배우다"},
+        ]
+
+    return []
+
+
+def reset_expression_game(game_key):
+    for k in list(st.session_state.keys()):
+        if k.startswith(f"expr_answer_{game_key}_") or k in [f"expr_questions_{game_key}", f"expr_submitted_{game_key}"]:
+            del st.session_state[k]
+
+
+def build_expression_questions(expressions, seed_text):
+    """영어 표현 10개를 문제로 만들고, 한국어 보기 4개를 섞어 반환합니다."""
+    rng = random.Random(seed_text + "_expression_quiz")
+    all_korean = [item["ko"] for item in expressions]
+    questions = []
+
+    for item in expressions:
+        distractors = [ko for ko in all_korean if ko != item["ko"]]
+        rng.shuffle(distractors)
+        options = [item["ko"]] + distractors[:3]
+        rng.shuffle(options)
+        questions.append({
+            "id": item["id"],
+            "en": item["en"],
+            "answer": item["ko"],
+            "options": options,
+        })
+
+    rng.shuffle(questions)
+    return questions
+
+
+def show_key_expression_game(song_choice):
+    safe_song_key = (
+        song_choice
+        .replace(" ", "_")
+        .replace(".", "")
+        .replace("-", "_")
+        .replace("'", "")
+        .replace("&", "and")
+    )
+    game_key = safe_song_key
+    expressions = get_key_expressions(song_choice)
+
+    st.markdown(
+        """
+        <div class="expression-box">
+            <div class="expression-title">📝 Key Expression 뜻 맞추기</div>
+            <div class="expression-guide">
+                영어 Key Expression을 보고 알맞은 한국어 뜻을 고르세요.<br>
                 각 노래마다 핵심 표현 10개가 나옵니다.
             </div>
         </div>
@@ -1535,102 +1833,68 @@ def show_expression_quiz_game(song_choice):
         unsafe_allow_html=True
     )
 
-    st.markdown("### 🎯 영어 표현 → 한국어 뜻")
+    if not expressions:
+        st.warning("이 노래의 Key Expression 데이터가 없습니다.")
+        return
 
-    with st.form(f"expr_quiz_form_{game_key}"):
-        answers = {}
+    q_key = f"expr_questions_{game_key}"
+    if q_key not in st.session_state:
+        st.session_state[q_key] = build_expression_questions(expressions, safe_song_key)
 
-        for q_no, idx in enumerate(order, start=1):
-            item = expressions[idx]
-            correct_ko = item["ko"]
+    questions = st.session_state[q_key]
+    user_answers = []
 
-            wrong_options = [ko for ko in all_korean_options if ko != correct_ko]
-            option_rng = random.Random(f"{game_key}_{item['id']}_options")
-            selected_wrong = option_rng.sample(wrong_options, k=min(3, len(wrong_options)))
-            options = selected_wrong + [correct_ko]
-            option_rng.shuffle(options)
-
+    with st.form(f"expression_quiz_form_{game_key}"):
+        for i, item in enumerate(questions):
             st.markdown(
                 f"""
-                <div class="quiz-box">
-                    <div style="font-size:1.05rem; font-weight:800; color:#475569;">문제 {q_no}</div>
-                    <div style="font-size:1.6rem; font-weight:900; color:#1e3a8a; margin-top:8px;">
-                        {html.escape(item['en'])}
-                    </div>
+                <div class="expression-question-card">
+                    <div class="expression-small">Question {i+1}</div>
+                    <div class="expression-en">{html.escape(item['en'])}</div>
+                    <div class="expression-small">이 표현의 한국어 뜻은?</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-
-            answers[item["id"]] = st.radio(
-                "한국어 뜻을 고르세요.",
-                options,
-                index=None,
-                key=f"expr_answer_{game_key}_{item['id']}",
+            answer = st.radio(
+                "정답을 고르세요.",
+                item["options"],
+                key=f"expr_answer_{game_key}_{i}",
                 label_visibility="collapsed"
             )
+            user_answers.append(answer)
 
         submitted = st.form_submit_button("✅ 정답 확인하기")
 
     if submitted:
         score = 0
-        result_rows = []
+        st.markdown("## 📌 결과 확인")
 
-        for idx in order:
-            item = expressions[idx]
-            user_answer = answers.get(item["id"])
-            is_correct = user_answer == item["ko"]
-            if is_correct:
+        for i, item in enumerate(questions):
+            if user_answers[i] == item["answer"]:
                 score += 1
-            result_rows.append({
-                "en": item["en"],
-                "correct": item["ko"],
-                "user": user_answer,
-                "is_correct": is_correct,
-            })
+                st.success(f"{i+1}. 정답입니다! ✅  {item['en']} = {item['answer']}")
+            else:
+                st.error(f"{i+1}. 틀렸습니다 ❌  {item['en']}")
+                st.markdown(f"정답: **{item['answer']}**")
 
-        st.session_state[f"expr_result_{game_key}"] = {
-            "score": score,
-            "total": len(expressions),
-            "rows": result_rows,
-        }
-
-    result = st.session_state.get(f"expr_result_{game_key}")
-
-    if result:
         st.markdown(
             f"""
             <div class="score-box">
-                <h2 style="margin:0; color:#14532d;">점수: {result['score']} / {result['total']}</h2>
+                <h2 style="margin:0;">점수: {score} / {len(questions)}</h2>
             </div>
             """,
             unsafe_allow_html=True
         )
 
-        if result["score"] == result["total"]:
-            st.success("🎉 완벽합니다! 핵심 표현을 모두 맞췄습니다.")
+        if score == len(questions):
             st.balloons()
-        elif result["score"] >= 7:
-            st.success("👏 좋습니다! 대부분의 핵심 표현을 잘 이해했습니다.")
-        else:
-            st.info("💪 괜찮습니다. 틀린 표현만 다시 확인하고 한 번 더 도전해 봅시다.")
+            st.success("🎉 모든 Key Expression을 맞췄습니다!")
 
-        st.markdown("---")
-        st.markdown("## 📌 정답 확인")
-
-        for i, row in enumerate(result["rows"], start=1):
-            if row["is_correct"]:
-                st.success(f"{i}. {row['en']} → {row['correct']} ✅")
-            else:
-                user_text = row["user"] if row["user"] else "선택하지 않음"
-                st.error(f"{i}. {row['en']} ❌")
-                st.markdown(f"- 내가 고른 답: **{user_text}**")
-                st.markdown(f"- 정답: **{row['correct']}**")
-
-        if st.button("🔄 다시 풀기 / 문제 다시 섞기", use_container_width=True, key=f"expr_restart_{game_key}"):
-            reset_expression_game(game_key)
-            st.session_state[f"expr_round_{safe_song_key}"] = round_no + 1
-            st.rerun()
+    st.markdown("---")
+    if st.button("🔄 Key Expression 다시 섞기", use_container_width=True, key=f"expr_restart_{game_key}"):
+        reset_expression_game(game_key)
+        st.rerun()
 
 # =========================
 # 5. 화면 출력
@@ -1741,7 +2005,11 @@ elif selected_tab == "📖 가사 & 퀴즈":
             unsafe_allow_html=True
         )
 
-elif selected_tab == "🧩 Key Expression 게임":
-    st.markdown("## 🧩 Key Expression 10개 뜻 맞추기")
-    show_expression_quiz_game(song_choice)
+elif selected_tab == "📝 Key Expression 뜻 맞추기":
+    st.markdown("## 📝 영어 표현을 보고 한국어 뜻을 맞춰 봅시다")
+    show_key_expression_game(song_choice)
+
+elif selected_tab == "🧩 문장 매칭 게임":
+    st.markdown("## 🧩 영어 문장과 한국어 뜻을 맞춰 봅시다")
+    show_matching_game(song_choice)
 
