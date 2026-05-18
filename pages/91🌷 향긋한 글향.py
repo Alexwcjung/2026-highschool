@@ -878,21 +878,28 @@ with tab_reading:
     fact_html += "</div>"
     st.markdown(fact_html, unsafe_allow_html=True)
 
-    # 영어 한 문장 바로 아래에 한국어 해석이 나오도록 수정한 부분입니다.
-    reading_html = '<div class="reading-card">'
+    # 영어 한 문장 바로 아래에 한국어 해석이 나오도록 표시
+    st.markdown('<div class="reading-card">', unsafe_allow_html=True)
+
     for speaker, eng, kor in dialogue:
-        reading_html += f"""
-        <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px dashed #e5e7eb;">
-            <div style="font-size: 22px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
-                <b>{speaker}:</b> {eng}
+        st.markdown(
+            f"""
+            <div style="margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px dashed #e5e7eb;">
+                <div style="font-size: 22px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
+                    <b>{speaker}:</b> {eng}
+                </div>
+                <div style="margin-top: 7px; margin-left: 8px; padding: 7px 10px 7px 14px;
+                            border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75);
+                            border-radius: 10px; font-size: 19px; font-weight: 700;
+                            color: #374151; line-height: 1.65;">
+                    🇰🇷 {kor}
+                </div>
             </div>
-            <div style="margin-top: 7px; margin-left: 8px; padding: 7px 10px 7px 14px; border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75); border-radius: 10px; font-size: 19px; font-weight: 700; color: #374151; line-height: 1.65;">
-                🇰🇷 {kor}
-            </div>
-        </div>
-        """
-    reading_html += "</div>"
-    st.markdown(reading_html, unsafe_allow_html=True)
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
