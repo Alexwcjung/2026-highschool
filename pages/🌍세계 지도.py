@@ -441,29 +441,6 @@ st.markdown(
         font-weight: 700;
         color: #334155;
     }
-    .quiz-hero {
-        background: linear-gradient(135deg, #f0f9ff 0%, #ecfeff 45%, #fff7ed 100%);
-        border: 2px solid #60a5fa;
-        border-radius: 30px;
-        padding: 24px 28px;
-        margin-bottom: 14px;
-        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-        text-align: center;
-    }
-    .quiz-hero h2 {
-        margin: 0;
-        font-size: 44px;
-        font-weight: 1000;
-        color: #0f172a;
-        letter-spacing: -0.5px;
-    }
-    .quiz-hero p {
-        margin-top: 10px;
-        font-size: 17px;
-        color: #334155;
-        font-weight: 750;
-        line-height: 1.6;
-    }
     .score-card {
         background: white;
         border: 1.5px solid #dbeafe;
@@ -519,8 +496,8 @@ st.markdown(
     div.stButton > button {
         border-radius: 24px;
         font-weight: 1000 !important;
-        min-height: 104px;
-        font-size: 1.95rem !important;
+        min-height: 116px;
+        font-size: 2.15rem !important;
         line-height: 1.35;
         border: 3px solid #93c5fd;
         background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 100%);
@@ -530,7 +507,7 @@ st.markdown(
 
     /* Streamlit 버튼 내부 글자 크기 강제 적용 */
     div.stButton > button p {
-        font-size: 1.95rem !important;
+        font-size: 2.15rem !important;
         font-weight: 1000 !important;
         line-height: 1.35 !important;
         color: #0f172a !important;
@@ -539,7 +516,7 @@ st.markdown(
     /* 퀴즈 보기 버튼이 더 또렷하게 보이도록 */
     div.stButton > button div,
     div.stButton > button span {
-        font-size: 1.95rem !important;
+        font-size: 2.15rem !important;
         font-weight: 1000 !important;
     }
 
@@ -641,8 +618,8 @@ st.markdown(
         .title-box p { font-size: 15px; }
         .quiz-hero h2 { font-size: 30px; }
         .question-card .big { font-size: 23px; }
-        div.stButton > button { font-size: 1.45rem !important; min-height: 86px; }
-        div.stButton > button p { font-size: 1.45rem !important; font-weight: 1000 !important; }
+        div.stButton > button { font-size: 1.6rem !important; min-height: 94px; }
+        div.stButton > button p { font-size: 1.6rem !important; font-weight: 1000 !important; }
     }
     </style>
     """,
@@ -917,14 +894,6 @@ with tab_learn:
 # 3번 탭: 나라 맞추기 퀴즈
 # =====================================================
 with tab_quiz:
-    st.markdown(
-        """
-        <div class="quiz-hero">
-            <h2>🎮 세계 지도 나라 맞추기</h2>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
     if st.session_state.quiz_finished:
         st.markdown(
@@ -965,7 +934,7 @@ with tab_quiz:
     )
 
     qfig.update_layout(
-        height=600,
+        height=720,
         margin=dict(l=0, r=0, t=0, b=0),
         coloraxis_showscale=False,
         geo=dict(
@@ -984,7 +953,7 @@ with tab_quiz:
 
     st.plotly_chart(qfig, use_container_width=True, config={"displaylogo": False})
 
-    st.markdown("## 🧩 정답을 골라 보세요")
+    st.markdown("## 정답을 골라 보세요")
 
     option_cols = st.columns(2)
     option_labels = ["A", "B", "C", "D"]
