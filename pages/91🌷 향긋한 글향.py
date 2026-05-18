@@ -1195,13 +1195,30 @@ with tab_reading:
     st.markdown(fact_html, unsafe_allow_html=True)
 
     st.markdown("### 📘 문장별 읽기")
-    st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다.")
+    st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
 
-    # 영어 한 문장 + 바로 아래 한국어 해석 + 오른쪽 문장별 듣기 버튼
+    show_korean_reading = st.toggle(
+        "🇰🇷 한국어 해석 보기",
+        value=False,
+        key=f"{category}_{topic_name}_show_korean_reading"
+    )
+
+    # 기본은 영어만 보이게 하고, 버튼을 켜면 영어 문장 아래에 한국어 해석이 보입니다.
     for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
         line_col, audio_col = st.columns([8.5, 1.5])
 
         with line_col:
+            korean_html = ""
+            if show_korean_reading:
+                korean_html = f"""
+                    <div style="margin-top: 7px; padding: 7px 10px 7px 14px;
+                                border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75);
+                                border-radius: 10px; font-size: 19px; font-weight: 700;
+                                color: #374151; line-height: 1.65;">
+                        🇰🇷 {kor}
+                    </div>
+                """
+
             st.markdown(
                 f"""
                 <div style="margin-bottom: 14px; padding: 16px 18px; border-radius: 20px;
@@ -1210,12 +1227,7 @@ with tab_reading:
                     <div style="font-size: 22px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
                         <b>{speaker}:</b> {eng}
                     </div>
-                    <div style="margin-top: 7px; padding: 7px 10px 7px 14px;
-                                border-left: 5px solid #fde68a; background: rgba(255,251,235,0.75);
-                                border-radius: 10px; font-size: 19px; font-weight: 700;
-                                color: #374151; line-height: 1.65;">
-                        🇰🇷 {kor}
-                    </div>
+                    {korean_html}
                 </div>
                 """,
                 unsafe_allow_html=True
