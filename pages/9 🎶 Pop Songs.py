@@ -2110,15 +2110,13 @@ def show_key_expression_game(song_choice):
 # 7. Reflective Writing 생각 적기 데이터와 함수
 # =========================
 def get_reflection_prompts(song_choice):
-    """각 노래의 주제에 맞는 성찰 질문을 반환합니다."""
+    """각 노래의 주제에 맞는 성찰 질문 3개를 반환합니다."""
     if "1. Let It Go" in song_choice:
         return {
             "theme": "자유, 자기표현, 두려움 극복",
             "questions": [
                 "엘사처럼 다른 사람의 시선 때문에 숨겨 왔던 나의 모습이 있나요?",
                 "내가 더 이상 붙잡고 싶지 않은 두려움이나 걱정은 무엇인가요?",
-                "'Let it go'처럼 마음속에서 놓아버리고 싶은 일이 있다면 무엇인가요?",
-                "내가 진짜 자유롭다고 느꼈던 순간은 언제였나요?",
                 "나는 앞으로 어떤 모습의 나를 더 당당하게 보여 주고 싶나요?",
             ],
             "starter_ko": "나는 예전에 ___ 때문에 나를 숨긴 적이 있다. 하지만 이제는 ___ 하고 싶다.",
@@ -2131,8 +2129,6 @@ def get_reflection_prompts(song_choice):
             "questions": [
                 "오랜 시간이 지난 뒤에도 미안하다고 말하고 싶은 사람이 있나요?",
                 "Adele처럼 다시 연락하고 싶은 사람이 있다면, 그 사람에게 어떤 말을 하고 싶나요?",
-                "시간이 지나면 모든 상처가 자연스럽게 치유된다고 생각하나요? 왜 그렇게 생각하나요?",
-                "나는 누군가에게 'I tried'라고 말할 만큼 노력해 본 적이 있나요?",
                 "관계에서 늦은 사과도 의미가 있다고 생각하나요?",
             ],
             "starter_ko": "나는 ___에게 아직 말하지 못한 마음이 있다. 그 사람에게 ___라고 말하고 싶다.",
@@ -2146,8 +2142,6 @@ def get_reflection_prompts(song_choice):
                 "나에게 'a whole new world'처럼 느껴졌던 새로운 경험은 무엇인가요?",
                 "누군가가 나의 눈을 열어 준 경험이 있나요?",
                 "새로운 세상으로 나아가기 위해 내가 넘어야 할 두려움은 무엇인가요?",
-                "내가 꼭 한 번 경험해 보고 싶은 새로운 세계는 어디인가요?",
-                "새로운 관점이 내 생각을 바꾼 적이 있나요?",
             ],
             "starter_ko": "나에게 새로운 세상처럼 느껴졌던 경험은 ___이다. 그때 나는 ___를 배웠다.",
             "starter_en": "A new world for me was ___. At that time, I learned ___.",
@@ -2159,9 +2153,7 @@ def get_reflection_prompts(song_choice):
             "questions": [
                 "힘든 순간에 내 곁에 있어 준 사람은 누구인가요?",
                 "나는 누군가에게 'stand by me'라고 말하고 싶었던 적이 있나요?",
-                "친구나 가족이 곁에 있다는 사실이 나에게 어떤 힘을 주나요?",
                 "내가 누군가의 곁에 있어 주었던 경험은 무엇인가요?",
-                "진정한 위로는 어떤 말이나 행동에서 온다고 생각하나요?",
             ],
             "starter_ko": "내가 힘들 때 ___가 내 곁에 있어 주었다. 그래서 나는 ___을 느꼈다.",
             "starter_en": "When I was in trouble, ___ stood by me. So I felt ___.",
@@ -2174,8 +2166,6 @@ def get_reflection_prompts(song_choice):
                 "나도 왜 그랬는지 아직 잘 모르겠는 선택을 한 적이 있나요?",
                 "가지 않았던 길이나 하지 않았던 말 때문에 후회한 적이 있나요?",
                 "내 마음속에 오래 남아 있는 사람이나 순간이 있나요?",
-                "말로 설명하기 어려운 감정을 느꼈던 경험은 무엇인가요?",
-                "후회가 꼭 나쁜 감정이라고 생각하나요, 아니면 배움이 될 수 있다고 생각하나요?",
             ],
             "starter_ko": "나는 아직도 왜 ___했는지 잘 모르겠다. 하지만 그 경험은 나에게 ___을 남겼다.",
             "starter_en": "I still do not know why I ___. However, that experience left me with ___.",
@@ -2187,8 +2177,6 @@ def get_reflection_prompts(song_choice):
             "questions": [
                 "최선을 다했지만 원하는 결과를 얻지 못했던 경험이 있나요?",
                 "내가 힘들 때 나를 다시 일으켜 준 말이나 사람이 있었나요?",
-                "'Lights will guide you home'처럼 나에게 희망이 되어 주는 것은 무엇인가요?",
-                "나는 내 실수에서 무엇을 배웠나요?",
                 "힘든 친구에게 내가 건네고 싶은 위로의 말은 무엇인가요?",
             ],
             "starter_ko": "나는 ___에서 실패했지만, 그 경험을 통해 ___을 배웠다.",
@@ -2202,8 +2190,6 @@ def get_reflection_prompts(song_choice):
                 "당신도 가수처럼 그리운 옛 연인이나 다시 만나고 싶은 사람이 있을까요?",
                 "다시 처음으로 돌아갈 수 있다면, 누구에게 어떤 말을 다시 하고 싶나요?",
                 "'Nobody said it was easy'처럼 쉽지 않았던 관계나 경험이 있었나요?",
-                "마음은 아직 남아 있는데 말로 설명하기 어려웠던 순간이 있었나요?",
-                "과거로 돌아갈 수 없다면, 지금의 나는 어떤 방식으로 다시 시작할 수 있을까요?",
             ],
             "starter_ko": "나는 ___에게 다시 돌아가서 ___라고 말하고 싶다. 왜냐하면 ___ 때문이다.",
             "starter_en": "I want to go back and tell ___, '___.'' This is because ___.",
@@ -2222,46 +2208,67 @@ def get_reflection_prompts(song_choice):
 
 
 def make_reflection_feedback(answer_text, question_text):
-    """학생 답변 길이와 내용에 따라 한국어·영어 피드백을 제공합니다."""
+    """학생 답변을 바탕으로 다듬은 한국어 문장과 영어 번역을 제공합니다."""
     cleaned = answer_text.strip()
-    word_count = len(cleaned.split())
     char_count = len(cleaned.replace(" ", ""))
 
     if not cleaned:
         return {
-            "ko": "아직 답변을 쓰지 않았습니다. 한 문장만이라도 좋으니, 노래의 감정과 자신의 경험을 연결해 보세요.",
-            "en": "You have not written your response yet. Even one sentence is okay. Try to connect the feeling of the song with your own experience.",
             "level": "warning",
+            "guide_ko": "아직 답변을 쓰지 않았습니다. 한 문장만이라도 좋으니, 질문에 대한 자신의 경험이나 감정을 먼저 적어 보세요.",
+            "guide_en": "You have not written your response yet. Even one sentence is okay. First, write your own experience or feeling about the question.",
+            "refined_ko": "",
+            "refined_en": "",
         }
 
-    emotional_words = ["미안", "후회", "그립", "사랑", "슬픔", "힘들", "두려", "자유", "희망", "친구", "가족", "다시", "처음", "상처", "위로"]
-    has_emotion = any(w in cleaned for w in emotional_words)
-
+    # 입력값은 학생의 원문을 최대한 살리되, reflective writing 형태로 자연스럽게 정리합니다.
     if char_count < 25:
-        return {
-            "ko": "좋은 시작입니다. 이제 조금만 더 구체적으로 써 보세요. 예를 들어 '언제', '누구에게', '왜 그런 감정을 느꼈는지'를 덧붙이면 글이 훨씬 깊어집니다.",
-            "en": "This is a good start. Try to make it more specific. Add when it happened, who was involved, and why you felt that way.",
-            "level": "info",
-        }
+        refined_ko = (
+            f"이 노래를 들으며 나는 ‘{cleaned}’라는 생각을 했다. "
+            "아직 짧은 답변이지만, 이 마음은 노래의 감정과 나의 경험을 연결하는 출발점이 될 수 있다."
+        )
+        refined_en = (
+            f"While listening to this song, I thought, ‘{cleaned}.’ "
+            "Although this response is still short, this feeling can be a starting point for connecting the emotion of the song with my own experience."
+        )
+        guide_ko = "좋은 시작입니다. 이제 ‘언제’, ‘누구에게’, ‘왜 그런 감정을 느꼈는지’를 한 문장 더 붙이면 글이 훨씬 깊어집니다."
+        guide_en = "This is a good start. Add one more sentence about when it happened, who was involved, and why you felt that way."
+        level = "info"
 
-    if char_count < 70:
-        return {
-            "ko": "잘 썼습니다. 노래의 주제와 자신의 생각이 연결되기 시작했습니다. 한 문장을 더 추가해서 자신의 감정 변화나 배운 점을 적으면 더 좋은 reflective writing이 됩니다.",
-            "en": "Good work. You are beginning to connect the song's theme with your own thoughts. Add one more sentence about how your feelings changed or what you learned.",
-            "level": "success",
-        }
+    elif char_count < 70:
+        refined_ko = (
+            f"이 노래를 들으며 나는 {cleaned}라고 느꼈다. "
+            "그 감정은 단순한 기억이 아니라, 지금의 내가 나의 관계와 마음을 다시 돌아보게 만드는 계기가 되었다."
+        )
+        refined_en = (
+            f"While listening to this song, I felt that {cleaned}. "
+            "This feeling was not just a simple memory; it became a chance for me to look back on my relationships and emotions."
+        )
+        guide_ko = "내용이 좋습니다. 마지막에 ‘그래서 앞으로 나는…’이라는 문장을 덧붙이면 성찰의 마무리가 더 분명해집니다."
+        guide_en = "This is good writing. To make the reflection clearer, add a final sentence beginning with ‘So from now on, I will…’."
+        level = "success"
 
-    if has_emotion:
-        return {
-            "ko": "아주 좋습니다. 자신의 경험과 감정을 솔직하게 연결했습니다. 특히 노래 속 화자의 마음을 자신의 삶과 비교하려는 점이 좋습니다. 마지막에 '그래서 앞으로 나는...'이라는 문장을 덧붙이면 성찰의 마무리가 더 강해집니다.",
-            "en": "Excellent. You honestly connected your own experience and emotions with the song. It is especially good that you compared the speaker's feelings with your own life. To make it stronger, finish with a sentence like, 'So from now on, I will...'.",
-            "level": "success",
-        }
+    else:
+        refined_ko = (
+            f"이 노래를 들으며 나는 {cleaned}라고 생각했다. "
+            "이 경험을 떠올리면서, 나는 과거의 감정을 피하기보다 그 의미를 천천히 이해해 보는 것이 중요하다는 것을 느꼈다. "
+            "결국 이 노래는 나에게 후회나 그리움도 나를 성장하게 만드는 감정이 될 수 있음을 알려 주었다."
+        )
+        refined_en = (
+            f"While listening to this song, I thought that {cleaned}. "
+            "As I remembered this experience, I realized that it is important not to avoid past emotions, but to slowly understand their meaning. "
+            "In the end, this song taught me that regret and longing can also become emotions that help me grow."
+        )
+        guide_ko = "아주 좋습니다. 자신의 경험과 노래의 주제를 잘 연결했습니다. 지금처럼 감정, 이유, 배운 점이 함께 들어가면 좋은 reflective writing이 됩니다."
+        guide_en = "Excellent. You connected your own experience with the theme of the song well. A strong reflection includes feelings, reasons, and what you learned."
+        level = "success"
 
     return {
-        "ko": "내용이 충분히 좋습니다. 이제 감정 단어를 조금 더 넣어 보세요. 예를 들어 '후회했다', '그리웠다', '위로가 되었다', '다시 시작하고 싶었다'처럼 마음을 보여 주는 표현을 쓰면 글이 더 살아납니다.",
-        "en": "Your response has good content. Now try to add more emotion words, such as 'I regretted it,' 'I missed someone,' 'It comforted me,' or 'I wanted to start again.' These expressions will make your reflection more vivid.",
-        "level": "success",
+        "level": level,
+        "guide_ko": guide_ko,
+        "guide_en": guide_en,
+        "refined_ko": refined_ko,
+        "refined_en": refined_en,
     }
 
 
@@ -2282,7 +2289,7 @@ def show_reflective_writing(song_choice):
             <div class="matching-title">✍️ 생각 적기 · Reflective Writing</div>
             <div class="matching-guide">
                 노래의 감정과 나의 경험을 연결해 봅시다.<br>
-                정답을 맞히는 활동이 아니라, <b>내 생각을 영어 또는 한국어로 표현하는 활동</b>입니다.
+                질문은 3개 중 하나를 고르면 됩니다. 답변을 쓰면 <b>다듬은 한국어 문장</b>과 <b>영어 번역</b>을 함께 볼 수 있습니다.
             </div>
         </div>
         """,
@@ -2330,15 +2337,18 @@ def show_reflective_writing(song_choice):
         feedback = make_reflection_feedback(answer, question)
         st.markdown("---")
         st.markdown("## 🌱 피드백 Feedback")
+
         if feedback["level"] == "warning":
-            st.warning(feedback["ko"])
-            st.info(feedback["en"])
-        elif feedback["level"] == "info":
-            st.info(feedback["ko"])
-            st.info(feedback["en"])
+            st.warning(feedback["guide_ko"])
+            st.info(feedback["guide_en"])
         else:
-            st.success(feedback["ko"])
-            st.success(feedback["en"])
+            st.markdown("### ✨ 다듬은 한국어")
+            st.success(feedback["refined_ko"])
+            st.markdown("### 🌍 English Translation")
+            st.info(feedback["refined_en"])
+            st.markdown("### 🌱 쓰기 조언")
+            st.write(feedback["guide_ko"])
+            st.caption(feedback["guide_en"])
 
         st.markdown(
             """
