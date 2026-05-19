@@ -681,9 +681,11 @@ with tabs[7]:
 # =========================================================
 with tabs[8]:
     st.subheader("🙋 선생님께 부탁해요")
-    st.caption("희망곡, 하고 싶은 활동, 질문, 건의사항을 구글 문서에 자유롭게 적어 주세요.")
 
-    safe_doc_url = html.escape("https://docs.google.com/document/d/1kjXveuOIiRQnrcWiyvSsS0DeXSqEe4bphDr0_DSkQyk/edit?tab=t.0", quote=True)
+    safe_doc_url = html.escape(
+        "https://docs.google.com/document/d/1kjXveuOIiRQnrcWiyvSsS0DeXSqEe4bphDr0_DSkQyk/edit?tab=t.0",
+        quote=True
+    )
 
     st.markdown(
         f"""
@@ -714,10 +716,6 @@ with tabs[8]:
             box-shadow:0 5px 14px rgba(0,0,0,0.06);
             margin-bottom:16px;
         ">
-            <div style="font-size:16px; color:#6b7280; font-weight:800; line-height:1.7; margin-bottom:18px;">
-                구글 문서에 적은 내용은 자동 저장됩니다.<br>
-                친구들이 남긴 요청도 함께 볼 수 있습니다.
-            </div>
             <a href="{safe_doc_url}" target="_blank" style="
                 display:block;
                 width:100%;
