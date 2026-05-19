@@ -794,7 +794,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                  'reflect_questions': ['당신도 가수처럼 그리운 옛 연인이나 다시 이야기하고 싶은 사람이 있나요?',
                                                        '처음으로 돌아갈 수 있다면 다시 말하고 싶은 말은 무엇인가요?',
                                                        '사랑이나 관계가 생각보다 쉽지 않았다고 느낀 경험이 있나요?']},
- '8. My Heart Will Go On - Celine Dion': {'video_url': 'https://www.youtube.com/watch?v=3gK_2XdjOdY',
+ '8. My Heart Will Go On - Celine Dion': {'video_url': 'https://www.youtube.com/watch?v=7J3eZFPRj4c&list=RD7J3eZFPRj4c&start_radio=1',
                                           'bg': '\n'
                                                 '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#0f766e;">\n'
                                                 '        🚢 My Heart Will Go On: 마음속에 계속 살아 있는 사랑\n'
