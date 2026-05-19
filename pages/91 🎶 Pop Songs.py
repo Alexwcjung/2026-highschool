@@ -910,7 +910,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                                 '나에게 오래도록 기억에 남는 사랑이나 우정은 무엇인가요?',
                                                                 '힘든 이별이나 그리움을 겪었을 때 나를 위로해 준 기억이 있나요?']},
 
- '9. Alex Sampson - Play Pretend': {'video_url': 'https://www.youtube.com/watch?v=AQiUcu8VX_8&list=RDUZ4brPbM-CI&index=5',
+ '9. Alex Sampson - Play Pretend': {'video_url': 'https://www.youtube.com/watch?v=Hcw8Ztfll_o',
                                      'bg': '\n'
                                            '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#db2777;">\n'
                                            '        🎭 Play Pretend: 좋아하지만 숨겨야 하는 마음\n'
@@ -1029,7 +1029,141 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                   ('Break the rules', '규칙을 깨다')],
                                      'reflect_questions': ['좋아하지만 솔직하게 말하지 못한 마음이 있었나요?',
                                                            '친구의 행복을 바라면서도 마음이 복잡했던 경험이 있나요?',
-                                                           '괜찮은 척했지만 사실은 힘들었던 순간이 있나요?']}
+                                                           '괜찮은 척했지만 사실은 힘들었던 순간이 있나요?']},
+
+ '10. Older - Sasha Alex Sloan': {'video_url': 'https://www.youtube.com/watch?v=M5WwinAObDA&list=RDM5WwinAObDA&start_radio=1',
+                                  'bg': '\n'
+                                        '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#9333ea;">\n'
+                                        '        🌙 Older: 나이가 들며 이해하게 되는 것\n'
+                                        '    </h3>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        Sasha Alex Sloan의 <b>Older</b>는 어린 시절에는 이해할 수 없었던 가족의 갈등과 부모의 모습을,\n'
+                                        '        시간이 흐른 뒤 조금씩 다르게 바라보게 되는 마음을 담은 노래입니다.\n'
+                                        '        제목의 <b>older</b>는 단순히 나이가 많아진다는 뜻을 넘어, 경험을 통해 사람과 관계를 더 깊이 이해하게 되는 과정을 의미합니다.\n'
+                                        '    </p>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        노래 속 화자는 어릴 때 부모님의 다툼을 들으며 방 안에서 음악을 크게 틀고,\n'
+                                        '        그 소리를 듣지 않으려 했던 기억을 떠올립니다.\n'
+                                        '        그때는 부모님이 왜 행복하지 못한지 이해하지 못했고,\n'
+                                        '        자신은 절대 부모님처럼 되지 않겠다고 생각했습니다.\n'
+                                        '    </p>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        하지만 나이가 들수록 화자는 부모님도 완벽한 영웅이 아니라,\n'
+                                        '        자신처럼 상처받고 실수하고 사랑을 어려워하는 한 사람이라는 것을 깨닫습니다.\n'
+                                        '        그래서 이 노래는 원망에서 이해로, 분노에서 받아들임으로 변해 가는 감정을 보여 줍니다.\n'
+                                        '    </p>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        수업에서는 <b>I used to</b>, <b>the older I get</b>, <b>heroes</b>,\n'
+                                        '        <b>loving is hard</b>, <b>try your best</b>, <b>let someone go</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+                                        '        특히 이 노래는 가족, 성장, 이해, 용서, 관계의 어려움을 주제로 생각을 적기에 좋습니다.\n'
+                                        '    </p>\n'
+                                        '    ',
+                                  'lyrics': [("I used to shut my door while my mother screamed in the kitchen",
+                                              '엄마가 부엌에서 소리칠 때 나는 방문을 닫곤 했어'),
+                                             ("I'd turn the music up, get high and try not to listen",
+                                              '나는 음악을 크게 틀고, 정신을 흐리게 한 채 듣지 않으려 했어'),
+                                             ("To every little fight, 'cause neither one was right",
+                                              '사소한 싸움 하나하나를 듣지 않으려고 했어, 어느 쪽도 맞지 않았으니까'),
+                                             ("I swore I'd never be like them / But I was just a kid back then",
+                                              '나는 절대 그들처럼 되지 않겠다고 맹세했어 / 하지만 그때 나는 그저 아이였어'),
+                                             ('The older I get the more that I see',
+                                              '나이가 들수록 더 많이 보이게 돼'),
+                                             ("My parents aren't heroes, they're just like me",
+                                              '내 부모님은 영웅이 아니라, 그저 나와 같은 사람이야'),
+                                             ("And loving is hard, it don't always work",
+                                              '그리고 사랑은 어렵고, 항상 잘되는 것은 아니야'),
+                                             ('You just try your best not to get hurt',
+                                              '그저 상처받지 않으려고 최선을 다할 뿐이야'),
+                                             ('I used to be mad but now I know',
+                                              '나는 예전에는 화가 났지만 이제는 알아'),
+                                             ("Sometimes it's better to let someone go",
+                                              '때로는 누군가를 놓아주는 것이 더 나을 때도 있다는 것을'),
+                                             ("It just hadn't hit me yet / The older I get",
+                                              '그게 아직 내 마음에 와닿지 않았을 뿐이야 / 나이가 들수록'),
+                                             ('I used to wonder why, why they could never be happy',
+                                              '나는 왜, 왜 그들이 결코 행복할 수 없었는지 궁금해하곤 했어'),
+                                             ("I used to close my eyes and pray for a whole 'nother family",
+                                              '나는 눈을 감고 완전히 다른 가족을 달라고 기도하곤 했어'),
+                                             ('Where everything was fine, one that felt like mine',
+                                              '모든 것이 괜찮고, 내 것처럼 느껴지는 가족을'),
+                                             ("I swore I'd never be like them / But I was just a kid back then",
+                                              '나는 절대 그들처럼 되지 않겠다고 맹세했어 / 하지만 그때 나는 그저 아이였어'),
+                                             ('The older I get the more that I see',
+                                              '나이가 들수록 더 많이 보이게 돼'),
+                                             ("My parents aren't heroes, they're just like me",
+                                              '내 부모님은 영웅이 아니라, 그저 나와 같은 사람이야'),
+                                             ("And loving is hard, it don't always work",
+                                              '그리고 사랑은 어렵고, 항상 잘되는 것은 아니야'),
+                                             ('You just try your best not to get hurt',
+                                              '그저 상처받지 않으려고 최선을 다할 뿐이야'),
+                                             ('I used to be mad but now I know',
+                                              '나는 예전에는 화가 났지만 이제는 알아'),
+                                             ("Sometimes it's better to let someone go",
+                                              '때로는 누군가를 놓아주는 것이 더 나을 때도 있다는 것을'),
+                                             ("It just hadn't hit me yet / The older I get",
+                                              '그게 아직 내 마음에 와닿지 않았을 뿐이야 / 나이가 들수록'),
+                                             ('The older I get the more that I see',
+                                              '나이가 들수록 더 많이 보이게 돼'),
+                                             ("My parents aren't heroes, they're just like me",
+                                              '내 부모님은 영웅이 아니라, 그저 나와 같은 사람이야'),
+                                             ("And loving is hard, it don't always work",
+                                              '그리고 사랑은 어렵고, 항상 잘되는 것은 아니야'),
+                                             ('You just try your best not to get hurt',
+                                              '그저 상처받지 않으려고 최선을 다할 뿐이야'),
+                                             ('I used to be mad but now I know',
+                                              '나는 예전에는 화가 났지만 이제는 알아'),
+                                             ("Sometimes it's better to let someone go",
+                                              '때로는 누군가를 놓아주는 것이 더 나을 때도 있다는 것을'),
+                                             ("It just hadn't hit me yet / The older I get",
+                                              '그게 아직 내 마음에 와닿지 않았을 뿐이야 / 나이가 들수록')],
+                                  'quiz': [{'q': '1. 이 노래에서 화자는 어릴 때 무엇을 듣지 않으려고 했나요?',
+                                            'options': ['부모님의 싸움', '친구의 웃음소리', '선생님의 설명', '바닷소리'],
+                                            'answer': '부모님의 싸움'},
+                                           {'q': '2. 화자는 어릴 때 어떤 가족을 바라곤 했나요?',
+                                            'options': ['모든 것이 괜찮은 다른 가족', '유명한 가수의 가족', '운동선수 가족', '외국에 사는 가족'],
+                                            'answer': '모든 것이 괜찮은 다른 가족'},
+                                           {'q': "3. 'The older I get the more that I see'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                            'options': ['나이가 들수록 더 많이 이해하게 된다', '나이가 들수록 아무것도 보이지 않는다', '나이가 들수록 음악을 싫어한다', '나이가 들수록 항상 화만 난다'],
+                                            'answer': '나이가 들수록 더 많이 이해하게 된다'},
+                                           {'q': "4. 'My parents aren't heroes, they're just like me'는 어떤 의미인가요?",
+                                            'options': ['부모님도 완벽하지 않은 한 사람이라는 뜻', '부모님은 실제 영웅이라는 뜻', '부모님은 나와 전혀 다르다는 뜻', '부모님은 항상 옳다는 뜻'],
+                                            'answer': '부모님도 완벽하지 않은 한 사람이라는 뜻'},
+                                           {'q': "5. 'Loving is hard, it don't always work'의 의미는 무엇인가요?",
+                                            'options': ['사랑은 어렵고 항상 잘되는 것은 아니다', '사랑은 언제나 쉽다', '사랑은 필요 없다', '사랑은 공부와 같다'],
+                                            'answer': '사랑은 어렵고 항상 잘되는 것은 아니다'},
+                                           {'q': "6. 'Sometimes it's better to let someone go'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                            'options': ['때로는 누군가를 놓아주는 것이 더 나을 수 있다', '항상 붙잡아야 한다', '절대 헤어지면 안 된다', '누군가를 무조건 미워해야 한다'],
+                                            'answer': '때로는 누군가를 놓아주는 것이 더 나을 수 있다'},
+                                           {'q': '7. 이 노래에서 화자의 감정 변화로 가장 알맞은 것은 무엇인가요?',
+                                            'options': ['원망에서 이해로 변해 감', '기쁨에서 질투로 변해 감', '자신감에서 두려움으로 변해 감', '무관심에서 승리감으로 변해 감'],
+                                            'answer': '원망에서 이해로 변해 감'},
+                                           {'q': '8. 이 노래의 중심 주제로 가장 알맞은 것은 무엇인가요?',
+                                            'options': ['성장하며 부모와 사랑을 이해하게 되는 마음', '여행의 즐거움', '학교 시험의 어려움', '친구와 규칙을 깨는 재미'],
+                                            'answer': '성장하며 부모와 사랑을 이해하게 되는 마음'}],
+                                  'key_expressions': [('I used to', '나는 ~하곤 했다'),
+                                                      ('Shut my door', '방문을 닫다'),
+                                                      ('Turn the music up', '음악을 크게 틀다'),
+                                                      ('Try not to listen', '듣지 않으려고 하다'),
+                                                      ('I swore', '나는 맹세했다'),
+                                                      ('The older I get', '나이가 들수록'),
+                                                      ("My parents aren't heroes", '내 부모님은 영웅이 아니다'),
+                                                      ('Loving is hard', '사랑은 어렵다'),
+                                                      ('Try your best', '최선을 다하다'),
+                                                      ('Let someone go', '누군가를 놓아주다')],
+                                  'matching': [('I used to', '나는 ~하곤 했다'),
+                                               ('The older I get', '나이가 들수록'),
+                                               ("My parents aren't heroes", '내 부모님은 영웅이 아니다'),
+                                               ('Loving is hard', '사랑은 어렵다'),
+                                               ('Try your best', '최선을 다하다'),
+                                               ('Let someone go', '누군가를 놓아주다')],
+                                  'reflect_questions': ['나이가 들면서 부모님이나 가족을 다르게 이해하게 된 경험이 있나요?',
+                                                        '어릴 때는 이해하지 못했지만 지금은 조금 이해되는 일이 있나요?',
+                                                        '누군가를 붙잡기보다 놓아주는 것이 더 낫다고 느낀 적이 있나요?']}
+
 }
 
 BACKGROUND_CONTENT = {
@@ -1112,6 +1246,15 @@ BACKGROUND_CONTENT = {
             "노래 속 화자는 상대를 특별한 사람이라고 생각합니다. 상대가 자신이 얼마나 소중한 사람인지 알았으면 좋겠지만, 동시에 그 마음을 직접 말하지 못합니다. 상대가 다시 상처받는 모습을 보는 것도 힘들고, 자신의 마음을 숨기는 것도 힘든 상황입니다.",
             "반복되는 I want you to be happy는 상대의 행복을 진심으로 바라는 마음을 보여 줍니다. 하지만 it’s hard to watch you fall again과 I gotta play pretend는 그 마음이 단순한 우정만은 아니라는 점, 그리고 솔직하지 못한 감정이 화자에게 아픔을 준다는 점을 보여 줍니다.",
             "수업에서는 someone special, settle, break the rules, don’t take this the wrong way, play pretend, fine line, like the back of my hand 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘좋아하지만 말하지 못한 마음’, ‘친구의 행복을 바라보는 마음’, ‘괜찮은 척했던 순간’을 주제로 생각을 적게 할 수 있습니다."
+        ],
+    },
+    "10. Older - Sasha Alex Sloan": {
+        "title": "🌙 Older: 나이가 들며 이해하게 되는 것",
+        "paragraphs": [
+            "Older는 Sasha Alex Sloan의 노래로, 어린 시절에는 이해할 수 없었던 부모님의 갈등과 가족의 모습을 시간이 흐른 뒤 조금씩 다르게 바라보게 되는 마음을 담고 있습니다. 화자는 어릴 때 부모님의 싸움을 들으며 방 안에서 음악을 크게 틀고, 그 상황을 피하려 했던 기억을 떠올립니다.",
+            "어릴 때 화자는 부모님이 왜 행복하지 못한지 이해하지 못했고, 자신은 절대 부모님처럼 되지 않겠다고 생각했습니다. 하지만 나이가 들면서 부모님도 완벽한 영웅이 아니라, 자신처럼 상처받고 실수하고 사랑을 어려워하는 한 사람이라는 것을 깨닫게 됩니다.",
+            "반복되는 The older I get the more that I see는 나이가 들수록 더 많이 이해하게 된다는 뜻입니다. 이 노래는 단순히 가족의 아픔을 말하는 것이 아니라, 시간이 지나며 원망이 이해로 바뀌고, 사랑이 항상 쉽지 않다는 사실을 받아들이는 성장의 과정을 보여 줍니다.",
+            "수업에서는 I used to, the older I get, my parents aren't heroes, loving is hard, try your best, let someone go 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘어릴 때는 몰랐지만 지금은 이해되는 일’, ‘가족을 바라보는 시선의 변화’, ‘누군가를 놓아주는 마음’을 주제로 생각을 적게 할 수 있습니다."
         ],
     },
 }
