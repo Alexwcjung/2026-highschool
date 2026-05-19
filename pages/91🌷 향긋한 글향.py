@@ -1227,7 +1227,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 data = data_bank[category][topic_name]
 dialogue = data["dialogue"]
-full_english = "\n".join([f"{speaker}: {eng}" for speaker, eng, kor in dialogue])
+full_english = "\n".join([eng for speaker, eng, kor in dialogue])
 
 st.markdown(f"""
 <div class="info-card">
