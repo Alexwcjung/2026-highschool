@@ -721,7 +721,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                         ('Tears stream down your face', '눈물이 네 얼굴을 타고 흘러내려'),
                                         ('I will learn from my mistakes', '나는 내 실수에서 배울 거야')],
                            'reflect_questions': ['최선을 다했지만 원하는 결과를 얻지 못했던 경험이 있나요?', '힘들 때 나를 다시 일으켜 준 사람이나 말이 있었나요?', '나도 누군가를 위로하거나 도와주고 싶었던 적이 있나요?']},
- '7. The Scientist - Coldplay': {'video_url': 'https://www.youtube.com/watch?v=RB-RcX5DS5A',
+ '7. The Scientist - Coldplay': {'video_url': 'https://www.youtube.com/watch?v=kV82ahVRPFg&list=RDkV82ahVRPFg&start_radio=1',
                                  'bg': '<h3 style="font-size:2.2rem; margin-bottom:20px; color:#2563eb;">🔬 The Scientist: 처음으로 돌아가고 싶은 마음</h3>\n'
                                        '<p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">Coldplay의 <b>The Scientist</b>는 지나간 관계와 후회를 돌아보며, 처음으로 '
                                        '돌아가 다시 말하고 싶은 마음을 담은 노래입니다.</p>\n'
