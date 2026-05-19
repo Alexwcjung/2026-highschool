@@ -545,6 +545,7 @@ def speaking_practice_component(items):
             font-weight:700;
         ">
             ※ Chrome 계열 브라우저에서 음성 인식이 가장 잘 작동합니다.<br>
+            ※ 문장은 말해야 합니다. 다만 발음 시험은 아니므로 빈칸 핵심 단어와 문장 흐름을 관대하게 봅니다.<br>
             ※ 마이크 권한 요청이 나오면 허용을 눌러 주세요.
         </div>
     </div>
@@ -648,6 +649,16 @@ def speaking_practice_component(items):
             .replace(/\byou'll\b/g, "you will")
             .replace(/\bhe'll\b/g, "he will")
             .replace(/\bshe'll\b/g, "she will")
+            .replace(/\bok\b/g, "okay")
+            .replace(/\bo k\b/g, "okay")
+            .replace(/\bwanna\b/g, "want")
+            .replace(/\bgonna\b/g, "going to")
+            .replace(/\bgotta\b/g, "have to")
+            .replace(/\bp\.e\.\b/g, "pe")
+            .replace(/\bwi fi\b/g, "wifi")
+            .replace(/\bwi-fi\b/g, "wifi")
+            .replace(/\bt shirt\b/g, "tshirt")
+            .replace(/\btee shirt\b/g, "tshirt")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
@@ -716,31 +727,135 @@ def speaking_practice_component(items):
             .replace(/(.)\1+/g, "$1");
     }
 
+    function vowelLooseKey(text) {
+        return normalizeText(text)
+            .replace(/[^a-z]/g, "")
+            .replace(/ee/g, "i")
+            .replace(/ea/g, "i")
+            .replace(/ie/g, "i")
+            .replace(/ei/g, "i")
+            .replace(/oo/g, "u")
+            .replace(/ou/g, "u")
+            .replace(/ow/g, "o")
+            .replace(/oa/g, "o")
+            .replace(/ai/g, "e")
+            .replace(/ay/g, "e")
+            .replace(/[aeiouy]+/g, "v")
+            .replace(/(.)\1+/g, "$1");
+    }
+
+    function hasSharedBigram(a, b) {
+        a = String(a || "");
+        b = String(b || "");
+        if (a.length < 2 || b.length < 2) return false;
+
+        for (let i = 0; i < a.length - 1; i++) {
+            if (b.includes(a.slice(i, i + 2))) return true;
+        }
+
+        return false;
+    }
+
     function aliasMatch(spokenWord, answerWord) {
         const sw = normalizeText(spokenWord).replace(/\s+/g, "");
         const aw = normalizeText(answerWord).replace(/\s+/g, "");
 
         const aliases = {
-            "i": ["i", "eye", "ai"],
-            "you": ["you", "u", "yew"],
-            "he": ["he", "hi"],
-            "she": ["she", "see", "sea"],
-            "we": ["we", "wee"],
-            "they": ["they", "day"],
-            "one": ["one", "won"],
-            "two": ["two", "to", "too"],
-            "three": ["three", "tree"],
-            "four": ["four", "for"],
-            "eight": ["eight", "ate"],
-            "here": ["here", "hear"],
-            "there": ["there", "their"],
-            "right": ["right", "write"],
-            "wait": ["wait", "weight"],
-            "know": ["know", "no"],
-            "okay": ["okay", "ok"],
-            "phone": ["phone", "fone"],
-            "coffee": ["coffee", "coffe"],
-            "please": ["please", "plz"]
+            "i": ["i", "eye", "hi", "ai", "a"],
+            "am": ["am", "im", "i'm", "em"],
+            "have": ["have", "haf", "hub"],
+            "a": ["a", "uh", "an"],
+            "the": ["the", "da", "d"],
+            "my": ["my", "mai"],
+            "we": ["we", "wee", "wi"],
+            "are": ["are", "r", "our"],
+            "was": ["was", "wuz"],
+            "will": ["will", "wheel", "well"],
+            "is": ["is", "iz", "his"],
+            "to": ["to", "too", "two"],
+            "in": ["in", "inn"],
+            "on": ["on", "an"],
+            "at": ["at", "art"],
+            "with": ["with", "wid"],
+            "because": ["because", "becuz", "cause"],
+            "and": ["and", "an", "en"],
+            "but": ["but", "bat"],
+            "so": ["so", "sew"],
+            "it": ["it", "eat"],
+
+            "math": ["math", "mat", "mass", "meth", "matt"],
+            "science": ["science", "sience", "signs"],
+            "textbook": ["textbook", "text book"],
+            "friend": ["friend", "frend", "freind"],
+            "schedule": ["schedule", "skedule"],
+            "copy": ["copy", "coffee"],
+            "underline": ["underline", "under line"],
+            "explained": ["explained", "explain", "explane"],
+            "discussed": ["discussed", "discuss"],
+            "repeat": ["repeat", "repeet"],
+            "television": ["television", "tv", "televison"],
+            "kitchen": ["kitchen", "kichen"],
+            "blanket": ["blanket", "blankit"],
+            "early": ["early", "erly"],
+            "soap": ["soap", "soup"],
+            "shower": ["shower", "shaur"],
+            "weekends": ["weekends", "weekend"],
+            "weekdays": ["weekdays", "weekday"],
+            "homework": ["homework", "home work"],
+            "music": ["music", "musick"],
+            "hobby": ["hobby", "habi"],
+            "photography": ["photography", "fotography"],
+            "camping": ["camping", "campin"],
+            "soccer": ["soccer", "soker"],
+            "basketball": ["basketball", "basket ball"],
+            "coach": ["coach", "couch"],
+            "rainy": ["rainy", "raining"],
+            "umbrella": ["umbrella", "umbreller"],
+            "winter": ["winter", "winner"],
+            "snowy": ["snowy", "snowing"],
+            "forecast": ["forecast", "forcast"],
+            "stormy": ["stormy", "storm"],
+            "restaurant": ["restaurant", "resturant"],
+            "menu": ["menu", "manu"],
+            "dish": ["dish", "this"],
+            "bill": ["bill", "빌"],
+            "receipt": ["receipt", "receit", "reseat"],
+            "salad": ["salad", "saled"],
+            "dessert": ["dessert", "desert"],
+            "expensive": ["expensive", "expencive"],
+            "coupon": ["coupon", "cupon"],
+            "cashier": ["cashier", "casher"],
+            "size": ["size", "sides"],
+            "exchange": ["exchange", "ex change"],
+            "lost": ["lost", "last"],
+            "subway": ["subway", "sub way"],
+            "corner": ["corner", "coroner"],
+            "right": ["right", "write", "light"],
+            "airport": ["airport", "air port"],
+            "quickly": ["quickly", "quickli"],
+            "reservation": ["reservation", "reserbation"],
+            "backpack": ["backpack", "back pack"],
+            "museum": ["museum", "museam"],
+            "souvenir": ["souvenir", "suvener"],
+            "late": ["late", "let"],
+            "helped": ["helped", "help"],
+            "nervous": ["nervous", "nervus"],
+            "proud": ["proud", "prout"],
+            "disappointed": ["disappointed", "disapointed"],
+            "hopeful": ["hopeful", "hopful"],
+            "lonely": ["lonely", "lonli"],
+            "message": ["message", "messege"],
+            "battery": ["battery", "batery"],
+            "password": ["password", "pass word"],
+            "news": ["news", "new"],
+            "comment": ["comment", "coment"],
+            "screen": ["screen", "스크린"],
+            "engineer": ["engineer", "enginier"],
+            "experience": ["experience", "experiance"],
+            "chef": ["chef", "shef"],
+            "goal": ["goal", "go"],
+            "firefighters": ["firefighters", "fire fighter", "firefighters"],
+            "dangerous": ["dangerous", "dangrous"]
         };
 
         if (!aliases[aw]) return false;
@@ -757,22 +872,120 @@ def speaking_practice_component(items):
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
+
         const soundSw = soundKey(sw);
         const soundAw = soundKey(aw);
+        const soundDist = editDistance(soundSw, soundAw);
+        const soundSim = wordSimilarity(soundSw, soundAw);
+
+        const vowelSw = vowelLooseKey(sw);
+        const vowelAw = vowelLooseKey(aw);
+        const vowelSim = wordSimilarity(vowelSw, vowelAw);
 
         const sameFirst = sw.charAt(0) === aw.charAt(0);
+        const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
         const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
-        const soundSame = soundSw && soundAw && soundSw === soundAw;
-        const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
+        const sameFirstThree = sw.slice(0, 3) === aw.slice(0, 3);
+        const sameLastTwo = sw.slice(-2) === aw.slice(-2);
 
-        if (!sameFirst && !soundSameFirst && sim < 0.78) return false;
-        if (soundSame) return true;
+        const soundSameFirst =
+            soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
+        const soundSameLast =
+            soundSw && soundAw &&
+            soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
 
-        if (aw.length <= 2) return sim >= 0.9;
-        if (aw.length <= 4) return (sameFirst || soundSameFirst) && (dist <= 1 || sim >= 0.74);
-        if (aw.length <= 6) return (sameFirst || soundSameFirst || sameFirstTwo) && (dist <= 2 || sim >= 0.72);
+        const hasAnyClue =
+            sameFirst ||
+            sameLast ||
+            sameFirstTwo ||
+            sameLastTwo ||
+            soundSameFirst ||
+            soundSameLast ||
+            hasSharedBigram(sw, aw) ||
+            sim >= 0.28 ||
+            soundSim >= 0.20 ||
+            vowelSim >= 0.23;
 
-        return (sameFirst || soundSameFirst || sameFirstTwo) && (dist <= 3 || sim >= 0.68);
+        if (!hasAnyClue) return false;
+
+        // 일부만 인식되거나 붙어서 인식된 경우 허용
+        if (aw.length >= 4 && sw.length >= 2 && (aw.includes(sw) || sw.includes(aw))) {
+            return true;
+        }
+
+        // 자음 뼈대가 같거나 거의 같으면 통과
+        if (soundSw && soundAw && soundSw === soundAw) return true;
+        if (soundSw && soundAw && soundDist <= 2 && soundSim >= 0.20) return true;
+
+        // 짧은 단어도 너무 엄격하지 않게 처리
+        if (aw.length <= 2) {
+            return (
+                sim >= 0.48 ||
+                soundSim >= 0.25 ||
+                sameFirst ||
+                sameLast ||
+                soundSameFirst ||
+                soundSameLast
+            );
+        }
+
+        // 3~4글자 단어: 한 단어 인식 관대하게
+        if (aw.length <= 4) {
+            return (
+                dist <= 2 ||
+                sim >= 0.28 ||
+                soundSim >= 0.18 ||
+                vowelSim >= 0.22 ||
+                sameFirst ||
+                sameLast ||
+                soundSameFirst ||
+                soundSameLast ||
+                hasSharedBigram(sw, aw)
+            );
+        }
+
+        // 5~6글자 단어
+        if (aw.length <= 6) {
+            return (
+                dist <= 4 ||
+                sim >= 0.30 ||
+                soundSim >= 0.20 ||
+                vowelSim >= 0.23 ||
+                sameFirst ||
+                sameFirstTwo ||
+                sameLast ||
+                sameLastTwo ||
+                hasSharedBigram(sw, aw)
+            );
+        }
+
+        // 긴 단어
+        return (
+            dist <= 6 ||
+            sim >= 0.26 ||
+            soundSim >= 0.18 ||
+            vowelSim >= 0.20 ||
+            sameFirst ||
+            sameFirstTwo ||
+            sameFirstThree ||
+            sameLast ||
+            sameLastTwo ||
+            hasSharedBigram(sw, aw)
+        );
+    }
+
+    function getCoreHintWords() {
+        if (!currentItem || !currentItem.hint) return [];
+        return String(currentItem.hint || "")
+            .split("/")
+            .map(x => normalizeText(x).trim())
+            .filter(x => x.length > 0);
+    }
+
+    function removeFillerWords(words) {
+        return words.filter(w =>
+            !["a", "an", "the", "uh", "um", "please", "yes", "no"].includes(w)
+        );
     }
 
     function isCloseEnough(spoken, answer) {
@@ -787,62 +1000,123 @@ def speaking_practice_component(items):
 
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
-        // 핵심 수정:
-        // 빈칸이 여러 개일 때 앞 빈칸만 말해도 전체 정답 처리되는 문제를 막습니다.
-        // currentItem.hint에 들어 있는 모든 빈칸 정답을 말해야 정답으로 인정합니다.
-        if (currentItem && currentItem.hint) {
-            const blankAnswers = String(currentItem.hint)
-                .split("/")
-                .map(x => normalizeText(x).trim())
-                .filter(x => x.length > 0);
+        // 문장 말하기 활동이므로 빈칸 단어만 말하면 오답입니다.
+        // 다만 2문장 전체에서 기능어 몇 개, 관사 몇 개가 빠지는 것은 허용합니다.
+        const minWordsNeeded = Math.max(4, Math.ceil(answerWords.length * 0.45));
+        if (spokenWords.length < minWordsNeeded) {
+            return false;
+        }
 
-            for (const blankAnswer of blankAnswers) {
-                const blankWords = wordsOnly(blankAnswer);
-                let allWordsFound = true;
+        // 첫 단어는 문장 시작 골격이므로 비슷해야 함
+        if (!isUnderstandableWord(spokenWords[0], answerWords[0])) {
+            return false;
+        }
 
-                for (const bw of blankWords) {
-                    let foundThisWord = false;
+        // 모든 빈칸 핵심 정답은 반드시 말해야 함
+        const blankAnswers = getCoreHintWords();
 
-                    for (const sw of spokenWords) {
-                        if (isUnderstandableWord(sw, bw)) {
-                            foundThisWord = true;
-                            break;
-                        }
-                    }
+        for (const blankAnswer of blankAnswers) {
+            const blankWords = wordsOnly(blankAnswer);
+            const joinedBlank = blankWords.join("");
+            let foundBlank = false;
 
-                    if (!foundThisWord) {
-                        allWordsFound = false;
+            if (blankWords.length === 1) {
+                const target = blankWords[0];
+
+                for (const sw of spokenWords) {
+                    if (isUnderstandableWord(sw, target)) {
+                        foundBlank = true;
                         break;
                     }
                 }
 
-                if (!allWordsFound) {
-                    return false;
+                if (!foundBlank) {
+                    const joinedSpoken = spokenWords.join("");
+                    if (isUnderstandableWord(joinedSpoken, target)) {
+                        foundBlank = true;
+                    }
                 }
+            } else {
+                const joinedSpoken = spokenWords.join("");
+                if (isUnderstandableWord(joinedSpoken, joinedBlank)) {
+                    foundBlank = true;
+                } else {
+                    let pos = 0;
+                    for (const sw of spokenWords) {
+                        const target = blankWords[pos];
+                        if (!target) break;
+                        if (isUnderstandableWord(sw, target)) pos += 1;
+                        if (pos >= blankWords.length) break;
+                    }
+                    if (pos >= blankWords.length) foundBlank = true;
+                }
+            }
+
+            if (!foundBlank) {
+                return false;
             }
         }
 
+        // 문장 전체 흐름을 순서대로 관대하게 매칭
+        let answerPos = 0;
         let matched = 0;
-        let used = new Array(spokenWords.length).fill(false);
 
-        for (let aw of answerWords) {
-            let found = false;
-            for (let i = 0; i < spokenWords.length; i++) {
-                if (used[i]) continue;
-                if (isUnderstandableWord(spokenWords[i], aw)) {
-                    used[i] = true;
-                    found = true;
-                    break;
-                }
+        for (let i = 0; i < spokenWords.length; i++) {
+            const sw = spokenWords[i];
+            const target = answerWords[answerPos];
+
+            if (!target) break;
+
+            if (isUnderstandableWord(sw, target)) {
+                matched += 1;
+                answerPos += 1;
+                continue;
             }
-            if (found) matched += 1;
+
+            // filler는 건너뜀
+            if (["a", "an", "the", "uh", "um", "please", "yes", "no"].includes(sw)) {
+                continue;
+            }
+
+            // 정답 쪽 짧은 기능어 하나가 빠진 경우 허용
+            const nextTarget = answerWords[answerPos + 1];
+            if (
+                target &&
+                target.length <= 3 &&
+                nextTarget &&
+                isUnderstandableWord(sw, nextTarget)
+            ) {
+                matched += 1;
+                answerPos += 2;
+                continue;
+            }
+
+            // 정답 두 단어가 붙어서 인식된 경우
+            if (
+                nextTarget &&
+                isUnderstandableWord(sw, target + nextTarget)
+            ) {
+                matched += 2;
+                answerPos += 2;
+                continue;
+            }
         }
 
-        const ratio = matched / answerWords.length;
+        // 긴 2문장이라 완벽한 단어 수를 요구하지 않음
+        const requiredMatches = Math.max(4, Math.ceil(answerWords.length * 0.48));
+        if (matched >= requiredMatches) return true;
 
-        // 모든 빈칸 정답을 어느 정도 말한 상태에서 문장 전체 비율을 봅니다.
-        // 학생 발음을 조금 더 관대하게 인정하기 위해 기준을 낮춥니다.
-        return ratio >= 0.65;
+        // 빈칸을 모두 맞히고, 문장 길이와 첫 단어 조건을 만족하면 통과
+        // 긴 문장에서 ASR이 중간을 많이 흘려도 학습 목적상 인정
+        if (
+            blankAnswers.length > 0 &&
+            spokenWords.length >= minWordsNeeded &&
+            isUnderstandableWord(spokenWords[0], answerWords[0])
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -1042,7 +1316,7 @@ def speaking_practice_component(items):
 
             resultBox.style.display = "block";
             resultBox.style.color = "#92400e";
-            resultBox.innerText = "틀린 것이 아니라, 아직 문장이 충분히 인식되지 않았습니다. 한 문장씩 쉬어 가며 다시 말해도 됩니다.";
+            resultBox.innerText = "문장은 말해야 합니다. 다만 발음 시험은 아니므로, 문장 흐름과 빈칸 핵심 단어가 맞으면 관대하게 정답으로 인정됩니다.";
         }
     }
 
