@@ -145,6 +145,71 @@ QUIZ_COUNTRIES = [
     {"ko": "뉴질랜드", "en": "New Zealand", "iso": "NZL", "continent": "오세아니아", "flag": "🇳🇿"},
 ]
 
+
+# =====================================================
+# 냉전시대 지도 데이터
+# =====================================================
+COLD_WAR_GROUPS = [
+    # 서방 진영 / NATO 중심
+    {"ko": "미국", "en": "United States", "iso": "USA", "group": "서방 진영 / Western Bloc"},
+    {"ko": "캐나다", "en": "Canada", "iso": "CAN", "group": "서방 진영 / Western Bloc"},
+    {"ko": "영국", "en": "United Kingdom", "iso": "GBR", "group": "서방 진영 / Western Bloc"},
+    {"ko": "프랑스", "en": "France", "iso": "FRA", "group": "서방 진영 / Western Bloc"},
+    {"ko": "서독", "en": "West Germany", "iso": "DEU", "group": "서방 진영 / Western Bloc"},
+    {"ko": "이탈리아", "en": "Italy", "iso": "ITA", "group": "서방 진영 / Western Bloc"},
+    {"ko": "스페인", "en": "Spain", "iso": "ESP", "group": "서방 진영 / Western Bloc"},
+    {"ko": "포르투갈", "en": "Portugal", "iso": "PRT", "group": "서방 진영 / Western Bloc"},
+    {"ko": "네덜란드", "en": "Netherlands", "iso": "NLD", "group": "서방 진영 / Western Bloc"},
+    {"ko": "벨기에", "en": "Belgium", "iso": "BEL", "group": "서방 진영 / Western Bloc"},
+    {"ko": "노르웨이", "en": "Norway", "iso": "NOR", "group": "서방 진영 / Western Bloc"},
+    {"ko": "덴마크", "en": "Denmark", "iso": "DNK", "group": "서방 진영 / Western Bloc"},
+    {"ko": "그리스", "en": "Greece", "iso": "GRC", "group": "서방 진영 / Western Bloc"},
+    {"ko": "튀르키예", "en": "Turkey", "iso": "TUR", "group": "서방 진영 / Western Bloc"},
+    {"ko": "일본", "en": "Japan", "iso": "JPN", "group": "서방 진영 / Western Bloc"},
+    {"ko": "대한민국", "en": "South Korea", "iso": "KOR", "group": "서방 진영 / Western Bloc"},
+    {"ko": "호주", "en": "Australia", "iso": "AUS", "group": "서방 진영 / Western Bloc"},
+    {"ko": "뉴질랜드", "en": "New Zealand", "iso": "NZL", "group": "서방 진영 / Western Bloc"},
+
+    # 공산권 / 동방 진영
+    {"ko": "소련", "en": "Soviet Union", "iso": "RUS", "group": "공산권 / Eastern Bloc"},
+    {"ko": "동독", "en": "East Germany", "iso": "DEU", "group": "공산권 / Eastern Bloc"},
+    {"ko": "폴란드", "en": "Poland", "iso": "POL", "group": "공산권 / Eastern Bloc"},
+    {"ko": "체코슬로바키아", "en": "Czechoslovakia", "iso": "CZE", "group": "공산권 / Eastern Bloc"},
+    {"ko": "헝가리", "en": "Hungary", "iso": "HUN", "group": "공산권 / Eastern Bloc"},
+    {"ko": "루마니아", "en": "Romania", "iso": "ROU", "group": "공산권 / Eastern Bloc"},
+    {"ko": "불가리아", "en": "Bulgaria", "iso": "BGR", "group": "공산권 / Eastern Bloc"},
+    {"ko": "중국", "en": "China", "iso": "CHN", "group": "공산권 / Eastern Bloc"},
+    {"ko": "북한", "en": "North Korea", "iso": "PRK", "group": "공산권 / Eastern Bloc"},
+    {"ko": "베트남", "en": "Vietnam", "iso": "VNM", "group": "공산권 / Eastern Bloc"},
+    {"ko": "쿠바", "en": "Cuba", "iso": "CUB", "group": "공산권 / Eastern Bloc"},
+
+    # 비동맹 / 제3세계 중심
+    {"ko": "인도", "en": "India", "iso": "IND", "group": "비동맹 / Non-Aligned"},
+    {"ko": "인도네시아", "en": "Indonesia", "iso": "IDN", "group": "비동맹 / Non-Aligned"},
+    {"ko": "이집트", "en": "Egypt", "iso": "EGY", "group": "비동맹 / Non-Aligned"},
+    {"ko": "유고슬라비아", "en": "Yugoslavia", "iso": "SRB", "group": "비동맹 / Non-Aligned"},
+    {"ko": "가나", "en": "Ghana", "iso": "GHA", "group": "비동맹 / Non-Aligned"},
+    {"ko": "나이지리아", "en": "Nigeria", "iso": "NGA", "group": "비동맹 / Non-Aligned"},
+    {"ko": "케냐", "en": "Kenya", "iso": "KEN", "group": "비동맹 / Non-Aligned"},
+    {"ko": "브라질", "en": "Brazil", "iso": "BRA", "group": "비동맹 / Non-Aligned"},
+    {"ko": "아르헨티나", "en": "Argentina", "iso": "ARG", "group": "비동맹 / Non-Aligned"},
+]
+
+COLD_WAR_EVENTS = [
+    {"year": "1945", "event": "제2차 세계대전 종전, 미국과 소련 중심의 양극 체제 시작"},
+    {"year": "1947", "event": "트루먼 독트린 발표, 냉전 구도 본격화"},
+    {"year": "1949", "event": "NATO 창설, 독일 분단 심화"},
+    {"year": "1950~1953", "event": "한국전쟁"},
+    {"year": "1955", "event": "바르샤바 조약기구 창설"},
+    {"year": "1961", "event": "베를린 장벽 건설"},
+    {"year": "1962", "event": "쿠바 미사일 위기"},
+    {"year": "1970s", "event": "데탕트, 긴장 완화 시기"},
+    {"year": "1979~1989", "event": "소련의 아프가니스탄 침공과 전쟁"},
+    {"year": "1989", "event": "베를린 장벽 붕괴"},
+    {"year": "1991", "event": "소련 해체, 냉전 종식"},
+]
+
+
 # 지도에 표시할 주요 국가 한국어 이름
 KOREAN_NAME_BY_ISO = {
     "KOR": "대한민국", "PRK": "북한", "JPN": "일본", "CHN": "중국", "MNG": "몽골",
@@ -783,6 +848,126 @@ with tab_map:
         fig,
         use_container_width=True,
         config={"scrollZoom": True, "displaylogo": False}
+    )
+
+    st.markdown("---")
+    st.markdown("## 🧊 냉전시대 세계 지도")
+
+    st.markdown(
+        """
+        <div class="info-box">
+            ✅ 냉전시대는 제2차 세계대전 이후 미국 중심의 <b>서방 진영</b>과 소련 중심의 <b>공산권</b>이 직접 전쟁보다는 정치·군사·경제·이념 경쟁을 벌인 시기입니다.<br>
+            ✅ 아래 지도는 수업용 이해를 돕기 위한 <b>단순화된 진영 구분 지도</b>입니다. 실제 냉전기 국제 관계는 시기별로 변동이 있었고, 일부 국가는 상황에 따라 입장이 달라졌습니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    cold_war_df = pd.DataFrame(COLD_WAR_GROUPS)
+
+    cold_war_fig = px.choropleth(
+        cold_war_df,
+        locations="iso",
+        color="group",
+        hover_name="ko",
+        hover_data={
+            "en": True,
+            "group": True,
+            "iso": False
+        },
+        projection="natural earth",
+        color_discrete_map={
+            "서방 진영 / Western Bloc": "#2563eb",
+            "공산권 / Eastern Bloc": "#dc2626",
+            "비동맹 / Non-Aligned": "#16a34a",
+        }
+    )
+
+    cold_war_fig.update_layout(
+        height=620,
+        margin=dict(l=0, r=0, t=0, b=0),
+        legend_title_text="냉전 진영",
+        geo=dict(
+            showframe=False,
+            showcoastlines=True,
+            coastlinecolor="#475569",
+            showcountries=True,
+            countrycolor="#cbd5e1",
+            showland=True,
+            landcolor="#f8fafc",
+            showocean=True,
+            oceancolor="#e0f2fe",
+            projection_type="natural earth"
+        )
+    )
+
+    st.plotly_chart(
+        cold_war_fig,
+        use_container_width=True,
+        config={"scrollZoom": True, "displaylogo": False}
+    )
+
+    c_cold1, c_cold2, c_cold3 = st.columns(3)
+
+    with c_cold1:
+        st.markdown(
+            """
+            <div class="continent-card">
+                <h3>🔵 서방 진영</h3>
+                <p style="font-size:17px; font-weight:800; line-height:1.7;">
+                미국을 중심으로 자유민주주의와 자본주의 체제를 강조했습니다.<br>
+                대표: 미국, 영국, 프랑스, 서독, 일본, 대한민국 등
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c_cold2:
+        st.markdown(
+            """
+            <div class="continent-card">
+                <h3>🔴 공산권</h3>
+                <p style="font-size:17px; font-weight:800; line-height:1.7;">
+                소련을 중심으로 사회주의·공산주의 체제를 강조했습니다.<br>
+                대표: 소련, 동유럽 국가들, 중국, 북한, 쿠바 등
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with c_cold3:
+        st.markdown(
+            """
+            <div class="continent-card">
+                <h3>🟢 비동맹</h3>
+                <p style="font-size:17px; font-weight:800; line-height:1.7;">
+                미국과 소련 어느 한쪽에도 완전히 속하지 않으려는 국가들이었습니다.<br>
+                대표: 인도, 인도네시아, 이집트, 유고슬라비아 등
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    st.markdown("### 🕰️ 냉전시대 주요 사건")
+
+    event_df = pd.DataFrame(COLD_WAR_EVENTS)
+    st.dataframe(
+        event_df.rename(columns={"year": "연도", "event": "주요 사건"}),
+        use_container_width=True,
+        hide_index=True
+    )
+
+    st.markdown(
+        """
+        <div class="info-box">
+            <b>학생용 핵심 문장</b><br>
+            냉전은 미국과 소련이 직접 큰 전쟁을 벌인 것이 아니라, 세계 여러 지역에서 동맹·군비 경쟁·우주 경쟁·대리전 등을 통해 서로 힘을 겨룬 시대입니다.
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
 # =====================================================
