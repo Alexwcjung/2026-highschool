@@ -30,6 +30,19 @@ def make_tts(text, lang="en"):
     fp.seek(0)
     return fp.read()
 
+
+def direct_tts_player(text, lang="en"):
+    """버튼을 한 번 더 누르지 않고 바로 재생 가능한 TTS 플레이어를 보여줍니다."""
+    text = str(text).strip()
+    if not text:
+        return
+
+    try:
+        st.audio(make_tts(text, lang=lang), format="audio/mp3")
+    except Exception as e:
+        st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
+        st.caption(f"오류 내용: {e}")
+
 # =========================================================
 # 서술형 피드백 함수
 # =========================================================
@@ -1466,7 +1479,7 @@ with tab_reading:
         lang="en"
     )
 
-    st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
+    st.caption("각 영어 문장 오른쪽에 바로 재생 가능한 TTS 플레이어가 보입니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
 
     show_korean_reading = st.toggle(
         "🇰🇷 한국어 해석 보기",
@@ -1504,21 +1517,23 @@ with tab_reading:
             )
 
         with audio_col:
-            st.write("")
-            st.write("")
-            if st.button("🔊", key=f"{category}_{topic_name}_sentence_audio_{i}", help="이 문장 듣기"):
-                st.audio(make_tts(eng, lang="en"), format="audio/mp3")
+            st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
+            direct_tts_player(eng, lang="en")
 
     st.markdown("---")
     st.markdown("### ⭐ Key Words")
     st.caption("활동 탭의 빈칸 문제에 나오는 핵심 단어입니다.")
 
     key_words = get_key_words(topic_name, data)
-    for word, meaning in key_words:
-        st.markdown(
-            f'<div class="expression"><b>{word}</b> <span style="color:#64748b;">= {meaning}</span></div>',
-            unsafe_allow_html=True
-        )
+    for i, (word, meaning) in enumerate(key_words, start=1):
+        exp_col, exp_audio_col = st.columns([7.5, 2.5])
+        with exp_col:
+            st.markdown(
+                f'<div class="expression"><b>{word}</b> <span style="color:#64748b;">= {meaning}</span></div>',
+                unsafe_allow_html=True
+            )
+        with exp_audio_col:
+            direct_tts_player(word, lang="en")
 
 # =========================================================
 # 활동
@@ -1556,7 +1571,7 @@ with tab_activity:
         status_key = f"{category}_{topic_name}_activity1_status_{i}"
         activity1_status_keys.append(status_key)
 
-        c1, c2, c3 = st.columns([1.25, 2.25, 1.5])
+        c1, c_audio, c2, c3 = st.columns([1.35, 1.15, 2.2, 1.5])
         with c1:
             st.markdown(
                 f"""
@@ -1568,6 +1583,8 @@ with tab_activity:
                 """,
                 unsafe_allow_html=True
             )
+        with c_audio:
+            direct_tts_player(word, lang="en")
         with c2:
             user_meaning = st.text_input(
                 "한국어 뜻",
