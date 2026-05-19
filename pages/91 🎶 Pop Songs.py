@@ -793,8 +793,122 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                               ("I'm going back to the start", '나는 처음으로 돌아가고 있어')],
                                  'reflect_questions': ['당신도 가수처럼 그리운 옛 연인이나 다시 이야기하고 싶은 사람이 있나요?',
                                                        '처음으로 돌아갈 수 있다면 다시 말하고 싶은 말은 무엇인가요?',
-                                                       '사랑이나 관계가 생각보다 쉽지 않았다고 느낀 경험이 있나요?']}}
-
+                                                       '사랑이나 관계가 생각보다 쉽지 않았다고 느낀 경험이 있나요?']},
+ '8. My Heart Will Go On - Celine Dion': {'video_url': 'https://www.youtube.com/watch?v=3gK_2XdjOdY',
+                                          'bg': '\n'
+                                                '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#0f766e;">\n'
+                                                '        🚢 My Heart Will Go On: 마음속에 계속 살아 있는 사랑\n'
+                                                '    </h3>\n'
+                                                '\n'
+                                                '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                '        Celine Dion의 <b>My Heart Will Go On</b>은 영화 <i>Titanic</i>의 대표곡으로,\n'
+                                                '        사랑하는 사람이 멀리 있거나 더 이상 곁에 없더라도\n'
+                                                '        그 사랑과 기억은 마음속에서 계속 이어진다는 메시지를 담은 노래입니다.\n'
+                                                '    </p>\n'
+                                                '\n'
+                                                '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                '        노래 속 화자는 매일 밤 꿈속에서 사랑하는 사람을 보고 느낍니다.\n'
+                                                '        두 사람 사이에는 먼 거리와 공간이 있지만,\n'
+                                                '        그 사람은 여전히 마음속에 살아 있고 사랑은 계속된다고 믿습니다.\n'
+                                                '    </p>\n'
+                                                '\n'
+                                                '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                '        반복되는 <b>my heart will go on</b>은 단순히 심장이 계속 뛴다는 뜻이 아니라,\n'
+                                                '        사랑과 기억이 사라지지 않고 계속 이어진다는 의미로 이해할 수 있습니다.\n'
+                                                '        상실과 그리움 속에서도 사랑했던 기억은 한 사람의 마음속에 안전하게 남아 있습니다.\n'
+                                                '    </p>\n'
+                                                '\n'
+                                                '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                '        수업에서는 <b>in my dreams</b>, <b>wherever you are</b>,\n'
+                                                '        <b>the heart does go on</b>, <b>open the door</b>, <b>safe in my heart</b>\n'
+                                                '        같은 표현을 중심으로 배울 수 있습니다.\n'
+                                                '        특히 이 노래는 느린 속도와 반복되는 표현이 많아,\n'
+                                                '        학생들이 사랑, 기억, 그리움, 위로의 감정을 영어로 이해하기에 좋습니다.\n'
+                                                '    </p>\n'
+                                                '    ',
+                                          'lyrics': [('Every night in my dreams / I see you, I feel you',
+                                                      '매일 밤 꿈속에서 / 나는 너를 보고, 너를 느껴'),
+                                                     ('That is how I know you go on',
+                                                      '그래서 나는 네가 계속 존재한다는 것을 알아'),
+                                                     ('Far across the distance / And spaces between us',
+                                                      '우리 사이의 먼 거리와 / 공간을 넘어'),
+                                                     ('You have come to show you go on',
+                                                      '너는 네가 계속 존재한다는 것을 보여 주러 왔어'),
+                                                     ('Near, far, wherever you are',
+                                                      '가까이 있든, 멀리 있든, 네가 어디에 있든'),
+                                                     ('I believe that the heart does go on',
+                                                      '나는 마음이 계속 이어진다고 믿어'),
+                                                     ("Once more, you open the door / And you're here in my heart",
+                                                      '다시 한 번, 너는 문을 열고 / 내 마음속에 있어'),
+                                                     ('And my heart will go on and on',
+                                                      '그리고 내 마음은 계속 이어질 거야'),
+                                                     ('Love can touch us one time / And last for a lifetime',
+                                                      '사랑은 한 번 우리에게 닿아 / 평생 지속될 수 있어'),
+                                                     ("And never let go 'til we're gone",
+                                                      '그리고 우리가 사라질 때까지 절대 놓지 않아'),
+                                                     ("Love was when I loved you / One true time I'd hold to",
+                                                      '사랑은 내가 너를 사랑했던 그때였어 / 내가 붙잡고 싶은 단 하나의 진실한 순간'),
+                                                     ("In my life, we'll always go on",
+                                                      '내 삶 속에서 우리는 언제나 계속 이어질 거야'),
+                                                     ('Near, far, wherever you are',
+                                                      '가까이 있든, 멀리 있든, 네가 어디에 있든'),
+                                                     ('I believe that the heart does go on (why does the heart go on?)',
+                                                      '나는 마음이 계속 이어진다고 믿어 / 왜 마음은 계속 이어질까?'),
+                                                     ("Once more, you open the door / And you're here in my heart",
+                                                      '다시 한 번, 너는 문을 열고 / 내 마음속에 있어'),
+                                                     ('And my heart will go on and on',
+                                                      '그리고 내 마음은 계속 이어질 거야'),
+                                                     ("You're here, there's nothing I fear",
+                                                      '네가 여기 있으니, 나는 두려운 것이 없어'),
+                                                     ('And I know that my heart will go on',
+                                                      '그리고 나는 내 마음이 계속 이어질 것을 알아'),
+                                                     ("We'll stay forever this way",
+                                                      '우리는 영원히 이렇게 머물 거야'),
+                                                     ('You are safe in my heart and / My heart will go on and on',
+                                                      '너는 내 마음속에 안전하게 있고 / 내 마음은 계속 이어질 거야')],
+                                          'quiz': [{'q': '1. 이 노래에서 화자는 매일 밤 어디에서 사랑하는 사람을 보나요?',
+                                                    'options': ['학교에서', '꿈속에서', '바닷가에서', '기차 안에서'],
+                                                    'answer': '꿈속에서'},
+                                                   {'q': '2. 화자는 사랑하는 사람이 어디에 있다고 느끼나요?',
+                                                    'options': ['내 마음속에', '교실 뒤에', '먼 도시의 가게에', '배 위의 식당에'],
+                                                    'answer': '내 마음속에'},
+                                                   {'q': "3. 'Near, far, wherever you are'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                                    'options': ['가까이 있든 멀리 있든 네가 어디에 있든', '항상 가까이에만 있어야 한다', '멀리 가면 잊어야 한다', '길을 잃었다'],
+                                                    'answer': '가까이 있든 멀리 있든 네가 어디에 있든'},
+                                                   {'q': "4. 'My heart will go on'은 어떤 의미에 가깝나요?",
+                                                    'options': ['내 마음과 사랑은 계속 이어질 것이다', '나는 빨리 달릴 것이다', '나는 문을 닫을 것이다', '나는 노래를 멈출 것이다'],
+                                                    'answer': '내 마음과 사랑은 계속 이어질 것이다'},
+                                                   {'q': '5. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?',
+                                                    'options': ['그리움과 영원한 사랑', '분노와 복수', '시험에 대한 걱정', '승리의 기쁨'],
+                                                    'answer': '그리움과 영원한 사랑'},
+                                                   {'q': "6. 'Love can touch us one time and last for a lifetime'의 의미는 무엇인가요?",
+                                                    'options': ['사랑은 한 번 닿아도 평생 남을 수 있다', '사랑은 항상 바로 사라진다', '사랑은 한 번도 중요하지 않다', '사랑은 시험 점수와 같다'],
+                                                    'answer': '사랑은 한 번 닿아도 평생 남을 수 있다'},
+                                                   {'q': "7. 'There’s nothing I fear'는 어떤 의미인가요?",
+                                                    'options': ['나는 두려운 것이 없다', '나는 모든 것이 무섭다', '나는 아무것도 보지 못한다', '나는 노래를 싫어한다'],
+                                                    'answer': '나는 두려운 것이 없다'},
+                                                   {'q': '8. 이 노래가 전하려는 메시지로 가장 알맞은 것은 무엇인가요?',
+                                                    'options': ['사랑과 기억은 마음속에서 계속 이어질 수 있다', '사람은 절대 꿈을 꾸지 않는다', '멀리 있으면 모든 감정은 사라진다', '사랑은 항상 쉬운 일이다'],
+                                                    'answer': '사랑과 기억은 마음속에서 계속 이어질 수 있다'}],
+                                          'key_expressions': [('In my dreams', '내 꿈속에서'),
+                                                              ('I see you, I feel you', '나는 너를 보고, 너를 느껴'),
+                                                              ('You go on', '너는 계속 존재해'),
+                                                              ('Far across the distance', '먼 거리를 넘어'),
+                                                              ('Spaces between us', '우리 사이의 공간'),
+                                                              ('Wherever you are', '네가 어디에 있든'),
+                                                              ('The heart does go on', '마음은 계속 이어진다'),
+                                                              ('Open the door', '문을 열다'),
+                                                              ('Here in my heart', '내 마음속 여기에'),
+                                                              ('Safe in my heart', '내 마음속에 안전하게')],
+                                          'matching': [('In my dreams', '내 꿈속에서'),
+                                                       ('I see you, I feel you', '나는 너를 보고, 너를 느껴'),
+                                                       ('Wherever you are', '네가 어디에 있든'),
+                                                       ('The heart does go on', '마음은 계속 이어진다'),
+                                                       ('You are safe in my heart', '너는 내 마음속에 안전하게 있어'),
+                                                       ('My heart will go on and on', '내 마음은 계속 이어질 거야')],
+                                          'reflect_questions': ['멀리 떨어져 있어도 마음속에 남아 있는 사람이 있나요?',
+                                                                '나에게 오래도록 기억에 남는 사랑이나 우정은 무엇인가요?',
+                                                                '힘든 이별이나 그리움을 겪었을 때 나를 위로해 준 기억이 있나요?']}}
 
 BACKGROUND_CONTENT = {
     "1. Let It Go - Frozen OST": {
@@ -858,6 +972,15 @@ BACKGROUND_CONTENT = {
             "Come up to meet you, tell you I'm sorry는 상대를 다시 만나 사과하고 싶은 마음을 보여 줍니다. Tell you I need you, Tell you I set you apart는 상대가 자신에게 얼마나 특별한 존재였는지를 뒤늦게 깨닫는 표현입니다.",
             "반복되는 Let's go back to the start와 Take me back to the start는 단순히 과거로 돌아가고 싶다는 뜻을 넘어, 관계가 어긋나기 전의 순수한 순간으로 돌아가고 싶은 마음을 나타냅니다. 이 노래의 핵심 감정은 후회, 그리움, 미안함, 그리고 다시 시작하고 싶은 마음입니다.",
             "수업에서는 tell you I'm sorry, I need you, set you apart, go back to the start, nobody said it was easy 같은 표현을 중심으로 배울 수 있습니다. 또한 ‘다시 돌아가고 싶은 순간’, ‘그때 하지 못한 말’, ‘관계가 왜 생각보다 어려운가’를 주제로 reflective writing을 하기에 좋습니다."
+        ],
+    },
+    "8. My Heart Will Go On - Celine Dion": {
+        "title": "🚢 My Heart Will Go On: 마음속에 계속 살아 있는 사랑",
+        "paragraphs": [
+            "My Heart Will Go On은 영화 Titanic의 대표곡으로, 사랑하는 사람이 멀리 있거나 더 이상 곁에 없더라도 그 사랑과 기억은 마음속에서 계속 이어진다는 메시지를 담은 노래입니다. 노래 속 화자는 매일 밤 꿈속에서 사랑하는 사람을 보고 느끼며, 그 사람이 여전히 마음속에 살아 있다고 믿습니다.",
+            "이 노래에서 distance와 spaces between us는 단순한 물리적 거리만을 뜻하지 않습니다. 두 사람 사이를 갈라놓은 시간, 상황, 이별, 상실까지 함께 상징합니다. 하지만 화자는 그 거리와 공간을 넘어 사랑이 계속된다고 말합니다.",
+            "반복되는 my heart will go on은 ‘내 심장이 계속 뛴다’는 문자 그대로의 뜻을 넘어, 사랑과 기억이 사라지지 않고 계속 이어진다는 의미로 이해할 수 있습니다. 사랑했던 한 순간이 평생 마음속에 남아 한 사람의 삶을 지탱해 주는 힘이 되는 것입니다.",
+            "수업에서는 in my dreams, wherever you are, the heart does go on, open the door, safe in my heart 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘마음속에 오래 남아 있는 사람’, ‘멀리 있어도 기억나는 관계’, ‘그리움이 주는 위로’를 주제로 생각을 적게 할 수 있습니다."
         ],
     },
 }
