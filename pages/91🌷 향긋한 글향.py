@@ -1204,6 +1204,29 @@ def show_pass_status(score, total, checked, pass_ratio=0.7):
     else:
         st.warning(f"아직 통과 기준에 부족합니다. 다시 풀기를 눌러 한 번 더 도전해 보세요. 현재 점수: {score}/{total}")
 
+
+def make_full_listening_text(dialogue):
+    """
+    전체 듣기용 텍스트:
+    - 화면에는 화자가 보이지만, 음성에서는 화자 이름을 읽지 않음
+    - 화자가 바뀔 때 문장 사이에 약간 더 긴 쉼을 주기 위해 마침표와 공백을 추가
+    """
+    listening_lines = []
+    previous_speaker = None
+
+    for speaker, eng, kor in dialogue:
+        sentence = str(eng).strip()
+
+        if previous_speaker is not None and speaker != previous_speaker:
+            # gTTS가 화자 전환을 조금 더 또렷하게 쉬도록 유도
+            listening_lines.append(".")
+
+        listening_lines.append(sentence)
+        previous_speaker = speaker
+
+    return "   ".join(listening_lines)
+
+
 # =========================================================
 # 화면
 # =========================================================
@@ -1227,7 +1250,7 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 data = data_bank[category][topic_name]
 dialogue = data["dialogue"]
-full_english = "\n".join([eng for speaker, eng, kor in dialogue])
+full_english = make_full_listening_text(dialogue)
 
 st.markdown(f"""
 <div class="info-card">
@@ -1284,7 +1307,7 @@ with tab_reading:
     # 전체 듣기 버튼을 읽기 지문 위로 배치
     play_persistent_full_audio(
         full_english,
-        key=f"{category}_{topic_name}_full_listening_no_speaker_v3",
+        key=f"{category}_{topic_name}_full_listening_no_speaker_pause_v1",
         button_label="🎧 전체 듣기",
         lang="en"
     )
