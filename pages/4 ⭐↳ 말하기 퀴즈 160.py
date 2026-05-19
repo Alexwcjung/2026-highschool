@@ -204,14 +204,12 @@ st.markdown(
         margin-bottom: 22px;
         box-shadow: 0 8px 22px rgba(0,0,0,0.07);
     }
-
     .main-title-box h1 {
         margin: 0 0 10px 0;
         color: #0f172a;
         font-size: 38px;
         font-weight: 900;
     }
-
     .main-title-box p {
         margin: 0;
         color: #475569;
@@ -219,17 +217,14 @@ st.markdown(
         line-height: 1.7;
         font-weight: 700;
     }
-
     @media (max-width: 768px) {
         .main-title-box {
             padding: 20px 18px;
             border-radius: 22px;
         }
-
         .main-title-box h1 {
             font-size: 27px;
         }
-
         .main-title-box p {
             font-size: 15px;
         }
@@ -243,12 +238,11 @@ st.markdown(
     """
     <div class="main-title-box">
         <h1>🃏 생존 단어 카드 말하기 게임</h1>
-        <p>한국말 뜻을 보고 영어 단어를 말해 보세요. 정답 후에는 직접 다음으로 넘어갑니다.</p>
+        <p>한국말 뜻을 보고 영어 단어를 말해 보세요. 발음 시험이 아니라 단어를 알고 있는지 확인하는 활동입니다.</p>
     </div>
     """,
     unsafe_allow_html=True
 )
-
 
 # =========================================================
 # 말하기 카드 게임 컴포넌트
@@ -276,18 +270,12 @@ def word_card_speaking_game(word_themes):
         box-sizing: border-box;
     ">
         <style>
-            #word-card-app * {
-                box-sizing: border-box;
-            }
-
+            #word-card-app * { box-sizing: border-box; }
             #word-card-app button {
                 -webkit-tap-highlight-color: transparent;
                 touch-action: manipulation;
             }
-
-            #word-card-app select {
-                max-width: 100%;
-            }
+            #word-card-app select { max-width: 100%; }
 
             #cardBox {
                 position: relative;
@@ -296,7 +284,6 @@ def word_card_speaking_game(word_themes):
                 will-change: transform, opacity, filter;
             }
 
-            /* 다음 단어로 바뀌는 것이 확실히 보이는 전환 효과 */
             #cardBox::before {
                 content: "다음 단어";
                 position: absolute;
@@ -337,64 +324,30 @@ def word_card_speaking_game(word_themes):
             .next-card-animate {
                 animation: nextCardSlide 0.58s cubic-bezier(.2,.8,.2,1);
             }
-
             .next-card-animate::before {
                 animation: nextBadgePop 0.58s cubic-bezier(.2,.8,.2,1);
             }
-
             .next-card-animate::after {
                 animation: nextLightSweep 0.58s ease-out;
             }
 
             @keyframes nextCardSlide {
-                0% {
-                    opacity: 0;
-                    transform: translateX(46px) scale(0.965);
-                    filter: blur(3px) brightness(1.05);
-                }
-                55% {
-                    opacity: 1;
-                    transform: translateX(-7px) scale(1.012);
-                    filter: blur(0) brightness(1.03);
-                }
-                100% {
-                    opacity: 1;
-                    transform: translateX(0) scale(1);
-                    filter: blur(0) brightness(1);
-                }
+                0% { opacity: 0; transform: translateX(46px) scale(0.965); filter: blur(3px) brightness(1.05); }
+                55% { opacity: 1; transform: translateX(-7px) scale(1.012); filter: blur(0) brightness(1.03); }
+                100% { opacity: 1; transform: translateX(0) scale(1); filter: blur(0) brightness(1); }
             }
 
             @keyframes nextBadgePop {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-18px) scale(0.86);
-                }
-                20% {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1.04);
-                }
-                62% {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0) scale(1);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-8px) scale(0.96);
-                }
+                0% { opacity: 0; transform: translateX(-50%) translateY(-18px) scale(0.86); }
+                20% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1.04); }
+                62% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); }
+                100% { opacity: 0; transform: translateX(-50%) translateY(-8px) scale(0.96); }
             }
 
             @keyframes nextLightSweep {
-                0% {
-                    opacity: 0;
-                    transform: translateX(-115%);
-                }
-                20% {
-                    opacity: 1;
-                }
-                100% {
-                    opacity: 0;
-                    transform: translateX(115%);
-                }
+                0% { opacity: 0; transform: translateX(-115%); }
+                20% { opacity: 1; }
+                100% { opacity: 0; transform: translateX(115%); }
             }
 
             @media (max-width: 768px) {
@@ -402,73 +355,54 @@ def word_card_speaking_game(word_themes):
                     padding: 14px !important;
                     border-radius: 22px !important;
                 }
-
                 #categorySelect {
                     width: 100%;
                     font-size: 14px !important;
                 }
-
                 #topControlBox {
                     gap: 8px !important;
                 }
-
                 #topControlBox button {
                     flex: 1 1 45%;
                     font-size: 14px !important;
                     padding: 10px 10px !important;
                 }
-
                 #cardBox {
                     padding: 18px 14px !important;
                     border-radius: 24px !important;
                 }
-
-                #emojiBox {
-                    font-size: 72px !important;
-                }
-
+                #emojiBox { font-size: 72px !important; }
                 #meaningBox {
                     font-size: 32px !important;
                     line-height: 1.25 !important;
                 }
-
                 #answerBox {
                     font-size: 27px !important;
                     padding: 14px 12px !important;
                     word-break: break-word;
                 }
-
-                #buttonBox {
-                    gap: 8px !important;
-                }
-
                 #micBtn {
                     min-height: 54px !important;
                     font-size: 17px !important;
                     padding: 13px 12px !important;
                     border-radius: 999px !important;
                 }
-
                 #transcriptMiniBox {
                     min-height: 62px !important;
                     padding: 10px 12px !important;
                     border-radius: 18px !important;
                 }
-
                 #transcriptMiniLabel {
                     font-size: 12px !important;
                     margin-bottom: 4px !important;
                 }
-
                 #transcriptBox {
                     font-size: 19px !important;
                     line-height: 1.25 !important;
                 }
-
                 #smallButtonRow {
                     gap: 6px !important;
                 }
-
                 #smallButtonRow button {
                     min-height: 42px !important;
                     font-size: 12px !important;
@@ -476,10 +410,7 @@ def word_card_speaking_game(word_themes):
                     border-radius: 15px !important;
                     letter-spacing: -0.5px;
                 }
-
-                #resultBox {
-                    font-size: 17px !important;
-                }
+                #resultBox { font-size: 17px !important; }
             }
         </style>
 
@@ -539,11 +470,7 @@ def word_card_speaking_game(word_themes):
                 text-align:center;
                 margin-bottom:18px;
             ">
-                <div id="emojiBox" style="
-                    font-size: 96px;
-                    line-height: 1.1;
-                    margin-bottom: 14px;
-                ">🃏</div>
+                <div id="emojiBox" style="font-size: 96px; line-height: 1.1; margin-bottom: 14px;">🃏</div>
 
                 <div style="
                     display:inline-block;
@@ -684,9 +611,7 @@ def word_card_speaking_game(word_themes):
                 font-size:20px;
                 font-weight:900;
                 color:#334155;
-            ">
-                
-            </div>
+            "></div>
         </div>
 
         <div id="finishBox" style="
@@ -767,12 +692,10 @@ def word_card_speaking_game(word_themes):
 
     function resetMicButton() {
         isListening = false;
-
         if (micSafetyTimer) {
             clearTimeout(micSafetyTimer);
             micSafetyTimer = null;
         }
-
         micBtn.disabled = false;
         micBtn.style.opacity = "1";
         micBtn.style.cursor = "pointer";
@@ -781,12 +704,10 @@ def word_card_speaking_game(word_themes):
 
     function cleanupRecognition() {
         recognitionRunId += 1;
-
         if (micSafetyTimer) {
             clearTimeout(micSafetyTimer);
             micSafetyTimer = null;
         }
-
         if (recognition) {
             try { recognition.onresult = null; } catch (e) {}
             try { recognition.onerror = null; } catch (e) {}
@@ -795,7 +716,6 @@ def word_card_speaking_game(word_themes):
             try { recognition.stop(); } catch (e) {}
             recognition = null;
         }
-
         resetMicButton();
     }
 
@@ -825,19 +745,9 @@ def word_card_speaking_game(word_themes):
 
     function getFilteredItems() {
         const selected = categorySelect.value || "1~50";
-
-        if (selected === "1~50") {
-            return ITEMS.slice(0, 50);
-        }
-
-        if (selected === "51~100") {
-            return ITEMS.slice(50, 100);
-        }
-
-        if (selected === "101~160") {
-            return ITEMS.slice(100, 160);
-        }
-
+        if (selected === "1~50") return ITEMS.slice(0, 50);
+        if (selected === "51~100") return ITEMS.slice(50, 100);
+        if (selected === "101~160") return ITEMS.slice(100, 160);
         return ITEMS.slice(0, 50);
     }
 
@@ -876,11 +786,19 @@ def word_card_speaking_game(word_themes):
             .replace(/\bshe'll\b/g, "she will")
             .replace(/\bok\b/g, "okay")
             .replace(/\bo k\b/g, "okay")
+            .replace(/\bt shirt\b/g, "tshirt")
+            .replace(/\btee shirt\b/g, "tshirt")
+            .replace(/\bwi fi\b/g, "wifi")
+            .replace(/\bwi-fi\b/g, "wifi")
             .replace(/[.,!?;:'"’‘“”]/g, "")
             .replace(/-/g, " ")
             .replace(/\s+/g, " ")
             .trim();
     }
+
+    const KNOWN_ANSWER_WORDS = ITEMS.map(item =>
+        normalizeText(item.word).replace(/\s+/g, "")
+    );
 
     function wordsOnly(text) {
         return normalizeText(text)
@@ -893,15 +811,11 @@ def word_card_speaking_game(word_themes):
     function editDistance(a, b) {
         a = String(a || "");
         b = String(b || "");
-
         const dp = [];
         for (let i = 0; i <= a.length; i++) {
             dp[i] = [];
-            for (let j = 0; j <= b.length; j++) {
-                dp[i][j] = 0;
-            }
+            for (let j = 0; j <= b.length; j++) dp[i][j] = 0;
         }
-
         for (let i = 0; i <= a.length; i++) dp[i][0] = i;
         for (let j = 0; j <= b.length; j++) dp[0][j] = j;
 
@@ -915,17 +829,14 @@ def word_card_speaking_game(word_themes):
                 );
             }
         }
-
         return dp[a.length][b.length];
     }
 
     function wordSimilarity(a, b) {
         a = String(a || "");
         b = String(b || "");
-
         if (!a || !b) return 0;
         if (a === b) return 1;
-
         const dist = editDistance(a, b);
         const maxLen = Math.max(a.length, b.length);
         return 1 - (dist / maxLen);
@@ -936,6 +847,8 @@ def word_card_speaking_game(word_themes):
             .replace(/[^a-z]/g, "")
             .replace(/tion/g, "shun")
             .replace(/sion/g, "shun")
+            .replace(/ch/g, "j")
+            .replace(/sh/g, "s")
             .replace(/th/g, "d")
             .replace(/ph/g, "f")
             .replace(/gh/g, "g")
@@ -964,13 +877,30 @@ def word_card_speaking_game(word_themes):
             .replace(/(.)\1+/g, "$1");
     }
 
+    function vowelLooseKey(text) {
+        return normalizeText(text)
+            .replace(/[^a-z]/g, "")
+            .replace(/ee/g, "i")
+            .replace(/ea/g, "i")
+            .replace(/ie/g, "i")
+            .replace(/ei/g, "i")
+            .replace(/oo/g, "u")
+            .replace(/ou/g, "u")
+            .replace(/ow/g, "o")
+            .replace(/oa/g, "o")
+            .replace(/ai/g, "e")
+            .replace(/ay/g, "e")
+            .replace(/[aeiouy]+/g, "v")
+            .replace(/(.)\1+/g, "$1");
+    }
+
     function aliasMatch(spokenWord, answerWord) {
         const sw = normalizeText(spokenWord).replace(/\s+/g, "");
         const aw = normalizeText(answerWord).replace(/\s+/g, "");
 
         const aliases = {
             "i": ["i", "eye", "hi", "ai", "a"],
-            "you": ["you", "u", "yew", "yo", "ya", "your", "yu", "유"],
+            "you": ["you", "u", "yew", "yo", "ya", "your", "yu"],
             "he": ["he", "hi", "hey", "hee"],
             "she": ["she", "see", "sea", "shi", "seat", "sheet"],
             "we": ["we", "wee", "wi", "me", "be"],
@@ -994,8 +924,6 @@ def word_card_speaking_game(word_themes):
             "phone": ["phone", "fone", "pon"],
             "coffee": ["coffee", "coffe", "copy"],
             "please": ["please", "plz", "plis", "place"],
-            "excuse": ["excuse", "excus", "excuseme"],
-            "me": ["me", "mi"],
             "go": ["go", "goal", "고"],
             "come": ["come", "com", "gum"],
             "run": ["run", "ran", "learn"],
@@ -1014,7 +942,7 @@ def word_card_speaking_game(word_themes):
             "friend": ["friend", "freind", "frend"],
             "teacher": ["teacher", "techer", "ticher"],
             "student": ["student", "studen", "studant"],
-            "classmate": ["classmate", "classmate", "classmate", "classmate", "classmate", "classmate", "class mate"],
+            "classmate": ["classmate", "classmate", "classmate", "classmate", "classmate", "classmate", "classmate", "classmate", "classmate", "class mate"],
             "family": ["family", "famly", "femily"],
             "father": ["father", "fader", "pader"],
             "mother": ["mother", "mader", "moder"],
@@ -1032,7 +960,7 @@ def word_card_speaking_game(word_themes):
             "tired": ["tired", "tyred", "tire"],
             "hungry": ["hungry", "hangry", "angry"],
             "thirsty": ["thirsty", "thirsti", "firsty"],
-            "stomachache": ["stomachache", "stomachache", "stomach ache", "stomachegg"],
+            "stomachache": ["stomachache", "stomach ache", "stomachegg"],
             "headache": ["headache", "head ache", "hedache"],
             "breakfast": ["breakfast", "brekfast", "break first"],
             "medicine": ["medicine", "medisin", "medicen"],
@@ -1057,7 +985,6 @@ def word_card_speaking_game(word_themes):
             "banana": ["banana", "bananna"],
             "chicken": ["chicken", "chiken"],
             "classroom": ["classroom", "class room"],
-            "bathroom": ["bathroom", "bath room"],
             "store": ["store", "stole"],
             "train": ["train", "trane"],
             "bike": ["bike", "back", "baik"],
@@ -1070,7 +997,7 @@ def word_card_speaking_game(word_themes):
             "money": ["money", "moni"],
             "ticket": ["ticket", "tiket"],
             "clothes": ["clothes", "close", "cloths"],
-            "shoes": ["shoes", "shoe", "슈즈"],
+            "shoes": ["shoes", "shoe"],
             "repeat": ["repeat", "repeet"],
             "look": ["look", "luk"],
             "ask": ["ask", "axe"],
@@ -1096,10 +1023,8 @@ def word_card_speaking_game(word_themes):
         const sw = normalizeText(spokenWord).replace(/\s+/g, "");
         const aw = normalizeText(answerWord).replace(/\s+/g, "");
         const pronouns = ["i", "you", "he", "she", "we", "they"];
-
         if (!pronouns.includes(aw)) return false;
         if (!pronouns.includes(sw)) return false;
-
         return sw !== aw;
     }
 
@@ -1115,6 +1040,31 @@ def word_card_speaking_game(word_themes):
         return count;
     }
 
+    function hasSharedBigram(a, b) {
+        a = String(a || "");
+        b = String(b || "");
+        if (a.length < 2 || b.length < 2) return false;
+        for (let i = 0; i < a.length - 1; i++) {
+            if (b.includes(a.slice(i, i + 2))) return true;
+        }
+        return false;
+    }
+
+    function isClearlyDifferentKnownWord(sw, aw) {
+        if (!KNOWN_ANSWER_WORDS.includes(sw)) return false;
+        if (sw === aw) return false;
+        if (aliasMatch(sw, aw)) return false;
+
+        const sim = wordSimilarity(sw, aw);
+        const soundSim = wordSimilarity(soundKey(sw), soundKey(aw));
+        const sameFirst = sw.charAt(0) === aw.charAt(0);
+        const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
+
+        // 생존 단어 목록 안의 다른 단어라도, bike/back처럼 ASR 오인식 가능성이 있으면 막지 않습니다.
+        // 다만 water → student처럼 완전히 다른 생존 단어는 오답 처리합니다.
+        return !(sameFirst || sameLast || sim >= 0.45 || soundSim >= 0.36 || hasSharedBigram(sw, aw));
+    }
+
     function isUnderstandableWord(spokenWord, answerWord) {
         if (!spokenWord || !answerWord) return false;
 
@@ -1125,67 +1075,104 @@ def word_card_speaking_game(word_themes):
         if (sw === aw) return true;
         if (aliasMatch(sw, aw)) return true;
 
-        // I / you / he / she / we / they처럼 의미가 크게 바뀌는 대명사는 alias가 아니면 통과시키지 않습니다.
+        // I / you / he / she / we / they는 의미가 크게 바뀌므로 대명사끼리 다르면 오답
         if (clearlyWrongPronoun(sw, aw)) return false;
+
+        // 아예 다른 생존 단어를 말한 경우는 오답
+        if (isClearlyDifferentKnownWord(sw, aw)) return false;
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
+
         const soundSw = soundKey(sw);
         const soundAw = soundKey(aw);
         const soundDist = editDistance(soundSw, soundAw);
         const soundSim = wordSimilarity(soundSw, soundAw);
 
+        const vowelSw = vowelLooseKey(sw);
+        const vowelAw = vowelLooseKey(aw);
+        const vowelSim = wordSimilarity(vowelSw, vowelAw);
+
         const sameFirst = sw.charAt(0) === aw.charAt(0);
-        const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
         const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
+        const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
+        const sameFirstThree = sw.slice(0, 3) === aw.slice(0, 3);
+        const sameLastTwo = sw.slice(-2) === aw.slice(-2);
+
         const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
         const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
         const overlap = prefixOverlap(sw, aw);
 
-        // 학생이 단어를 아는지 확인하는 활동이므로, 발음상 비슷하면 정답으로 넓게 인정합니다.
-        // 다만 첫소리나 자음 뼈대가 전혀 다른 단어는 너무 쉽게 통과시키지 않습니다.
-        const hasSoundClue = sameFirst || sameFirstTwo || soundSameFirst || soundSameLast || overlap >= 2 || soundSim >= 0.50;
+        const hasAnyClue =
+            sameFirst ||
+            sameLast ||
+            sameFirstTwo ||
+            sameLastTwo ||
+            soundSameFirst ||
+            soundSameLast ||
+            overlap >= 1 ||
+            hasSharedBigram(sw, aw) ||
+            soundSim >= 0.25 ||
+            vowelSim >= 0.30 ||
+            sim >= 0.30;
 
-        // 긴 단어를 일부만 말했거나 브라우저가 일부만 인식한 경우도 허용합니다.
-        if (aw.length >= 5 && sw.length >= 3 && (aw.includes(sw) || sw.includes(aw))) return true;
+        if (!hasAnyClue) return false;
 
-        // 자음 뼈대가 같거나 거의 같으면 발음/인식 차이로 보고 허용합니다.
+        // 한 단어 인식에서 브라우저가 앞뒤에 붙이거나 일부만 잡은 경우 허용
+        if (aw.length >= 4 && sw.length >= 2 && (aw.includes(sw) || sw.includes(aw))) return true;
+
+        // 자음 뼈대가 같거나 거의 같으면 단어를 안 것으로 처리
         if (soundSw && soundAw && soundSw === soundAw) return true;
-        if (soundSw && soundAw && soundDist <= 1 && soundSim >= 0.55) return true;
+        if (soundSw && soundAw && soundDist <= 2 && soundSim >= 0.25) return true;
 
-        // 1~2글자 단어는 너무 짧아서 완전 일치 또는 alias 중심으로 봅니다.
-        // 단, he→hi, we→wee 같은 경우는 alias에서 처리됩니다.
+        // 1~2글자 단어: alias 중심이지만 너무 딱딱하지 않게 처리
         if (aw.length <= 2) {
-            return sim >= 0.80 && (sameFirst || soundSameFirst);
+            return sim >= 0.55 || soundSim >= 0.35 || sameFirst || sameLast;
         }
 
-        // 3~4글자 단어: 한 단어 인식이 특히 인색하게 느껴지므로 넓게 허용합니다.
-        // 예: bike→back, rice→rise, sit→seat 등
+        // 3~4글자 단어: 가장 관대하게 처리
+        // 목적은 발음 평가가 아니라 단어 인지 확인
         if (aw.length <= 4) {
-            return hasSoundClue && (
+            return (
                 dist <= 2 ||
-                sim >= 0.50 ||
-                soundSim >= 0.45 ||
-                (sameFirst && sameLast)
+                sim >= 0.32 ||
+                soundSim >= 0.24 ||
+                vowelSim >= 0.28 ||
+                sameFirst ||
+                sameLast ||
+                soundSameFirst ||
+                soundSameLast ||
+                hasSharedBigram(sw, aw)
             );
         }
 
-        // 5~6글자 단어: 2~3글자 차이까지 허용합니다.
+        // 5~6글자 단어
         if (aw.length <= 6) {
-            return hasSoundClue && (
-                dist <= 3 ||
-                sim >= 0.52 ||
-                soundSim >= 0.45 ||
-                (sameFirstTwo && sim >= 0.45)
+            return (
+                dist <= 4 ||
+                sim >= 0.34 ||
+                soundSim >= 0.25 ||
+                vowelSim >= 0.30 ||
+                sameFirst ||
+                sameFirstTwo ||
+                sameLast ||
+                sameLastTwo ||
+                hasSharedBigram(sw, aw)
             );
         }
 
-        // 7글자 이상 긴 단어: 일부 음절을 다르게 인식해도 전체 흐름이 비슷하면 허용합니다.
-        return hasSoundClue && (
-            dist <= 4 ||
-            sim >= 0.48 ||
-            soundSim >= 0.42 ||
-            (sameFirstTwo && sim >= 0.42)
+        // 7글자 이상 긴 단어
+        return (
+            dist <= 6 ||
+            sim >= 0.30 ||
+            soundSim >= 0.22 ||
+            vowelSim >= 0.25 ||
+            sameFirst ||
+            sameFirstTwo ||
+            sameFirstThree ||
+            sameLast ||
+            sameLastTwo ||
+            hasSharedBigram(sw, aw)
         );
     }
 
@@ -1202,20 +1189,39 @@ def word_card_speaking_game(word_themes):
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
         if (answerWords.length === 1) {
+            const target = answerWords[0];
+
+            // 전체 인식 문장이 비슷하면 정답
+            if (isUnderstandableWord(s, target)) return true;
+
+            // 인식 후보 단어 중 하나라도 정답과 비슷하면 정답
             for (const sw of spokenWords) {
-                if (isUnderstandableWord(sw, answerWords[0])) {
-                    return true;
+                if (isUnderstandableWord(sw, target)) return true;
+            }
+
+            // "bath room", "class room"처럼 분리되거나 붙는 경우 대비
+            const joinedSpoken = spokenWords.join("");
+            if (isUnderstandableWord(joinedSpoken, target)) return true;
+
+            // 앞뒤에 please, uh, a, the 같은 말이 붙어도 핵심 단어만 맞으면 통과
+            const fillerRemoved = spokenWords.filter(w =>
+                !["a", "an", "the", "uh", "um", "please", "yes", "no"].includes(w)
+            );
+            if (fillerRemoved.length > 0) {
+                const joinedClean = fillerRemoved.join("");
+                if (isUnderstandableWord(joinedClean, target)) return true;
+                for (const w of fillerRemoved) {
+                    if (isUnderstandableWord(w, target)) return true;
                 }
             }
+
             return false;
         }
 
         if (s.includes(a)) return true;
 
-        // 두 단어 이상인 경우도 순서대로 비슷하게 말하면 정답 처리합니다.
-        // 예: excuse me → excuse, me 중 하나가 살짝 다르게 인식되어도 통과
+        // 두 단어 이상 표현: 순서대로 핵심 단어가 비슷하게 잡히면 정답
         let pos = 0;
-
         for (const sw of spokenWords) {
             const target = answerWords[pos];
             if (!target) break;
@@ -1223,8 +1229,14 @@ def word_card_speaking_game(word_themes):
             if (isUnderstandableWord(sw, target)) {
                 pos += 1;
             }
-
             if (pos >= answerWords.length) break;
+        }
+
+        // excuse me처럼 짧은 두 단어 표현은 붙어서 인식되는 경우도 허용
+        if (pos < answerWords.length) {
+            const joinedSpoken = spokenWords.join("");
+            const joinedAnswer = answerWords.join("");
+            if (isUnderstandableWord(joinedSpoken, joinedAnswer)) return true;
         }
 
         return pos >= answerWords.length;
@@ -1233,7 +1245,6 @@ def word_card_speaking_game(word_themes):
     function transcriptScore(transcript, answer) {
         const spokenWords = wordsOnly(transcript);
         const answerWords = wordsOnly(answer);
-
         if (spokenWords.length === 0 || answerWords.length === 0) return 0;
 
         let best = 0;
@@ -1244,6 +1255,8 @@ def word_card_speaking_game(word_themes):
                 const awNorm = normalizeText(aw).replace(/\s+/g, "");
                 const soundSw = soundKey(swNorm);
                 const soundAw = soundKey(awNorm);
+                const vowelSw = vowelLooseKey(swNorm);
+                const vowelAw = vowelLooseKey(awNorm);
 
                 if (isUnderstandableWord(sw, aw)) {
                     best = Math.max(best, 1);
@@ -1251,7 +1264,8 @@ def word_card_speaking_game(word_themes):
                     best = Math.max(
                         best,
                         wordSimilarity(swNorm, awNorm),
-                        wordSimilarity(soundSw, soundAw) * 0.92
+                        wordSimilarity(soundSw, soundAw) * 0.95,
+                        wordSimilarity(vowelSw, vowelAw) * 0.88
                     );
                 }
             }
@@ -1278,7 +1292,7 @@ def word_card_speaking_game(word_themes):
 
                 if (!bestTranscript) bestTranscript = candidate;
 
-                // 정답 판정이 되는 후보가 있으면 바로 선택합니다.
+                // 정답 판정이 되는 후보가 있으면 final을 기다리지 않고 바로 선택
                 if (isCorrectSpeech(candidate, answer)) {
                     return {
                         transcript: candidate,
@@ -1302,26 +1316,21 @@ def word_card_speaking_game(word_themes):
         };
     }
 
-
     function countCorrectInCurrentRange() {
         const list = getFilteredItems();
         let count = 0;
-
         list.forEach(item => {
             if (correctMap[getItemKey(item)]) count += 1;
         });
-
         return count;
     }
 
     function countMissedInCurrentRange() {
         const list = getFilteredItems();
         let count = 0;
-
         list.forEach(item => {
             if (missedMap[getItemKey(item)]) count += 1;
         });
-
         return count;
     }
 
@@ -1334,7 +1343,6 @@ def word_card_speaking_game(word_themes):
 
     function speak(text) {
         window.speechSynthesis.cancel();
-
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = "en-US";
         utterance.rate = 0.82;
@@ -1346,7 +1354,6 @@ def word_card_speaking_game(word_themes):
             /(samantha|jenny|aria|zira|google us english|karen|victoria|female)/i.test(v.name)
         );
         if (preferred) utterance.voice = preferred;
-
         window.speechSynthesis.speak(utterance);
     }
 
@@ -1370,9 +1377,7 @@ def word_card_speaking_game(word_themes):
     }
 
     function loadQuestion(index = 0) {
-        if (currentList.length === 0) {
-            currentList = getFilteredItems();
-        }
+        if (currentList.length === 0) currentList = getFilteredItems();
 
         if (index >= currentList.length) {
             showFinishScreen();
@@ -1429,8 +1434,6 @@ def word_card_speaking_game(word_themes):
             delete missedMap[getItemKey(currentItem)];
             updateScore();
 
-            // 정답 영어 단어를 인식된 단어 칸에 보여 주고, 바로 옆에 정답 표시를 붙입니다.
-            // 예: water ✅ 정답입니다
             answerBox.style.display = "none";
             transcriptBox.innerHTML =
                 "<span style='color:#334155;'>" + escapeHtml(currentItem.word) + "</span>" +
@@ -1441,19 +1444,12 @@ def word_card_speaking_game(word_themes):
             resultBox.style.display = "none";
 
             speak(currentItem.word);
-
-            // 정답을 맞혀도 자동으로 다음 단어로 넘어가지 않습니다.
-            // 정답 표시는 인식된 단어 칸에만 남기고, 아래 안내 문구는 숨깁니다.
-            resultBox.innerText = "";
-            resultBox.style.display = "none";
-
             cleanupRecognition();
         } else {
-            // 틀렸을 때는 인식된 단어는 그대로 두고, 안내만 짧게 보여 줍니다.
             answerBox.style.display = "none";
             transcriptBox.style.color = "#334155";
             resultBox.style.display = "block";
-            resultBox.innerText = "조금 비슷하게 말하면 정답 처리됩니다. 다시 한 번 말해 보세요.";
+            resultBox.innerText = "완전히 다른 단어가 아니면 비슷한 발음도 정답으로 인정됩니다. 다시 한 번 말해 보세요.";
             resultBox.style.background = "#fff7ed";
             resultBox.style.borderColor = "#fed7aa";
             resultBox.style.color = "#92400e";
@@ -1463,7 +1459,7 @@ def word_card_speaking_game(word_themes):
     async function startRecognition() {
         if (!SpeechRecognition) {
             resultBox.innerText = "이 브라우저에서는 음성 인식을 사용할 수 없습니다. Chrome에서 실행해 보세요.";
-                resultBox.style.display = "block";
+            resultBox.style.display = "block";
             resultBox.style.background = "#fef2f2";
             resultBox.style.borderColor = "#fecaca";
             resultBox.style.color = "#991b1b";
@@ -1476,7 +1472,6 @@ def word_card_speaking_game(word_themes):
             return;
         }
 
-        // 이미 맞힌 단어에서는 마이크를 다시 켜지 않고, 다음 버튼으로 이동하게 합니다.
         if (correctMap[getItemKey(currentItem)]) {
             resultBox.innerText = "";
             resultBox.style.display = "none";
@@ -1484,11 +1479,8 @@ def word_card_speaking_game(word_themes):
             return;
         }
 
-        // 이미 남아 있는 음성 인식 객체를 먼저 정리합니다.
-        // 몇 문제 뒤 말하기 버튼이 안 눌리는 현상을 줄이기 위한 안전장치입니다.
         cleanupRecognition();
 
-        // 모바일/브라우저에서 마이크 권한이 꼬이는 경우를 줄입니다.
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1538,12 +1530,11 @@ def word_card_speaking_game(word_themes):
             const picked = pickBestTranscriptFromEvent(event, currentItem.word);
             const bestTranscript = picked.transcript || "";
 
-            // 말하는 중에도 인식된 단어를 바로 보여 줍니다.
             transcriptBox.style.color = "#334155";
             transcriptBox.innerText = bestTranscript;
 
-            // 정답 후보가 나오면 final을 기다리지 않고 바로 채점합니다.
-            // 아니면 final 결과가 왔을 때 채점합니다.
+            // 정답 후보가 나오면 final을 기다리지 않고 바로 채점
+            // final이 오면 그때도 채점
             if (picked.isCorrectCandidate || picked.hasFinal) {
                 checkSpeech(bestTranscript);
             }
@@ -1551,6 +1542,7 @@ def word_card_speaking_game(word_themes):
 
         recognition.onerror = function(event) {
             if (thisRunId !== recognitionRunId) return;
+
             if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                 resultBox.innerText = "마이크 권한을 허용해 주세요.";
                 resultBox.style.display = "block";
@@ -1580,8 +1572,6 @@ def word_card_speaking_game(word_themes):
             resetMicButton();
         };
 
-        // 혹시 브라우저가 onend를 늦게 주거나 누락해도 버튼을 살립니다.
-        // 동시에 남은 recognition 객체도 정리해 말하기 버튼 먹통을 방지합니다.
         micSafetyTimer = setTimeout(function() {
             if (thisRunId !== recognitionRunId) return;
             if (isListening) {
@@ -1596,7 +1586,7 @@ def word_card_speaking_game(word_themes):
             recognition.start();
         } catch (err) {
             resultBox.innerText = "다시 눌러 주세요.";
-                resultBox.style.display = "block";
+            resultBox.style.display = "block";
             resultBox.style.background = "#f8fafc";
             resultBox.style.borderColor = "#e2e8f0";
             resultBox.style.color = "#334155";
@@ -1637,7 +1627,6 @@ def word_card_speaking_game(word_themes):
 
     resetBtn.addEventListener("click", resetCurrentRange);
     finishRetryBtn.addEventListener("click", resetCurrentRange);
-
     micBtn.addEventListener("click", startRecognition);
 
     answerBtn.addEventListener("click", function() {
@@ -1658,7 +1647,6 @@ def word_card_speaking_game(word_themes):
 
     hintBtn.addEventListener("click", function() {
         if (!currentItem) return;
-
         const cleanWord = String(currentItem.word || "").trim();
         const noSpaceWord = cleanWord.replace(/\s+/g, "");
         const firstTwo = noSpaceWord.length <= 2 ? noSpaceWord : noSpaceWord.slice(0, 2);
@@ -1668,8 +1656,6 @@ def word_card_speaking_game(word_themes):
     });
 
     skipBtn.addEventListener("click", function() {
-        // 학생이 그냥 다음으로 넘길 때만 연습 필요 단어로 기록합니다.
-        // 틀리게 말한 것만으로는 기록하지 않고, 나중에 다시 말해서 맞히면 정답으로 바뀝니다.
         if (currentItem && !correctMap[getItemKey(currentItem)]) {
             missedMap[getItemKey(currentItem)] = true;
             updateScore();
