@@ -1164,7 +1164,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                         '어릴 때는 이해하지 못했지만 지금은 조금 이해되는 일이 있나요?',
                                                         '누군가를 붙잡기보다 놓아주는 것이 더 낫다고 느낀 적이 있나요?']}
 ,
- '11. No One Else Like You - Adam Levine': {'video_url': 'https://www.youtube.com/watch?v=llpw7u3X11M&list=RDllpw7u3X11M&start_radio=1',
+ '11. No One Else Like You - Adam Levine': {'video_url': 'https://www.youtube.com/watch?v=xYWZfCjK8wE',
                                             'bg': '\n'
                                                   '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#db2777;">\n'
                                                   '        💘 No One Else Like You: 너 같은 사람은 없다는 마음\n'
@@ -1300,6 +1300,120 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                                   '좋아하는 마음을 쉽게 말하지 못했던 경험이 있나요?',
                                                                   '외적인 모습보다 더 중요하다고 생각하는 매력은 무엇인가요?']}
 
+,
+ '12. Out of Time - The Weeknd': {'video_url': 'https://www.youtube.com/watch?v=2fDzCWNS3ig',
+                                  'bg': '\n'
+                                        '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#7c2d12;">\n'
+                                        '        ⏳ Out of Time: 너무 늦게 깨달은 후회\n'
+                                        '    </h3>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        The Weeknd의 <b>Out of Time</b>은 사랑하는 사람에게 상처를 주고 난 뒤,\n'
+                                        '        뒤늦게 자신의 잘못을 깨닫지만 이미 너무 늦어 버린 상황을 담은 노래입니다.\n'
+                                        '        제목의 <b>out of time</b>은 “시간이 다 되었다”, “이미 늦었다”라는 뜻으로,\n'
+                                        '        후회와 미련이 섞인 화자의 마음을 잘 보여 줍니다.\n'
+                                        '    </p>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        노래 속 화자는 지난 몇 달 동안 자기 자신을 돌아보고 있었다고 말합니다.\n'
+                                        '        자신의 삶에 많은 상처가 있었고, 그 상처 때문에 자신을 사랑해 준 사람들에게 차갑게 대했다는 사실을 깨닫습니다.\n'
+                                        '        하지만 그 깨달음은 이미 상대가 다른 사람을 선택한 뒤에 찾아옵니다.\n'
+                                        '    </p>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        반복되는 <b>I\'m out of time</b>은 사랑한다고 말하고 싶고, 곁에 있어 주고 싶고,\n'
+                                        '        잘해 주고 싶지만 이미 기회를 놓쳤다는 고백입니다.\n'
+                                        '        화자는 다시 한 번만 기회를 달라고 말하지만, 동시에 상대가 이미 마음을 정했다는 사실도 알고 있습니다.\n'
+                                        '    </p>\n'
+                                        '\n'
+                                        '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                        '        수업에서는 <b>working on me</b>, <b>trauma</b>, <b>look back</b>,\n'
+                                        '        <b>I regret</b>, <b>made up your mind</b>, <b>out of time</b>,\n'
+                                        '        <b>give me one chance</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+                                        '        특히 이 노래는 후회, 자기 성찰, 놓친 기회, 관계에서의 책임을 주제로 생각을 적기에 좋습니다.\n'
+                                        '    </p>\n'
+                                        '    ',
+                                  'lyrics': [('Yeah, yeah / The last few months, I\'ve been working on me, baby',
+                                              '그래, 그래 / 지난 몇 달 동안 나는 나 자신을 돌아보고 있었어'),
+                                             ("There's so much trauma in my life", '내 삶에는 너무 많은 상처가 있어'),
+                                             ("I've been so cold to the ones who loved me, baby", '나는 나를 사랑해 준 사람들에게 너무 차갑게 굴었어'),
+                                             ('I look back now and I realize', '이제 돌아보니 나는 깨닫게 돼'),
+                                             ('I remember when I held you', '내가 너를 안았던 때가 기억나'),
+                                             ('You begged me with your drowning eyes to stay', '너는 물에 잠길 듯한 눈으로 내게 머물러 달라고 애원했어'),
+                                             ("And I regret I didn't tell you", '그리고 내가 너에게 말하지 않았던 것을 후회해'),
+                                             ("Now I can't keep you from loving him, you made up your mind", '이제 나는 네가 그를 사랑하는 것을 막을 수 없어, 너는 이미 마음을 정했으니까'),
+                                             ("Say I love you, girl, but I'm out of time", '사랑한다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("Say I'm there for you, but I'm out of time", '네 곁에 있겠다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("Say that I'll care for you, but I'm out of time", '널 아껴 주겠다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("Said, I'm too late to make you mine, out of time", '너를 내 사람으로 만들기에는 너무 늦었어, 시간이 다 됐어'),
+                                             ('If he mess up just a little, baby, you know my line', '그가 조금이라도 잘못하면, 내 연락처를 알잖아'),
+                                             ("If you don't trust him a little, then come right back, girl, come right back", '그를 조금이라도 믿지 못하겠다면, 다시 돌아와 줘'),
+                                             ("Gimme one chance, just a little, baby, I'll treat you right", '나에게 한 번만 기회를 줘, 내가 너를 잘 대해 줄게'),
+                                             ("And I'll love you like I should've loved you all the time", '그리고 내가 처음부터 그랬어야 했던 것처럼 너를 사랑할게'),
+                                             ('And I remember when I held you', '그리고 내가 너를 안았던 때가 기억나'),
+                                             ('You begged me with your drowning eyes to stay', '너는 물에 잠길 듯한 눈으로 내게 머물러 달라고 애원했어'),
+                                             ("And I regret I didn't tell you", '그리고 내가 너에게 말하지 않았던 것을 후회해'),
+                                             ("Now I can't keep you from loving him, you made up your mind", '이제 나는 네가 그를 사랑하는 것을 막을 수 없어, 너는 이미 마음을 정했으니까'),
+                                             ("Say I love you, girl, but I'm out of time", '사랑한다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("Say I'm there for you, but I'm out of time", '네 곁에 있겠다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("Say that I'll care for you, but I'm out of time", '널 아껴 주겠다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("Said, I'm too late to make you mine, out of time", '너를 내 사람으로 만들기에는 너무 늦었어, 시간이 다 됐어'),
+                                             ("Said, I had you to myself, but I'm out of time", '한때 너는 내 곁에 있었지만, 이제 나는 이미 늦었어'),
+                                             ("Say that I'll care for you, but I'm out of time", '널 아껴 주겠다고 말하고 싶지만, 나는 이미 늦었어'),
+                                             ("But I'm too late to make you mine, out of time", '하지만 너를 내 사람으로 만들기에는 너무 늦었어, 시간이 다 됐어'),
+                                             ('Out of time, out of time', '시간이 다 됐어, 이미 늦었어'),
+                                             ("Don't you dare touch that dial", '채널을 돌릴 생각은 하지 마'),
+                                             ('Because like the song says, you are out of time', '노래가 말하듯, 당신은 시간이 다 되었으니까'),
+                                             ("You're almost there, but don't panic", '거의 다 왔지만, 당황하지 마'),
+                                             ("There's still more music to come before you're completely engulfed", '완전히 휩싸이기 전에 아직 더 많은 음악이 남아 있어'),
+                                             ('In the blissful embrace of that little light you see in the distance', '멀리 보이는 작은 빛의 평온한 품 안으로'),
+                                             ("Soon you'll be healed, forgiven, and refreshed, free from all trauma, pain, guilt, and shame", '곧 당신은 치유되고, 용서받고, 새로워져 모든 상처와 고통, 죄책감과 수치심에서 자유로워질 거야'),
+                                             ('You may even forget your own name, but before you dwell in that house forever', '어쩌면 자신의 이름도 잊을 수 있어, 하지만 그 집에 영원히 머물기 전에'),
+                                             ("Here's 30 minutes of easy listening to some slow tracks, on 103.5 Dawn FM", '103.5 Dawn FM에서 편안히 들을 수 있는 느린 음악 30분을 들려줄게')],
+                                  'quiz': [{'q': '1. 이 노래에서 화자는 지난 몇 달 동안 무엇을 하고 있었다고 말하나요?',
+                                            'options': ['자기 자신을 돌아보고 있었다', '여행을 준비하고 있었다', '새로운 학교에 다니고 있었다', '운동을 배우고 있었다'],
+                                            'answer': '자기 자신을 돌아보고 있었다'},
+                                           {'q': '2. 화자는 자신을 사랑해 준 사람들에게 어떻게 대했다고 말하나요?',
+                                            'options': ['차갑게 대했다', '항상 친절하게 대했다', '아무 말도 하지 않았다', '선물을 많이 주었다'],
+                                            'answer': '차갑게 대했다'},
+                                           {'q': "3. 'I regret I didn't tell you'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                            'options': ['말하지 않았던 것을 후회한다', '너를 잊었다', '나는 시간이 많다', '아무것도 느끼지 않는다'],
+                                            'answer': '말하지 않았던 것을 후회한다'},
+                                           {'q': "4. 'You made up your mind'는 어떤 의미인가요?",
+                                            'options': ['너는 이미 마음을 정했다', '너는 길을 잃었다', '너는 노래를 만들었다', '너는 생각이 없다'],
+                                            'answer': '너는 이미 마음을 정했다'},
+                                           {'q': "5. 'I'm out of time'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                            'options': ['나는 이미 늦었다', '나는 시간이 아주 많다', '나는 밖에 있다', '나는 시간을 만들었다'],
+                                            'answer': '나는 이미 늦었다'},
+                                           {'q': '6. 화자가 원하는 것은 무엇인가요?',
+                                            'options': ['다시 한 번 기회를 얻는 것', '상대를 완전히 잊는 것', '다른 도시로 떠나는 것', '노래를 그만두는 것'],
+                                            'answer': '다시 한 번 기회를 얻는 것'},
+                                           {'q': '7. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?',
+                                            'options': ['후회와 늦은 깨달음', '승리와 자신감', '여행의 설렘', '분노와 복수'],
+                                            'answer': '후회와 늦은 깨달음'},
+                                           {'q': '8. 이 노래가 보여 주는 관계의 상황으로 가장 알맞은 것은 무엇인가요?',
+                                            'options': ['화자가 뒤늦게 후회하지만 상대는 이미 마음을 정한 상황', '두 사람이 처음 만나는 상황', '친구들이 함께 여행하는 상황', '가족이 화해하는 상황'],
+                                            'answer': '화자가 뒤늦게 후회하지만 상대는 이미 마음을 정한 상황'}],
+                                  'key_expressions': [('Working on me', '나 자신을 돌아보고 노력하는 중'),
+                                                      ('Trauma', '상처, 트라우마'),
+                                                      ('Look back', '돌아보다'),
+                                                      ('I realize', '나는 깨닫다'),
+                                                      ('I regret', '나는 후회하다'),
+                                                      ('Made up your mind', '마음을 정했다'),
+                                                      ("I'm out of time", '나는 이미 늦었다'),
+                                                      ('Gimme one chance', '나에게 한 번만 기회를 줘'),
+                                                      ("I'll treat you right", '내가 너를 잘 대해 줄게'),
+                                                      ('Too late', '너무 늦은')],
+                                  'matching': [('Working on me', '나 자신을 돌아보고 노력하는 중'),
+                                               ('I regret', '나는 후회하다'),
+                                               ('Made up your mind', '마음을 정했다'),
+                                               ("I'm out of time", '나는 이미 늦었다'),
+                                               ('Gimme one chance', '나에게 한 번만 기회를 줘'),
+                                               ('Too late', '너무 늦은')],
+                                  'reflect_questions': ['뒤늦게 후회했던 말이나 행동이 있나요?',
+                                                        '시간이 지나고 나서야 소중함을 깨달은 사람이 있나요?',
+                                                        '다시 기회가 주어진다면 다르게 행동하고 싶은 순간이 있나요?']}
+
 
 }
 
@@ -1403,6 +1517,15 @@ BACKGROUND_CONTENT = {
             "이 과정에서 그레타는 이별의 상처를 조금씩 극복하고, 댄도 잃어버렸던 열정과 삶의 방향을 되찾습니다. 이 영화는 단순한 사랑 이야기가 아니라, 상처받은 사람들이 음악을 통해 자신을 회복하고 다시 시작하는 이야기입니다. 제목 Begin Again처럼, 실패와 이별 뒤에도 삶은 다시 시작될 수 있다는 메시지를 담고 있습니다.",
             "노래 속 화자는 상대가 이미 다른 사람과 함께 있는 상황에서도, 자신이 원하는 사람은 오직 그 사람뿐이라고 말합니다. 상대를 닮은 사람, 상대처럼 웃는 사람, 상대처럼 느껴지는 사람을 원한다고 반복하면서, 결국 누구도 그 사람을 대신할 수 없다는 마음을 표현합니다.",
             "수업에서는 no one else like you, someone just like you, through and through, physical attraction, man of action, in my dreams 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘나에게 특별한 사람’, ‘고백하지 못한 마음’, ‘외적인 모습보다 중요한 매력’, ‘상처 뒤에 다시 시작하는 마음’을 주제로 생각을 적게 할 수 있습니다."
+        ],
+    },
+    "12. Out of Time - The Weeknd": {
+        "title": "⏳ Out of Time: 너무 늦게 깨달은 후회",
+        "paragraphs": [
+            "Out of Time은 The Weeknd의 노래로, 사랑하는 사람에게 상처를 주고 난 뒤 뒤늦게 자신의 잘못을 깨닫지만 이미 너무 늦어 버린 상황을 담고 있습니다. 제목의 out of time은 ‘시간이 다 되었다’, ‘이미 늦었다’라는 뜻으로, 후회와 미련이 섞인 화자의 마음을 보여 줍니다.",
+            "노래 속 화자는 지난 몇 달 동안 자기 자신을 돌아보고 있었다고 말합니다. 자신의 삶에 많은 상처가 있었고, 그 상처 때문에 자신을 사랑해 준 사람들에게 차갑게 대했다는 사실을 깨닫습니다. 하지만 그 깨달음은 이미 상대가 다른 사람을 선택한 뒤에 찾아옵니다.",
+            "반복되는 I’m out of time은 사랑한다고 말하고 싶고, 곁에 있어 주고 싶고, 잘해 주고 싶지만 이미 기회를 놓쳤다는 고백입니다. 화자는 다시 한 번만 기회를 달라고 말하지만, 동시에 상대가 이미 마음을 정했다는 사실도 알고 있습니다.",
+            "수업에서는 working on me, trauma, look back, I regret, made up your mind, out of time, give me one chance 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘뒤늦게 후회한 순간’, ‘시간이 지나고 깨달은 소중함’, ‘다시 기회가 주어진다면 하고 싶은 말’을 주제로 생각을 적게 할 수 있습니다."
         ],
     },
 }
