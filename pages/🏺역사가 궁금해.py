@@ -621,6 +621,61 @@ COLD_WAR_CAMPS = [
     {"구분": "비동맹", "중심 국가": "여러 신생 독립국", "주요 체제": "어느 한 진영에도 완전히 속하지 않으려는 외교 노선", "대표 국가": "인도, 인도네시아, 이집트, 유고슬라비아 등"}
 ]
 
+# 소련을 구성했던 15개 공화국
+COLD_WAR_SOVIET_REPUBLICS = [
+    {"번호": 1, "소련 시기 명칭": "러시아 소비에트 연방 사회주의 공화국", "현재 국가": "러시아", "지역": "동유럽·북아시아"},
+    {"번호": 2, "소련 시기 명칭": "우크라이나 소비에트 사회주의 공화국", "현재 국가": "우크라이나", "지역": "동유럽"},
+    {"번호": 3, "소련 시기 명칭": "벨라루스 소비에트 사회주의 공화국", "현재 국가": "벨라루스", "지역": "동유럽"},
+    {"번호": 4, "소련 시기 명칭": "에스토니아 소비에트 사회주의 공화국", "현재 국가": "에스토니아", "지역": "발트 3국"},
+    {"번호": 5, "소련 시기 명칭": "라트비아 소비에트 사회주의 공화국", "현재 국가": "라트비아", "지역": "발트 3국"},
+    {"번호": 6, "소련 시기 명칭": "리투아니아 소비에트 사회주의 공화국", "현재 국가": "리투아니아", "지역": "발트 3국"},
+    {"번호": 7, "소련 시기 명칭": "몰도바 소비에트 사회주의 공화국", "현재 국가": "몰도바", "지역": "동유럽"},
+    {"번호": 8, "소련 시기 명칭": "조지아 소비에트 사회주의 공화국", "현재 국가": "조지아", "지역": "캅카스"},
+    {"번호": 9, "소련 시기 명칭": "아르메니아 소비에트 사회주의 공화국", "현재 국가": "아르메니아", "지역": "캅카스"},
+    {"번호": 10, "소련 시기 명칭": "아제르바이잔 소비에트 사회주의 공화국", "현재 국가": "아제르바이잔", "지역": "캅카스"},
+    {"번호": 11, "소련 시기 명칭": "카자흐 소비에트 사회주의 공화국", "현재 국가": "카자흐스탄", "지역": "중앙아시아"},
+    {"번호": 12, "소련 시기 명칭": "우즈베크 소비에트 사회주의 공화국", "현재 국가": "우즈베키스탄", "지역": "중앙아시아"},
+    {"번호": 13, "소련 시기 명칭": "투르크멘 소비에트 사회주의 공화국", "현재 국가": "투르크메니스탄", "지역": "중앙아시아"},
+    {"번호": 14, "소련 시기 명칭": "키르기스 소비에트 사회주의 공화국", "현재 국가": "키르기스스탄", "지역": "중앙아시아"},
+    {"번호": 15, "소련 시기 명칭": "타지크 소비에트 사회주의 공화국", "현재 국가": "타지키스탄", "지역": "중앙아시아"},
+]
+
+# 냉전시대 세계 지도용 진영 데이터
+COLD_WAR_CAMP_MAP = {
+    "서방 진영": {
+        "color": "#2563eb",
+        "countries": [
+            "United States", "United Kingdom", "France", "West Germany", "Canada",
+            "Italy", "Belgium", "Netherlands", "Luxembourg", "Norway", "Denmark",
+            "Iceland", "Portugal", "Greece", "Turkey", "Spain", "Japan",
+            "South Korea", "Australia", "New Zealand", "Thailand", "Philippines"
+        ],
+        "korean_names": "미국, 영국, 프랑스, 서독, 캐나다, 이탈리아, 벨기에, 네덜란드, 노르웨이, 덴마크, 포르투갈, 그리스, 튀르키예, 스페인, 일본, 대한민국, 호주, 뉴질랜드 등"
+    },
+    "공산권": {
+        "color": "#dc2626",
+        "countries": [
+            "Russia", "Ukraine", "Belarus", "Estonia", "Latvia", "Lithuania",
+            "Moldova", "Georgia", "Armenia", "Azerbaijan", "Kazakhstan",
+            "Uzbekistan", "Turkmenistan", "Kyrgyzstan", "Tajikistan",
+            "East Germany", "Poland", "Czechoslovakia", "Hungary", "Romania",
+            "Bulgaria", "Albania", "Yugoslavia", "China", "North Korea",
+            "Vietnam", "Cuba", "Mongolia"
+        ],
+        "korean_names": "소련 15개 공화국, 동독, 폴란드, 체코슬로바키아, 헝가리, 루마니아, 불가리아, 중국, 북한, 베트남, 쿠바, 몽골 등"
+    },
+    "비동맹": {
+        "color": "#16a34a",
+        "countries": [
+            "India", "Indonesia", "Egypt", "Yugoslavia", "Ghana", "Ethiopia",
+            "Kenya", "Tanzania", "Algeria", "Morocco", "Tunisia", "Libya",
+            "Iraq", "Iran", "Saudi Arabia", "Syria", "Jordan", "Lebanon",
+            "Myanmar", "Sri Lanka", "Nepal", "Cambodia", "Laos"
+        ],
+        "korean_names": "인도, 인도네시아, 이집트, 유고슬라비아, 가나, 에티오피아, 케냐, 탄자니아, 알제리, 모로코, 이라크, 이란, 시리아 등"
+    }
+}
+
 
 # =========================
 # 핵심 인물 업적 데이터
@@ -1361,6 +1416,75 @@ def create_alliance_map(war_key):
 
     return fig
 
+
+def create_cold_war_camp_map():
+    fig = go.Figure()
+
+    for camp_name, info in COLD_WAR_CAMP_MAP.items():
+        countries = info["countries"]
+        color = info["color"]
+
+        fig.add_trace(
+            go.Choropleth(
+                locations=countries,
+                locationmode="country names",
+                z=[1] * len(countries),
+                text=[f"{country} - {camp_name}" for country in countries],
+                colorscale=[[0, color], [1, color]],
+                showscale=False,
+                marker_line_color="white",
+                marker_line_width=0.7,
+                hovertemplate="%{text}<extra></extra>",
+                name=camp_name,
+                showlegend=False
+            )
+        )
+
+        fig.add_trace(
+            go.Scattergeo(
+                lon=[None],
+                lat=[None],
+                mode="markers",
+                marker=dict(size=12, color=color),
+                name=camp_name,
+                showlegend=True
+            )
+        )
+
+    fig.update_layout(
+        height=470,
+        margin=dict(l=0, r=0, t=55, b=0),
+        title=dict(
+            text="냉전시대 세계 진영 지도: 서방 진영 · 공산권 · 비동맹",
+            x=0.5,
+            xanchor="center",
+            font=dict(size=18)
+        ),
+        geo=dict(
+            projection_type="natural earth",
+            showland=True,
+            landcolor="#f8fafc",
+            showocean=True,
+            oceancolor="#dbeafe",
+            showcountries=True,
+            countrycolor="#94a3b8",
+            coastlinecolor="#64748b",
+            showcoastlines=True,
+            showframe=False
+        ),
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=0.02,
+            xanchor="center",
+            x=0.5
+        )
+    )
+
+    return fig
+
+
+
 def show_world_wars():
     st.markdown(
         """
@@ -1678,6 +1802,42 @@ with tab_cold_war:
     st.markdown("## 🔵🔴 냉전의 세 진영")
     camp_df = pd.DataFrame(COLD_WAR_CAMPS)
     st.dataframe(camp_df, use_container_width=True, hide_index=True)
+
+    st.markdown("## 🗺️ 냉전시대 세계 진영 지도")
+    st.markdown(
+        """
+        <div class="notice-box">
+            <b>지도 읽는 법</b><br>
+            파란색은 미국 중심의 서방 진영, 빨간색은 소련 중심의 공산권, 초록색은 어느 한 진영에도 완전히 속하지 않으려 한 비동맹 국가들을 나타냅니다.
+            실제 각 국가는 시기와 상황에 따라 입장이 달라질 수 있으므로, 이 지도는 수업용으로 큰 흐름을 이해하기 위한 자료입니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.plotly_chart(create_cold_war_camp_map(), use_container_width=True)
+
+    cold_war_map_rows = []
+    for camp_name, info in COLD_WAR_CAMP_MAP.items():
+        cold_war_map_rows.append({
+            "진영": camp_name,
+            "지도 색": "파란색" if camp_name == "서방 진영" else ("빨간색" if camp_name == "공산권" else "초록색"),
+            "대표 국가": info["korean_names"]
+        })
+    st.dataframe(pd.DataFrame(cold_war_map_rows), use_container_width=True, hide_index=True)
+
+    st.markdown("## ☭ 소련을 구성했던 15개 공화국")
+    st.markdown(
+        """
+        <div class="notice-box">
+            <b>소련에 해당하는 나라</b><br>
+            냉전시대의 소련은 하나의 나라처럼 보였지만, 내부적으로는 15개의 소비에트 공화국으로 구성되어 있었습니다.
+            1991년 소련 해체 이후 이 공화국들은 각각 독립 국가가 되었습니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    soviet_df = pd.DataFrame(COLD_WAR_SOVIET_REPUBLICS)
+    st.dataframe(soviet_df, use_container_width=True, hide_index=True)
 
     st.markdown("## 🕰️ 냉전시대 주요 흐름")
     cold_war_df = pd.DataFrame(COLD_WAR_ROWS)
