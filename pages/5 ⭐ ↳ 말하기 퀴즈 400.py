@@ -2057,7 +2057,7 @@ def daily_word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#334155;
             ">
-                마이크 버튼을 누르고 영어 단어를 말해 보세요.
+                마이크 버튼을 누르고 영어 단어를 말해 보세요. 비슷한 발음은 정답으로 인정하지만, 완전히 다른 단어는 오답입니다.
             </div>
         </div>
 
@@ -2439,11 +2439,11 @@ def daily_word_card_speaking_game(word_themes):
         if (!sw || !aw) return false;
         if (sw === aw) return true;
 
-        // 꼭 필요한 ASR 오인식만 명시적으로 허용
+        // 꼭 필요한 ASR 오인식은 명시적으로 허용
         const aliases = {
             "i": ["i", "eye", "ai"],
             "you": ["you", "u", "yew"],
-            "he": ["he", "hi"],
+            "he": ["he", "hi", "hey"],
             "she": ["she", "see", "sea", "shi"],
             "we": ["we", "wee", "wi"],
             "they": ["they", "day", "dey", "their"],
@@ -2454,23 +2454,30 @@ def daily_word_card_speaking_game(word_themes):
             "eight": ["eight", "ate"],
             "here": ["here", "hear"],
             "there": ["there", "their"],
-            "right": ["right", "write"],
+            "right": ["right", "write", "light"],
             "wait": ["wait", "weight"],
             "know": ["know", "no"],
-            "okay": ["okay", "ok"],
+            "okay": ["okay", "ok", "kay"],
             "pe": ["pe", "pee", "p", "physicaleducation"],
             "wifi": ["wifi", "wi", "wifei"],
+            "tshirt": ["tshirt", "teeshirt", "t shirt", "tee shirt"],
 
-            // 짧거나 ASR이 자주 흔들리는 단어만 제한적으로 허용
+            // ASR이 자주 흔들리는 단어
             "math": ["math", "mat", "mass", "meth", "matt"],
             "art": ["art", "heart"],
             "science": ["science", "sience", "signs"],
-            "history": ["history", "hisstory"],
+            "history": ["history", "hisstory", "his story"],
             "music": ["music", "musick"],
             "schedule": ["schedule", "skedule"],
             "library": ["library", "libary"],
             "restaurant": ["restaurant", "resturant"],
-            "comfortable": ["comfortable", "comfterble"]
+            "comfortable": ["comfortable", "comfterble", "comftable"],
+            "clothes": ["clothes", "close"],
+            "weather": ["weather", "whether"],
+            "write": ["write", "right"],
+            "read": ["read", "reed"],
+            "hour": ["hour", "our"],
+            "flower": ["flower", "flour"]
         };
 
         if (aliases[aw] && aliases[aw].includes(sw)) return true;
@@ -2484,61 +2491,28 @@ def daily_word_card_speaking_game(word_themes):
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
 
-        function soundKey(x) {
-            return String(x || "")
-                .replace(/tion/g, "shun")
-                .replace(/sion/g, "shun")
-                .replace(/th/g, "d")
-                .replace(/ph/g, "f")
-                .replace(/gh/g, "g")
-                .replace(/ck/g, "k")
-                .replace(/qu/g, "kw")
-                .replace(/x/g, "ks")
-                .replace(/c/g, "k")
-                .replace(/q/g, "k")
-                .replace(/z/g, "s")
-                .replace(/v/g, "b")
-                .replace(/r/g, "l")
-                .replace(/ee/g, "i")
-                .replace(/ea/g, "i")
-                .replace(/ie/g, "i")
-                .replace(/ei/g, "i")
-                .replace(/oo/g, "u")
-                .replace(/ou/g, "u")
-                .replace(/ow/g, "o")
-                .replace(/oa/g, "o")
-                .replace(/ai/g, "e")
-                .replace(/ay/g, "e")
-                .replace(/[aeiouy]/g, "");
-        }
-
-        const soundSw = soundKey(sw);
-        const soundAw = soundKey(aw);
-
         const sameFirst = sw.charAt(0) === aw.charAt(0);
         const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
         const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
+        const sameFirstThree = sw.slice(0, 3) === aw.slice(0, 3);
+
+        const soundSw = soundKey(sw);
+        const soundAw = soundKey(aw);
+        const vowelSw = vowelLooseKey(sw);
+        const vowelAw = vowelLooseKey(aw);
 
         const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
         const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
 
+        const soundSim = wordSimilarity(soundSw, soundAw);
+        const vowelSim = wordSimilarity(vowelSw, vowelAw);
+        const overlap = soundOverlap(sw, aw);
+
         // 핵심 안전장치:
-        // 첫 글자/첫소리가 다르면 완전히 다른 단어일 가능성이 높으므로 오답.
-        // 예: assignment ≠ project
+        // 첫 글자도 다르고 첫 자음 소리도 다르면 완전히 다른 단어일 가능성이 높으므로 오답.
+        // 예: assignment ≠ project, subject ≠ music
         if (!sameFirst && !soundSameFirst) {
             return false;
-        }
-
-        // 짧은 단어는 끝소리까지 맞아야 함.
-        // 예: club ≠ call
-        if (aw.length <= 4) {
-            if (!sameLast && !soundSameLast) return false;
-        }
-
-        // 자음 뼈대가 완전히 같으면 허용.
-        // 단, 첫소리는 이미 위에서 확인됨.
-        if (soundSw && soundAw && soundSw === soundAw) {
-            return true;
         }
 
         // 2글자 이하는 alias 또는 완전 일치만 허용
@@ -2546,23 +2520,36 @@ def daily_word_card_speaking_game(word_themes):
             return false;
         }
 
-        // 3~4글자는 철자 1개 차이 정도만 허용
+        // 3~4글자 짧은 단어는 너무 관대하면 다른 단어가 쉽게 정답 처리되므로 보수적으로 처리
         if (aw.length <= 4) {
-            return sameFirst && sameLast && dist <= 1 && sim >= 0.75;
+            if (!sameLast && !soundSameLast) return false;
+            return (
+                dist <= 1 ||
+                sim >= 0.78 ||
+                (soundSw && soundAw && soundSw === soundAw)
+            );
         }
 
-        // 5~6글자는 첫 글자가 같고, 너무 많이 다르지 않을 때만 허용
+        // 5~6글자 단어:
+        // 첫소리가 같고 철자/소리 중 하나가 충분히 비슷하면 정답
         if (aw.length <= 6) {
-            return sameFirst && (dist <= 1 || sim >= 0.78);
+            return (
+                dist <= 2 ||
+                sim >= 0.70 ||
+                soundSim >= 0.72 ||
+                vowelSim >= 0.74 ||
+                (overlap >= 0.72 && sameLast)
+            );
         }
 
         // 7글자 이상 긴 단어:
-        // 앞 2글자까지 같거나, edit distance가 아주 작아야 함.
-        // assignment/project 같은 완전히 다른 단어는 여기서 오답 처리됨.
+        // ASR이 일부 음절을 잘못 잡아도 핵심 앞부분과 자음 구조가 비슷하면 허용
         if (aw.length >= 7) {
-            return sameFirst && (
-                (sameFirstTwo && sim >= 0.72) ||
-                dist <= 2
+            return (
+                dist <= 3 ||
+                sim >= 0.64 ||
+                (sameFirstTwo && (soundSim >= 0.66 || vowelSim >= 0.68 || overlap >= 0.68)) ||
+                (sameFirstThree && sim >= 0.58)
             );
         }
 
@@ -2710,7 +2697,7 @@ def daily_word_card_speaking_game(word_themes):
 
         transcriptBox.innerText = "";
         transcriptBox.style.color = "#334155";
-        resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요.";
+        resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요. 비슷한 발음은 정답으로 인정하지만, 완전히 다른 단어는 오답입니다.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
