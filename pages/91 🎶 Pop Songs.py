@@ -1164,7 +1164,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                         '어릴 때는 이해하지 못했지만 지금은 조금 이해되는 일이 있나요?',
                                                         '누군가를 붙잡기보다 놓아주는 것이 더 낫다고 느낀 적이 있나요?']}
 ,
- '11. No One Else Like You - Adam Levine': {'video_url': 'https://www.youtube.com/watch?v=xYWZfCjK8wE',
+ '11. No One Else Like You - Adam Levine': {'video_url': 'https://www.youtube.com/watch?v=llpw7u3X11M&list=RDllpw7u3X11M&start_radio=1',
                                             'bg': '\n'
                                                   '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#db2777;">\n'
                                                   '        💘 No One Else Like You: 너 같은 사람은 없다는 마음\n'
