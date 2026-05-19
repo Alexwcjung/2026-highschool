@@ -910,7 +910,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                                 '나에게 오래도록 기억에 남는 사랑이나 우정은 무엇인가요?',
                                                                 '힘든 이별이나 그리움을 겪었을 때 나를 위로해 준 기억이 있나요?']},
 
- '9. Alex Sampson - Play Pretend': {'video_url': 'https://www.youtube.com/watch?v=Hcw8Ztfll_o',
+ '9. Alex Sampson - Play Pretend': {'video_url': 'https://www.youtube.com/watch?v=9xbbSiWyiQY&list=RD9xbbSiWyiQY&start_radio=1',
                                      'bg': '\n'
                                            '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#db2777;">\n'
                                            '        🎭 Play Pretend: 좋아하지만 숨겨야 하는 마음\n'
