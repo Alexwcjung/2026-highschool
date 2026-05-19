@@ -549,6 +549,56 @@ def get_word_emoji(word):
     return emoji_map.get(word, "🌱")
 
 
+
+# =========================
+# 복습 희망 저장 기능
+# =========================
+if "unknown_words" not in st.session_state:
+    st.session_state.unknown_words = []
+
+if "unknown_word_info" not in st.session_state:
+    st.session_state.unknown_word_info = {}
+
+
+def make_review_id(theme_name, word):
+    """
+    Daily English 400에는 같은 단어가 여러 테마에 나올 수 있으므로
+    내부 저장은 '테마||단어' 기준으로 구분합니다.
+    """
+    return f"{theme_name}||{word}"
+
+
+def add_unknown_word(word, meaning, theme_name):
+    review_id = make_review_id(theme_name, word)
+
+    if review_id not in st.session_state.unknown_words:
+        st.session_state.unknown_words.append(review_id)
+
+    st.session_state.unknown_word_info[review_id] = {
+        "word": word,
+        "meaning": meaning,
+        "theme": theme_name,
+    }
+
+
+def remove_unknown_word(review_id):
+    if review_id in st.session_state.unknown_words:
+        st.session_state.unknown_words.remove(review_id)
+
+    if review_id in st.session_state.unknown_word_info:
+        del st.session_state.unknown_word_info[review_id]
+
+
+def clear_review_checkbox_keys():
+    keys_to_delete = [
+        key for key in list(st.session_state.keys())
+        if "_unknown_" in str(key)
+    ]
+
+    for key in keys_to_delete:
+        del st.session_state[key]
+
+
 # =========================
 # 단어·대화 오디오
 # =========================
@@ -1479,7 +1529,12 @@ def show_cassette_audio(items, title):
         key=f"repeat_{title}"
     )
 
-    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 테마별 전체 단어 듣기"
+    if title == "전체 단어":
+        button_label = "🎧 전체 단어 듣기"
+    elif title == "복습 희망":
+        button_label = "🎧 복습 희망 단어 듣기"
+    else:
+        button_label = "🎧 테마별 전체 단어 듣기"
 
     if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
         try:
@@ -1564,16 +1619,22 @@ def show_dialogue(theme_name):
 # =========================
 def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
+        word = item["word"]
+        meaning = item["meaning"]
+        review_id = make_review_id(theme_name, word)
+        checked = review_id in st.session_state.unknown_words
+        checkbox_key = f"{theme_name}_unknown_{idx}_{word}"
+
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
-        col1, col2, col3, col4 = st.columns([1.25, 1.05, 0.35, 1.65])
+        col1, col2, col3, col4, col5 = st.columns([1.25, 1.05, 0.35, 1.65, 1.25])
 
         with col1:
             st.markdown(
                 f"""
                 <div class="word-row">
                     <div class="word-number">{idx + 1}</div>
-                    <div class="word-text">{item['word']}</div>
+                    <div class="word-text">{word}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
@@ -1581,22 +1642,36 @@ def show_word_cards(theme_words, theme_name):
 
         with col2:
             st.markdown(
-                f"<div class='meaning-text'>{item['meaning']}</div>",
+                f"<div class='meaning-text'>{meaning}</div>",
                 unsafe_allow_html=True
             )
 
         with col3:
             st.markdown(
-                f"<div class='emoji-text'>{get_word_emoji(item['word'])}</div>",
+                f"<div class='emoji-text'>{get_word_emoji(word)}</div>",
                 unsafe_allow_html=True
             )
 
         with col4:
             audio_button(
                 "🔊 듣기",
-                item["word"],
+                word,
                 key=f"{theme_name}_learn_audio_{idx}"
             )
+
+        with col5:
+            review_checked = st.checkbox(
+                "복습 희망",
+                value=checked,
+                key=checkbox_key
+            )
+
+            # 체크박스 화면 상태와 실제 복습 희망 목록을 매번 동기화합니다.
+            # 이렇게 해야 전체 삭제 후 다시 체크해도 바로 목록에 들어갑니다.
+            if review_checked and review_id not in st.session_state.unknown_words:
+                add_unknown_word(word, meaning, theme_name)
+            elif not review_checked and review_id in st.session_state.unknown_words:
+                remove_unknown_word(review_id)
 
         st.markdown('</div>', unsafe_allow_html=True)
 
@@ -1606,13 +1681,117 @@ def show_word_cards(theme_words, theme_name):
 # =========================
 
 
+
+# =========================
+# 복습 희망 단어 모음 탭
+# =========================
+def show_unknown_words_tab():
+    st.markdown(
+        """
+        <div class="theme-header">
+            <div class="theme-title">⭐ 복습 희망</div>
+            <div class="theme-desc">각 탭에서 복습하고 싶은 단어만 모아서 다시 들을 수 있습니다.</div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    unknown_ids = st.session_state.unknown_words
+    unknown_info = st.session_state.unknown_word_info
+
+    if not unknown_ids:
+        st.info("아직 체크한 단어가 없습니다. 각 단어 옆의 '복습 희망'을 체크해 보세요.")
+        return
+
+    st.success(f"총 {len(unknown_ids)}개의 단어를 체크했습니다.")
+
+    unknown_items = []
+    for idx, review_id in enumerate(unknown_ids, start=1):
+        info = unknown_info.get(review_id, {})
+        word = info.get("word", review_id.split("||")[-1])
+        unknown_items.append({
+            "number": idx,
+            "theme": info.get("theme", "복습 희망"),
+            "word": word,
+            "meaning": info.get("meaning", ""),
+            "emoji": get_word_emoji(word),
+        })
+
+    show_cassette_audio(unknown_items, "복습 희망")
+
+    st.markdown("### 📌 체크한 단어 목록")
+
+    for idx, review_id in enumerate(unknown_ids):
+        info = unknown_info.get(review_id, {})
+        word = info.get("word", review_id.split("||")[-1])
+        meaning = info.get("meaning", "")
+        theme_name = info.get("theme", "")
+
+        st.markdown('<div class="word-card">', unsafe_allow_html=True)
+
+        col1, col2, col3, col4, col5 = st.columns([1.25, 1.05, 0.35, 1.65, 1.25])
+
+        with col1:
+            st.markdown(
+                f"""
+                <div class="word-row">
+                    <div class="word-number">{idx + 1}</div>
+                    <div class="word-text">{word}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        with col2:
+            st.markdown(
+                f"<div class='meaning-text'>{meaning}</div>",
+                unsafe_allow_html=True
+            )
+
+        with col3:
+            st.markdown(
+                f"<div class='emoji-text'>{get_word_emoji(word)}</div>",
+                unsafe_allow_html=True
+            )
+
+        with col4:
+            audio_button(
+                "🔊 듣기",
+                word,
+                key=f"unknown_word_audio_{idx}_{review_id}"
+            )
+
+        with col5:
+            if st.button("삭제", key=f"delete_unknown_{idx}_{review_id}", use_container_width=True):
+                remove_unknown_word(review_id)
+
+                keys_to_delete = [
+                    key for key in list(st.session_state.keys())
+                    if "_unknown_" in str(key) and str(key).endswith(f"_{word}")
+                ]
+                for key in keys_to_delete:
+                    del st.session_state[key]
+
+                st.rerun()
+
+        st.caption(f"분류: {theme_name}")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    if st.button("🗑️ 복습 희망 전체 삭제", key="clear_all_unknown_words", use_container_width=True):
+        st.session_state.unknown_words = []
+        st.session_state.unknown_word_info = {}
+        clear_review_checkbox_keys()
+        st.rerun()
+
+
 # =========================
 # 탭 구성
 # =========================
-tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기"]
+tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기", "⭐ 복습 희망"]
 tabs = st.tabs(tab_names)
 
-for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
+for tab, theme_name in zip(tabs[:-2], word_themes.keys()):
     with tab:
         theme_words = word_themes[theme_name]
 
@@ -1629,5 +1808,8 @@ for tab, theme_name in zip(tabs[:-1], word_themes.keys()):
         show_cassette_player(theme_words, theme_name)
         show_word_cards(theme_words, theme_name)
 
-with tabs[-1]:
+with tabs[-2]:
     show_all_cassette_tab()
+
+with tabs[-1]:
+    show_unknown_words_tab()
