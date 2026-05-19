@@ -1683,47 +1683,6 @@ with tab_cold_war:
     cold_war_df = pd.DataFrame(COLD_WAR_ROWS)
     st.dataframe(cold_war_df, use_container_width=True, hide_index=True)
 
-    st.markdown("## 📈 냉전시대 타임라인")
-
-    timeline_df = pd.DataFrame([
-        {"연도": 1945, "사건": "제2차 세계대전 종전", "구분": "시작"},
-        {"연도": 1947, "사건": "트루먼 독트린", "구분": "대립 심화"},
-        {"연도": 1949, "사건": "NATO 창설", "구분": "동맹"},
-        {"연도": 1950, "사건": "한국전쟁", "구분": "대리전"},
-        {"연도": 1955, "사건": "바르샤바 조약기구", "구분": "동맹"},
-        {"연도": 1961, "사건": "베를린 장벽", "구분": "대립 상징"},
-        {"연도": 1962, "사건": "쿠바 미사일 위기", "구분": "핵 위기"},
-        {"연도": 1975, "사건": "베트남 전쟁 종결", "구분": "대리전"},
-        {"연도": 1989, "사건": "베를린 장벽 붕괴", "구분": "종식"},
-        {"연도": 1991, "사건": "소련 해체", "구분": "종식"},
-    ])
-
-    fig = go.Figure()
-
-    fig.add_trace(go.Scatter(
-        x=timeline_df["연도"],
-        y=[1] * len(timeline_df),
-        mode="markers+text",
-        text=timeline_df["사건"],
-        textposition="top center",
-        marker=dict(size=18),
-        hovertext=[
-            f"{row['연도']}년<br>{row['사건']}<br>{row['구분']}"
-            for _, row in timeline_df.iterrows()
-        ],
-        hoverinfo="text"
-    ))
-
-    fig.update_layout(
-        height=350,
-        margin=dict(l=20, r=20, t=50, b=40),
-        xaxis=dict(title="연도", range=[1943, 1993], showgrid=True),
-        yaxis=dict(visible=False),
-        showlegend=False
-    )
-
-    st.plotly_chart(fig, use_container_width=True, config={"displaylogo": False})
-
     st.markdown(
         """
         <div class="notice-box">
