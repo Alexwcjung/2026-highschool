@@ -794,7 +794,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                  'reflect_questions': ['당신도 가수처럼 그리운 옛 연인이나 다시 이야기하고 싶은 사람이 있나요?',
                                                        '처음으로 돌아갈 수 있다면 다시 말하고 싶은 말은 무엇인가요?',
                                                        '사랑이나 관계가 생각보다 쉽지 않았다고 느낀 경험이 있나요?']},
- '8. My Heart Will Go On - Celine Dion': {'video_url': 'https://www.youtube.com/watch?v=qHtcHxx6UfQ&list=RDqHtcHxx6UfQ&start_radio=1',
+ '8. My Heart Will Go On - Celine Dion': {'video_url': 'https://www.youtube.com/watch?v=3gK_2XdjOdY',
                                           'bg': '\n'
                                                 '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#0f766e;">\n'
                                                 '        🚢 My Heart Will Go On: 마음속에 계속 살아 있는 사랑\n'
@@ -908,7 +908,129 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                        ('My heart will go on and on', '내 마음은 계속 이어질 거야')],
                                           'reflect_questions': ['멀리 떨어져 있어도 마음속에 남아 있는 사람이 있나요?',
                                                                 '나에게 오래도록 기억에 남는 사랑이나 우정은 무엇인가요?',
-                                                                '힘든 이별이나 그리움을 겪었을 때 나를 위로해 준 기억이 있나요?']}}
+                                                                '힘든 이별이나 그리움을 겪었을 때 나를 위로해 준 기억이 있나요?']},
+
+ '9. Alex Sampson - Play Pretend': {'video_url': 'https://www.youtube.com/watch?v=Hcw8Ztfll_o',
+                                     'bg': '\n'
+                                           '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#db2777;">\n'
+                                           '        🎭 Play Pretend: 좋아하지만 숨겨야 하는 마음\n'
+                                           '    </h3>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        Alex Sampson의 <b>Play Pretend</b>는 가까운 사람을 좋아하지만,\n'
+                                           '        그 마음을 쉽게 드러내지 못하고 친구처럼 아무렇지 않은 척해야 하는 상황을 담은 노래입니다.\n'
+                                           '        제목의 <b>play pretend</b>는 “괜찮은 척하다”, “아무렇지 않은 척하다”라는 의미로 이해할 수 있습니다.\n'
+                                           '    </p>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        노래 속 화자는 상대를 특별한 사람이라고 생각하고,\n'
+                                           '        상대가 자신이 얼마나 소중한 사람인지 알았으면 좋겠다고 말합니다.\n'
+                                           '        하지만 상대가 또다시 상처받는 모습을 보면서도 자신의 마음을 솔직하게 말하지 못하고,\n'
+                                           '        그저 괜찮은 척해야 하는 아픔을 느낍니다.\n'
+                                           '    </p>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        이 노래에는 좋아하는 사람의 행복을 바라면서도,\n'
+                                           '        동시에 그 사람을 향한 자신의 마음 때문에 힘들어하는 복잡한 감정이 담겨 있습니다.\n'
+                                           '        특히 <b>I want you to be happy</b>와 <b>it\'s hard to watch you fall again</b>은\n'
+                                           '        상대를 걱정하는 마음과 자신의 아픔이 함께 드러나는 표현입니다.\n'
+                                           '    </p>\n'
+                                           '\n'
+                                           '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                           '        수업에서는 <b>someone special</b>, <b>settle</b>, <b>break the rules</b>,\n'
+                                           '        <b>take this the wrong way</b>, <b>play pretend</b>, <b>fine line</b>,\n'
+                                           '        <b>like the back of my hand</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+                                           '        특히 이 노래는 짝사랑, 우정, 걱정, 솔직하지 못한 마음을 주제로 생각을 적기에 좋습니다.\n'
+                                           '    </p>\n'
+                                           '    ',
+                                     'lyrics': [("Let me tell you 'bout someone special / She's kinda perfect and I wish she knew",
+                                                 '내가 특별한 사람에 대해 말해 줄게 / 그녀는 거의 완벽하고, 그녀가 그걸 알았으면 좋겠어'),
+                                                ("Told me that she thinks she has to settle / But I know that ain't true",
+                                                 '그녀는 자신이 적당히 만족해야 한다고 생각한다고 말했어 / 하지만 나는 그게 사실이 아니라는 걸 알아'),
+                                                ('She used to laugh at all the trouble we got in / Always finding ways to break the rules',
+                                                 '그녀는 우리가 저지른 모든 말썽에 웃곤 했어 / 늘 규칙을 깨는 방법을 찾으면서'),
+                                                ("Lately I don't see her smile as often / I think you know it's you",
+                                                 '요즘 나는 그녀의 미소를 자주 보지 못해 / 너도 그게 너라는 걸 알고 있을 것 같아'),
+                                                ("Don't take this the wrong way / I want you to be happy",
+                                                 '이 말을 오해하지는 마 / 나는 네가 행복했으면 좋겠어'),
+                                                ("But it's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '하지만 네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ('Spending all of my time / Dancing on this fine line',
+                                                 '내 모든 시간을 보내며 / 이 아슬아슬한 선 위에서 춤추고 있어'),
+                                                ("It's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ('I know you like the back of my hand / I want you more every day and',
+                                                 '나는 너를 내 손등처럼 잘 알아 / 그리고 매일 너를 더 원하게 돼'),
+                                                ("It's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ("We can talk until three in the morning / The sun'll rise, I never want it to",
+                                                 '우리는 새벽 세 시까지 이야기할 수 있어 / 해가 뜨겠지만, 나는 그러길 원하지 않아'),
+                                                ("Feelings for you came without warning / Ever since we met it's only you",
+                                                 '너를 향한 감정은 예고 없이 찾아왔어 / 우리가 만난 이후로 오직 너뿐이야'),
+                                                ("Don't take this the wrong way / I want you to be happy",
+                                                 '이 말을 오해하지는 마 / 나는 네가 행복했으면 좋겠어'),
+                                                ("But it's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '하지만 네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ('Spending all of my time / Dancing on this fine line',
+                                                 '내 모든 시간을 보내며 / 이 아슬아슬한 선 위에서 춤추고 있어'),
+                                                ("It's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ('I know you like the back of my hand / I want you more every day and',
+                                                 '나는 너를 내 손등처럼 잘 알아 / 그리고 매일 너를 더 원하게 돼'),
+                                                ("It's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ('All you gotta do is let me be your man / Got a hold on me like quick sand',
+                                                 '네가 해야 할 일은 내가 너의 사람이 되게 해 주는 것뿐이야 / 너는 모래늪처럼 나를 붙잡고 있어'),
+                                                ("It's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까'),
+                                                ("Don't take this the wrong way / I want you to be happy",
+                                                 '이 말을 오해하지는 마 / 나는 네가 행복했으면 좋겠어'),
+                                                ("But it's hard to watch you fall again / 'Cause now I gotta play pretend",
+                                                 '하지만 네가 다시 상처받는 모습을 보는 건 힘들어 / 이제 나는 괜찮은 척해야 하니까')],
+                                     'quiz': [{'q': '1. 이 노래에서 화자가 말하는 특별한 사람은 어떤 사람인가요?',
+                                               'options': ['화자가 좋아하고 아끼는 사람', '처음 만난 낯선 사람', '학교 선생님', '유명한 배우'],
+                                               'answer': '화자가 좋아하고 아끼는 사람'},
+                                              {'q': '2. 화자는 상대가 무엇을 알았으면 좋겠다고 생각하나요?',
+                                               'options': ['자신이 소중하고 완벽에 가까운 사람이라는 것', '노래를 못한다는 것', '규칙을 절대 어기면 안 된다는 것', '멀리 떠나야 한다는 것'],
+                                               'answer': '자신이 소중하고 완벽에 가까운 사람이라는 것'},
+                                              {'q': "3. 'I want you to be happy'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                               'options': ['나는 네가 행복했으면 좋겠어', '나는 네가 떠났으면 좋겠어', '나는 네가 화났으면 좋겠어', '나는 네가 조용했으면 좋겠어'],
+                                               'answer': '나는 네가 행복했으면 좋겠어'},
+                                              {'q': "4. 'play pretend'는 이 노래에서 어떤 의미에 가깝나요?",
+                                               'options': ['괜찮은 척하다', '게임을 하다', '노래를 부르다', '규칙을 만들다'],
+                                               'answer': '괜찮은 척하다'},
+                                              {'q': "5. 'Dancing on this fine line'은 어떤 상황을 나타내나요?",
+                                               'options': ['아슬아슬한 관계와 감정 사이에 있는 상황', '무대에서 춤추는 상황', '운동장에서 달리는 상황', '시험을 준비하는 상황'],
+                                               'answer': '아슬아슬한 관계와 감정 사이에 있는 상황'},
+                                              {'q': "6. 'I know you like the back of my hand'의 의미는 무엇인가요?",
+                                               'options': ['나는 너를 아주 잘 안다', '나는 네 손을 잡고 싶다', '나는 길을 잃었다', '나는 아무것도 모른다'],
+                                               'answer': '나는 너를 아주 잘 안다'},
+                                              {'q': '7. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?',
+                                               'options': ['숨겨야 하는 사랑과 안타까움', '승리의 기쁨', '분노와 복수', '여행의 설렘'],
+                                               'answer': '숨겨야 하는 사랑과 안타까움'},
+                                              {'q': '8. 화자가 보기 힘들어하는 것은 무엇인가요?',
+                                               'options': ['상대가 다시 상처받는 모습', '비가 오는 날씨', '학교 시험', '아침에 일어나는 일'],
+                                               'answer': '상대가 다시 상처받는 모습'}],
+                                     'key_expressions': [('Someone special', '특별한 사람'),
+                                                         ("I wish she knew", '그녀가 알았으면 좋겠어'),
+                                                         ('Settle', '적당히 만족하다'),
+                                                         ("That ain't true", '그건 사실이 아니야'),
+                                                         ('Break the rules', '규칙을 깨다'),
+                                                         ("Don't take this the wrong way", '이 말을 오해하지 마'),
+                                                         ('I want you to be happy', '나는 네가 행복했으면 좋겠어'),
+                                                         ('Play pretend', '괜찮은 척하다'),
+                                                         ('Fine line', '아슬아슬한 경계선'),
+                                                         ('Like the back of my hand', '아주 잘 아는')],
+                                     'matching': [('Someone special', '특별한 사람'),
+                                                  ('I want you to be happy', '나는 네가 행복했으면 좋겠어'),
+                                                  ('Play pretend', '괜찮은 척하다'),
+                                                  ('Fine line', '아슬아슬한 경계선'),
+                                                  ('Like the back of my hand', '아주 잘 아는'),
+                                                  ('Break the rules', '규칙을 깨다')],
+                                     'reflect_questions': ['좋아하지만 솔직하게 말하지 못한 마음이 있었나요?',
+                                                           '친구의 행복을 바라면서도 마음이 복잡했던 경험이 있나요?',
+                                                           '괜찮은 척했지만 사실은 힘들었던 순간이 있나요?']}
+}
 
 BACKGROUND_CONTENT = {
     "1. Let It Go - Frozen OST": {
@@ -981,6 +1103,15 @@ BACKGROUND_CONTENT = {
             "이 노래에서 distance와 spaces between us는 단순한 물리적 거리만을 뜻하지 않습니다. 두 사람 사이를 갈라놓은 시간, 상황, 이별, 상실까지 함께 상징합니다. 하지만 화자는 그 거리와 공간을 넘어 사랑이 계속된다고 말합니다.",
             "반복되는 my heart will go on은 ‘내 심장이 계속 뛴다’는 문자 그대로의 뜻을 넘어, 사랑과 기억이 사라지지 않고 계속 이어진다는 의미로 이해할 수 있습니다. 사랑했던 한 순간이 평생 마음속에 남아 한 사람의 삶을 지탱해 주는 힘이 되는 것입니다.",
             "수업에서는 in my dreams, wherever you are, the heart does go on, open the door, safe in my heart 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘마음속에 오래 남아 있는 사람’, ‘멀리 있어도 기억나는 관계’, ‘그리움이 주는 위로’를 주제로 생각을 적게 할 수 있습니다."
+        ],
+    },
+    "9. Alex Sampson - Play Pretend": {
+        "title": "🎭 Play Pretend: 좋아하지만 숨겨야 하는 마음",
+        "paragraphs": [
+            "Alex Sampson의 Play Pretend는 가까운 사람을 좋아하지만 그 마음을 쉽게 드러내지 못하고, 친구처럼 아무렇지 않은 척해야 하는 상황을 담은 노래입니다. 제목의 play pretend는 ‘괜찮은 척하다’, ‘아무렇지 않은 척하다’라는 의미로 이해할 수 있습니다.",
+            "노래 속 화자는 상대를 특별한 사람이라고 생각합니다. 상대가 자신이 얼마나 소중한 사람인지 알았으면 좋겠지만, 동시에 그 마음을 직접 말하지 못합니다. 상대가 다시 상처받는 모습을 보는 것도 힘들고, 자신의 마음을 숨기는 것도 힘든 상황입니다.",
+            "반복되는 I want you to be happy는 상대의 행복을 진심으로 바라는 마음을 보여 줍니다. 하지만 it’s hard to watch you fall again과 I gotta play pretend는 그 마음이 단순한 우정만은 아니라는 점, 그리고 솔직하지 못한 감정이 화자에게 아픔을 준다는 점을 보여 줍니다.",
+            "수업에서는 someone special, settle, break the rules, don’t take this the wrong way, play pretend, fine line, like the back of my hand 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘좋아하지만 말하지 못한 마음’, ‘친구의 행복을 바라보는 마음’, ‘괜찮은 척했던 순간’을 주제로 생각을 적게 할 수 있습니다."
         ],
     },
 }
