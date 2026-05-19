@@ -1458,18 +1458,14 @@ with tab_reading:
     fact_html += "</div>"
     st.markdown(fact_html, unsafe_allow_html=True)
 
-    guide_col, listen_col = st.columns([2.2, 1])
+    play_dialogue_sequence_audio(
+        dialogue,
+        key=f"{category}_{topic_name}_sequence_full_listening_v2",
+        button_label="🎧 전체 듣기",
+        lang="en"
+    )
 
-    with guide_col:
-        st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 전체 듣기는 오른쪽 버튼을 누르세요.")
-
-    with listen_col:
-        play_dialogue_sequence_audio(
-            dialogue,
-            key=f"{category}_{topic_name}_sequence_full_listening_v1",
-            button_label="🎧 전체 듣기",
-            lang="en"
-        )
+    st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
 
     show_korean_reading = st.toggle(
         "🇰🇷 한국어 해석 보기",
