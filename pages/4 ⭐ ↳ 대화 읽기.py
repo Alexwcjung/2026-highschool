@@ -233,28 +233,102 @@ def make_gtts_audio(text):
 def play_dialogue_audio(lines, key):
     """
     대화 전체 듣기:
-    - 줄마다 따로 오디오를 만들지 않음
-    - 대화 전체를 하나의 mp3처럼 재생
+    - st.audio() 대신 HTML audio 사용
+    - 한국어 해석 보기 toggle을 눌러도 재생 위치를 localStorage에 저장/복원
+    - rerun 후에도 가능하면 이어서 재생
     """
+
+    audio_state_key = f"{key}_audio_bytes"
+
     if st.button("🔊 대화 전체 듣기", key=key, use_container_width=True):
         try:
             dialogue_text = make_dialogue_tts_text(lines)
             audio_bytes = make_gtts_audio(dialogue_text)
 
-            st.markdown(
-                """
-                <div class="audio-box">
-                    대화 전체 음성입니다. 한 번에 이어서 들을 수 있습니다.
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-
-            st.audio(audio_bytes, format="audio/mp3")
+            # rerun 이후에도 오디오가 사라지지 않도록 session_state에 저장
+            st.session_state[audio_state_key] = audio_bytes
 
         except Exception as e:
             st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
             st.caption(f"오류 내용: {e}")
+
+    # 한 번 만든 오디오는 계속 표시
+    if audio_state_key in st.session_state:
+        audio_bytes = st.session_state[audio_state_key]
+        audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+        # key를 안전한 id로 변환
+        safe_audio_id = safe_key(key)
+
+        st.markdown(
+            """
+            <div class="audio-box">
+                대화 전체 음성입니다. 한국어 해석 보기를 눌러도 이어서 재생되도록 설정했습니다.
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        components.html(
+            f"""
+            <audio
+                id="audio_{safe_audio_id}"
+                controls
+                style="width: 100%;"
+                src="data:audio/mp3;base64,{audio_b64}">
+            </audio>
+
+            <script>
+            const audio = document.getElementById("audio_{safe_audio_id}");
+
+            const timeKey = "dialogue_audio_time_{safe_audio_id}";
+            const playingKey = "dialogue_audio_playing_{safe_audio_id}";
+
+            // 저장된 재생 위치 복원
+            const savedTime = localStorage.getItem(timeKey);
+            if (savedTime !== null) {{
+                audio.currentTime = parseFloat(savedTime);
+            }}
+
+            // 이전에 재생 중이었다면 rerun 후 다시 재생 시도
+            const wasPlaying = localStorage.getItem(playingKey);
+            if (wasPlaying === "true") {{
+                setTimeout(() => {{
+                    audio.play().catch(() => {{
+                        // 브라우저 정책상 자동재생이 막힐 수 있음
+                    }});
+                }}, 300);
+            }}
+
+            // 재생 위치 계속 저장
+            audio.addEventListener("timeupdate", () => {{
+                localStorage.setItem(timeKey, audio.currentTime);
+            }});
+
+            // 재생 상태 저장
+            audio.addEventListener("play", () => {{
+                localStorage.setItem(playingKey, "true");
+            }});
+
+            audio.addEventListener("pause", () => {{
+                localStorage.setItem(playingKey, "false");
+                localStorage.setItem(timeKey, audio.currentTime);
+            }});
+
+            audio.addEventListener("ended", () => {{
+                localStorage.setItem(playingKey, "false");
+                localStorage.setItem(timeKey, "0");
+            }});
+
+            // Streamlit rerun 직전에도 위치 저장
+            window.addEventListener("beforeunload", () => {{
+                localStorage.setItem(timeKey, audio.currentTime);
+                localStorage.setItem(playingKey, !audio.paused);
+            }});
+            </script>
+            """,
+            height=95,
+        )
 
 
 
