@@ -5,6 +5,7 @@ import re
 import html
 import json
 import uuid
+import base64
 import streamlit.components.v1 as components
 
 # =========================
@@ -258,7 +259,7 @@ def play_dialogue_audio(lines, key):
         audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
 
         # key를 안전한 id로 변환
-        safe_audio_id = safe_key(key)
+        safe_audio_id = re.sub(r"[^a-zA-Z0-9_]+", "_", str(key))
 
         st.markdown(
             """
