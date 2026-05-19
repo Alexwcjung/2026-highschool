@@ -2057,7 +2057,7 @@ def daily_word_card_speaking_game(word_themes):
                 font-weight:900;
                 color:#334155;
             ">
-                마이크 버튼을 누르고 영어 단어를 말해 보세요. 비슷한 발음은 정답으로 인정하지만, 완전히 다른 단어는 오답입니다.
+                마이크 버튼을 누르고 영어 단어를 말해 보세요. 발음 시험이 아니라 단어를 아는지 확인하는 활동입니다.
             </div>
         </div>
 
@@ -2267,6 +2267,10 @@ def daily_word_card_speaking_game(word_themes):
             .trim();
     }
 
+    const KNOWN_ANSWER_WORDS = ITEMS.map(item =>
+        normalizeText(item.word).replace(/\s+/g, "")
+    );
+
     function wordsOnly(text) {
         return normalizeText(text)
             .split(" ")
@@ -2430,6 +2434,48 @@ def daily_word_card_speaking_game(word_themes):
         return overlap / Math.max(1, Math.min(ka.length, kb.length));
     }
 
+    function hasSharedBigram(a, b) {
+        a = String(a || "");
+        b = String(b || "");
+        if (a.length < 2 || b.length < 2) return false;
+
+        for (let i = 0; i < a.length - 1; i++) {
+            if (b.includes(a.slice(i, i + 2))) return true;
+        }
+        return false;
+    }
+
+    function isClearlyDifferentKnownWord(sw, aw) {
+        if (typeof KNOWN_ANSWER_WORDS === "undefined") return false;
+        if (!KNOWN_ANSWER_WORDS.includes(sw)) return false;
+        if (sw === aw) return false;
+        if (aliasMatch(sw, aw)) return false;
+
+        const sim = wordSimilarity(sw, aw);
+        const soundSim = wordSimilarity(soundKey(sw), soundKey(aw));
+        const vowelSim = wordSimilarity(vowelLooseKey(sw), vowelLooseKey(aw));
+
+        const sameFirst = sw.charAt(0) === aw.charAt(0);
+        const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
+        const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
+        const sameLastTwo = sw.slice(-2) === aw.slice(-2);
+
+        // Daily English 400 안의 다른 단어라도 ASR 오인식 가능성이 있으면 막지 않습니다.
+        // 예: art→heart, math→mass, clothes→close, weather→whether 등
+        // 다만 assignment→project, subject→music처럼 완전히 다른 단어는 오답 처리합니다.
+        const hasClue =
+            sameFirst ||
+            sameLast ||
+            sameFirstTwo ||
+            sameLastTwo ||
+            hasSharedBigram(sw, aw) ||
+            sim >= 0.38 ||
+            soundSim >= 0.28 ||
+            vowelSim >= 0.30;
+
+        return !hasClue;
+    }
+
     function isSmallRecognitionMistake(spokenWord, answerWord) {
         if (!spokenWord || !answerWord) return false;
 
@@ -2438,122 +2484,128 @@ def daily_word_card_speaking_game(word_themes):
 
         if (!sw || !aw) return false;
         if (sw === aw) return true;
+        if (aliasMatch(sw, aw)) return true;
 
-        // 꼭 필요한 ASR 오인식은 명시적으로 허용
-        const aliases = {
-            "i": ["i", "eye", "ai"],
-            "you": ["you", "u", "yew"],
-            "he": ["he", "hi", "hey"],
-            "she": ["she", "see", "sea", "shi"],
-            "we": ["we", "wee", "wi"],
-            "they": ["they", "day", "dey", "their"],
-            "one": ["one", "won"],
-            "two": ["two", "to", "too"],
-            "three": ["three", "tree"],
-            "four": ["four", "for"],
-            "eight": ["eight", "ate"],
-            "here": ["here", "hear"],
-            "there": ["there", "their"],
-            "right": ["right", "write", "light"],
-            "wait": ["wait", "weight"],
-            "know": ["know", "no"],
-            "okay": ["okay", "ok", "kay"],
-            "pe": ["pe", "pee", "p", "physicaleducation"],
-            "wifi": ["wifi", "wi", "wifei"],
-            "tshirt": ["tshirt", "teeshirt", "t shirt", "tee shirt"],
-
-            // ASR이 자주 흔들리는 단어
-            "math": ["math", "mat", "mass", "meth", "matt"],
-            "art": ["art", "heart"],
-            "science": ["science", "sience", "signs"],
-            "history": ["history", "hisstory", "his story"],
-            "music": ["music", "musick"],
-            "schedule": ["schedule", "skedule"],
-            "library": ["library", "libary"],
-            "restaurant": ["restaurant", "resturant"],
-            "comfortable": ["comfortable", "comfterble", "comftable"],
-            "clothes": ["clothes", "close"],
-            "weather": ["weather", "whether"],
-            "write": ["write", "right"],
-            "read": ["read", "reed"],
-            "hour": ["hour", "our"],
-            "flower": ["flower", "flour"]
-        };
-
-        if (aliases[aw] && aliases[aw].includes(sw)) return true;
-
-        // 완전히 다른 대명사류는 오답
+        // I / you / he / she / we / they처럼 의미가 크게 바뀌는 대명사는 alias가 아니면 통과시키지 않습니다.
         const pronouns = ["i", "you", "he", "she", "we", "they"];
         if (pronouns.includes(aw) && pronouns.includes(sw) && aw !== sw) {
+            return false;
+        }
+
+        // 단어 목록 안의 완전히 다른 단어를 말한 경우는 오답
+        if (isClearlyDifferentKnownWord(sw, aw)) {
             return false;
         }
 
         const dist = editDistance(sw, aw);
         const sim = wordSimilarity(sw, aw);
 
+        const soundSw = soundKey(sw);
+        const soundAw = soundKey(aw);
+        const soundDist = editDistance(soundSw, soundAw);
+        const soundSim = wordSimilarity(soundSw, soundAw);
+
+        const vowelSw = vowelLooseKey(sw);
+        const vowelAw = vowelLooseKey(aw);
+        const vowelSim = wordSimilarity(vowelSw, vowelAw);
+
         const sameFirst = sw.charAt(0) === aw.charAt(0);
         const sameLast = sw.charAt(sw.length - 1) === aw.charAt(aw.length - 1);
         const sameFirstTwo = sw.slice(0, 2) === aw.slice(0, 2);
         const sameFirstThree = sw.slice(0, 3) === aw.slice(0, 3);
+        const sameLastTwo = sw.slice(-2) === aw.slice(-2);
 
-        const soundSw = soundKey(sw);
-        const soundAw = soundKey(aw);
-        const vowelSw = vowelLooseKey(sw);
-        const vowelAw = vowelLooseKey(aw);
+        const soundSameFirst =
+            soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
 
-        const soundSameFirst = soundSw && soundAw && soundSw.charAt(0) === soundAw.charAt(0);
-        const soundSameLast = soundSw && soundAw && soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
+        const soundSameLast =
+            soundSw && soundAw &&
+            soundSw.charAt(soundSw.length - 1) === soundAw.charAt(soundAw.length - 1);
 
-        const soundSim = wordSimilarity(soundSw, soundAw);
-        const vowelSim = wordSimilarity(vowelSw, vowelAw);
         const overlap = soundOverlap(sw, aw);
 
-        // 핵심 안전장치:
-        // 첫 글자도 다르고 첫 자음 소리도 다르면 완전히 다른 단어일 가능성이 높으므로 오답.
-        // 예: assignment ≠ project, subject ≠ music
-        if (!sameFirst && !soundSameFirst) {
-            return false;
+        // 완전히 다른 단어 방지용 최소 단서
+        const hasAnyClue =
+            sameFirst ||
+            sameLast ||
+            sameFirstTwo ||
+            sameLastTwo ||
+            soundSameFirst ||
+            soundSameLast ||
+            hasSharedBigram(sw, aw) ||
+            soundSim >= 0.22 ||
+            vowelSim >= 0.25 ||
+            sim >= 0.28 ||
+            overlap >= 0.28;
+
+        if (!hasAnyClue) return false;
+
+        // 한 단어 인식에서 브라우저가 일부만 잡거나 붙여 잡는 경우 허용
+        // 예: refrigerator → refriger, cafeteria → cafe, comfortable → comfort
+        if (aw.length >= 4 && sw.length >= 2 && (aw.includes(sw) || sw.includes(aw))) {
+            return true;
         }
 
-        // 2글자 이하는 alias 또는 완전 일치만 허용
+        // 자음 뼈대가 같거나 거의 같으면 단어를 안 것으로 처리
+        if (soundSw && soundAw && soundSw === soundAw) return true;
+        if (soundSw && soundAw && soundDist <= 2 && soundSim >= 0.22) return true;
+
+        // 1~2글자 단어: P.E. 같은 짧은 단어도 관대하게
         if (aw.length <= 2) {
-            return false;
-        }
-
-        // 3~4글자 짧은 단어는 너무 관대하면 다른 단어가 쉽게 정답 처리되므로 보수적으로 처리
-        if (aw.length <= 4) {
-            if (!sameLast && !soundSameLast) return false;
             return (
-                dist <= 1 ||
-                sim >= 0.78 ||
-                (soundSw && soundAw && soundSw === soundAw)
+                sim >= 0.50 ||
+                soundSim >= 0.28 ||
+                sameFirst ||
+                sameLast ||
+                soundSameFirst ||
+                soundSameLast
             );
         }
 
-        // 5~6글자 단어:
-        // 첫소리가 같고 철자/소리 중 하나가 충분히 비슷하면 정답
-        if (aw.length <= 6) {
+        // 3~4글자 단어: 특히 관대하게
+        // art, club, copy, fill, roof, yard, sofa, song 등 한 단어 ASR이 흔들림
+        if (aw.length <= 4) {
             return (
                 dist <= 2 ||
-                sim >= 0.70 ||
-                soundSim >= 0.72 ||
-                vowelSim >= 0.74 ||
-                (overlap >= 0.72 && sameLast)
+                sim >= 0.30 ||
+                soundSim >= 0.20 ||
+                vowelSim >= 0.24 ||
+                sameFirst ||
+                sameLast ||
+                soundSameFirst ||
+                soundSameLast ||
+                hasSharedBigram(sw, aw)
             );
         }
 
-        // 7글자 이상 긴 단어:
-        // ASR이 일부 음절을 잘못 잡아도 핵심 앞부분과 자음 구조가 비슷하면 허용
-        if (aw.length >= 7) {
+        // 5~6글자 단어: 3~4글자 차이까지 허용
+        if (aw.length <= 6) {
             return (
-                dist <= 3 ||
-                sim >= 0.64 ||
-                (sameFirstTwo && (soundSim >= 0.66 || vowelSim >= 0.68 || overlap >= 0.68)) ||
-                (sameFirstThree && sim >= 0.58)
+                dist <= 4 ||
+                sim >= 0.32 ||
+                soundSim >= 0.22 ||
+                vowelSim >= 0.25 ||
+                sameFirst ||
+                sameFirstTwo ||
+                sameLast ||
+                sameLastTwo ||
+                hasSharedBigram(sw, aw)
             );
         }
 
-        return false;
+        // 7글자 이상 긴 단어: 일부 음절만 맞아도 단어를 안 것으로 처리
+        return (
+            dist <= 6 ||
+            sim >= 0.28 ||
+            soundSim >= 0.20 ||
+            vowelSim >= 0.22 ||
+            sameFirst ||
+            sameFirstTwo ||
+            sameFirstThree ||
+            sameLast ||
+            sameLastTwo ||
+            hasSharedBigram(sw, aw)
+        );
     }
 
     function isCorrectSpeech(spoken, answer) {
@@ -2569,20 +2621,51 @@ def daily_word_card_speaking_game(word_themes):
         if (spokenWords.length === 0 || answerWords.length === 0) return false;
 
         // 한 단어 정답:
-        // 음성 인식이 앞뒤에 짧은 말을 붙이는 경우도 허용
+        // 발음 시험이 아니라 단어를 아는지 보는 활동이므로 매우 관대하게 처리합니다.
         if (answerWords.length === 1) {
+            const target = answerWords[0];
+
+            // 전체 인식 문장이 바로 비슷하면 정답
+            // 예: "a subject", "the subject", "subject please"
+            if (isSmallRecognitionMistake(s, target)) return true;
+
+            // 후보 단어 중 하나라도 정답과 비슷하면 정답
             for (const sw of spokenWords) {
-                if (isSmallRecognitionMistake(sw, answerWords[0])) {
+                if (isSmallRecognitionMistake(sw, target)) {
                     return true;
                 }
             }
+
+            // 브라우저가 한 단어를 붙여서 인식한 경우
+            const joinedSpoken = spokenWords.join("");
+            if (isSmallRecognitionMistake(joinedSpoken, target)) return true;
+
+            // 앞뒤 filler 제거 후 다시 확인
+            const fillerRemoved = spokenWords.filter(w =>
+                !["a", "an", "the", "uh", "um", "please", "yes", "no", "is", "it"].includes(w)
+            );
+
+            if (fillerRemoved.length > 0) {
+                const joinedClean = fillerRemoved.join("");
+                if (isSmallRecognitionMistake(joinedClean, target)) return true;
+
+                for (const w of fillerRemoved) {
+                    if (isSmallRecognitionMistake(w, target)) return true;
+                }
+            }
+
             return false;
         }
 
         // 두 단어 이상 표현:
         if (s.includes(a)) return true;
 
-        // 정답 단어들이 순서대로 이해 가능하면 정답
+        // check in / take notes / living room처럼 띄어쓰기 차이 허용
+        const joinedSpoken = spokenWords.join("");
+        const joinedAnswer = answerWords.join("");
+        if (isSmallRecognitionMistake(joinedSpoken, joinedAnswer)) return true;
+
+        // 순서대로 핵심 단어가 비슷하게 잡히면 정답
         let pos = 0;
 
         for (const sw of spokenWords) {
@@ -2697,7 +2780,7 @@ def daily_word_card_speaking_game(word_themes):
 
         transcriptBox.innerText = "";
         transcriptBox.style.color = "#334155";
-        resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요. 비슷한 발음은 정답으로 인정하지만, 완전히 다른 단어는 오답입니다.";
+        resultBox.innerText = "마이크 버튼을 누르고 영어 단어를 말해 보세요. 발음 시험이 아니라 단어를 아는지 확인하는 활동입니다.";
         resultBox.style.background = "#f1f5f9";
         resultBox.style.borderColor = "#e2e8f0";
         resultBox.style.color = "#334155";
