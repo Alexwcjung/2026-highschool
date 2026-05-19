@@ -1031,7 +1031,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                            '친구의 행복을 바라면서도 마음이 복잡했던 경험이 있나요?',
                                                            '괜찮은 척했지만 사실은 힘들었던 순간이 있나요?']},
 
- '10. Older - Sasha Alex Sloan': {'video_url': 'https://www.youtube.com/watch?v=M5WwinAObDA&list=RDM5WwinAObDA&start_radio=1',
+ '10. Older - Sasha Alex Sloan': {'video_url': 'https://www.youtube.com/watch?v=Rb_tqxQKSPM',
                                   'bg': '\n'
                                         '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#9333ea;">\n'
                                         '        🌙 Older: 나이가 들며 이해하게 되는 것\n'
@@ -1163,6 +1163,143 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                   'reflect_questions': ['나이가 들면서 부모님이나 가족을 다르게 이해하게 된 경험이 있나요?',
                                                         '어릴 때는 이해하지 못했지만 지금은 조금 이해되는 일이 있나요?',
                                                         '누군가를 붙잡기보다 놓아주는 것이 더 낫다고 느낀 적이 있나요?']}
+,
+ '11. No One Else Like You - Adam Levine': {'video_url': 'https://www.youtube.com/watch?v=xYWZfCjK8wE',
+                                            'bg': '\n'
+                                                  '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#db2777;">\n'
+                                                  '        💘 No One Else Like You: 너 같은 사람은 없다는 마음\n'
+                                                  '    </h3>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  '        Adam Levine의 <b>No One Else Like You</b>는 마음속에 특별한 사람이 있지만,\n'
+                                                  '        그 마음을 쉽게 드러내지 못하는 화자의 솔직한 감정을 담은 노래입니다.\n'
+                                                  '        제목의 <b>no one else like you</b>는 “너 같은 사람은 아무도 없어”라는 뜻으로,\n'
+                                                  '        상대가 자신에게 얼마나 특별한 존재인지 보여 줍니다.\n'
+                                                  '    </p>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  '        노래 속 화자는 상대가 이미 다른 사람과 함께 있는 상황에서도,\n'
+                                                  '        자신이 원하는 사람은 오직 그 사람뿐이라고 말합니다.\n'
+                                                  '        상대를 닮은 사람, 상대처럼 웃는 사람, 상대처럼 느껴지는 사람을 원한다고 반복하면서,\n'
+                                                  '        결국 누구도 그 사람을 대신할 수 없다는 마음을 표현합니다.\n'
+                                                  '    </p>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  '        이 노래는 단순한 고백 노래처럼 들리지만, 그 안에는 기다림, 짝사랑,\n'
+                                                  '        조심스러운 고백, 그리고 상대의 행복을 바라보면서도 포기하기 어려운 마음이 담겨 있습니다.\n'
+                                                  '        <b>I want someone just like you</b>와 <b>There\'s no one else</b>가 반복되며,\n'
+                                                  '        화자의 간절함이 더욱 분명하게 드러납니다.\n'
+                                                  '    </p>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  '        수업에서는 <b>someone just like you</b>, <b>through and through</b>,\n'
+                                                  '        <b>physical attraction</b>, <b>man of action</b>, <b>in my dreams</b>,\n'
+                                                  '        <b>no one else</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+                                                  '        특히 이 노래는 좋아하는 사람을 향한 마음, 고백, 기다림, 진심을 주제로 생각을 적기에 좋습니다.\n'
+                                                  '    </p>\n'
+                                                  '    ',
+                                            'lyrics': [('Oh, woah-oh / Woah-woah-oh-oh / Oh, yeah',
+                                                        '오, 워-oh / 워-워-oh-oh / 오, 그래'),
+                                                       ('Is everything just right / Don\'t want you thinking that I\'m in a hurry',
+                                                        '모든 것이 괜찮은 걸까 / 내가 서두르고 있다고 네가 생각하길 원하지 않아'),
+                                                       ("I won't stay afraid / I have this vision and it's got me worried",
+                                                        '나는 계속 두려워하고만 있지 않을 거야 / 내게 이런 상상이 있고, 그것이 나를 걱정하게 해'),
+                                                       ("'Cause everyone wants someone / That's one cliché that's true",
+                                                        '왜냐하면 누구나 누군가를 원하니까 / 그것은 흔한 말이지만 사실이야'),
+                                                       ("The sad truth's, I want no one / Unless that someone's you",
+                                                        '슬픈 진실은, 나는 아무도 원하지 않아 / 그 누군가가 네가 아니라면'),
+                                                       ('And looks like you / Feels like you / Smiles like you',
+                                                        '그리고 너처럼 보이고 / 너처럼 느껴지고 / 너처럼 웃는 사람'),
+                                                       ('I want someone just like you / Through and through',
+                                                        '나는 너와 꼭 같은 사람을 원해 / 처음부터 끝까지'),
+                                                       ("I'm forever blue / 'Cause there's no one else like",
+                                                        '나는 영원히 우울할 거야 / 왜냐하면 그런 사람은 아무도 없으니까'),
+                                                       ("I hope that you're not mad / You always said you want a man of action",
+                                                        '네가 화나지 않았으면 좋겠어 / 너는 항상 행동하는 남자를 원한다고 말했지'),
+                                                       ("I'm not the hottest lad, no / There's more to life than physical attraction",
+                                                        '나는 가장 멋진 남자는 아니야 / 삶에는 외적인 끌림보다 더 중요한 것이 있어'),
+                                                       ('You got your special someone / But between me and him, guess who',
+                                                        '너에게는 특별한 누군가가 있어 / 하지만 나와 그 사람 사이에서, 누가'),
+                                                       ('Will spend their whole life waiting / For someone just like you',
+                                                        '평생을 기다리며 보낼까 / 너 같은 사람을'),
+                                                       ('That looks like you / That feels like you / That smiles like you',
+                                                        '너처럼 보이고 / 너처럼 느껴지고 / 너처럼 웃는 사람을'),
+                                                       ('I need someone just like you / Love me true',
+                                                        '나는 너와 꼭 같은 사람이 필요해 / 나를 진심으로 사랑해 줘'),
+                                                       ("I'm forever blue / 'Cause there's no one else like",
+                                                        '나는 영원히 우울할 거야 / 왜냐하면 그런 사람은 아무도 없으니까'),
+                                                       ('Hoo, woah-woah-oh-oh, hoo-ooh',
+                                                        '후, 워-워-oh-oh, 후-ooh'),
+                                                       ('I want you in my arms / I see you in my dreams',
+                                                        '나는 너를 내 품에 안고 싶어 / 나는 꿈속에서 너를 봐'),
+                                                       ("I'm gonna make you mine / As crazy as it seems",
+                                                        '나는 너를 내 사람으로 만들 거야 / 미친 말처럼 들리겠지만'),
+                                                       ('Girl, you, yes you / I need someone just like you',
+                                                        '너야, 바로 너 / 나는 너와 꼭 같은 사람이 필요해'),
+                                                       ("Love me true / I'm forever blue",
+                                                        '나를 진심으로 사랑해 줘 / 나는 영원히 우울할 거야'),
+                                                       ("'Cause there's no one else / There's no one else",
+                                                        '왜냐하면 다른 사람은 없으니까 / 다른 사람은 없으니까'),
+                                                       ("There's no one else / There's no one else",
+                                                        '다른 사람은 없어 / 다른 사람은 없어'),
+                                                       ("There's no one else / There's no one else",
+                                                        '다른 사람은 없어 / 다른 사람은 없어'),
+                                                       ("There's no one else I need to have",
+                                                        '내게 필요한 다른 사람은 아무도 없어'),
+                                                       ("'Cause you're so fine / You're so fine",
+                                                        '왜냐하면 너는 정말 멋지니까 / 너는 정말 멋지니까'),
+                                                       ("'Cause you're so fine / You're so fine",
+                                                        '왜냐하면 너는 정말 멋지니까 / 너는 정말 멋지니까'),
+                                                       ("'Cause you're so fine / You're so fine",
+                                                        '왜냐하면 너는 정말 멋지니까 / 너는 정말 멋지니까'),
+                                                       ("'Cause you're so fine / You're so fine",
+                                                        '왜냐하면 너는 정말 멋지니까 / 너는 정말 멋지니까'),
+                                                       ("'Cause you're so fine / You're so fine",
+                                                        '왜냐하면 너는 정말 멋지니까 / 너는 정말 멋지니까')],
+                                            'quiz': [{'q': '1. 이 노래에서 화자가 원하는 사람은 누구와 같은 사람인가요?',
+                                                      'options': ['상대와 같은 사람', '전혀 모르는 사람', '유명한 배우', '오래된 친구가 아닌 사람'],
+                                                      'answer': '상대와 같은 사람'},
+                                                     {'q': '2. 화자는 자신이 서두르고 있다고 상대가 생각하길 원하나요?',
+                                                      'options': ['아니요, 그렇게 생각하지 않길 원한다', '네, 빨리 고백하고 싶다', '전혀 관심이 없다', '상대를 피하고 싶다'],
+                                                      'answer': '아니요, 그렇게 생각하지 않길 원한다'},
+                                                     {'q': "3. 'I want no one unless that someone's you'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                                      'options': ['그 사람이 네가 아니라면 아무도 원하지 않는다', '아무나 괜찮다', '너를 잊고 싶다', '혼자 있는 것이 가장 좋다'],
+                                                      'answer': '그 사람이 네가 아니라면 아무도 원하지 않는다'},
+                                                     {'q': "4. 'I want someone just like you'는 어떤 뜻인가요?",
+                                                      'options': ['너와 꼭 같은 사람을 원해', '너와 전혀 다른 사람을 원해', '아무도 필요 없어', '친구가 되고 싶지 않아'],
+                                                      'answer': '너와 꼭 같은 사람을 원해'},
+                                                     {'q': "5. 'physical attraction'의 뜻으로 가장 알맞은 것은 무엇인가요?",
+                                                      'options': ['외적인 끌림', '학교 성적', '운동 능력', '가족 관계'],
+                                                      'answer': '외적인 끌림'},
+                                                     {'q': "6. 'I see you in my dreams'는 어떤 의미인가요?",
+                                                      'options': ['꿈속에서 너를 본다', '너를 전혀 생각하지 않는다', '잠을 자지 못한다', '꿈을 싫어한다'],
+                                                      'answer': '꿈속에서 너를 본다'},
+                                                     {'q': '7. 이 노래의 중심 감정으로 가장 알맞은 것은 무엇인가요?',
+                                                      'options': ['특별한 사람을 향한 간절한 마음', '시험에 대한 긴장', '여행의 설렘', '친구와의 장난'],
+                                                      'answer': '특별한 사람을 향한 간절한 마음'},
+                                                     {'q': "8. 반복되는 'There's no one else'는 무엇을 강조하나요?",
+                                                      'options': ['상대를 대신할 사람은 없다는 마음', '사람이 너무 많다는 사실', '혼자 있는 것이 좋다는 마음', '노래를 멈추고 싶다는 마음'],
+                                                      'answer': '상대를 대신할 사람은 없다는 마음'}],
+                                            'key_expressions': [('No one else like you', '너 같은 사람은 아무도 없어'),
+                                                                ('Just right', '딱 맞는'),
+                                                                ("I'm in a hurry", '나는 서두르고 있어'),
+                                                                ('Someone just like you', '너와 꼭 같은 사람'),
+                                                                ('Through and through', '처음부터 끝까지'),
+                                                                ("I'm forever blue", '나는 영원히 우울해'),
+                                                                ('Man of action', '행동하는 사람'),
+                                                                ('Physical attraction', '외적인 끌림'),
+                                                                ('In my dreams', '내 꿈속에서'),
+                                                                ('Love me true', '나를 진심으로 사랑해 줘')],
+                                            'matching': [('No one else like you', '너 같은 사람은 아무도 없어'),
+                                                         ('Someone just like you', '너와 꼭 같은 사람'),
+                                                         ('Through and through', '처음부터 끝까지'),
+                                                         ('Physical attraction', '외적인 끌림'),
+                                                         ('I see you in my dreams', '나는 꿈속에서 너를 봐'),
+                                                         ('Love me true', '나를 진심으로 사랑해 줘')],
+                                            'reflect_questions': ['나에게 “너 같은 사람은 없다”고 느껴지는 사람이 있나요?',
+                                                                  '좋아하는 마음을 쉽게 말하지 못했던 경험이 있나요?',
+                                                                  '외적인 모습보다 더 중요하다고 생각하는 매력은 무엇인가요?']}
+
 
 }
 
@@ -1255,6 +1392,15 @@ BACKGROUND_CONTENT = {
             "어릴 때 화자는 부모님이 왜 행복하지 못한지 이해하지 못했고, 자신은 절대 부모님처럼 되지 않겠다고 생각했습니다. 하지만 나이가 들면서 부모님도 완벽한 영웅이 아니라, 자신처럼 상처받고 실수하고 사랑을 어려워하는 한 사람이라는 것을 깨닫게 됩니다.",
             "반복되는 The older I get the more that I see는 나이가 들수록 더 많이 이해하게 된다는 뜻입니다. 이 노래는 단순히 가족의 아픔을 말하는 것이 아니라, 시간이 지나며 원망이 이해로 바뀌고, 사랑이 항상 쉽지 않다는 사실을 받아들이는 성장의 과정을 보여 줍니다.",
             "수업에서는 I used to, the older I get, my parents aren't heroes, loving is hard, try your best, let someone go 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘어릴 때는 몰랐지만 지금은 이해되는 일’, ‘가족을 바라보는 시선의 변화’, ‘누군가를 놓아주는 마음’을 주제로 생각을 적게 할 수 있습니다."
+        ],
+    },
+    "11. No One Else Like You - Adam Levine": {
+        "title": "💘 No One Else Like You: 너 같은 사람은 없다는 마음",
+        "paragraphs": [
+            "No One Else Like You는 Adam Levine의 노래로, 마음속에 특별한 사람이 있지만 그 마음을 쉽게 드러내지 못하는 화자의 감정을 담고 있습니다. 화자는 상대와 닮은 사람, 상대처럼 웃는 사람, 상대처럼 느껴지는 사람을 원한다고 말하며, 결국 누구도 그 사람을 대신할 수 없다고 고백합니다.",
+            "이 노래에서 no one else like you는 ‘너 같은 사람은 아무도 없다’는 뜻입니다. 단순히 외모가 마음에 든다는 의미를 넘어, 상대의 분위기, 웃음, 느낌, 존재 자체가 특별하다는 마음을 보여 줍니다.",
+            "화자는 상대에게 이미 특별한 사람이 있다는 것을 알고 있지만, 그래도 자신의 마음을 완전히 접지 못합니다. I want someone just like you와 There's no one else가 반복되면서, 상대를 향한 간절함과 기다림이 더욱 분명하게 드러납니다.",
+            "수업에서는 no one else like you, someone just like you, through and through, physical attraction, man of action, in my dreams 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘나에게 특별한 사람’, ‘고백하지 못한 마음’, ‘외적인 모습보다 중요한 매력’을 주제로 생각을 적게 할 수 있습니다."
         ],
     },
 }
