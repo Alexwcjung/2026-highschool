@@ -1284,7 +1284,7 @@ with tab_reading:
     # 전체 듣기 버튼을 읽기 지문 위로 배치
     play_persistent_full_audio(
         full_english,
-        key=f"{category}_{topic_name}_full_listening",
+        key=f"{category}_{topic_name}_full_listening_no_speaker_v3",
         button_label="🎧 전체 듣기",
         lang="en"
     )
