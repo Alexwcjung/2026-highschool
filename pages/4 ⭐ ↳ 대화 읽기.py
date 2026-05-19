@@ -261,15 +261,6 @@ def play_dialogue_audio(lines, key):
         # key를 안전한 id로 변환
         safe_audio_id = re.sub(r"[^a-zA-Z0-9_]+", "_", str(key))
 
-        st.markdown(
-            """
-            <div class="audio-box">
-                대화 전체 음성입니다. 한국어 해석 보기를 눌러도 이어서 재생되도록 설정했습니다.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
         components.html(
             f"""
             <audio
