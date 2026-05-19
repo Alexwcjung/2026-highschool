@@ -1031,7 +1031,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                            '친구의 행복을 바라면서도 마음이 복잡했던 경험이 있나요?',
                                                            '괜찮은 척했지만 사실은 힘들었던 순간이 있나요?']},
 
- '10. Older - Sasha Alex Sloan': {'video_url': 'https://www.youtube.com/watch?v=Rb_tqxQKSPM',
+ '10. Older - Sasha Alex Sloan': {'video_url': 'https://www.youtube.com/watch?v=M5WwinAObDA&list=RDM5WwinAObDA&start_radio=1',
                                   'bg': '\n'
                                         '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#9333ea;">\n'
                                         '        🌙 Older: 나이가 들며 이해하게 되는 것\n'
