@@ -1617,14 +1617,15 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-tab_civil, tab_korea, tab_china, tab_japan, tab_usa, tab_uk, tab_world_wars = st.tabs([
+tab_civil, tab_korea, tab_china, tab_japan, tab_usa, tab_uk, tab_world_wars, tab_cold_war = st.tabs([
     "🏺 세계 4대 문명",
     "🇰🇷 한국 역사",
     "🇨🇳 중국 역사",
     "🇯🇵 일본 역사",
     "🇺🇸 미국 역사",
     "🇬🇧 영국 역사",
-    "🌍 세계대전 1·2차"
+    "🌍 세계대전 1·2차",
+    "🧊 냉전시대"
 ])
 
 with tab_civil:
@@ -1653,88 +1654,82 @@ st.caption("필요 패키지: streamlit, pandas, plotly")
 # =========================
 # 마지막 탭: 냉전시대
 # =========================
-try:
-    cold_war_tab = tab_world_wars[-1]
-except Exception:
-    cold_war_tab = None
+with tab_cold_war:
+    st.markdown(
+        f"""
+        <div class="intro-box">
+            <h2>🧊 {COLD_WAR_OVERVIEW["title"]}</h2>
+            <p>{COLD_WAR_OVERVIEW["intro"]}</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-if cold_war_tab is not None:
-    with cold_war_tab:
-        st.markdown(
-            f"""
-            <div class="intro-box">
-                <h2>🧊 {COLD_WAR_OVERVIEW["title"]}</h2>
-                <p>{COLD_WAR_OVERVIEW["intro"]}</p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        f"""
+        <div class="simple-box">
+            <b>한 줄 정리</b><br>
+            {COLD_WAR_OVERVIEW["summary"]}
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        st.markdown(
-            f"""
-            <div class="simple-box">
-                <b>한 줄 정리</b><br>
-                {COLD_WAR_OVERVIEW["summary"]}
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.markdown("## 🔵🔴 냉전의 세 진영")
+    camp_df = pd.DataFrame(COLD_WAR_CAMPS)
+    st.dataframe(camp_df, use_container_width=True, hide_index=True)
 
-        st.markdown("## 🔵🔴 냉전의 세 진영")
-        camp_df = pd.DataFrame(COLD_WAR_CAMPS)
-        st.dataframe(camp_df, use_container_width=True, hide_index=True)
+    st.markdown("## 🕰️ 냉전시대 주요 흐름")
+    cold_war_df = pd.DataFrame(COLD_WAR_ROWS)
+    st.dataframe(cold_war_df, use_container_width=True, hide_index=True)
 
-        st.markdown("## 🕰️ 냉전시대 주요 흐름")
-        cold_war_df = pd.DataFrame(COLD_WAR_ROWS)
-        st.dataframe(cold_war_df, use_container_width=True, hide_index=True)
+    st.markdown("## 📈 냉전시대 타임라인")
 
-        st.markdown("## 📈 냉전시대 타임라인")
+    timeline_df = pd.DataFrame([
+        {"연도": 1945, "사건": "제2차 세계대전 종전", "구분": "시작"},
+        {"연도": 1947, "사건": "트루먼 독트린", "구분": "대립 심화"},
+        {"연도": 1949, "사건": "NATO 창설", "구분": "동맹"},
+        {"연도": 1950, "사건": "한국전쟁", "구분": "대리전"},
+        {"연도": 1955, "사건": "바르샤바 조약기구", "구분": "동맹"},
+        {"연도": 1961, "사건": "베를린 장벽", "구분": "대립 상징"},
+        {"연도": 1962, "사건": "쿠바 미사일 위기", "구분": "핵 위기"},
+        {"연도": 1975, "사건": "베트남 전쟁 종결", "구분": "대리전"},
+        {"연도": 1989, "사건": "베를린 장벽 붕괴", "구분": "종식"},
+        {"연도": 1991, "사건": "소련 해체", "구분": "종식"},
+    ])
 
-        timeline_df = pd.DataFrame([
-            {"연도": 1945, "사건": "제2차 세계대전 종전", "구분": "시작"},
-            {"연도": 1947, "사건": "트루먼 독트린", "구분": "대립 심화"},
-            {"연도": 1949, "사건": "NATO 창설", "구분": "동맹"},
-            {"연도": 1950, "사건": "한국전쟁", "구분": "대리전"},
-            {"연도": 1955, "사건": "바르샤바 조약기구", "구분": "동맹"},
-            {"연도": 1961, "사건": "베를린 장벽", "구분": "대립 상징"},
-            {"연도": 1962, "사건": "쿠바 미사일 위기", "구분": "핵 위기"},
-            {"연도": 1975, "사건": "베트남 전쟁 종결", "구분": "대리전"},
-            {"연도": 1989, "사건": "베를린 장벽 붕괴", "구분": "종식"},
-            {"연도": 1991, "사건": "소련 해체", "구분": "종식"},
-        ])
+    fig = go.Figure()
 
-        fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=timeline_df["연도"],
+        y=[1] * len(timeline_df),
+        mode="markers+text",
+        text=timeline_df["사건"],
+        textposition="top center",
+        marker=dict(size=18),
+        hovertext=[
+            f"{row['연도']}년<br>{row['사건']}<br>{row['구분']}"
+            for _, row in timeline_df.iterrows()
+        ],
+        hoverinfo="text"
+    ))
 
-        fig.add_trace(go.Scatter(
-            x=timeline_df["연도"],
-            y=[1] * len(timeline_df),
-            mode="markers+text",
-            text=timeline_df["사건"],
-            textposition="top center",
-            marker=dict(size=18),
-            hovertext=[
-                f"{row['연도']}년<br>{row['사건']}<br>{row['구분']}"
-                for _, row in timeline_df.iterrows()
-            ],
-            hoverinfo="text"
-        ))
+    fig.update_layout(
+        height=350,
+        margin=dict(l=20, r=20, t=50, b=40),
+        xaxis=dict(title="연도", range=[1943, 1993], showgrid=True),
+        yaxis=dict(visible=False),
+        showlegend=False
+    )
 
-        fig.update_layout(
-            height=350,
-            margin=dict(l=20, r=20, t=50, b=40),
-            xaxis=dict(title="연도", range=[1943, 1993], showgrid=True),
-            yaxis=dict(visible=False),
-            showlegend=False
-        )
+    st.plotly_chart(fig, use_container_width=True, config={"displaylogo": False})
 
-        st.plotly_chart(fig, use_container_width=True, config={"displaylogo": False})
-
-        st.markdown(
-            """
-            <div class="notice-box">
-                <b>학생용 핵심 이해</b><br>
-                냉전은 미국과 소련이 직접 전면전을 벌인 전쟁이 아니라, 군사 동맹, 핵무기 경쟁, 우주 경쟁, 한국전쟁·베트남전쟁 같은 대리전, 그리고 이념 경쟁으로 세계가 갈라졌던 시대입니다.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        """
+        <div class="notice-box">
+            <b>학생용 핵심 이해</b><br>
+            냉전은 미국과 소련이 직접 전면전을 벌인 전쟁이 아니라, 군사 동맹, 핵무기 경쟁, 우주 경쟁, 한국전쟁·베트남전쟁 같은 대리전, 그리고 이념 경쟁으로 세계가 갈라졌던 시대입니다.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
