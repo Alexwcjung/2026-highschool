@@ -2,7 +2,10 @@ import streamlit as st
 from pathlib import Path
 from gtts import gTTS
 import io
+import base64
 import random
+import re
+import streamlit.components.v1 as components
 
 # =========================================================
 # 기본 설정
@@ -25,6 +28,90 @@ def make_tts(text, lang="en"):
     tts.write_to_fp(fp)
     fp.seek(0)
     return fp.read()
+
+# =========================================================
+# 서술형 피드백 함수
+# =========================================================
+
+def play_persistent_full_audio(text, key, button_label="🎧 전체 듣기", lang="en"):
+    """
+    전체 듣기:
+    - st.audio() 대신 HTML audio 사용
+    - 한국어 해석 보기 toggle을 눌러도 재생 위치를 localStorage에 저장/복원
+    - rerun 후에도 가능하면 이어서 재생
+    """
+    audio_state_key = f"{key}_audio_bytes"
+
+    if st.button(button_label, use_container_width=True, key=f"{key}_btn"):
+        try:
+            audio_bytes = make_tts(text, lang=lang)
+            st.session_state[audio_state_key] = audio_bytes
+        except Exception as e:
+            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
+
+    if audio_state_key in st.session_state:
+        audio_bytes = st.session_state[audio_state_key]
+        audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+        safe_audio_id = re.sub(r"[^a-zA-Z0-9_]+", "_", str(key))
+
+        components.html(
+            f"""
+            <audio
+                id="audio_{safe_audio_id}"
+                controls
+                style="width: 100%;"
+                src="data:audio/mp3;base64,{audio_b64}">
+            </audio>
+
+            <script>
+            const audio = document.getElementById("audio_{safe_audio_id}");
+
+            const timeKey = "reading_full_audio_time_{safe_audio_id}";
+            const playingKey = "reading_full_audio_playing_{safe_audio_id}";
+
+            const savedTime = localStorage.getItem(timeKey);
+            if (savedTime !== null) {{
+                audio.currentTime = parseFloat(savedTime);
+            }}
+
+            const wasPlaying = localStorage.getItem(playingKey);
+            if (wasPlaying === "true") {{
+                setTimeout(() => {{
+                    audio.play().catch(() => {{
+                        // 브라우저 자동재생 정책상 막힐 수 있음
+                    }});
+                }}, 300);
+            }}
+
+            audio.addEventListener("timeupdate", () => {{
+                localStorage.setItem(timeKey, audio.currentTime);
+            }});
+
+            audio.addEventListener("play", () => {{
+                localStorage.setItem(playingKey, "true");
+            }});
+
+            audio.addEventListener("pause", () => {{
+                localStorage.setItem(playingKey, "false");
+                localStorage.setItem(timeKey, audio.currentTime);
+            }});
+
+            audio.addEventListener("ended", () => {{
+                localStorage.setItem(playingKey, "false");
+                localStorage.setItem(timeKey, "0");
+            }});
+
+            window.addEventListener("beforeunload", () => {{
+                localStorage.setItem(timeKey, audio.currentTime);
+                localStorage.setItem(playingKey, !audio.paused);
+            }});
+            </script>
+            """,
+            height=95,
+        )
+
 
 # =========================================================
 # 서술형 피드백 함수
@@ -1194,6 +1281,16 @@ with tab_reading:
     fact_html += "</div>"
     st.markdown(fact_html, unsafe_allow_html=True)
 
+    # 전체 듣기 버튼을 읽기 지문 위로 배치
+    play_persistent_full_audio(
+        full_english,
+        key=f"{category}_{topic_name}_full_listening",
+        button_label="🎧 전체 듣기",
+        lang="en"
+    )
+
+    st.markdown("---")
+
     st.markdown("### 📘 문장별 읽기")
     st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
 
@@ -1237,19 +1334,6 @@ with tab_reading:
             st.write("")
             if st.button("🔊", key=f"{category}_{topic_name}_sentence_audio_{i}", help="이 문장 듣기"):
                 st.audio(make_tts(eng, lang="en"), format="audio/mp3")
-
-    st.markdown("---")
-
-    listening_key = f"{category}_{topic_name}_show_listening"
-
-    if listening_key not in st.session_state:
-        st.session_state[listening_key] = False
-
-    if st.button("🎧 전체 듣기", use_container_width=True, key=f"{category}_{topic_name}_listening_btn"):
-        st.session_state[listening_key] = not st.session_state[listening_key]
-
-    if st.session_state[listening_key]:
-        st.audio(make_tts(full_english, lang="en"), format="audio/mp3")
 
     st.markdown("---")
     st.markdown("### ⭐ Key Words")
