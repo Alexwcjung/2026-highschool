@@ -1301,7 +1301,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                                   '외적인 모습보다 더 중요하다고 생각하는 매력은 무엇인가요?']}
 
 ,
- '12. Out of Time - The Weeknd': {'video_url': 'https://www.youtube.com/watch?v=2fDzCWNS3ig',
+ '12. Out of Time - The Weeknd': {'video_url': 'https://www.youtube.com/watch?v=S0eUa8QTsFQ&list=RDS0eUa8QTsFQ&start_radio=1',
                                   'bg': '\n'
                                         '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#7c2d12;">\n'
                                         '        ⏳ Out of Time: 너무 늦게 깨달은 후회\n'
