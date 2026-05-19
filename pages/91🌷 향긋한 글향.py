@@ -4,6 +4,7 @@ from gtts import gTTS
 import io
 import base64
 import random
+import json
 import re
 import streamlit.components.v1 as components
 
@@ -1227,6 +1228,159 @@ def make_full_listening_text(dialogue):
     return "   ".join(listening_lines)
 
 
+
+def play_dialogue_sequence_audio(dialogue, key, button_label="🎧 전체 듣기", lang="en"):
+    """
+    전체 듣기:
+    - 화자 이름은 음성에서 읽지 않음
+    - 문장별 mp3를 순서대로 재생
+    - 화자가 바뀔 때 실제 대기 시간을 넣어 발화 간격을 확실히 늘림
+    - 한국어 해석 보기 toggle로 rerun되어도 현재 문장과 재생 위치를 복원
+    """
+    audio_state_key = f"{key}_playlist"
+
+    if st.button(button_label, use_container_width=True, key=f"{key}_btn"):
+        try:
+            playlist = []
+            for idx, (speaker, eng, kor) in enumerate(dialogue):
+                eng_text = str(eng).strip()
+                audio_bytes = make_tts(eng_text, lang=lang)
+                audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+
+                next_speaker = dialogue[idx + 1][0] if idx + 1 < len(dialogue) else None
+
+                # 같은 화자가 이어지면 짧게, 화자가 바뀌면 확실히 길게 쉼
+                pause_after = 1500 if next_speaker is not None and next_speaker != speaker else 300
+
+                playlist.append({
+                    "src": f"data:audio/mp3;base64,{audio_b64}",
+                    "pauseAfter": pause_after
+                })
+
+            st.session_state[audio_state_key] = playlist
+
+        except Exception as e:
+            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
+            st.caption(f"오류 내용: {e}")
+
+    if audio_state_key in st.session_state:
+        playlist = st.session_state[audio_state_key]
+        playlist_json = json.dumps(playlist, ensure_ascii=False)
+        safe_audio_id = re.sub(r"[^a-zA-Z0-9_]+", "_", str(key))
+
+        components.html(
+            f"""
+            <div style="width:100%;">
+                <audio id="audio_{safe_audio_id}" controls style="width:100%;"></audio>
+            </div>
+
+            <script>
+            const playlist_{safe_audio_id} = {playlist_json};
+            const audio_{safe_audio_id} = document.getElementById("audio_{safe_audio_id}");
+
+            const indexKey_{safe_audio_id} = "seq_audio_index_{safe_audio_id}";
+            const timeKey_{safe_audio_id} = "seq_audio_time_{safe_audio_id}";
+            const playingKey_{safe_audio_id} = "seq_audio_playing_{safe_audio_id}";
+
+            let currentIndex_{safe_audio_id} = parseInt(localStorage.getItem(indexKey_{safe_audio_id}) || "0");
+            if (currentIndex_{safe_audio_id} < 0 || currentIndex_{safe_audio_id} >= playlist_{safe_audio_id}.length) {{
+                currentIndex_{safe_audio_id} = 0;
+            }}
+
+            let movingNext_{safe_audio_id} = false;
+            let endTimer_{safe_audio_id} = null;
+
+            function saveState_{safe_audio_id}() {{
+                localStorage.setItem(indexKey_{safe_audio_id}, String(currentIndex_{safe_audio_id}));
+                localStorage.setItem(timeKey_{safe_audio_id}, String(audio_{safe_audio_id}.currentTime || 0));
+                localStorage.setItem(playingKey_{safe_audio_id}, String(!audio_{safe_audio_id}.paused));
+            }}
+
+            function loadTrack_{safe_audio_id}(idx, restoreTime=true, autoplay=false) {{
+                currentIndex_{safe_audio_id} = idx;
+                localStorage.setItem(indexKey_{safe_audio_id}, String(currentIndex_{safe_audio_id}));
+
+                audio_{safe_audio_id}.src = playlist_{safe_audio_id}[currentIndex_{safe_audio_id}].src;
+                audio_{safe_audio_id}.load();
+
+                audio_{safe_audio_id}.onloadedmetadata = () => {{
+                    if (restoreTime) {{
+                        const savedTime = parseFloat(localStorage.getItem(timeKey_{safe_audio_id}) || "0");
+                        if (!Number.isNaN(savedTime) && savedTime > 0 && savedTime < audio_{safe_audio_id}.duration) {{
+                            audio_{safe_audio_id}.currentTime = savedTime;
+                        }}
+                    }} else {{
+                        audio_{safe_audio_id}.currentTime = 0;
+                    }}
+
+                    if (autoplay) {{
+                        audio_{safe_audio_id}.play().catch(() => {{}});
+                    }}
+                }};
+            }}
+
+            loadTrack_{safe_audio_id}(currentIndex_{safe_audio_id}, true, false);
+
+            const wasPlaying_{safe_audio_id} = localStorage.getItem(playingKey_{safe_audio_id});
+            if (wasPlaying_{safe_audio_id} === "true") {{
+                setTimeout(() => {{
+                    audio_{safe_audio_id}.play().catch(() => {{}});
+                }}, 350);
+            }}
+
+            audio_{safe_audio_id}.addEventListener("timeupdate", () => {{
+                localStorage.setItem(timeKey_{safe_audio_id}, String(audio_{safe_audio_id}.currentTime || 0));
+            }});
+
+            audio_{safe_audio_id}.addEventListener("play", () => {{
+                if (endTimer_{safe_audio_id}) {{
+                    clearTimeout(endTimer_{safe_audio_id});
+                    endTimer_{safe_audio_id} = null;
+                }}
+                localStorage.setItem(playingKey_{safe_audio_id}, "true");
+            }});
+
+            audio_{safe_audio_id}.addEventListener("pause", () => {{
+                if (!movingNext_{safe_audio_id}) {{
+                    saveState_{safe_audio_id}();
+                    localStorage.setItem(playingKey_{safe_audio_id}, "false");
+                }}
+            }});
+
+            audio_{safe_audio_id}.addEventListener("ended", () => {{
+                localStorage.setItem(timeKey_{safe_audio_id}, "0");
+
+                const delay = playlist_{safe_audio_id}[currentIndex_{safe_audio_id}].pauseAfter || 300;
+
+                if (currentIndex_{safe_audio_id} + 1 < playlist_{safe_audio_id}.length) {{
+                    movingNext_{safe_audio_id} = true;
+                    localStorage.setItem(playingKey_{safe_audio_id}, "true");
+
+                    endTimer_{safe_audio_id} = setTimeout(() => {{
+                        currentIndex_{safe_audio_id} += 1;
+                        localStorage.setItem(indexKey_{safe_audio_id}, String(currentIndex_{safe_audio_id}));
+                        localStorage.setItem(timeKey_{safe_audio_id}, "0");
+                        loadTrack_{safe_audio_id}(currentIndex_{safe_audio_id}, false, true);
+                        movingNext_{safe_audio_id} = false;
+                    }}, delay);
+                }} else {{
+                    currentIndex_{safe_audio_id} = 0;
+                    localStorage.setItem(indexKey_{safe_audio_id}, "0");
+                    localStorage.setItem(timeKey_{safe_audio_id}, "0");
+                    localStorage.setItem(playingKey_{safe_audio_id}, "false");
+                    loadTrack_{safe_audio_id}(0, false, false);
+                }}
+            }});
+
+            window.addEventListener("beforeunload", () => {{
+                saveState_{safe_audio_id}();
+            }});
+            </script>
+            """,
+            height=85,
+        )
+
+
 # =========================================================
 # 화면
 # =========================================================
@@ -1304,18 +1458,18 @@ with tab_reading:
     fact_html += "</div>"
     st.markdown(fact_html, unsafe_allow_html=True)
 
-    # 전체 듣기 버튼을 읽기 지문 위로 배치
-    play_persistent_full_audio(
-        full_english,
-        key=f"{category}_{topic_name}_full_listening_no_speaker_pause_v1",
-        button_label="🎧 전체 듣기",
-        lang="en"
-    )
+    guide_col, listen_col = st.columns([2.2, 1])
 
-    st.markdown("---")
+    with guide_col:
+        st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 전체 듣기는 오른쪽 버튼을 누르세요.")
 
-    st.markdown("### 📘 문장별 읽기")
-    st.caption("각 영어 문장 오른쪽의 🔊 버튼을 누르면 그 문장만 들을 수 있습니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
+    with listen_col:
+        play_dialogue_sequence_audio(
+            dialogue,
+            key=f"{category}_{topic_name}_sequence_full_listening_v1",
+            button_label="🎧 전체 듣기",
+            lang="en"
+        )
 
     show_korean_reading = st.toggle(
         "🇰🇷 한국어 해석 보기",
