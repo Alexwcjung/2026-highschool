@@ -1209,23 +1209,24 @@ def show_pass_status(score, total, checked, pass_ratio=0.7):
 def make_full_listening_text(dialogue):
     """
     전체 듣기용 텍스트:
-    - 화면에는 화자가 보이지만, 음성에서는 화자 이름을 읽지 않음
-    - 화자가 바뀔 때 문장 사이에 약간 더 긴 쉼을 주기 위해 마침표와 공백을 추가
+    - 한 개의 긴 mp3로 처음부터 끝까지 재생되게 함
+    - 음성에서는 화자 이름을 읽지 않음
+    - 화자가 바뀔 때 약간 더 쉬도록 문장 사이에 pause 표현을 추가
     """
-    listening_lines = []
+    parts = []
     previous_speaker = None
 
     for speaker, eng, kor in dialogue:
         sentence = str(eng).strip()
 
         if previous_speaker is not None and speaker != previous_speaker:
-            # gTTS가 화자 전환을 조금 더 또렷하게 쉬도록 유도
-            listening_lines.append(".")
+            # gTTS에서 약간의 쉼을 유도하기 위한 짧은 문장부호
+            parts.append(".")
 
-        listening_lines.append(sentence)
+        parts.append(sentence)
         previous_speaker = speaker
 
-    return "   ".join(listening_lines)
+    return " ... ".join(parts)
 
 
 
@@ -1404,8 +1405,6 @@ st.markdown('</div>', unsafe_allow_html=True)
 
 data = data_bank[category][topic_name]
 dialogue = data["dialogue"]
-full_english = make_full_listening_text(dialogue)
-
 st.markdown(f"""
 <div class="info-card">
     <h2>🌿 {data["title"]}</h2>
@@ -1458,9 +1457,11 @@ with tab_reading:
     fact_html += "</div>"
     st.markdown(fact_html, unsafe_allow_html=True)
 
-    play_dialogue_sequence_audio(
-        dialogue,
-        key=f"{category}_{topic_name}_sequence_full_listening_v2",
+    full_english = make_full_listening_text(dialogue)
+
+    play_persistent_full_audio(
+        full_english,
+        key=f"{category}_{topic_name}_full_listening_long_mp3_v1",
         button_label="🎧 전체 듣기",
         lang="en"
     )
