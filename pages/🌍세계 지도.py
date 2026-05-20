@@ -710,18 +710,18 @@ st.markdown(
     <div class="title-box">
         <h1>🌍 세계 지도 학습 자료</h1>
         <p>
-            대륙별 대표 국가를 먼저 학습하고, 이어서 지도 퀴즈로 복습할 수 있습니다.<br>
-            전체 세계지도, 바다, 강 이름 자료는 마지막 탭에서 지식용으로 확인할 수 있습니다.
+            지도에서 색칠된 나라를 보고 정답을 고르는 세계 지도 퀴즈입니다.<br>
+            수업용 정리와 전체 세계지도, 바다, 강 이름 자료도 함께 확인할 수 있습니다.
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-tab_learn, tab_quiz, tab_summary, tab_map = st.tabs(["🌎 대륙별 나라 학습", "🎮 나라 맞추기 퀴즈", "📌 수업용 정리", "🗺️ 세계 지도 지식용"])
+tab_quiz, tab_summary, tab_map = st.tabs(["🎮 나라 맞추기 퀴즈", "📌 수업용 정리", "🗺️ 세계 지도 지식용"])
 
 # =====================================================
-# 마지막 탭: 세계 지도 지식용
+# 3번 탭: 세계 지도 지식용
 # =====================================================
 with tab_map:
     row1 = st.columns(4)
@@ -971,126 +971,7 @@ with tab_map:
     )
 
 # =====================================================
-# 2번 탭: 대륙별 나라 학습
-# =====================================================
-with tab_learn:
-    st.markdown(
-        """
-        <div class="learn-hero">
-            <h2>🌎 대륙별 나라 학습</h2>
-            <p>
-                모든 나라를 한꺼번에 외우기보다, 대륙별 대표 국가를 먼저 익혀 봅시다.<br>
-                나라 이름을 한국어/영어로 보고, 지도에서 위치를 확인한 뒤 퀴즈로 복습합니다.
-            </p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    continent_options = ["전체", "아시아", "유럽", "북아메리카", "남아메리카", "아프리카", "오세아니아"]
-    learn_continent = st.selectbox("🌎 학습할 대륙 선택", continent_options, key="learn_continent")
-
-    st.info("수업 목표: 중요 국가를 먼저 익히고 → 지도에서 위치 확인 → 10문제 퀴즈로 복습")
-
-    if learn_continent == "전체":
-        learn_pool = QUIZ_COUNTRIES
-    else:
-        learn_pool = [c for c in QUIZ_COUNTRIES if learn_continent in c["continent"]]
-
-    st.markdown(f"### 📚 {learn_continent} 대표 국가 목록")
-
-    if not learn_pool:
-        st.warning("해당 대륙의 나라 데이터가 없습니다.")
-
-    else:
-        st.markdown(
-            """
-            <div class="info-box">
-                ✅ 여기의 대표 국가는 <b>세계 뉴스, 역사, 경제, 문화, 여행, 국제 관계</b>에서 자주 등장하는 나라를 중심으로 골랐습니다.<br>
-                ✅ 모든 나라를 외우기보다, 먼저 자주 접하는 나라의 <b>이름과 위치</b>를 익히는 것이 목표입니다.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        # 보기 좋은 칩 형태
-        st.markdown("<div class='continent-card'>", unsafe_allow_html=True)
-
-        chip_html = ""
-        for c in learn_pool:
-            chip_html += f"""
-            <span class="country-chip">
-                {c['flag']} {c['ko']} <small>/ {c['en']}</small>
-            </span>
-            """
-
-        st.markdown(chip_html, unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-        # 학습용 지도: 선택 대륙의 나라들을 색칠
-        st.markdown("### 🗺️ 지도에서 위치 보기")
-
-        map_learn_df = pd.DataFrame([
-            {
-                "iso_alpha": c["iso"],
-                "country": f"{c['ko']} / {c['en']}",
-                "continent": c["continent"],
-                "value": 1
-            }
-            for c in learn_pool
-        ])
-
-        learn_fig = px.choropleth(
-            map_learn_df,
-            locations="iso_alpha",
-            color="continent",
-            hover_name="country",
-            projection="natural earth"
-        )
-
-        learn_fig.update_layout(
-            height=560,
-            margin=dict(l=0, r=0, t=0, b=0),
-            legend_title_text="대륙",
-            geo=dict(
-                showframe=False,
-                showcoastlines=True,
-                coastlinecolor="#475569",
-                showcountries=True,
-                countrycolor="#cbd5e1",
-                showland=True,
-                landcolor="#f8fafc",
-                showocean=True,
-                oceancolor="#e0f2fe",
-                projection_type="natural earth"
-            )
-        )
-
-        st.plotly_chart(
-            learn_fig,
-            use_container_width=True,
-            config={"displaylogo": False}
-        )
-
-        st.markdown("### 🧠 학생용 암기 문장")
-
-        if learn_continent == "전체":
-            st.info(
-                "먼저 세계에서 자주 등장하는 대표 국가를 익혀 둡니다. "
-                "뉴스, 스포츠, 역사, 여행, 경제 이야기에서 자주 만나는 나라들이라 "
-                "기본 세계지리 학습의 출발점으로 좋습니다."
-            )
-        else:
-            names = ", ".join([c["ko"] for c in learn_pool[:8]])
-            st.info(
-                f"{learn_continent}의 대표 국가로는 {names} 등이 있습니다. "
-                f"이 나라들은 뉴스, 역사, 문화, 여행, 경제에서 자주 등장하므로 "
-                f"{learn_continent}의 위치와 특징을 익히는 데 도움이 됩니다."
-            )
-
-
-# =====================================================
-# 3번 탭: 나라 맞추기 퀴즈
+# 1번 탭: 나라 맞추기 퀴즈
 # =====================================================
 with tab_quiz:
 
@@ -1232,7 +1113,7 @@ with tab_quiz:
 
 
 # =====================================================
-# 4번 탭: 수업용 정리
+# 2번 탭: 수업용 정리
 # =====================================================
 with tab_summary:
     st.markdown("## 📌 수업용 빠른 정리")
@@ -1277,9 +1158,9 @@ with tab_summary:
     st.markdown("### 🎮 나라 맞추기 퀴즈 활용 방법")
     st.markdown(
         """
-        - 먼저 `대륙별 나라 학습` 탭에서 대륙별 대표 국가를 익힙니다.
-        - 그다음 `나라 맞추기 퀴즈` 탭에서 선택한 대륙의 나라 위치를 맞혀 봅니다.
-        - 전체 세계지도, 바다, 강 이름은 마지막 `세계 지도 지식용` 탭에서 참고 자료로 확인합니다.
+        - `나라 맞추기 퀴즈` 탭에서 지도에 색칠된 나라의 이름을 고릅니다.
+        - 정답을 맞히면 다음 문제로 넘어갈 수 있습니다.
+        - 전체 세계지도, 바다, 강 이름은 `세계 지도 지식용` 탭에서 참고 자료로 확인합니다.
         - 정답을 맞히면 풍선과 반짝이는 축하 효과가 나옵니다.
         """
     )
