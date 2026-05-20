@@ -647,17 +647,17 @@ st.markdown(
         <h1>🌍 세계 지도 학습 자료</h1>
         <p>
             지도에서 색칠된 나라를 보고 정답을 고르는 세계 지도 퀴즈입니다.<br>
-            수업용 정리와 전체 세계지도, 바다, 강 이름 자료도 함께 확인할 수 있습니다.
+            세계지도에서 대륙, 바다, 강, 나라 이름도 함께 확인할 수 있습니다.
         </p>
     </div>
     """,
     unsafe_allow_html=True
 )
 
-tab_quiz, tab_summary, tab_map = st.tabs(["🎮 나라 맞추기 퀴즈", "📌 수업용 정리", "🗺️ 세계 지도 지식용"])
+tab_quiz, tab_map = st.tabs(["🎮 나라 맞추기 퀴즈", "🗺️ 세계지도"])
 
 # =====================================================
-# 3번 탭: 세계 지도 지식용
+# 2번 탭: 세계지도
 # =====================================================
 with tab_map:
     row1 = st.columns(4)
@@ -683,7 +683,7 @@ with tab_map:
     st.markdown(
         f"""
         <div class="info-box">
-        ✅ 이 탭은 <b>지식용 세계지도</b>입니다. 나라 이름은 가능한 경우 <b>한국어 / 영어</b>로 함께 표시됩니다. 현재 표시 가능 데이터: <b>{len(countries_df)}개</b><br>
+        ✅ 이 탭은 <b>세계지도</b>입니다. 나라 이름은 가능한 경우 <b>한국어 / 영어</b>로 함께 표시됩니다. 현재 표시 가능 데이터: <b>{len(countries_df)}개</b><br>
         ✅ 지도는 마우스로 확대/축소할 수 있고, 확대하면 나라 이름을 더 자세히 볼 수 있습니다.<br>
         ✅ Plotly 범례에서도 레이어를 클릭해서 보이기/숨기기를 할 수 있습니다.
         </div>
@@ -785,6 +785,45 @@ with tab_map:
         use_container_width=True,
         config={"scrollZoom": True, "displaylogo": False}
     )
+
+    st.markdown("---")
+    st.markdown("## 📌 수업용 빠른 정리")
+
+    c1, c2 = st.columns(2)
+
+    with c1:
+        st.markdown(
+            """
+            ### 🌎 7대륙
+            - 아시아 / Asia
+            - 유럽 / Europe
+            - 아프리카 / Africa
+            - 북아메리카 / North America
+            - 남아메리카 / South America
+            - 오세아니아 / Oceania
+            - 남극 / Antarctica
+            """
+        )
+
+    with c2:
+        st.markdown(
+            """
+            ### 🌊 주요 바다 / 강 예시
+            **바다**
+            - 태평양 / Pacific Ocean
+            - 대서양 / Atlantic Ocean
+            - 인도양 / Indian Ocean
+            - 홍해 / Red Sea
+            - 지중해 / Mediterranean Sea
+
+            **강**
+            - 나일강 / Nile
+            - 아마존강 / Amazon
+            - 미시시피강 / Mississippi
+            - 양쯔강 / Yangtze
+            - 메콩강 / Mekong
+            """
+        )
 
 
 # =====================================================
@@ -928,58 +967,5 @@ with tab_quiz:
                 unsafe_allow_html=True
             )
 
-
-# =====================================================
-# 2번 탭: 수업용 정리
-# =====================================================
-with tab_summary:
-    st.markdown("## 📌 수업용 빠른 정리")
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        st.markdown(
-            """
-            ### 🌎 7대륙
-            - 아시아 / Asia
-            - 유럽 / Europe
-            - 아프리카 / Africa
-            - 북아메리카 / North America
-            - 남아메리카 / South America
-            - 오세아니아 / Oceania
-            - 남극 / Antarctica
-            """
-        )
-
-    with c2:
-        st.markdown(
-            """
-            ### 🌊 주요 바다 / 강 예시
-            **바다**
-            - 태평양 / Pacific Ocean
-            - 대서양 / Atlantic Ocean
-            - 인도양 / Indian Ocean
-            - 홍해 / Red Sea
-            - 지중해 / Mediterranean Sea
-
-            **강**
-            - 나일강 / Nile
-            - 아마존강 / Amazon
-            - 미시시피강 / Mississippi
-            - 양쯔강 / Yangtze
-            - 메콩강 / Mekong
-            """
-        )
-
-    st.markdown("---")
-    st.markdown("### 🎮 나라 맞추기 퀴즈 활용 방법")
-    st.markdown(
-        """
-        - `나라 맞추기 퀴즈` 탭에서 지도에 색칠된 나라의 이름을 고릅니다.
-        - 정답을 맞히면 다음 문제로 넘어갈 수 있습니다.
-        - 전체 세계지도, 바다, 강 이름은 `세계 지도 지식용` 탭에서 참고 자료로 확인합니다.
-        - 정답을 맞히면 풍선과 반짝이는 축하 효과가 나옵니다.
-        """
-    )
 
 st.caption("필요한 패키지: streamlit, plotly, pandas, countryinfo")
