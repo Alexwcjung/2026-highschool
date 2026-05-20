@@ -1402,7 +1402,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
 
 
 
-, '13. I Don\'t Think So - Priscilla Ahn': {'video_url': 'https://www.youtube.com/watch?v=zWCsRi8dPaM',
+, '13. I Don\'t Think So - Priscilla Ahn': {'video_url': 'https://www.youtube.com/watch?v=19bUY3sRqqI&list=RD19bUY3sRqqI&start_radio=1',
                                             'bg': '\n'
                                                   '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#be123c;">\n'
                                                   "        🚪 I Don\'t Think So: 이용당하지 않겠다는 단호한 마음\n"
@@ -1491,7 +1491,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                             'reflect_questions': ['상대의 애매한 태도 때문에 혼란스러웠던 경험이 있나요?',
                                                                   '누군가에게 단호하게 “그건 아닌 것 같아”라고 말하고 싶었던 순간이 있나요?',
                                                                   '나를 지키기 위해 관계에서 선을 그어야 했던 경험이 있나요?']},
- '14. New York City - Norah Jones': {'video_url': 'https://www.youtube.com/watch?v=yTv-o6i1k5o',
+ '14. New York City - Norah Jones': {'video_url': 'https://www.youtube.com/watch?v=LpbHEO_kLwc&list=RDLpbHEO_kLwc&start_radio=1',
  'bg': '\n'
        '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#0f766e;">\n'
        '        🗽 New York City: 아름답지만 아픈 도시의 기억\n'
@@ -1610,7 +1610,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
               ('Things could get better', '상황이 나아질 수 있다'),
               ('Such a beautiful disease', '참 아름다운 병 같은 것')],
  'reflect_questions': ['겉으로는 아름다워 보였지만 실제로는 힘들었던 경험이 있나요?', '꿈을 좇는 과정에서 외로움이나 혼란을 느낀 적이 있나요?', 'New York City처럼 나에게 복잡한 감정을 주는 장소가 있나요?']},
- '15. Counting Stars - OneRepublic': {'video_url': 'https://www.youtube.com/watch?v=hT_nvWreIhg',
+ '15. Counting Stars - OneRepublic': {'video_url': 'https://www.youtube.com/watch?v=hT_nvWreIhg&list=RDhT_nvWreIhg&start_radio=1',
                                       'bg': '\n'
                                             '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#f59e0b;">\n'
                                             '        🌟 Counting Stars: 돈보다 꿈을 세고 싶은 마음\n'
