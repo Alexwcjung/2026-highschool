@@ -1490,7 +1490,126 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                          ('I am not here for you to use', '나는 이용당하려고 여기 있는 게 아니야')],
                                             'reflect_questions': ['상대의 애매한 태도 때문에 혼란스러웠던 경험이 있나요?',
                                                                   '누군가에게 단호하게 “그건 아닌 것 같아”라고 말하고 싶었던 순간이 있나요?',
-                                                                  '나를 지키기 위해 관계에서 선을 그어야 했던 경험이 있나요?']}
+                                                                  '나를 지키기 위해 관계에서 선을 그어야 했던 경험이 있나요?']},
+ '14. New York City - Norah Jones': {'video_url': 'https://www.youtube.com/watch?v=yTv-o6i1k5o',
+ 'bg': '\n'
+       '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#0f766e;">\n'
+       '        🗽 New York City: 아름답지만 아픈 도시의 기억\n'
+       '    </h3>\n'
+       '\n'
+       '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+       '        Norah Jones의 <b>New York City</b>는 화려하고 아름다운 도시가 주는 꿈과 환상,\n'
+       '        그리고 그 안에 숨어 있는 상처와 외로움을 함께 담고 있는 노래입니다.\n'
+       '        제목의 <b>New York City</b>는 단순한 장소 이름이 아니라,\n'
+       '        사람을 끌어당기지만 동시에 지치게 만드는 복잡한 감정의 공간으로 이해할 수 있습니다.\n'
+       '    </p>\n'
+       '\n'
+       '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+       '        노래 속 화자는 기억이 흐릿해지고, 거울 속 자신의 모습을 바라보며 과거의 일들을 떠올립니다.\n'
+       '        사랑이 영원할 것이라고 믿고 싶었지만, 상대의 눈빛에서 빛이 사라지는 순간을 보며\n'
+       '        어떤 사랑은 끝까지 살아남지 못한다는 사실을 깨닫습니다.\n'
+       '    </p>\n'
+       '\n'
+       '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+       '        반복되는 <b>such a beautiful disease</b>는 매우 인상적인 표현입니다.\n'
+       '        New York City가 아름답지만 동시에 병처럼 사람을 아프게 할 수 있다는 의미로 볼 수 있습니다.\n'
+       '        이 표현은 꿈, 사랑, 도시의 환상, 성공에 대한 욕망이 때로는 사람을 강하게 끌어당기면서도\n'
+       '        상처를 남길 수 있다는 양면성을 보여 줍니다.\n'
+       '    </p>\n'
+       '\n'
+       '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+       "        수업에서는 <b>I can't remember</b>, <b>look in the mirror</b>, <b>endless love</b>,\n"
+       '        <b>in the dead of the night</b>, <b>things could get better</b>,\n'
+       '        <b>no regrets</b>, <b>pass me by</b>, <b>beautiful disease</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+       '        또한 학생들에게 ‘꿈을 좇는 도시’, ‘아름답지만 힘들었던 경험’,\n'
+       '        ‘겉보기와 실제가 달랐던 순간’을 주제로 생각을 적게 할 수 있습니다.\n'
+       '    </p>\n'
+       '    ',
+ 'lyrics': [("I can't remember what I planned tomorrow", '나는 내일 무엇을 계획했는지 기억나지 않아'),
+            ("I can't remember when it's time to go", '언제 떠나야 하는지도 기억나지 않아'),
+            ('When I look in the mirror', '거울을 바라볼 때'),
+            ('Tracing lines with a pencil', '연필로 선을 따라 그리며'),
+            ('I remember what came before', '나는 이전에 있었던 일을 기억해'),
+            ('I wanted to think there was endless love', '나는 끝없는 사랑이 있다고 믿고 싶었어'),
+            ('Until I saw the light dim in your eyes', '네 눈빛에서 빛이 희미해지는 것을 보기 전까지는'),
+            ('In the dead of the night I found out', '깊은 밤에 나는 알게 되었어'),
+            ("Sometimes there's love that won't survive", '때로는 살아남지 못하는 사랑도 있다는 것을'),
+            ('New York City', '뉴욕 시티'),
+            ('Such a beautiful disease', '참 아름다운 병 같은 곳'),
+            ('New York City', '뉴욕 시티'),
+            ('Such a beautiful,', '참 아름다운,'),
+            ('Such a beautiful disease', '참 아름다운 병 같은 곳'),
+            ('Laura kept all her disappointments', '로라는 자신의 모든 실망을 간직했어'),
+            ('Locked up in a box behind her closet door', '옷장 문 뒤 상자 안에 잠가 둔 채로'),
+            ('She pulled the blinds', '그녀는 블라인드를 내리고'),
+            ('and listened to the thunder', '천둥소리를 들었어'),
+            ('With no way out from the family store', '가족 가게에서 벗어날 길도 없이'),
+            ('We all told her things could get better', '우리는 모두 그녀에게 상황이 나아질 수 있다고 말했어'),
+            ('When you just say goodbye', '그저 작별 인사를 하면 된다고'),
+            ("I'll lay awake one more night", '나는 또 하룻밤을 잠 못 이루고 누워 있을 거야'),
+            ('Caught in a vision I want to deny', '부정하고 싶은 환상에 사로잡힌 채'),
+            ('And did I mention the note that I found', '그리고 내가 발견한 쪽지 이야기를 했던가'),
+            ('Taped to my locked front door', '잠긴 현관문에 붙어 있던 쪽지'),
+            ('It talked about no regrets', '그 쪽지에는 후회는 없다는 말이 적혀 있었어'),
+            ('As it slipped from my hand', '그것이 내 손에서 미끄러져'),
+            ('to the scuffed tile floor', '긁힌 타일 바닥으로 떨어졌을 때'),
+            ('I rode the train for hours on end', '나는 몇 시간이고 계속 기차를 탔어'),
+            ('And watched the people pass me by', '그리고 사람들이 내 곁을 지나가는 것을 바라보았어'),
+            ('It could be that it has no end', '어쩌면 이것은 끝이 없을지도 몰라'),
+            ("Just an action junkie's lullaby", '그저 행동에 중독된 사람의 자장가처럼'),
+            ('New York City', '뉴욕 시티'),
+            ('Such a beautiful disease', '참 아름다운 병 같은 곳'),
+            ('New York City', '뉴욕 시티'),
+            ('Such a beautiful,', '참 아름다운,'),
+            ('Such a beautiful disease', '참 아름다운 병 같은 곳'),
+            ('New York City', '뉴욕 시티'),
+            ('We were full of the stuff', '우리는 그런 것들로 가득 차 있었어'),
+            ('that every dream rested', '모든 꿈이 기대고 있던 것들로'),
+            ('As if floating on a lumpy pillow sky', '울퉁불퉁한 베개 같은 하늘 위를 떠다니는 것처럼'),
+            ('Caught up in the whole illusion', '그 모든 환상에 사로잡힌 채'),
+            ('That dreams never pass us by', '꿈은 결코 우리를 지나쳐 가지 않는다는 환상에'),
+            ('Came to a tattoed conclusion', '지워지지 않는 결론에 이르렀어'),
+            ('That the big one was knocking on the door', '큰일이 문을 두드리고 있다는 결론에'),
+            ('What started as a mass delusion', '집단적인 착각으로 시작된 것이'),
+            ('Would take me far from the place I adore', '내가 사랑하는 곳에서 나를 멀리 데려가리라는 것을'),
+            ('New York City', '뉴욕 시티'),
+            ('Such a beautiful disease', '참 아름다운 병 같은 곳'),
+            ('New York City', '뉴욕 시티'),
+            ('You are my beautiful,', '너는 나의 아름다운,'),
+            ('Such a beautiful disease', '참 아름다운 병 같은 곳')],
+ 'quiz': [{'q': '1. 이 노래에서 반복해서 등장하는 도시는 어디인가요?', 'options': ['London', 'New York City', 'Paris', 'Seoul'], 'answer': 'New York City'},
+          {'q': "2. 'I can't remember'가 반복되며 보여 주는 화자의 상태로 가장 알맞은 것은 무엇인가요?",
+           'options': ['기억이 또렷하고 자신감 있는 상태', '혼란스럽고 지친 상태', '매우 신나는 상태', '화가 나서 소리치는 상태'],
+           'answer': '혼란스럽고 지친 상태'},
+          {'q': "3. 'look in the mirror'의 뜻으로 가장 알맞은 것은 무엇인가요?", 'options': ['거울을 보다', '창문을 열다', '문을 잠그다', '기차를 타다'], 'answer': '거울을 보다'},
+          {'q': "4. 'endless love'는 어떤 뜻인가요?", 'options': ['끝없는 사랑', '짧은 여행', '깊은 잠', '낡은 가게'], 'answer': '끝없는 사랑'},
+          {'q': "5. 'in the dead of the night'의 의미로 가장 알맞은 것은 무엇인가요?", 'options': ['아침 일찍', '한낮에', '깊은 밤에', '수업 시간에'], 'answer': '깊은 밤에'},
+          {'q': "6. 'things could get better'는 어떤 의미인가요?",
+           'options': ['상황이 나아질 수 있다', '모든 것이 끝났다', '도시는 사라졌다', '기억이 완전히 없어졌다'],
+           'answer': '상황이 나아질 수 있다'},
+          {'q': "7. 'Such a beautiful disease'는 어떤 의미로 이해할 수 있나요?",
+           'options': ['아름답지만 사람을 아프게 할 수 있는 것', '완전히 건강한 상태', '아주 쉬운 숙제', '단순히 예쁜 건물'],
+           'answer': '아름답지만 사람을 아프게 할 수 있는 것'},
+          {'q': '8. 이 노래의 중심 분위기로 가장 알맞은 것은 무엇인가요?',
+           'options': ['밝고 단순한 축하 분위기', '도시의 아름다움과 상처가 섞인 분위기', '운동 경기의 긴장감', '코미디 같은 장난스러움'],
+           'answer': '도시의 아름다움과 상처가 섞인 분위기'}],
+ 'key_expressions': [("I can't remember", '나는 기억나지 않아'),
+                     ('Time to go', '떠날 시간'),
+                     ('Look in the mirror', '거울을 보다'),
+                     ('Endless love', '끝없는 사랑'),
+                     ('The light dim in your eyes', '네 눈빛의 빛이 희미해지다'),
+                     ('In the dead of the night', '깊은 밤에'),
+                     ("Love that won't survive", '살아남지 못하는 사랑'),
+                     ('Things could get better', '상황이 나아질 수 있다'),
+                     ('No regrets', '후회 없음'),
+                     ('Such a beautiful disease', '참 아름다운 병 같은 것')],
+ 'matching': [("I can't remember", '나는 기억나지 않아'),
+              ('Look in the mirror', '거울을 보다'),
+              ('Endless love', '끝없는 사랑'),
+              ('In the dead of the night', '깊은 밤에'),
+              ('Things could get better', '상황이 나아질 수 있다'),
+              ('Such a beautiful disease', '참 아름다운 병 같은 것')],
+ 'reflect_questions': ['겉으로는 아름다워 보였지만 실제로는 힘들었던 경험이 있나요?', '꿈을 좇는 과정에서 외로움이나 혼란을 느낀 적이 있나요?', 'New York City처럼 나에게 복잡한 감정을 주는 장소가 있나요?']}
 }
 
 BACKGROUND_CONTENT = {
@@ -1613,6 +1732,16 @@ BACKGROUND_CONTENT = {
             "수업에서는 I don\'t think so, I think I should go, listen up, take a hint, take a clue, utterly confused, I am not here for you to use 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘관계에서 선을 긋는 순간’, ‘애매한 태도 때문에 혼란스러웠던 경험’, ‘나를 지키기 위한 단호한 말’을 주제로 생각을 적게 할 수 있습니다."
         ],
     },
+    '14. New York City - Norah Jones': {'title': '🗽 New York City: 아름답지만 아픈 도시의 기억',
+ 'paragraphs': ['Norah Jones의 New York City는 화려하고 아름다운 도시가 주는 꿈과 환상, 그리고 그 안에 숨어 있는 상처와 외로움을 함께 담고 있는 노래입니다. 제목의 New York City는 단순한 장소 이름이 '
+                '아니라, 사람을 끌어당기지만 동시에 지치게 만드는 복잡한 감정의 공간으로 이해할 수 있습니다.',
+                '노래 속 화자는 기억이 흐릿해지고, 거울 속 자신의 모습을 바라보며 과거의 일들을 떠올립니다. 사랑이 영원할 것이라고 믿고 싶었지만, 상대의 눈빛에서 빛이 사라지는 순간을 보며 어떤 사랑은 끝까지 살아남지 못한다는 '
+                '사실을 깨닫습니다.',
+                '반복되는 such a beautiful disease는 매우 인상적인 표현입니다. New York City가 아름답지만 동시에 병처럼 사람을 아프게 할 수 있다는 의미로 볼 수 있습니다. 이 표현은 꿈, 사랑, 도시의 '
+                '환상, 성공에 대한 욕망이 때로는 사람을 강하게 끌어당기면서도 상처를 남길 수 있다는 양면성을 보여 줍니다.',
+                "수업에서는 I can't remember, look in the mirror, endless love, in the dead of the night, things could get better, no regrets, "
+                'pass me by, beautiful disease 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 꿈을 좇는 도시, 아름답지만 힘들었던 경험, 겉보기와 실제가 달랐던 순간을 주제로 생각을 적게 할 수 '
+                '있습니다.']}
 }
 
 
