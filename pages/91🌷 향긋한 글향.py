@@ -1220,7 +1220,7 @@ def show_pass_status(score, total, checked, pass_ratio=0.7):
 
 
 # =========================================================
-# 읽기 전 이해도 문제
+# 지문 읽고 답하기 문제
 # =========================================================
 pre_reading_questions_bank = {
     "⚽ Ronaldo": [
@@ -1348,17 +1348,17 @@ def get_pre_reading_questions(topic_name, data):
 
 
 def show_pre_reading_questions(category, topic_name, data):
-    """Reading 본문 바로 위에 읽기 전 이해도 문제를 표시합니다."""
+    """Reading 본문 바로 위에 지문을 읽고 답할 문제를 표시합니다."""
     pre_questions = get_pre_reading_questions(topic_name, data)
     pre_prefix = f"{category}_{topic_name}_pre_reading_"
 
     st.markdown(
-        '<div class="section-box"><h3>🧭 읽기 전 이해도 문제</h3></div>',
+        '<div class="section-box"><h3>🧭 해당 내용 지문을 읽고 답하세요</h3></div>',
         unsafe_allow_html=True
     )
-    st.caption("아래 문제를 먼저 보고, 답을 찾는다는 생각으로 바로 아래 지문을 읽어 봅시다.")
+    st.caption("아래 문제를 먼저 확인한 뒤, 바로 아래 지문을 읽으면서 답을 찾아보세요.")
 
-    if st.button("🔄 읽기 전 문제 다시 풀기", key=f"reset_pre_reading_{category}_{topic_name}", use_container_width=True):
+    if st.button("🔄 지문 문제 다시 풀기", key=f"reset_pre_reading_{category}_{topic_name}", use_container_width=True):
         reset_keys_by_prefix(pre_prefix)
         st.rerun()
 
@@ -1405,6 +1405,63 @@ def show_pre_reading_questions(category, topic_name, data):
     checked = sum(1 for key in status_keys if key in st.session_state)
     show_pass_status(score, len(status_keys), checked)
     st.markdown("---")
+
+
+def make_expression_completion_items(data, key_words, max_items=6):
+    """활동 3용: 핵심 표현에서 중요한 영어 단어를 하나 비우고 고르게 합니다."""
+    stop_words = {
+        "the", "a", "an", "and", "or", "but", "to", "of", "in", "on", "at", "for", "with",
+        "is", "are", "was", "were", "be", "am", "do", "does", "did", "can", "will", "should",
+        "i", "you", "your", "my", "me", "it", "this", "that", "not", "from", "by", "as", "up"
+    }
+
+    default_pool = [
+        "practice", "confidence", "respect", "focus", "effort", "attitude", "growth", "failure",
+        "motivation", "nature", "history", "culture", "healthy", "nutrients", "future", "service",
+        "freedom", "teamwork", "sincerity", "training", "goal", "voice", "basics", "routine"
+    ]
+
+    pool = []
+    for word, meaning in key_words:
+        pool.extend(re.findall(r"[A-Za-z][A-Za-z'-]*", str(word)))
+    for exp in data.get("key_expressions", []):
+        pool.extend(re.findall(r"[A-Za-z][A-Za-z'-]*", str(exp)))
+    pool.extend(default_pool)
+
+    cleaned_pool = []
+    seen = set()
+    for item in pool:
+        item_clean = item.strip(".,!?;:()[]{}\"")
+        low = item_clean.lower()
+        if len(item_clean) >= 3 and low not in stop_words and low not in seen:
+            cleaned_pool.append(item_clean)
+            seen.add(low)
+
+    items = []
+    for exp in data.get("key_expressions", []):
+        words = re.findall(r"[A-Za-z][A-Za-z'-]*", str(exp))
+        candidates = [w for w in words if len(w) >= 4 and w.lower() not in stop_words]
+        if not candidates:
+            candidates = [w for w in words if len(w) >= 3 and w.lower() not in stop_words]
+        if not candidates:
+            continue
+
+        # 짧은 기능어보다 의미어가 비도록 가장 긴 단어를 선택합니다.
+        answer = sorted(candidates, key=len, reverse=True)[0]
+        blank_sentence = re.sub(rf"\b{re.escape(answer)}\b", "______", str(exp), count=1, flags=re.IGNORECASE)
+
+        distractors = [p for p in cleaned_pool if p.lower() != answer.lower()]
+        rnd = random.Random(f"expression-completion-{exp}")
+        rnd.shuffle(distractors)
+        options = [answer] + distractors[:3]
+        rnd.shuffle(options)
+
+        items.append((blank_sentence, options, answer, exp))
+        if len(items) >= max_items:
+            break
+
+    return items
+
 
 def make_full_listening_text(dialogue):
     """
@@ -1666,15 +1723,16 @@ with tab_reading:
         lang="en"
     )
 
-    st.caption("각 영어 문장 오른쪽에 바로 재생 가능한 TTS 플레이어가 보입니다. 한국어 해석은 버튼으로 켜고 끌 수 있습니다.")
+    st.caption("각 영어 문장 오른쪽에 바로 재생 가능한 TTS 플레이어가 보입니다. 한국어 해석은 지문 바로 위 버튼으로 켜고 끌 수 있습니다.")
 
+    show_pre_reading_questions(category, topic_name, data)
+
+    st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
     show_korean_reading = st.toggle(
         "🇰🇷 한국어 해석 보기",
         value=False,
         key=f"{category}_{topic_name}_show_korean_reading"
     )
-
-    show_pre_reading_questions(category, topic_name, data)
 
     # 기본은 영어만 보이게 하고, 버튼을 켜면 영어 문장 아래에 한국어 해석이 보입니다.
     for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
@@ -1889,48 +1947,66 @@ with tab_activity:
     st.markdown("---")
 
     # -----------------------------------------------------
-    # 활동 3. Reading Check
+    # 활동 3. 핵심 표현 완성하기
     # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>활동 3. 내용 확인 문제</h3></div>', unsafe_allow_html=True)
-    st.caption("문제는 한국어로 읽고, 영어 보기 중에서 정답을 고르세요. 보기는 문제마다 다른 위치에 나오도록 섞었습니다.")
+    st.markdown('<div class="section-box"><h3>활동 3. 핵심 표현 완성하기</h3></div>', unsafe_allow_html=True)
+    st.caption("내용 확인은 Reading 탭에서 했으므로, 여기서는 지문 속 핵심 영어 표현을 완성해 봅니다. 빈칸에 들어갈 가장 알맞은 영어 단어를 고르세요.")
 
-    activity3_prefix = f"{category}_{topic_name}_activity3_"
-    activity3_radio_prefix = f"{category}_{topic_name}_q"
+    activity3_prefix = f"{category}_{topic_name}_activity3_expr_"
+    activity3_radio_prefix = f"{category}_{topic_name}_expr_q"
     if st.button("🔄 활동 3 전체 다시 풀기", key=f"reset_activity3_{category}_{topic_name}", use_container_width=True):
         reset_keys_by_prefix([activity3_prefix, activity3_radio_prefix])
         st.rerun()
 
+    expression_items = make_expression_completion_items(data, key_words, max_items=6)
     activity3_status_keys = []
 
-    for i, (question, options, answer) in enumerate(data["questions"], start=1):
-        status_key = f"{category}_{topic_name}_activity3_status_{i}"
-        activity3_status_keys.append(status_key)
+    if not expression_items:
+        st.info("이 주제에는 완성할 핵심 표현이 없습니다.")
+    else:
+        for i, (blank_sentence, options, answer, original_sentence) in enumerate(expression_items, start=1):
+            status_key = f"{activity3_prefix}status_{i}"
+            activity3_status_keys.append(status_key)
 
-        mixed_options = list(options)
-        random.Random(f"{category}-{topic_name}-{i}").shuffle(mixed_options)
-
-        q_col, check_col = st.columns([3.2, 1.4])
-        with q_col:
-            choice = st.radio(
-                question,
-                mixed_options,
-                key=f"{category}_{topic_name}_q{i}"
+            st.markdown(
+                f"""
+                <div style="margin-bottom: 10px; padding: 16px 18px; border-radius: 20px;
+                            border: 1.5px solid #dbeafe; background: rgba(255,255,255,0.92);
+                            box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+                    <div style="font-size: 20px; font-weight: 950; color: #1d4ed8; line-height: 1.65;">
+                        {i}. {blank_sentence}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True
             )
-        with check_col:
-            st.write("")
-            st.write("")
-            if st.button("답 확인", key=f"{category}_{topic_name}_activity3_check_{i}"):
-                st.session_state[status_key] = (choice == answer)
+
+            q_col, check_col = st.columns([3.2, 1.4])
+            with q_col:
+                choice = st.radio(
+                    "빈칸에 들어갈 단어를 고르세요.",
+                    options,
+                    key=f"{activity3_radio_prefix}{i}",
+                    horizontal=False,
+                    label_visibility="collapsed"
+                )
+            with check_col:
+                st.write("")
+                if st.button("답 확인", key=f"{activity3_prefix}check_{i}", use_container_width=True):
+                    st.session_state[status_key] = (choice == answer)
+
+                if status_key in st.session_state:
+                    if st.session_state[status_key]:
+                        st.success("정답")
+                    else:
+                        st.error(f"정답: {answer}")
 
             if status_key in st.session_state:
-                if st.session_state[status_key]:
-                    st.success("정답")
-                else:
-                    st.error(f"정답: {answer}")
+                st.caption(f"전체 표현: {original_sentence}")
 
-    activity3_score = sum(1 for key in activity3_status_keys if st.session_state.get(key) is True)
-    activity3_checked = sum(1 for key in activity3_status_keys if key in st.session_state)
-    show_pass_status(activity3_score, len(activity3_status_keys), activity3_checked)
+        activity3_score = sum(1 for key in activity3_status_keys if st.session_state.get(key) is True)
+        activity3_checked = sum(1 for key in activity3_status_keys if key in st.session_state)
+        show_pass_status(activity3_score, len(activity3_status_keys), activity3_checked)
 
     st.markdown("---")
 
