@@ -1609,7 +1609,193 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
               ('In the dead of the night', '깊은 밤에'),
               ('Things could get better', '상황이 나아질 수 있다'),
               ('Such a beautiful disease', '참 아름다운 병 같은 것')],
- 'reflect_questions': ['겉으로는 아름다워 보였지만 실제로는 힘들었던 경험이 있나요?', '꿈을 좇는 과정에서 외로움이나 혼란을 느낀 적이 있나요?', 'New York City처럼 나에게 복잡한 감정을 주는 장소가 있나요?']}
+ 'reflect_questions': ['겉으로는 아름다워 보였지만 실제로는 힘들었던 경험이 있나요?', '꿈을 좇는 과정에서 외로움이나 혼란을 느낀 적이 있나요?', 'New York City처럼 나에게 복잡한 감정을 주는 장소가 있나요?']},
+ '15. Counting Stars - OneRepublic': {'video_url': 'https://www.youtube.com/watch?v=hT_nvWreIhg',
+                                      'bg': '\n'
+                                            '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#f59e0b;">\n'
+                                            '        🌟 Counting Stars: 돈보다 꿈을 세고 싶은 마음\n'
+                                            '    </h3>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        OneRepublic의 <b>Counting Stars</b>는 돈, 성공, 규칙적인 삶보다\n'
+                                            '        자신이 진짜 꿈꾸는 삶을 따라가고 싶은 마음을 담은 노래입니다.\n'
+                                            '        제목의 <b>counting stars</b>는 단순히 별을 센다는 뜻이 아니라,\n'
+                                            '        돈을 세는 삶에서 벗어나 꿈과 희망을 바라보겠다는 의미로 이해할 수 있습니다.\n'
+                                            '    </p>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        노래 속 화자는 요즘 잠을 이루지 못하고,\n'
+                                            '        자신과 상대가 앞으로 무엇이 될 수 있을지 계속 꿈꿉니다.\n'
+                                            '        하지만 단순히 돈을 많이 버는 삶이 아니라,\n'
+                                            '        더 큰 희망과 가능성을 따라가고 싶어 합니다.\n'
+                                            "        그래서 <b>no more counting dollars, we'll be counting stars</b>라는 "
+                                            '문장은\n'
+                                            '        물질적인 성공보다 꿈과 의미를 더 중요하게 보겠다는 선언처럼 들립니다.\n'
+                                            '    </p>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        이 노래에는 <b>right</b>와 <b>wrong</b>, <b>old</b>와 <b>young</b>,\n'
+                                            '        <b>money</b>와 <b>stars</b>처럼 서로 대비되는 표현이 많이 나옵니다.\n'
+                                            '        화자는 세상이 시키는 대로만 사는 것에 의문을 느끼고,\n'
+                                            '        때로는 자신을 힘들게 하는 경험조차 살아 있음을 느끼게 한다고 말합니다.\n'
+                                            '    </p>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        수업에서는 <b>losing sleep</b>, <b>dreaming about</b>, <b>counting '
+                                            'dollars</b>,\n'
+                                            "        <b>counting stars</b>, <b>seek it out</b>, <b>do what we're "
+                                            'told</b>,\n'
+                                            '        <b>makes me feel alive</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+                                            '        또한 학생들에게 돈보다 중요하게 생각하는 것, 내가 꿈꾸는 미래,\n'
+                                            '        남들이 정한 길이 아니라 내가 선택하고 싶은 길을 주제로 생각을 적게 할 수 있습니다.\n'
+                                            '    </p>\n'
+                                            '    ',
+                                      'lyrics': [("Lately, I been, I been losin' sleep", '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be", '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard", '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be countin' stars",
+                                                  '이제 돈을 세는 대신 별을 세게 될 거라고 말했지'),
+                                                 ("Yeah, we'll be countin' stars", '그래, 우리는 별을 세게 될 거야'),
+                                                 ("I see this life like a swingin' vine", '나는 이 삶을 흔들리는 덩굴처럼 봐'),
+                                                 ('Swing my heart across the line', '내 마음을 선 너머로 흔들어 보내'),
+                                                 ("In my face is flashin' signs", '내 앞에는 신호들이 번쩍이고 있어'),
+                                                 ('Seek it out and ye shall find', '찾으면 발견하게 될 거야'),
+                                                 ("Old, but I'm not that old", '나이가 들었지만 그렇게 늙지는 않았어'),
+                                                 ("Young, but I'm not that bold", '젊지만 그렇게 대담하지도 않아'),
+                                                 ("And I don't think the world is sold",
+                                                  '그리고 나는 세상이 완전히 설득되었다고 생각하지 않아'),
+                                                 ("On just doin' what we're told", '그저 시키는 대로만 사는 것에 말이야'),
+                                                 ("I feel somethin' so right doin' the wrong thing",
+                                                  '잘못된 일을 하면서도 뭔가 너무 옳은 느낌이 들어'),
+                                                 ("And I feel somethin' so wrong doin' the right thing",
+                                                  '옳은 일을 하면서도 뭔가 너무 잘못된 느낌이 들어'),
+                                                 ("I couldn't lie, couldn't lie, couldn't lie", '나는 거짓말할 수 없어'),
+                                                 ('Everything that kills me makes me feel alive',
+                                                  '나를 힘들게 하는 모든 것이 오히려 살아 있음을 느끼게 해'),
+                                                 ("Lately, I been, I been losin' sleep (hey!)", '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be", '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard (hey!)", '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be countin' stars",
+                                                  '이제 돈을 세는 대신 별을 세게 될 거라고 말했지'),
+                                                 ("Lately, I been, I been losin' sleep (hey!)", '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be", '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard", '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be, we'll be countin' stars, "
+                                                  'yeah',
+                                                  '이제 돈을 세는 대신, 우리는 별을 세게 될 거야'),
+                                                 ('I feel your love, and I feel it burn',
+                                                  '나는 너의 사랑을 느끼고, 그것이 타오르는 것도 느껴'),
+                                                 ('Down this river, every turn', '이 강을 따라 내려가며, 모든 굽이마다'),
+                                                 ('"Hope" is our four-letter word', '"희망"은 우리에게 가장 중요한 말이야'),
+                                                 ('Make that money, watch it burn', '그 돈을 벌고, 그것이 타는 것을 지켜봐'),
+                                                 ("Old, but I'm not that old", '나이가 들었지만 그렇게 늙지는 않았어'),
+                                                 ("Young, but I'm not that bold", '젊지만 그렇게 대담하지도 않아'),
+                                                 ("And I don't think the world is sold",
+                                                  '그리고 나는 세상이 완전히 설득되었다고 생각하지 않아'),
+                                                 ("On just doin' what we're told", '그저 시키는 대로만 사는 것에 말이야'),
+                                                 ("And I feel somethin' so wrong doin' the right thing",
+                                                  '옳은 일을 하면서도 뭔가 너무 잘못된 느낌이 들어'),
+                                                 ("I couldn't lie, couldn't lie, couldn't lie", '나는 거짓말할 수 없어'),
+                                                 ('Everything that drowns me makes me wanna fly',
+                                                  '나를 가라앉게 하는 모든 것이 오히려 날고 싶게 만들어'),
+                                                 ("Lately, I been, I been losin' sleep (hey!)", '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be", '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard (hey!)", '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be countin' stars (ooh)",
+                                                  '이제 돈을 세는 대신 별을 세게 될 거라고 말했지'),
+                                                 ("Lately, I been, I been losin' sleep (ooh, ooh, hey)",
+                                                  '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be (ooh, ooh)",
+                                                  '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard (ooh, ooh)",
+                                                  '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be, we'll be countin' stars "
+                                                  '(ooh, ooh)',
+                                                  '이제 돈을 세는 대신, 우리는 별을 세게 될 거야'),
+                                                 ('Oh, take that money, watch it burn', '오, 그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river the lessons I learned', '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Take that money, watch it burn', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river the lessons I learned', '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Take that money, watch it burn', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river the lessons I learned', '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Take that money, watch it burn', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river the lessons I learned', '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Everything that kills me makes me feel alive',
+                                                  '나를 힘들게 하는 모든 것이 오히려 살아 있음을 느끼게 해'),
+                                                 ("Lately, I been, I been losin' sleep (hey!)", '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be", '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard (hey!)", '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be countin' stars (ooh)",
+                                                  '이제 돈을 세는 대신 별을 세게 될 거라고 말했지'),
+                                                 ("Lately, I been, I been losin' sleep (ooh, ooh hey!)",
+                                                  '요즘 나는 잠을 이루지 못하고 있어'),
+                                                 ("Dreamin' about the things that we could be (ooh, ooh)",
+                                                  '우리가 될 수 있는 모습들을 꿈꾸면서'),
+                                                 ("But, baby, I been, I been prayin' hard (ooh, ooh)",
+                                                  '하지만 나는 간절히 기도해 왔어'),
+                                                 ("Said, no more countin' dollars, we'll be, we'll be countin' stars "
+                                                  '(ooh, ooh)',
+                                                  '이제 돈을 세는 대신, 우리는 별을 세게 될 거야'),
+                                                 ('Take that money, watch it burn (ooh)', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river, the lessons I learned (ooh)',
+                                                  '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Take that money, watch it burn (ooh)', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river, the lessons I learned (ooh)',
+                                                  '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Take that money, watch it burn (ooh)', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river, the lessons I learned (ooh)',
+                                                  '내가 배운 교훈들을 강물 속으로 가라앉혀'),
+                                                 ('Take that money, watch it burn (ooh)', '그 돈을 가져가고 타는 것을 지켜봐'),
+                                                 ('Sink in the river, the lessons I learned',
+                                                  '내가 배운 교훈들을 강물 속으로 가라앉혀')],
+                                      'quiz': [{'q': '1. 이 노래에서 화자는 요즘 무엇을 잃고 있다고 말하나요?',
+                                                'options': ['돈', '잠', '친구', '길'],
+                                                'answer': '잠'},
+                                               {'q': '2. 화자는 무엇에 대해 꿈꾸고 있나요?',
+                                                'options': ['우리가 될 수 있는 모습', '어제 먹은 음식', '학교 시험지', '비 오는 날씨'],
+                                                'answer': '우리가 될 수 있는 모습'},
+                                               {'q': "3. 'no more counting dollars'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                                'options': ['더 이상 돈만 세지 않겠다', '돈을 더 많이 세겠다', '별을 팔겠다', '잠을 자지 않겠다'],
+                                                'answer': '더 이상 돈만 세지 않겠다'},
+                                               {'q': "4. 'counting stars'가 상징하는 의미로 가장 알맞은 것은 무엇인가요?",
+                                                'options': ['밤하늘 숙제', '꿈과 희망을 바라보는 삶', '수학 문제', '돈을 숨기는 행동'],
+                                                'answer': '꿈과 희망을 바라보는 삶'},
+                                               {'q': "5. 'doing what we're told'는 어떤 의미인가요?",
+                                                'options': ['시키는 대로 하는 것', '노래를 크게 부르는 것', '별을 세는 것', '강을 건너는 것'],
+                                                'answer': '시키는 대로 하는 것'},
+                                               {'q': "6. 'Everything that kills me makes me feel alive'는 어떤 의미에 가깝나요?",
+                                                'options': ['힘든 경험도 살아 있음을 느끼게 한다',
+                                                            '잠을 많이 자고 싶다',
+                                                            '돈이 가장 중요하다',
+                                                            '아무것도 느끼지 못한다'],
+                                                'answer': '힘든 경험도 살아 있음을 느끼게 한다'},
+                                               {'q': '7. 이 노래의 중심 주제로 가장 알맞은 것은 무엇인가요?',
+                                                'options': ['돈보다 꿈과 가능성을 좇는 삶', '시험 공부 방법', '친구와의 싸움', '도시 여행'],
+                                                'answer': '돈보다 꿈과 가능성을 좇는 삶'},
+                                               {'q': "8. 'Hope is our four-letter word'에서 hope의 의미는 무엇인가요?",
+                                                'options': ['희망', '분노', '후회', '잠'],
+                                                'answer': '희망'}],
+                                      'key_expressions': [('Losing sleep', '잠을 이루지 못하다'),
+                                                          ('Dreaming about', '~에 대해 꿈꾸다'),
+                                                          ('Things that we could be', '우리가 될 수 있는 모습들'),
+                                                          ('Praying hard', '간절히 기도하다'),
+                                                          ('Counting dollars', '돈을 세다'),
+                                                          ('Counting stars', '별을 세다, 꿈을 바라보다'),
+                                                          ('Seek it out', '그것을 찾아내다'),
+                                                          ("Do what we're told", '시키는 대로 하다'),
+                                                          ('Feel alive', '살아 있음을 느끼다'),
+                                                          ('Lessons I learned', '내가 배운 교훈들')],
+                                      'matching': [('Losing sleep', '잠을 이루지 못하다'),
+                                                   ('Counting stars', '별을 세다, 꿈을 바라보다'),
+                                                   ('Counting dollars', '돈을 세다'),
+                                                   ('Dreaming about the things that we could be',
+                                                    '우리가 될 수 있는 모습들을 꿈꾸다'),
+                                                   ("Do what we're told", '시키는 대로 하다'),
+                                                   ('Everything that kills me makes me feel alive',
+                                                    '힘든 경험이 오히려 살아 있음을 느끼게 하다')],
+                                      'reflect_questions': ['돈보다 더 중요하다고 생각하는 꿈이나 가치는 무엇인가요?',
+                                                            '남들이 시키는 대로가 아니라 내가 선택하고 싶은 길이 있나요?',
+                                                            '힘들었지만 오히려 나를 성장하게 만든 경험이 있나요?']}
 }
 
 BACKGROUND_CONTENT = {
@@ -1741,7 +1927,20 @@ BACKGROUND_CONTENT = {
                 '환상, 성공에 대한 욕망이 때로는 사람을 강하게 끌어당기면서도 상처를 남길 수 있다는 양면성을 보여 줍니다.',
                 "수업에서는 I can't remember, look in the mirror, endless love, in the dead of the night, things could get better, no regrets, "
                 'pass me by, beautiful disease 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 꿈을 좇는 도시, 아름답지만 힘들었던 경험, 겉보기와 실제가 달랐던 순간을 주제로 생각을 적게 할 수 '
-                '있습니다.']}
+                '있습니다.']},
+    '15. Counting Stars - OneRepublic': {'title': '🌟 Counting Stars: 돈보다 꿈을 세고 싶은 마음',
+                                      'paragraphs': ['OneRepublic의 Counting Stars는 돈, 성공, 규칙적인 삶보다 자신이 진짜 꿈꾸는 삶을 따라가고 '
+                                                     '싶은 마음을 담은 노래입니다. 제목의 counting stars는 단순히 별을 센다는 뜻이 아니라, 돈을 세는 '
+                                                     '삶에서 벗어나 꿈과 희망을 바라보겠다는 의미로 이해할 수 있습니다.',
+                                                     '노래 속 화자는 요즘 잠을 이루지 못하고, 자신과 상대가 앞으로 무엇이 될 수 있을지 계속 꿈꿉니다. 하지만 단순히 '
+                                                     '돈을 많이 버는 삶이 아니라, 더 큰 희망과 가능성을 따라가고 싶어 합니다.',
+                                                     "no more counting dollars, we'll be counting stars라는 문장은 물질적인 "
+                                                     '성공보다 꿈과 의미를 더 중요하게 보겠다는 선언처럼 들립니다. 또한 right와 wrong, old와 young, '
+                                                     'money와 stars처럼 서로 대비되는 표현을 통해 혼란스럽지만 살아 있는 감정을 보여 줍니다.',
+                                                     '수업에서는 losing sleep, dreaming about, counting dollars, counting '
+                                                     "stars, seek it out, do what we're told, makes me feel alive 같은 "
+                                                     '표현을 중심으로 배울 수 있습니다. 또한 학생들에게 돈보다 중요하게 생각하는 것, 내가 꿈꾸는 미래, 남들이 정한 '
+                                                     '길이 아니라 내가 선택하고 싶은 길을 주제로 생각을 적게 할 수 있습니다.']}
 }
 
 
