@@ -1356,7 +1356,7 @@ def show_pre_reading_questions(category, topic_name, data):
         '<div class="section-box"><h3>🧭 해당 내용 지문을 읽고 답하세요</h3></div>',
         unsafe_allow_html=True
     )
-    st.caption("아래 문제를 먼저 확인한 뒤, 바로 아래 지문을 읽으면서 답을 찾아보세요.")
+    st.caption("문제를 먼저 확인한 뒤, 바로 아래 지문을 읽으면서 답을 찾아보세요.")
 
     if st.button("🔄 지문 문제 다시 풀기", key=f"reset_pre_reading_{category}_{topic_name}", use_container_width=True):
         reset_keys_by_prefix(pre_prefix)
@@ -1367,7 +1367,29 @@ def show_pre_reading_questions(category, topic_name, data):
     for q_idx, (question, options, answer) in enumerate(pre_questions, start=1):
         answer_key = f"{pre_prefix}answer_{q_idx}"
         status_key = f"{pre_prefix}status_{q_idx}"
+        option_key = f"{pre_prefix}options_{q_idx}"
         status_keys.append(status_key)
+
+        # 정답이 항상 1번에 나오지 않도록 보기 순서를 문제별로 섞습니다.
+        # 단, Streamlit은 버튼을 누를 때마다 rerun되므로 한 번 정해진 보기 순서는 session_state에 저장합니다.
+        if option_key not in st.session_state:
+            distractors = [opt for opt in options if opt != answer]
+            rnd = random.Random(f"pre-reading-{category}-{topic_name}-{q_idx}")
+            rnd.shuffle(distractors)
+
+            mixed_options = distractors[:]
+            if answer in options:
+                # 정답 위치를 2번, 3번, 4번, 1번 순으로 순환 배치합니다.
+                answer_position = q_idx % max(1, len(options))
+                answer_position = min(answer_position, len(mixed_options))
+                mixed_options.insert(answer_position, answer)
+            else:
+                mixed_options = list(options)
+                rnd.shuffle(mixed_options)
+
+            st.session_state[option_key] = mixed_options
+
+        mixed_options = st.session_state[option_key]
 
         st.markdown(
             f"""
@@ -1384,7 +1406,7 @@ def show_pre_reading_questions(category, topic_name, data):
 
         selected = st.radio(
             "정답 선택",
-            options,
+            mixed_options,
             key=answer_key,
             horizontal=False,
             label_visibility="collapsed"
@@ -1405,7 +1427,6 @@ def show_pre_reading_questions(category, topic_name, data):
     checked = sum(1 for key in status_keys if key in st.session_state)
     show_pass_status(score, len(status_keys), checked)
     st.markdown("---")
-
 
 def make_expression_completion_items(data, key_words, max_items=6):
     """활동 3용: 핵심 표현에서 중요한 영어 단어를 하나 비우고 고르게 합니다."""
