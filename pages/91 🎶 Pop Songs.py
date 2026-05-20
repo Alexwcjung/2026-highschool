@@ -1610,7 +1610,7 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
               ('Things could get better', '상황이 나아질 수 있다'),
               ('Such a beautiful disease', '참 아름다운 병 같은 것')],
  'reflect_questions': ['겉으로는 아름다워 보였지만 실제로는 힘들었던 경험이 있나요?', '꿈을 좇는 과정에서 외로움이나 혼란을 느낀 적이 있나요?', 'New York City처럼 나에게 복잡한 감정을 주는 장소가 있나요?']},
- '15. Counting Stars - OneRepublic': {'video_url': 'https://www.youtube.com/watch?v=hT_nvWreIhg&list=RDhT_nvWreIhg&start_radio=1',
+ '15. Counting Stars - OneRepublic': {'video_url': 'https://www.youtube.com/watch?v=k03uV71OP8E&list=RDk03uV71OP8E&start_radio=1',
                                       'bg': '\n'
                                             '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#f59e0b;">\n'
                                             '        🌟 Counting Stars: 돈보다 꿈을 세고 싶은 마음\n'
