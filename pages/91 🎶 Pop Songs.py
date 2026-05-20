@@ -1401,6 +1401,96 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                         '다시 기회가 주어진다면 다르게 행동하고 싶은 순간이 있나요?']}
 
 
+
+, '13. I Don\'t Think So - Priscilla Ahn': {'video_url': 'https://www.youtube.com/watch?v=zWCsRi8dPaM',
+                                            'bg': '\n'
+                                                  '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#be123c;">\n'
+                                                  "        🚪 I Don\'t Think So: 이용당하지 않겠다는 단호한 마음\n"
+                                                  '    </h3>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  "        Priscilla Ahn의 <b>I Don\'t Think So</b>는 관계 속에서 애매한 태도와 상처를 느낀 화자가\n"
+                                                  '        더 이상 이용당하지 않겠다고 말하는 노래입니다.\n'
+                                                  '        제목의 <b>I don\'t think so</b>는 단순히 “나는 그렇게 생각하지 않아”라는 뜻을 넘어,\n'
+                                                  '        “그건 아닌 것 같아”, “나는 받아들이지 않겠어”라는 단호한 거절의 의미로 이해할 수 있습니다.\n'
+                                                  '    </p>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  '        노래 속 화자는 상대가 자신에게 확실한 마음을 보이지 않으면서도\n'
+                                                  '        자신을 곁에 두려는 듯한 태도를 느낍니다.\n'
+                                                  '        그래서 처음에는 너무 친절하게 대해 왔지만, 이제는 그 관계가 자신을 혼란스럽게 만들고 있다는 것을 깨닫습니다.\n'
+                                                  '        <b>I can take a hint</b>, <b>I can take a clue</b>는 상대의 눈치와 신호를 알아차렸다는 뜻이고,\n'
+                                                  '        <b>I am not here for you to use</b>는 더 이상 이용당하지 않겠다는 자기 존중의 표현입니다.\n'
+                                                  '    </p>\n'
+                                                  '\n'
+                                                  '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                                  '        수업에서는 <b>I don\'t think so</b>, <b>I think I should go</b>,\n'
+                                                  '        <b>take a hint</b>, <b>take a clue</b>, <b>utterly confused</b>,\n'
+                                                  '        <b>I am not here for you to use</b> 같은 표현을 중심으로 배울 수 있습니다.\n'
+                                                  '        이 노래는 짧은 문장과 반복 표현이 많아, 학생들이 관계 속 감정과 단호한 자기표현을 영어로 익히기에 좋습니다.\n'
+                                                  '    </p>\n'
+                                                  '    ',
+                                            'lyrics': [('Girl, you were looking at him a little too long for me / To be your friend',
+                                                        '너는 그를 너무 오래 바라보고 있었어 / 내가 너의 친구로 있기에는 말이야'),
+                                                       ('And boy, you were looking at her a little too short / For me to be yours',
+                                                        '그리고 너는 그녀를 너무 짧게 바라보고 있었어 / 내가 너의 사람이 되기에는 말이야'),
+                                                       ("And I've been really too nice, I know", '그리고 나는 정말 너무 친절했어, 나도 알아'),
+                                                       ('You probably thought that we were just a show', '너는 아마 우리가 그저 보여 주기 위한 관계라고 생각했겠지'),
+                                                       ('But you better listen up / You better listen close', '하지만 너는 잘 들어야 해 / 아주 가까이서 잘 들어야 해'),
+                                                       ("I don't think so", '나는 그렇게 생각하지 않아 / 그건 아닌 것 같아'),
+                                                       ('I think I should go', '나는 가야 할 것 같아'),
+                                                       ('I can feel your eyes look at me and the door', '네 시선이 나와 문을 바라보는 것이 느껴져'),
+                                                       ('Oh, I can take a hint / Oh, I can take a clue', '오, 나는 눈치를 챌 수 있어 / 오, 나는 단서를 알아차릴 수 있어'),
+                                                       ("You're giving me the go, sir / You're giving me the boot", '너는 나에게 가라는 신호를 주고 있어 / 너는 나를 쫓아내고 있어'),
+                                                       ("And I've been really too nice, I know", '그리고 나는 정말 너무 친절했어, 나도 알아'),
+                                                       ('You probably thought that we were just a show', '너는 아마 우리가 그저 보여 주기 위한 관계라고 생각했겠지'),
+                                                       ('But you left me utterly confused', '하지만 너는 나를 완전히 혼란스럽게 만들었어'),
+                                                       ('I am not here for you to use', '나는 네가 이용하라고 여기 있는 게 아니야'),
+                                                       ('So you better listen up / You better listen close', '그러니 너는 잘 들어야 해 / 아주 가까이서 잘 들어야 해'),
+                                                       ("I don't think so", '나는 그렇게 생각하지 않아 / 그건 아닌 것 같아')],
+                                            'quiz': [{'q': '1. 이 노래에서 화자가 느끼는 중심 감정으로 가장 알맞은 것은 무엇인가요?',
+                                                      'options': ['설렘과 기대', '혼란과 단호한 거절', '여행의 즐거움', '승리의 자신감'],
+                                                      'answer': '혼란과 단호한 거절'},
+                                                     {'q': '2. 화자는 자신이 너무 어떻게 행동했다고 말하나요?',
+                                                      'options': ['너무 조용했다', '너무 친절했다', '너무 빨리 달렸다', '너무 늦게 왔다'],
+                                                      'answer': '너무 친절했다'},
+                                                     {'q': "3. 'I don't think so'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                                      'options': ['나는 배가 고프다', '나는 그렇게 생각하지 않는다 / 그건 아닌 것 같다', '나는 집에 있다', '나는 노래하고 싶다'],
+                                                      'answer': '나는 그렇게 생각하지 않는다 / 그건 아닌 것 같다'},
+                                                     {'q': "4. 'I think I should go'는 어떤 의미인가요?",
+                                                      'options': ['나는 가야 할 것 같다', '나는 기다려야 한다', '나는 잠을 자야 한다', '나는 웃어야 한다'],
+                                                      'answer': '나는 가야 할 것 같다'},
+                                                     {'q': "5. 'I can take a hint'의 의미로 가장 알맞은 것은 무엇인가요?",
+                                                      'options': ['힌트를 줄 수 있다', '눈치를 챌 수 있다', '문을 열 수 있다', '친구를 부를 수 있다'],
+                                                      'answer': '눈치를 챌 수 있다'},
+                                                     {'q': "6. 'You left me utterly confused'는 어떤 의미인가요?",
+                                                      'options': ['너는 나를 완전히 혼란스럽게 만들었다', '너는 나를 아주 행복하게 만들었다', '너는 나를 빨리 걷게 했다', '너는 나를 도와주었다'],
+                                                      'answer': '너는 나를 완전히 혼란스럽게 만들었다'},
+                                                     {'q': "7. 'I am not here for you to use'는 어떤 태도를 보여 주나요?",
+                                                      'options': ['자기 존중과 단호함', '장난스러움', '무관심', '운동 의지'],
+                                                      'answer': '자기 존중과 단호함'},
+                                                     {'q': '8. 이 노래의 관계 상황으로 가장 알맞은 것은 무엇인가요?',
+                                                      'options': ['화자가 상대의 애매한 태도에 혼란을 느끼고 떠나려는 상황', '두 사람이 함께 여행을 떠나는 상황', '가족이 다시 만나는 상황', '친구들이 시험을 준비하는 상황'],
+                                                      'answer': '화자가 상대의 애매한 태도에 혼란을 느끼고 떠나려는 상황'}],
+                                            'key_expressions': [("I don't think so", '나는 그렇게 생각하지 않아 / 그건 아닌 것 같아'),
+                                                                ('I think I should go', '나는 가야 할 것 같아'),
+                                                                ('Listen up', '잘 들어'),
+                                                                ('Listen close', '가까이서 잘 들어'),
+                                                                ('Take a hint', '눈치를 채다'),
+                                                                ('Take a clue', '단서를 알아차리다'),
+                                                                ('Give me the boot', '나를 쫓아내다 / 떠나게 하다'),
+                                                                ('Really too nice', '정말 너무 친절한'),
+                                                                ('Utterly confused', '완전히 혼란스러운'),
+                                                                ('I am not here for you to use', '나는 네가 이용하라고 여기 있는 게 아니야')],
+                                            'matching': [("I don't think so", '그건 아닌 것 같아'),
+                                                         ('I think I should go', '나는 가야 할 것 같아'),
+                                                         ('Listen up', '잘 들어'),
+                                                         ('Take a hint', '눈치를 채다'),
+                                                         ('Utterly confused', '완전히 혼란스러운'),
+                                                         ('I am not here for you to use', '나는 이용당하려고 여기 있는 게 아니야')],
+                                            'reflect_questions': ['상대의 애매한 태도 때문에 혼란스러웠던 경험이 있나요?',
+                                                                  '누군가에게 단호하게 “그건 아닌 것 같아”라고 말하고 싶었던 순간이 있나요?',
+                                                                  '나를 지키기 위해 관계에서 선을 그어야 했던 경험이 있나요?']}
 }
 
 BACKGROUND_CONTENT = {
@@ -1511,6 +1601,16 @@ BACKGROUND_CONTENT = {
             "노래 속 화자는 지난 몇 달 동안 자기 자신을 돌아보고 있었다고 말합니다. 자신의 삶에 많은 상처가 있었고, 그 상처 때문에 자신을 사랑해 준 사람들에게 차갑게 대했다는 사실을 깨닫습니다. 하지만 그 깨달음은 이미 상대가 다른 사람을 선택한 뒤에 찾아옵니다.",
             "반복되는 I’m out of time은 사랑한다고 말하고 싶고, 곁에 있어 주고 싶고, 잘해 주고 싶지만 이미 기회를 놓쳤다는 고백입니다. 화자는 다시 한 번만 기회를 달라고 말하지만, 동시에 상대가 이미 마음을 정했다는 사실도 알고 있습니다.",
             "수업에서는 working on me, trauma, look back, I regret, made up your mind, out of time, give me one chance 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘뒤늦게 후회한 순간’, ‘시간이 지나고 깨달은 소중함’, ‘다시 기회가 주어진다면 하고 싶은 말’을 주제로 생각을 적게 할 수 있습니다."
+        ],
+    },
+
+    "13. I Don\'t Think So - Priscilla Ahn": {
+        "title": "🚪 I Don\'t Think So: 이용당하지 않겠다는 단호한 마음",
+        "paragraphs": [
+            "Priscilla Ahn의 I Don\'t Think So는 관계 속에서 애매한 태도와 상처를 느낀 화자가 더 이상 이용당하지 않겠다고 말하는 노래입니다. 제목의 I don\'t think so는 단순히 ‘나는 그렇게 생각하지 않아’라는 뜻을 넘어, ‘그건 아닌 것 같아’, ‘나는 받아들이지 않겠어’라는 단호한 거절의 의미로 이해할 수 있습니다.",
+            "노래 속 화자는 상대가 자신에게 확실한 마음을 보이지 않으면서도 자신을 곁에 두려는 듯한 태도를 느낍니다. 그래서 처음에는 너무 친절하게 대해 왔지만, 이제는 그 관계가 자신을 혼란스럽게 만들고 있다는 것을 깨닫습니다.",
+            "I can take a hint와 I can take a clue는 상대의 눈치와 신호를 알아차렸다는 뜻입니다. You\'re giving me the boot는 상대가 자신을 밀어내고 있다는 느낌을 표현하며, I am not here for you to use는 더 이상 이용당하지 않겠다는 자기 존중의 표현입니다.",
+            "수업에서는 I don\'t think so, I think I should go, listen up, take a hint, take a clue, utterly confused, I am not here for you to use 같은 표현을 중심으로 배울 수 있습니다. 또한 학생들에게 ‘관계에서 선을 긋는 순간’, ‘애매한 태도 때문에 혼란스러웠던 경험’, ‘나를 지키기 위한 단호한 말’을 주제로 생각을 적게 할 수 있습니다."
         ],
     },
 }
