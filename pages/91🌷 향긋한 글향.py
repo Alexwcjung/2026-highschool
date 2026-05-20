@@ -1219,6 +1219,193 @@ def show_pass_status(score, total, checked, pass_ratio=0.7):
         st.warning(f"아직 통과 기준에 부족합니다. 다시 풀기를 눌러 한 번 더 도전해 보세요. 현재 점수: {score}/{total}")
 
 
+# =========================================================
+# 읽기 전 이해도 문제
+# =========================================================
+pre_reading_questions_bank = {
+    "⚽ Ronaldo": [
+        ("1. 이 글에서 Ronaldo가 가장 중요하다고 말하는 것은 무엇일까요?", ["Daily habits", "Expensive shoes", "Watching games", "Being famous"], "Daily habits"),
+        ("2. Ronaldo가 말한 좋은 습관에 들어가지 않는 것은 무엇일까요?", ["Watching TV all day", "Training", "Sleeping well", "Eating carefully"], "Watching TV all day"),
+        ("3. 학생은 왜 Ronaldo를 좋아한다고 말할까요?", ["He is fast, strong, and hardworking", "He is a singer", "He cooks well", "He lives nearby"], "He is fast, strong, and hardworking"),
+        ("4. Ronaldo는 작은 루틴이 학생을 어떻게 만든다고 말할까요?", ["Stronger", "Slower", "Sleepier", "Angrier"], "Stronger"),
+        ("5. 학생은 가끔 무엇을 잃는다고 말할까요?", ["Confidence", "A textbook", "A phone", "A ticket"], "Confidence"),
+        ("6. Ronaldo는 지쳤을 때 어떻게 하라고 말할까요?", ["Rest a little, and then try again", "Give up quickly", "Stop practicing forever", "Blame other people"], "Rest a little, and then try again"),
+        ("7. Ronaldo가 말하는 좋은 연습 방법은 무엇일까요?", ["Practice with a clear goal", "Practice without thinking", "Only practice once", "Only copy others"], "Practice with a clear goal"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Believe in yourself and never give up", "Winning is only luck", "Do not make routines", "Talent is the only thing"], "Believe in yourself and never give up"),
+    ],
+    "🏀 Jordan": [
+        ("1. Jordan은 어느 팀과 함께 NBA 챔피언십에서 여섯 번 우승했나요?", ["Chicago Bulls", "LA Lakers", "New York Knicks", "Miami Heat"], "Chicago Bulls"),
+        ("2. Jordan은 훌륭한 선수들도 무엇을 겪는다고 말하나요?", ["Failure", "No practice", "Only luck", "No pressure"], "Failure"),
+        ("3. Jordan은 실패를 무엇으로 사용할 수 있다고 말하나요?", ["Motivation", "Excuse", "Secret", "Homework"], "Motivation"),
+        ("4. 쉬운 슛을 놓친 학생에게 Jordan은 그것이 어떻다고 말하나요?", ["Normal", "Impossible", "Funny", "Dangerous"], "Normal"),
+        ("5. 실수한 뒤 해야 할 일로 알맞은 것은 무엇인가요?", ["Think, practice again, and take the next shot with confidence", "Never play again", "Get angry", "Forget practice"], "Think, practice again, and take the next shot with confidence"),
+        ("6. 진짜 승부욕의 의미로 알맞은 것은 무엇인가요?", ["Preparation, focus, and responsibility", "Only wanting to win", "Being angry", "Never losing"], "Preparation, focus, and responsibility"),
+        ("7. Jordan은 다음 도전을 어떻게 대하라고 말하나요?", ["Never be afraid of it", "Avoid it", "Forget it", "Laugh at it"], "Never be afraid of it"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Learn from failure and keep trying", "Great players never fail", "Mistakes are always bad", "Confidence is not important"], "Learn from failure and keep trying"),
+    ],
+    "⚽ Son Heung-min": [
+        ("1. Son Heung-min은 축구가 무엇만의 경기가 아니라고 말하나요?", ["One player", "One ball", "One school", "One country"], "One player"),
+        ("2. 팀에서 중요한 것으로 알맞은 것은 무엇인가요?", ["Respect, communication, and hard work", "Noise, luck, and speed", "Money, games, and phones", "Anger, silence, and fear"], "Respect, communication, and hard work"),
+        ("3. 어릴 때 Son의 기본기를 도와준 사람은 누구인가요?", ["His father", "His friend", "His teacher", "His brother"], "His father"),
+        ("4. Son이 반복해서 연습한 기본 기술은 무엇인가요?", ["Ball control and shooting", "Cooking and drawing", "Singing and dancing", "Reading and writing"], "Ball control and shooting"),
+        ("5. 기본기는 실제 경기에서 무엇이 된다고 말하나요?", ["Power", "Problem", "Noise", "Luck"], "Power"),
+        ("6. 팀을 돕는 방법으로 알맞은 것은 무엇인가요?", ["Listen to your teammates and move together", "Ignore teammates", "Play alone only", "Never pass the ball"], "Listen to your teammates and move together"),
+        ("7. 좋은 선수는 무엇을 잃지 않는다고 말하나요?", ["Humility", "Anger", "Jealousy", "Laziness"], "Humility"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Discipline, teamwork, and attitude make great players", "Scoring alone is everything", "Basics are not important", "Losing means nothing to learn"], "Discipline, teamwork, and attitude make great players"),
+    ],
+    "🎤 IU": [
+        ("1. 학생은 음악이 자신을 어떻게 만든다고 말하나요?", ["Happy", "Angry", "Tired", "Afraid"], "Happy"),
+        ("2. 학생은 어떤 메시지가 있는 노래를 좋아하나요?", ["Warm messages", "Cold messages", "Fast rules", "Difficult numbers"], "Warm messages"),
+        ("3. IU는 좋은 노래가 사람들에게 무엇을 줄 수 있다고 말하나요?", ["Comfort", "Homework", "Noise", "Money"], "Comfort"),
+        ("4. 감정을 더 잘 표현하려면 무엇에 귀 기울여야 하나요?", ["Your heart", "Your phone", "A machine", "A map"], "Your heart"),
+        ("5. IU는 처음에 무엇 하나를 써 보라고 말하나요?", ["One small sentence", "One long book", "One test paper", "One rule"], "One small sentence"),
+        ("6. 솔직한 감정은 무엇이 될 수 있나요?", ["Powerful words", "A mistake", "A problem", "A game"], "Powerful words"),
+        ("7. IU는 무엇이 사람들에게 닿는다고 말하나요?", ["Sincerity", "Silence", "Speed", "Luck"], "Sincerity"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Express yourself honestly and trust your voice", "Hide your feelings forever", "A song needs no feeling", "Writing is always useless"], "Express yourself honestly and trust your voice"),
+    ],
+    "⛸️ Kim Yuna": [
+        ("1. 학생은 피겨스케이팅이 어떻게 보인다고 말하나요?", ["Beautiful and difficult", "Easy and boring", "Fast and noisy", "Small and simple"], "Beautiful and difficult"),
+        ("2. 피겨스케이팅에 필요한 것으로 알맞은 것은 무엇인가요?", ["Balance, practice, and focus", "Only luck", "No practice", "A loud voice"], "Balance, practice, and focus"),
+        ("3. Kim Yuna는 중요한 순간 전에 누구나 무엇을 느낄 수 있다고 말하나요?", ["Nervous", "Lazy", "Famous", "Perfect"], "Nervous"),
+        ("4. Kim Yuna는 마음을 다스리기 위해 무엇에 집중했나요?", ["What she practiced", "Other people", "Only the result", "Her phone"], "What she practiced"),
+        ("5. 시험 전에 걱정이 많은 학생에게 걱정만으로는 어떻다고 말하나요?", ["It does not help", "It is enough", "It is perfect", "It is the goal"], "It does not help"),
+        ("6. 긴장될 때 해야 할 일로 알맞은 것은 무엇인가요?", ["Prepare step by step, breathe slowly, and focus on one thing", "Run away", "Forget everything", "Only worry"], "Prepare step by step, breathe slowly, and focus on one thing"),
+        ("7. 침착함은 무엇에서 나온다고 말하나요?", ["Practice and trust in yourself", "Noise and luck", "Fear and anger", "Money and phones"], "Practice and trust in yourself"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Preparation helps control nervousness", "Worry is the best answer", "Pressure is impossible to handle", "Growth is not important"], "Preparation helps control nervousness"),
+    ],
+    "🎤 BTS Jungkook": [
+        ("1. 학생은 무엇을 좋아한다고 말하나요?", ["Singing and watching performances", "Cooking and cleaning", "Drawing maps", "Sleeping only"], "Singing and watching performances"),
+        ("2. Jungkook은 공연에는 무엇이 많이 필요하다고 말하나요?", ["Practice", "Money", "Homework", "Luck only"], "Practice"),
+        ("3. 매일의 작은 연습은 무엇을 만들 수 있나요?", ["A big difference", "A big problem", "No change", "A loud sound"], "A big difference"),
+        ("4. 사람들 앞에서 긴장하는 것은 어떻다고 말하나요?", ["Natural", "Wrong", "Impossible", "Strange"], "Natural"),
+        ("5. 자신감을 가지기 위한 방법으로 알맞은 것은 무엇인가요?", ["Prepare well, breathe slowly, and focus on the message", "Compare yourself all day", "Give up quickly", "Never practice"], "Prepare well, breathe slowly, and focus on the message"),
+        ("6. Jungkook은 재능 외에 무엇이 중요하다고 말하나요?", ["Effort and attitude", "Only height", "Only age", "Only luck"], "Effort and attitude"),
+        ("7. Jungkook은 다른 사람과 너무 많이 무엇하지 말라고 말하나요?", ["Compare yourself", "Practice", "Sing", "Improve"], "Compare yourself"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Focus on your own growth and trust your own voice", "Only talented people can grow", "Practice does not matter", "Stage fear never changes"], "Focus on your own growth and trust your own voice"),
+    ],
+    "🏜️ Grand Canyon": [
+        ("1. Grand Canyon은 어느 나라 어느 주에 있나요?", ["Arizona, USA", "Seoul, Korea", "Paris, France", "London, UK"], "Arizona, USA"),
+        ("2. Grand Canyon을 보며 학생은 어떻게 느끼나요?", ["Amazed", "Angry", "Bored", "Sleepy"], "Amazed"),
+        ("3. Grand Canyon은 무엇에 의해 천천히 만들어졌나요?", ["The Colorado River and erosion", "A machine", "Only people", "A building"], "The Colorado River and erosion"),
+        ("4. 물과 같은 작은 힘은 오랜 시간 동안 무엇을 만들 수 있나요?", ["Huge changes", "No change", "Only noise", "A classroom"], "Huge changes"),
+        ("5. 알록달록한 암석층은 무엇을 보여 주나요?", ["Different periods of Earth's history", "Only sports history", "A school rule", "Modern fashion"], "Different periods of Earth's history"),
+        ("6. 학생은 Grand Canyon을 무엇에 비유하나요?", ["A book made of rocks", "A phone made of glass", "A school made of paper", "A game made of water"], "A book made of rocks"),
+        ("7. 학생은 무엇을 보호하고 싶다고 말하나요?", ["Nature", "A phone", "A bus", "A classroom"], "Nature"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Nature has stories, so we should respect it", "Nature changes only in one day", "Rocks have no history", "Water cannot change land"], "Nature has stories, so we should respect it"),
+    ],
+    "🗽 New York": [
+        ("1. New York에는 어떤 사람들이 살고 있나요?", ["People from many cultures", "Only one family", "Only students", "No people"], "People from many cultures"),
+        ("2. New York은 종종 어떤 도시라고 불리나요?", ["A global city", "A small village", "A quiet farm", "A desert city"], "A global city"),
+        ("3. Global city의 의미로 알맞은 것은 무엇인가요?", ["People, ideas, money, art, and culture from many countries meet", "Only one idea exists", "No culture exists", "Only farmers live there"], "People, ideas, money, art, and culture from many countries meet"),
+        ("4. Times Square는 무엇을 보여 준다고 말하나요?", ["Energy", "Silence", "Fear", "Homework"], "Energy"),
+        ("5. Statue of Liberty는 무엇을 보여 주나요?", ["Freedom", "Sports", "Food", "Noise"], "Freedom"),
+        ("6. 큰 도시의 어려움으로 알맞은 것은 무엇인가요?", ["Life can be fast, expensive, and competitive", "Life is always slow and free", "There is no competition", "Everything is quiet"], "Life can be fast, expensive, and competitive"),
+        ("7. Guide는 꿈을 따르려면 무엇을 존중하라고 말하나요?", ["Different cultures", "Only one opinion", "Only money", "Only speed"], "Different cultures"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Stay curious, keep learning, and respect diversity", "Avoid all big cities", "Freedom is not important", "Different cultures are a problem"], "Stay curious, keep learning, and respect diversity"),
+    ],
+    "🏯 Gyeongbokgung": [
+        ("1. Gyeongbokgung은 처음 언제 지어졌나요?", ["1395", "1910", "2020", "1600"], "1395"),
+        ("2. Gyeongbokgung은 어느 시대에 지어졌나요?", ["Joseon Dynasty", "Roman Empire", "British Empire", "Modern USA"], "Joseon Dynasty"),
+        ("3. Gyeongbokgung은 조선의 어떤 궁궐이었나요?", ["Main royal palace", "Small market", "Old school", "Train station"], "Main royal palace"),
+        ("4. Gyeongbokgung이라는 이름의 뜻은 무엇인가요?", ["A palace greatly blessed by heaven", "A house near a river", "A small mountain school", "A market for people"], "A palace greatly blessed by heaven"),
+        ("5. Gyeongbokgung은 무엇을 보여 주나요?", ["Korean history, architecture, and royal culture", "Only sports", "Only food", "Only music"], "Korean history, architecture, and royal culture"),
+        ("6. 중요한 국가 행사가 열렸던 건물은 무엇인가요?", ["Geunjeongjeon Hall", "Times Square", "Central Park", "Colorado River"], "Geunjeongjeon Hall"),
+        ("7. 이런 장소는 우리가 무엇을 기억하도록 도와주나요?", ["The past", "Only homework", "A phone number", "A game rule"], "The past"),
+        ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Understanding the past can help us build a better future", "History is not useful", "Palaces have no meaning", "Culture should be forgotten"], "Understanding the past can help us build a better future"),
+    ],
+    "📘 교과서": [
+        ("1. 이 글의 날짜는 언제인가요?", ["November 25th, 2075", "November 25th, 2025", "December 25th, 2075", "January 1st, 2075"], "November 25th, 2075"),
+        ("2. 학교에 막 도착한 것은 무엇인가요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
+        ("3. 학생은 그 기계를 사용해 본 몇 번째 학생이었나요?", ["The first student", "The last student", "The second teacher", "The third cook"], "The first student"),
+        ("4. 메뉴 선택지를 고르자 무엇이 나왔나요?", ["A healthy meal", "A new book", "A soccer ball", "A movie ticket"], "A healthy meal"),
+        ("5. 학생이 어떤 식사를 고르든 그 안에는 무엇이 들어 있었나요?", ["All the nutrients needed", "Only sugar", "No nutrients", "Only water"], "All the nutrients needed"),
+        ("6. 오늘 학생이 선택한 음식은 무엇인가요?", ["A hamburger made from lab-grown beef", "Spicy tteokbokki", "Fried chicken", "Pizza"], "A hamburger made from lab-grown beef"),
+        ("7. 학생을 더 놀라게 한 것은 무엇인가요?", ["The speed of service", "The size of the classroom", "The weather", "The color of the button"], "The speed of service"),
+        ("8. 학생은 내일 무엇을 먹어 보는 것을 기대하나요?", ["Spicy tteokbokki", "Low-fat ice cream", "Pizza", "Fried chicken"], "Spicy tteokbokki"),
+    ],
+}
+
+
+def get_pre_reading_questions(topic_name, data):
+    """지문을 읽기 전에 볼 8개의 이해도 문제를 가져옵니다."""
+    if topic_name in pre_reading_questions_bank:
+        return pre_reading_questions_bank[topic_name]
+
+    base_questions = data.get("questions", [])
+    if len(base_questions) >= 8:
+        return base_questions[:8]
+
+    # 예비 자료가 부족한 경우에도 화면이 깨지지 않도록 기본 문제를 보충합니다.
+    fallback = list(base_questions)
+    fallback.append(("이 지문을 읽으며 가장 먼저 확인할 내용은 무엇인가요?", [data.get("title", "Main topic"), "Random topic", "Only grammar", "Only spelling"], data.get("title", "Main topic")))
+    fallback.append(("이 지문에서 배울 수 있는 태도로 가장 알맞은 것은 무엇인가요?", ["Read carefully and find key ideas", "Ignore the text", "Guess without reading", "Stop learning"], "Read carefully and find key ideas"))
+
+    while len(fallback) < 8:
+        n = len(fallback) + 1
+        fallback.append((f"{n}. 지문을 읽으며 핵심 내용을 찾아봅시다.", ["Key idea", "Wrong idea", "No idea", "Unrelated idea"], "Key idea"))
+
+    return fallback[:8]
+
+
+def show_pre_reading_questions(category, topic_name, data):
+    """Reading 본문 바로 위에 읽기 전 이해도 문제를 표시합니다."""
+    pre_questions = get_pre_reading_questions(topic_name, data)
+    pre_prefix = f"{category}_{topic_name}_pre_reading_"
+
+    st.markdown(
+        '<div class="section-box"><h3>🧭 읽기 전 이해도 문제</h3></div>',
+        unsafe_allow_html=True
+    )
+    st.caption("아래 문제를 먼저 보고, 답을 찾는다는 생각으로 바로 아래 지문을 읽어 봅시다.")
+
+    if st.button("🔄 읽기 전 문제 다시 풀기", key=f"reset_pre_reading_{category}_{topic_name}", use_container_width=True):
+        reset_keys_by_prefix(pre_prefix)
+        st.rerun()
+
+    status_keys = []
+
+    for q_idx, (question, options, answer) in enumerate(pre_questions, start=1):
+        answer_key = f"{pre_prefix}answer_{q_idx}"
+        status_key = f"{pre_prefix}status_{q_idx}"
+        status_keys.append(status_key)
+
+        st.markdown(
+            f"""
+            <div style="margin-top: 14px; margin-bottom: 8px; padding: 15px 17px; border-radius: 20px;
+                        border: 1.5px solid #bbf7d0; background: rgba(255,255,255,0.92);
+                        box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+                <div style="font-size: 20px; font-weight: 950; color: #166534; line-height: 1.55;">
+                    {question}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        selected = st.radio(
+            "정답 선택",
+            options,
+            key=answer_key,
+            horizontal=False,
+            label_visibility="collapsed"
+        )
+
+        c_check, c_result = st.columns([1.2, 3])
+        with c_check:
+            if st.button("답 확인", key=f"{pre_prefix}check_{q_idx}", use_container_width=True):
+                st.session_state[status_key] = selected == answer
+        with c_result:
+            if status_key in st.session_state:
+                if st.session_state[status_key]:
+                    st.success("정답입니다.")
+                else:
+                    st.error(f"정답: {answer}")
+
+    score = sum(1 for key in status_keys if st.session_state.get(key) is True)
+    checked = sum(1 for key in status_keys if key in st.session_state)
+    show_pass_status(score, len(status_keys), checked)
+    st.markdown("---")
+
 def make_full_listening_text(dialogue):
     """
     전체 듣기용 텍스트:
@@ -1486,6 +1673,8 @@ with tab_reading:
         value=False,
         key=f"{category}_{topic_name}_show_korean_reading"
     )
+
+    show_pre_reading_questions(category, topic_name, data)
 
     # 기본은 영어만 보이게 하고, 버튼을 켜면 영어 문장 아래에 한국어 해석이 보입니다.
     for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
