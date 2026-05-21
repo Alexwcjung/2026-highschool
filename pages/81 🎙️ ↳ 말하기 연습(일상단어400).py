@@ -301,8 +301,9 @@ st.markdown(
         #speaking-app #answerBtn,
         #speaking-app #listenBtn,
         #speaking-app #nextBtn {
-            padding: 8px 12px !important;
-            font-size: 13px !important;
+            padding: 13px 8px !important;
+            min-height: 58px !important;
+            font-size: 17px !important;
         }
         #speaking-app #hintBox {
             font-size: 13px !important;
@@ -315,7 +316,23 @@ st.markdown(
             box-sizing: border-box !important;
         }
     }
-    </style>
+    
+
+        #speaking-app #hintBtn:hover,
+        #speaking-app #answerBtn:hover,
+        #speaking-app #listenBtn:hover,
+        #speaking-app #nextBtn:hover {
+            border-color: #22c55e !important;
+            color: #22c55e !important;
+        }
+
+        @media (max-width: 640px) {
+            #speaking-app div[style*="grid-template-columns:repeat(3"] {
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+            }
+        }
+
+</style>
     """,
     unsafe_allow_html=True
 )
@@ -445,67 +462,65 @@ def speaking_practice_component(items):
                 "></div>
             </div>
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:12px;">
-                <button id="hintBtn" style="
-                    border:1.5px solid #fcd34d;
-                    background:linear-gradient(135deg,#fef3c7,#fde68a);
-                    color:#92400e;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    box-shadow:0 4px 10px rgba(245,158,11,0.14);
-                ">💡 힌트</button>
-
+            <div style="display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; margin-bottom:12px;">
                 <button id="micBtn" style="
                     border:4px solid rgba(255,255,255,0.95);
                     background: linear-gradient(135deg, #8b5cf6, #ec4899);
                     color:white;
                     border-radius:999px;
-                    width:100px;
-                    height:100px;
-                    font-weight:900;
+                    width:108px;
+                    height:108px;
+                    font-weight:1000;
                     cursor:pointer;
-                    font-size:36px;
+                    font-size:38px;
                     box-shadow:0 12px 26px rgba(124,58,237,0.26);
                     flex: 0 0 auto;
                 ">🎙️</button>
 
-                <button id="answerBtn" style="
-                    display:none;
-                    border:1.5px solid #86efac;
-                    background:linear-gradient(135deg,#dcfce7,#f0fdf4);
-                    color:#166534;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    box-shadow:0 4px 10px rgba(34,197,94,0.12);
-                ">👀 정답</button>
+                <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; width:100%; max-width:760px;">
+                    <button id="hintBtn" style="
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">💡 힌트</button>
 
-                <button id="listenBtn" style="
-                    display:none;
-                    border:1.5px solid #93c5fd;
-                    background:linear-gradient(135deg,#dbeafe,#eff6ff);
-                    color:#1d4ed8;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    box-shadow:0 4px 10px rgba(59,130,246,0.12);
-                ">🔊 듣기</button>
+                    <button id="answerBtn" style="
+                        display:inline-block;
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">👀🔊 정답 보기·듣기</button>
 
-                <button id="nextBtn" style="
-                    border:1.5px solid #c4b5fd;
-                    background:linear-gradient(135deg,#ede9fe,#eef2ff);
-                    color:#5b21b6;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:16px;
-                    box-shadow:0 4px 10px rgba(124,58,237,0.12);
-                ">➡️ 다음</button>
+                    <button id="listenBtn" style="display:none;">🔊 듣기</button>
+
+                    <button id="nextBtn" style="
+                        display:inline-block;
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">➡️ 다음</button>
+                </div>
             </div>
 
             <div id="hintBox" style="
@@ -527,6 +542,8 @@ def speaking_practice_component(items):
                 box-sizing:border-box;
                 box-shadow: 0 3px 8px rgba(251,191,36,0.10);
             "></div>
+
+            <div id="answerBox" style="display:none;"></div>
 
             <div id="resultBox" style="
                 display:none;
@@ -562,6 +579,8 @@ def speaking_practice_component(items):
     let recognitionTimeout = null;
     let speechCheckTimeout = null;
     let finalSpeechBuffer = "";
+    let lastCheckedSpeech = "";
+    let isCheckingSpeech = false;
 
     const categorySelect = document.getElementById("categorySelect");
     const randomBtn = document.getElementById("randomBtn");
@@ -1253,13 +1272,18 @@ def speaking_practice_component(items):
 
         blankSentence.innerHTML = makeBlankSentenceHtml(currentItem.blank);
         hintBox.style.display = "none";
+        if (typeof answerBox !== "undefined" && answerBox) answerBox.style.display = "none";
         hintBox.innerText = "";
+        if (typeof answerBox !== "undefined" && answerBox) answerBox.innerText = "";
         transcriptBox.innerText = "";
+        finalSpeechBuffer = "";
+        lastCheckedSpeech = "";
+        isCheckingSpeech = false;
 
         resetMicState();
         hintBtn.style.display = "inline-block";
         micBtn.style.display = "inline-block";
-        answerBtn.style.display = "none";
+        answerBtn.style.display = "inline-block";
         listenBtn.style.display = "none";
         nextBtn.style.display = "inline-block";
 
@@ -1278,6 +1302,11 @@ def speaking_practice_component(items):
         if (!currentItem) return;
 
         const recognized = String(spokenText || "").trim();
+        const recognizedKey = normalizeText(recognized);
+        if (!recognizedKey) return;
+        if (isCheckingSpeech && recognizedKey === lastCheckedSpeech) return;
+        isCheckingSpeech = true;
+        lastCheckedSpeech = recognizedKey;
 
         if (isCorrectSpeech(recognized, currentItem.answer)) {
             if (!alreadyCorrect) {
@@ -1318,11 +1347,11 @@ def speaking_practice_component(items):
             resultBox.style.color = "#92400e";
             resultBox.innerText = "문장은 말해야 합니다. 다만 발음 시험은 아니므로, 문장 흐름과 빈칸 핵심 단어가 맞으면 관대하게 정답으로 인정됩니다.";
         }
+        isCheckingSpeech = false;
     }
 
     async function startRecognition() {
-        // 듣는 중에 다시 누르면 기존 인식을 끊고 새로 시작합니다.
-        // 학생이 잘못 말했거나 다시 말하고 싶을 때 버튼이 먹통처럼 느껴지지 않게 합니다.
+        // 듣는 중에 다시 누르면 현재 인식을 정리하고 새로 시작합니다.
         if (isListening) {
             stopRecognition();
             setTimeout(function() {
@@ -1357,7 +1386,7 @@ def speaking_practice_component(items):
             recognition = new SpeechRecognition();
             recognition.lang = "en-US";
             recognition.interimResults = true;
-            recognition.continuous = true;
+            recognition.continuous = false;
             recognition.maxAlternatives = 5;
 
             isListening = true;
@@ -1369,6 +1398,8 @@ def speaking_practice_component(items):
             resultBox.innerText = "";
             transcriptBox.innerText = "";
             finalSpeechBuffer = "";
+            lastCheckedSpeech = "";
+            isCheckingSpeech = false;
 
             recognitionTimeout = setTimeout(function() {
                 if (isListening) {
@@ -1384,7 +1415,19 @@ def speaking_practice_component(items):
                         transcriptBox.innerText = "한 문장씩 천천히 말해도 됩니다. 다시 눌러 말해 보세요.";
                     }
                 }
-            }, 13000);
+            }, 12000);
+
+            function pickBestTranscript(result) {
+                let piece = result[0].transcript.trim();
+                for (let j = 0; j < result.length; j++) {
+                    const alt = result[j].transcript.trim();
+                    if (isCorrectSpeech(alt, currentItem.answer)) {
+                        piece = alt;
+                        break;
+                    }
+                }
+                return piece;
+            }
 
             function scheduleFinalCheck(textToCheck) {
                 if (speechCheckTimeout) {
@@ -1392,7 +1435,7 @@ def speaking_practice_component(items):
                     speechCheckTimeout = null;
                 }
 
-                // 한 문장 끝나고 잠깐 쉬어도 바로 오답 처리하지 않도록 2.2초 기다립니다.
+                // 한 문장 끝나고 잠깐 쉬어도 바로 오답 처리하지 않도록 기다립니다.
                 speechCheckTimeout = setTimeout(function() {
                     speechCheckTimeout = null;
                     const finalText = textToCheck || finalSpeechBuffer || transcriptBox.innerText || "";
@@ -1408,48 +1451,40 @@ def speaking_practice_component(items):
                     }
                     checkSpeech(finalText);
                     resetMicState();
-                }, 2200);
+                }, 1800);
             }
 
             recognition.onresult = function(event) {
-                let spokenText = "";
+                let spokenText = finalSpeechBuffer || "";
                 let hasFinal = false;
 
-                for (let i = 0; i < event.results.length; i++) {
-                    let piece = event.results[i][0].transcript.trim();
+                // 중요: event.results 전체를 매번 다시 붙이면 같은 말이 2~3번 반복될 수 있습니다.
+                // 이번 이벤트에서 새로 들어온 결과만 사용합니다.
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const piece = pickBestTranscript(event.results[i]);
+                    if (!piece) continue;
 
-                    // 여러 후보 중 정답에 가까운 후보가 있으면 그걸 사용합니다.
-                    for (let j = 0; j < event.results[i].length; j++) {
-                        const alt = event.results[i][j].transcript.trim();
-                        if (isCorrectSpeech(alt, currentItem.answer)) {
-                            piece = alt;
-                            break;
-                        }
-                    }
-
-                    if (piece) {
-                        spokenText += (spokenText ? " " : "") + piece;
-                    }
                     if (event.results[i].isFinal) {
+                        if (!normalizeText(finalSpeechBuffer).includes(normalizeText(piece))) {
+                            finalSpeechBuffer += (finalSpeechBuffer ? " " : "") + piece;
+                        }
                         hasFinal = true;
+                    } else {
+                        spokenText = (finalSpeechBuffer ? finalSpeechBuffer + " " : "") + piece;
                     }
                 }
 
-                if (spokenText.trim()) {
-                    transcriptBox.innerText = spokenText;
+                const displayText = (spokenText || finalSpeechBuffer || "").trim();
+                if (displayText) {
+                    transcriptBox.innerText = displayText;
                 }
 
-                // 최종 인식 결과가 나와도 바로 채점하지 않고, 잠깐 기다립니다.
-                // 학생이 첫 문장 말하고 쉬었다가 두 번째 문장을 말할 시간을 주기 위함입니다.
-                if (hasFinal && spokenText.trim()) {
-                    finalSpeechBuffer = spokenText;
-                    scheduleFinalCheck(spokenText);
+                if (hasFinal && finalSpeechBuffer.trim()) {
+                    scheduleFinalCheck(finalSpeechBuffer);
                 }
             };
 
             recognition.onerror = function(event) {
-                // 실제 권한 문제만 명확히 알려 주고,
-                // no-speech 같은 일시적 오류는 오답/오류로 띄우지 않습니다.
                 if (event.error === "not-allowed" || event.error === "service-not-allowed") {
                     stopRecognition();
                     transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
@@ -1518,15 +1553,16 @@ def speaking_practice_component(items):
 
     answerBtn.addEventListener("click", function() {
         if (!currentItem) return;
+        if (typeof answerBox !== "undefined" && answerBox) answerBox.style.display = "none";
         blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
         transcriptBox.innerHTML = "<span style='color:#166534;'>" + escapeHtml(currentItem.answer) + "</span>";
-        listenBtn.style.display = "inline-block";
+        listenBtn.style.display = "none";
         nextBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
         resultBox.style.display = "block";
         resultBox.style.color = "#166534";
-        resultBox.innerText = "빈칸에 들어간 단어를 보고 다시 말하면 정답으로 인정됩니다.";
+        resultBox.innerText = "정답을 보고 들은 뒤, 다시 말하면 정답으로 인정됩니다.";
     });
 
     micBtn.addEventListener("click", startRecognition);
