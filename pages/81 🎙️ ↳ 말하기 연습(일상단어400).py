@@ -580,7 +580,9 @@ def speaking_practice_component(items):
     let speechCheckTimeout = null;
     let finalSpeechBuffer = "";
     let lastCheckedSpeech = "";
+    let lastCheckAt = 0;
     let isCheckingSpeech = false;
+    let hasSubmittedSpeech = false;
 
     const categorySelect = document.getElementById("categorySelect");
     const randomBtn = document.getElementById("randomBtn");
@@ -1304,9 +1306,14 @@ def speaking_practice_component(items):
         const recognized = String(spokenText || "").trim();
         const recognizedKey = normalizeText(recognized);
         if (!recognizedKey) return;
-        if (isCheckingSpeech && recognizedKey === lastCheckedSpeech) return;
-        isCheckingSpeech = true;
+
+        // 같은 결과가 아주 짧은 시간 안에 중복으로 들어오는 경우만 막습니다.
+        // 학생이 다시 말했을 때는 같은 문장도 다시 채점될 수 있어야 합니다.
+        const now = Date.now();
+        if (recognizedKey === lastCheckedSpeech && now - lastCheckAt < 1200) return;
         lastCheckedSpeech = recognizedKey;
+        lastCheckAt = now;
+        isCheckingSpeech = false;
 
         if (isCorrectSpeech(recognized, currentItem.answer)) {
             if (!alreadyCorrect) {
@@ -1356,7 +1363,7 @@ def speaking_practice_component(items):
             stopRecognition();
             setTimeout(function() {
                 startRecognition();
-            }, 120);
+            }, 160);
             return;
         }
 
@@ -1386,36 +1393,46 @@ def speaking_practice_component(items):
             recognition = new SpeechRecognition();
             recognition.lang = "en-US";
             recognition.interimResults = true;
-            recognition.continuous = false;
-            recognition.maxAlternatives = 5;
+            recognition.continuous = true;
+            recognition.maxAlternatives = 8;
 
             isListening = true;
+            hasSubmittedSpeech = false;
             micBtn.disabled = false;
             micBtn.style.opacity = "0.9";
             micBtn.style.pointerEvents = "auto";
-            micBtn.innerText = "🔁";
+            micBtn.innerText = "👂";
             resultBox.style.display = "none";
             resultBox.innerText = "";
-            transcriptBox.innerText = "";
+            transcriptBox.innerText = "듣는 중입니다. 한 문장씩 천천히 말해 보세요.";
             finalSpeechBuffer = "";
             lastCheckedSpeech = "";
+            lastCheckAt = 0;
             isCheckingSpeech = false;
 
-            recognitionTimeout = setTimeout(function() {
-                if (isListening) {
-                    const textToCheck = finalSpeechBuffer || transcriptBox.innerText || "";
-                    try { recognition.stop(); } catch (e) {}
-                    try { recognition.abort(); } catch (e) {}
-                    recognition = null;
-                    resetMicState();
+            const finalSegments = {};
+            let liveInterimText = "";
 
-                    if (textToCheck.trim()) {
-                        checkSpeech(textToCheck);
-                    } else {
-                        transcriptBox.innerText = "한 문장씩 천천히 말해도 됩니다. 다시 눌러 말해 보세요.";
-                    }
+            function cleanDuplicateWords(text) {
+                const words = normalizeText(text).split(" ").filter(Boolean);
+                if (words.length < 4) return String(text || "").trim();
+
+                // 같은 문장이 두 번 붙는 경우를 줄입니다.
+                const half = Math.floor(words.length / 2);
+                const first = words.slice(0, half).join(" ");
+                const second = words.slice(half, half * 2).join(" ");
+                if (first && first === second) {
+                    return words.slice(0, half).join(" ");
                 }
-            }, 12000);
+
+                return String(text || "").replace(/\s+/g, " ").trim();
+            }
+
+            function getFinalText() {
+                const keys = Object.keys(finalSegments).map(Number).sort((a, b) => a - b);
+                const joined = keys.map(k => finalSegments[k]).filter(Boolean).join(" ");
+                return cleanDuplicateWords(joined || finalSpeechBuffer || transcriptBox.innerText || "");
+            }
 
             function pickBestTranscript(result) {
                 let piece = result[0].transcript.trim();
@@ -1429,87 +1446,110 @@ def speaking_practice_component(items):
                 return piece;
             }
 
-            function scheduleFinalCheck(textToCheck) {
+            function finishAndCheck(textToCheck) {
+                const finalText = cleanDuplicateWords(textToCheck || getFinalText());
+
+                if (hasSubmittedSpeech) return;
+                hasSubmittedSpeech = true;
+
+                if (recognitionTimeout) {
+                    clearTimeout(recognitionTimeout);
+                    recognitionTimeout = null;
+                }
                 if (speechCheckTimeout) {
                     clearTimeout(speechCheckTimeout);
                     speechCheckTimeout = null;
                 }
 
-                // 한 문장 끝나고 잠깐 쉬어도 바로 오답 처리하지 않도록 기다립니다.
-                speechCheckTimeout = setTimeout(function() {
-                    speechCheckTimeout = null;
-                    const finalText = textToCheck || finalSpeechBuffer || transcriptBox.innerText || "";
+                if (recognition) {
+                    try { recognition.onresult = null; } catch (e) {}
+                    try { recognition.onerror = null; } catch (e) {}
+                    try { recognition.onend = null; } catch (e) {}
+                    try { recognition.stop(); } catch (e) {}
+                    try { recognition.abort(); } catch (e) {}
+                    recognition = null;
+                }
 
-                    if (!finalText.trim()) {
-                        transcriptBox.innerText = "천천히 다시 말해 보세요.";
-                        resetMicState();
-                        return;
-                    }
+                resetMicState();
 
-                    if (recognition) {
-                        try { recognition.stop(); } catch (e) {}
-                    }
+                if (finalText.trim() && finalText !== "듣는 중입니다 한 문장씩 천천히 말해 보세요") {
                     checkSpeech(finalText);
-                    resetMicState();
-                }, 1800);
+                } else {
+                    transcriptBox.innerText = "소리가 잘 들어오지 않았습니다. 마이크를 조금 가까이 두고 다시 눌러 말해 보세요.";
+                    resultBox.style.display = "none";
+                }
             }
 
+            function scheduleFinalCheck() {
+                if (speechCheckTimeout) {
+                    clearTimeout(speechCheckTimeout);
+                    speechCheckTimeout = null;
+                }
+
+                // 긴 문장 2개를 말할 수 있도록 마지막 최종 인식 뒤 3초 기다립니다.
+                speechCheckTimeout = setTimeout(function() {
+                    finishAndCheck(getFinalText());
+                }, 3000);
+            }
+
+            recognitionTimeout = setTimeout(function() {
+                if (isListening) {
+                    finishAndCheck(getFinalText() || liveInterimText || "");
+                }
+            }, 16000);
+
             recognition.onresult = function(event) {
-                let spokenText = finalSpeechBuffer || "";
+                let interimText = "";
                 let hasFinal = false;
 
-                // 중요: event.results 전체를 매번 다시 붙이면 같은 말이 2~3번 반복될 수 있습니다.
-                // 이번 이벤트에서 새로 들어온 결과만 사용합니다.
+                // event.resultIndex부터 새로 들어온 결과만 처리해서 중복 인식을 막습니다.
                 for (let i = event.resultIndex; i < event.results.length; i++) {
                     const piece = pickBestTranscript(event.results[i]);
                     if (!piece) continue;
 
                     if (event.results[i].isFinal) {
-                        if (!normalizeText(finalSpeechBuffer).includes(normalizeText(piece))) {
-                            finalSpeechBuffer += (finalSpeechBuffer ? " " : "") + piece;
-                        }
+                        finalSegments[i] = piece;
                         hasFinal = true;
                     } else {
-                        spokenText = (finalSpeechBuffer ? finalSpeechBuffer + " " : "") + piece;
+                        interimText += (interimText ? " " : "") + piece;
                     }
                 }
 
-                const displayText = (spokenText || finalSpeechBuffer || "").trim();
+                finalSpeechBuffer = getFinalText();
+                liveInterimText = cleanDuplicateWords((finalSpeechBuffer ? finalSpeechBuffer + " " : "") + interimText);
+
+                const displayText = (liveInterimText || finalSpeechBuffer || "").trim();
                 if (displayText) {
                     transcriptBox.innerText = displayText;
                 }
 
-                if (hasFinal && finalSpeechBuffer.trim()) {
-                    scheduleFinalCheck(finalSpeechBuffer);
+                if (hasFinal) {
+                    scheduleFinalCheck();
                 }
             };
 
             recognition.onerror = function(event) {
                 if (event.error === "not-allowed" || event.error === "service-not-allowed") {
-                    stopRecognition();
+                    finishAndCheck("");
                     transcriptBox.innerText = "마이크 허용 후 다시 눌러 주세요.";
                     return;
                 }
 
+                // no-speech는 실제 수업에서 자주 뜨므로 오류로 크게 띄우지 않습니다.
                 if (event.error === "no-speech" || event.error === "audio-capture" || event.error === "network") {
-                    const textToCheck = finalSpeechBuffer || transcriptBox.innerText || "";
-                    stopRecognition();
-                    if (textToCheck.trim()) {
-                        checkSpeech(textToCheck);
-                    } else {
-                        transcriptBox.innerText = "한 문장씩 천천히 말해도 됩니다. 다시 눌러 말해 보세요.";
-                        resultBox.style.display = "none";
-                    }
+                    finishAndCheck(getFinalText() || liveInterimText || "");
                     return;
                 }
 
-                stopRecognition();
-                transcriptBox.innerText = "다시 눌러 천천히 말해 보세요.";
-                resultBox.style.display = "none";
+                finishAndCheck(getFinalText() || liveInterimText || "");
             };
 
             recognition.onend = function() {
-                resetMicState();
+                if (!hasSubmittedSpeech && (getFinalText() || liveInterimText || "").trim()) {
+                    scheduleFinalCheck();
+                } else if (!hasSubmittedSpeech) {
+                    resetMicState();
+                }
             };
 
             recognition.start();
