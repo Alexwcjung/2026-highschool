@@ -324,6 +324,18 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+
+# =========================
+# 뜻 언어 선택
+# =========================
+st.markdown("### 🌐 뜻 언어 선택")
+meaning_language = st.radio(
+    "영어 단어를 배울 때 보여 줄 뜻 언어를 선택하세요.",
+    ["한국어 Korean", "베트남어 Vietnamese"],
+    horizontal=True,
+    key="meaning_language"
+)
+
 # =========================
 # TTS 함수 - 일상 400과 같은 requests 방식
 # =========================
@@ -585,6 +597,185 @@ word_themes = {
         {"word": "listen", "meaning": "듣다"},
     ],
 }
+
+
+# =========================
+# 베트남어 뜻 사전
+# =========================
+VI_MEANINGS = {
+    "I": "tôi",
+    "you": "bạn",
+    "he": "anh ấy",
+    "she": "cô ấy",
+    "we": "chúng tôi",
+    "they": "họ",
+    "friend": "bạn bè",
+    "teacher": "giáo viên",
+    "student": "học sinh",
+    "classmate": "bạn cùng lớp",
+    "family": "gia đình",
+    "father": "bố",
+    "mother": "mẹ",
+    "brother": "anh/em trai",
+    "sister": "chị/em gái",
+    "name": "tên",
+    "person": "người",
+    "man": "đàn ông",
+    "woman": "phụ nữ",
+    "child": "trẻ em",
+
+    "go": "đi",
+    "come": "đến",
+    "walk": "đi bộ",
+    "run": "chạy",
+    "sit": "ngồi",
+    "stand": "đứng",
+    "stop": "dừng lại",
+    "start": "bắt đầu",
+    "open": "mở",
+    "close": "đóng",
+    "eat": "ăn",
+    "drink": "uống",
+    "sleep": "ngủ",
+    "study": "học",
+    "read": "đọc",
+    "write": "viết",
+    "listen": "nghe",
+    "speak": "nói",
+    "help": "giúp đỡ",
+    "wait": "chờ",
+
+    "happy": "vui vẻ",
+    "sad": "buồn",
+    "angry": "tức giận",
+    "tired": "mệt",
+    "hungry": "đói",
+    "thirsty": "khát",
+    "sick": "ốm",
+    "okay": "ổn",
+    "fine": "khỏe / ổn",
+    "cold": "lạnh",
+    "hot": "nóng",
+    "pain": "đau",
+    "headache": "đau đầu",
+    "stomachache": "đau bụng",
+    "fever": "sốt",
+    "hurt": "đau / bị thương",
+    "good": "tốt",
+    "bad": "xấu / tệ",
+    "worried": "lo lắng",
+    "scared": "sợ",
+
+    "food": "đồ ăn",
+    "water": "nước",
+    "rice": "cơm / gạo",
+    "bread": "bánh mì",
+    "milk": "sữa",
+    "juice": "nước ép",
+    "coffee": "cà phê",
+    "tea": "trà",
+    "apple": "quả táo",
+    "banana": "quả chuối",
+    "egg": "trứng",
+    "meat": "thịt",
+    "chicken": "gà / thịt gà",
+    "fish": "cá",
+    "breakfast": "bữa sáng",
+    "lunch": "bữa trưa",
+    "dinner": "bữa tối",
+    "snack": "đồ ăn nhẹ",
+    "medicine": "thuốc",
+    "hospital": "bệnh viện",
+
+    "home": "nhà",
+    "school": "trường học",
+    "classroom": "lớp học",
+    "bathroom": "nhà vệ sinh",
+    "store": "cửa hàng",
+    "station": "nhà ga",
+    "bus": "xe buýt",
+    "car": "ô tô",
+    "taxi": "taxi",
+    "train": "tàu hỏa",
+    "bike": "xe đạp",
+    "road": "đường",
+    "street": "đường phố",
+    "here": "ở đây",
+    "there": "ở đó",
+    "near": "gần",
+    "far": "xa",
+    "left": "bên trái",
+    "right": "bên phải / đúng",
+
+    "time": "thời gian",
+    "now": "bây giờ",
+    "today": "hôm nay",
+    "tomorrow": "ngày mai",
+    "yesterday": "hôm qua",
+    "morning": "buổi sáng",
+    "afternoon": "buổi chiều",
+    "evening": "buổi tối",
+    "night": "ban đêm",
+    "early": "sớm",
+    "late": "muộn",
+    "one": "một",
+    "two": "hai",
+    "three": "ba",
+    "four": "bốn",
+    "five": "năm",
+    "six": "sáu",
+    "seven": "bảy",
+    "eight": "tám",
+    "nine": "chín",
+    "ten": "mười",
+
+    "bag": "cặp / túi",
+    "phone": "điện thoại",
+    "book": "sách",
+    "notebook": "vở",
+    "pen": "bút mực",
+    "pencil": "bút chì",
+    "desk": "bàn học",
+    "chair": "ghế",
+    "door": "cửa",
+    "window": "cửa sổ",
+    "key": "chìa khóa",
+    "money": "tiền",
+    "card": "thẻ",
+    "ticket": "vé",
+    "clothes": "quần áo",
+    "shoes": "giày",
+    "hat": "mũ",
+    "watch": "đồng hồ",
+    "cup": "cốc",
+    "bottle": "chai",
+
+    "please": "làm ơn",
+    "sorry": "xin lỗi",
+    "excuse me": "xin lỗi / làm ơn cho hỏi",
+    "again": "lại / một lần nữa",
+    "slowly": "chậm rãi",
+    "understand": "hiểu",
+    "question": "câu hỏi",
+    "problem": "vấn đề",
+    "need": "cần",
+    "want": "muốn",
+    "know": "biết",
+    "say": "nói",
+    "tell": "nói / kể",
+    "ask": "hỏi",
+    "answer": "câu trả lời",
+    "repeat": "lặp lại",
+    "look": "nhìn",
+}
+
+def get_display_meaning(word, korean_meaning):
+    """선택한 언어에 따라 뜻을 한국어 또는 베트남어로 보여줍니다."""
+    selected_language = st.session_state.get("meaning_language", "한국어 Korean")
+    if selected_language == "베트남어 Vietnamese":
+        return VI_MEANINGS.get(str(word).strip(), korean_meaning)
+    return korean_meaning
+
 
 # =========================
 # 단어별 예문
@@ -910,7 +1101,7 @@ def flatten_survival_words():
                 "number": number,
                 "theme": theme_name,
                 "word": word,
-                "meaning": item["meaning"],
+                "meaning": get_display_meaning(word, item["meaning"]),
                 "emoji": get_word_emoji(word),
             })
             number += 1
@@ -1214,7 +1405,12 @@ all_words = []
 for theme_words in word_themes.values():
     all_words.extend(theme_words)
 
-all_meanings = [item["meaning"] for item in all_words]
+
+def get_all_display_meanings():
+    return [
+        get_display_meaning(item["word"], item["meaning"])
+        for item in all_words
+    ]
 
 
 # =========================
@@ -1237,17 +1433,19 @@ def get_shuffled_options(theme_name, index, options):
 # =========================
 def make_quiz_items(theme_words, theme_name):
     quiz_items = []
+    display_meanings = get_all_display_meanings()
 
     for idx, item in enumerate(theme_words):
-        correct = item["meaning"]
-        distractors = [m for m in all_meanings if m != correct]
-        random.seed(f"{theme_name}_{item['word']}_{idx}")
+        word = item["word"]
+        correct = get_display_meaning(word, item["meaning"])
+        distractors = [m for m in display_meanings if m != correct]
+        random.seed(f"{theme_name}_{word}_{idx}_{st.session_state.get('meaning_language', '한국어 Korean')}")
         wrong_options = random.sample(distractors, 3)
 
         options = [correct] + wrong_options
 
         quiz_items.append({
-            "word": item["word"],
+            "word": word,
             "answer": correct,
             "options": options
         })
@@ -1319,7 +1517,7 @@ def show_dialogue(theme_name):
 def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
         word = item["word"]
-        meaning = item["meaning"]
+        meaning = get_display_meaning(word, item["meaning"])
         checked = word in st.session_state.unknown_words
         checkbox_key = f"{theme_name}_unknown_{idx}_{word}"
 
@@ -1388,7 +1586,7 @@ def show_quiz(theme_words, theme_name):
 
     if not st.session_state[submitted1_key]:
         st.markdown("### 🧸 1차 퀴즈")
-        st.write("영어 단어를 보고 알맞은 뜻을 고르세요.")
+        st.write("영어 단어를 보고 선택한 언어의 알맞은 뜻을 고르세요.")
 
         for i, q in enumerate(quiz_items):
             st.markdown('<div class="quiz-card">', unsafe_allow_html=True)
@@ -1575,7 +1773,7 @@ def show_unknown_words_tab():
             "number": idx,
             "theme": info.get("theme", "복습 희망"),
             "word": word,
-            "meaning": info.get("meaning", ""),
+            "meaning": get_display_meaning(word, info.get("meaning", "")),
             "emoji": get_word_emoji(word),
         })
 
@@ -1585,7 +1783,7 @@ def show_unknown_words_tab():
 
     for idx, word in enumerate(unknown_words):
         info = unknown_info.get(word, {})
-        meaning = info.get("meaning", "")
+        meaning = get_display_meaning(word, info.get("meaning", ""))
         theme_name = info.get("theme", "")
 
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
