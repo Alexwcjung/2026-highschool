@@ -190,12 +190,6 @@ WORD_THEMES = {
     ],
 }
 
-
-# =========================================================
-# 베트남어 뜻 선택용 사전
-# =========================================================
-VI_MEANINGS = {"I": "tôi", "you": "bạn", "he": "anh ấy", "she": "cô ấy", "we": "chúng tôi", "they": "họ", "friend": "bạn bè", "teacher": "giáo viên", "student": "học sinh", "classmate": "bạn cùng lớp", "family": "gia đình", "father": "bố", "mother": "mẹ", "brother": "anh/em trai", "sister": "chị/em gái", "name": "tên", "person": "người", "man": "đàn ông", "woman": "phụ nữ", "child": "trẻ em", "go": "đi", "come": "đến", "walk": "đi bộ", "run": "chạy", "sit": "ngồi", "stand": "đứng", "stop": "dừng lại", "start": "bắt đầu", "open": "mở", "close": "đóng", "eat": "ăn", "drink": "uống", "sleep": "ngủ", "study": "học", "read": "đọc", "write": "viết", "listen": "nghe", "speak": "nói", "help": "giúp đỡ", "wait": "đợi", "happy": "vui vẻ", "sad": "buồn", "angry": "tức giận", "tired": "mệt", "hungry": "đói", "thirsty": "khát", "sick": "ốm", "okay": "ổn", "fine": "khỏe, ổn", "cold": "lạnh", "hot": "nóng", "pain": "đau", "headache": "đau đầu", "stomachache": "đau bụng", "fever": "sốt", "hurt": "đau, bị thương", "good": "tốt", "bad": "xấu, tệ", "worried": "lo lắng", "scared": "sợ", "food": "thức ăn", "water": "nước", "rice": "cơm, gạo", "bread": "bánh mì", "milk": "sữa", "juice": "nước ép", "coffee": "cà phê", "tea": "trà", "apple": "táo", "banana": "chuối", "egg": "trứng", "meat": "thịt", "chicken": "gà, thịt gà", "fish": "cá", "breakfast": "bữa sáng", "lunch": "bữa trưa", "dinner": "bữa tối", "snack": "đồ ăn nhẹ", "medicine": "thuốc", "hospital": "bệnh viện", "home": "nhà", "school": "trường học", "classroom": "lớp học", "bathroom": "nhà vệ sinh", "store": "cửa hàng", "station": "nhà ga", "bus": "xe buýt", "car": "ô tô", "taxi": "taxi", "train": "tàu hỏa", "bike": "xe đạp", "road": "đường", "street": "phố", "here": "ở đây", "there": "ở đó", "near": "gần", "far": "xa", "left": "bên trái", "right": "bên phải, đúng", "time": "thời gian", "now": "bây giờ", "today": "hôm nay", "tomorrow": "ngày mai", "yesterday": "hôm qua", "morning": "buổi sáng", "afternoon": "buổi chiều", "evening": "buổi tối", "night": "đêm", "early": "sớm", "late": "muộn", "one": "một", "two": "hai", "three": "ba", "four": "bốn", "five": "năm", "six": "sáu", "seven": "bảy", "eight": "tám", "ten": "mười", "bag": "cặp, túi", "phone": "điện thoại", "book": "sách", "notebook": "vở", "pen": "bút mực", "pencil": "bút chì", "desk": "bàn học", "chair": "ghế", "door": "cửa", "window": "cửa sổ", "key": "chìa khóa", "money": "tiền", "card": "thẻ", "ticket": "vé", "clothes": "quần áo", "shoes": "giày", "hat": "mũ", "watch": "đồng hồ", "cup": "cốc", "bottle": "chai", "please": "làm ơn", "sorry": "xin lỗi", "excuse me": "xin lỗi / làm phiền", "again": "lại, lần nữa", "slowly": "chậm rãi", "understand": "hiểu", "question": "câu hỏi", "problem": "vấn đề", "need": "cần", "want": "muốn", "know": "biết", "say": "nói", "tell": "nói, kể", "ask": "hỏi", "answer": "câu trả lời", "repeat": "lặp lại", "look": "nhìn"}
-
 # =========================================================
 # 상단 디자인
 # =========================================================
@@ -244,7 +238,7 @@ st.markdown(
     """
     <div class="main-title-box">
         <h1>🃏 생존 단어 카드 말하기 게임</h1>
-        <p>한국어 또는 베트남어 뜻을 보고 영어 단어를 말해 보세요. 발음 시험이 아니라 영어 단어를 알고 있는지 확인하는 활동입니다.</p>
+        <p>한국말 뜻을 보고 영어 단어를 말해 보세요. 발음 시험이 아니라 단어를 알고 있는지 확인하는 활동입니다.</p>
     </div>
     """,
     unsafe_allow_html=True
@@ -259,7 +253,6 @@ def word_card_speaking_game(word_themes):
         for item in words:
             new_item = dict(item)
             new_item["cat"] = cat
-            new_item["meaning_vi"] = VI_MEANINGS.get(new_item.get("word", ""), new_item.get("meaning", ""))
             items.append(new_item)
 
     items_json = json.dumps(items, ensure_ascii=False)
@@ -362,7 +355,7 @@ def word_card_speaking_game(word_themes):
                     padding: 14px !important;
                     border-radius: 22px !important;
                 }
-                #categorySelect, #languageSelect {
+                #categorySelect {
                     width: 100%;
                     font-size: 14px !important;
                 }
@@ -433,20 +426,6 @@ def word_card_speaking_game(word_themes):
                 background: white;
             "></select>
 
-            <label style="font-weight:900; color:#334155;">뜻 언어 선택</label>
-            <select id="languageSelect" style="
-                padding: 10px 14px;
-                border-radius: 999px;
-                border: 1.5px solid #ddd6fe;
-                font-size: 15px;
-                font-weight: 800;
-                color: #0f172a;
-                background: white;
-            ">
-                <option value="ko" selected>한국어 Korean</option>
-                <option value="vi">베트남어 Vietnamese</option>
-            </select>
-
             <button id="randomBtn" style="
                 border: 1.5px solid #c7d2fe;
                 background: white;
@@ -503,7 +482,7 @@ def word_card_speaking_game(word_themes):
                     font-size:14px;
                     font-weight:900;
                     margin-bottom:14px;
-                "><span id="meaningLangLabel">한국어 뜻</span></div>
+                ">한국말 뜻</div>
 
                 <div id="meaningBox" style="
                     font-size: 44px;
@@ -682,8 +661,6 @@ def word_card_speaking_game(word_themes):
     let finished = false;
 
     const categorySelect = document.getElementById("categorySelect");
-    const languageSelect = document.getElementById("languageSelect");
-    const meaningLangLabel = document.getElementById("meaningLangLabel");
     const randomBtn = document.getElementById("randomBtn");
     const resetBtn = document.getElementById("resetBtn");
 
@@ -1418,19 +1395,6 @@ def word_card_speaking_game(word_themes):
         finishBox.style.display = "block";
     }
 
-
-    function getDisplayMeaning(item) {
-        if (!item) return "";
-        const lang = languageSelect ? languageSelect.value : "ko";
-        if (lang === "vi") return item.meaning_vi || item.meaning || "";
-        return item.meaning || "";
-    }
-
-    function updateMeaningLanguageLabel() {
-        if (!meaningLangLabel || !languageSelect) return;
-        meaningLangLabel.innerText = languageSelect.value === "vi" ? "베트남어 뜻" : "한국어 뜻";
-    }
-
     function loadQuestion(index = 0) {
         if (currentList.length === 0) currentList = getFilteredItems();
 
@@ -1448,8 +1412,7 @@ def word_card_speaking_game(word_themes):
         currentItem = currentList[currentIndex];
 
         emojiBox.innerText = currentItem.emoji || "🃏";
-        updateMeaningLanguageLabel();
-        meaningBox.innerText = getDisplayMeaning(currentItem);
+        meaningBox.innerText = currentItem.meaning;
 
         answerBox.style.display = "none";
         answerBox.style.background = "#ecfdf5";
@@ -1671,13 +1634,6 @@ def word_card_speaking_game(word_themes):
         currentIndex = 0;
         loadQuestion(0);
         updateScore();
-    });
-
-    languageSelect.addEventListener("change", function() {
-        updateMeaningLanguageLabel();
-        if (currentItem) {
-            meaningBox.innerText = getDisplayMeaning(currentItem);
-        }
     });
 
     randomBtn.addEventListener("click", function() {
