@@ -1287,6 +1287,12 @@ word_themes = merge_categories(word_themes)
 theme_dialogues = merge_categories(theme_dialogues)
 
 
+
+def get_display_meaning(word, ko_meaning):
+    """한국어 뜻만 반환합니다. 영어 단어와 영어 듣기는 그대로 유지합니다."""
+    return ko_meaning
+
+
 # =========================
 # 카세트 듣기 - 단어별 mp3 순차 재생 + 현재 단어 동기화 표시
 # =========================
@@ -1300,7 +1306,7 @@ def flatten_all_words():
                 "number": number,
                 "theme": theme_name,
                 "word": word,
-                "meaning": item["meaning"],
+                "meaning": get_display_meaning(word, item["meaning"]),
                 "emoji": get_word_emoji(word),
             })
             number += 1
@@ -1621,6 +1627,7 @@ def show_word_cards(theme_words, theme_name):
     for idx, item in enumerate(theme_words):
         word = item["word"]
         meaning = item["meaning"]
+        display_meaning = get_display_meaning(word, meaning)
         review_id = make_review_id(theme_name, word)
         checked = review_id in st.session_state.unknown_words
         checkbox_key = f"{theme_name}_unknown_{idx}_{word}"
@@ -1642,7 +1649,7 @@ def show_word_cards(theme_words, theme_name):
 
         with col2:
             st.markdown(
-                f"<div class='meaning-text'>{meaning}</div>",
+                f"<div class='meaning-text'>{display_meaning}</div>",
                 unsafe_allow_html=True
             )
 
@@ -1709,11 +1716,12 @@ def show_unknown_words_tab():
     for idx, review_id in enumerate(unknown_ids, start=1):
         info = unknown_info.get(review_id, {})
         word = info.get("word", review_id.split("||")[-1])
+        ko_meaning = info.get("meaning", "")
         unknown_items.append({
             "number": idx,
             "theme": info.get("theme", "복습 희망"),
             "word": word,
-            "meaning": info.get("meaning", ""),
+            "meaning": get_display_meaning(word, ko_meaning),
             "emoji": get_word_emoji(word),
         })
 
@@ -1724,7 +1732,7 @@ def show_unknown_words_tab():
     for idx, review_id in enumerate(unknown_ids):
         info = unknown_info.get(review_id, {})
         word = info.get("word", review_id.split("||")[-1])
-        meaning = info.get("meaning", "")
+        meaning = get_display_meaning(word, info.get("meaning", ""))
         theme_name = info.get("theme", "")
 
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
@@ -1744,7 +1752,7 @@ def show_unknown_words_tab():
 
         with col2:
             st.markdown(
-                f"<div class='meaning-text'>{meaning}</div>",
+                f"<div class='meaning-text'>{display_meaning}</div>",
                 unsafe_allow_html=True
             )
 
