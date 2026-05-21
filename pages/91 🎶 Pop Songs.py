@@ -5,6 +5,7 @@ import html
 import re
 import json
 import uuid
+import requests
 
 st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
 
@@ -144,26 +145,68 @@ LANG_VI = "베트남어 Vietnamese"
 
 
 @st.cache_data(show_spinner=False)
-def translate_ko_to_vi_cached(text):
+def translate_ko_to_vi_cached_v2(text):
+    """
+    한국어 설명/해석/질문을 베트남어로 바꿉니다.
+    베트남어 모드에서 한국어가 그대로 남지 않도록 여러 번역 방법을 순서대로 시도합니다.
+    """
     text = str(text).strip()
     if not text:
         return ""
 
-    # 노래 제목이나 영어 표현만 있는 경우는 번역하지 않습니다.
+    # 영어 표현만 있는 경우는 그대로 둡니다.
     if not re.search(r"[가-힣]", text):
         return text
 
+    # 1) deep-translator
     try:
         from deep_translator import GoogleTranslator
         translated = GoogleTranslator(source="ko", target="vi").translate(text)
         translated = str(translated).strip()
-        if translated:
+        if translated and not re.search(r"[가-힣]", translated):
             return translated
     except Exception:
         pass
 
-    # 번역 API가 막힐 때 앱이 멈추지 않도록 원문을 유지합니다.
+    # 2) googletrans가 requirements에 있을 때
+    try:
+        from googletrans import Translator
+        translator = Translator()
+        result = translator.translate(text, src="ko", dest="vi")
+        translated = str(result.text).strip()
+        if translated and not re.search(r"[가-힣]", translated):
+            return translated
+    except Exception:
+        pass
+
+    # 3) Google Translate 비공식 JSON endpoint
+    try:
+        url = "https://translate.googleapis.com/translate_a/single"
+        params = {
+            "client": "gtx",
+            "sl": "ko",
+            "tl": "vi",
+            "dt": "t",
+            "q": text,
+        }
+        headers = {"User-Agent": "Mozilla/5.0"}
+        response = requests.get(url, params=params, headers=headers, timeout=12)
+        response.raise_for_status()
+        data = response.json()
+        translated = "".join(part[0] for part in data[0] if part and part[0]).strip()
+        if translated and not re.search(r"[가-힣]", translated):
+            return translated
+    except Exception:
+        pass
+
+    # 번역 서비스가 모두 막힌 경우에만 원문 유지
+    # 이 경우 앱이 멈추지는 않지만, requirements와 인터넷 연결을 확인해야 합니다.
     return text
+
+
+def translate_ko_to_vi_cached(text):
+    # 이전 캐시 결과가 남아 한국어가 계속 보이는 것을 피하기 위한 v2 래퍼입니다.
+    return translate_ko_to_vi_cached_v2(text)
 
 
 def get_support_language():
@@ -2098,9 +2141,9 @@ elif selected_tab == "📖 가사 & 퀴즈":
         user_answers.append((q_text, picked, answer_display))
     c1, c2 = st.columns(2)
     with c1:
-        submit_quiz = st.button("정답 확인", key=f"quiz_submit_{quiz_key}", use_container_width=True)
+        submit_quiz = st.button(ui_label("정답 확인", "Kiểm tra đáp án"), key=f"quiz_submit_{quiz_key}", use_container_width=True)
     with c2:
-        if st.button("다시 풀기", key=f"quiz_reset_{quiz_key}", use_container_width=True):
+        if st.button(ui_label("다시 풀기", "Làm lại"), key=f"quiz_reset_{quiz_key}", use_container_width=True):
             for k in list(st.session_state.keys()):
                 if k.startswith(f"quiz_{quiz_key}_"):
                     del st.session_state[k]
@@ -2293,7 +2336,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
                 <div id="bar_{component_id}" class="progress-inner"></div>
             </div>
 
-            <button id="reset_{component_id}" class="reset-btn">매칭 게임 다시 시작</button>
+            <button id="reset_{component_id}" class="reset-btn">{ui_label("매칭 게임 다시 시작", "Bắt đầu lại trò chơi ghép câu")}</button>
         </div>
 
         <style>
