@@ -764,6 +764,20 @@ def word_card_speaking_game(word_themes):
         return copied;
     }
 
+    function hasKorean(text) {
+        return /[ㄱ-ㅎㅏ-ㅣ가-힣]/.test(String(text || ""));
+    }
+
+    function hasEnglishLetters(text) {
+        return /[a-zA-Z]/.test(String(text || ""));
+    }
+
+    function isKoreanOnlyWithoutEnglishClue(text) {
+        const raw = String(text || "").trim();
+        if (!raw) return false;
+        return hasKorean(raw) && !hasEnglishLetters(raw);
+    }
+
     function normalizeText(text) {
         return String(text || "")
             .toLowerCase()
@@ -1074,6 +1088,11 @@ def word_card_speaking_game(word_themes):
         if (!sw || !aw) return false;
         if (sw === aw) return true;
         if (aliasMatch(sw, aw)) return true;
+
+        // 한국어만 인식된 경우는 기본적으로 오답 처리합니다.
+        // 다만 브라우저가 영어 발음을 한글 소리로 잡는 일부 경우(예: go→고, water→워터, school→스쿨)는
+        // 위의 aliasMatch에서 먼저 통과되므로 너무 인색하게 막지 않습니다.
+        if (isKoreanOnlyWithoutEnglishClue(spokenWord)) return false;
 
         // I / you / he / she / we / they는 의미가 크게 바뀌므로 대명사끼리 다르면 오답
         if (clearlyWrongPronoun(sw, aw)) return false;
