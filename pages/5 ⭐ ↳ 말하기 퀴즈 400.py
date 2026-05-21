@@ -2609,6 +2609,11 @@ def daily_word_card_speaking_game(word_themes):
     }
 
     function isCorrectSpeech(spoken, answer) {
+        // 한국어로 말한 것이 그대로 인식되면 정답 처리하지 않습니다.
+        // 이 활동은 영어 단어를 말하는 활동이므로, 한글이 포함된 인식 결과는 바로 오답 처리합니다.
+        if (/[가-힣ㄱ-ㅎㅏ-ㅣ]/.test(String(spoken || ""))) return false;
+        if (!/[a-zA-Z]/.test(String(spoken || ""))) return false;
+
         const s = normalizeText(spoken);
         const a = normalizeText(answer);
 
