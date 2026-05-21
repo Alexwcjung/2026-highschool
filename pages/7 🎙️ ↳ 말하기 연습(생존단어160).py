@@ -57,8 +57,9 @@ st.markdown(
         #speaking-app #answerBtn,
         #speaking-app #listenBtn,
         #speaking-app #nextBtn {
-            padding: 8px 12px !important;
-            font-size: 13px !important;
+            padding: 13px 8px !important;
+            min-height: 58px !important;
+            font-size: 17px !important;
         }
         #speaking-app #hintBox {
             font-size: 13px !important;
@@ -73,61 +74,20 @@ st.markdown(
     }
 
 
-
-    /* =========================================================
-       버튼 스타일 통일
-       - 말하기 퀴즈 400의 큰 둥근 버튼 스타일과 동일하게 적용
-       - 기능/데이터/문장/음성인식 로직은 변경하지 않음
-    ========================================================= */
-    #speaking-app #randomBtn,
-    #speaking-app #resetBtn,
-    #speaking-app #hintBtn,
-    #speaking-app #micBtn,
-    #speaking-app #answerBtn,
-    #speaking-app #listenBtn,
-    #speaking-app #nextBtn {
-        border-radius: 999px !important;
-        font-weight: 1000 !important;
-        border: 1px solid #bbf7d0 !important;
-        padding: 1.15rem 1.45rem !important;
-        min-height: 84px !important;
-        font-size: 30px !important;
-        box-shadow: 0 6px 16px rgba(34,197,94,0.16) !important;
-        background: white !important;
-        color: #111827 !important;
-        cursor: pointer !important;
-        width: auto !important;
-        height: auto !important;
-        flex: 0 1 auto !important;
-        line-height: 1.2 !important;
-    }
-
-    #speaking-app #randomBtn:hover,
-    #speaking-app #resetBtn:hover,
-    #speaking-app #hintBtn:hover,
-    #speaking-app #micBtn:hover,
-    #speaking-app #answerBtn:hover,
-    #speaking-app #listenBtn:hover,
-    #speaking-app #nextBtn:hover {
-        border-color: #22c55e !important;
-        color: #22c55e !important;
-    }
-
-    @media (max-width: 520px) {
-        #speaking-app #randomBtn,
-        #speaking-app #resetBtn,
-        #speaking-app #hintBtn,
-        #speaking-app #micBtn,
-        #speaking-app #answerBtn,
-        #speaking-app #listenBtn,
-        #speaking-app #nextBtn {
-            min-height: 72px !important;
-            font-size: 27px !important;
-            padding: 0.95rem 1.15rem !important;
-            width: auto !important;
-            height: auto !important;
+        #speaking-app #hintBtn:hover,
+        #speaking-app #answerBtn:hover,
+        #speaking-app #listenBtn:hover,
+        #speaking-app #nextBtn:hover {
+            border-color: #22c55e !important;
+            color: #22c55e !important;
         }
-    }
+
+        @media (max-width: 640px) {
+            #speaking-app div[style*="grid-template-columns:repeat(4"] {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+            }
+        }
+
 </style>
     """,
     unsafe_allow_html=True
@@ -261,68 +221,77 @@ def speaking_practice_component(items):
                 "></div>
             </div>
 
-            <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:center; margin-bottom:12px;">
-                <button id="hintBtn" style="
-                    border:1.5px solid #fcd34d;
-                    background:linear-gradient(135deg,#fef3c7,#fde68a);
-                    color:#92400e;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    box-shadow:0 4px 10px rgba(245,158,11,0.14);
-                ">💡 힌트</button>
-
+            <div style="display:flex; flex-direction:column; gap:12px; align-items:center; justify-content:center; margin-bottom:12px;">
                 <button id="micBtn" style="
                     border:4px solid rgba(255,255,255,0.95);
                     background: linear-gradient(135deg, #8b5cf6, #ec4899);
                     color:white;
                     border-radius:999px;
-                    width:100px;
-                    height:100px;
-                    font-weight:900;
+                    width:108px;
+                    height:108px;
+                    font-weight:1000;
                     cursor:pointer;
-                    font-size:36px;
+                    font-size:38px;
                     box-shadow:0 12px 26px rgba(124,58,237,0.26);
                     flex: 0 0 auto;
                 ">🎙️</button>
 
-                <button id="answerBtn" style="
-                    display:none;
-                    border:1.5px solid #86efac;
-                    background:linear-gradient(135deg,#dcfce7,#f0fdf4);
-                    color:#166534;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    box-shadow:0 4px 10px rgba(34,197,94,0.12);
-                ">👀 정답</button>
+                <div style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; width:100%; max-width:760px;">
+                    <button id="hintBtn" style="
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">💡 힌트</button>
 
-                <button id="listenBtn" style="
-                    display:none;
-                    border:1.5px solid #93c5fd;
-                    background:linear-gradient(135deg,#dbeafe,#eff6ff);
-                    color:#1d4ed8;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    box-shadow:0 4px 10px rgba(59,130,246,0.12);
-                ">🔊 듣기</button>
+                    <button id="answerBtn" style="
+                        display:inline-block;
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">👀 정답 보기</button>
 
-                <button id="nextBtn" style="
-                    display:none;
-                    border:1.5px solid #c4b5fd;
-                    background:linear-gradient(135deg,#ede9fe,#eef2ff);
-                    color:#5b21b6;
-                    border-radius:999px;
-                    padding:10px 16px;
-                    font-weight:900;
-                    cursor:pointer;
-                    font-size:16px;
-                    box-shadow:0 4px 10px rgba(124,58,237,0.12);
-                ">➡️ 다음</button>
+                    <button id="listenBtn" style="
+                        display:inline-block;
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">🔊 듣기</button>
+
+                    <button id="nextBtn" style="
+                        display:inline-block;
+                        border:1.5px solid #bbf7d0;
+                        background:white;
+                        color:#111827;
+                        border-radius:999px;
+                        padding:18px 14px;
+                        min-height:72px;
+                        font-size:22px;
+                        font-weight:1000;
+                        cursor:pointer;
+                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
+                    ">➡️ 다음</button>
+                </div>
             </div>
 
             <div id="hintBox" style="
@@ -1100,8 +1069,8 @@ def speaking_practice_component(items):
         resetMicState();
         hintBtn.style.display = "inline-block";
         micBtn.style.display = "inline-block";
-        answerBtn.style.display = "none";
-        listenBtn.style.display = "none";
+        answerBtn.style.display = "inline-block";
+        listenBtn.style.display = "inline-block";
         nextBtn.style.display = "inline-block";
 
         resultBox.style.display = "none";
@@ -1182,7 +1151,7 @@ def speaking_practice_component(items):
 
             hintBox.style.display = "none";
             answerBox.style.display = "none";
-            answerBtn.style.display = "none";
+            answerBtn.style.display = "inline-block";
             listenBtn.style.display = "inline-block";
             nextBtn.style.display = "inline-block";
 
@@ -1200,7 +1169,7 @@ def speaking_practice_component(items):
             hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
 
             answerBtn.style.display = "inline-block";
-            listenBtn.style.display = "none";
+            listenBtn.style.display = "inline-block";
             nextBtn.style.display = "inline-block";
 
             resultBox.style.display = "block";
