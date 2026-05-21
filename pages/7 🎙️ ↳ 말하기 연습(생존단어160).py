@@ -84,7 +84,7 @@ st.markdown(
 
         @media (max-width: 640px) {
             #speaking-app div[style*="grid-template-columns:repeat(4"] {
-                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
             }
         }
 
@@ -236,7 +236,7 @@ def speaking_practice_component(items):
                     flex: 0 0 auto;
                 ">🎙️</button>
 
-                <div style="display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:10px; width:100%; max-width:760px;">
+                <div style="display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:10px; width:100%; max-width:760px;">
                     <button id="hintBtn" style="
                         border:1.5px solid #bbf7d0;
                         background:white;
@@ -262,21 +262,9 @@ def speaking_practice_component(items):
                         font-weight:1000;
                         cursor:pointer;
                         box-shadow:0 6px 16px rgba(34,197,94,0.16);
-                    ">👀 정답 보기</button>
+                    ">👀🔊 정답 보기·듣기</button>
 
-                    <button id="listenBtn" style="
-                        display:inline-block;
-                        border:1.5px solid #bbf7d0;
-                        background:white;
-                        color:#111827;
-                        border-radius:999px;
-                        padding:18px 14px;
-                        min-height:72px;
-                        font-size:22px;
-                        font-weight:1000;
-                        cursor:pointer;
-                        box-shadow:0 6px 16px rgba(34,197,94,0.16);
-                    ">🔊 듣기</button>
+                    <button id="listenBtn" style="display:none;">🔊 듣기</button>
 
                     <button id="nextBtn" style="
                         display:inline-block;
@@ -1070,7 +1058,7 @@ def speaking_practice_component(items):
         hintBtn.style.display = "inline-block";
         micBtn.style.display = "inline-block";
         answerBtn.style.display = "inline-block";
-        listenBtn.style.display = "inline-block";
+        listenBtn.style.display = "none";
         nextBtn.style.display = "inline-block";
 
         resultBox.style.display = "none";
@@ -1152,7 +1140,7 @@ def speaking_practice_component(items):
             hintBox.style.display = "none";
             answerBox.style.display = "none";
             answerBtn.style.display = "inline-block";
-            listenBtn.style.display = "inline-block";
+            listenBtn.style.display = "none";
             nextBtn.style.display = "inline-block";
 
             resultBox.style.display = "none";
@@ -1169,7 +1157,7 @@ def speaking_practice_component(items):
             hintBox.innerText = "힌트: " + makeTwoLetterHint(currentItem.hint);
 
             answerBtn.style.display = "inline-block";
-            listenBtn.style.display = "inline-block";
+            listenBtn.style.display = "none";
             nextBtn.style.display = "inline-block";
 
             resultBox.style.display = "block";
@@ -1311,13 +1299,13 @@ def speaking_practice_component(items):
         answerBox.style.display = "none";
         blankSentence.innerHTML = makeFilledBlankSentenceHtml(currentItem.blank, currentItem.hint);
         transcriptBox.innerHTML = "<span style='color:#166534;'>" + escapeHtml(currentItem.answer) + "</span>";
-        listenBtn.style.display = "inline-block";
+        listenBtn.style.display = "none";
         nextBtn.style.display = "inline-block";
         speak(currentItem.answer);
 
         resultBox.style.display = "block";
         resultBox.style.color = "#166534";
-        resultBox.innerText = "빈칸에 들어간 단어를 보고 다시 말하면 정답으로 인정됩니다.";
+        resultBox.innerText = "정답을 보고 들은 뒤, 다시 말하면 정답으로 인정됩니다.";
     });
 
     micBtn.addEventListener("click", startRecognition);
