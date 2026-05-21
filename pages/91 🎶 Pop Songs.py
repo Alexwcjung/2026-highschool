@@ -2589,7 +2589,7 @@ elif selected_tab == "✍️ 생각 적기":
     questions = data["reflect_questions"][:3]
     selected_question = st.radio("질문을 선택하세요.", questions, key=f"reflect_question_{reflect_key}", index=0)
     answer = st.text_area("내 생각을 적어 보세요.", placeholder="예: 이 노래를 들으며 예전에 좋아했던 사람이 떠올랐다. 그때는 내 마음을 잘 표현하지 못했고, 지금 생각하면 조금 아쉽다...", height=180, key=f"reflect_answer_{reflect_key}")
-    if st.button("피드백 받기", key=f"reflect_submit_{reflect_key}", use_container_width=True):
+    if st.button("쓰기 결과 제출", key=f"reflect_submit_{reflect_key}", use_container_width=True):
         if not answer.strip():
             st.warning("먼저 자신의 생각을 한두 문장이라도 적어 보세요.")
         else:
