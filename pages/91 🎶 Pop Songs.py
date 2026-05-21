@@ -115,6 +115,41 @@ def shuffle_options(options, seed):
     rng.shuffle(options)
     return options
 
+
+# =========================================================
+# 한국어 / 베트남어 보조 언어 선택 기능
+# - 영어 원문은 그대로 두고, 뜻/해석/문제 보조 설명만 선택 언어로 표시합니다.
+# - 베트남어는 deep-translator가 가능하면 자동 번역하고, 실패하면 한국어 원문을 보여 줍니다.
+# =========================================================
+@st.cache_data(show_spinner=False)
+def translate_ko_to_vi_cached(text):
+    raw = str(text).strip()
+    if not raw:
+        return raw
+    # 이미 영어만 있는 경우에는 번역하지 않습니다.
+    if not re.search(r"[가-힣ㄱ-ㅎㅏ-ㅣ]", raw):
+        return raw
+    try:
+        from deep_translator import GoogleTranslator
+        translated = GoogleTranslator(source="ko", target="vi").translate(raw)
+        translated = str(translated).strip()
+        return translated if translated else raw
+    except Exception:
+        return raw
+
+
+def support_text(text):
+    """선택한 보조 언어에 맞춰 한국어 뜻/해석을 표시합니다."""
+    lang = st.session_state.get("support_language", "한국어 Korean")
+    if str(lang).startswith("베트남어"):
+        return translate_ko_to_vi_cached(text)
+    return str(text)
+
+
+def support_label():
+    lang = st.session_state.get("support_language", "한국어 Korean")
+    return "Vietnamese" if str(lang).startswith("베트남어") else "Korean"
+
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
     if not korean_text:
@@ -1954,9 +1989,9 @@ def show_background(song_choice, data):
         }
 
     st.markdown('<div class="bg-card">', unsafe_allow_html=True)
-    st.markdown(f'<div class="bg-title">{bg["title"]}</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="bg-title">{clean_text_for_display(support_text(bg["title"]))}</div>', unsafe_allow_html=True)
     for p in bg["paragraphs"]:
-        st.markdown(f'<div class="bg-p">{p}</div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="bg-p">{clean_text_for_display(support_text(p))}</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
@@ -1976,6 +2011,13 @@ song_choice = st.selectbox("👉 학습할 노래를 선택하세요", song_opti
 st.session_state.selected_song = song_choice
 data = SONGS[song_choice]
 
+st.radio(
+    "🌐 뜻/해석 언어 선택",
+    ["한국어 Korean", "베트남어 Vietnamese"],
+    horizontal=True,
+    key="support_language",
+)
+
 tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "📝 Key Expression 뜻 맞추기", "🧩 문장 매칭 게임", "✍️ 생각 적기"]
 selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
 
@@ -1986,7 +2028,7 @@ if selected_tab == "🎬 배경 학습":
         """
         <div class="game-card">
             <div class="big-guide">
-            노래를 듣기 전에 배경을 먼저 읽고, 화자의 감정과 상황을 생각해 보세요.
+            노래를 듣기 전에 배경을 먼저 읽고, 화자의 감정과 상황을 생각해 보세요. 위 선택에서 한국어 또는 베트남어로 보조 설명을 바꿀 수 있습니다.
             </div>
         </div>
         """,
@@ -1998,24 +2040,24 @@ elif selected_tab == "📖 가사 & 퀴즈":
     st.subheader("🎬 노래 영상")
     st.video(data["video_url"])
     st.markdown("---")
-    st.subheader("📖 전체 가사와 한국어 해석")
+    st.subheader(f"📖 전체 가사와 {support_label()} 해석")
     for en, ko in data["lyrics"]:
         st.markdown(f"""
         <div class="lyrics-container">
             <div class="eng-line">{clean_text_for_display(en)}</div>
-            <div class="kor-sub">{clean_text_for_display(ko)}</div>
+            <div class="kor-sub">{clean_text_for_display(support_text(ko))}</div>
         </div>
         """, unsafe_allow_html=True)
     st.markdown("---")
     st.subheader("✅ 내용 이해 문제 8문항")
-    st.markdown('<div class="quiz-box"><b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>화자의 상황, 감정, 반복되는 표현을 중심으로 생각하면 됩니다.</div>', unsafe_allow_html=True)
+    st.markdown(f'<div class="quiz-box"><b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>문제와 보기는 {support_label()}로 표시되고, 영어 가사의 상황과 감정을 확인합니다.</div>', unsafe_allow_html=True)
     quiz_key = safe_key(song_choice)
     user_answers = []
     for i, item in enumerate(data["quiz"], start=1):
         q = item["q"]
         q_text = q if str(q).strip().startswith(str(i)) else f"{i}. {q}"
         options = shuffle_options(item["options"], seed=f"{quiz_key}_quiz_{i}")
-        picked = st.radio(q_text, options, key=f"quiz_{quiz_key}_{i}", index=None)
+        picked = st.radio(support_text(q_text), options, key=f"quiz_{quiz_key}_{i}", index=None, format_func=lambda x: support_text(x))
         user_answers.append((q_text, picked, item["answer"]))
     c1, c2 = st.columns(2)
     with c1:
@@ -2033,13 +2075,13 @@ elif selected_tab == "📖 가사 & 퀴즈":
             if picked == answer:
                 st.success(f"{idx}번 정답입니다. ✅")
             else:
-                st.markdown(f'<div class="wrong-box"><b>{idx}번</b> 다시 확인해 보세요.<br>내가 고른 답: {clean_text_for_display(picked) if picked else "선택 안 함"}<br>정답: <b>{clean_text_for_display(answer)}</b></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="wrong-box"><b>{idx}번</b> 다시 확인해 보세요.<br>내가 고른 답: {clean_text_for_display(support_text(picked)) if picked else "선택 안 함"}<br>정답: <b>{clean_text_for_display(support_text(answer))}</b></div>', unsafe_allow_html=True)
 
 elif selected_tab == "📝 Key Expression 뜻 맞추기":
     st.subheader("📝 Key Expression 뜻 맞추기")
     st.markdown(
         '<div class="game-card"><div class="big-guide">'
-        '영어 표현을 보고 한국어 뜻을 고르는 문제와, 한국어 뜻을 보고 영어 표현을 고르는 문제가 섞여 나옵니다.<br>'
+        '영어 표현을 보고 선택한 언어의 뜻을 고르는 문제와, 선택한 언어의 뜻을 보고 영어 표현을 고르는 문제가 섞여 나옵니다.<br>'
         '각 노래마다 중요한 표현 10개를 양방향으로 연습합니다.'
         '</div></div>',
         unsafe_allow_html=True
@@ -2069,10 +2111,11 @@ elif selected_tab == "📝 Key Expression 뜻 맞추기":
 
             st.markdown(f"### {i}. {en}")
             picked = st.radio(
-                "알맞은 한국어 뜻을 고르세요.",
+                f"알맞은 {support_label()} 뜻을 고르세요.",
                 options,
                 key=f"keygame_{key_key}_{i}",
-                index=None
+                index=None,
+                format_func=lambda x: support_text(x)
             )
 
             user_answers.append({
@@ -2090,7 +2133,7 @@ elif selected_tab == "📝 Key Expression 뜻 맞추기":
             wrongs = rng.sample(distractors, k=min(3, len(distractors)))
             options = shuffle_options(wrongs + [en], seed=f"{key_key}_keygame_options_{i}")
 
-            st.markdown(f"### {i}. {ko}")
+            st.markdown(f"### {i}. {clean_text_for_display(support_text(ko))}")
             picked = st.radio(
                 "알맞은 영어 표현을 고르세요.",
                 options,
@@ -2141,11 +2184,11 @@ elif selected_tab == "📝 Key Expression 뜻 맞추기":
             answer = item["answer"]
 
             if picked == answer:
-                st.success(f"{idx}번 정답 ✅  {en} = {ko}")
+                st.success(f"{idx}번 정답 ✅  {en} = {support_text(ko)}")
             else:
                 st.error(
-                    f"{idx}번 오답 ❌  정답: {answer}\n\n"
-                    f"전체 표현: {en} = {ko}"
+                    f"{idx}번 오답 ❌  정답: {support_text(answer)}\n\n"
+                    f"전체 표현: {en} = {support_text(ko)}"
                 )
 
 
@@ -2162,7 +2205,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
     ]
 
     en_cards = [{"id": p["id"], "text": p["en"]} for p in pairs]
-    ko_cards = [{"id": p["id"], "text": p["ko"]} for p in pairs]
+    ko_cards = [{"id": p["id"], "text": support_text(p["ko"])} for p in pairs]
 
     en_cards = shuffle_options(en_cards, seed=f"{match_key}_en")
     ko_cards = shuffle_options(ko_cards, seed=f"{match_key}_ko")
@@ -2182,7 +2225,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
             <div class="match-head">
                 <div class="match-title">🧩 문장 매칭 게임</div>
                 <div class="match-guide">
-                    왼쪽 영어 표현과 오른쪽 한국어 뜻을 차례로 눌러 짝을 맞추세요.<br>
+                    왼쪽 영어 표현과 오른쪽 {support_label()} 뜻을 차례로 눌러 짝을 맞추세요.<br>
                     선택한 박스는 색칠되고, 정답이면 두 박스가 반짝이며 함께 사라집니다.
                 </div>
             </div>
@@ -2198,7 +2241,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
                     <div id="en_{component_id}" class="card-wrap"></div>
                 </div>
                 <div class="match-col">
-                    <div class="col-title">Korean</div>
+                    <div class="col-title">{support_label()}</div>
                     <div id="ko_{component_id}" class="card-wrap"></div>
                 </div>
             </div>
@@ -2516,7 +2559,7 @@ elif selected_tab == "🧩 문장 매칭 게임":
                     selected_{component_id} = {{ el, card, kind }};
                     el.classList.add("selected");
                     status_{component_id}.textContent = kind === "en"
-                        ? "오른쪽에서 알맞은 한국어 뜻을 고르세요."
+                        ? "오른쪽에서 알맞은 뜻을 고르세요."
                         : "왼쪽에서 알맞은 영어 표현을 고르세요.";
                     return;
                 }}
@@ -2584,10 +2627,10 @@ elif selected_tab == "🧩 문장 매칭 게임":
     
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
-    st.markdown('<div class="game-card"><div class="big-guide">질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요.<br>학생이 쓴 내용을 바탕으로 한국어 글을 조금 더 풍부하게 다듬고, 그 글을 자연스러운 영어로 번역해 줍니다.<br>맨 밑에는 글을 더 발전시키기 위한 쓰기 조언만 제시합니다.</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="game-card"><div class="big-guide">질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요. 질문은 선택한 언어로 표시할 수 있습니다.<br>학생이 쓴 내용을 바탕으로 한국어 글을 조금 더 풍부하게 다듬고, 그 글을 자연스러운 영어로 번역해 줍니다.<br>맨 밑에는 글을 더 발전시키기 위한 쓰기 조언만 제시합니다.</div></div>', unsafe_allow_html=True)
     reflect_key = safe_key(song_choice)
     questions = data["reflect_questions"][:3]
-    selected_question = st.radio("질문을 선택하세요.", questions, key=f"reflect_question_{reflect_key}", index=0)
+    selected_question = st.radio("질문을 선택하세요.", questions, key=f"reflect_question_{reflect_key}", index=0, format_func=lambda x: support_text(x))
     answer = st.text_area("내 생각을 적어 보세요.", placeholder="예: 이 노래를 들으며 예전에 좋아했던 사람이 떠올랐다. 그때는 내 마음을 잘 표현하지 못했고, 지금 생각하면 조금 아쉽다...", height=180, key=f"reflect_answer_{reflect_key}")
     if st.button("쓰기 결과 제출", key=f"reflect_submit_{reflect_key}", use_container_width=True):
         if not answer.strip():
