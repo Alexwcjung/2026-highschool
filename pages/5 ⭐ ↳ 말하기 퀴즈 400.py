@@ -1654,6 +1654,12 @@ WORD_THEMES = {
     ]
 }
 
+
+# =========================================================
+# 베트남어 뜻 데이터
+# =========================================================
+VI_MEANINGS = {'subject': 'môn học', 'math': 'toán', 'science': 'khoa học', 'history': 'lịch sử', 'music': 'âm nhạc', 'art': 'mỹ thuật', 'P.E.': 'thể dục', 'club': 'câu lạc bộ', 'schedule': 'thời khóa biểu', 'semester': 'học kỳ', 'assignment': 'bài tập', 'project': 'dự án', 'presentation': 'bài thuyết trình', 'report': 'báo cáo', 'textbook': 'sách giáo khoa', 'workbook': 'sách bài tập', 'library': 'thư viện', 'cafeteria': 'nhà ăn', 'hallway': 'hành lang', 'attendance': 'điểm danh', 'copy': 'chép lại', 'repeat': 'lặp lại', 'underline': 'gạch chân', 'circle': 'khoanh tròn', 'choose': 'chọn', 'check': 'kiểm tra', 'match': 'nối, ghép', 'complete': 'hoàn thành', 'fill': 'điền vào', 'spell': 'đánh vần', 'pronounce': 'phát âm', 'review': 'ôn tập', 'explain': 'giải thích', 'describe': 'miêu tả', 'compare': 'so sánh', 'discuss': 'thảo luận', 'present': 'thuyết trình', 'take notes': 'ghi chép', 'turn in': 'nộp', 'hand out': 'phát cho', 'living room': 'phòng khách', 'bedroom': 'phòng ngủ', 'kitchen': 'nhà bếp', 'balcony': 'ban công', 'floor': 'sàn nhà, tầng', 'wall': 'bức tường', 'roof': 'mái nhà', 'garden': 'khu vườn', 'yard': 'sân', 'sofa': 'ghế sofa', 'television': 'tivi', 'refrigerator': 'tủ lạnh', 'microwave': 'lò vi sóng', 'blanket': 'chăn', 'pillow': 'gối', 'towel': 'khăn', 'soap': 'xà phòng', 'mirror': 'gương', 'closet': 'tủ quần áo', 'trash': 'rác', 'routine': 'thói quen hằng ngày', 'wake up': 'thức dậy', 'get up': 'ngủ dậy', 'brush': 'chải, đánh', 'shower': 'tắm vòi sen', 'dress': 'váy liền, đầm', 'leave': 'rời đi', 'arrive': 'đến nơi', 'return': 'trở về', 'finish': 'kết thúc', 'relax': 'thư giãn', 'weekday': 'ngày trong tuần', 'weekend': 'cuối tuần', 'usually': 'thường thường', 'often': 'thường xuyên', 'sometimes': 'thỉnh thoảng', 'always': 'luôn luôn', 'never': 'không bao giờ', 'habit': 'thói quen', 'lifestyle': 'lối sống', 'hobby': 'sở thích', 'movie': 'phim', 'drama': 'phim truyền hình', 'song': 'bài hát', 'concert': 'buổi hòa nhạc', 'dance': 'nhảy, múa', 'drawing': 'vẽ tranh', 'painting': 'bức tranh, hội họa', 'comic': 'truyện tranh', 'novel': 'tiểu thuyết', 'photography': 'chụp ảnh', 'cooking': 'nấu ăn', 'baking': 'làm bánh', 'camping': 'cắm trại', 'hiking': 'đi bộ đường dài', 'fishing': 'câu cá', 'free time': 'thời gian rảnh', 'favorite': 'yêu thích nhất', 'popular': 'phổ biến', 'relaxing': 'thư giãn', 'soccer': 'bóng đá', 'baseball': 'bóng chày', 'basketball': 'bóng rổ', 'volleyball': 'bóng chuyền', 'tennis': 'quần vợt', 'badminton': 'cầu lông', 'swimming': 'bơi lội', 'cycling': 'đạp xe', 'skating': 'trượt băng', 'boxing': 'quyền anh', 'taekwondo': 'taekwondo', 'yoga': 'yoga', 'fitness': 'thể dục thể hình', 'field': 'sân, cánh đồng', 'court': 'sân thi đấu', 'stadium': 'sân vận động', 'coach': 'huấn luyện viên', 'competition': 'cuộc thi, giải đấu', 'medal': 'huy chương', 'season': 'mùa', 'spring': 'mùa xuân', 'summer': 'mùa hè', 'fall': 'mùa thu', 'winter': 'mùa đông', 'cloudy': 'nhiều mây', 'rainy': 'có mưa', 'snowy': 'có tuyết', 'windy': 'có gió', 'stormy': 'có bão', 'foggy': 'có sương mù', 'dry': 'khô', 'wet': 'ướt', 'humid': 'ẩm', 'temperature': 'nhiệt độ', 'degree': 'độ', 'forecast': 'dự báo thời tiết', 'umbrella': 'ô, dù', 'raincoat': 'áo mưa', 'rainbow': 'cầu vồng', 'nature': 'thiên nhiên', 'environment': 'môi trường', 'plant': 'cây, thực vật', 'forest': 'rừng', 'lake': 'hồ', 'ocean': 'đại dương', 'island': 'hòn đảo', 'desert': 'sa mạc', 'farm': 'nông trại', 'village': 'ngôi làng', 'leaf': 'lá', 'root': 'rễ', 'stone': 'đá', 'sand': 'cát', 'soil': 'đất', 'plastic': 'nhựa', 'recycle': 'tái chế', 'protect': 'bảo vệ', 'pollution': 'ô nhiễm', 'restaurant': 'nhà hàng', 'menu': 'thực đơn', 'seat': 'chỗ ngồi', 'waiter': 'nam phục vụ', 'waitress': 'nữ phục vụ', 'order': 'gọi món, đặt hàng', 'dish': 'món ăn, cái đĩa', 'meal': 'bữa ăn', 'soup': 'súp', 'salad': 'sa lát', 'steak': 'bít tết', 'pizza': 'pizza', 'pasta': 'mì Ý', 'burger': 'bánh burger', 'sandwich': 'bánh sandwich', 'dessert': 'món tráng miệng', 'spicy': 'cay', 'sweet': 'ngọt', 'bill': 'hóa đơn', 'receipt': 'biên lai', 'shop': 'cửa hàng', 'market': 'chợ', 'mall': 'trung tâm mua sắm', 'supermarket': 'siêu thị', 'cashier': 'thu ngân', 'customer': 'khách hàng', 'price': 'giá', 'sale': 'giảm giá', 'discount': 'giảm giá', 'coupon': 'phiếu giảm giá', 'change': 'tiền thối lại', 'coin': 'đồng xu', 'expensive': 'đắt', 'cheap': 'rẻ', 'size': 'kích cỡ', 'color': 'màu sắc', 'brand': 'thương hiệu', 'exchange': 'đổi hàng', 'refund': 'hoàn tiền', 'T-shirt': 'áo thun', 'pants': 'quần dài', 'jeans': 'quần jean', 'shorts': 'quần ngắn', 'skirt': 'váy', 'jacket': 'áo khoác', 'coat': 'áo khoác dài', 'sweater': 'áo len', 'hoodie': 'áo hoodie', 'uniform': 'đồng phục', 'socks': 'tất, vớ', 'sneakers': 'giày thể thao', 'boots': 'ủng', 'sandals': 'dép xăng đan', 'scarf': 'khăn quàng cổ', 'gloves': 'găng tay', 'belt': 'thắt lưng', 'glasses': 'kính', 'comfortable': 'thoải mái', 'bus stop': 'trạm xe buýt', 'subway': 'tàu điện ngầm', 'airport': 'sân bay', 'terminal': 'bến, nhà ga', 'platform': 'sân ga', 'route': 'tuyến đường', 'direction': 'hướng', 'straight': 'đi thẳng', 'corner': 'góc đường', 'block': 'khu, dãy nhà', 'traffic': 'giao thông', 'crosswalk': 'vạch qua đường', 'sidewalk': 'vỉa hè', 'bridge': 'cây cầu', 'tunnel': 'đường hầm', 'entrance': 'lối vào', 'exit': 'lối ra', 'transfer': 'chuyển tuyến', 'lost': 'bị lạc', 'guide': 'hướng dẫn, hướng dẫn viên', 'travel': 'du lịch', 'trip': 'chuyến đi', 'vacation': 'kỳ nghỉ', 'tourist': 'khách du lịch', 'passport': 'hộ chiếu', 'flight': 'chuyến bay', 'hotel': 'khách sạn', 'motel': 'nhà nghỉ ven đường', 'hostel': 'nhà trọ', 'reservation': 'đặt chỗ', 'check in': 'nhận phòng', 'check out': 'trả phòng', 'luggage': 'hành lý', 'suitcase': 'vali', 'backpack': 'ba lô', 'souvenir': 'quà lưu niệm', 'museum': 'bảo tàng', 'famous': 'nổi tiếng', 'local': 'địa phương', 'friendship': 'tình bạn', 'best friend': 'bạn thân nhất', 'teammate': 'đồng đội', 'partner': 'bạn cùng nhóm, đối tác', 'message': 'tin nhắn', 'call': 'gọi điện', 'chat': 'trò chuyện', 'invite': 'mời', 'visit': 'thăm', 'meet': 'gặp', 'hang out': 'đi chơi', 'laugh': 'cười', 'share': 'chia sẻ', 'trust': 'tin tưởng', 'promise': 'lời hứa, hứa', 'secret': 'bí mật', 'joke': 'trò đùa', 'together': 'cùng nhau', 'alone': 'một mình', 'forgive': 'tha thứ', 'excited': 'hào hứng', 'nervous': 'lo lắng, hồi hộp', 'bored': 'chán', 'surprised': 'ngạc nhiên', 'confused': 'bối rối', 'embarrassed': 'xấu hổ, ngượng', 'proud': 'tự hào', 'disappointed': 'thất vọng', 'lonely': 'cô đơn', 'relaxed': 'thư thái', 'calm': 'bình tĩnh', 'upset': 'buồn bực', 'interested': 'quan tâm, thích thú', 'satisfied': 'hài lòng', 'thankful': 'biết ơn', 'hopeful': 'đầy hy vọng', 'mood': 'tâm trạng', 'stress': 'căng thẳng', 'confidence': 'sự tự tin', 'courage': 'lòng can đảm', 'think': 'nghĩ', 'believe': 'tin', 'guess': 'đoán', 'remember': 'nhớ', 'forget': 'quên', 'mean': 'có nghĩa là', 'agree': 'đồng ý', 'disagree': 'không đồng ý', 'opinion': 'ý kiến', 'idea': 'ý tưởng', 'reason': 'lý do', 'example': 'ví dụ', 'fact': 'sự thật', 'choice': 'sự lựa chọn', 'decision': 'quyết định', 'advice': 'lời khuyên', 'suggestion': 'gợi ý, đề xuất', 'possible': 'có thể', 'impossible': 'không thể', 'confusing': 'khó hiểu', 'plan': 'kế hoạch', 'appointment': 'cuộc hẹn', 'meeting': 'cuộc họp, buổi gặp', 'date': 'ngày, cuộc hẹn', 'event': 'sự kiện', 'party': 'bữa tiệc', 'festival': 'lễ hội', 'deadline': 'hạn chót', 'calendar': 'lịch', 'next week': 'tuần sau', 'join': 'tham gia', 'prepare': 'chuẩn bị', 'decide': 'quyết định', 'cancel': 'hủy', 'on time': 'đúng giờ', 'available': 'có sẵn, rảnh', 'reminder': 'lời nhắc', 'health': 'sức khỏe', 'body': 'cơ thể', 'eye': 'mắt', 'ear': 'tai', 'nose': 'mũi', 'mouth': 'miệng', 'tooth': 'răng', 'hand': 'bàn tay', 'arm': 'cánh tay', 'leg': 'chân', 'foot': 'bàn chân', 'stomach': 'bụng, dạ dày', 'back': 'lưng', 'heart': 'tim', 'clinic': 'phòng khám', 'vitamin': 'vitamin', 'diet': 'chế độ ăn', 'cough': 'ho', 'flu': 'cúm', 'breathe': 'thở', 'smartphone': 'điện thoại thông minh', 'screen': 'màn hình', 'app': 'ứng dụng', 'website': 'trang web', 'internet': 'internet', 'Wi-Fi': 'Wi-Fi', 'password': 'mật khẩu', 'text': 'tin nhắn văn bản', 'video call': 'cuộc gọi video', 'gallery': 'thư viện ảnh', 'news': 'tin tức', 'channel': 'kênh', 'post': 'bài đăng', 'comment': 'bình luận', 'upload': 'tải lên', 'download': 'tải xuống', 'search': 'tìm kiếm', 'click': 'nhấp chuột', 'battery': 'pin', 'notification': 'thông báo', 'job': 'nghề nghiệp', 'work': 'làm việc', 'company': 'công ty', 'office': 'văn phòng', 'factory': 'nhà máy', 'engineer': 'kỹ sư', 'mechanic': 'thợ máy', 'chef': 'đầu bếp', 'firefighter': 'lính cứu hỏa', 'farmer': 'nông dân', 'designer': 'nhà thiết kế', 'singer': 'ca sĩ', 'actor': 'diễn viên', 'athlete': 'vận động viên', 'dream': 'ước mơ', 'future': 'tương lai', 'goal': 'mục tiêu', 'skill': 'kỹ năng', 'interview': 'phỏng vấn', 'experience': 'kinh nghiệm'}
+
 # =========================================================
 # 말하기 카드 게임 컴포넌트
 # =========================================================
@@ -1665,6 +1671,7 @@ def daily_word_card_speaking_game(word_themes):
             new_item = dict(item)
             new_item["cat"] = cat
             new_item["emoji"] = cat_emoji
+            new_item["meaning_vi"] = VI_MEANINGS.get(new_item.get("word", ""), new_item.get("meaning", ""))
             items.append(new_item)
 
     items_json = json.dumps(items, ensure_ascii=False)
@@ -1872,6 +1879,20 @@ def daily_word_card_speaking_game(word_themes):
                 background: white;
             "></select>
 
+            <label style="font-weight:900; color:#334155;">뜻 언어 선택</label>
+            <select id="languageSelect" style="
+                padding: 10px 14px;
+                border-radius: 999px;
+                border: 1.5px solid #bae6fd;
+                font-size: 15px;
+                font-weight: 800;
+                color: #0f172a;
+                background: white;
+            ">
+                <option value="ko" selected>한국어 Korean</option>
+                <option value="vi">베트남어 Vietnamese</option>
+            </select>
+
             <button id="randomBtn" style="
                 border: 1.5px solid #c7d2fe;
                 background: white;
@@ -1932,7 +1953,7 @@ def daily_word_card_speaking_game(word_themes):
                     font-size:14px;
                     font-weight:900;
                     margin-bottom:14px;
-                ">한국말 뜻</div>
+                " id="meaningLangBadge">한국어 뜻</div>
 
                 <div id="meaningBox" style="
                     font-size: 44px;
@@ -2108,6 +2129,7 @@ def daily_word_card_speaking_game(word_themes):
     let finished = false;
 
     const categorySelect = document.getElementById("categorySelect");
+    const languageSelect = document.getElementById("languageSelect");
     const randomBtn = document.getElementById("randomBtn");
     const resetBtn = document.getElementById("resetBtn");
 
@@ -2120,6 +2142,7 @@ def daily_word_card_speaking_game(word_themes):
     const cardBox = document.getElementById("cardBox");
     const emojiBox = document.getElementById("emojiBox");
     const meaningBox = document.getElementById("meaningBox");
+    const meaningLangBadge = document.getElementById("meaningLangBadge");
     const answerBox = document.getElementById("answerBox");
     const hintBox = document.getElementById("hintBox");
     const cardFeedbackBox = document.getElementById("cardFeedbackBox");
@@ -3178,6 +3201,19 @@ def daily_word_card_speaking_game(word_themes):
         finishBox.style.display = "block";
     }
 
+    function getCurrentMeaning(item) {
+        const lang = languageSelect ? languageSelect.value : "ko";
+        if (lang === "vi") {
+            return item.meaning_vi || item.meaning || "";
+        }
+        return item.meaning || "";
+    }
+
+    function updateMeaningLanguageBadge() {
+        if (!meaningLangBadge || !languageSelect) return;
+        meaningLangBadge.innerText = languageSelect.value === "vi" ? "베트남어 뜻" : "한국어 뜻";
+    }
+
     function loadQuestion(index = 0) {
         if (currentList.length === 0) {
             currentList = getFilteredItems();
@@ -3197,7 +3233,8 @@ def daily_word_card_speaking_game(word_themes):
         currentItem = currentList[currentIndex];
 
         emojiBox.innerText = currentItem.emoji || "🌱";
-        meaningBox.innerText = currentItem.meaning;
+        updateMeaningLanguageBadge();
+        meaningBox.innerText = getCurrentMeaning(currentItem);
 
         answerBox.style.display = "none";
         answerBox.innerText = "정답: " + currentItem.word;
@@ -3427,6 +3464,13 @@ def daily_word_card_speaking_game(word_themes):
         currentIndex = 0;
         loadQuestion(0);
         updateScore();
+    });
+
+    languageSelect.addEventListener("change", function() {
+        updateMeaningLanguageBadge();
+        if (currentItem) {
+            meaningBox.innerText = getCurrentMeaning(currentItem);
+        }
     });
 
     randomBtn.addEventListener("click", function() {
