@@ -72,6 +72,62 @@ st.markdown(
         }
     }
 
+
+
+    /* =========================================================
+       버튼 스타일 통일
+       - 말하기 퀴즈 400의 큰 둥근 버튼 스타일과 동일하게 적용
+       - 기능/데이터/문장/음성인식 로직은 변경하지 않음
+    ========================================================= */
+    #speaking-app #randomBtn,
+    #speaking-app #resetBtn,
+    #speaking-app #hintBtn,
+    #speaking-app #micBtn,
+    #speaking-app #answerBtn,
+    #speaking-app #listenBtn,
+    #speaking-app #nextBtn {
+        border-radius: 999px !important;
+        font-weight: 1000 !important;
+        border: 1px solid #bbf7d0 !important;
+        padding: 1.15rem 1.45rem !important;
+        min-height: 84px !important;
+        font-size: 30px !important;
+        box-shadow: 0 6px 16px rgba(34,197,94,0.16) !important;
+        background: white !important;
+        color: #111827 !important;
+        cursor: pointer !important;
+        width: auto !important;
+        height: auto !important;
+        flex: 0 1 auto !important;
+        line-height: 1.2 !important;
+    }
+
+    #speaking-app #randomBtn:hover,
+    #speaking-app #resetBtn:hover,
+    #speaking-app #hintBtn:hover,
+    #speaking-app #micBtn:hover,
+    #speaking-app #answerBtn:hover,
+    #speaking-app #listenBtn:hover,
+    #speaking-app #nextBtn:hover {
+        border-color: #22c55e !important;
+        color: #22c55e !important;
+    }
+
+    @media (max-width: 520px) {
+        #speaking-app #randomBtn,
+        #speaking-app #resetBtn,
+        #speaking-app #hintBtn,
+        #speaking-app #micBtn,
+        #speaking-app #answerBtn,
+        #speaking-app #listenBtn,
+        #speaking-app #nextBtn {
+            min-height: 72px !important;
+            font-size: 27px !important;
+            padding: 0.95rem 1.15rem !important;
+            width: auto !important;
+            height: auto !important;
+        }
+    }
 </style>
     """,
     unsafe_allow_html=True
