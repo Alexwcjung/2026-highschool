@@ -2043,7 +2043,7 @@ with tab_activity:
         key=f"{category}_{topic_name}_reflection"
     )
 
-    if st.button("피드백 받기", key=f"{category}_{topic_name}_feedback"):
+    if st.button("쓰기 결과 제출", key=f"{category}_{topic_name}_feedback"):
         text = reflection.strip()
 
         if text == "":
