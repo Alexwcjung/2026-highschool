@@ -326,17 +326,6 @@ st.markdown(
 
 
 # =========================
-# 뜻 언어 선택
-# =========================
-st.markdown("### 🌐 뜻 언어 선택")
-meaning_language = st.radio(
-    "영어 단어를 배울 때 보여 줄 뜻 언어를 선택하세요.",
-    ["한국어 Korean", "베트남어 Vietnamese"],
-    horizontal=True,
-    key="meaning_language"
-)
-
-# =========================
 # TTS 함수 - 일상 400과 같은 requests 방식
 # =========================
 def make_google_tts_url(text, lang="en"):
@@ -600,180 +589,10 @@ word_themes = {
 
 
 # =========================
-# 베트남어 뜻 사전
+# 뜻 표시 함수
 # =========================
-VI_MEANINGS = {
-    "I": "tôi",
-    "you": "bạn",
-    "he": "anh ấy",
-    "she": "cô ấy",
-    "we": "chúng tôi",
-    "they": "họ",
-    "friend": "bạn bè",
-    "teacher": "giáo viên",
-    "student": "học sinh",
-    "classmate": "bạn cùng lớp",
-    "family": "gia đình",
-    "father": "bố",
-    "mother": "mẹ",
-    "brother": "anh/em trai",
-    "sister": "chị/em gái",
-    "name": "tên",
-    "person": "người",
-    "man": "đàn ông",
-    "woman": "phụ nữ",
-    "child": "trẻ em",
-
-    "go": "đi",
-    "come": "đến",
-    "walk": "đi bộ",
-    "run": "chạy",
-    "sit": "ngồi",
-    "stand": "đứng",
-    "stop": "dừng lại",
-    "start": "bắt đầu",
-    "open": "mở",
-    "close": "đóng",
-    "eat": "ăn",
-    "drink": "uống",
-    "sleep": "ngủ",
-    "study": "học",
-    "read": "đọc",
-    "write": "viết",
-    "listen": "nghe",
-    "speak": "nói",
-    "help": "giúp đỡ",
-    "wait": "chờ",
-
-    "happy": "vui vẻ",
-    "sad": "buồn",
-    "angry": "tức giận",
-    "tired": "mệt",
-    "hungry": "đói",
-    "thirsty": "khát",
-    "sick": "ốm",
-    "okay": "ổn",
-    "fine": "khỏe / ổn",
-    "cold": "lạnh",
-    "hot": "nóng",
-    "pain": "đau",
-    "headache": "đau đầu",
-    "stomachache": "đau bụng",
-    "fever": "sốt",
-    "hurt": "đau / bị thương",
-    "good": "tốt",
-    "bad": "xấu / tệ",
-    "worried": "lo lắng",
-    "scared": "sợ",
-
-    "food": "đồ ăn",
-    "water": "nước",
-    "rice": "cơm / gạo",
-    "bread": "bánh mì",
-    "milk": "sữa",
-    "juice": "nước ép",
-    "coffee": "cà phê",
-    "tea": "trà",
-    "apple": "quả táo",
-    "banana": "quả chuối",
-    "egg": "trứng",
-    "meat": "thịt",
-    "chicken": "gà / thịt gà",
-    "fish": "cá",
-    "breakfast": "bữa sáng",
-    "lunch": "bữa trưa",
-    "dinner": "bữa tối",
-    "snack": "đồ ăn nhẹ",
-    "medicine": "thuốc",
-    "hospital": "bệnh viện",
-
-    "home": "nhà",
-    "school": "trường học",
-    "classroom": "lớp học",
-    "bathroom": "nhà vệ sinh",
-    "store": "cửa hàng",
-    "station": "nhà ga",
-    "bus": "xe buýt",
-    "car": "ô tô",
-    "taxi": "taxi",
-    "train": "tàu hỏa",
-    "bike": "xe đạp",
-    "road": "đường",
-    "street": "đường phố",
-    "here": "ở đây",
-    "there": "ở đó",
-    "near": "gần",
-    "far": "xa",
-    "left": "bên trái",
-    "right": "bên phải / đúng",
-
-    "time": "thời gian",
-    "now": "bây giờ",
-    "today": "hôm nay",
-    "tomorrow": "ngày mai",
-    "yesterday": "hôm qua",
-    "morning": "buổi sáng",
-    "afternoon": "buổi chiều",
-    "evening": "buổi tối",
-    "night": "ban đêm",
-    "early": "sớm",
-    "late": "muộn",
-    "one": "một",
-    "two": "hai",
-    "three": "ba",
-    "four": "bốn",
-    "five": "năm",
-    "six": "sáu",
-    "seven": "bảy",
-    "eight": "tám",
-    "nine": "chín",
-    "ten": "mười",
-
-    "bag": "cặp / túi",
-    "phone": "điện thoại",
-    "book": "sách",
-    "notebook": "vở",
-    "pen": "bút mực",
-    "pencil": "bút chì",
-    "desk": "bàn học",
-    "chair": "ghế",
-    "door": "cửa",
-    "window": "cửa sổ",
-    "key": "chìa khóa",
-    "money": "tiền",
-    "card": "thẻ",
-    "ticket": "vé",
-    "clothes": "quần áo",
-    "shoes": "giày",
-    "hat": "mũ",
-    "watch": "đồng hồ",
-    "cup": "cốc",
-    "bottle": "chai",
-
-    "please": "làm ơn",
-    "sorry": "xin lỗi",
-    "excuse me": "xin lỗi / làm ơn cho hỏi",
-    "again": "lại / một lần nữa",
-    "slowly": "chậm rãi",
-    "understand": "hiểu",
-    "question": "câu hỏi",
-    "problem": "vấn đề",
-    "need": "cần",
-    "want": "muốn",
-    "know": "biết",
-    "say": "nói",
-    "tell": "nói / kể",
-    "ask": "hỏi",
-    "answer": "câu trả lời",
-    "repeat": "lặp lại",
-    "look": "nhìn",
-}
-
 def get_display_meaning(word, korean_meaning):
-    """선택한 언어에 따라 뜻을 한국어 또는 베트남어로 보여줍니다."""
-    selected_language = st.session_state.get("meaning_language", "한국어 Korean")
-    if selected_language == "베트남어 Vietnamese":
-        return VI_MEANINGS.get(str(word).strip(), korean_meaning)
+    """한국어 뜻만 보여줍니다."""
     return korean_meaning
 
 
@@ -1439,7 +1258,7 @@ def make_quiz_items(theme_words, theme_name):
         word = item["word"]
         correct = get_display_meaning(word, item["meaning"])
         distractors = [m for m in display_meanings if m != correct]
-        random.seed(f"{theme_name}_{word}_{idx}_{st.session_state.get('meaning_language', '한국어 Korean')}")
+        random.seed(f"{theme_name}_{word}_{idx}")
         wrong_options = random.sample(distractors, 3)
 
         options = [correct] + wrong_options
