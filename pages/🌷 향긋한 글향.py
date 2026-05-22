@@ -2314,7 +2314,7 @@ def _statement_bilingual(en, ko):
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동: 보기 7개 중 거짓말 2개를 고릅니다. 보기는 영어(한국어) 형태입니다."""
+    """거짓말 찾기 활동: A~G 보기 중 거짓말 2개를 고릅니다. 보기는 영어(한국어) 형태입니다."""
     hint = get_story_card_hint(topic_name, data)
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
@@ -2330,36 +2330,54 @@ def show_lie_finding_activity(category, topic_name, data):
         (_statement_bilingual("The text says the best answer is to give up and stop trying.", "이 글은 포기하고 노력을 멈추는 것이 가장 좋다고 말한다."), False),
         (_statement_bilingual("The text says practice, learning, or effort is not important at all.", "이 글은 연습, 배움, 노력이 전혀 중요하지 않다고 말한다."), False),
     ]
+
     statements = true_statements + false_statements
     option_key = f"{prefix}options"
     if option_key not in st.session_state:
-        st.session_state[option_key] = _stable_shuffle(statements, f"lie-{category}-{topic_name}")
+        shuffled = _stable_shuffle(statements, f"lie-{category}-{topic_name}")
+        letters = list("ABCDEFG")
+        st.session_state[option_key] = [
+            {"letter": letters[i], "text": text, "truth": truth}
+            for i, (text, truth) in enumerate(shuffled)
+        ]
 
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("보기 7개 중 지문 내용과 맞지 않는 거짓말 2개를 고르세요.")
+    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 2개를 고르세요. 보기는 영어(한국어)로 함께 제시됩니다.")
 
-    choices = [s for s, truth in st.session_state[option_key]]
-    selected = st.multiselect(
-        "거짓말 문장 2개 선택",
-        choices,
-        key=f"{prefix}selected",
+    for item in st.session_state[option_key]:
+        st.markdown(
+            f"""
+            <div style="margin-bottom: 10px; padding: 15px 17px; border-radius: 20px;
+                        border: 1.5px solid #fde68a; background: rgba(255,255,255,0.94);
+                        box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+                <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
+                    {item['letter']}. {item['text']}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    selected_letters = st.multiselect(
+        "거짓말 보기 2개 선택",
+        list("ABCDEFG"),
+        key=f"{prefix}selected_letters",
         max_selections=2,
         label_visibility="collapsed"
     )
 
     if st.button("거짓말 답 확인", key=f"{prefix}check", use_container_width=True):
-        false_set = {s for s, truth in st.session_state[option_key] if not truth}
-        selected_set = set(selected)
-        st.session_state[f"{prefix}result"] = selected_set == false_set
-        st.session_state[f"{prefix}false_set"] = list(false_set)
+        false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
+        selected_set = set(selected_letters)
+        st.session_state[f"{prefix}result"] = selected_set == false_letters
+        st.session_state[f"{prefix}false_letters"] = sorted(false_letters)
 
     if f"{prefix}result" in st.session_state:
         if st.session_state[f"{prefix}result"]:
             st.success("정답입니다. 거짓말 2개를 모두 찾았습니다.")
         else:
-            st.error("아직 정답이 아닙니다. 아래 정답 2개를 확인하세요.")
-            for ans in st.session_state.get(f"{prefix}false_set", []):
-                st.caption(f"정답: {ans}")
+            ans = ", ".join(st.session_state.get(f"{prefix}false_letters", []))
+            st.error(f"아직 정답이 아닙니다. 정답은 {ans}입니다.")
 
     if f"{prefix}result" in st.session_state:
         if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
@@ -2479,7 +2497,27 @@ with tab_video:
     video_url = data["video_url"]
 
     if video_url and str(video_url).startswith("http"):
-        st.video(video_url)
+        # YouTube Shorts 링크는 st.video에서 잘 안 보일 수 있어 iframe으로 직접 넣습니다.
+        if "youtube.com/shorts/" in video_url:
+            video_id = video_url.rstrip("/").split("/")[-1].split("?")[0]
+            components.html(
+                f"""
+                <div style="display:flex; justify-content:center; width:100%;">
+                    <iframe
+                        width="360"
+                        height="640"
+                        src="https://www.youtube.com/embed/{video_id}"
+                        title="YouTube Shorts video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+                """,
+                height=680,
+            )
+        else:
+            st.video(video_url)
     else:
         st.info("동영상 링크가 없는 자료입니다.")
 
@@ -2496,13 +2534,6 @@ with tab_reading:
     st.markdown(fact_html, unsafe_allow_html=True)
 
     full_english = make_full_listening_text(dialogue)
-
-    play_persistent_full_audio(
-        full_english,
-        key=f"{category}_{topic_name}_full_listening_long_mp3_v2",
-        button_label="🎧 전체 듣기",
-        lang="en"
-    )
 
     st.caption("먼저 미션을 확인하고, 지문을 읽은 뒤 바로 아래에서 미션 문제를 풉니다.")
 
@@ -2547,6 +2578,14 @@ with tab_reading:
         with audio_col:
             st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
             direct_tts_player(eng, lang="en")
+
+    # 전체 듣기는 본문을 모두 읽은 뒤, 본문 읽기 칸 바로 아래에 둡니다.
+    play_persistent_full_audio(
+        full_english,
+        key=f"{category}_{topic_name}_full_listening_long_mp3_v3",
+        button_label="🎧 전체 듣기",
+        lang="en"
+    )
 
     st.markdown("---")
 
