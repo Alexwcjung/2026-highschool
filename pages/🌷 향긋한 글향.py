@@ -2288,19 +2288,19 @@ def get_sequence_events(topic_name, data):
     return events
 
 def show_sequence_matching_activity(category, topic_name, data):
-    """지문 순서 맞추기 활동: 섞인 카드 번호를 1-3-2-4-5처럼 입력합니다."""
+    """지문 순서 맞추기 활동: 섞인 카드 번호를 13245처럼 숫자만 붙여 입력합니다."""
     events = get_sequence_events(topic_name, data)
     prefix = f"{category}_{topic_name}_sequence_"
 
     st.markdown('<div class="section-box"><h3>🔢 지문 순서 맞추기</h3></div>', unsafe_allow_html=True)
-    st.caption("아래 카드 5개를 읽고, 지문에 나온 순서대로 카드 번호를 적으세요. 예: 1-3-2-4-5")
+    st.caption("아래 카드 5개를 읽고, 지문에 나온 순서대로 카드 번호를 숫자만 붙여 적으세요. 예: 13245")
 
     order_key = f"{prefix}shuffled_order"
     if order_key not in st.session_state:
         st.session_state[order_key] = _stable_shuffle(list(range(len(events))), f"sequence-{category}-{topic_name}")
 
     shuffled_order = st.session_state[order_key]
-    correct_sequence = "-".join(str(shuffled_order.index(i) + 1) for i in range(len(events)))
+    correct_sequence = "".join(str(shuffled_order.index(i) + 1) for i in range(len(events)))
 
     for card_no, original_index in enumerate(shuffled_order, start=1):
         event = events[original_index]
@@ -2331,13 +2331,12 @@ def show_sequence_matching_activity(category, topic_name, data):
 
     user_order = st.text_input(
         "정답 순서 입력",
-        placeholder="예: 1-3-2-4-5",
+        placeholder="예: 13245",
         key=f"{prefix}user_order"
     )
 
     if st.button("순서 답 확인", key=f"{prefix}check", use_container_width=True):
-        cleaned = re.sub(r"[^0-9]", "-", user_order.strip())
-        cleaned = re.sub(r"-+", "-", cleaned).strip("-")
+        cleaned = re.sub(r"[^0-9]", "", user_order.strip())
         st.session_state[f"{prefix}checked_order"] = cleaned
 
     if f"{prefix}checked_order" in st.session_state:
@@ -2346,7 +2345,7 @@ def show_sequence_matching_activity(category, topic_name, data):
             st.success("정답입니다! 지문 순서를 잘 이해했습니다.")
         else:
             st.error(f"정답 순서: {correct_sequence}")
-            st.caption("카드 번호를 지문에 나온 순서대로 다시 확인해 보세요.")
+            st.caption("대시(-) 없이 숫자만 붙여서 입력하세요. 예: 13245")
 
     if f"{prefix}checked_order" in st.session_state:
         if st.button("🔄 순서 맞추기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
@@ -2499,47 +2498,73 @@ def show_key_expression_word_test(category, topic_name, data, max_words=10):
 
 
 def make_letter_feedback(answer, target_name):
-    """주인공에게 쓰는 편지에 대해 간단한 한국어/영어 피드백을 만듭니다."""
+    """주인공에게 쓰는 편지에 대해 한국어/영어 피드백과 개선 예시를 만듭니다."""
     text = answer.strip()
-    lang = detect_language(text)
-
-    # 내용에 따라 간단한 칭찬 포인트를 잡습니다.
     lower = text.lower()
-    ko_points = []
-    en_points = []
 
-    if any(w in text for w in ["힘", "응원", "괜찮", "위로", "잘했"]):
-        ko_points.append("주인공을 응원하고 위로하는 마음이 잘 드러납니다.")
-        en_points.append("Your letter clearly shows encouragement and comfort.")
-    if any(w in text for w in ["포기", "도전", "노력", "연습", "계속"]):
-        ko_points.append("노력과 도전이라는 글의 교훈을 잘 연결했습니다.")
-        en_points.append("You connected your letter well to the lesson of effort and challenge.")
-    if any(w in lower for w in ["sorry", "proud", "cheer", "keep", "try", "believe", "support"]):
-        ko_points.append("영어 표현으로 감정과 응원을 잘 전달했습니다.")
-        en_points.append("Your English expressions communicate feeling and support well.")
+    ko_strengths = []
+    en_strengths = []
+    ko_advice = []
+    en_advice = []
 
-    if not ko_points:
-        ko_points.append("주인공에게 하고 싶은 말을 직접 표현한 점이 좋습니다.")
-        en_points.append("It is good that you expressed your message directly to the main character.")
-
-    korean_feedback = " ".join(ko_points[:2]) + " 다음에는 왜 그렇게 말하고 싶은지 이유를 한 문장 더 넣으면 더 풍부한 편지가 됩니다."
-
-    if lang == "ko":
-        improved_english = (
-            f"Dear {target_name}, I understand how you feel. "
-            f"I want to tell you that you did your best. "
-            f"Please keep believing in yourself and do not give up."
-        )
+    if any(w in lower for w in ["dear", "hello", "hi"]):
+        ko_strengths.append("편지의 시작이 자연스럽습니다. 주인공을 직접 부르는 표현이 있어서 진짜 편지를 쓰는 느낌이 납니다.")
+        en_strengths.append("Your opening sounds natural because you directly address the main character.")
     else:
-        improved_english = (
-            f"Dear {target_name}, your message is clear and warm. "
-            f"To make it stronger, add one reason with because and one sentence of encouragement. "
-            f"For example, I believe you can keep going because you are trying your best."
-        )
+        ko_advice.append(f"처음에 'Dear {target_name},'처럼 주인공을 부르는 말을 넣으면 편지 형식이 더 분명해집니다.")
+        en_advice.append(f"Try starting with 'Dear {target_name},' to make your writing look more like a real letter.")
 
-    english_feedback = " ".join(en_points[:2]) + " " + improved_english
-    return korean_feedback, english_feedback
+    if any(w in lower for w in ["sorry", "sad", "hard", "difficult", "tired", "worry", "nervous", "feel"]):
+        ko_strengths.append("주인공의 감정을 이해하려는 태도가 잘 드러납니다. 단순한 칭찬이 아니라 상대의 마음을 헤아리는 편지라서 더 따뜻하게 느껴집니다.")
+        en_strengths.append("You show empathy by thinking about the character's feelings.")
 
+    if any(w in lower for w in ["proud", "great", "good", "amazing", "wonderful", "impressive"]):
+        ko_strengths.append("주인공을 칭찬하는 표현이 잘 들어갔습니다. 읽는 사람이 힘을 얻을 수 있는 긍정적인 분위기가 만들어졌습니다.")
+        en_strengths.append("Your compliment creates a positive and encouraging tone.")
+
+    if any(w in lower for w in ["cheer", "support", "believe", "keep", "try", "never give up", "do not give up", "don't give up"]):
+        ko_strengths.append("응원과 격려의 메시지가 분명합니다. 특히 계속 노력하라는 내용은 이 활동의 주제와 잘 연결됩니다.")
+        en_strengths.append("Your message of encouragement is clear and meaningful.")
+
+    if any(w in lower for w in ["because", "so", "when", "if"]):
+        ko_strengths.append("이유나 상황을 설명하려는 연결어를 사용한 점이 좋습니다. 문장이 단순한 나열에서 벗어나 조금 더 논리적으로 이어집니다.")
+        en_strengths.append("You used connecting words, so your ideas flow more logically.")
+    else:
+        ko_advice.append("다음에는 'because'를 사용해서 왜 그렇게 생각하는지 이유를 한 문장 더 붙여 보세요. 그러면 편지가 훨씬 풍부해집니다.")
+        en_advice.append("Add one sentence with 'because' to explain your reason more clearly.")
+
+    word_count = len(re.findall(r"[A-Za-z']+", text))
+    if word_count >= 35:
+        ko_strengths.append("분량도 충분합니다. 짧은 문장 몇 개로 마음을 전달하는 수준을 넘어, 자신의 생각을 조금 더 자세히 표현했습니다.")
+        en_strengths.append("Your letter has enough detail, and it expresses your thoughts more fully.")
+    else:
+        ko_advice.append("조금 더 길게 쓰고 싶다면 '내가 너에게 말해 주고 싶은 것', '그 이유', '마지막 응원' 순서로 한 문장씩 추가하면 좋습니다.")
+        en_advice.append("To make it longer, add one sentence for your message, one for the reason, and one for final encouragement.")
+
+    if not ko_strengths:
+        ko_strengths.append("주인공에게 직접 말을 건네려는 시도가 좋습니다. 아직 문장이 짧더라도, 자신의 생각을 영어로 표현하려고 한 점이 중요합니다.")
+        en_strengths.append("It is good that you tried to express your own message in English.")
+
+    korean_feedback = (
+        "좋은 점: " + " ".join(ko_strengths[:4]) + "\n\n"
+        "더 발전시키기: " + " ".join(ko_advice[:3] if ko_advice else ["현재 편지는 전체적으로 따뜻하고 분명합니다. 다음에는 본문에서 배운 핵심 표현을 하나 넣고, 마지막에 앞으로의 다짐이나 응원을 덧붙이면 더 완성도 높은 편지가 됩니다."])
+    )
+
+    english_feedback = (
+        "Good points: " + " ".join(en_strengths[:4]) + "\n\n"
+        "To improve: " + " ".join(en_advice[:3] if en_advice else ["Your letter is warm and clear. Next time, try adding one key expression from the reading and one final sentence of encouragement."])
+    )
+
+    improved_english = (
+        f"Dear {target_name},\n"
+        "I want to tell you that your story was meaningful to me. "
+        "I could understand your feelings, and I learned something important from your effort. "
+        "Please keep believing in yourself because small steps can make a big difference. "
+        "I will remember your story and try harder in my own life, too.\n"
+        "Sincerely,\nMe"
+    )
+
+    return korean_feedback, english_feedback, improved_english
 
 def show_letter_to_character_activity(category, topic_name, data):
     """마지막 활동: 한국어 초안 → 구글 번역 → 영어 편지 작성 → 한국어/영어 피드백."""
@@ -2584,7 +2609,7 @@ def show_letter_to_character_activity(category, topic_name, data):
         key=f"{prefix}answer"
     )
 
-    if st.button("편지 제출하고 피드백 받기", key=f"{prefix}submit", use_container_width=True):
+    if st.button("💌 편지 보내기", key=f"{prefix}submit", use_container_width=True):
         lines = [line.strip() for line in answer.splitlines() if line.strip()]
         if not answer.strip():
             if korean_draft.strip():
@@ -2596,7 +2621,7 @@ def show_letter_to_character_activity(category, topic_name, data):
         elif len(lines) < 2:
             st.warning("좋아요. 영어 편지를 한 줄 더 추가해서 2줄 이상으로 써 보세요.")
         else:
-            ko_feedback, en_feedback = make_letter_feedback(answer, target_name)
+            ko_feedback, en_feedback, improved_letter = make_letter_feedback(answer, target_name)
             st.markdown(
                 f"""
                 <div class="message-card">
@@ -2606,11 +2631,18 @@ def show_letter_to_character_activity(category, topic_name, data):
                 """,
                 unsafe_allow_html=True
             )
-            st.success("편지를 제출했습니다.")
+            st.success("편지를 보냈습니다. 아래 피드백을 확인해 보세요.")
             st.markdown("### 🇰🇷 한국어 피드백")
             st.info(ko_feedback)
             st.markdown("### 🇺🇸 English Feedback")
             st.info(en_feedback)
+            st.markdown("### ✨ 더 자연스러운 영어 편지 예시")
+            st.text_area(
+                "복사해서 참고할 수 있는 개선 예시",
+                value=improved_letter,
+                height=180,
+                key=f"{prefix}improved_letter"
+            )
 
 tab_video, tab_reading = st.tabs([
     "🎬 동영상",
