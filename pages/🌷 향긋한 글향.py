@@ -2361,7 +2361,7 @@ def _statement_bilingual(en, ko):
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동: 별도 선택 버튼 없이 카드 자체를 눌러 선택합니다. 두 개를 모두 고른 뒤 정답이면 두 카드가 동시에 반짝하고 사라지며 미션 성공이 뜹니다."""
+    """거짓말 찾기 활동: 문장매칭게임처럼 카드 자체를 클릭해서 고르고, 제출하기를 눌러 정답이면 두 카드가 반짝이며 사라집니다."""
     hint = get_story_card_hint(topic_name, data)
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
@@ -2380,10 +2380,6 @@ def show_lie_finding_activity(category, topic_name, data):
 
     statements = true_statements + false_statements
     option_key = f"{prefix}options"
-    selected_key = f"{prefix}selected_cards"
-    success_key = f"{prefix}success"
-    message_key = f"{prefix}message"
-
     if option_key not in st.session_state:
         shuffled = _stable_shuffle(statements, f"lie-{category}-{topic_name}")
         letters = list("ABCDEFG")
@@ -2391,142 +2387,246 @@ def show_lie_finding_activity(category, topic_name, data):
             {"letter": letters[i], "text": text, "truth": truth}
             for i, (text, truth) in enumerate(shuffled)
         ]
-    st.session_state.setdefault(selected_key, [])
-    st.session_state.setdefault(success_key, False)
-    st.session_state.setdefault(message_key, "")
 
-    st.markdown(
-        """
+    st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
+    st.caption("거짓말 카드 2개를 직접 누른 뒤, 제출하기를 누르세요. 정답이면 두 카드가 반짝하고 사라지며 '정답입니다'가 뜹니다. 오답일 때는 정답을 알려주지 않습니다.")
+
+    cards = []
+    false_letters = []
+    for item in st.session_state[option_key]:
+        cards.append({
+            "letter": item["letter"],
+            "text": item["text"],
+            "truth": item["truth"],
+        })
+        if not item["truth"]:
+            false_letters.append(item["letter"])
+
+    payload = {
+        "cards": cards,
+        "answers": false_letters,
+    }
+    data_json = json.dumps(payload, ensure_ascii=False)
+    component_id = "lie_" + uuid.uuid4().hex
+
+    components.html(
+        f"""
+        <div id="{component_id}" class="lie-app">
+            <div class="lie-guide">
+                카드 자체를 누르면 바로 선택됩니다. 두 개를 고른 뒤 <b>제출하기</b>를 누르세요.
+            </div>
+            <div id="status_{component_id}" class="lie-status">현재 선택: 0 / 2</div>
+            <div id="board_{component_id}" class="lie-board"></div>
+            <button id="submit_{component_id}" class="submit-btn">제출하기</button>
+            <button id="reset_{component_id}" class="reset-btn">다시 풀기</button>
+        </div>
+
         <style>
-        @keyframes sparkleDisappear {
-            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 rgba(250,204,21,0); }
-            35% { opacity: 1; transform: scale(1.03); box-shadow: 0 0 28px rgba(250,204,21,0.95); }
-            70% { opacity: 0.45; transform: scale(0.97); }
-            100% { opacity: 0; transform: scale(0.88); height: 0; margin: 0; padding: 0; overflow: hidden; }
-        }
-        .lie-card {
+        .lie-app {{
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: linear-gradient(135deg, #fff7ed 0%, #ffffff 52%, #f0fdf4 100%);
+            border: 2px solid #fed7aa;
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(15,23,42,0.08);
+        }}
+        .lie-guide {{
+            font-size: 17px;
+            font-weight: 800;
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }}
+        .lie-status {{
+            background: #eff6ff;
+            border: 1.5px solid #bfdbfe;
+            border-radius: 16px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            font-size: 18px;
+            font-weight: 950;
+            color: #1d4ed8;
+            text-align: center;
+        }}
+        .lie-card {{
+            width: 100%;
+            text-align: left;
+            cursor: pointer;
             margin-bottom: 10px;
-            padding: 15px 17px;
+            padding: 16px 18px;
             border-radius: 20px;
-            border: 1.5px solid #fde68a;
-            background: rgba(255,255,255,0.94);
-            box-shadow: 0 4px 12px rgba(15,23,42,0.05);
-        }
-        .lie-card-selected {
-            border: 2.5px solid #38bdf8;
-            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
-            box-shadow: 0 0 0 4px rgba(56,189,248,0.16), 0 6px 16px rgba(15,23,42,0.08);
-        }
-        .lie-card-vanish {
-            animation: sparkleDisappear 1.15s ease-in-out forwards;
-            border: 2.5px solid #facc15;
+            border: 2px solid #fde68a;
+            background: rgba(255,255,255,0.96);
+            box-shadow: 0 4px 12px rgba(15,23,42,0.06);
+            color: #92400e;
+            font-size: 20px;
+            font-weight: 950;
+            line-height: 1.6;
+            transition: all 0.18s ease;
+        }}
+        .lie-card:hover {{
+            transform: translateY(-1px);
+            border-color: #f9a8d4;
+            box-shadow: 0 8px 18px rgba(15,23,42,0.10);
+        }}
+        .lie-card.selected {{
+            background: linear-gradient(135deg, #dbeafe 0%, #ffffff 100%);
+            border-color: #38bdf8;
+            box-shadow: 0 0 0 4px rgba(56,189,248,0.18), 0 8px 18px rgba(15,23,42,0.10);
+            color: #1d4ed8;
+        }}
+        .lie-card.wrong-flash {{
+            animation: wrongFlash 0.55s ease-in-out;
+        }}
+        .lie-card.vanish {{
+            animation: sparkleDisappear 1.05s ease-in-out forwards;
+            border-color: #facc15;
             background: linear-gradient(135deg, #fef9c3 0%, #ffffff 45%, #dcfce7 100%);
-        }
-        .lie-mission-success {
+        }}
+        @keyframes wrongFlash {{
+            0% {{ background: #fee2e2; border-color: #f87171; }}
+            50% {{ background: #fff7ed; border-color: #fb923c; }}
+            100% {{ background: rgba(255,255,255,0.96); border-color: #fde68a; }}
+        }}
+        @keyframes sparkleDisappear {{
+            0% {{ opacity: 1; transform: scale(1); box-shadow: 0 0 0 rgba(250,204,21,0); }}
+            35% {{ opacity: 1; transform: scale(1.04); box-shadow: 0 0 30px rgba(250,204,21,0.95); }}
+            70% {{ opacity: 0.5; transform: scale(0.96); }}
+            100% {{ opacity: 0; transform: scale(0.86); height: 0; margin: 0; padding: 0; overflow: hidden; }}
+        }}
+        .submit-btn, .reset-btn {{
+            width: 100%;
+            border: 0;
+            border-radius: 18px;
+            padding: 14px 16px;
+            margin-top: 10px;
+            font-size: 19px;
+            font-weight: 950;
+            cursor: pointer;
+            box-shadow: 0 5px 14px rgba(15,23,42,0.10);
+        }}
+        .submit-btn {{
+            background: linear-gradient(135deg, #2563eb 0%, #38bdf8 100%);
+            color: white;
+        }}
+        .reset-btn {{
+            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+            color: #166534;
+            border: 2px solid #bbf7d0;
+        }}
+        .success-box {{
             margin-top: 14px;
             padding: 22px 24px;
-            border-radius: 26px;
+            border-radius: 24px;
             background: linear-gradient(135deg, #dcfce7 0%, #ffffff 55%, #fef9c3 100%);
             border: 2px solid #86efac;
             text-align: center;
             font-size: 28px;
             font-weight: 950;
             color: #166534;
-            box-shadow: 0 10px 24px rgba(15,23,42,0.10);
-        }
-        .lie-help {
-            font-size: 17px;
-            font-weight: 800;
-            color: #475569;
-            line-height: 1.7;
-            margin-bottom: 12px;
-        }
+        }}
+        .fail-box {{
+            margin-top: 14px;
+            padding: 16px 18px;
+            border-radius: 20px;
+            background: #fff7ed;
+            border: 2px solid #fdba74;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 950;
+            color: #c2410c;
+        }}
         </style>
+
+        <script>
+        const payload_{component_id} = {data_json};
+        const board_{component_id} = document.getElementById("board_{component_id}");
+        const status_{component_id} = document.getElementById("status_{component_id}");
+        const submit_{component_id} = document.getElementById("submit_{component_id}");
+        const reset_{component_id} = document.getElementById("reset_{component_id}");
+        let selected_{component_id} = [];
+        let solved_{component_id} = false;
+
+        function render_{component_id}() {{
+            board_{component_id}.innerHTML = "";
+            payload_{component_id}.cards.forEach(card => {{
+                const btn = document.createElement("button");
+                btn.className = "lie-card";
+                btn.id = "card_{component_id}_" + card.letter;
+                btn.innerHTML = card.letter + ". " + card.text;
+                btn.addEventListener("click", () => {{
+                    if (solved_{component_id}) return;
+                    const idx = selected_{component_id}.indexOf(card.letter);
+                    if (idx >= 0) {{
+                        selected_{component_id}.splice(idx, 1);
+                    }} else {{
+                        if (selected_{component_id}.length >= 2) {{
+                            selected_{component_id}.shift();
+                        }}
+                        selected_{component_id}.push(card.letter);
+                    }}
+                    update_{component_id}();
+                }});
+                board_{component_id}.appendChild(btn);
+            }});
+            update_{component_id}();
+        }}
+
+        function update_{component_id}() {{
+            payload_{component_id}.cards.forEach(card => {{
+                const el = document.getElementById("card_{component_id}_" + card.letter);
+                if (!el) return;
+                el.classList.toggle("selected", selected_{component_id}.includes(card.letter));
+            }});
+            status_{component_id}.textContent = "현재 선택: " + selected_{component_id}.length + " / 2";
+        }}
+
+        submit_{component_id}.addEventListener("click", () => {{
+            if (solved_{component_id}) return;
+            if (selected_{component_id}.length !== 2) {{
+                status_{component_id}.textContent = "거짓말 카드 2개를 선택한 뒤 제출하세요.";
+                return;
+            }}
+            const answer = [...payload_{component_id}.answers].sort().join("");
+            const picked = [...selected_{component_id}].sort().join("");
+            if (picked === answer) {{
+                solved_{component_id} = true;
+                selected_{component_id}.forEach(letter => {{
+                    const el = document.getElementById("card_{component_id}_" + letter);
+                    if (el) el.classList.add("vanish");
+                }});
+                status_{component_id}.innerHTML = "정답입니다!";
+                const success = document.createElement("div");
+                success.className = "success-box";
+                success.innerHTML = "✨ 정답입니다! 미션 성공!";
+                board_{component_id}.appendChild(success);
+            }} else {{
+                selected_{component_id}.forEach(letter => {{
+                    const el = document.getElementById("card_{component_id}_" + letter);
+                    if (el) {{
+                        el.classList.add("wrong-flash");
+                        setTimeout(() => el.classList.remove("wrong-flash"), 600);
+                    }}
+                }});
+                selected_{component_id} = [];
+                update_{component_id}();
+                status_{component_id}.innerHTML = "아직 정답이 아닙니다. 정답은 알려주지 않습니다. 다시 골라 보세요.";
+            }}
+        }});
+
+        reset_{component_id}.addEventListener("click", () => {{
+            selected_{component_id} = [];
+            solved_{component_id} = false;
+            render_{component_id}();
+            status_{component_id}.textContent = "현재 선택: 0 / 2";
+        }});
+
+        render_{component_id}();
+        </script>
         """,
-        unsafe_allow_html=True,
+        height=760,
     )
 
-    st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="lie-help">A~G 보기 중 지문 내용과 맞지 않는 거짓말 카드 2개를 누르세요. 선택한 카드는 파란색으로 칠해집니다. 두 개를 모두 고르면 바로 판정됩니다. 정답은 공개하지 않습니다.</div>',
-        unsafe_allow_html=True,
-    )
-
-    false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
-    selected_letters = st.session_state[selected_key]
-
-    # 성공한 뒤에는 학생이 고른 두 카드가 반짝하고 사라지는 효과를 보여줍니다.
-    if st.session_state[success_key]:
-        for item in st.session_state[option_key]:
-            if item["letter"] in selected_letters:
-                card_class = "lie-card lie-card-vanish"
-            else:
-                card_class = "lie-card"
-            st.markdown(
-                f"""
-                <div class="{card_class}">
-                    <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
-                        {item['letter']}. {item['text']}
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        st.markdown('<div class="lie-mission-success">✨ 미션 성공! 거짓말 2개를 모두 찾았습니다.</div>', unsafe_allow_html=True)
-        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_success", use_container_width=True):
-            reset_keys_by_prefix(prefix)
-            st.rerun()
-        return
-
-    # 아직 성공 전이면 카드 자체를 큰 버튼처럼 보여줍니다. 별도의 "카드 선택" 버튼은 없습니다.
-    for item in st.session_state[option_key]:
-        is_selected = item["letter"] in selected_letters
-        card_class = "lie-card lie-card-selected" if is_selected else "lie-card"
-        check_mark = " ✅ 선택됨" if is_selected else ""
-
-        st.markdown(
-            f"""
-            <div class="{card_class}">
-                <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
-                    {item['letter']}. {item['text']}{check_mark}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-
-        # 카드를 누르는 느낌을 주기 위해 버튼 문구를 짧게 두지 않고 카드 전체 문장으로 구성합니다.
-        # Streamlit 기본 제약상 HTML 카드 div 자체는 클릭 이벤트를 받을 수 없어서, 바로 아래의 투명한 역할의 버튼이 클릭을 처리합니다.
-        if st.button(f"{item['letter']}. {re.sub('<[^<]+?>', ' ', item['text']).strip()}", key=f"{prefix}pick_{item['letter']}", use_container_width=True):
-            current = list(st.session_state[selected_key])
-            if item["letter"] in current:
-                current.remove(item["letter"])
-                st.session_state[message_key] = ""
-            elif len(current) < 2:
-                current.append(item["letter"])
-                st.session_state[message_key] = ""
-            else:
-                st.session_state[message_key] = "이미 2개를 골랐습니다. 다시 풀기를 눌러 새로 선택하세요."
-
-            st.session_state[selected_key] = current
-
-            if len(current) == 2:
-                if set(current) == false_letters:
-                    st.session_state[success_key] = True
-                    st.session_state[message_key] = ""
-                else:
-                    st.session_state[message_key] = "아직 성공하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요."
-            st.rerun()
-
-    st.caption(f"현재 선택: {len(selected_letters)}/2개")
-
-    if st.session_state.get(message_key):
-        st.warning(st.session_state[message_key])
-
-    if selected_letters or st.session_state.get(message_key):
-        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_try", use_container_width=True):
-            reset_keys_by_prefix(prefix)
-            st.rerun()
 
 def show_key_expression_word_test(category, topic_name, data, max_words=10):
     """Key Expressions 단어 테스트: 10개 중 8개 이상을 첫 확인에서 맞혀야 통과합니다."""
