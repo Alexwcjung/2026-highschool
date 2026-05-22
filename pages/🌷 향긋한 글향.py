@@ -2361,7 +2361,7 @@ def _statement_bilingual(en, ko):
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동: 첫 번째 카드는 사라지지 않고 선택 표시만 됩니다. 두 개를 모두 고른 뒤 정답이면 두 카드가 동시에 반짝하고 사라지며 미션 성공이 뜹니다."""
+    """거짓말 찾기 활동: 카드 문장 자체를 버튼처럼 클릭합니다. 두 개를 고른 뒤 정답이면 동시에 반짝하고 사라집니다."""
     hint = get_story_card_hint(topic_name, data)
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
@@ -2391,6 +2391,7 @@ def show_lie_finding_activity(category, topic_name, data):
             {"letter": letters[i], "text": text, "truth": truth}
             for i, (text, truth) in enumerate(shuffled)
         ]
+
     st.session_state.setdefault(selected_key, [])
     st.session_state.setdefault(success_key, False)
     st.session_state.setdefault(message_key, "")
@@ -2404,23 +2405,60 @@ def show_lie_finding_activity(category, topic_name, data):
             70% { opacity: 0.45; transform: scale(0.97); }
             100% { opacity: 0; transform: scale(0.88); height: 0; margin: 0; padding: 0; overflow: hidden; }
         }
-        .lie-card {
-            margin-bottom: 10px;
-            padding: 15px 17px;
-            border-radius: 20px;
-            border: 1.5px solid #fde68a;
-            background: rgba(255,255,255,0.94);
-            box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+        .lie-click-card {
+            margin-bottom: 12px;
         }
-        .lie-card-selected {
+        .lie-click-card div[data-testid="stButton"] > button {
+            width: 100%;
+            min-height: 86px;
+            justify-content: flex-start;
+            text-align: left;
+            white-space: normal;
+            line-height: 1.65;
+            padding: 16px 18px;
+            border-radius: 22px;
+            border: 2px solid #fde68a;
+            background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+            color: #92400e;
+            font-size: 19px;
+            font-weight: 900;
+            box-shadow: 0 5px 14px rgba(15,23,42,0.07);
+        }
+        .lie-click-card div[data-testid="stButton"] > button:hover {
             border: 2.5px solid #38bdf8;
             background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
-            box-shadow: 0 0 0 4px rgba(56,189,248,0.16), 0 6px 16px rgba(15,23,42,0.08);
+            color: #1d4ed8;
+        }
+        .lie-selected-card div[data-testid="stButton"] > button {
+            border: 3px solid #38bdf8;
+            background: linear-gradient(135deg, #dbeafe 0%, #ffffff 100%);
+            color: #1d4ed8;
+            box-shadow: 0 0 0 5px rgba(56,189,248,0.16), 0 6px 16px rgba(15,23,42,0.08);
         }
         .lie-card-vanish {
             animation: sparkleDisappear 1.15s ease-in-out forwards;
+            margin-bottom: 12px;
+            padding: 16px 18px;
+            border-radius: 22px;
             border: 2.5px solid #facc15;
             background: linear-gradient(135deg, #fef9c3 0%, #ffffff 45%, #dcfce7 100%);
+            color: #92400e;
+            font-size: 19px;
+            font-weight: 950;
+            line-height: 1.65;
+            box-shadow: 0 0 25px rgba(250,204,21,0.55);
+        }
+        .lie-normal-card {
+            margin-bottom: 12px;
+            padding: 16px 18px;
+            border-radius: 22px;
+            border: 2px solid #fde68a;
+            background: linear-gradient(135deg, #ffffff 0%, #fff7ed 100%);
+            color: #92400e;
+            font-size: 19px;
+            font-weight: 950;
+            line-height: 1.65;
+            box-shadow: 0 5px 14px rgba(15,23,42,0.07);
         }
         .lie-mission-success {
             margin-top: 14px;
@@ -2440,69 +2478,74 @@ def show_lie_finding_activity(category, topic_name, data):
     )
 
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 카드 2개를 누르세요. 첫 번째 카드는 사라지지 않고 선택 표시만 됩니다. 두 개를 모두 고르면 바로 판정됩니다. 정답은 공개하지 않습니다.")
+    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 카드 2개를 누르세요. 카드 문장 자체가 버튼입니다. 정답 2개를 모두 고르면 카드가 동시에 사라집니다.")
 
     false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
     selected_letters = st.session_state[selected_key]
 
-    # 성공한 뒤에는 학생이 고른 두 카드가 반짝하고 사라지는 효과를 보여줍니다.
+    # 성공한 뒤에는 정답 카드 2개가 반짝하고 사라지는 효과를 보여줍니다.
     if st.session_state[success_key]:
         for item in st.session_state[option_key]:
             if item["letter"] in selected_letters:
-                card_class = "lie-card lie-card-vanish"
-            else:
-                card_class = "lie-card"
-            st.markdown(
-                f"""
-                <div class="{card_class}">
-                    <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
+                st.markdown(
+                    f"""
+                    <div class="lie-card-vanish">
                         {item['letter']}. {item['text']}
                     </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
-        st.markdown('<div class="lie-mission-success">✨ 미션 성공! 거짓말 2개를 모두 찾았습니다.</div>', unsafe_allow_html=True)
+                    """,
+                    unsafe_allow_html=True,
+                )
+            else:
+                st.markdown(
+                    f"""
+                    <div class="lie-normal-card">
+                        {item['letter']}. {item['text']}
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
+        st.markdown('<div class="lie-mission-success">✨ 정답입니다! 미션 성공!</div>', unsafe_allow_html=True)
         if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_success", use_container_width=True):
             reset_keys_by_prefix(prefix)
             st.rerun()
         return
 
-    # 아직 성공 전이면 카드 버튼을 보여줍니다.
+    # 아직 성공 전이면 카드 문장 자체를 클릭합니다.
     for item in st.session_state[option_key]:
         is_selected = item["letter"] in selected_letters
-        card_class = "lie-card lie-card-selected" if is_selected else "lie-card"
-        st.markdown(
-            f"""
-            <div class="{card_class}">
-                <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
-                    {item['letter']}. {item['text']}
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        btn_label = f"✅ {item['letter']} 선택됨" if is_selected else f"{item['letter']} 카드 선택"
+        wrapper_class = "lie-click-card lie-selected-card" if is_selected else "lie-click-card"
+        st.markdown(f'<div class="{wrapper_class}">', unsafe_allow_html=True)
+
+        # 별도의 "A 카드 선택" 버튼을 만들지 않고, 카드 문장 자체가 버튼이 되도록 합니다.
+        btn_label = f"✅ {item['letter']}. {item['text']}" if is_selected else f"{item['letter']}. {item['text']}"
+
         if st.button(btn_label, key=f"{prefix}pick_{item['letter']}", use_container_width=True):
             current = list(st.session_state[selected_key])
+
+            # 이미 선택한 카드를 다시 누르면 선택 취소
             if item["letter"] in current:
                 current.remove(item["letter"])
                 st.session_state[message_key] = ""
+
+            # 아직 2개 미만이면 선택 추가
             elif len(current) < 2:
                 current.append(item["letter"])
                 st.session_state[message_key] = ""
-            else:
-                st.session_state[message_key] = "이미 2개를 골랐습니다. 다시 풀기를 눌러 새로 선택하세요."
 
             st.session_state[selected_key] = current
 
+            # 2개가 선택되면 바로 판정
             if len(current) == 2:
                 if set(current) == false_letters:
                     st.session_state[success_key] = True
                     st.session_state[message_key] = ""
                 else:
-                    st.session_state[message_key] = "아직 성공하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요."
+                    # 오답이면 정답을 공개하지 않고 선택을 바로 풀어 다시 고르게 합니다.
+                    st.session_state[selected_key] = []
+                    st.session_state[message_key] = "아직 정답이 아닙니다. 정답은 공개하지 않습니다. 다시 두 카드를 골라 보세요."
             st.rerun()
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
     st.caption(f"현재 선택: {len(selected_letters)}/2개")
 
@@ -2513,6 +2556,7 @@ def show_lie_finding_activity(category, topic_name, data):
         if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_try", use_container_width=True):
             reset_keys_by_prefix(prefix)
             st.rerun()
+
 
 def show_key_expression_word_test(category, topic_name, data, max_words=10):
     """Key Expressions 단어 테스트: 10개 중 8개 이상을 첫 확인에서 맞혀야 통과합니다."""
