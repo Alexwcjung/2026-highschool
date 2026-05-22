@@ -1974,7 +1974,7 @@ st.markdown(f"""
 
 
 # =========================================================
-# 새 Reading 흐름 활동: 미션 객관식 → 순서 맞추기 → 거짓말 찾기 → 단어 테스트 → 감정 2줄 쓰기
+# 새 Reading 흐름 활동: 미션 객관식 → 순서 맞추기 → 거짓말 찾기 → 단어 테스트 → 편지쓰기
 # =========================================================
 def _stable_shuffle(items, seed_text):
     items = list(items)
@@ -2226,27 +2226,47 @@ def show_mission_quiz(category, topic_name, data):
 
 
 def get_sequence_events(topic_name, data):
-    """본문 대화에서 5개의 서로 다른 사건을 뽑아 순서 맞추기 자료를 만듭니다."""
+    """본문 대화에서 5개의 서로 다른 대화 흐름을 뽑아 순서 맞추기 자료를 만듭니다.
+    Ronaldo의 말만 나오지 않도록, 가능하면 바로 다음 Me의 대답까지 함께 카드에 넣습니다.
+    """
     dialogue = data.get('dialogue', [])
     if not dialogue:
         return []
-    positions = [0, max(1, len(dialogue)//4), max(2, len(dialogue)//2), max(3, (len(dialogue)*3)//4), len(dialogue)-1]
-    unique_positions = []
-    for p in positions:
-        p = min(max(p, 0), len(dialogue)-1)
-        if p not in unique_positions:
-            unique_positions.append(p)
-    for p in range(len(dialogue)):
-        if len(unique_positions) >= min(5, len(dialogue)):
-            break
-        if p not in unique_positions:
-            unique_positions.append(p)
-    events = []
-    for p in unique_positions[:5]:
-        speaker, eng, kor = dialogue[p]
-        events.append({"speaker": speaker, "eng": eng, "kor": kor})
-    return events
 
+    # 5개의 위치를 고르게 뽑되, 각 위치의 문장과 바로 다음 문장을 한 카드에 묶습니다.
+    max_start = max(0, len(dialogue) - 2)
+    raw_positions = [0, len(dialogue)//5, (len(dialogue)*2)//5, (len(dialogue)*3)//5, (len(dialogue)*4)//5]
+
+    starts = []
+    for p in raw_positions:
+        p = min(max(p, 0), max_start)
+        # 대화가 인물-나 형태일 때는 가능하면 인물 발화에서 시작하도록 조정합니다.
+        if p > 0 and dialogue[p][0] == "Me":
+            p -= 1
+        if p not in starts:
+            starts.append(p)
+
+    for p in range(0, max_start + 1):
+        if len(starts) >= min(5, len(dialogue)):
+            break
+        if p not in starts and dialogue[p][0] != "Me":
+            starts.append(p)
+
+    events = []
+    for p in starts[:5]:
+        speaker1, eng1, kor1 = dialogue[p]
+        if p + 1 < len(dialogue):
+            speaker2, eng2, kor2 = dialogue[p + 1]
+            events.append({
+                "speaker1": speaker1, "eng1": eng1, "kor1": kor1,
+                "speaker2": speaker2, "eng2": eng2, "kor2": kor2,
+            })
+        else:
+            events.append({
+                "speaker1": speaker1, "eng1": eng1, "kor1": kor1,
+                "speaker2": "", "eng2": "", "kor2": "",
+            })
+    return events
 
 def show_sequence_matching_activity(category, topic_name, data):
     """지문 순서 맞추기 활동: 섞인 카드 번호를 1-3-2-4-5처럼 입력합니다."""
@@ -2274,10 +2294,16 @@ def show_sequence_matching_activity(category, topic_name, data):
                     카드 {card_no}
                 </div>
                 <div style="font-size: 20px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
-                    {event['speaker']}: {event['eng']}
+                    <b>{event['speaker1']}:</b> {event['eng1']}
                 </div>
                 <div style="font-size: 18px; font-weight: 750; color: #475569; line-height: 1.6; margin-top: 4px;">
-                    ({event['kor']})
+                    ({event['kor1']})
+                </div>
+                <div style="font-size: 20px; font-weight: 850; color: #be185d; line-height: 1.6; margin-top: 10px;">
+                    <b>{event['speaker2']}:</b> {event['eng2']}
+                </div>
+                <div style="font-size: 18px; font-weight: 750; color: #475569; line-height: 1.6; margin-top: 4px;">
+                    ({event['kor2']})
                 </div>
             </div>
             """,
@@ -2362,18 +2388,24 @@ def show_lie_finding_activity(category, topic_name, data):
         "거짓말 보기 2개 선택",
         list("ABCDEFG"),
         key=f"{prefix}selected_letters",
-        max_selections=2,
         label_visibility="collapsed"
     )
+    st.caption(f"현재 선택: {len(selected_letters)}/2개 · 반드시 2개만 선택하세요.")
 
     if st.button("거짓말 답 확인", key=f"{prefix}check", use_container_width=True):
         false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
         selected_set = set(selected_letters)
-        st.session_state[f"{prefix}result"] = selected_set == false_letters
-        st.session_state[f"{prefix}false_letters"] = sorted(false_letters)
+        if len(selected_set) != 2:
+            st.session_state[f"{prefix}result"] = None
+            st.session_state[f"{prefix}false_letters"] = sorted(false_letters)
+        else:
+            st.session_state[f"{prefix}result"] = selected_set == false_letters
+            st.session_state[f"{prefix}false_letters"] = sorted(false_letters)
 
     if f"{prefix}result" in st.session_state:
-        if st.session_state[f"{prefix}result"]:
+        if st.session_state[f"{prefix}result"] is None:
+            st.warning("거짓말 보기를 정확히 2개 선택해 주세요.")
+        elif st.session_state[f"{prefix}result"]:
             st.success("정답입니다. 거짓말 2개를 모두 찾았습니다.")
         else:
             ans = ", ".join(st.session_state.get(f"{prefix}false_letters", []))
@@ -2447,41 +2479,87 @@ def show_key_expression_word_test(category, topic_name, data, max_words=10):
             st.rerun()
 
 
-def show_feeling_two_lines_activity(category, topic_name, data):
-    """마지막 활동: 내가 주인공이라면 어떤 감정이 들지 한 칸에 2줄로 쓰기."""
+def make_letter_feedback(answer, target_name):
+    """주인공에게 쓰는 편지에 대해 간단한 한국어/영어 피드백을 만듭니다."""
+    text = answer.strip()
+    lang = detect_language(text)
+
+    # 내용에 따라 간단한 칭찬 포인트를 잡습니다.
+    lower = text.lower()
+    ko_points = []
+    en_points = []
+
+    if any(w in text for w in ["힘", "응원", "괜찮", "위로", "잘했"]):
+        ko_points.append("주인공을 응원하고 위로하는 마음이 잘 드러납니다.")
+        en_points.append("Your letter clearly shows encouragement and comfort.")
+    if any(w in text for w in ["포기", "도전", "노력", "연습", "계속"]):
+        ko_points.append("노력과 도전이라는 글의 교훈을 잘 연결했습니다.")
+        en_points.append("You connected your letter well to the lesson of effort and challenge.")
+    if any(w in lower for w in ["sorry", "proud", "cheer", "keep", "try", "believe", "support"]):
+        ko_points.append("영어 표현으로 감정과 응원을 잘 전달했습니다.")
+        en_points.append("Your English expressions communicate feeling and support well.")
+
+    if not ko_points:
+        ko_points.append("주인공에게 하고 싶은 말을 직접 표현한 점이 좋습니다.")
+        en_points.append("It is good that you expressed your message directly to the main character.")
+
+    korean_feedback = " ".join(ko_points[:2]) + " 다음에는 왜 그렇게 말하고 싶은지 이유를 한 문장 더 넣으면 더 풍부한 편지가 됩니다."
+
+    if lang == "ko":
+        improved_english = (
+            f"Dear {target_name}, I understand how you feel. "
+            f"I want to tell you that you did your best. "
+            f"Please keep believing in yourself and do not give up."
+        )
+    else:
+        improved_english = (
+            f"Dear {target_name}, your message is clear and warm. "
+            f"To make it stronger, add one reason with because and one sentence of encouragement. "
+            f"For example, I believe you can keep going because you are trying your best."
+        )
+
+    english_feedback = " ".join(en_points[:2]) + " " + improved_english
+    return korean_feedback, english_feedback
+
+
+def show_letter_to_character_activity(category, topic_name, data):
+    """마지막 활동: 주인공에게 편지 쓰기 + 한국어/영어 피드백."""
     hint = get_story_card_hint(topic_name, data)
     target_name = hint.get('Name', 'the main character')
-    prefix = f"{category}_{topic_name}_feeling_two_lines_"
+    prefix = f"{category}_{topic_name}_letter_to_character_"
 
-    st.markdown('<div class="section-box"><h3>💭 내가 주인공이라면 어떤 기분이 들까요?</h3></div>', unsafe_allow_html=True)
-    st.caption("답을 쓰는 칸은 하나입니다. 내가 주인공이라면 어떤 감정이 들지 2줄로 써 보세요. 한국어 또는 영어 모두 가능합니다.")
+    st.markdown('<div class="section-box"><h3>💌 주인공에게 편지쓰기</h3></div>', unsafe_allow_html=True)
+    st.caption("지문 속 주인공에게 하고 싶은 말을 2줄 이상 편지로 써 보세요. 한국어 또는 영어 모두 가능합니다.")
 
     answer = st.text_area(
-        "감정 2줄 쓰기",
-        placeholder="예: 나라면 처음에는 조금 긴장될 것 같다.\n하지만 다시 도전하고 싶을 것 같다.",
-        height=120,
+        "주인공에게 편지쓰기",
+        placeholder=f"예: Dear {target_name},\nYou did a great job. I want to cheer you up.",
+        height=150,
         key=f"{prefix}answer"
     )
 
-    if st.button("정답 제출", key=f"{prefix}submit", use_container_width=True):
+    if st.button("편지 제출", key=f"{prefix}submit", use_container_width=True):
         lines = [line.strip() for line in answer.splitlines() if line.strip()]
         if not answer.strip():
-            st.warning("먼저 감정을 2줄로 적어 주세요.")
+            st.warning("먼저 주인공에게 편지를 써 주세요.")
         elif len(lines) < 2:
-            st.warning("좋아요. 한 줄을 더 추가해서 2줄로 써 보세요.")
+            st.warning("좋아요. 한 줄을 더 추가해서 2줄 이상으로 써 보세요.")
         else:
+            ko_feedback, en_feedback = make_letter_feedback(answer, target_name)
             st.markdown(
                 f"""
                 <div class="message-card">
-                    <div class="story-card-title">💭 If I were {target_name}</div>
-                    <div class="message-line">{lines[0]}</div>
-                    <div class="message-line">{lines[1]}</div>
+                    <div class="story-card-title">💌 Letter to {target_name}</div>
+                    <div class="message-line">{answer.replace(chr(10), '<br>')}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            st.success("제출했습니다. 지문 속 상황과 내 감정을 잘 연결했습니다.")
-            st.info("더 좋게 쓰려면 감정 단어 하나와 이유 하나를 함께 넣어 보세요. 예: I would feel nervous because the challenge is difficult.")
+            st.success("편지를 제출했습니다.")
+            st.markdown("### 🇰🇷 한국어 피드백")
+            st.info(ko_feedback)
+            st.markdown("### 🇺🇸 English Feedback")
+            st.info(en_feedback)
 
 tab_video, tab_reading = st.tabs([
     "🎬 동영상",
@@ -2522,7 +2600,7 @@ with tab_video:
         st.info("동영상 링크가 없는 자료입니다.")
 
 # =========================================================
-# Reading: 미션 → 지문 → 미션 문제 → 순서 맞추기 → 거짓말 찾기 → 단어 테스트 → 감정 2줄
+# Reading: 미션 → 지문 → 미션 문제 → 순서 맞추기 → 거짓말 찾기 → 단어 테스트 → 편지쓰기
 # =========================================================
 with tab_reading:
     st.markdown("## 📖 Reading")
@@ -2542,11 +2620,21 @@ with tab_reading:
 
     # 2. 본문 읽기
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
-    show_korean_reading = st.toggle(
-        "🇰🇷 한국어 해석 보기",
-        value=False,
-        key=f"{category}_{topic_name}_show_korean_reading"
-    )
+
+    audio_col_top, korean_col_top = st.columns([1.1, 1.4])
+    with audio_col_top:
+        play_persistent_full_audio(
+            full_english,
+            key=f"{category}_{topic_name}_full_listening_long_mp3_v4",
+            button_label="🎧 전체 듣기",
+            lang="en"
+        )
+    with korean_col_top:
+        show_korean_reading = st.toggle(
+            "🇰🇷 한국어 해석 보기",
+            value=False,
+            key=f"{category}_{topic_name}_show_korean_reading"
+        )
 
     for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
         line_col, audio_col = st.columns([8.5, 1.5])
@@ -2579,14 +2667,6 @@ with tab_reading:
             st.markdown("<div style='height:8px;'></div>", unsafe_allow_html=True)
             direct_tts_player(eng, lang="en")
 
-    # 전체 듣기는 본문을 모두 읽은 뒤, 본문 읽기 칸 바로 아래에 둡니다.
-    play_persistent_full_audio(
-        full_english,
-        key=f"{category}_{topic_name}_full_listening_long_mp3_v3",
-        button_label="🎧 전체 듣기",
-        lang="en"
-    )
-
     st.markdown("---")
 
     # 3. 미션 답 확인: 4지선다
@@ -2609,5 +2689,5 @@ with tab_reading:
 
     st.markdown("---")
 
-    # 7. 마지막 감정 2줄 쓰기
-    show_feeling_two_lines_activity(category, topic_name, data)
+    # 7. 마지막 주인공에게 편지쓰기
+    show_letter_to_character_activity(category, topic_name, data)
