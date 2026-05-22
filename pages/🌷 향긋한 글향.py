@@ -733,7 +733,7 @@ data_bank = {
         "🎤 IU": {
             "title": "Music Talk with IU",
             "subtitle": "Creativity, sincerity, and expression",
-            "video_url": "여기에_IU_유튜브_링크",
+            "video_url": "https://www.youtube.com/watch?v=0k1uM8LmT-o",
             "image_path": BASE_DIR / "images" / "iu.png",
             "facts": [
                 "Korean singer-songwriter and actor",
