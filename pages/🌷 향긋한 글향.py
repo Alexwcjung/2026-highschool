@@ -633,7 +633,7 @@ data_bank = {
         "🏀 Jordan": {
             "title": "Basketball Talk with Jordan",
             "subtitle": "Failure, effort, and mental strength",
-            "video_url": "여기에_조던_유튜브_링크",
+            "video_url": "https://www.youtube.com/watch?v=wIbsBey5s8A",
             "image_path": BASE_DIR / "images" / "jordan.png",
             "facts": [
                 "American basketball legend",
