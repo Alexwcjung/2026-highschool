@@ -588,7 +588,7 @@ data_bank = {
         "⚽ Ronaldo": {
             "title": "Soccer Talk with Ronaldo",
             "subtitle": "Practice, confidence, and professional habits",
-            "video_url": "여기에_로날도_유튜브_링크",
+            "video_url": "https://www.youtube.com/shorts/PmqPgcgvi_s",
             "image_path": BASE_DIR / "images" / "ronaldo.png",
             "facts": [
                 "Portuguese soccer player",
@@ -1983,6 +1983,91 @@ def _stable_shuffle(items, seed_text):
     return items
 
 
+story_card_hints_ko = {
+    "⚽ Ronaldo": {
+        "Name": "로날도",
+        "Feeling": "피곤함 / 자신감을 잃음",
+        "Problem": "학생은 더 잘하고 싶지만 가끔 자신감을 잃는다.",
+        "Action": "분명한 목표를 가지고 똑똑하게 연습한다.",
+        "Result": "자신을 믿고 절대 포기하지 않는다."
+    },
+    "🏀 Jordan": {
+        "Name": "조던",
+        "Feeling": "실수 뒤 긴장함 / 실망함",
+        "Problem": "학생은 슛을 놓치고 실패를 걱정한다.",
+        "Action": "실패에서 배우고 자신 있게 다음 슛을 던진다.",
+        "Result": "실패는 동기가 될 수 있다."
+    },
+    "⚽ Son Heung-min": {
+        "Name": "손흥민",
+        "Feeling": "질 때 화가 남",
+        "Problem": "학생은 혼자 골을 넣고 싶어 하고 질 때 속상해한다.",
+        "Action": "팀 동료의 말을 듣고 함께 움직인다.",
+        "Result": "훈련, 팀워크, 태도가 좋은 선수를 만든다."
+    },
+    "🎤 IU": {
+        "Name": "아이유",
+        "Feeling": "부끄러움 / 확신이 없음",
+        "Problem": "학생은 감정을 어떻게 표현해야 할지 모른다.",
+        "Action": "짧은 문장 하나를 쓰고 감정을 솔직하게 표현한다.",
+        "Result": "진심은 사람들의 마음에 닿을 수 있다."
+    },
+    "⛸️ Kim Yuna": {
+        "Name": "김연아",
+        "Feeling": "긴장함 / 걱정함",
+        "Problem": "학생은 중요한 순간 전에 걱정한다.",
+        "Action": "차근차근 준비하고 한 번에 하나에 집중한다.",
+        "Result": "연습과 믿음은 침착함을 가져올 수 있다."
+    },
+    "🎤 BTS Jungkook": {
+        "Name": "정국",
+        "Feeling": "긴장함 / 걱정함",
+        "Problem": "학생은 사람들 앞에서 긴장한다.",
+        "Action": "잘 준비하고 전하고 싶은 메시지에 집중한다.",
+        "Result": "계속 연습하고 자신의 목소리를 믿는다."
+    },
+    "🏜️ Grand Canyon": {
+        "Name": "그랜드캐니언",
+        "Feeling": "경이로움",
+        "Problem": "방문자는 협곡이 어떻게 만들어졌는지 알고 싶어 한다.",
+        "Action": "콜로라도강, 침식, 암석층에 대해 배운다.",
+        "Result": "우리는 자연을 더 존중하고 보호할 수 있다."
+    },
+    "🗽 New York": {
+        "Name": "뉴욕",
+        "Feeling": "신남",
+        "Problem": "큰 도시는 빠르고 비싸며 경쟁적일 수 있다.",
+        "Action": "호기심을 갖고 계속 배우며 다양한 문화를 존중한다.",
+        "Result": "세계적인 도시에서 많은 문화와 꿈이 만난다."
+    },
+    "🏯 Gyeongbokgung": {
+        "Name": "경복궁",
+        "Feeling": "인상 깊음",
+        "Problem": "방문자는 한국의 역사와 문화를 이해하고 싶어 한다.",
+        "Action": "조선, 궁궐, 근정전에 대해 배운다.",
+        "Result": "과거를 이해하면 더 나은 미래를 만들 수 있다."
+    },
+    "📘 교과서": {
+        "Name": "학생",
+        "Feeling": "인상 깊음 / 신남",
+        "Problem": "학생들은 전에는 점심시간에 줄을 서서 기다려야 했다.",
+        "Action": "학생은 새로운 음식 기계를 사용해 본다.",
+        "Result": "빠르고 건강한 식사가 나오고 학생은 내일을 기대한다."
+    },
+}
+
+
+def _ko_hint(topic_name, field):
+    return story_card_hints_ko.get(topic_name, {}).get(field, '')
+
+
+def _bi_option(topic_name, field, english_text):
+    korean_text = _ko_hint(topic_name, field)
+    if korean_text:
+        return f"{english_text} ({korean_text})"
+    return str(english_text)
+
+
 def show_mission_preview(category, topic_name, data):
     """지문을 읽기 전에 오늘의 미션을 먼저 보여줍니다."""
     st.markdown(
@@ -1990,7 +2075,7 @@ def show_mission_preview(category, topic_name, data):
         <div class="mission-card">
             <div class="mission-title">🧭 Mission 1. 읽으면서 찾기</div>
             <div class="mission-guide">
-                아래 5가지를 생각하면서 지문을 읽어 보세요. 지문을 다 읽은 뒤 바로 4지선다 문제로 확인합니다.
+                아래 5가지를 생각하면서 지문을 읽어 보세요. 읽은 뒤 바로 아래에서 4지선다 문제를 풉니다.
             </div>
         </div>
         """,
@@ -2008,37 +2093,74 @@ def show_mission_preview(category, topic_name, data):
 
 
 def build_mission_questions(topic_name, data):
-    """카드 힌트를 바탕으로 4지선다 미션 문제를 만듭니다."""
+    """카드 힌트를 바탕으로 4지선다 미션 문제를 만듭니다. 보기는 영어(한국어) 형태입니다."""
     hint = get_story_card_hint(topic_name, data)
     all_hints = list(story_card_hints.values())
 
+    fallback_ko = {
+        'Name': {
+            'A robot teacher': '로봇 선생님', 'A new phone': '새 휴대폰', 'A random student': '아무 학생'
+        },
+        'Feeling': {
+            'angry only': '화만 남', 'bored only': '지루하기만 함', 'not interested': '관심 없음'
+        },
+        'Problem': {
+            'There is no problem at all.': '아무 문제가 없다.',
+            'The story is only about shopping.': '이야기는 쇼핑에 관한 것뿐이다.',
+            'The character does not learn anything.': '인물은 아무것도 배우지 않는다.'
+        },
+        'Action': {
+            'Give up quickly.': '빨리 포기한다.',
+            'Ignore everyone.': '모두를 무시한다.',
+            'Do nothing and wait forever.': '아무것도 하지 않고 계속 기다린다.'
+        },
+        'Result': {
+            'There is no lesson.': '교훈이 없다.',
+            'The story ends with no change.': '이야기는 아무 변화 없이 끝난다.',
+            'The best answer is to stop trying.': '가장 좋은 답은 노력을 멈추는 것이다.'
+        }
+    }
+
+    def display_for(field, english_text):
+        if english_text == hint.get(field):
+            return _bi_option(topic_name, field, english_text)
+        ko = ''
+        for t_name, h in story_card_hints.items():
+            if h.get(field) == english_text:
+                ko = _ko_hint(t_name, field)
+                break
+        if not ko:
+            ko = fallback_ko.get(field, {}).get(english_text, '본문 내용이 아님')
+        return f"{english_text} ({ko})"
+
     def options_for(field, answer):
         pool = [h.get(field, '') for h in all_hints if h.get(field, '') and h.get(field, '') != answer]
-        pool += {
-            'Name': ['A robot teacher', 'A new phone', 'A random student'],
-            'Feeling': ['angry only', 'bored only', 'not interested'],
-            'Problem': ['There is no problem at all.', 'The story is only about shopping.', 'The character does not learn anything.'],
-            'Action': ['Give up quickly.', 'Ignore everyone.', 'Do nothing and wait forever.'],
-            'Result': ['There is no lesson.', 'The story ends with no change.', 'The best answer is to stop trying.'],
-        }.get(field, [])
+        pool += list(fallback_ko.get(field, {}).keys())
         distractors = []
         for item in pool:
             if item and item not in distractors and item != answer:
                 distractors.append(item)
             if len(distractors) >= 3:
                 break
-        mixed = [answer] + distractors[:3]
-        while len(mixed) < 4:
-            mixed.append('Not mentioned in the text')
-        return mixed[:4]
+        raw_options = [answer] + distractors[:3]
+        while len(raw_options) < 4:
+            raw_options.append('Not mentioned in the text')
+        display_options = [display_for(field, opt) for opt in raw_options[:4]]
+        display_answer = display_for(field, answer)
+        return display_options, display_answer
 
-    return [
-        ("1. 중심 인물 또는 중심 대상은 누구/무엇인가요?", options_for('Name', hint['Name']), hint['Name']),
-        ("2. 글 속 인물 또는 화자는 어떤 감정을 느끼나요?", options_for('Feeling', hint['Feeling']), hint['Feeling']),
-        ("3. 글에서 나타난 문제나 어려움은 무엇인가요?", options_for('Problem', hint['Problem']), hint['Problem']),
-        ("4. 글에서 제시된 행동이나 조언은 무엇인가요?", options_for('Action', hint['Action']), hint['Action']),
-        ("5. 마지막 결과나 교훈으로 알맞은 것은 무엇인가요?", options_for('Result', hint['Result']), hint['Result']),
+    mission_specs = [
+        ('Name', "1. 중심 인물 또는 중심 대상은 누구/무엇인가요?"),
+        ('Feeling', "2. 글 속 인물 또는 화자는 어떤 감정을 느끼나요?"),
+        ('Problem', "3. 글에서 나타난 문제나 어려움은 무엇인가요?"),
+        ('Action', "4. 글에서 제시된 행동이나 조언은 무엇인가요?"),
+        ('Result', "5. 마지막 결과나 교훈으로 알맞은 것은 무엇인가요?"),
     ]
+    result = []
+    for field, question in mission_specs:
+        opts, ans = options_for(field, hint[field])
+        result.append((question, opts, ans))
+    return result
 
 
 def show_mission_quiz(category, topic_name, data):
@@ -2047,11 +2169,7 @@ def show_mission_quiz(category, topic_name, data):
     prefix = f"{category}_{topic_name}_mission_quiz_"
 
     st.markdown('<div class="section-box"><h3>🧭 Mission 1 문제 풀기</h3></div>', unsafe_allow_html=True)
-    st.caption("방금 읽은 지문을 떠올리며 미션 답을 4지선다로 확인하세요.")
-
-    if st.button("🔄 Mission 1 다시 풀기", key=f"{prefix}reset", use_container_width=True):
-        reset_keys_by_prefix(prefix)
-        st.rerun()
+    st.caption("방금 읽은 지문을 떠올리며 미션 답을 4지선다로 확인하세요. 각 문제는 바로 답을 확인할 수 있고, 5문제를 모두 맞히면 통과입니다.")
 
     status_keys = []
     for i, (question, options, answer) in enumerate(questions, start=1):
@@ -2080,7 +2198,9 @@ def show_mission_quiz(category, topic_name, data):
         c1, c2 = st.columns([1.2, 3])
         with c1:
             if st.button("답 확인", key=f"{prefix}check_{i}", use_container_width=True):
-                st.session_state[status_key] = choice == answer
+                # 첫 확인 결과를 저장합니다. 답을 본 뒤 고쳐도 같은 라운드에서는 점수가 바뀌지 않습니다.
+                if status_key not in st.session_state:
+                    st.session_state[status_key] = choice == answer
         with c2:
             if status_key in st.session_state:
                 if st.session_state[status_key]:
@@ -2090,118 +2210,170 @@ def show_mission_quiz(category, topic_name, data):
 
     score = sum(1 for key in status_keys if st.session_state.get(key) is True)
     checked = sum(1 for key in status_keys if key in st.session_state)
-    show_pass_status(score, len(status_keys), checked)
+    st.markdown(f"### Mission 1 점수: {score}/5")
+    st.caption(f"답 확인을 누른 문제: {checked}/5 · 통과 기준: 5/5")
+    if checked == 5 and score == 5:
+        st.success("통과했습니다! Mission 1의 5문제를 모두 맞혔습니다.")
+    elif checked == 5:
+        st.warning("아직 통과하지 못했습니다. 답을 본 문제는 같은 라운드에서 다시 고쳐도 점수에 반영되지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
+    else:
+        st.info("5문제 모두 답 확인을 누르면 통과 여부가 표시됩니다.")
+
+    if checked > 0:
+        if st.button("🔄 Mission 1 문제 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
 
 
 def get_sequence_events(topic_name, data):
-    """본문 대화에서 4개의 사건을 뽑아 순서 맞추기 자료를 만듭니다."""
+    """본문 대화에서 5개의 서로 다른 사건을 뽑아 순서 맞추기 자료를 만듭니다."""
     dialogue = data.get('dialogue', [])
-    if len(dialogue) < 4:
-        return [line[1] for line in dialogue]
-    positions = [0, max(1, len(dialogue)//3), max(2, (len(dialogue)*2)//3), len(dialogue)-1]
-    # 중복 위치 방지
+    if not dialogue:
+        return []
+    positions = [0, max(1, len(dialogue)//4), max(2, len(dialogue)//2), max(3, (len(dialogue)*3)//4), len(dialogue)-1]
     unique_positions = []
     for p in positions:
+        p = min(max(p, 0), len(dialogue)-1)
         if p not in unique_positions:
             unique_positions.append(p)
-    while len(unique_positions) < 4 and len(unique_positions) < len(dialogue):
-        for p in range(len(dialogue)):
-            if p not in unique_positions:
-                unique_positions.append(p)
-                break
+    for p in range(len(dialogue)):
+        if len(unique_positions) >= min(5, len(dialogue)):
+            break
+        if p not in unique_positions:
+            unique_positions.append(p)
     events = []
-    for p in unique_positions[:4]:
+    for p in unique_positions[:5]:
         speaker, eng, kor = dialogue[p]
-        events.append(f"{speaker}: {eng}")
+        events.append({"speaker": speaker, "eng": eng, "kor": kor})
     return events
 
 
 def show_sequence_matching_activity(category, topic_name, data):
-    """지문 순서 맞추기 활동."""
+    """지문 순서 맞추기 활동: 섞인 카드 번호를 1-3-2-4-5처럼 입력합니다."""
     events = get_sequence_events(topic_name, data)
     prefix = f"{category}_{topic_name}_sequence_"
 
     st.markdown('<div class="section-box"><h3>🔢 지문 순서 맞추기</h3></div>', unsafe_allow_html=True)
-    st.caption("지문 내용을 생각하며 사건이 나온 순서대로 고르세요.")
+    st.caption("아래 카드 5개를 읽고, 지문에 나온 순서대로 카드 번호를 적으세요. 예: 1-3-2-4-5")
 
-    if st.button("🔄 순서 맞추기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
-        reset_keys_by_prefix(prefix)
-        st.rerun()
+    order_key = f"{prefix}shuffled_order"
+    if order_key not in st.session_state:
+        st.session_state[order_key] = _stable_shuffle(list(range(len(events))), f"sequence-{category}-{topic_name}")
 
-    option_key = f"{prefix}options"
-    if option_key not in st.session_state:
-        st.session_state[option_key] = _stable_shuffle(events, f"sequence-{category}-{topic_name}")
+    shuffled_order = st.session_state[order_key]
+    correct_sequence = "-".join(str(shuffled_order.index(i) + 1) for i in range(len(events)))
 
-    answers = []
-    for i in range(1, len(events)+1):
-        choice = st.selectbox(
-            f"{i}번째 내용",
-            st.session_state[option_key],
-            key=f"{prefix}choice_{i}"
+    for card_no, original_index in enumerate(shuffled_order, start=1):
+        event = events[original_index]
+        st.markdown(
+            f"""
+            <div style="margin-bottom: 12px; padding: 18px 20px; border-radius: 22px;
+                        border: 2px solid #bbf7d0; background: rgba(255,255,255,0.94);
+                        box-shadow: 0 5px 14px rgba(15,23,42,0.06);">
+                <div style="font-size: 21px; font-weight: 950; color: #166534; margin-bottom: 6px;">
+                    카드 {card_no}
+                </div>
+                <div style="font-size: 20px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
+                    {event['speaker']}: {event['eng']}
+                </div>
+                <div style="font-size: 18px; font-weight: 750; color: #475569; line-height: 1.6; margin-top: 4px;">
+                    ({event['kor']})
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
         )
-        answers.append(choice)
+
+    user_order = st.text_input(
+        "정답 순서 입력",
+        placeholder="예: 1-3-2-4-5",
+        key=f"{prefix}user_order"
+    )
 
     if st.button("순서 답 확인", key=f"{prefix}check", use_container_width=True):
-        score = sum(1 for a, b in zip(answers, events) if a == b)
-        st.session_state[f"{prefix}score"] = score
+        cleaned = re.sub(r"[^0-9]", "-", user_order.strip())
+        cleaned = re.sub(r"-+", "-", cleaned).strip("-")
+        st.session_state[f"{prefix}checked_order"] = cleaned
 
-    if f"{prefix}score" in st.session_state:
-        score = st.session_state[f"{prefix}score"]
-        if score == len(events):
-            st.success(f"정답입니다! {score}/{len(events)}")
+    if f"{prefix}checked_order" in st.session_state:
+        cleaned = st.session_state[f"{prefix}checked_order"]
+        if cleaned == correct_sequence:
+            st.success("정답입니다! 지문 순서를 잘 이해했습니다.")
         else:
-            st.warning(f"현재 {score}/{len(events)}개가 맞았습니다. 아래 정답 순서를 확인하세요.")
-            for i, event in enumerate(events, start=1):
-                st.caption(f"{i}. {event}")
+            st.error(f"정답 순서: {correct_sequence}")
+            st.caption("카드 번호를 지문에 나온 순서대로 다시 확인해 보세요.")
+
+    if f"{prefix}checked_order" in st.session_state:
+        if st.button("🔄 순서 맞추기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
+
+
+def _statement_bilingual(en, ko):
+    return f"{en} ({ko})"
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동."""
+    """거짓말 찾기 활동: 보기 7개 중 거짓말 2개를 고릅니다. 보기는 영어(한국어) 형태입니다."""
     hint = get_story_card_hint(topic_name, data)
+    ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
-    false_sentence = "The text says the best answer is to give up and stop trying."
-    statements = [
-        (f"The main character or topic is {hint['Name']}.", True),
-        (f"One feeling in the text is {hint['Feeling']}.", True),
-        (f"One action or advice is: {hint['Action']}", True),
-        (false_sentence, False),
+
+    true_statements = [
+        (_statement_bilingual(f"The main character or topic is {hint['Name']}.", f"중심 인물 또는 대상은 {ko_hint.get('Name', hint['Name'])}이다."), True),
+        (_statement_bilingual(f"One feeling in the text is {hint['Feeling']}.", f"글 속 감정 중 하나는 {ko_hint.get('Feeling', hint['Feeling'])}이다."), True),
+        (_statement_bilingual(f"One problem is: {hint['Problem']}", f"문제 또는 어려움은 {ko_hint.get('Problem', hint['Problem'])}"), True),
+        (_statement_bilingual(f"One action or advice is: {hint['Action']}", f"행동 또는 조언은 {ko_hint.get('Action', hint['Action'])}"), True),
+        (_statement_bilingual(f"One lesson is: {hint['Result']}", f"교훈은 {ko_hint.get('Result', hint['Result'])}"), True),
     ]
+    false_statements = [
+        (_statement_bilingual("The text says the best answer is to give up and stop trying.", "이 글은 포기하고 노력을 멈추는 것이 가장 좋다고 말한다."), False),
+        (_statement_bilingual("The text says practice, learning, or effort is not important at all.", "이 글은 연습, 배움, 노력이 전혀 중요하지 않다고 말한다."), False),
+    ]
+    statements = true_statements + false_statements
     option_key = f"{prefix}options"
     if option_key not in st.session_state:
         st.session_state[option_key] = _stable_shuffle(statements, f"lie-{category}-{topic_name}")
 
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("지문 내용과 맞지 않는 문장 1개를 고르세요.")
+    st.caption("보기 7개 중 지문 내용과 맞지 않는 거짓말 2개를 고르세요.")
 
     choices = [s for s, truth in st.session_state[option_key]]
-    choice = st.radio("거짓말 문장 선택", choices, key=f"{prefix}choice", label_visibility="collapsed")
+    selected = st.multiselect(
+        "거짓말 문장 2개 선택",
+        choices,
+        key=f"{prefix}selected",
+        max_selections=2,
+        label_visibility="collapsed"
+    )
 
     if st.button("거짓말 답 확인", key=f"{prefix}check", use_container_width=True):
-        is_false = False
-        for sentence, truth in st.session_state[option_key]:
-            if sentence == choice:
-                is_false = not truth
-                break
-        st.session_state[f"{prefix}result"] = is_false
+        false_set = {s for s, truth in st.session_state[option_key] if not truth}
+        selected_set = set(selected)
+        st.session_state[f"{prefix}result"] = selected_set == false_set
+        st.session_state[f"{prefix}false_set"] = list(false_set)
 
     if f"{prefix}result" in st.session_state:
         if st.session_state[f"{prefix}result"]:
-            st.success("정답입니다. 이 문장이 거짓말입니다.")
+            st.success("정답입니다. 거짓말 2개를 모두 찾았습니다.")
         else:
-            st.error(f"정답: {false_sentence}")
+            st.error("아직 정답이 아닙니다. 아래 정답 2개를 확인하세요.")
+            for ans in st.session_state.get(f"{prefix}false_set", []):
+                st.caption(f"정답: {ans}")
+
+    if f"{prefix}result" in st.session_state:
+        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
 
 
 def show_key_expression_word_test(category, topic_name, data, max_words=10):
-    """기존 활동 1을 Reading 흐름 안에서 사용할 수 있도록 함수화합니다."""
+    """Key Expressions 단어 테스트: 10개 중 8개 이상을 첫 확인에서 맞혀야 통과합니다."""
     key_words = get_key_words(topic_name, data)[:max_words]
     prefix = f"{category}_{topic_name}_activity1_"
 
     st.markdown('<div class="section-box"><h3>⭐ Key Expressions 단어 테스트</h3></div>', unsafe_allow_html=True)
-    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요. 각 문제 옆의 답 확인을 누르면 바로 확인할 수 있습니다.")
-
-    if st.button("🔄 단어 테스트 다시 풀기", key=f"{prefix}reset_in_reading", use_container_width=True):
-        reset_keys_by_prefix(prefix)
-        st.rerun()
+    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요. 답을 본 뒤 고친 것은 같은 라운드 점수에 반영되지 않습니다. 10개 중 8개 이상을 한 번에 맞히면 통과입니다.")
 
     status_keys = []
     for i, (word, meaning) in enumerate(key_words, start=1):
@@ -2231,7 +2403,9 @@ def show_key_expression_word_test(category, topic_name, data, max_words=10):
             )
         with c3:
             if st.button("답 확인", key=f"{prefix}check_{i}"):
-                st.session_state[status_key] = is_correct_korean_answer(user_meaning, meaning)
+                # 첫 확인 결과만 저장합니다. 정답을 본 뒤 고쳐도 같은 라운드에서는 점수가 바뀌지 않습니다.
+                if status_key not in st.session_state:
+                    st.session_state[status_key] = is_correct_korean_answer(user_meaning, meaning)
             if status_key in st.session_state:
                 if st.session_state[status_key]:
                     st.success("정답")
@@ -2240,44 +2414,60 @@ def show_key_expression_word_test(category, topic_name, data, max_words=10):
 
     score = sum(1 for key in status_keys if st.session_state.get(key) is True)
     checked = sum(1 for key in status_keys if key in st.session_state)
-    show_pass_status(score, len(status_keys), checked)
+    st.markdown(f"### 단어 테스트 점수: {score}/{len(key_words)}")
+    st.caption(f"답 확인을 누른 단어: {checked}/{len(key_words)} · 통과 기준: 8/{len(key_words)} 이상")
+    if checked == len(key_words) and score >= 8:
+        st.success(f"통과했습니다! 답을 보지 않고 첫 시도에서 {score}/{len(key_words)}개를 맞혔습니다.")
+    elif checked == len(key_words):
+        st.warning(f"아직 통과 기준에 부족합니다. 첫 시도 점수는 {score}/{len(key_words)}개입니다. 다시 풀기를 눌러 새로 도전하세요.")
+    else:
+        st.info("모든 단어의 답 확인을 누르면 통과 여부가 표시됩니다.")
+
+    if checked > 0:
+        if st.button("🔄 단어 테스트 다시 풀기", key=f"{prefix}reset_in_reading", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
 
 
 def show_feeling_two_lines_activity(category, topic_name, data):
-    """마지막 활동: 내가 주인공이라면 어떤 감정이 들지 2줄로 쓰기."""
+    """마지막 활동: 내가 주인공이라면 어떤 감정이 들지 한 칸에 2줄로 쓰기."""
     hint = get_story_card_hint(topic_name, data)
     target_name = hint.get('Name', 'the main character')
     prefix = f"{category}_{topic_name}_feeling_two_lines_"
 
-    st.markdown('<div class="section-box"><h3>💭 내가 주인공이라면?</h3></div>', unsafe_allow_html=True)
-    st.caption("내가 지문 속 주인공 또는 그 상황에 있는 사람이라면 어떤 감정이 들지 2줄로 써 보세요. 한국어 또는 영어 모두 가능합니다.")
+    st.markdown('<div class="section-box"><h3>💭 내가 주인공이라면 어떤 기분이 들까요?</h3></div>', unsafe_allow_html=True)
+    st.caption("답을 쓰는 칸은 하나입니다. 내가 주인공이라면 어떤 감정이 들지 2줄로 써 보세요. 한국어 또는 영어 모두 가능합니다.")
 
-    line1 = st.text_input("1번째 줄", placeholder="예: 나라면 조금 긴장될 것 같다.", key=f"{prefix}line1")
-    line2 = st.text_input("2번째 줄", placeholder="예: 그래도 다시 도전하고 싶을 것 같다.", key=f"{prefix}line2")
+    answer = st.text_area(
+        "감정 2줄 쓰기",
+        placeholder="예: 나라면 처음에는 조금 긴장될 것 같다.\n하지만 다시 도전하고 싶을 것 같다.",
+        height=120,
+        key=f"{prefix}answer"
+    )
 
-    if st.button("감정 2줄 확인", key=f"{prefix}submit", use_container_width=True):
-        if not line1.strip() and not line2.strip():
-            st.warning("먼저 감정 2줄을 적어 주세요.")
+    if st.button("정답 제출", key=f"{prefix}submit", use_container_width=True):
+        lines = [line.strip() for line in answer.splitlines() if line.strip()]
+        if not answer.strip():
+            st.warning("먼저 감정을 2줄로 적어 주세요.")
+        elif len(lines) < 2:
+            st.warning("좋아요. 한 줄을 더 추가해서 2줄로 써 보세요.")
         else:
             st.markdown(
                 f"""
                 <div class="message-card">
                     <div class="story-card-title">💭 If I were {target_name}</div>
-                    <div class="message-line">1. {line1.strip() or '...'}</div>
-                    <div class="message-line">2. {line2.strip() or '...'}</div>
+                    <div class="message-line">{lines[0]}</div>
+                    <div class="message-line">{lines[1]}</div>
                 </div>
                 """,
                 unsafe_allow_html=True
             )
-            st.success("좋아요. 지문 속 상황과 내 감정을 연결했습니다.")
+            st.success("제출했습니다. 지문 속 상황과 내 감정을 잘 연결했습니다.")
             st.info("더 좋게 쓰려면 감정 단어 하나와 이유 하나를 함께 넣어 보세요. 예: I would feel nervous because the challenge is difficult.")
 
-
-tab_video, tab_image, tab_reading, tab_activity = st.tabs([
+tab_video, tab_reading = st.tabs([
     "🎬 동영상",
-    "🖼️ 그림",
-    "📖 Reading",
-    "✍️ 활동 안내"
+    "📖 Reading"
 ])
 
 # =========================================================
@@ -2292,19 +2482,6 @@ with tab_video:
         st.video(video_url)
     else:
         st.info("동영상 링크가 없는 자료입니다.")
-
-# =========================================================
-# 그림
-# =========================================================
-with tab_image:
-    st.markdown("## 🖼️ 그림")
-
-    image_path = data["image_path"]
-
-    if image_path and image_path.exists():
-        st.image(str(image_path), use_container_width=True)
-    else:
-        st.info("이미지 파일이 없는 자료입니다.")
 
 # =========================================================
 # Reading: 미션 → 지문 → 미션 문제 → 순서 맞추기 → 거짓말 찾기 → 단어 테스트 → 감정 2줄
@@ -2395,10 +2572,3 @@ with tab_reading:
 
     # 7. 마지막 감정 2줄 쓰기
     show_feeling_two_lines_activity(category, topic_name, data)
-
-# =========================================================
-# 활동 안내
-# =========================================================
-with tab_activity:
-    st.markdown("## ✍️ 활동 안내")
-    st.info("활동은 Reading 탭 아래로 이동했습니다. 미션 문제, 순서 맞추기, 거짓말 찾기, Key Expressions 단어 테스트, 감정 2줄 쓰기를 Reading 탭에서 순서대로 진행하세요.")
