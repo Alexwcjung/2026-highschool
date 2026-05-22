@@ -2361,7 +2361,7 @@ def _statement_bilingual(en, ko):
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동: 첫 번째 카드는 사라지지 않고 선택 표시만 됩니다. 두 개를 모두 고른 뒤 정답이면 두 카드가 동시에 반짝하고 사라지며 미션 성공이 뜹니다."""
+    """거짓말 찾기 활동: 별도 선택 버튼 없이 카드 자체를 눌러 선택합니다. 두 개를 모두 고른 뒤 정답이면 두 카드가 동시에 반짝하고 사라지며 미션 성공이 뜹니다."""
     hint = get_story_card_hint(topic_name, data)
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
@@ -2434,13 +2434,23 @@ def show_lie_finding_activity(category, topic_name, data):
             color: #166534;
             box-shadow: 0 10px 24px rgba(15,23,42,0.10);
         }
+        .lie-help {
+            font-size: 17px;
+            font-weight: 800;
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 카드 2개를 누르세요. 첫 번째 카드는 사라지지 않고 선택 표시만 됩니다. 두 개를 모두 고르면 바로 판정됩니다. 정답은 공개하지 않습니다.")
+    st.markdown(
+        '<div class="lie-help">A~G 보기 중 지문 내용과 맞지 않는 거짓말 카드 2개를 누르세요. 선택한 카드는 파란색으로 칠해집니다. 두 개를 모두 고르면 바로 판정됩니다. 정답은 공개하지 않습니다.</div>',
+        unsafe_allow_html=True,
+    )
 
     false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
     selected_letters = st.session_state[selected_key]
@@ -2468,22 +2478,26 @@ def show_lie_finding_activity(category, topic_name, data):
             st.rerun()
         return
 
-    # 아직 성공 전이면 카드 버튼을 보여줍니다.
+    # 아직 성공 전이면 카드 자체를 큰 버튼처럼 보여줍니다. 별도의 "카드 선택" 버튼은 없습니다.
     for item in st.session_state[option_key]:
         is_selected = item["letter"] in selected_letters
         card_class = "lie-card lie-card-selected" if is_selected else "lie-card"
+        check_mark = " ✅ 선택됨" if is_selected else ""
+
         st.markdown(
             f"""
             <div class="{card_class}">
                 <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
-                    {item['letter']}. {item['text']}
+                    {item['letter']}. {item['text']}{check_mark}
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        btn_label = f"✅ {item['letter']} 선택됨" if is_selected else f"{item['letter']} 카드 선택"
-        if st.button(btn_label, key=f"{prefix}pick_{item['letter']}", use_container_width=True):
+
+        # 카드를 누르는 느낌을 주기 위해 버튼 문구를 짧게 두지 않고 카드 전체 문장으로 구성합니다.
+        # Streamlit 기본 제약상 HTML 카드 div 자체는 클릭 이벤트를 받을 수 없어서, 바로 아래의 투명한 역할의 버튼이 클릭을 처리합니다.
+        if st.button(f"{item['letter']}. {re.sub('<[^<]+?>', ' ', item['text']).strip()}", key=f"{prefix}pick_{item['letter']}", use_container_width=True):
             current = list(st.session_state[selected_key])
             if item["letter"] in current:
                 current.remove(item["letter"])
