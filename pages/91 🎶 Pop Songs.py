@@ -115,6 +115,113 @@ def shuffle_options(options, seed):
     rng.shuffle(options)
     return options
 
+
+def normalize_answer(text):
+    """학생 답안 비교를 조금 관대하게 하기 위한 정리 함수입니다."""
+    return str(text).strip().lower().replace(" ", "").replace("/", "")
+
+
+def is_correct_korean_answer(user_answer, correct_answer):
+    """한국어 뜻 입력을 너무 빡빡하지 않게 비교합니다."""
+    user_norm = normalize_answer(user_answer)
+    correct_options = [part.strip() for part in str(correct_answer).split("/")]
+
+    if not user_norm:
+        return False
+
+    for option in correct_options:
+        option_norm = normalize_answer(option)
+        if option_norm and (user_norm == option_norm or option_norm in user_norm or user_norm in option_norm):
+            return True
+    return False
+
+
+def reset_keys_by_prefix(prefixes):
+    """현재 활동 입력값과 채점 결과를 초기화합니다."""
+    if isinstance(prefixes, str):
+        prefixes = [prefixes]
+
+    for key in list(st.session_state.keys()):
+        if any(str(key).startswith(prefix) for prefix in prefixes):
+            del st.session_state[key]
+
+
+def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
+    """가사 & 퀴즈 탭 맨 아래에 넣는 Key Expression 학습 활동입니다."""
+    key_key = safe_key(song_choice)
+    prefix = f"lyrics_key_expression_learning_{key_key}_"
+    expressions = list(data.get("key_expressions", []))[:max_words]
+
+    if not expressions:
+        return
+
+    st.markdown("---")
+    st.subheader("⭐ Key Expression 학습")
+    st.markdown(
+        '<div class="game-card"><div class="big-guide">'
+        '노래에서 중요한 영어 표현을 보고 한국어 뜻을 직접 적어 보세요.<br>'
+        '답을 본 뒤 고친 것은 같은 라운드 점수에 반영되지 않습니다. '
+        '10개 중 8개 이상을 한 번에 맞히면 통과입니다.'
+        '</div></div>',
+        unsafe_allow_html=True
+    )
+
+    status_keys = []
+    for i, (en, ko) in enumerate(expressions, start=1):
+        status_key = f"{prefix}status_{i}"
+        status_keys.append(status_key)
+
+        c1, c2, c3 = st.columns([2.2, 2.4, 1.25])
+        with c1:
+            st.markdown(
+                f"""
+                <div style="padding: 12px 14px; border-radius: 16px; background: #eff6ff;
+                            border: 1.5px solid #bfdbfe; font-size: 18px; font-weight: 900;
+                            color: #1d4ed8; margin-top: 4px;">
+                    {i}. {clean_text_for_display(en)}
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        with c2:
+            user_meaning = st.text_input(
+                "한국어 뜻",
+                key=f"{prefix}answer_{i}",
+                placeholder="한국어 뜻을 적어 보세요.",
+                label_visibility="collapsed"
+            )
+        with c3:
+            if st.button("답 확인", key=f"{prefix}check_{i}"):
+                if status_key not in st.session_state:
+                    st.session_state[status_key] = is_correct_korean_answer(user_meaning, ko)
+
+            if status_key in st.session_state:
+                if st.session_state[status_key]:
+                    st.success("정답")
+                else:
+                    st.error(f"정답: {ko}")
+
+    score = sum(1 for key in status_keys if st.session_state.get(key) is True)
+    checked = sum(1 for key in status_keys if key in st.session_state)
+    total = len(expressions)
+    pass_count = min(8, total)
+
+    st.markdown(f"### Key Expression 점수: {score}/{total}")
+    st.caption(f"답 확인을 누른 표현: {checked}/{total} · 통과 기준: {pass_count}/{total} 이상")
+
+    if checked == total and score >= pass_count:
+        st.success(f"통과했습니다! 답을 보지 않고 첫 시도에서 {score}/{total}개를 맞혔습니다.")
+    elif checked == total:
+        st.warning(f"아직 통과 기준에 부족합니다. 첫 시도 점수는 {score}/{total}개입니다. 다시 풀기를 눌러 새로 도전하세요.")
+    else:
+        st.info("모든 표현의 답 확인을 누르면 통과 여부가 표시됩니다.")
+
+    if checked > 0:
+        if st.button("🔄 Key Expression 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
+
+
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
     if not korean_text:
@@ -2034,6 +2141,8 @@ elif selected_tab == "📖 가사 & 퀴즈":
                 st.success(f"{idx}번 정답입니다. ✅")
             else:
                 st.markdown(f'<div class="wrong-box"><b>{idx}번</b> 다시 확인해 보세요.<br>내가 고른 답: {clean_text_for_display(picked) if picked else "선택 안 함"}<br>정답: <b>{clean_text_for_display(answer)}</b></div>', unsafe_allow_html=True)
+
+    show_key_expression_learning_in_lyrics(song_choice, data, max_words=10)
 
 elif selected_tab == "📝 Key Expression 뜻 맞추기":
     st.subheader("📝 Key Expression 뜻 맞추기")
