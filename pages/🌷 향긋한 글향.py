@@ -498,6 +498,57 @@ textarea {
     border-radius: 18px !important;
 }
 
+/* 미션/카드/문자 활동 */
+.mission-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #ffffff 55%, #f0fdf4 100%);
+    border: 2px solid #bfdbfe;
+    border-radius: 24px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 16px rgba(15,23,42,0.06);
+}
+.mission-title {
+    font-size: 22px;
+    font-weight: 950;
+    color: #1d4ed8;
+    margin-bottom: 8px;
+}
+.mission-guide {
+    font-size: 17px;
+    font-weight: 800;
+    color: #475569;
+    line-height: 1.7;
+}
+.story-card {
+    background: linear-gradient(135deg, #ffffff 0%, #fff7ed 48%, #f0fdf4 100%);
+    border: 2px solid #fed7aa;
+    border-radius: 26px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 8px 20px rgba(15,23,42,0.07);
+}
+.story-card-title {
+    font-size: 23px;
+    font-weight: 950;
+    color: #c2410c;
+    margin-bottom: 10px;
+}
+.message-card {
+    background: linear-gradient(135deg, #fdf2f8 0%, #ffffff 55%, #eff6ff 100%);
+    border: 2px solid #f9a8d4;
+    border-radius: 26px;
+    padding: 18px 20px;
+    margin-top: 12px;
+    box-shadow: 0 8px 20px rgba(15,23,42,0.07);
+}
+.message-line {
+    font-size: 20px;
+    font-weight: 850;
+    color: #334155;
+    line-height: 1.7;
+}
+
+
 /* 이미지, 비디오 주변 */
 div[data-testid="stImage"] img {
     border-radius: 26px;
@@ -1428,6 +1479,236 @@ def show_pre_reading_questions(category, topic_name, data):
     show_pass_status(score, len(status_keys), checked)
     st.markdown("---")
 
+
+
+# =========================================================
+# 읽기 미션 / 카드 만들기 / 문자 보내기 활동
+# =========================================================
+story_card_hints = {
+    "⚽ Ronaldo": {
+        "Name": "Ronaldo",
+        "Feeling": "tired / loses confidence",
+        "Problem": "The student wants to improve but sometimes loses confidence.",
+        "Action": "Practice with a clear goal and practice smart.",
+        "Result": "Believe in yourself and never give up."
+    },
+    "🏀 Jordan": {
+        "Name": "Jordan",
+        "Feeling": "nervous / disappointed after mistakes",
+        "Problem": "The student misses shots and worries about failure.",
+        "Action": "Learn from failure and take the next shot with confidence.",
+        "Result": "Failure can become motivation."
+    },
+    "⚽ Son Heung-min": {
+        "Name": "Son Heung-min",
+        "Feeling": "angry when losing",
+        "Problem": "The student wants to score alone and gets upset.",
+        "Action": "Listen to teammates and move together.",
+        "Result": "Discipline, teamwork, and attitude make a good player."
+    },
+    "🎤 IU": {
+        "Name": "IU",
+        "Feeling": "shy / unsure",
+        "Problem": "The student does not know how to express feelings.",
+        "Action": "Write one small sentence and express feelings honestly.",
+        "Result": "Sincerity can touch people."
+    },
+    "⛸️ Kim Yuna": {
+        "Name": "Kim Yuna",
+        "Feeling": "nervous / worried",
+        "Problem": "The student worries before an important moment.",
+        "Action": "Prepare step by step and focus on one thing.",
+        "Result": "Practice and trust can bring calmness."
+    },
+    "🎤 BTS Jungkook": {
+        "Name": "Jungkook",
+        "Feeling": "nervous / worried",
+        "Problem": "The student feels nervous in front of people.",
+        "Action": "Prepare well and focus on the message.",
+        "Result": "Keep practicing and trust your own voice."
+    },
+    "🏜️ Grand Canyon": {
+        "Name": "Grand Canyon",
+        "Feeling": "amazed",
+        "Problem": "The visitor wants to understand how the canyon was made.",
+        "Action": "Learn about the Colorado River, erosion, and rock layers.",
+        "Result": "We can respect and protect nature more."
+    },
+    "🗽 New York": {
+        "Name": "New York",
+        "Feeling": "excited",
+        "Problem": "A big city can be fast, expensive, and competitive.",
+        "Action": "Stay curious, keep learning, and respect different cultures.",
+        "Result": "Many cultures and dreams meet in a global city."
+    },
+    "🏯 Gyeongbokgung": {
+        "Name": "Gyeongbokgung",
+        "Feeling": "impressed",
+        "Problem": "The visitor wants to understand Korean history and culture.",
+        "Action": "Learn about Joseon, the palace, and Geunjeongjeon Hall.",
+        "Result": "Understanding the past helps build a better future."
+    },
+    "📘 교과서": {
+        "Name": "The student",
+        "Feeling": "impressed / excited",
+        "Problem": "Students had to wait in line for lunch before.",
+        "Action": "The student tries a new food machine.",
+        "Result": "A fast, healthy meal comes out and the student looks forward to tomorrow."
+    },
+}
+
+
+def get_story_card_hint(topic_name, data):
+    """주제별 카드 만들기 예시를 가져옵니다. 없으면 기본값을 사용합니다."""
+    if topic_name in story_card_hints:
+        return story_card_hints[topic_name]
+
+    clean_name = topic_name.split(" ", 1)[-1] if " " in topic_name else data.get("title", "Main character")
+    return {
+        "Name": clean_name,
+        "Feeling": "interested / surprised",
+        "Problem": "Find the main problem in the reading.",
+        "Action": "Find the action or advice in the reading.",
+        "Result": "Find the result or lesson in the reading."
+    }
+
+
+def get_message_target(topic_name, data):
+    """문자 보내기 활동의 수신자 이름을 정합니다."""
+    hint = get_story_card_hint(topic_name, data)
+    return hint.get("Name", topic_name.split(" ", 1)[-1])
+
+
+def show_mission_reading_activity(category, topic_name, data):
+    """본문을 읽으면서 찾아야 할 미션을 간단하게 제시합니다."""
+    hint = get_story_card_hint(topic_name, data)
+    mission_key = f"{category}_{topic_name}_mission_"
+
+    st.markdown(
+        """
+        <div class="mission-card">
+            <div class="mission-title">🧭 Mission 1. 읽으면서 찾기</div>
+            <div class="mission-guide">
+                아래 5가지를 생각하면서 지문을 읽어 보세요. 답을 길게 쓰지 않아도 됩니다.
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    missions = [
+        ("Name", "누가/무엇이 중심인가요?", hint["Name"]),
+        ("Feeling", "어떤 감정이 나오나요?", hint["Feeling"]),
+        ("Problem", "어떤 문제나 어려움이 있나요?", hint["Problem"]),
+        ("Action", "어떤 행동이나 조언이 나오나요?", hint["Action"]),
+        ("Result", "마지막 결과나 교훈은 무엇인가요?", hint["Result"]),
+    ]
+
+    cols = st.columns(5)
+    for idx, (label, question, example) in enumerate(missions):
+        with cols[idx]:
+            st.checkbox(
+                f"{label}",
+                key=f"{mission_key}check_{label}",
+                help=question
+            )
+            st.caption(question)
+            st.caption(f"예: {example}")
+
+
+def show_story_card_activity(category, topic_name, data):
+    """읽은 내용을 바탕으로 학생이 간단한 내용 카드를 완성합니다."""
+    hint = get_story_card_hint(topic_name, data)
+    card_key = f"{category}_{topic_name}_story_card_"
+
+    st.markdown('<div class="section-box"><h3>활동 4. 내용 카드 만들기</h3></div>', unsafe_allow_html=True)
+    st.caption("지문을 읽고 핵심 내용을 짧게 정리하세요. 영어로 써도 되고, 어려우면 한국어로 써도 됩니다.")
+
+    c1, c2 = st.columns(2)
+    with c1:
+        name = st.text_input("Name / 중심 인물·대상", placeholder=hint["Name"], key=f"{card_key}name")
+        feeling = st.text_input("Feeling / 감정", placeholder=hint["Feeling"], key=f"{card_key}feeling")
+        problem = st.text_area("Problem / 문제·어려움", placeholder=hint["Problem"], height=90, key=f"{card_key}problem")
+    with c2:
+        action = st.text_area("Action / 행동·조언", placeholder=hint["Action"], height=90, key=f"{card_key}action")
+        result = st.text_area("Result / 결과·교훈", placeholder=hint["Result"], height=90, key=f"{card_key}result")
+
+    if st.button("📇 카드 완성하기", key=f"{card_key}submit", use_container_width=True):
+        st.markdown(
+            f"""
+            <div class="story-card">
+                <div class="story-card-title">📇 My Reading Card</div>
+                <div class="message-line"><b>Name:</b> {name.strip() or hint["Name"]}</div>
+                <div class="message-line"><b>Feeling:</b> {feeling.strip() or hint["Feeling"]}</div>
+                <div class="message-line"><b>Problem:</b> {problem.strip() or hint["Problem"]}</div>
+                <div class="message-line"><b>Action:</b> {action.strip() or hint["Action"]}</div>
+                <div class="message-line"><b>Result:</b> {result.strip() or hint["Result"]}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        st.success("좋아요. 지문 내용을 카드로 정리했습니다.")
+
+
+def make_message_feedback(line1, line2, target_name):
+    """주인공에게 보내는 문자 2줄에 대한 간단한 피드백을 만듭니다."""
+    full_text = f"{line1} {line2}".strip()
+    if not full_text:
+        return "먼저 문자 2줄을 써 보세요.", ""
+
+    answer_lang = detect_language(full_text)
+    if answer_lang == "ko":
+        korean_feedback = "내용이 잘 전달됩니다. 다음에는 본문에서 나온 핵심 단어를 하나 넣으면 더 좋습니다."
+        english_sample = f"Hi {target_name}, I learned a lot from you. I will remember your lesson and try my best."
+    else:
+        korean_feedback = "영어로 의미가 잘 전달됩니다. 더 자연스럽게 하려면 감사 표현과 앞으로의 다짐을 함께 넣으면 좋습니다."
+        english_sample = f"Hi {target_name}, thank you for your advice. I will keep trying and use this lesson in my life."
+
+    return korean_feedback, english_sample
+
+
+def show_message_to_character_activity(category, topic_name, data):
+    """마지막 활동: 주인공에게 문자 2줄 보내기."""
+    target_name = get_message_target(topic_name, data)
+    msg_key = f"{category}_{topic_name}_message_to_character_"
+
+    st.markdown('<div class="section-box"><h3>활동 5. 주인공에게 문자 2줄 보내기</h3></div>', unsafe_allow_html=True)
+    st.caption("지문을 읽고 주인공에게 짧은 문자 2줄을 보내 보세요. 한국어 또는 영어 모두 가능합니다.")
+
+    line1 = st.text_input(
+        "1번째 줄",
+        placeholder=f"Hi {target_name}, thank you for your advice.",
+        key=f"{msg_key}line1"
+    )
+    line2 = st.text_input(
+        "2번째 줄",
+        placeholder="I will keep trying and never give up.",
+        key=f"{msg_key}line2"
+    )
+
+    if st.button("💬 문자 보내기", key=f"{msg_key}submit", use_container_width=True):
+        if not line1.strip() and not line2.strip():
+            st.warning("먼저 문자 2줄을 적어 주세요.")
+        else:
+            st.markdown(
+                f"""
+                <div class="message-card">
+                    <div class="story-card-title">💬 To. {target_name}</div>
+                    <div class="message-line">1. {line1.strip() or "..."}</div>
+                    <div class="message-line">2. {line2.strip() or "..."}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+            korean_feedback, english_sample = make_message_feedback(line1, line2, target_name)
+            st.markdown("### 🇰🇷 피드백")
+            st.info(korean_feedback)
+            st.markdown("### 🇺🇸 예시 표현")
+            st.success(english_sample)
+            direct_tts_player(english_sample, lang="en")
+
+
 def make_expression_completion_items(data, key_words, max_items=6):
     """활동 3용: 핵심 표현에서 중요한 영어 단어를 하나 비우고 고르게 합니다."""
     stop_words = {
@@ -1746,7 +2027,7 @@ with tab_reading:
 
     st.caption("각 영어 문장 오른쪽에 바로 재생 가능한 TTS 플레이어가 보입니다. 한국어 해석은 지문 바로 위 버튼으로 켜고 끌 수 있습니다.")
 
-    show_pre_reading_questions(category, topic_name, data)
+    show_mission_reading_activity(category, topic_name, data)
 
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
     show_korean_reading = st.toggle(
@@ -1815,8 +2096,9 @@ with tab_activity:
         f"{category}_{topic_name}_activity1_",
         f"{category}_{topic_name}_activity2_",
         f"{category}_{topic_name}_activity3_",
+        f"{category}_{topic_name}_story_card_",
+        f"{category}_{topic_name}_message_to_character_",
         f"{category}_{topic_name}_q",
-        f"{category}_{topic_name}_reflection",
     ]
     if st.button("🔄 활동 전체 다시 풀기", key=f"reset_all_activities_{category}_{topic_name}", use_container_width=True):
         reset_keys_by_prefix(all_activity_prefixes)
@@ -2032,38 +2314,13 @@ with tab_activity:
     st.markdown("---")
 
     # -----------------------------------------------------
-    # 활동 4. Reflection Writing
+    # 활동 4. 내용 카드 만들기
     # -----------------------------------------------------
-    st.markdown('<div class="section-box"><h3>활동 4. Reflection Writing</h3></div>', unsafe_allow_html=True)
+    show_story_card_activity(category, topic_name, data)
 
-    reflection = st.text_area(
-        data["reflection_prompt"],
-        placeholder="영어 또는 한국어로 적어 보세요.",
-        height=140,
-        key=f"{category}_{topic_name}_reflection"
-    )
+    st.markdown("---")
 
-    if st.button("쓰기 결과 제출", key=f"{category}_{topic_name}_feedback"):
-        text = reflection.strip()
-
-        if text == "":
-            st.warning("먼저 답을 적어 주세요.")
-        else:
-            clean_name = topic_name.split(" ", 1)[-1]
-            answer_lang = detect_language(text)
-
-            if answer_lang == "ko":
-                korean_feedback, english_feedback = make_korean_to_english(text, clean_name)
-                st.markdown("### 🇰🇷 한국어 피드백")
-                st.info(korean_feedback)
-                st.markdown("### 🇺🇸 영어로 바꾸면")
-                st.success(english_feedback)
-            else:
-                korean_feedback, improved_english = improve_english_answer(text, clean_name)
-                st.markdown("### 🇰🇷 한국어 피드백")
-                st.info(korean_feedback)
-                st.markdown("### 🇺🇸 더 자연스러운 영어")
-                st.success(improved_english)
-
-            st.markdown("### 추천 표현")
-            st.write("I learned that effort is important. / I should keep trying. / This lesson can help me grow. / I want to apply this lesson to my life.")
+    # -----------------------------------------------------
+    # 활동 5. 주인공에게 문자 2줄 보내기
+    # -----------------------------------------------------
+    show_message_to_character_activity(category, topic_name, data)
