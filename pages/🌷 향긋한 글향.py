@@ -2183,19 +2183,17 @@ def build_mission_questions(topic_name, data):
     ]
 
 def show_mission_quiz(category, topic_name, data):
-    """지문 바로 아래에서 미션 답을 4지선다로 확인합니다."""
+    """지문 바로 아래에서 미션 답을 4지선다로 한 번에 제출합니다."""
     questions = build_mission_questions(topic_name, data)
     prefix = f"{category}_{topic_name}_mission_quiz_"
 
     st.markdown('<div class="section-box"><h3>🧭 Mission 1 문제 풀기</h3></div>', unsafe_allow_html=True)
-    st.caption("방금 읽은 지문을 떠올리며 미션 답을 4지선다로 확인하세요. 각 문제는 바로 답을 확인할 수 있고, 5문제를 모두 맞히면 통과입니다.")
+    st.caption("방금 읽은 지문을 떠올리며 5문제를 모두 푼 뒤 한 번에 제출하세요. 정답은 바로 공개하지 않고 정답 개수만 보여줍니다. 5문제를 모두 맞히면 통과입니다.")
 
-    status_keys = []
+    answers = []
     for i, (question, options, answer) in enumerate(questions, start=1):
         answer_key = f"{prefix}answer_{i}"
-        status_key = f"{prefix}status_{i}"
         option_key = f"{prefix}options_{i}"
-        status_keys.append(status_key)
 
         if option_key not in st.session_state:
             st.session_state[option_key] = _stable_shuffle(options, f"mission-{category}-{topic_name}-{i}")
@@ -2212,37 +2210,41 @@ def show_mission_quiz(category, topic_name, data):
             """,
             unsafe_allow_html=True
         )
-        choice = st.radio("정답 선택", st.session_state[option_key], key=answer_key, label_visibility="collapsed")
+        choice = st.radio(
+            "정답 선택",
+            st.session_state[option_key],
+            index=None,
+            key=answer_key,
+            label_visibility="collapsed"
+        )
+        answers.append((choice, answer))
 
-        c1, c2 = st.columns([1.2, 3])
-        with c1:
-            if st.button("답 확인", key=f"{prefix}check_{i}", use_container_width=True):
-                # 첫 확인 결과를 저장합니다. 답을 본 뒤 고쳐도 같은 라운드에서는 점수가 바뀌지 않습니다.
-                if status_key not in st.session_state:
-                    st.session_state[status_key] = choice == answer
-        with c2:
-            if status_key in st.session_state:
-                if st.session_state[status_key]:
-                    st.success("정답입니다.")
-                else:
-                    st.error(f"정답: {answer}")
+    if st.button("✅ Mission 1 제출하기", key=f"{prefix}submit", use_container_width=True):
+        unanswered = sum(1 for choice, _ in answers if choice is None)
+        if unanswered > 0:
+            st.session_state[f"{prefix}submitted"] = False
+            st.session_state[f"{prefix}message"] = f"아직 선택하지 않은 문제가 {unanswered}개 있습니다. 5문제를 모두 선택한 뒤 제출하세요."
+        else:
+            score = sum(1 for choice, answer in answers if choice == answer)
+            st.session_state[f"{prefix}submitted"] = True
+            st.session_state[f"{prefix}score"] = score
+            st.session_state[f"{prefix}message"] = ""
 
-    score = sum(1 for key in status_keys if st.session_state.get(key) is True)
-    checked = sum(1 for key in status_keys if key in st.session_state)
-    st.markdown(f"### Mission 1 점수: {score}/5")
-    st.caption(f"답 확인을 누른 문제: {checked}/5 · 통과 기준: 5/5")
-    if checked == 5 and score == 5:
-        st.success("통과했습니다! Mission 1의 5문제를 모두 맞혔습니다.")
-    elif checked == 5:
-        st.warning("아직 통과하지 못했습니다. 답을 본 문제는 같은 라운드에서 다시 고쳐도 점수에 반영되지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
-    else:
-        st.info("5문제 모두 답 확인을 누르면 통과 여부가 표시됩니다.")
+    if st.session_state.get(f"{prefix}message"):
+        st.warning(st.session_state[f"{prefix}message"])
 
-    if checked > 0:
-        if st.button("🔄 Mission 1 문제 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+    if st.session_state.get(f"{prefix}submitted"):
+        score = st.session_state.get(f"{prefix}score", 0)
+        st.markdown(f"### Mission 1 정답 개수: {score}/5")
+        if score == 5:
+            st.success("통과했습니다! Mission 1의 5문제를 모두 맞혔습니다.")
+        else:
+            st.warning("아직 통과하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
+
+    if st.session_state.get(f"{prefix}submitted") or st.session_state.get(f"{prefix}message"):
+        if st.button("🔄 Mission 1 다시 풀기", key=f"{prefix}reset", use_container_width=True):
             reset_keys_by_prefix(prefix)
             st.rerun()
-
 
 def get_sequence_events(topic_name, data):
     """본문 대화에서 5개의 서로 다른 대화 흐름을 뽑아 순서 맞추기 자료를 만듭니다.
@@ -2342,9 +2344,10 @@ def show_sequence_matching_activity(category, topic_name, data):
     if f"{prefix}checked_order" in st.session_state:
         cleaned = st.session_state[f"{prefix}checked_order"]
         if cleaned == correct_sequence:
-            st.success("정답입니다! 지문 순서를 잘 이해했습니다.")
+            st.success(f"정답입니다! 정답 순서는 {correct_sequence}입니다.")
+            st.caption("지문 순서를 잘 이해했습니다.")
         else:
-            st.error(f"정답 순서: {correct_sequence}")
+            st.warning("아직 정답이 아닙니다. 지문을 다시 읽고 순서를 한 번 더 생각해 보세요.")
             st.caption("대시(-) 없이 숫자만 붙여서 입력하세요. 예: 13245")
 
     if f"{prefix}checked_order" in st.session_state:
@@ -2358,7 +2361,7 @@ def _statement_bilingual(en, ko):
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동: A~G 보기 중 거짓말 2개를 고릅니다. 보기는 영어(한국어) 형태입니다."""
+    """거짓말 찾기 활동: A~G 보기 중 거짓말 2개를 고르고 한 번에 제출합니다."""
     hint = get_story_card_hint(topic_name, data)
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
@@ -2386,7 +2389,7 @@ def show_lie_finding_activity(category, topic_name, data):
         ]
 
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 2개를 고르세요. 보기는 영어(한국어)로 함께 제시됩니다.")
+    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 2개를 고르세요. 제출 후 정답 개수만 보여줍니다. 거짓말 2개를 모두 맞히면 통과입니다.")
 
     for item in st.session_state[option_key]:
         st.markdown(
@@ -2410,30 +2413,33 @@ def show_lie_finding_activity(category, topic_name, data):
     )
     st.caption(f"현재 선택: {len(selected_letters)}/2개 · 반드시 2개만 선택하세요.")
 
-    if st.button("거짓말 답 확인", key=f"{prefix}check", use_container_width=True):
+    if st.button("✅ 거짓말 찾기 제출하기", key=f"{prefix}submit", use_container_width=True):
         false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
         selected_set = set(selected_letters)
         if len(selected_set) != 2:
-            st.session_state[f"{prefix}result"] = None
-            st.session_state[f"{prefix}false_letters"] = sorted(false_letters)
+            st.session_state[f"{prefix}submitted"] = False
+            st.session_state[f"{prefix}message"] = "거짓말 보기를 정확히 2개 선택한 뒤 제출하세요."
         else:
-            st.session_state[f"{prefix}result"] = selected_set == false_letters
-            st.session_state[f"{prefix}false_letters"] = sorted(false_letters)
+            score = sum(1 for letter in selected_set if letter in false_letters)
+            st.session_state[f"{prefix}submitted"] = True
+            st.session_state[f"{prefix}score"] = score
+            st.session_state[f"{prefix}message"] = ""
 
-    if f"{prefix}result" in st.session_state:
-        if st.session_state[f"{prefix}result"] is None:
-            st.warning("거짓말 보기를 정확히 2개 선택해 주세요.")
-        elif st.session_state[f"{prefix}result"]:
-            st.success("정답입니다. 거짓말 2개를 모두 찾았습니다.")
+    if st.session_state.get(f"{prefix}message"):
+        st.warning(st.session_state[f"{prefix}message"])
+
+    if st.session_state.get(f"{prefix}submitted"):
+        score = st.session_state.get(f"{prefix}score", 0)
+        st.markdown(f"### 거짓말 찾기 정답 개수: {score}/2")
+        if score == 2:
+            st.success("통과했습니다! 거짓말 2개를 모두 찾았습니다.")
         else:
-            ans = ", ".join(st.session_state.get(f"{prefix}false_letters", []))
-            st.error(f"아직 정답이 아닙니다. 정답은 {ans}입니다.")
+            st.warning("아직 통과하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
 
-    if f"{prefix}result" in st.session_state:
+    if st.session_state.get(f"{prefix}submitted") or st.session_state.get(f"{prefix}message"):
         if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
             reset_keys_by_prefix(prefix)
             st.rerun()
-
 
 def show_key_expression_word_test(category, topic_name, data, max_words=10):
     """Key Expressions 단어 테스트: 10개 중 8개 이상을 첫 확인에서 맞혀야 통과합니다."""
@@ -2495,6 +2501,56 @@ def show_key_expression_word_test(category, topic_name, data, max_words=10):
         if st.button("🔄 단어 테스트 다시 풀기", key=f"{prefix}reset_in_reading", use_container_width=True):
             reset_keys_by_prefix(prefix)
             st.rerun()
+
+
+def get_english_sentences(text):
+    """영어 편지에서 문장 단위로 나눕니다. 마침표, 물음표, 느낌표를 기준으로 4문장 이상인지 확인합니다."""
+    cleaned = str(text).strip()
+    raw_sentences = re.split(r"(?<=[.!?])\s+|\n+", cleaned)
+    sentences = []
+    for sentence in raw_sentences:
+        sentence = sentence.strip()
+        if not sentence:
+            continue
+        # 영어 단어가 2개 이상 들어간 것만 실제 문장으로 봅니다.
+        if len(re.findall(r"[A-Za-z']+", sentence)) >= 2:
+            sentences.append(sentence)
+    return sentences
+
+
+def normalize_sentence_for_repeat(sentence):
+    """복사·붙여넣기 반복 여부를 확인하기 위해 문장을 단순화합니다."""
+    return re.sub(r"[^a-z]+", "", str(sentence).lower())
+
+
+def has_repeated_sentence(sentences):
+    """똑같은 영어 문장을 반복해서 붙여 넣었는지 확인합니다."""
+    normalized = [normalize_sentence_for_repeat(s) for s in sentences]
+    normalized = [s for s in normalized if s]
+    return len(normalized) != len(set(normalized))
+
+
+def make_character_reply(answer, target_name, topic_name):
+    """학생 편지에 대한 주인공의 짧은 영어 답장을 만듭니다."""
+    lower = answer.lower()
+    if any(w in lower for w in ["give up", "try", "practice", "effort", "hard", "goal"]):
+        core_message = "Your words remind me that effort and patience are very important."
+    elif any(w in lower for w in ["sad", "sorry", "worry", "nervous", "tired", "feel"]):
+        core_message = "Thank you for understanding my feelings and cheering me up."
+    elif any(w in lower for w in ["dream", "future", "hope", "believe"]):
+        core_message = "I am happy that my story helped you think about your dream and future."
+    elif any(w in lower for w in ["team", "friend", "respect", "together"]):
+        core_message = "Your letter shows that you understand the value of respect and teamwork."
+    else:
+        core_message = "Thank you for reading my story carefully and writing a kind letter to me."
+
+    return (
+        f"Dear Me,\n\n"
+        f"Thank you for your warm letter. {core_message} "
+        f"I hope you keep learning from this story and use the lesson in your own life. "
+        f"Even small steps can help you grow, so keep trying and believe in yourself.\n\n"
+        f"From,\n{target_name}"
+    )
 
 
 def make_letter_feedback(answer, target_name):
@@ -2610,7 +2666,7 @@ def show_letter_to_character_activity(category, topic_name, data):
     )
 
     if st.button("💌 편지 보내기", key=f"{prefix}submit", use_container_width=True):
-        lines = [line.strip() for line in answer.splitlines() if line.strip()]
+        sentences = get_english_sentences(answer)
         if not answer.strip():
             if korean_draft.strip():
                 st.warning("구글 번역에서 영어 문장을 확인한 뒤, 2단계 영어 편지 칸에 붙여 넣어 주세요.")
@@ -2618,10 +2674,13 @@ def show_letter_to_character_activity(category, topic_name, data):
                 st.warning("먼저 한국어 초안을 쓰거나, 2단계에 영어 편지를 직접 써 주세요.")
         elif detect_language(answer) == "ko":
             st.warning("피드백은 영어 편지를 기준으로 제공합니다. 구글 번역 버튼을 눌러 영어로 바꾼 뒤 2단계에 영어로 적어 주세요.")
-        elif len(lines) < 2:
-            st.warning("좋아요. 영어 편지를 한 줄 더 추가해서 2줄 이상으로 써 보세요.")
+        elif len(sentences) < 4:
+            st.warning(f"영어로 최소 4문장 이상 써 주세요. 현재 확인된 영어 문장 수: {len(sentences)}/4")
+        elif has_repeated_sentence(sentences):
+            st.warning("똑같은 문장을 반복해서 복사·붙여넣기하면 답장을 받을 수 없습니다. 서로 다른 내용의 영어 문장 4개 이상을 써 주세요.")
         else:
             ko_feedback, en_feedback, improved_letter = make_letter_feedback(answer, target_name)
+            reply_letter = make_character_reply(answer, target_name, topic_name)
             st.markdown(
                 f"""
                 <div class="message-card">
@@ -2631,7 +2690,14 @@ def show_letter_to_character_activity(category, topic_name, data):
                 """,
                 unsafe_allow_html=True
             )
-            st.success("편지를 보냈습니다. 아래 피드백을 확인해 보세요.")
+            st.success("편지를 보냈습니다. 주인공의 답장과 피드백을 확인해 보세요.")
+            st.markdown("### 📬 주인공의 답장")
+            st.text_area(
+                "주인공에게서 온 영어 답장",
+                value=reply_letter,
+                height=180,
+                key=f"{prefix}reply_letter"
+            )
             st.markdown("### 🇰🇷 한국어 피드백")
             st.info(ko_feedback)
             st.markdown("### 🇺🇸 English Feedback")
