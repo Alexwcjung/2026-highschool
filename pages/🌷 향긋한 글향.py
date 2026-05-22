@@ -588,7 +588,7 @@ data_bank = {
         "⚽ Ronaldo": {
             "title": "Soccer Talk with Ronaldo",
             "subtitle": "Practice, confidence, and professional habits",
-            "video_url": "https://www.youtube.com/shorts/PmqPgcgvi_s",
+            "video_url": "https://www.youtube.com/watch?v=yQU8q_wXESU",
             "image_path": BASE_DIR / "images" / "ronaldo.png",
             "facts": [
                 "Portuguese soccer player",
