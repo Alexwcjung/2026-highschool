@@ -2361,7 +2361,7 @@ def _statement_bilingual(en, ko):
 
 
 def show_lie_finding_activity(category, topic_name, data):
-    """거짓말 찾기 활동: A~G 보기 중 거짓말 2개를 고르고 한 번에 제출합니다."""
+    """거짓말 찾기 활동: 첫 번째 카드는 사라지지 않고 선택 표시만 됩니다. 두 개를 모두 고른 뒤 정답이면 두 카드가 동시에 반짝하고 사라지며 미션 성공이 뜹니다."""
     hint = get_story_card_hint(topic_name, data)
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
@@ -2380,6 +2380,10 @@ def show_lie_finding_activity(category, topic_name, data):
 
     statements = true_statements + false_statements
     option_key = f"{prefix}options"
+    selected_key = f"{prefix}selected_cards"
+    success_key = f"{prefix}success"
+    message_key = f"{prefix}message"
+
     if option_key not in st.session_state:
         shuffled = _stable_shuffle(statements, f"lie-{category}-{topic_name}")
         letters = list("ABCDEFG")
@@ -2387,57 +2391,126 @@ def show_lie_finding_activity(category, topic_name, data):
             {"letter": letters[i], "text": text, "truth": truth}
             for i, (text, truth) in enumerate(shuffled)
         ]
+    st.session_state.setdefault(selected_key, [])
+    st.session_state.setdefault(success_key, False)
+    st.session_state.setdefault(message_key, "")
+
+    st.markdown(
+        """
+        <style>
+        @keyframes sparkleDisappear {
+            0% { opacity: 1; transform: scale(1); box-shadow: 0 0 0 rgba(250,204,21,0); }
+            35% { opacity: 1; transform: scale(1.03); box-shadow: 0 0 28px rgba(250,204,21,0.95); }
+            70% { opacity: 0.45; transform: scale(0.97); }
+            100% { opacity: 0; transform: scale(0.88); height: 0; margin: 0; padding: 0; overflow: hidden; }
+        }
+        .lie-card {
+            margin-bottom: 10px;
+            padding: 15px 17px;
+            border-radius: 20px;
+            border: 1.5px solid #fde68a;
+            background: rgba(255,255,255,0.94);
+            box-shadow: 0 4px 12px rgba(15,23,42,0.05);
+        }
+        .lie-card-selected {
+            border: 2.5px solid #38bdf8;
+            background: linear-gradient(135deg, #eff6ff 0%, #ffffff 100%);
+            box-shadow: 0 0 0 4px rgba(56,189,248,0.16), 0 6px 16px rgba(15,23,42,0.08);
+        }
+        .lie-card-vanish {
+            animation: sparkleDisappear 1.15s ease-in-out forwards;
+            border: 2.5px solid #facc15;
+            background: linear-gradient(135deg, #fef9c3 0%, #ffffff 45%, #dcfce7 100%);
+        }
+        .lie-mission-success {
+            margin-top: 14px;
+            padding: 22px 24px;
+            border-radius: 26px;
+            background: linear-gradient(135deg, #dcfce7 0%, #ffffff 55%, #fef9c3 100%);
+            border: 2px solid #86efac;
+            text-align: center;
+            font-size: 28px;
+            font-weight: 950;
+            color: #166534;
+            box-shadow: 0 10px 24px rgba(15,23,42,0.10);
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 2개를 고르세요. 제출 후 정답 개수만 보여줍니다. 거짓말 2개를 모두 맞히면 통과입니다.")
+    st.caption("A~G 보기 중 지문 내용과 맞지 않는 거짓말 카드 2개를 누르세요. 첫 번째 카드는 사라지지 않고 선택 표시만 됩니다. 두 개를 모두 고르면 바로 판정됩니다. 정답은 공개하지 않습니다.")
 
+    false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
+    selected_letters = st.session_state[selected_key]
+
+    # 성공한 뒤에는 학생이 고른 두 카드가 반짝하고 사라지는 효과를 보여줍니다.
+    if st.session_state[success_key]:
+        for item in st.session_state[option_key]:
+            if item["letter"] in selected_letters:
+                card_class = "lie-card lie-card-vanish"
+            else:
+                card_class = "lie-card"
+            st.markdown(
+                f"""
+                <div class="{card_class}">
+                    <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
+                        {item['letter']}. {item['text']}
+                    </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+        st.markdown('<div class="lie-mission-success">✨ 미션 성공! 거짓말 2개를 모두 찾았습니다.</div>', unsafe_allow_html=True)
+        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_success", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
+        return
+
+    # 아직 성공 전이면 카드 버튼을 보여줍니다.
     for item in st.session_state[option_key]:
+        is_selected = item["letter"] in selected_letters
+        card_class = "lie-card lie-card-selected" if is_selected else "lie-card"
         st.markdown(
             f"""
-            <div style="margin-bottom: 10px; padding: 15px 17px; border-radius: 20px;
-                        border: 1.5px solid #fde68a; background: rgba(255,255,255,0.94);
-                        box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
+            <div class="{card_class}">
                 <div style="font-size: 20px; font-weight: 950; color: #92400e; line-height: 1.6;">
                     {item['letter']}. {item['text']}
                 </div>
             </div>
             """,
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
+        btn_label = f"✅ {item['letter']} 선택됨" if is_selected else f"{item['letter']} 카드 선택"
+        if st.button(btn_label, key=f"{prefix}pick_{item['letter']}", use_container_width=True):
+            current = list(st.session_state[selected_key])
+            if item["letter"] in current:
+                current.remove(item["letter"])
+                st.session_state[message_key] = ""
+            elif len(current) < 2:
+                current.append(item["letter"])
+                st.session_state[message_key] = ""
+            else:
+                st.session_state[message_key] = "이미 2개를 골랐습니다. 다시 풀기를 눌러 새로 선택하세요."
 
-    selected_letters = st.multiselect(
-        "거짓말 보기 2개 선택",
-        list("ABCDEFG"),
-        key=f"{prefix}selected_letters",
-        label_visibility="collapsed"
-    )
-    st.caption(f"현재 선택: {len(selected_letters)}/2개 · 반드시 2개만 선택하세요.")
+            st.session_state[selected_key] = current
 
-    if st.button("✅ 거짓말 찾기 제출하기", key=f"{prefix}submit", use_container_width=True):
-        false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
-        selected_set = set(selected_letters)
-        if len(selected_set) != 2:
-            st.session_state[f"{prefix}submitted"] = False
-            st.session_state[f"{prefix}message"] = "거짓말 보기를 정확히 2개 선택한 뒤 제출하세요."
-        else:
-            score = sum(1 for letter in selected_set if letter in false_letters)
-            st.session_state[f"{prefix}submitted"] = True
-            st.session_state[f"{prefix}score"] = score
-            st.session_state[f"{prefix}message"] = ""
+            if len(current) == 2:
+                if set(current) == false_letters:
+                    st.session_state[success_key] = True
+                    st.session_state[message_key] = ""
+                else:
+                    st.session_state[message_key] = "아직 성공하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요."
+            st.rerun()
 
-    if st.session_state.get(f"{prefix}message"):
-        st.warning(st.session_state[f"{prefix}message"])
+    st.caption(f"현재 선택: {len(selected_letters)}/2개")
 
-    if st.session_state.get(f"{prefix}submitted"):
-        score = st.session_state.get(f"{prefix}score", 0)
-        st.markdown(f"### 거짓말 찾기 정답 개수: {score}/2")
-        if score == 2:
-            st.success("통과했습니다! 거짓말 2개를 모두 찾았습니다.")
-        else:
-            st.warning("아직 통과하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
+    if st.session_state.get(message_key):
+        st.warning(st.session_state[message_key])
 
-    if st.session_state.get(f"{prefix}submitted") or st.session_state.get(f"{prefix}message"):
-        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+    if selected_letters or st.session_state.get(message_key):
+        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_try", use_container_width=True):
             reset_keys_by_prefix(prefix)
             st.rerun()
 
