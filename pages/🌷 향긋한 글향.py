@@ -683,7 +683,7 @@ data_bank = {
         "⚽ Son Heung-min": {
             "title": "Talk with Son Heung-min",
             "subtitle": "Teamwork, humility, and respect",
-            "video_url": "여기에_손흥민_유튜브_링크",
+            "video_url": "https://www.youtube.com/watch?v=AmKHi17sy1Q",
             "image_path": BASE_DIR / "images" / "son.png",
             "facts": [
                 "South Korean soccer star",
