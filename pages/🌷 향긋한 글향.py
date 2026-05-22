@@ -777,7 +777,7 @@ data_bank = {
         "⛸️ Kim Yuna": {
             "title": "Skating Talk with Kim Yuna",
             "subtitle": "Focus, balance, and mental strength",
-            "video_url": "여기에_김연아_유튜브_링크",
+            "video_url": "https://www.youtube.com/watch?v=DaSyR7putcg",
             "image_path": BASE_DIR / "images" / "kim_yuna.png",
             "facts": [
                 "South Korean figure skating champion",
