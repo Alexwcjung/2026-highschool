@@ -6,6 +6,7 @@ import base64
 import random
 import json
 import re
+from urllib.parse import quote
 import streamlit.components.v1 as components
 
 # =========================================================
@@ -2541,27 +2542,59 @@ def make_letter_feedback(answer, target_name):
 
 
 def show_letter_to_character_activity(category, topic_name, data):
-    """마지막 활동: 주인공에게 편지 쓰기 + 한국어/영어 피드백."""
+    """마지막 활동: 한국어 초안 → 구글 번역 → 영어 편지 작성 → 한국어/영어 피드백."""
     hint = get_story_card_hint(topic_name, data)
     target_name = hint.get('Name', 'the main character')
     prefix = f"{category}_{topic_name}_letter_to_character_"
 
     st.markdown('<div class="section-box"><h3>💌 주인공에게 편지쓰기</h3></div>', unsafe_allow_html=True)
-    st.caption("지문 속 주인공에게 하고 싶은 말을 2줄 이상 편지로 써 보세요. 한국어 또는 영어 모두 가능합니다.")
+    st.caption("먼저 한국어로 쓰고 구글 번역으로 영어를 확인한 뒤, 아래 영어 편지 칸에 영어로 적어 넣으세요. 피드백은 영어 편지를 기준으로 제공합니다.")
+
+    korean_draft = st.text_area(
+        "1단계: 한국어로 먼저 쓰기",
+        placeholder=f"예: {target_name}에게 하고 싶은 말을 한국어로 먼저 써 보세요.\n힘들어도 포기하지 말고 계속 도전했으면 좋겠어.",
+        height=120,
+        key=f"{prefix}korean_draft"
+    )
+
+    if korean_draft.strip():
+        translate_url = (
+            "https://translate.google.com/?sl=ko&tl=en&op=translate&text="
+            + quote(korean_draft.strip())
+        )
+
+        st.markdown(
+            """
+            <div class="message-card">
+                <div class="story-card-title">🌐 번역 도움</div>
+                <div class="message-line">
+                    아래 버튼을 눌러 한국어 문장을 영어로 번역한 뒤,<br>
+                    번역된 영어 문장을 복사해서 2단계 영어 편지 칸에 붙여 넣으세요.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        st.link_button("🌐 구글 번역으로 영어 만들기", translate_url, use_container_width=True)
 
     answer = st.text_area(
-        "주인공에게 편지쓰기",
+        "2단계: 영어로 번역한 편지 적기",
         placeholder=f"예: Dear {target_name},\nYou did a great job. I want to cheer you up.",
         height=150,
         key=f"{prefix}answer"
     )
 
-    if st.button("편지 제출", key=f"{prefix}submit", use_container_width=True):
+    if st.button("편지 제출하고 피드백 받기", key=f"{prefix}submit", use_container_width=True):
         lines = [line.strip() for line in answer.splitlines() if line.strip()]
         if not answer.strip():
-            st.warning("먼저 주인공에게 편지를 써 주세요.")
+            if korean_draft.strip():
+                st.warning("구글 번역에서 영어 문장을 확인한 뒤, 2단계 영어 편지 칸에 붙여 넣어 주세요.")
+            else:
+                st.warning("먼저 한국어 초안을 쓰거나, 2단계에 영어 편지를 직접 써 주세요.")
+        elif detect_language(answer) == "ko":
+            st.warning("피드백은 영어 편지를 기준으로 제공합니다. 구글 번역 버튼을 눌러 영어로 바꾼 뒤 2단계에 영어로 적어 주세요.")
         elif len(lines) < 2:
-            st.warning("좋아요. 한 줄을 더 추가해서 2줄 이상으로 써 보세요.")
+            st.warning("좋아요. 영어 편지를 한 줄 더 추가해서 2줄 이상으로 써 보세요.")
         else:
             ko_feedback, en_feedback = make_letter_feedback(answer, target_name)
             st.markdown(
