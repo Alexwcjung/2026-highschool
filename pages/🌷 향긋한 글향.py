@@ -2622,18 +2622,42 @@ def make_letter_feedback(answer, target_name):
 
     return korean_feedback, english_feedback, improved_english
 
+def get_display_target_name(topic_name, target_name):
+    """화면에 보여 줄 한국어 이름을 정합니다."""
+    name_map = {
+        "⚽ Ronaldo": "호날두",
+        "🏀 Jordan": "조던",
+        "⚽ Son Heung-min": "손흥민",
+        "🎤 IU": "아이유",
+        "⛸️ Kim Yuna": "김연아",
+        "🎤 BTS Jungkook": "정국",
+        "🏜️ Grand Canyon": "그랜드캐니언",
+        "🗽 New York": "뉴욕",
+        "🏯 Gyeongbokgung": "경복궁",
+        "📘 교과서": "교과서 속 주인공",
+    }
+    return name_map.get(topic_name, target_name)
+
+
 def show_letter_to_character_activity(category, topic_name, data):
-    """마지막 활동: 한국어 초안 → 구글 번역 → 영어 편지 작성 → 한국어/영어 피드백."""
+    """마지막 활동: 한국어 초안 → 구글 번역 → 영어 편지 작성 → 영어 답장 → 답장 한국어 이해 확인."""
     hint = get_story_card_hint(topic_name, data)
     target_name = hint.get('Name', 'the main character')
+    display_name = get_display_target_name(topic_name, target_name)
     prefix = f"{category}_{topic_name}_letter_to_character_"
 
-    st.markdown('<div class="section-box"><h3>💌 주인공에게 편지쓰기</h3></div>', unsafe_allow_html=True)
-    st.caption("먼저 한국어로 쓰고 구글 번역으로 영어를 확인한 뒤, 아래 영어 편지 칸에 영어로 적어 넣으세요. 피드백은 영어 편지를 기준으로 제공합니다.")
+    st.markdown(
+        f'<div class="section-box"><h3>💌 {display_name}에게 편지 보내기</h3></div>',
+        unsafe_allow_html=True
+    )
+    st.caption(
+        "한국어로 먼저 생각을 쓰고 구글 번역으로 영어를 확인한 뒤, 영어 편지를 4문장 이상 적어 보내세요. "
+        "답장을 받은 뒤에는 답장도 구글 번역으로 한국어 뜻을 확인하고, 직접 한국어로 적어 넣습니다."
+    )
 
     korean_draft = st.text_area(
         "1단계: 한국어로 먼저 쓰기",
-        placeholder=f"예: {target_name}에게 하고 싶은 말을 한국어로 먼저 써 보세요.\n힘들어도 포기하지 말고 계속 도전했으면 좋겠어.",
+        placeholder=f"예: {display_name}에게 하고 싶은 말을 한국어로 먼저 써 보세요.\n힘들어도 포기하지 말고 계속 도전했으면 좋겠어.",
         height=120,
         key=f"{prefix}korean_draft"
     )
@@ -2656,16 +2680,16 @@ def show_letter_to_character_activity(category, topic_name, data):
             """,
             unsafe_allow_html=True
         )
-        st.link_button("🌐 구글 번역으로 영어 만들기", translate_url, use_container_width=True)
+        st.link_button("🌐 구글 번역으로 영어 편지 만들기", translate_url, use_container_width=True)
 
     answer = st.text_area(
         "2단계: 영어로 번역한 편지 적기",
-        placeholder=f"예: Dear {target_name},\nYou did a great job. I want to cheer you up.",
-        height=150,
+        placeholder=f"예: Dear {target_name},\nYou did a great job. I learned many things from you. I want to practice every day. I will not give up easily.",
+        height=170,
         key=f"{prefix}answer"
     )
 
-    if st.button("💌 편지 보내기", key=f"{prefix}submit", use_container_width=True):
+    if st.button(f"💌 {display_name}에게 편지 보내기", key=f"{prefix}submit", use_container_width=True):
         sentences = get_english_sentences(answer)
         if not answer.strip():
             if korean_draft.strip():
@@ -2673,7 +2697,7 @@ def show_letter_to_character_activity(category, topic_name, data):
             else:
                 st.warning("먼저 한국어 초안을 쓰거나, 2단계에 영어 편지를 직접 써 주세요.")
         elif detect_language(answer) == "ko":
-            st.warning("피드백은 영어 편지를 기준으로 제공합니다. 구글 번역 버튼을 눌러 영어로 바꾼 뒤 2단계에 영어로 적어 주세요.")
+            st.warning("편지는 영어로 보내야 합니다. 구글 번역 버튼을 눌러 영어로 바꾼 뒤 2단계에 영어로 적어 주세요.")
         elif len(sentences) < 4:
             st.warning(f"영어로 최소 4문장 이상 써 주세요. 현재 확인된 영어 문장 수: {len(sentences)}/4")
         elif has_repeated_sentence(sentences):
@@ -2681,34 +2705,73 @@ def show_letter_to_character_activity(category, topic_name, data):
         else:
             ko_feedback, en_feedback, improved_letter = make_letter_feedback(answer, target_name)
             reply_letter = make_character_reply(answer, target_name, topic_name)
-            st.markdown(
-                f"""
-                <div class="message-card">
-                    <div class="story-card-title">💌 Letter to {target_name}</div>
-                    <div class="message-line">{answer.replace(chr(10), '<br>')}</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            st.success("편지를 보냈습니다. 주인공의 답장과 피드백을 확인해 보세요.")
-            st.markdown("### 📬 주인공의 답장")
-            st.text_area(
-                "주인공에게서 온 영어 답장",
-                value=reply_letter,
-                height=180,
-                key=f"{prefix}reply_letter"
-            )
-            st.markdown("### 🇰🇷 한국어 피드백")
-            st.info(ko_feedback)
-            st.markdown("### 🇺🇸 English Feedback")
-            st.info(en_feedback)
-            st.markdown("### ✨ 더 자연스러운 영어 편지 예시")
-            st.text_area(
-                "복사해서 참고할 수 있는 개선 예시",
-                value=improved_letter,
-                height=180,
-                key=f"{prefix}improved_letter"
-            )
+            st.session_state[f"{prefix}sent_letter"] = answer
+            st.session_state[f"{prefix}reply_letter_value"] = reply_letter
+            st.session_state[f"{prefix}ko_feedback_value"] = ko_feedback
+            st.session_state[f"{prefix}en_feedback_value"] = en_feedback
+            st.session_state[f"{prefix}improved_letter_value"] = improved_letter
+            st.session_state[f"{prefix}reply_translation_done"] = False
+            st.success(f"편지를 보냈습니다. {display_name}의 답장을 확인해 보세요.")
+
+    sent_letter = st.session_state.get(f"{prefix}sent_letter", "")
+    reply_letter = st.session_state.get(f"{prefix}reply_letter_value", "")
+    ko_feedback = st.session_state.get(f"{prefix}ko_feedback_value", "")
+    en_feedback = st.session_state.get(f"{prefix}en_feedback_value", "")
+    improved_letter = st.session_state.get(f"{prefix}improved_letter_value", "")
+
+    if sent_letter and reply_letter:
+        st.markdown(
+            f"""
+            <div class="message-card">
+                <div class="story-card-title">💌 {display_name}에게 보낸 편지</div>
+                <div class="message-line">{sent_letter.replace(chr(10), '<br>')}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.markdown(f"### 📬 {display_name}의 답장")
+        st.text_area(
+            f"{display_name}에게서 온 영어 답장",
+            value=reply_letter,
+            height=180,
+            key=f"{prefix}reply_letter"
+        )
+
+        reply_translate_url = (
+            "https://translate.google.com/?sl=en&tl=ko&op=translate&text="
+            + quote(reply_letter.strip())
+        )
+        st.link_button(f"🌐 {display_name}의 답장 구글 번역으로 보기", reply_translate_url, use_container_width=True)
+
+        reply_korean = st.text_area(
+            f"3단계: {display_name}의 답장을 한국어로 적어 넣기",
+            placeholder="구글 번역으로 뜻을 확인한 뒤, 답장의 한국어 뜻을 여기에 적어 보세요.",
+            height=130,
+            key=f"{prefix}reply_korean_understanding"
+        )
+
+        if reply_korean.strip():
+            if st.button("✅ 편지를 모두 이해했습니다", key=f"{prefix}understood_btn", use_container_width=True):
+                st.session_state[f"{prefix}reply_translation_done"] = True
+                st.success("좋습니다! 영어 편지와 답장의 의미까지 모두 확인했습니다.")
+        else:
+            st.info("답장의 한국어 뜻을 적어 넣으면 ‘편지를 모두 이해했습니다’ 버튼이 나타납니다.")
+
+        if st.session_state.get(f"{prefix}reply_translation_done", False):
+            st.success("✅ 편지를 모두 이해했습니다.")
+
+        st.markdown("### 🇰🇷 한국어 피드백")
+        st.info(ko_feedback)
+        st.markdown("### 🇺🇸 English Feedback")
+        st.info(en_feedback)
+        st.markdown("### ✨ 더 자연스러운 영어 편지 예시")
+        st.text_area(
+            "복사해서 참고할 수 있는 개선 예시",
+            value=improved_letter,
+            height=180,
+            key=f"{prefix}improved_letter"
+        )
 
 tab_video, tab_reading = st.tabs([
     "🎬 동영상",
