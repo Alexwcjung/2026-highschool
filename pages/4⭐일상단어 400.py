@@ -1537,8 +1537,8 @@ def show_cassette_audio(items, title):
 
     if title == "전체 단어":
         button_label = "🎧 전체 단어 듣기"
-    elif title == "복습 희망":
-        button_label = "🎧 복습 희망 단어 듣기"
+    elif title == "정확히 모르겠어요":
+        button_label = "🎧 정확히 모르겠어요 단어 듣기"
     else:
         button_label = "🎧 테마별 전체 단어 듣기"
 
@@ -1668,7 +1668,7 @@ def show_word_cards(theme_words, theme_name):
 
         with col5:
             review_checked = st.checkbox(
-                "복습 희망",
+                "정확히 모르겠어요",
                 value=checked,
                 key=checkbox_key
             )
@@ -1696,8 +1696,8 @@ def show_unknown_words_tab():
     st.markdown(
         """
         <div class="theme-header">
-            <div class="theme-title">⭐ 복습 희망</div>
-            <div class="theme-desc">각 탭에서 복습하고 싶은 단어만 모아서 다시 들을 수 있습니다.</div>
+            <div class="theme-title">⭐ 정확히 모르겠어요</div>
+            <div class="theme-desc">각 탭에서 정확히 모르는 단어만 모아서 다시 들을 수 있습니다.</div>
         </div>
         """,
         unsafe_allow_html=True
@@ -1707,7 +1707,7 @@ def show_unknown_words_tab():
     unknown_info = st.session_state.unknown_word_info
 
     if not unknown_ids:
-        st.info("아직 체크한 단어가 없습니다. 각 단어 옆의 '복습 희망'을 체크해 보세요.")
+        st.info("아직 체크한 단어가 없습니다. 각 단어 옆의 '정확히 모르겠어요'를 체크해 보세요.")
         return
 
     st.success(f"총 {len(unknown_ids)}개의 단어를 체크했습니다.")
@@ -1719,20 +1719,20 @@ def show_unknown_words_tab():
         ko_meaning = info.get("meaning", "")
         unknown_items.append({
             "number": idx,
-            "theme": info.get("theme", "복습 희망"),
+            "theme": info.get("theme", "정확히 모르겠어요"),
             "word": word,
             "meaning": get_display_meaning(word, ko_meaning),
             "emoji": get_word_emoji(word),
         })
 
-    show_cassette_audio(unknown_items, "복습 희망")
+    show_cassette_audio(unknown_items, "정확히 모르겠어요")
 
     st.markdown("### 📌 체크한 단어 목록")
 
     for idx, review_id in enumerate(unknown_ids):
         info = unknown_info.get(review_id, {})
         word = info.get("word", review_id.split("||")[-1])
-        meaning = get_display_meaning(word, info.get("meaning", ""))
+        display_meaning = get_display_meaning(word, info.get("meaning", ""))
         theme_name = info.get("theme", "")
 
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
@@ -1786,7 +1786,7 @@ def show_unknown_words_tab():
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("🗑️ 복습 희망 전체 삭제", key="clear_all_unknown_words", use_container_width=True):
+    if st.button("🗑️ 정확히 모르겠어요 전체 삭제", key="clear_all_unknown_words", use_container_width=True):
         st.session_state.unknown_words = []
         st.session_state.unknown_word_info = {}
         clear_review_checkbox_keys()
@@ -1796,7 +1796,7 @@ def show_unknown_words_tab():
 # =========================
 # 탭 구성
 # =========================
-tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기", "⭐ 복습 희망"]
+tab_names = list(word_themes.keys()) + ["🎧 전체 단어 듣기", "⭐ 정확히 모르겠어요"]
 tabs = st.tabs(tab_names)
 
 for tab, theme_name in zip(tabs[:-2], word_themes.keys()):
