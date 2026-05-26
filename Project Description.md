@@ -62,19 +62,11 @@ This app does not fully implement CLT in every activity, because many activities
 
 ### 6. Form-Meaning-Use Vocabulary Learning
 
-The vocabulary activities reflect **Form-Meaning-Use Vocabulary Learning**. Nation (2001) explains that knowing a word involves knowing its form, meaning, and use.
-
-In this app, students do not only memorize the Korean meaning of a word. They listen to the word, check its meaning, pronounce it, and practice it in a simple sentence. For example, students may learn the word `pencil` by listening to its sound, checking its meaning, saying the word, and then using it in a sentence such as `I need a pencil.`
-
-In this way, vocabulary learning becomes connected to listening, pronunciation, meaning, and actual use.
-
-### 7. Mobile/AI-Mediated Interactive Language Practice
-
 The app reflects **mobile and AI-mediated interactive language practice** because students use a digital tool to listen, answer, speak, retry, and receive feedback. Wei (2023) showed that AI-mediated language instruction can be related to English learning achievement, L2 motivation, and self-regulated learning.
 
 In this app, students can learn at their own pace. They can listen again, check answers, retry speaking tasks, and review difficult words. This structure supports repeated practice, self-checking, and more individualized learning opportunities inside and outside the classroom.
 
-### 8. ASR-Based Pronunciation and Self-Paced Speaking Practice
+### 7. ASR-Based Pronunciation and Self-Paced Speaking Practice
 
 The speaking activities are directly connected to **automatic speech recognition (ASR)-based pronunciation practice**. Neri, Cucchiarini, and Strik (2003) discussed the use of ASR technology for second language pronunciation learning. More recently, Ngo, Chen, and Lai (2024) reported in a meta-analysis that ASR can support ESL/EFL pronunciation development.
 
@@ -82,7 +74,7 @@ In this app, students say words or sentences into the microphone, check whether 
 
 This is useful in a classroom where one teacher cannot immediately check every student’s pronunciation. The app gives each student a chance to speak, receive a recognition result, and retry individually.
 
-### 9. Repeated Word-Level Speaking Practice
+### 8. Repeated Word-Level Speaking Practice
 
 The individual word repetition activity is not just mechanical repetition. It is a basic speaking practice that helps students learn the sound form of vocabulary and develop oral automaticity.
 
