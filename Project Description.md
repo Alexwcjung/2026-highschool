@@ -26,11 +26,13 @@ This lesson is meaningful because it connects English learning to students’ in
 
 This app is designed based on several language learning principles that are closely related to low-proficiency EFL learners’ listening, vocabulary learning, and speaking practice.
 
-### 1. Comprehensible Input
+### 1. The Natural Approach
 
-This app reflects the idea of **Comprehensible Input**. Krashen and Terrell (1983) argue that language learners benefit from meaningful input that they can understand. In this app, students first listen to understandable English words, expressions, and song lyrics before moving to speaking practice.
+This app is more closely related to **the Natural Approach** than to Comprehensible Input alone. Krashen and Terrell (1983) emphasize that language acquisition is supported when learners are exposed to meaningful and understandable input in a low-anxiety environment. In the Natural Approach, learners are not forced to produce language before they are ready. Instead, they first build comprehension through listening, meaning-focused input, and familiar contexts.
 
-This design is especially suitable for low-proficiency learners because they may feel burdened if they are asked to read long texts, write sentences, or analyze grammar from the beginning. By providing understandable spoken input first, the app helps students become familiar with English sounds in a low-pressure way.
+This principle fits the design of this app because students first listen to English words, expressions, song lyrics, and simple sentences before being asked to speak or write. The app provides Korean meanings, captions, repeated audio, and simple tasks so that low-proficiency learners can understand the input without excessive pressure.
+
+The Natural Approach is especially appropriate for Korean vocational high school students who may feel anxious about English speaking. By beginning with familiar songs, short expressions, and repeated listening, the app lowers the affective burden and helps students experience English as something understandable and usable. Speaking practice is introduced gradually through word-level and sentence-level activities after students have had enough exposure to the target language.
 
 ### 2. Reading While Listening (RWL)
 
@@ -38,7 +40,15 @@ The app also uses **Reading While Listening (RWL)**. In the pop song activity, s
 
 Hui (2024) found that English learners showed better comprehension in the reading-while-listening condition than in the listening-only condition. This suggests that written support can scaffold listening comprehension. Therefore, the lyrics and captions in this app are not used to replace listening. Instead, they help learners visualize the spoken input and understand it more clearly.
 
-### 3. Audiolingual Practice and Repeated Oral Practice
+### 3. Inductive Grammar Learning
+
+The pop song module also includes **inductive grammar learning**. Instead of giving students a grammar rule first, the app presents several example sentences from the song or from similar everyday contexts. Students first notice repeated expressions, compare sentence patterns, infer the common structure, and then check the rule.
+
+For example, students may see repeated sentences such as `I've been losing sleep`, `I've been dreaming`, and `I've been practicing English`. Before the rule is directly explained, they are asked to identify the repeated expression, notice the form, and connect it with the meaning of an action or state continuing from the recent past to the present.
+
+This approach is suitable for low-proficiency learners because grammar is introduced through short, meaningful, and familiar examples rather than through long abstract explanations. After discovering the pattern, students complete controlled practice and then write their own sentence using the target structure. In this way, grammar learning moves from noticing to rule formation, practice, and simple personal use.
+
+### 4. Audiolingual Practice and Repeated Oral Practice
 
 After listening, students hear a speech model and repeat words or expressions several times. This is related to **audiolingual practice**, especially the idea of repeated oral practice.
 
@@ -46,7 +56,7 @@ For low-proficiency learners, repetition is not simply mechanical drilling. Many
 
 However, this app does not use repetition only for mechanical memorization. Students repeat words and expressions that can be used in real situations, so the practice is connected to communicative purposes.
 
-### 4. Communicative Language Teaching (CLT)
+### 5. Communicative Language Teaching (CLT)
 
 The app also reflects some principles of **Communicative Language Teaching (CLT)**. The learning content is not organized only around grammar points. Instead, it focuses on useful expressions that students can use in real situations.
 
@@ -54,7 +64,7 @@ For example, students practice expressions for asking for help, introducing them
 
 This app does not fully implement CLT in every activity, because many activities are individual listening and speaking practices. However, it reflects CLT principles by focusing on meaningful expressions and real-life use.
 
-### 5. Form-Meaning-Use Vocabulary Learning
+### 6. Form-Meaning-Use Vocabulary Learning
 
 The vocabulary activities reflect **Form-Meaning-Use Vocabulary Learning**. Nation (2001) explains that knowing a word involves knowing its form, meaning, and use.
 
@@ -62,13 +72,13 @@ In this app, students do not only memorize the Korean meaning of a word. They li
 
 In this way, vocabulary learning becomes connected to listening, pronunciation, meaning, and actual use.
 
-### 6. Mobile/AI-Mediated Interactive Language Practice
+### 7. Mobile/AI-Mediated Interactive Language Practice
 
 The app reflects **mobile and AI-mediated interactive language practice** because students use a digital tool to listen, answer, speak, retry, and receive feedback. Wei (2023) showed that AI-mediated language instruction can be related to English learning achievement, L2 motivation, and self-regulated learning.
 
 In this app, students can learn at their own pace. They can listen again, check answers, retry speaking tasks, and review difficult words. This structure supports repeated practice, self-checking, and more individualized learning opportunities inside and outside the classroom.
 
-### 7. ASR-Based Pronunciation and Self-Paced Speaking Practice
+### 8. ASR-Based Pronunciation and Self-Paced Speaking Practice
 
 The speaking activities are directly connected to **automatic speech recognition (ASR)-based pronunciation practice**. Neri, Cucchiarini, and Strik (2003) discussed the use of ASR technology for second language pronunciation learning. More recently, Ngo, Chen, and Lai (2024) reported in a meta-analysis that ASR can support ESL/EFL pronunciation development.
 
@@ -76,7 +86,7 @@ In this app, students say words or sentences into the microphone, check whether 
 
 This is useful in a classroom where one teacher cannot immediately check every student’s pronunciation. The app gives each student a chance to speak, receive a recognition result, and retry individually.
 
-### 8. Repeated Word-Level Speaking Practice
+### 9. Repeated Word-Level Speaking Practice
 
 The individual word repetition activity is not just mechanical repetition. It is a basic speaking practice that helps students learn the sound form of vocabulary and develop oral automaticity.
 
@@ -110,7 +120,7 @@ The app is a customized Streamlit-based English learning app. It includes severa
 - matching games
 - short reflection or writing activities
 
-The pop song module includes background learning, lyrics or captions, listening activities, comprehension questions, key expressions, sentence matching, and short reflection activities. This module helps students receive meaningful English input in an enjoyable and low-anxiety context.
+The pop song module includes background learning, lyrics or captions, listening activities, comprehension questions, key expressions, sentence matching, inductive grammar learning, controlled grammar practice, and short reflection activities. This module helps students receive meaningful English input and notice useful language patterns in an enjoyable and low-anxiety context.
 
 The **Daily English 400** module organizes vocabulary into familiar themes, such as school life, classroom activities, home and daily life, hobbies, weather, shopping, and food. In the lesson, students use the school-life vocabulary section.
 
@@ -167,6 +177,10 @@ The lesson is designed to be teacher-guided and app-supported. The teacher intro
 ## 📚 References
 
 Brown, H. D. (2007). *Principles of language learning and teaching* (5th ed.). Pearson Education.
+
+Ellis, R. (2002). The place of grammar instruction in the second/foreign language curriculum. In E. Hinkel & S. Fotos (Eds.), *New perspectives on grammar teaching in second language classrooms* (pp. 17–34). Lawrence Erlbaum Associates.
+
+Thornbury, S. (1999). *How to teach grammar*. Pearson Education.
 
 Hui, B. (2024). Scaffolding comprehension with reading while listening and the role of reading speed and text complexity. *The Modern Language Journal, 108*(1), 183–200. https://doi.org/10.1111/modl.12905
 
