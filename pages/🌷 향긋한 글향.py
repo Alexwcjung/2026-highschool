@@ -1985,41 +1985,25 @@ simple_reading_people = {
             ("Ronaldo first played for Sporting CP in Portugal.", "호날두는 포르투갈의 스포르팅 CP에서 처음 뛰었다."),
             ("Later, he moved to Manchester United in England.", "나중에 그는 영국의 맨체스터 유나이티드로 이적했다."),
             ("In 2008, he won his first Ballon d'Or.", "2008년에 그는 첫 발롱도르를 받았다."),
-            ("In 2008, he also won the Champions League with Manchester United.", "2008년에 그는 맨체스터 유나이티드와 챔피언스리그에서도 우승했다."),
             ("In 2016, he won Euro 2016 with Portugal.", "2016년에 그는 포르투갈과 유로 2016에서 우승했다."),
             ("He believes that talent is helpful, but good habits are more important.", "그는 재능도 도움이 되지만 좋은 습관이 더 중요하다고 믿는다."),
-            ("His story shows the power of practice, focus, and strong routines.", "그의 이야기는 연습, 집중, 강한 루틴의 힘을 보여 준다."),
         ]),
         "mission_questions": [
-            ("1. Ronaldo가 태어난 나라는 어디인가요?", ["Portugal", "Spain", "Brazil", "England"], "Portugal"),
-            ("2. Ronaldo가 태어난 해는 언제인가요?", ["1985", "1995", "2008", "2016"], "1985"),
-            ("3. Ronaldo가 자란 섬은 어디인가요?", ["Madeira", "Jeju", "Hawaii", "Bali"], "Madeira"),
-            ("4. Ronaldo에게는 남자 형제가 몇 명 있나요?", ["One", "Two", "Three", "Four"], "One"),
-            ("5. Ronaldo에게는 여자 형제가 몇 명 있나요?", ["Two", "One", "Three", "Four"], "Two"),
-            ("6. Ronaldo의 남자 형제 이름은 무엇인가요?", ["Hugo", "Messi", "Bruno", "Pepe"], "Hugo"),
-            ("7. Ronaldo의 여자 형제 이름으로 알맞은 것은 무엇인가요?", ["Elma and Katia", "Anna and Maria", "Rose and Lisa", "Sofia and Bella"], "Elma and Katia"),
-            ("8. Ronaldo가 처음 뛴 포르투갈 팀은 어디인가요?", ["Sporting CP", "Manchester United", "Real Madrid", "Juventus"], "Sporting CP"),
-            ("9. Ronaldo가 나중에 이적한 영국 팀은 어디인가요?", ["Manchester United", "Chelsea", "Liverpool", "Arsenal"], "Manchester United"),
-            ("10. Ronaldo가 첫 Ballon d'Or를 받은 해는 언제인가요?", ["2008", "2016", "1985", "2023"], "2008"),
-            ("11. Ronaldo가 Portugal과 Euro에서 우승한 해는 언제인가요?", ["2016", "2008", "2010", "2018"], "2016"),
-            ("12. Ronaldo가 talent보다 더 중요하다고 믿는 것은 무엇인가요?", ["Good habits", "Expensive shoes", "Famous friends", "Watching games"], "Good habits"),
+            ("1. Ronaldo가 태어난 나라는 어디인가요?", ["Spain", "Brazil", "Portugal", "England"], "Portugal"),
+            ("2. Ronaldo가 태어난 해는 언제인가요?", ["1995", "2008", "2016", "1985"], "1985"),
+            ("3. Ronaldo가 자란 섬은 어디인가요?", ["Jeju", "Hawaii", "Madeira", "Bali"], "Madeira"),
+            ("4. Ronaldo에게는 남자 형제가 몇 명 있나요?", ["Two", "Three", "Four", "One"], "One"),
+            ("5. Ronaldo에게는 여자 형제가 몇 명 있나요?", ["One", "Three", "Two", "Four"], "Two"),
+            ("6. Ronaldo의 남자 형제 이름은 무엇인가요?", ["Messi", "Bruno", "Pepe", "Hugo"], "Hugo"),
+            ("7. Ronaldo의 여자 형제 이름으로 알맞은 것은 무엇인가요?", ["Anna and Maria", "Rose and Lisa", "Elma and Katia", "Sofia and Bella"], "Elma and Katia"),
+            ("8. Ronaldo가 처음 뛴 포르투갈 팀은 어디인가요?", ["Manchester United", "Real Madrid", "Juventus", "Sporting CP"], "Sporting CP"),
+            ("9. Ronaldo가 나중에 이적한 영국 팀은 어디인가요?", ["Chelsea", "Liverpool", "Manchester United", "Arsenal"], "Manchester United"),
+            ("10. Ronaldo가 첫 Ballon d'Or를 받은 해는 언제인가요?", ["2016", "1985", "2008", "2023"], "2008"),
+            ("11. Ronaldo가 Portugal과 Euro에서 우승한 해는 언제인가요?", ["2008", "2010", "2018", "2016"], "2016"),
+            ("12. Ronaldo가 talent보다 더 중요하다고 믿는 것은 무엇인가요?", ["Expensive shoes", "Famous friends", "Good habits", "Watching games"], "Good habits"),
         ],
-        "matching_pairs": [
-            ("Ronaldo was born in Portugal.", "호날두는 포르투갈에서 태어났다."),
-            ("He grew up on Madeira.", "그는 마데이라에서 자랐다."),
-            ("He has one brother and two sisters.", "그에게는 남자 형제 한 명과 여자 형제 두 명이 있다."),
-            ("He first played for Sporting CP.", "그는 스포르팅 CP에서 처음 뛰었다."),
-            ("He won his first Ballon d'Or in 2008.", "그는 2008년에 첫 발롱도르를 받았다."),
-            ("Good habits are more important than talent.", "좋은 습관은 재능보다 더 중요하다."),
-        ],
-        "lie_cards": [
-            ("Ronaldo was born in Portugal in 1985.", True),
-            ("Ronaldo grew up on Madeira.", True),
-            ("Ronaldo has two brothers and one sister.", False),
-            ("Ronaldo's brother's name is Hugo.", True),
-            ("Ronaldo first played for Manchester United in Portugal.", False),
-            ("Ronaldo won Euro 2016 with Portugal.", True),
-        ],
+        "matching_pairs": [("Ronaldo was born in Portugal.", "호날두는 포르투갈에서 태어났다."), ("He grew up on Madeira.", "그는 마데이라에서 자랐다."), ("He has one brother and two sisters.", "그에게는 남자 형제 한 명과 여자 형제 두 명이 있다."), ("He first played for Sporting CP.", "그는 스포르팅 CP에서 처음 뛰었다."), ("He won his first Ballon d'Or in 2008.", "그는 2008년에 첫 발롱도르를 받았다."), ("Good habits are more important than talent.", "좋은 습관은 재능보다 더 중요하다.")],
+        "lie_cards": [("Ronaldo was born in Spain in 1995.", False), ("Ronaldo grew up on Madeira.", True), ("Ronaldo has one brother and two sisters.", True), ("Ronaldo first played for Sporting CP.", True), ("Ronaldo's brother's name is Messi.", False)],
         "reflection_prompt": "Ronaldo의 이야기를 통해 내가 배울 점은 무엇인가요?"
     },
     "🏀 Jordan": {
@@ -2034,27 +2018,25 @@ simple_reading_people = {
             ("In 1984, he joined the Chicago Bulls.", "1984년에 그는 시카고 불스에 입단했다."),
             ("He won six NBA championships with the Chicago Bulls.", "그는 시카고 불스와 함께 NBA 챔피언십에서 여섯 번 우승했다."),
             ("He wore number 23 for most of his career.", "그는 선수 생활 대부분 동안 23번을 달았다."),
-            ("Jordan was famous for focus, confidence, and strong competitiveness.", "조던은 집중력, 자신감, 강한 승부욕으로 유명했다."),
             ("He often said that failure helped him become better.", "그는 실패가 자신을 더 나아지게 했다고 자주 말했다."),
             ("His story shows that mistakes can become motivation.", "그의 이야기는 실수가 동기가 될 수 있음을 보여 준다."),
-            ("He teaches us to practice again after failure.", "그는 실패 후 다시 연습해야 한다는 것을 가르쳐 준다."),
         ]),
         "mission_questions": [
-            ("1. Jordan이 태어난 도시는 어디인가요?", ["Brooklyn", "Chicago", "Los Angeles", "Miami"], "Brooklyn"),
-            ("2. Jordan이 자란 곳은 어디인가요?", ["Wilmington", "Boston", "Seattle", "Dallas"], "Wilmington"),
-            ("3. Jordan이 태어난 해는 언제인가요?", ["1963", "1982", "1984", "1998"], "1963"),
-            ("4. Jordan에게는 남자 형제가 몇 명 있나요?", ["Two", "One", "Three", "Four"], "Two"),
-            ("5. Jordan에게는 여자 형제가 몇 명 있나요?", ["Two", "One", "Three", "Four"], "Two"),
-            ("6. Jordan이 대학 농구를 한 학교는 어디인가요?", ["University of North Carolina", "Harvard University", "Stanford University", "Oxford University"], "University of North Carolina"),
-            ("7. Jordan이 대학 결승전에서 유명한 결승 슛을 넣은 해는 언제인가요?", ["1982", "1963", "1984", "1996"], "1982"),
-            ("8. Jordan이 Chicago Bulls에 입단한 해는 언제인가요?", ["1984", "1982", "1991", "2008"], "1984"),
-            ("9. Jordan은 Chicago Bulls와 NBA에서 몇 번 우승했나요?", ["Six", "Two", "Three", "Ten"], "Six"),
-            ("10. Jordan이 주로 달았던 등번호는 무엇인가요?", ["23", "7", "10", "30"], "23"),
-            ("11. Jordan은 무엇으로 유명했나요?", ["Focus, confidence, and competitiveness", "Singing and dancing", "Cooking and painting", "Travel and shopping"], "Focus, confidence, and competitiveness"),
-            ("12. Jordan의 이야기가 보여 주는 것은 무엇인가요?", ["Mistakes can become motivation", "Failure is always the end", "Practice is not useful", "Winning is only luck"], "Mistakes can become motivation"),
+            ("1. Jordan이 태어난 도시는 어디인가요?", ["Chicago", "Los Angeles", "Brooklyn", "Miami"], "Brooklyn"),
+            ("2. Jordan이 자란 곳은 어디인가요?", ["Boston", "Seattle", "Dallas", "Wilmington"], "Wilmington"),
+            ("3. Jordan이 태어난 해는 언제인가요?", ["1982", "1984", "1963", "1998"], "1963"),
+            ("4. Jordan에게는 남자 형제가 몇 명 있나요?", ["One", "Three", "Four", "Two"], "Two"),
+            ("5. Jordan에게는 여자 형제가 몇 명 있나요?", ["One", "Three", "Two", "Four"], "Two"),
+            ("6. Jordan이 대학 농구를 한 학교는 어디인가요?", ["Harvard University", "Stanford University", "Oxford University", "University of North Carolina"], "University of North Carolina"),
+            ("7. Jordan이 대학 결승전에서 유명한 결승 슛을 넣은 해는 언제인가요?", ["1963", "1984", "1982", "1996"], "1982"),
+            ("8. Jordan이 Chicago Bulls에 입단한 해는 언제인가요?", ["1982", "1991", "2008", "1984"], "1984"),
+            ("9. Jordan은 Chicago Bulls와 NBA에서 몇 번 우승했나요?", ["Two", "Three", "Six", "Ten"], "Six"),
+            ("10. Jordan이 주로 달았던 등번호는 무엇인가요?", ["7", "10", "30", "23"], "23"),
+            ("11. Jordan은 실패가 자신을 어떻게 만들었다고 말했나요?", ["weaker", "slower", "better", "sleepier"], "better"),
+            ("12. Jordan의 이야기가 보여 주는 것은 무엇인가요?", ["Failure is always the end", "Practice is not useful", "Mistakes can become motivation", "Winning is only luck"], "Mistakes can become motivation"),
         ],
-        "matching_pairs": [("Jordan was born in Brooklyn.", "조던은 브루클린에서 태어났다."), ("He joined the Chicago Bulls in 1984.", "그는 1984년에 시카고 불스에 입단했다."), ("He won six NBA championships.", "그는 NBA에서 여섯 번 우승했다."), ("He wore number 23.", "그는 23번을 달았다."), ("Failure helped him become better.", "실패는 그가 더 나아지도록 도왔다."), ("Mistakes can become motivation.", "실수는 동기가 될 수 있다.")],
-        "lie_cards": [("Jordan was born in Brooklyn in 1963.", True), ("Jordan grew up in Wilmington.", True), ("Jordan has one brother and three sisters.", False), ("Jordan joined the Chicago Bulls in 1984.", True), ("Jordan won three NBA championships.", False), ("Jordan wore number 23 for most of his career.", True)],
+        "matching_pairs": [("Jordan was born in Brooklyn.", "조던은 브루클린에서 태어났다."), ("He grew up in Wilmington.", "그는 윌밍턴에서 자랐다."), ("He joined the Chicago Bulls in 1984.", "그는 1984년에 시카고 불스에 입단했다."), ("He won six NBA championships.", "그는 NBA에서 여섯 번 우승했다."), ("He wore number 23.", "그는 23번을 달았다."), ("Mistakes can become motivation.", "실수는 동기가 될 수 있다.")],
+        "lie_cards": [("Jordan was born in Brooklyn in 1963.", True), ("Jordan grew up in Wilmington.", True), ("Jordan has one brother and three sisters.", False), ("Jordan joined the Chicago Bulls in 1984.", True), ("Jordan won three NBA championships.", False)],
         "reflection_prompt": "Jordan의 이야기를 통해 내가 배울 점은 무엇인가요?"
     },
     "⚽ Son Heung-min": {
@@ -2068,137 +2050,128 @@ simple_reading_people = {
             ("He played for Hamburger SV and Bayer Leverkusen in Germany.", "그는 독일에서 함부르크 SV와 바이어 레버쿠젠에서 뛰었다."),
             ("In 2015, he moved to Tottenham Hotspur in England.", "2015년에 그는 영국의 토트넘 홋스퍼로 이적했다."),
             ("In 2022, he won the Premier League Golden Boot.", "2022년에 그는 프리미어리그 득점왕을 차지했다."),
-            ("He became captain of the South Korean national team.", "그는 대한민국 국가대표팀의 주장이 되었다."),
-            ("Son is known for speed, shooting, and teamwork.", "손흥민은 속도, 슈팅, 팀워크로 알려져 있다."),
-            ("He often smiles and shows respect to others.", "그는 자주 웃고 다른 사람을 존중하는 모습을 보인다."),
-            ("His story shows the importance of basics and discipline.", "그의 이야기는 기본기와 절제의 중요성을 보여 준다."),
-            ("He teaches us to grow through steady practice.", "그는 꾸준한 연습을 통해 성장해야 한다는 것을 가르쳐 준다."),
+            ("He became the captain of the South Korean national team.", "그는 대한민국 국가대표팀의 주장이 되었다."),
+            ("He is known for speed, finishing, and teamwork.", "그는 속도, 마무리 능력, 팀워크로 알려져 있다."),
+            ("His story shows that basics and discipline are important.", "그의 이야기는 기본기와 절제가 중요하다는 것을 보여 준다."),
         ]),
         "mission_questions": [
-            ("1. Son Heung-min이 태어난 도시는 어디인가요?", ["Chuncheon", "Seoul", "Busan", "Jeju"], "Chuncheon"),
-            ("2. Son Heung-min이 태어난 해는 언제인가요?", ["1992", "2015", "2022", "1985"], "1992"),
-            ("3. Son Heung-min의 아버지 이름은 무엇인가요?", ["Son Woong-jung", "Park Ji-sung", "Kim Min-jae", "Lee Kang-in"], "Son Woong-jung"),
-            ("4. 어릴 때 Son이 반복해서 연습한 것은 무엇인가요?", ["Basic skills", "Video games", "Only running", "Cooking"], "Basic skills"),
-            ("5. Son은 어린 선수 시절 어느 나라로 갔나요?", ["Germany", "Spain", "Brazil", "Canada"], "Germany"),
-            ("6. Son이 독일에서 뛴 팀으로 알맞은 것은 무엇인가요?", ["Hamburger SV and Bayer Leverkusen", "Manchester United and Chelsea", "Real Madrid and Barcelona", "Juventus and Milan"], "Hamburger SV and Bayer Leverkusen"),
-            ("7. Son이 Tottenham Hotspur로 이적한 해는 언제인가요?", ["2015", "1992", "2022", "2008"], "2015"),
-            ("8. Son이 2022년에 받은 상은 무엇인가요?", ["Premier League Golden Boot", "Ballon d'Or", "NBA MVP", "Olympic Gold Medal"], "Premier League Golden Boot"),
-            ("9. Son은 어느 국가대표팀의 주장이 되었나요?", ["South Korean national team", "German national team", "English national team", "Brazilian national team"], "South Korean national team"),
-            ("10. Son은 무엇으로 알려져 있나요?", ["Speed, shooting, and teamwork", "Singing, acting, and painting", "Cooking, writing, and dancing", "Only height"], "Speed, shooting, and teamwork"),
-            ("11. Son의 이야기는 무엇의 중요성을 보여 주나요?", ["Basics and discipline", "Money and luck", "Noise and anger", "Games and sleep"], "Basics and discipline"),
-            ("12. Son은 무엇을 통해 성장해야 한다고 가르치나요?", ["Steady practice", "No practice", "Only talent", "Giving up"], "Steady practice"),
+            ("1. Son Heung-min이 태어난 도시는 어디인가요?", ["Seoul", "Busan", "Chuncheon", "Daegu"], "Chuncheon"),
+            ("2. Son Heung-min이 태어난 해는 언제인가요?", ["1985", "2015", "2022", "1992"], "1992"),
+            ("3. 어릴 때 Son의 훈련을 도운 사람은 누구인가요?", ["His friend", "His coach in England", "His father", "His brother"], "His father"),
+            ("4. Son이 반복해서 연습한 것은 무엇인가요?", ["Singing", "Cooking", "Painting", "Basic skills"], "Basic skills"),
+            ("5. Son은 어린 선수 시절 어느 나라로 갔나요?", ["England", "Spain", "Germany", "France"], "Germany"),
+            ("6. Son이 독일에서 뛴 팀으로 알맞은 것은 무엇인가요?", ["Tottenham and Arsenal", "Hamburger SV and Bayer Leverkusen", "Seoul and Jeju", "Barcelona and Real Madrid"], "Hamburger SV and Bayer Leverkusen"),
+            ("7. Son이 Tottenham Hotspur로 이적한 해는 언제인가요?", ["1992", "2022", "2015", "2008"], "2015"),
+            ("8. Son이 2022년에 받은 상은 무엇인가요?", ["Ballon d'Or", "NBA championship", "Golden Boot", "Grammy Award"], "Golden Boot"),
+            ("9. Son은 어느 국가대표팀의 주장이 되었나요?", ["Japan", "England", "Brazil", "South Korea"], "South Korea"),
+            ("10. Son이 알려진 특징으로 알맞은 것은 무엇인가요?", ["Cooking and painting", "Speed, finishing, and teamwork", "Only singing", "Dancing and acting"], "Speed, finishing, and teamwork"),
+            ("11. Son의 이야기가 보여 주는 중요한 것은 무엇인가요?", ["Money and luck", "Fear and anger", "Basics and discipline", "Only talent"], "Basics and discipline"),
+            ("12. 이 글의 중심 인물은 누구인가요?", ["Ronaldo", "Jordan", "IU", "Son Heung-min"], "Son Heung-min"),
         ],
-        "matching_pairs": [("Son was born in Chuncheon.", "손흥민은 춘천에서 태어났다."), ("His father helped him train.", "그의 아버지는 훈련을 도왔다."), ("He moved to Tottenham in 2015.", "그는 2015년에 토트넘으로 이적했다."), ("He won the Golden Boot in 2022.", "그는 2022년에 득점왕을 차지했다."), ("He is known for teamwork.", "그는 팀워크로 알려져 있다."), ("Basics and discipline are important.", "기본기와 절제가 중요하다.")],
-        "lie_cards": [("Son was born in Chuncheon in 1992.", True), ("His father helped him train.", True), ("Son first moved to Canada as a young player.", False), ("He moved to Tottenham in 2015.", True), ("He won the Premier League Golden Boot in 2022.", True), ("Son is known only for cooking.", False)],
+        "matching_pairs": [("Son was born in Chuncheon.", "손흥민은 춘천에서 태어났다."), ("His father helped him train.", "그의 아버지는 훈련을 도왔다."), ("He moved to Germany as a young player.", "그는 어린 선수 시절 독일로 갔다."), ("He moved to Tottenham in 2015.", "그는 2015년에 토트넘으로 이적했다."), ("He won the Golden Boot in 2022.", "그는 2022년에 득점왕을 차지했다."), ("Basics and discipline are important.", "기본기와 절제가 중요하다.")],
+        "lie_cards": [("Son was born in Chuncheon in 1992.", True), ("His father helped him train.", True), ("Son first moved to Canada as a young player.", False), ("He moved to Tottenham in 2015.", True), ("Son is known only for cooking.", False)],
         "reflection_prompt": "Son Heung-min의 이야기를 통해 내가 배울 점은 무엇인가요?"
     },
     "🎤 IU": {
         "title": "IU",
-        "subtitle": "Name, debut, songs, acting, and sincere expression",
+        "subtitle": "Name, debut, music, lyrics, and sincere expression",
         "dialogue": _info_lines([
             ("IU's real name is Lee Ji-eun.", "아이유의 본명은 이지은이다."),
             ("She was born in Seoul, South Korea, in 1993.", "그녀는 1993년에 대한민국 서울에서 태어났다."),
             ("She debuted as a singer in 2008.", "그녀는 2008년에 가수로 데뷔했다."),
-            ("Her stage name IU means 'I and You'.", "그녀의 예명 IU는 '나와 너'를 뜻한다."),
-            ("She became famous for her clear voice and emotional songs.", "그녀는 맑은 목소리와 감성적인 노래로 유명해졌다."),
-            ("One of her famous songs is Good Day.", "그녀의 유명한 노래 중 하나는 Good Day이다."),
-            ("IU also writes lyrics and tells stories through music.", "아이유는 가사를 쓰고 음악으로 이야기를 전한다."),
-            ("She has acted in television dramas, too.", "그녀는 텔레비전 드라마에서도 연기했다."),
-            ("Many fans like her honest words and warm messages.", "많은 팬들은 그녀의 솔직한 말과 따뜻한 메시지를 좋아한다."),
-            ("IU shows that small feelings can become powerful words.", "아이유는 작은 감정이 힘 있는 말이 될 수 있음을 보여 준다."),
-            ("Her story teaches us to express ourselves sincerely.", "그녀의 이야기는 자신을 진심으로 표현하라고 가르친다."),
-            ("She reminds us to trust our own voice.", "그녀는 우리에게 자신의 목소리를 믿으라고 일깨워 준다."),
+            ("Her stage name IU means I and You.", "그녀의 예명 IU는 나와 너를 뜻한다."),
+            ("She became known for her clear voice and emotional songs.", "그녀는 맑은 목소리와 감성적인 노래로 알려지게 되었다."),
+            ("IU also writes lyrics and tells stories through music.", "아이유는 가사를 쓰고 음악을 통해 이야기를 전하기도 한다."),
+            ("Many people like her warm messages.", "많은 사람들은 그녀의 따뜻한 메시지를 좋아한다."),
+            ("She has also acted in dramas.", "그녀는 드라마에서 연기하기도 했다."),
+            ("Her story shows that sincere feelings can become powerful words.", "그녀의 이야기는 진심 어린 감정이 힘 있는 말이 될 수 있음을 보여 준다."),
+            ("She teaches us to trust our own voice.", "그녀는 우리 자신의 목소리를 믿으라고 가르친다."),
         ]),
         "mission_questions": [
-            ("1. IU의 본명은 무엇인가요?", ["Lee Ji-eun", "Kim Yuna", "Park Ji-min", "Jang Won-young"], "Lee Ji-eun"),
-            ("2. IU가 태어난 도시는 어디인가요?", ["Seoul", "Busan", "Daegu", "Jeju"], "Seoul"),
-            ("3. IU가 태어난 해는 언제인가요?", ["1993", "2008", "2010", "1985"], "1993"),
-            ("4. IU가 가수로 데뷔한 해는 언제인가요?", ["2008", "1993", "2016", "2023"], "2008"),
-            ("5. IU라는 예명은 무엇을 뜻하나요?", ["I and You", "Ice Universe", "Inside Us", "Important Unit"], "I and You"),
-            ("6. IU는 무엇으로 유명해졌나요?", ["Clear voice and emotional songs", "Fast running", "Basketball skills", "Figure skating"], "Clear voice and emotional songs"),
-            ("7. IU의 유명한 노래 중 하나는 무엇인가요?", ["Good Day", "Seven", "Dynamite", "Imagine"], "Good Day"),
-            ("8. IU는 음악을 통해 무엇을 전하나요?", ["Stories", "Only numbers", "Sports rules", "Maps"], "Stories"),
-            ("9. IU는 텔레비전 드라마에서 무엇을 했나요?", ["Acted", "Played soccer", "Skated", "Cooked"], "Acted"),
-            ("10. 많은 팬들은 IU의 어떤 메시지를 좋아하나요?", ["Warm messages", "Cold messages", "Angry messages", "Empty messages"], "Warm messages"),
-            ("11. IU는 작은 감정이 무엇이 될 수 있음을 보여 주나요?", ["Powerful words", "A big problem", "A sports team", "A machine"], "Powerful words"),
-            ("12. IU의 이야기는 무엇을 가르치나요?", ["Express ourselves sincerely", "Hide all feelings", "Never write", "Only copy others"], "Express ourselves sincerely"),
+            ("1. IU의 본명은 무엇인가요?", ["Kim Ji-soo", "Park Min-young", "Lee Ji-eun", "Choi Yu-na"], "Lee Ji-eun"),
+            ("2. IU가 태어난 도시는 어디인가요?", ["Busan", "Daegu", "Incheon", "Seoul"], "Seoul"),
+            ("3. IU가 태어난 해는 언제인가요?", ["2008", "2013", "1993", "2023"], "1993"),
+            ("4. IU가 가수로 데뷔한 해는 언제인가요?", ["1993", "2016", "2023", "2008"], "2008"),
+            ("5. IU라는 예명은 무엇을 뜻하나요?", ["Ice and Umbrella", "I and You", "Inside Universe", "In Unit"], "I and You"),
+            ("6. IU는 무엇으로 알려졌나요?", ["Fast running", "Clear voice and emotional songs", "Basketball shots", "Only cooking"], "Clear voice and emotional songs"),
+            ("7. IU가 음악을 통해 하는 일은 무엇인가요?", ["Hides stories", "Writes lyrics and tells stories", "Stops singing", "Draws maps"], "Writes lyrics and tells stories"),
+            ("8. 많은 사람들이 IU의 무엇을 좋아하나요?", ["Cold rules", "Loud noise", "Warm messages", "Sports records"], "Warm messages"),
+            ("9. IU가 음악 외에 한 활동은 무엇인가요?", ["Acted in dramas", "Played in the NBA", "Worked as a pilot", "Won Euro 2016"], "Acted in dramas"),
+            ("10. IU의 이야기는 sincere feelings가 무엇이 될 수 있음을 보여 주나요?", ["A problem", "A mistake", "Powerful words", "A secret"], "Powerful words"),
+            ("11. IU는 우리에게 무엇을 믿으라고 가르치나요?", ["Only luck", "Money", "Other people only", "Our own voice"], "Our own voice"),
+            ("12. 이 글의 중심 인물은 누구인가요?", ["Kim Yuna", "Jordan", "IU", "Ronaldo"], "IU"),
         ],
-        "matching_pairs": [("IU's real name is Lee Ji-eun.", "아이유의 본명은 이지은이다."), ("She debuted in 2008.", "그녀는 2008년에 데뷔했다."), ("IU means I and You.", "IU는 나와 너를 뜻한다."), ("She writes lyrics.", "그녀는 가사를 쓴다."), ("Small feelings can become powerful words.", "작은 감정은 힘 있는 말이 될 수 있다."), ("Trust your own voice.", "너 자신의 목소리를 믿어라.")],
-        "lie_cards": [("IU's real name is Lee Ji-eun.", True), ("IU was born in Seoul in 1993.", True), ("IU debuted as a singer in 2018.", False), ("IU means I and You.", True), ("IU is famous only for basketball.", False), ("IU writes lyrics and tells stories through music.", True)],
+        "matching_pairs": [("IU's real name is Lee Ji-eun.", "아이유의 본명은 이지은이다."), ("She debuted in 2008.", "그녀는 2008년에 데뷔했다."), ("IU means I and You.", "IU는 나와 너를 뜻한다."), ("She writes lyrics.", "그녀는 가사를 쓴다."), ("Sincere feelings can become powerful words.", "진심 어린 감정은 힘 있는 말이 될 수 있다."), ("Trust your own voice.", "너 자신의 목소리를 믿어라.")],
+        "lie_cards": [("IU's real name is Lee Ji-eun.", True), ("IU was born in Seoul in 1993.", True), ("IU debuted as a singer in 2018.", False), ("IU means I and You.", True), ("IU is famous only for basketball.", False)],
         "reflection_prompt": "IU의 이야기를 통해 내가 배울 점은 무엇인가요?"
     },
     "⛸️ Kim Yuna": {
         "title": "Kim Yuna",
-        "subtitle": "Birthplace, skating, Olympics, pressure, and preparation",
+        "subtitle": "Birthplace, skating, medals, pressure, and calmness",
         "dialogue": _info_lines([
             ("Kim Yuna was born in Bucheon, South Korea, in 1990.", "김연아는 1990년에 대한민국 부천에서 태어났다."),
             ("She started figure skating when she was six years old.", "그녀는 여섯 살 때 피겨스케이팅을 시작했다."),
-            ("She practiced jumps, spins, balance, and expression.", "그녀는 점프, 회전, 균형, 표현을 연습했다."),
-            ("Kim Yuna became famous for graceful performances and strong technique.", "김연아는 우아한 연기와 뛰어난 기술로 유명해졌다."),
+            ("She practiced jumps, spins, and balance for many years.", "그녀는 여러 해 동안 점프, 스핀, 균형을 연습했다."),
             ("In 2010, she won the gold medal at the Vancouver Winter Olympics.", "2010년에 그녀는 밴쿠버 동계 올림픽에서 금메달을 땄다."),
             ("In 2014, she won the silver medal at the Sochi Winter Olympics.", "2014년에 그녀는 소치 동계 올림픽에서 은메달을 땄다."),
             ("Many people called her Queen Yuna.", "많은 사람들은 그녀를 퀸연아라고 불렀다."),
-            ("She had pressure before big competitions.", "그녀는 큰 대회 전에 압박감을 느꼈다."),
-            ("She trusted her training and focused on one movement at a time.", "그녀는 자신의 훈련을 믿고 한 번에 하나의 동작에 집중했다."),
+            ("She was famous for graceful movement and strong technique.", "그녀는 우아한 움직임과 강한 기술로 유명했다."),
+            ("Before competitions, she focused on her training.", "경기 전 그녀는 자신의 훈련에 집중했다."),
             ("Her story shows that preparation can make the mind calmer.", "그녀의 이야기는 준비가 마음을 더 침착하게 만들 수 있음을 보여 준다."),
-            ("She teaches us to practice steadily before important moments.", "그녀는 중요한 순간 전에 꾸준히 연습하라고 가르친다."),
-            ("She also reminds us to enjoy our own growth.", "그녀는 또한 자신의 성장을 즐기라고 일깨워 준다."),
+            ("She teaches us to trust steady practice.", "그녀는 꾸준한 연습을 믿으라고 가르친다."),
         ]),
         "mission_questions": [
-            ("1. Kim Yuna가 태어난 도시는 어디인가요?", ["Bucheon", "Seoul", "Busan", "Chuncheon"], "Bucheon"),
-            ("2. Kim Yuna가 태어난 해는 언제인가요?", ["1990", "2010", "2014", "1993"], "1990"),
-            ("3. Kim Yuna는 몇 살 때 피겨스케이팅을 시작했나요?", ["Six", "Ten", "Three", "Fourteen"], "Six"),
-            ("4. Kim Yuna가 연습한 것으로 알맞은 것은 무엇인가요?", ["Jumps, spins, balance, and expression", "Cooking and painting", "Soccer and baseball", "Only sleeping"], "Jumps, spins, balance, and expression"),
-            ("5. Kim Yuna는 무엇으로 유명해졌나요?", ["Graceful performances and strong technique", "Fast singing", "Basketball shooting", "Writing novels"], "Graceful performances and strong technique"),
-            ("6. Kim Yuna가 Vancouver Winter Olympics에서 금메달을 딴 해는 언제인가요?", ["2010", "2014", "1990", "2022"], "2010"),
-            ("7. Kim Yuna가 Sochi Winter Olympics에서 은메달을 딴 해는 언제인가요?", ["2014", "2010", "2008", "2023"], "2014"),
-            ("8. 많은 사람들이 Kim Yuna를 무엇이라고 불렀나요?", ["Queen Yuna", "Captain Yuna", "Golden Boot", "Good Day"], "Queen Yuna"),
-            ("9. Kim Yuna는 큰 대회 전에 무엇을 느꼈나요?", ["Pressure", "No feeling", "Hunger only", "Anger only"], "Pressure"),
-            ("10. Kim Yuna는 무엇을 믿었나요?", ["Her training", "Only luck", "A phone", "Other people's mistakes"], "Her training"),
-            ("11. 준비는 마음을 어떻게 만들 수 있나요?", ["Calmer", "Angrier", "Weaker", "Slower"], "Calmer"),
-            ("12. Kim Yuna는 중요한 순간 전에 무엇을 하라고 가르치나요?", ["Practice steadily", "Give up", "Avoid pressure", "Forget practice"], "Practice steadily"),
+            ("1. Kim Yuna가 태어난 도시는 어디인가요?", ["Seoul", "Daegu", "Bucheon", "Busan"], "Bucheon"),
+            ("2. Kim Yuna가 태어난 해는 언제인가요?", ["2010", "2014", "1990", "2008"], "1990"),
+            ("3. Kim Yuna는 몇 살 때 피겨스케이팅을 시작했나요?", ["Four", "Five", "Seven", "Six"], "Six"),
+            ("4. Kim Yuna가 오랫동안 연습한 것으로 알맞은 것은 무엇인가요?", ["Cooking and singing", "Jumps, spins, and balance", "Soccer and tennis", "Painting and writing"], "Jumps, spins, and balance"),
+            ("5. Kim Yuna가 Vancouver Winter Olympics에서 금메달을 딴 해는 언제인가요?", ["1990", "2014", "2010", "2022"], "2010"),
+            ("6. Kim Yuna가 Sochi Winter Olympics에서 은메달을 딴 해는 언제인가요?", ["2010", "1990", "2020", "2014"], "2014"),
+            ("7. 많은 사람들은 Kim Yuna를 무엇이라고 불렀나요?", ["Captain Yuna", "Teacher Yuna", "Queen Yuna", "Singer Yuna"], "Queen Yuna"),
+            ("8. Kim Yuna가 유명했던 특징은 무엇인가요?", ["Only speed", "Graceful movement and strong technique", "Cooking skills", "Loud singing"], "Graceful movement and strong technique"),
+            ("9. 경기 전 Kim Yuna는 무엇에 집중했나요?", ["Other people", "Her phone", "Her training", "Only luck"], "Her training"),
+            ("10. Kim Yuna의 이야기는 preparation이 마음을 어떻게 만들 수 있음을 보여 주나요?", ["Angrier", "Sleepier", "Calmer", "Weaker"], "Calmer"),
+            ("11. Kim Yuna는 우리에게 무엇을 믿으라고 가르치나요?", ["Steady practice", "Only luck", "Noise", "Fear"], "Steady practice"),
+            ("12. 이 글의 중심 인물은 누구인가요?", ["IU", "Jungkook", "Kim Yuna", "Jordan"], "Kim Yuna"),
         ],
-        "matching_pairs": [("Kim Yuna was born in Bucheon.", "김연아는 부천에서 태어났다."), ("She started skating at six.", "그녀는 여섯 살 때 스케이트를 시작했다."), ("She won gold in 2010.", "그녀는 2010년에 금메달을 땄다."), ("She won silver in 2014.", "그녀는 2014년에 은메달을 땄다."), ("She trusted her training.", "그녀는 자신의 훈련을 믿었다."), ("Preparation can make the mind calmer.", "준비는 마음을 더 침착하게 만들 수 있다.")],
-        "lie_cards": [("Kim Yuna was born in Bucheon in 1990.", True), ("She started figure skating when she was six.", True), ("She won gold at the Vancouver Winter Olympics in 2010.", True), ("She won silver at the Sochi Winter Olympics in 2020.", False), ("Many people called her Queen Yuna.", True), ("She trusted only luck before competitions.", False)],
+        "matching_pairs": [("Kim Yuna was born in Bucheon.", "김연아는 부천에서 태어났다."), ("She started skating at six.", "그녀는 여섯 살 때 스케이트를 시작했다."), ("She won gold in 2010.", "그녀는 2010년에 금메달을 땄다."), ("She won silver in 2014.", "그녀는 2014년에 은메달을 땄다."), ("She focused on her training.", "그녀는 자신의 훈련에 집중했다."), ("Preparation can make the mind calmer.", "준비는 마음을 더 침착하게 만들 수 있다.")],
+        "lie_cards": [("Kim Yuna was born in Bucheon in 1990.", True), ("She started figure skating when she was six.", True), ("She won gold at the Vancouver Winter Olympics in 2010.", True), ("She won silver at the Sochi Winter Olympics in 2020.", False), ("She trusted only luck before competitions.", False)],
         "reflection_prompt": "Kim Yuna의 이야기를 통해 내가 배울 점은 무엇인가요?"
     },
     "🎤 BTS Jungkook": {
         "title": "BTS Jungkook",
-        "subtitle": "Birthplace, debut, practice, solo music, and growth",
+        "subtitle": "Birthplace, group, songs, practice, and growth",
         "dialogue": _info_lines([
             ("Jungkook was born in Busan, South Korea, in 1997.", "정국은 1997년에 대한민국 부산에서 태어났다."),
             ("His full name is Jeon Jung-kook.", "그의 전체 이름은 전정국이다."),
-            ("He became a member of BTS.", "그는 BTS의 멤버가 되었다."),
+            ("He is a member of BTS.", "그는 BTS의 멤버이다."),
             ("BTS debuted in 2013.", "BTS는 2013년에 데뷔했다."),
-            ("Jungkook is known for singing, dancing, and strong stage performances.", "정국은 노래, 춤, 강한 무대 공연으로 알려져 있다."),
-            ("He practiced often to improve his skills.", "그는 실력을 향상시키기 위해 자주 연습했다."),
+            ("Jungkook is known for singing, dancing, and stage performances.", "정국은 노래, 춤, 무대 공연으로 알려져 있다."),
+            ("He practiced often to improve his skills.", "그는 기술을 향상시키기 위해 자주 연습했다."),
             ("In 2023, he released the song Seven.", "2023년에 그는 Seven이라는 노래를 발표했다."),
             ("In 2023, he also released his solo album Golden.", "2023년에 그는 솔로 앨범 Golden도 발표했다."),
             ("Many fans like his clear voice and energetic performances.", "많은 팬들은 그의 맑은 목소리와 에너지 넘치는 공연을 좋아한다."),
-            ("Jungkook often tries to become better step by step.", "정국은 자주 조금씩 더 나아지려고 노력한다."),
             ("His story shows that effort and attitude are important.", "그의 이야기는 노력과 태도가 중요하다는 것을 보여 준다."),
-            ("He teaches us to focus on our own growth.", "그는 자신의 성장에 집중하라고 가르친다."),
         ]),
         "mission_questions": [
-            ("1. Jungkook이 태어난 도시는 어디인가요?", ["Busan", "Seoul", "Daegu", "Incheon"], "Busan"),
-            ("2. Jungkook이 태어난 해는 언제인가요?", ["1997", "2013", "2023", "1993"], "1997"),
-            ("3. Jungkook의 전체 이름은 무엇인가요?", ["Jeon Jung-kook", "Kim Nam-joon", "Park Ji-min", "Min Yoon-gi"], "Jeon Jung-kook"),
-            ("4. Jungkook은 어떤 그룹의 멤버인가요?", ["BTS", "Blackpink", "NewJeans", "EXO"], "BTS"),
-            ("5. BTS가 데뷔한 해는 언제인가요?", ["2013", "1997", "2023", "2008"], "2013"),
-            ("6. Jungkook은 무엇으로 알려져 있나요?", ["Singing, dancing, and stage performances", "Soccer and tennis", "Cooking and fishing", "Only acting"], "Singing, dancing, and stage performances"),
-            ("7. Jungkook은 왜 자주 연습했나요?", ["To improve his skills", "To sleep more", "To avoid music", "To stop dancing"], "To improve his skills"),
-            ("8. Jungkook이 2023년에 발표한 노래는 무엇인가요?", ["Seven", "Good Day", "Imagine", "Dynamite"], "Seven"),
-            ("9. Jungkook이 2023년에 발표한 솔로 앨범은 무엇인가요?", ["Golden", "Palette", "Thriller", "Purpose"], "Golden"),
-            ("10. 많은 팬들은 Jungkook의 무엇을 좋아하나요?", ["Clear voice and energetic performances", "Only quiet reading", "Basketball shots", "Painting skills"], "Clear voice and energetic performances"),
-            ("11. Jungkook은 어떤 방식으로 더 나아지려고 노력하나요?", ["Step by step", "Never practicing", "Only by luck", "By giving up"], "Step by step"),
-            ("12. Jungkook의 이야기는 무엇이 중요하다는 것을 보여 주나요?", ["Effort and attitude", "Money and height", "Fear and anger", "Only talent"], "Effort and attitude"),
+            ("1. Jungkook이 태어난 도시는 어디인가요?", ["Seoul", "Daegu", "Busan", "Incheon"], "Busan"),
+            ("2. Jungkook이 태어난 해는 언제인가요?", ["2013", "2023", "1993", "1997"], "1997"),
+            ("3. Jungkook의 전체 이름은 무엇인가요?", ["Kim Nam-joon", "Park Ji-min", "Jeon Jung-kook", "Min Yoon-gi"], "Jeon Jung-kook"),
+            ("4. Jungkook은 어떤 그룹의 멤버인가요?", ["Blackpink", "NewJeans", "EXO", "BTS"], "BTS"),
+            ("5. BTS가 데뷔한 해는 언제인가요?", ["1997", "2023", "2013", "2008"], "2013"),
+            ("6. Jungkook은 무엇으로 알려져 있나요?", ["Soccer and tennis", "Cooking and fishing", "Singing, dancing, and stage performances", "Only acting"], "Singing, dancing, and stage performances"),
+            ("7. Jungkook은 왜 자주 연습했나요?", ["To sleep more", "To avoid music", "To stop dancing", "To improve his skills"], "To improve his skills"),
+            ("8. Jungkook이 2023년에 발표한 노래는 무엇인가요?", ["Good Day", "Imagine", "Seven", "Dynamite"], "Seven"),
+            ("9. Jungkook이 2023년에 발표한 솔로 앨범은 무엇인가요?", ["Palette", "Thriller", "Purpose", "Golden"], "Golden"),
+            ("10. 많은 팬들은 Jungkook의 무엇을 좋아하나요?", ["Only quiet reading", "Basketball shots", "Clear voice and energetic performances", "Painting skills"], "Clear voice and energetic performances"),
+            ("11. Jungkook의 이야기는 무엇이 중요하다는 것을 보여 주나요?", ["Money and height", "Fear and anger", "Effort and attitude", "Only talent"], "Effort and attitude"),
+            ("12. 이 글의 중심 인물은 누구인가요?", ["Jordan", "IU", "Kim Yuna", "BTS Jungkook"], "BTS Jungkook"),
         ],
         "matching_pairs": [("Jungkook was born in Busan.", "정국은 부산에서 태어났다."), ("His full name is Jeon Jung-kook.", "그의 전체 이름은 전정국이다."), ("BTS debuted in 2013.", "BTS는 2013년에 데뷔했다."), ("He released Seven in 2023.", "그는 2023년에 Seven을 발표했다."), ("He released Golden in 2023.", "그는 2023년에 Golden을 발표했다."), ("Effort and attitude are important.", "노력과 태도가 중요하다.")],
-        "lie_cards": [("Jungkook was born in Busan in 1997.", True), ("His full name is Jeon Jung-kook.", True), ("BTS debuted in 2003.", False), ("Jungkook released Seven in 2023.", True), ("Jungkook released Golden in 2023.", True), ("His story shows that effort is not important.", False)],
+        "lie_cards": [("Jungkook was born in Busan in 1997.", True), ("His full name is Jeon Jung-kook.", True), ("BTS debuted in 2003.", False), ("Jungkook released Seven in 2023.", True), ("His story shows that effort is not important.", False)],
         "reflection_prompt": "Jungkook의 이야기를 통해 내가 배울 점은 무엇인가요?"
     }
 }
-
 # 인물 자료 덮어쓰기
 if "인물" in data_bank:
     for _topic, _new in simple_reading_people.items():
@@ -3649,42 +3622,169 @@ def show_mission_quiz(category, topic_name, data):
 
 
 def show_sequence_matching_activity(category, topic_name, data):
-    pairs = data.get("matching_pairs")
-    if not pairs:
-        pairs = [(eng, kor) for _, eng, kor in data.get("dialogue", [])[:6]]
+    """문장 매칭: 영어 카드와 한국어 카드를 직접 클릭해서 맞추는 방식입니다."""
+    pairs = data.get("matching_pairs") or [(eng, kor) for _, eng, kor in data.get("dialogue", [])[:6]]
     pairs = pairs[:6]
-    prefix = f"{category}_{topic_name}_simple_match_"
-    st.markdown('<div class="section-box"><h3>🧩 문장 매칭</h3></div>', unsafe_allow_html=True)
-    st.caption("영어 문장과 한국어 뜻을 연결하세요. 지문 속 핵심 정보로만 만들었습니다.")
-    for i, (en, ko) in enumerate(pairs, start=1):
-        cols = st.columns([1.2, 1.2])
-        with cols[0]:
-            st.markdown(f"<div style='padding:14px;border:1px solid #e5e7eb;border-radius:14px;background:white;color:#111827;font-weight:800;'>{i}. {en}</div>", unsafe_allow_html=True)
-        with cols[1]:
-            st.markdown(f"<div style='padding:14px;border:1px solid #e5e7eb;border-radius:14px;background:white;color:#111827;font-weight:800;'>뜻: {ko}</div>", unsafe_allow_html=True)
-    st.info("학생용 게임으로 더 어렵게 만들고 싶으면, 이 부분은 기존 카드 클릭형으로 다시 바꿀 수 있습니다.")
+
+    en_cards = [{"id": f"p{i}", "text": en} for i, (en, ko) in enumerate(pairs, start=1)]
+    ko_cards = [{"id": f"p{i}", "text": ko} for i, (en, ko) in enumerate(pairs, start=1)]
+    en_cards = _stable_shuffle(en_cards, f"match-en-{category}-{topic_name}")
+    ko_cards = _stable_shuffle(ko_cards, f"match-ko-{category}-{topic_name}")
+
+    payload = json.dumps({"en": en_cards, "ko": ko_cards, "total": len(pairs)}, ensure_ascii=False)
+    component_id = "click_match_" + uuid.uuid4().hex
+
+    components.html(
+        f"""
+        <div id="{component_id}" class="match-app">
+            <div class="match-title">🧩 문장 매칭</div>
+            <div class="match-guide">영어 카드와 한국어 카드를 직접 클릭하세요. 정답이면 두 카드가 반짝이며 사라집니다.</div>
+            <div class="match-status" id="status_{component_id}">먼저 카드 하나를 고르세요.</div>
+            <div class="match-board">
+                <div class="match-col"><div class="col-title">English</div><div id="en_{component_id}"></div></div>
+                <div class="match-col"><div class="col-title">Korean</div><div id="ko_{component_id}"></div></div>
+            </div>
+            <div class="progress"><div id="bar_{component_id}"></div></div>
+            <button class="reset-btn" id="reset_{component_id}">다시 시작</button>
+        </div>
+        <style>
+            #{component_id}.match-app {{background:#ffffff;border:1px solid #e5e7eb;border-radius:18px;padding:18px;font-family:Arial,sans-serif;color:#111827;}}
+            #{component_id} .match-title {{font-size:26px;font-weight:900;margin-bottom:6px;}}
+            #{component_id} .match-guide {{font-size:15px;font-weight:700;color:#475569;margin-bottom:12px;line-height:1.6;}}
+            #{component_id} .match-status {{background:#f8fafc;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;margin-bottom:12px;font-weight:800;color:#1d4ed8;}}
+            #{component_id} .match-board {{display:grid;grid-template-columns:1fr 1fr;gap:12px;}}
+            #{component_id} .match-col {{background:#f9fafb;border:1px solid #e5e7eb;border-radius:14px;padding:12px;}}
+            #{component_id} .col-title {{font-size:20px;font-weight:900;margin-bottom:10px;}}
+            #{component_id} .card {{width:100%;margin-bottom:10px;text-align:left;white-space:normal;line-height:1.55;border:2px solid #dbeafe;background:#fff;color:#111827;border-radius:14px;padding:14px;font-size:17px;font-weight:850;cursor:pointer;box-shadow:0 3px 10px rgba(15,23,42,.05);transition:.15s;}}
+            #{component_id} .card:hover {{transform:translateY(-1px);border-color:#93c5fd;}}
+            #{component_id} .selected {{background:#fef3c7;border-color:#f59e0b;color:#78350f;}}
+            #{component_id} .wrong {{background:#fee2e2;border-color:#ef4444;}}
+            #{component_id} .correct {{background:#dcfce7;border-color:#22c55e;animation:vanish_{component_id} .7s ease forwards;}}
+            @keyframes vanish_{component_id} {{0%{{opacity:1;transform:scale(1);}}40%{{opacity:1;transform:scale(1.04);box-shadow:0 0 24px rgba(250,204,21,.9);}}100%{{opacity:0;transform:scale(.85);height:0;padding:0;margin:0;border-width:0;overflow:hidden;}}}}
+            #{component_id} .progress {{height:12px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:12px 0;}}
+            #{component_id} .progress div {{height:100%;width:0%;background:#60a5fa;}}
+            #{component_id} .reset-btn {{width:100%;border:1px solid #d1d5db;border-radius:12px;background:#f9fafb;padding:12px;font-weight:900;cursor:pointer;}}
+            @media(max-width:700px){{#{component_id} .match-board{{grid-template-columns:1fr;}}}}
+        </style>
+        <script>
+            const data_{component_id} = {payload};
+            const root_{component_id} = document.getElementById("{component_id}");
+            const enBox_{component_id} = document.getElementById("en_{component_id}");
+            const koBox_{component_id} = document.getElementById("ko_{component_id}");
+            const status_{component_id} = document.getElementById("status_{component_id}");
+            const bar_{component_id} = document.getElementById("bar_{component_id}");
+            let selected_{component_id} = null;
+            let done_{component_id} = new Set();
+            let locked_{component_id} = false;
+            function esc_{component_id}(x) {{ return String(x).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;'); }}
+            function makeCard_{component_id}(card, kind) {{
+                const b=document.createElement('button'); b.className='card'; b.dataset.id=card.id; b.dataset.kind=kind; b.innerHTML=esc_{component_id}(card.text);
+                b.onclick=()=>clickCard_{component_id}(b, card, kind); return b;
+            }}
+            function render_{component_id}() {{
+                enBox_{component_id}.innerHTML=''; koBox_{component_id}.innerHTML='';
+                data_{component_id}.en.forEach(c=>{{ if(!done_{component_id}.has(c.id)) enBox_{component_id}.appendChild(makeCard_{component_id}(c,'en')); }});
+                data_{component_id}.ko.forEach(c=>{{ if(!done_{component_id}.has(c.id)) koBox_{component_id}.appendChild(makeCard_{component_id}(c,'ko')); }});
+                bar_{component_id}.style.width=(done_{component_id}.size/data_{component_id}.total*100)+'%';
+                if(done_{component_id}.size===data_{component_id}.total) status_{component_id}.textContent='모든 문장을 맞췄습니다! 🎉';
+            }}
+            function clear_{component_id}() {{ root_{component_id}.querySelectorAll('.selected').forEach(e=>e.classList.remove('selected')); selected_{component_id}=null; }}
+            function clickCard_{component_id}(el, card, kind) {{
+                if(locked_{component_id} || done_{component_id}.has(card.id)) return;
+                if(!selected_{component_id}) {{ selected_{component_id}={{el,card,kind}}; el.classList.add('selected'); status_{component_id}.textContent = kind==='en' ? '알맞은 한국어 카드를 고르세요.' : '알맞은 영어 카드를 고르세요.'; return; }}
+                if(selected_{component_id}.el===el) {{ clear_{component_id}(); status_{component_id}.textContent='선택을 취소했습니다.'; return; }}
+                locked_{component_id}=true;
+                if(selected_{component_id}.card.id===card.id && selected_{component_id}.kind!==kind) {{
+                    selected_{component_id}.el.classList.remove('selected'); el.classList.remove('selected');
+                    selected_{component_id}.el.classList.add('correct'); el.classList.add('correct'); status_{component_id}.textContent='정답입니다!';
+                    const id=card.id; setTimeout(()=>{{done_{component_id}.add(id); selected_{component_id}=null; locked_{component_id}=false; render_{component_id}();}},700);
+                }} else {{
+                    selected_{component_id}.el.classList.add('wrong'); el.classList.add('wrong'); status_{component_id}.textContent='다시 골라 보세요.';
+                    setTimeout(()=>{{selected_{component_id}.el.classList.remove('selected','wrong'); el.classList.remove('wrong'); selected_{component_id}=null; locked_{component_id}=false;}},420);
+                }}
+            }}
+            document.getElementById('reset_{component_id}').onclick=()=>{{selected_{component_id}=null;done_{component_id}=new Set();locked_{component_id}=false;status_{component_id}.textContent='먼저 카드 하나를 고르세요.';render_{component_id}();}};
+            render_{component_id}();
+        </script>
+        """,
+        height=700,
+        scrolling=True,
+    )
 
 
 def show_lie_finding_activity(category, topic_name, data):
+    """거짓말 찾기: 5개 카드 중 거짓말 2개를 직접 클릭합니다."""
     cards = data.get("lie_cards")
     if not cards:
-        cards = []
-        for _, eng, _ in data.get("dialogue", [])[:4]:
-            cards.append((eng, True))
-        cards += [("This information is not in the text.", False), ("The text says the opposite information.", False)]
-    cards = _stable_shuffle(cards, f"lie-simple-{category}-{topic_name}")
-    prefix = f"{category}_{topic_name}_lie_simple_"
+        cards = [(eng, True) for _, eng, _ in data.get("dialogue", [])[:3]] + [("This sentence is not true.", False), ("This detail is different from the text.", False)]
+    cards = cards[:5]
+    prefix = f"{category}_{topic_name}_lie_click5_"
+    option_key = f"{prefix}options"
+    selected_key = f"{prefix}selected"
+    success_key = f"{prefix}success"
+    message_key = f"{prefix}message"
+
+    if option_key not in st.session_state:
+        shuffled = _stable_shuffle(cards, f"lie5-{category}-{topic_name}")
+        letters = list("ABCDE")
+        st.session_state[option_key] = [{"letter": letters[i], "text": text, "truth": truth} for i, (text, truth) in enumerate(shuffled)]
+    st.session_state.setdefault(selected_key, [])
+    st.session_state.setdefault(success_key, False)
+    st.session_state.setdefault(message_key, "")
+
+    st.markdown("""
+    <style>
+    @keyframes lieVanish {0%{opacity:1;transform:scale(1);}40%{opacity:1;transform:scale(1.04);box-shadow:0 0 24px rgba(250,204,21,.9);}100%{opacity:0;transform:scale(.86);height:0;margin:0;padding:0;border-width:0;overflow:hidden;}}
+    .lie-card-wrap{margin-bottom:10px;}
+    .lie-card-wrap div[data-testid="stButton"]>button{width:100%;min-height:72px;text-align:left;justify-content:flex-start;white-space:normal;line-height:1.55;padding:14px 16px;border-radius:16px;border:2px solid #e5e7eb;background:#fff;color:#111827;font-size:17px;font-weight:850;}
+    .lie-card-selected div[data-testid="stButton"]>button{border:3px solid #3b82f6;background:#dbeafe;color:#1e3a8a;}
+    .lie-card-gone{animation:lieVanish .9s ease forwards;margin-bottom:10px;padding:14px 16px;border-radius:16px;border:2px solid #facc15;background:#fef9c3;color:#78350f;font-size:17px;font-weight:900;line-height:1.55;}
+    .lie-card-left{margin-bottom:10px;padding:14px 16px;border-radius:16px;border:2px solid #e5e7eb;background:#fff;color:#111827;font-size:17px;font-weight:850;line-height:1.55;}
+    </style>
+    """, unsafe_allow_html=True)
+
     st.markdown('<div class="section-box"><h3>🕵️ 거짓말 찾기</h3></div>', unsafe_allow_html=True)
-    st.caption("지문 내용과 맞지 않는 거짓말 2개를 고르세요.")
-    selected = st.multiselect("거짓말 카드 2개 선택", [text for text, _ in cards], max_selections=2, key=f"{prefix}select")
-    if st.button("✅ 거짓말 확인하기", key=f"{prefix}check", use_container_width=True):
-        false_texts = {text for text, is_true in cards if not is_true}
-        if len(selected) < 2:
-            st.warning("거짓말 카드 2개를 골라 주세요.")
-        elif set(selected) == false_texts:
-            st.success("정답입니다. 거짓말 2개를 모두 찾았습니다.")
-        else:
-            st.warning("아직 아닙니다. 지문을 다시 읽고 세부 정보를 확인하세요.")
+    st.caption("카드 5개 중 지문 내용과 맞지 않는 거짓말 카드 2개를 고르세요. 카드 문장 자체를 클릭하면 됩니다.")
+
+    false_letters = {item["letter"] for item in st.session_state[option_key] if not item["truth"]}
+    selected = list(st.session_state[selected_key])
+
+    if st.session_state[success_key]:
+        for item in st.session_state[option_key]:
+            if item["letter"] in selected:
+                st.markdown(f'<div class="lie-card-gone">{item["letter"]}. {item["text"]}</div>', unsafe_allow_html=True)
+            else:
+                st.markdown(f'<div class="lie-card-left">{item["letter"]}. {item["text"]}</div>', unsafe_allow_html=True)
+        st.success("정답입니다! 거짓말 2개를 모두 찾았습니다.")
+        if st.button("🔄 거짓말 찾기 다시 풀기", key=f"{prefix}reset_success", use_container_width=True):
+            reset_keys_by_prefix(prefix)
+            st.rerun()
+        return
+
+    for item in st.session_state[option_key]:
+        is_selected = item["letter"] in selected
+        cls = "lie-card-wrap lie-card-selected" if is_selected else "lie-card-wrap"
+        st.markdown(f'<div class="{cls}">', unsafe_allow_html=True)
+        label = f"✅ {item['letter']}. {item['text']}" if is_selected else f"{item['letter']}. {item['text']}"
+        if st.button(label, key=f"{prefix}pick_{item['letter']}", use_container_width=True):
+            current = list(st.session_state[selected_key])
+            if item["letter"] in current:
+                current.remove(item["letter"])
+            elif len(current) < 2:
+                current.append(item["letter"])
+            st.session_state[selected_key] = current
+            if len(current) == 2:
+                if set(current) == false_letters:
+                    st.session_state[success_key] = True
+                    st.session_state[message_key] = ""
+                else:
+                    st.session_state[selected_key] = []
+                    st.session_state[message_key] = "아직 아닙니다. 정답은 공개하지 않습니다. 다시 두 카드를 골라 보세요."
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    if st.session_state.get(message_key):
+        st.warning(st.session_state[message_key])
 
 
 def show_reading_blocks(dialogue, category, topic_name):
