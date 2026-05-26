@@ -224,49 +224,21 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
 
 
 def show_ive_been_grammar_tab(song_choice, data):
-    """Counting Stars를 활용한 inductive grammar learning 탭입니다."""
+    """Counting Stars를 활용한 간단한 inductive grammar learning 탭입니다."""
     grammar_key = safe_key(song_choice)
     prefix = f"have_been_grammar_{grammar_key}_"
 
-    st.subheader("🎯 Grammar Discovery")
-    st.markdown(
-        """
-        <div style="background:linear-gradient(135deg,#eef2ff,#ecfeff,#fdf2f8);
-                    padding:26px; border-radius:24px; border:2px solid #c7d2fe;
-                    margin-bottom:22px;">
-            <div style="font-size:2rem; font-weight:900; color:#3730a3; margin-bottom:10px;">
-                🔍 노래 속 반복 문장 패턴을 직접 찾아봅시다
-            </div>
-            <div style="font-size:1.18rem; line-height:1.9; color:#1e293b; font-weight:760;">
-                처음부터 문법 규칙을 알려 주지 않습니다.<br>
-                여러 문장을 보고 <b>자주 등장하는 표현</b>, <b>짧은 형태와 긴 형태</b>, <b>전체 공통 구조</b>, <b>의미</b>를 차례로 발견합니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.subheader("🎯 Grammar")
 
-    st.markdown("### 🎧 Step 1. 여러 문장 속에서 자주 등장하는 표현 찾기")
+    st.markdown("### 1. 자주 나오는 표현 찾기")
     st.markdown(
         """
-        <div class="game-card">
-            <div class="big-guide">
-                아래 문장들을 먼저 읽어 보세요.<br>
-                <b>자주 등장하는 표현은 무엇인가요?</b>
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-
-    st.markdown(
-        """
-        <div style="background:#f8fafc; padding:24px; border-radius:18px; border-left:6px solid #6366f1; line-height:2.2; font-size:1.22rem;">
-            Lately, <b>I’ve been</b> losing sleep.<br>
-            Baby, <b>I’ve been</b> praying hard.<br>
-            <b>I’ve been</b> dreaming about the things that we could be.<br>
-            Lately, <b>I’ve been</b> thinking about my future.<br>
-            Lately, <b>I’ve been</b> practicing English.
+        <div style="background:#f8fafc; padding:22px; border-radius:18px; border-left:6px solid #6366f1; line-height:2.15; font-size:1.22rem;">
+            Lately, I’ve been losing sleep.<br>
+            Baby, I’ve been praying hard.<br>
+            I’ve been dreaming about the things that we could be.<br>
+            Lately, I’ve been thinking about my future.<br>
+            Lately, I’ve been practicing English.
         </div>
         """,
         unsafe_allow_html=True
@@ -279,27 +251,14 @@ def show_ive_been_grammar_tab(song_choice, data):
         horizontal=True
     )
 
-    if st.button("🔍 자주 등장하는 표현 확인", key=f"{prefix}frequent_check", use_container_width=True):
+    if st.button("확인", key=f"{prefix}frequent_check", use_container_width=True):
         if frequent == "I’ve been":
-            st.success("정답입니다! 여러 문장에 I’ve been이 반복해서 등장합니다.")
+            st.success("정답입니다.")
         else:
-            st.error("다시 보세요. 여러 문장 앞부분에 반복되는 표현이 있습니다.")
+            st.error("다시 보세요. 여러 문장에 반복되는 표현이 있습니다.")
 
     st.markdown("---")
-    st.markdown("### 🧩 Step 2. 짧은 형태와 긴 형태 연결하기")
-    st.markdown(
-        """
-        <div style="background:#fff7ed; padding:22px; border-radius:20px; border:1px solid #fed7aa;">
-            <div style="font-size:1.3rem; font-weight:900; color:#9a3412; margin-bottom:10px;">
-                노래에는 짧은 형태가 나옵니다.
-            </div>
-            <div style="font-size:1.18rem; line-height:1.9; color:#1e293b;">
-                I’ve been = I _____ been
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    st.markdown("### 2. 짧은 형태와 긴 형태")
 
     full_form = st.radio(
         "I’ve been의 긴 형태는 무엇인가요?",
@@ -308,27 +267,22 @@ def show_ive_been_grammar_tab(song_choice, data):
         horizontal=True
     )
 
-    if st.button("🧩 긴 형태 확인", key=f"{prefix}full_form_check", use_container_width=True):
+    if st.button("확인", key=f"{prefix}full_form_check", use_container_width=True):
         if full_form == "I have been":
-            st.success("정답입니다! I’ve been은 I have been의 짧은 형태입니다.")
+            st.success("정답입니다. I’ve been = I have been")
         else:
             st.error("다시 생각해 보세요. ’ve는 have의 짧은 형태입니다.")
 
     st.markdown("---")
-    st.markdown("### 🧠 Step 3. 공통점 찾기: I have been 뒤에 무엇이 오나요?")
+    st.markdown("### 3. 공통점 찾기")
     st.markdown(
         """
-        <div style="background:#f0f9ff; padding:22px; border-radius:20px; border:1px solid #bae6fd;">
-            <div style="font-size:1.35rem; font-weight:900; color:#075985; margin-bottom:12px;">
-                I’ve been을 긴 형태로 바꾸어 보면 어떤 공통점이 보이나요?
-            </div>
-            <div style="font-size:1.18rem; line-height:2.05; color:#1e293b;">
-                I have been <b>losing</b> sleep.<br>
-                I have been <b>praying</b> hard.<br>
-                I have been <b>dreaming</b> about the things that we could be.<br>
-                I have been <b>thinking</b> about my future.<br>
-                I have been <b>practicing</b> English.
-            </div>
+        <div style="background:#f0f9ff; padding:22px; border-radius:18px; border:1px solid #bae6fd; line-height:2.15; font-size:1.18rem;">
+            I have been losing sleep.<br>
+            I have been praying hard.<br>
+            I have been dreaming about the things that we could be.<br>
+            I have been thinking about my future.<br>
+            I have been practicing English.
         </div>
         """,
         unsafe_allow_html=True
@@ -337,34 +291,29 @@ def show_ive_been_grammar_tab(song_choice, data):
     common_form = st.radio(
         "위 문장들의 공통점은 무엇인가요?",
         [
-            "I have been 뒤에 동사-ing가 온다.",
-            "I have been 뒤에 동사원형이 온다.",
-            "I have been 뒤에 과거형 동사가 온다.",
-            "I have been 뒤에 명사만 온다."
+            "I have been + 동사-ing",
+            "I have been + 동사원형",
+            "I have been + 과거형 동사",
+            "I have been + 명사"
         ],
         key=f"{prefix}common_form",
         horizontal=False
     )
 
-    if st.button("🧠 공통점 확인", key=f"{prefix}common_form_check", use_container_width=True):
-        if common_form == "I have been 뒤에 동사-ing가 온다.":
-            st.success("정답입니다! 핵심은 ing 하나가 아니라 I have been + 동사-ing 전체 구조입니다.")
+    if st.button("확인", key=f"{prefix}common_form_check", use_container_width=True):
+        if common_form == "I have been + 동사-ing":
+            st.success("정답입니다.")
         else:
-            st.error("다시 보세요. losing, praying, dreaming, thinking, practicing처럼 모두 동사-ing입니다.")
+            st.error("다시 보세요. have been 뒤에 오는 단어의 모양을 비교해 보세요.")
 
     st.markdown("---")
-    st.markdown("### 💡 Step 4. 의미 발견하기: 언제 쓰는 표현일까요?")
+    st.markdown("### 4. 의미의 공통점 찾기")
     st.markdown(
         """
-        <div style="background:#f8fafc; padding:22px; border-radius:20px; border:1px solid #cbd5e1;">
-            <div style="font-size:1.35rem; font-weight:900; color:#334155; margin-bottom:12px;">
-                이번에는 뜻을 보고 공통점을 찾아봅시다.
-            </div>
-            <div style="font-size:1.15rem; line-height:2.05; color:#1e293b;">
-                <b>Lately</b>, I have been losing sleep. → 요즘 잠을 잘 못 자고 있다.<br>
-                <b>Lately</b>, I have been thinking about my dream. → 요즘 내 꿈에 대해 계속 생각하고 있다.<br>
-                <b>Lately</b>, I have been practicing English. → 요즘 영어를 계속 연습하고 있다.
-            </div>
+        <div style="background:#f8fafc; padding:22px; border-radius:18px; border:1px solid #cbd5e1; line-height:2.1; font-size:1.12rem;">
+            Lately, I have been losing sleep. → 요즘 잠을 잘 못 자고 있다.<br>
+            Lately, I have been thinking about my dream. → 요즘 내 꿈에 대해 계속 생각하고 있다.<br>
+            Lately, I have been practicing English. → 요즘 영어를 계속 연습하고 있다.
         </div>
         """,
         unsafe_allow_html=True
@@ -382,14 +331,14 @@ def show_ive_been_grammar_tab(song_choice, data):
         horizontal=False
     )
 
-    if st.button("💡 의미 확인", key=f"{prefix}common_meaning_check", use_container_width=True):
+    if st.button("확인", key=f"{prefix}common_meaning_check", use_container_width=True):
         if common_meaning == "최근부터 지금까지 이어지는 행동이나 상태를 말한다.":
-            st.success("정답입니다! Lately와 함께 쓰이며 최근부터 지금까지 이어지는 행동이나 상태를 나타냅니다.")
+            st.success("정답입니다.")
         else:
-            st.error("다시 생각해 보세요. Lately는 ‘요즘, 최근에’라는 힌트를 줍니다.")
+            st.error("다시 생각해 보세요. Lately의 뜻도 함께 보세요.")
 
     st.markdown("---")
-    st.markdown("### ✅ Step 5. 우리가 발견한 규칙 정리하기")
+    st.markdown("### 5. 발견한 규칙 정리")
 
     rule_choice = st.radio(
         "지금까지 발견한 규칙을 가장 잘 정리한 것은 무엇인가요?",
@@ -403,30 +352,27 @@ def show_ive_been_grammar_tab(song_choice, data):
         horizontal=False
     )
 
-    if st.button("✅ 규칙 정리 확인", key=f"{prefix}rule_choice_check", use_container_width=True):
+    if st.button("확인", key=f"{prefix}rule_choice_check", use_container_width=True):
         if rule_choice == "I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다":
-            st.success("정답입니다! 오늘 발견한 핵심은 have been + 동사-ing 전체 구조입니다.")
+            st.success("정답입니다.")
             st.balloons()
         else:
-            st.error("다시 보세요. I’ve been = I have been이고, 뒤에는 동사-ing가 반복됩니다.")
+            st.error("다시 보세요. I’ve been = I have been입니다.")
 
     if st.session_state.get(f"{prefix}rule_choice") == "I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다":
         st.markdown(
             """
-            <div style="background:#f0fdf4; padding:24px; border-radius:22px; border:2px solid #bbf7d0; margin-top:22px;">
-                <div style="font-size:1.65rem; font-weight:900; color:#166534; margin-bottom:12px;">
+            <div style="background:#f0fdf4; padding:22px; border-radius:20px; border:2px solid #bbf7d0; margin-top:18px;">
+                <div style="font-size:1.45rem; font-weight:900; color:#166534; margin-bottom:10px;">
                     🌟 발견한 규칙
                 </div>
-                <div style="font-size:1.35rem; line-height:1.9; color:#1e293b; font-weight:850;">
+                <div style="font-size:1.25rem; line-height:1.8; color:#1e293b; font-weight:850;">
                     I’ve been = I have been<br>
                     I have been + 동사-ing<br>
                     = 최근부터 지금까지 계속 ~하고 있다
                 </div>
-                <div style="font-size:1.08rem; line-height:1.8; color:#475569; margin-top:10px;">
-                    예: I have been studying English. / I’ve been thinking about my dream.
-                </div>
                 <div style="font-size:0.95rem; color:#64748b; margin-top:8px;">
-                    ※ 문법 이름은 현재완료진행형입니다. 하지만 오늘은 이름보다 have been + ing 패턴과 의미를 발견하는 것이 중요합니다.
+                    문법 이름: 현재완료진행형
                 </div>
             </div>
             """,
@@ -435,30 +381,19 @@ def show_ive_been_grammar_tab(song_choice, data):
 
     st.markdown("---")
     st.markdown("### 📝 Controlled Practice")
-    st.markdown(
-        """
-        <div class="game-card">
-            <div class="big-guide">
-                이제 발견한 규칙을 연습해 봅시다.<br>
-                정답을 본 뒤 고친 것은 같은 라운드 점수에 반영되지 않습니다.
-            </div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
     questions = [
         {
             "q": "1. I’ve been의 긴 형태로 알맞은 것은?",
             "options": ["I am been", "I have been", "I will been", "I did been"],
             "answer": "I have been",
-            "explain": "’ve는 have의 짧은 형태입니다. I’ve been = I have been."
+            "explain": "I’ve been = I have been"
         },
         {
             "q": "2. 맞는 문장은?",
             "options": ["I have been study English.", "I have been studying English.", "I have studying English.", "I been studying English."],
             "answer": "I have been studying English.",
-            "explain": "have been + 동사-ing 전체가 핵심 패턴입니다."
+            "explain": "have been + 동사-ing"
         },
         {
             "q": "3. Lately, I have been ______ soccer.",
@@ -482,19 +417,19 @@ def show_ive_been_grammar_tab(song_choice, data):
             "q": "6. '요즘 계속 영어를 연습하고 있어.'에 가장 가까운 문장은?",
             "options": ["I practiced English yesterday.", "I have been practicing English.", "I will practice English.", "I am practice English."],
             "answer": "I have been practicing English.",
-            "explain": "요즘 계속 이어지는 행동이므로 have been + 동사-ing를 씁니다."
+            "explain": "요즘 계속 이어지는 행동입니다."
         },
         {
             "q": "7. 노래 문장에 가장 알맞은 것은? Lately, I’ve been ______ sleep.",
             "options": ["lose", "losing", "lost", "loses"],
             "answer": "losing",
-            "explain": "노래에서는 I’ve been losing sleep가 반복됩니다."
+            "explain": "I’ve been losing sleep."
         },
         {
             "q": "8. 다음 중 have been + 동사-ing 구조가 맞는 것은?",
             "options": ["I have been pray hard.", "I have been praying hard.", "I have prayed hard yesterday.", "I am been praying hard."],
             "answer": "I have been praying hard.",
-            "explain": "have been 뒤에는 praying처럼 동사-ing가 옵니다."
+            "explain": "have been + 동사-ing"
         },
     ]
 
@@ -526,20 +461,20 @@ def show_ive_been_grammar_tab(song_choice, data):
             checked += 1
             if st.session_state[check_key]:
                 score += 1
-                st.success(f"정답입니다! {item['explain']}")
+                st.success(f"정답입니다. {item['explain']}")
             else:
-                st.error(f"아쉬워요. 정답: {item['answer']} / {item['explain']}")
+                st.error(f"정답: {item['answer']} / {item['explain']}")
 
     st.markdown(f"### 📊 Grammar Practice 점수: {score}/{len(questions)}")
     st.caption(f"정답 확인을 누른 문제: {checked}/{len(questions)} · 통과 기준: 6/{len(questions)} 이상")
 
     if checked == len(questions):
         if score >= 6:
-            st.success("통과했습니다! have been + 동사-ing 패턴을 잘 이해했습니다.")
+            st.success("통과했습니다.")
         else:
-            st.warning("조금 더 연습이 필요합니다. 다시 풀기로 한 번 더 도전해 보세요.")
+            st.warning("다시 풀기로 한 번 더 도전해 보세요.")
     else:
-        st.info("모든 문제의 정답 확인을 누르면 점수와 통과 여부가 표시됩니다.")
+        st.info("모든 문제의 정답 확인을 누르면 점수가 표시됩니다.")
 
     if checked > 0:
         if st.button("🔄 Grammar Practice 다시 풀기", key=f"{prefix}reset", use_container_width=True):
@@ -547,10 +482,10 @@ def show_ive_been_grammar_tab(song_choice, data):
             st.rerun()
 
     st.markdown("---")
-    st.markdown("### ✍️ My Sentence: 나만의 문장 만들기")
+    st.markdown("### ✍️ My Sentence")
 
     sentence_choice = st.selectbox(
-        "나에게 맞는 표현을 골라 문장을 완성하세요.",
+        "표현을 골라 문장을 완성하세요.",
         [
             "studying English",
             "playing soccer",
@@ -577,7 +512,7 @@ def show_ive_been_grammar_tab(song_choice, data):
 
     user_sentence = st.text_input(
         "직접 문장을 써 보세요.",
-        placeholder="예: Lately, I have been studying English. / Lately, I’ve been studying English.",
+        placeholder="예: Lately, I have been studying English.",
         key=f"{prefix}user_sentence"
     )
 
@@ -588,27 +523,14 @@ def show_ive_been_grammar_tab(song_choice, data):
         if not sentence_norm:
             st.warning("먼저 문장을 써 보세요.")
         elif has_have_been and has_ing_after_been:
-            st.success("좋아요! have been + 동사-ing 구조를 잘 사용했습니다.")
+            st.success("좋아요. have been + 동사-ing 구조를 사용했습니다.")
         elif has_have_been:
-            st.info("좋아요. 다만 have been 뒤에 동사-ing가 왔는지 확인해 보세요.")
+            st.info("have been 뒤에 동사-ing가 왔는지 확인해 보세요.")
         elif "been" in sentence_norm:
-            st.info("been은 들어갔습니다. 앞에 have가 있는지, 뒤에 동사-ing가 있는지 확인해 보세요.")
+            st.info("have been + 동사-ing 구조를 확인해 보세요.")
         else:
-            st.warning("문장에 I have been 또는 I’ve been을 넣어서 다시 써 보세요.")
+            st.warning("I have been 또는 I’ve been을 넣어서 다시 써 보세요.")
 
-    st.markdown(
-        """
-        <div class="advice-box">
-            <b>수업 활용 팁</b><br>
-            ① 여러 문장을 먼저 보여 주고 “자주 등장하는 표현은 무엇인가요?”라고 묻습니다.<br>
-            ② 학생들이 I’ve been을 찾으면, I’ve been = I have been임을 고르게 합니다.<br>
-            ③ I have been 뒤에 losing, praying, dreaming처럼 동사-ing가 반복된다는 것을 발견하게 합니다.<br>
-            ④ 뜻을 보고 “이것의 공통점은 무엇인가요?”라고 묻고, 최근부터 지금까지 이어지는 의미를 고르게 합니다.<br>
-            ⑤ Controlled Practice로 형태, 의미, 문장 완성을 연습한 뒤 자기 문장으로 연결합니다.
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
     if not korean_text:
