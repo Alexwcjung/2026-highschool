@@ -5,6 +5,8 @@ import html
 import re
 import json
 import uuid
+import io
+from gtts import gTTS
 from urllib.parse import quote
 
 st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
@@ -147,17 +149,34 @@ def reset_keys_by_prefix(prefixes):
             del st.session_state[key]
 
 
-def tts_audio_html(text, lang="en"):
-    """외부 패키지 없이 Google Translate TTS URL로 짧은 표현을 들려줍니다."""
+@st.cache_data(show_spinner=False)
+def make_key_expression_tts(text, lang="en"):
+    """Key Expression 듣기용 mp3 bytes를 만듭니다.
+    Google Translate TTS URL을 직접 걸면 Streamlit Cloud/브라우저에서 재생이 막히는 경우가 있어
+    gTTS로 mp3를 생성한 뒤 st.audio로 재생합니다.
+    """
     safe_text = str(text).strip()
     if not safe_text:
-        return ""
-    url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + lang + "&q=" + quote(safe_text)
-    return f"""
-    <audio controls style="width:100%; height:38px; margin-top:6px;">
-        <source src="{url}" type="audio/mpeg">
-    </audio>
-    """
+        return b""
+    fp = io.BytesIO()
+    tts = gTTS(text=safe_text, lang=lang, slow=False)
+    tts.write_to_fp(fp)
+    fp.seek(0)
+    return fp.read()
+
+
+def show_key_expression_audio(text, lang="en"):
+    """Key Expression 오디오 플레이어를 안정적으로 표시합니다."""
+    safe_text = str(text).strip()
+    if not safe_text:
+        return
+    try:
+        audio_bytes = make_key_expression_tts(safe_text, lang=lang)
+        if audio_bytes:
+            st.audio(audio_bytes, format="audio/mp3")
+    except Exception as e:
+        st.warning("음성 재생을 준비하지 못했습니다. requirements.txt에 gTTS가 있는지 확인해 주세요.")
+        st.caption(f"오류 내용: {e}")
 
 
 def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
@@ -179,7 +198,7 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
 
     all_text = " . ".join(en for en, _ in expressions)
     st.markdown("#### 🎧 전체 표현 듣기")
-    components.html(tts_audio_html(all_text, lang="en"), height=60)
+    show_key_expression_audio(all_text, lang="en")
 
     for i, (en, ko) in enumerate(expressions, start=1):
         st.markdown(
@@ -195,7 +214,7 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
             """,
             unsafe_allow_html=True
         )
-        components.html(tts_audio_html(en, lang="en"), height=58)
+        show_key_expression_audio(en, lang="en")
 
 
 def build_integrated_quiz(song_choice, data, total_questions=15):
