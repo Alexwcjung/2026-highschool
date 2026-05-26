@@ -588,46 +588,44 @@ div[data-testid="stImage"] img {
 data_bank = {
     "인물": {
         "⚽ Ronaldo": {
-            "title": "Soccer Talk with Ronaldo",
-            "subtitle": "Practice, confidence, and professional habits",
+            "title": "Cristiano Ronaldo",
+            "subtitle": "Country, family, teams, and achievements",
             "video_url": "https://www.youtube.com/watch?v=yQU8q_wXESU",
             "image_path": BASE_DIR / "images" / "ronaldo.png",
             "facts": [
-                "Portuguese soccer player",
-                "Known for speed, powerful shooting, heading, and strict self-management",
-                "Lesson: daily habits and clear goals"
+                "Born in Portugal in 1985",
+                "Grew up on the island of Madeira",
+                "Won the Champions League in 2008 and Euro 2016 with Portugal"
             ],
             "dialogue": [
-                ("Ronaldo", "Hi! Do you like soccer?", "안녕! 너는 축구를 좋아하니?"),
-                ("Me", "Yes, I do. I really like soccer.", "응, 좋아해. 나는 축구를 정말 좋아해."),
-                ("Ronaldo", "Who is your favorite player?", "네가 가장 좋아하는 선수는 누구니?"),
-                ("Me", "You are my favorite player, Ronaldo.", "로날도, 당신이 제가 가장 좋아하는 선수예요."),
-                ("Ronaldo", "Why do you like me?", "왜 나를 좋아하니?"),
-                ("Me", "Because you are fast, strong, and hardworking.", "당신은 빠르고, 강하고, 성실하기 때문이에요."),
-                ("Ronaldo", "Thank you. Talent is helpful, but daily habits are more important.", "고마워. 재능도 도움이 되지만 매일의 습관이 더 중요해."),
-                ("Me", "What kind of habits do you mean?", "어떤 습관을 말하는 건가요?"),
-                ("Ronaldo", "Training, sleeping well, eating carefully, and staying focused.", "훈련, 충분한 수면, 조심스러운 식단, 집중력을 말해."),
-                ("Me", "That sounds difficult.", "어려워 보여요."),
-                ("Ronaldo", "It is not easy, but small routines make you stronger.", "쉽지는 않지만 작은 루틴이 너를 더 강하게 만들어."),
-                ("Me", "Sometimes I get tired and lose confidence.", "가끔은 지치고 자신감을 잃어요."),
-                ("Ronaldo", "Everyone feels that way sometimes. Rest a little, and then try again.", "누구나 가끔 그렇게 느껴. 조금 쉬고 다시 도전해 봐."),
-                ("Me", "I want to be a great player like you.", "저도 당신처럼 훌륭한 선수가 되고 싶어요."),
-                ("Ronaldo", "Then practice with a clear goal. Do not just practice a lot. Practice smart.", "그렇다면 분명한 목표를 가지고 연습해. 많이만 하지 말고 똑똑하게 연습해."),
-                ("Me", "I will set a goal and do my best.", "목표를 세우고 최선을 다할게요."),
-                ("Ronaldo", "Good. Believe in yourself, keep practicing, and never give up.", "좋아. 너 자신을 믿고, 계속 연습하고, 절대 포기하지 마.")
+                ("Text", "Cristiano Ronaldo was born in Portugal in 1985.", "크리스티아누 호날두는 1985년에 포르투갈에서 태어났다."),
+                ("Text", "He grew up on the island of Madeira.", "그는 마데이라 섬에서 자랐다."),
+                ("Text", "He has one brother and two sisters.", "그에게는 남자 형제 한 명과 여자 형제 두 명이 있다."),
+                ("Text", "His brother's name is Hugo.", "그의 남자 형제 이름은 후고이다."),
+                ("Text", "His sisters' names are Elma and Katia.", "그의 여자 형제 이름은 엘마와 카티아이다."),
+                ("Text", "Ronaldo first played for Sporting CP in Portugal.", "호날두는 처음에 포르투갈의 스포르팅 CP에서 뛰었다."),
+                ("Text", "Later, he moved to Manchester United in England.", "나중에 그는 영국의 맨체스터 유나이티드로 이적했다."),
+                ("Text", "He won his first Ballon d'Or in 2008.", "그는 2008년에 첫 발롱도르를 받았다."),
+                ("Text", "In 2008, he won the Champions League with Manchester United.", "2008년에 그는 맨체스터 유나이티드와 함께 챔피언스리그에서 우승했다."),
+                ("Text", "In 2016, he won Euro 2016 with Portugal.", "2016년에 그는 포르투갈과 함께 유로 2016에서 우승했다."),
+                ("Text", "He says talent is helpful, but good habits are more important.", "그는 재능도 도움이 되지만 좋은 습관이 더 중요하다고 말한다.")
             ],
             "key_expressions": [
-                "Daily habits are important.",
-                "Small routines make you stronger.",
-                "Practice with a clear goal.",
-                "Practice smart.",
-                "Believe in yourself.",
-                "Never give up."
+                "was born in",
+                "grew up",
+                "one brother and two sisters",
+                "first played for",
+                "moved to",
+                "won his first Ballon d'Or",
+                "won the Champions League",
+                "good habits are more important"
             ],
             "questions": [
-                ("1. 로날도는 무엇으로 잘 알려져 있나요?", ["Strict self-management", "Cooking", "Painting", "Writing novels"], "Strict self-management"),
-                ("2. 로날도가 말한 좋은 습관은 무엇인가요?", ["Training, sleeping well, and eating carefully", "Watching TV all day", "Never resting", "Playing games only"], "Training, sleeping well, and eating carefully"),
-                ("3. 학생은 어떻게 연습해야 하나요?", ["With a clear goal", "Without thinking", "Only once a month", "Only when winning"], "With a clear goal")
+                ("1. Ronaldo는 어느 나라에서 태어났나요?", ["Spain", "Portugal", "Brazil", "England"], "Portugal"),
+                ("2. Ronaldo는 몇 년에 태어났나요?", ["1985", "1995", "2008", "2016"], "1985"),
+                ("3. Ronaldo는 어느 섬에서 자랐나요?", ["Jeju", "Madeira", "Hawaii", "Bali"], "Madeira"),
+                ("4. Ronaldo에게는 형제가 몇 명 있나요?", ["One brother and two sisters", "Two brothers and one sister", "Three brothers", "Three sisters"], "One brother and two sisters"),
+                ("5. Ronaldo가 첫 Ballon d'Or를 받은 해는 언제인가요?", ["1985", "2008", "2016", "2023"], "2008")
             ],
             "reflection_prompt": "Ronaldo를 통해 내가 배울 점은 무엇인가요?"
         },
@@ -1042,21 +1040,21 @@ data_bank = {
 # =========================================================
 key_word_bank = {
     "⚽ Ronaldo": [
-        ("impressive", "인상적인"),
-        ("favorite", "가장 좋아하는"),
-        ("fast", "빠른"),
-        ("strong", "강한"),
-        ("hardworking", "성실한"),
-        ("talent", "재능"),
-        ("daily habit", "매일의 습관"),
-        ("routine", "루틴 / 규칙적인 습관"),
-        ("training", "훈련"),
-        ("stay focused", "집중을 유지하다"),
-        ("confidence", "자신감"),
-        ("clear goal", "분명한 목표"),
-        ("practice smart", "똑똑하게 연습하다"),
-        ("believe in yourself", "너 자신을 믿다"),
-        ("never give up", "절대 포기하지 않다"),
+        ("was born in", "~에서 태어났다"),
+        ("Portugal", "포르투갈"),
+        ("1985", "1985년"),
+        ("grew up", "자랐다"),
+        ("Madeira", "마데이라"),
+        ("one brother and two sisters", "남자 형제 한 명과 여자 형제 두 명"),
+        ("Hugo", "후고"),
+        ("Elma and Katia", "엘마와 카티아"),
+        ("Sporting CP", "스포르팅 CP"),
+        ("Manchester United", "맨체스터 유나이티드"),
+        ("England", "영국"),
+        ("Ballon d'Or", "발롱도르"),
+        ("Champions League", "챔피언스리그"),
+        ("Euro 2016", "유로 2016"),
+        ("good habits", "좋은 습관"),
     ],
     "🏀 Jordan": [
         ("basketball", "농구"),
@@ -1488,11 +1486,11 @@ def show_pre_reading_questions(category, topic_name, data):
 # =========================================================
 story_card_hints = {
     "⚽ Ronaldo": {
-        "Name": "Ronaldo",
-        "Feeling": "tired / loses confidence",
-        "Problem": "The student wants to improve but sometimes loses confidence.",
-        "Action": "Practice with a clear goal and practice smart.",
-        "Result": "Believe in yourself and never give up."
+        "Name": "Cristiano Ronaldo",
+        "Feeling": "focused / hardworking",
+        "Problem": "The text gives detailed facts about Ronaldo's country, family, teams, and achievements.",
+        "Action": "Read the text carefully and find exact information such as Portugal, Madeira, Hugo, 2008, and 2016.",
+        "Result": "Good habits are more important than talent."
     },
     "🏀 Jordan": {
         "Name": "Jordan",
@@ -1987,11 +1985,11 @@ def _stable_shuffle(items, seed_text):
 
 story_card_hints_ko = {
     "⚽ Ronaldo": {
-        "Name": "로날도",
-        "Feeling": "피곤함 / 자신감을 잃음",
-        "Problem": "학생은 더 잘하고 싶지만 가끔 자신감을 잃는다.",
-        "Action": "분명한 목표를 가지고 똑똑하게 연습한다.",
-        "Result": "자신을 믿고 절대 포기하지 않는다."
+        "Name": "크리스티아누 호날두",
+        "Feeling": "집중함 / 성실함",
+        "Problem": "본문에는 호날두의 출생 국가, 가족, 팀, 우승 연도 같은 세부 정보가 나온다.",
+        "Action": "Portugal, Madeira, Hugo, 2008, 2016 같은 정확한 정보를 찾아 읽는다.",
+        "Result": "재능도 도움이 되지만 좋은 습관이 더 중요하다."
     },
     "🏀 Jordan": {
         "Name": "조던",
@@ -2096,11 +2094,17 @@ def show_mission_preview(category, topic_name, data):
 
 mission1_questions_bank = {
     "⚽ Ronaldo": [
-        ("1. 학생은 왜 Ronaldo를 좋아한다고 말하나요?", ["빠르고 강하며 성실하기 때문에", "노래를 잘 부르기 때문에", "요리를 잘하기 때문에", "게임을 잘하기 때문에"], "빠르고 강하며 성실하기 때문에"),
-        ("2. Ronaldo가 재능보다 더 중요하다고 말한 것은 무엇인가요?", ["매일의 습관", "비싼 축구화", "유명한 팀", "큰 경기장"], "매일의 습관"),
-        ("3. Ronaldo가 말한 좋은 습관이 아닌 것은 무엇인가요?", ["하루 종일 TV 보기", "훈련하기", "잠 잘 자기", "조심해서 먹기"], "하루 종일 TV 보기"),
-        ("4. 학생이 지치고 자신감을 잃을 때 Ronaldo는 어떻게 하라고 말하나요?", ["조금 쉬고 다시 도전하기", "완전히 포기하기", "다른 사람을 탓하기", "연습을 영원히 멈추기"], "조금 쉬고 다시 도전하기"),
-        ("5. Ronaldo가 마지막에 강조한 태도는 무엇인가요?", ["자신을 믿고 계속 연습하며 포기하지 않기", "무조건 많이만 연습하기", "이기는 것만 생각하기", "다른 사람과 비교하기"], "자신을 믿고 계속 연습하며 포기하지 않기"),
+        ("1. Ronaldo는 어느 나라에서 태어났나요?", ["Spain", "Portugal", "Brazil", "England"], "Portugal"),
+        ("2. Ronaldo는 몇 년에 태어났나요?", ["1985", "1995", "2008", "2016"], "1985"),
+        ("3. Ronaldo는 어느 섬에서 자랐나요?", ["Jeju", "Madeira", "Hawaii", "Bali"], "Madeira"),
+        ("4. Ronaldo의 가족 설명으로 맞는 것은 무엇인가요?", ["One brother and two sisters", "Two brothers and one sister", "Three brothers", "Three sisters"], "One brother and two sisters"),
+        ("5. Ronaldo의 남자 형제 이름은 무엇인가요?", ["Hugo", "Messi", "Bruno", "Pepe"], "Hugo"),
+        ("6. Ronaldo가 처음 뛴 포르투갈 축구팀은 어디인가요?", ["Sporting CP", "Manchester United", "Real Madrid", "Juventus"], "Sporting CP"),
+        ("7. Ronaldo는 나중에 어느 나라의 Manchester United로 이적했나요?", ["Spain", "Portugal", "England", "France"], "England"),
+        ("8. Ronaldo가 첫 Ballon d'Or를 받은 해는 언제인가요?", ["1985", "2008", "2016", "2023"], "2008"),
+        ("9. Ronaldo가 Manchester United와 함께 Champions League에서 우승한 해는 언제인가요?", ["2002", "2008", "2016", "2018"], "2008"),
+        ("10. Ronaldo가 Portugal과 함께 Euro 대회에서 우승한 해는 언제인가요?", ["2008", "2010", "2016", "2018"], "2016"),
+        ("11. Ronaldo는 talent보다 무엇이 더 중요하다고 말하나요?", ["Money", "Luck", "Good habits", "Famous friends"], "Good habits"),
     ],
     "🏀 Jordan": [
         ("1. Jordan은 어느 팀과 함께 NBA에서 여섯 번 우승했나요?", ["시카고 불스", "LA 레이커스", "마이애미 히트", "뉴욕 닉스"], "시카고 불스"),
@@ -2189,7 +2193,8 @@ def show_mission_quiz(category, topic_name, data):
     prefix = f"{category}_{topic_name}_mission_quiz_"
 
     st.markdown('<div class="section-box"><h3>🧭 Mission 1 문제 풀기</h3></div>', unsafe_allow_html=True)
-    st.caption("방금 읽은 지문을 떠올리며 5문제를 모두 푼 뒤 한 번에 제출하세요. 정답은 바로 공개하지 않고 정답 개수만 보여줍니다. 5문제를 모두 맞히면 통과입니다.")
+    pass_need = len(questions)
+    st.caption(f"방금 읽은 지문을 떠올리며 {len(questions)}문제를 모두 푼 뒤 한 번에 제출하세요. 정답은 바로 공개하지 않고 정답 개수만 보여줍니다. {pass_need}문제를 모두 맞히면 통과입니다.")
 
     answers = []
     for i, (question, options, answer) in enumerate(questions, start=1):
@@ -2224,7 +2229,7 @@ def show_mission_quiz(category, topic_name, data):
         unanswered = sum(1 for choice, _ in answers if choice is None)
         if unanswered > 0:
             st.session_state[f"{prefix}submitted"] = False
-            st.session_state[f"{prefix}message"] = f"아직 선택하지 않은 문제가 {unanswered}개 있습니다. 5문제를 모두 선택한 뒤 제출하세요."
+            st.session_state[f"{prefix}message"] = f"아직 선택하지 않은 문제가 {unanswered}개 있습니다. 모든 문제를 선택한 뒤 제출하세요."
         else:
             score = sum(1 for choice, answer in answers if choice == answer)
             st.session_state[f"{prefix}submitted"] = True
@@ -2236,9 +2241,9 @@ def show_mission_quiz(category, topic_name, data):
 
     if st.session_state.get(f"{prefix}submitted"):
         score = st.session_state.get(f"{prefix}score", 0)
-        st.markdown(f"### Mission 1 정답 개수: {score}/5")
-        if score == 5:
-            st.success("통과했습니다! Mission 1의 5문제를 모두 맞혔습니다.")
+        st.markdown(f"### Mission 1 정답 개수: {score}/{len(questions)}")
+        if score == len(questions):
+            st.success(f"통과했습니다! Mission 1의 {len(questions)}문제를 모두 맞혔습니다.")
         else:
             st.warning("아직 통과하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
 
@@ -2248,12 +2253,28 @@ def show_mission_quiz(category, topic_name, data):
             st.rerun()
 
 def get_sequence_events(topic_name, data):
-    """본문 대화에서 5개의 서로 다른 대화 흐름을 뽑아 순서 맞추기 자료를 만듭니다.
-    Ronaldo의 말만 나오지 않도록, 가능하면 바로 다음 Me의 대답까지 함께 카드에 넣습니다.
-    """
+    """본문에서 5개의 서로 다른 흐름을 뽑아 문장 매칭 자료를 만듭니다."""
     dialogue = data.get('dialogue', [])
     if not dialogue:
         return []
+
+    if topic_name == "⚽ Ronaldo":
+        selected = [
+            (0, 1),
+            (2, 3),
+            (5, 6),
+            (7, 8),
+            (9, 10),
+        ]
+        events = []
+        for a, b in selected:
+            speaker1, eng1, kor1 = dialogue[a]
+            speaker2, eng2, kor2 = dialogue[b]
+            events.append({
+                "speaker1": "", "eng1": eng1, "kor1": kor1,
+                "speaker2": "", "eng2": eng2, "kor2": kor2,
+            })
+        return events
 
     # 5개의 위치를 고르게 뽑되, 각 위치의 문장과 바로 다음 문장을 한 카드에 묶습니다.
     max_start = max(0, len(dialogue) - 2)
@@ -2300,13 +2321,21 @@ def show_sequence_matching_activity(category, topic_name, data):
         en_lines = []
         ko_lines = []
 
-        if event.get("speaker1") and event.get("eng1"):
-            en_lines.append(f"{event['speaker1']}: {event['eng1']}")
-            ko_lines.append(f"{event['speaker1']}: {event['kor1']}")
+        if event.get("eng1"):
+            if event.get("speaker1"):
+                en_lines.append(f"{event['speaker1']}: {event['eng1']}")
+                ko_lines.append(f"{event['speaker1']}: {event['kor1']}")
+            else:
+                en_lines.append(event["eng1"])
+                ko_lines.append(event["kor1"])
 
-        if event.get("speaker2") and event.get("eng2"):
-            en_lines.append(f"{event['speaker2']}: {event['eng2']}")
-            ko_lines.append(f"{event['speaker2']}: {event['kor2']}")
+        if event.get("eng2"):
+            if event.get("speaker2"):
+                en_lines.append(f"{event['speaker2']}: {event['eng2']}")
+                ko_lines.append(f"{event['speaker2']}: {event['kor2']}")
+            else:
+                en_lines.append(event["eng2"])
+                ko_lines.append(event["kor2"])
 
         pairs.append({
             "id": f"pair_{i}",
@@ -2748,17 +2777,30 @@ def show_lie_finding_activity(category, topic_name, data):
     ko_hint = story_card_hints_ko.get(topic_name, {})
     prefix = f"{category}_{topic_name}_lie_"
 
-    true_statements = [
-        (_statement_bilingual(f"The main character or topic is {hint['Name']}.", f"중심 인물 또는 대상은 {ko_hint.get('Name', hint['Name'])}이다."), True),
-        (_statement_bilingual(f"One feeling in the text is {hint['Feeling']}.", f"글 속 감정 중 하나는 {ko_hint.get('Feeling', hint['Feeling'])}이다."), True),
-        (_statement_bilingual(f"One problem is: {hint['Problem']}", f"문제 또는 어려움은 {ko_hint.get('Problem', hint['Problem'])}"), True),
-        (_statement_bilingual(f"One action or advice is: {hint['Action']}", f"행동 또는 조언은 {ko_hint.get('Action', hint['Action'])}"), True),
-        (_statement_bilingual(f"One lesson is: {hint['Result']}", f"교훈은 {ko_hint.get('Result', hint['Result'])}"), True),
-    ]
-    false_statements = [
-        (_statement_bilingual("The text says the best answer is to give up and stop trying.", "이 글은 포기하고 노력을 멈추는 것이 가장 좋다고 말한다."), False),
-        (_statement_bilingual("The text says practice, learning, or effort is not important at all.", "이 글은 연습, 배움, 노력이 전혀 중요하지 않다고 말한다."), False),
-    ]
+    if topic_name == "⚽ Ronaldo":
+        true_statements = [
+            (_statement_bilingual("Ronaldo was born in Portugal in 1985.", "호날두는 1985년에 포르투갈에서 태어났다."), True),
+            (_statement_bilingual("Ronaldo grew up on the island of Madeira.", "호날두는 마데이라 섬에서 자랐다."), True),
+            (_statement_bilingual("Ronaldo has one brother and two sisters.", "호날두에게는 남자 형제 한 명과 여자 형제 두 명이 있다."), True),
+            (_statement_bilingual("Ronaldo first played for Sporting CP.", "호날두는 처음에 스포르팅 CP에서 뛰었다."), True),
+            (_statement_bilingual("Ronaldo won Euro 2016 with Portugal.", "호날두는 포르투갈과 함께 유로 2016에서 우승했다."), True),
+        ]
+        false_statements = [
+            (_statement_bilingual("Ronaldo was born in Spain in 1995.", "호날두는 1995년에 스페인에서 태어났다."), False),
+            (_statement_bilingual("Ronaldo's brother's name is Messi.", "호날두의 남자 형제 이름은 메시이다."), False),
+        ]
+    else:
+        true_statements = [
+            (_statement_bilingual(f"The main character or topic is {hint['Name']}.", f"중심 인물 또는 대상은 {ko_hint.get('Name', hint['Name'])}이다."), True),
+            (_statement_bilingual(f"One feeling in the text is {hint['Feeling']}.", f"글 속 감정 중 하나는 {ko_hint.get('Feeling', hint['Feeling'])}이다."), True),
+            (_statement_bilingual(f"One problem is: {hint['Problem']}", f"문제 또는 어려움은 {ko_hint.get('Problem', hint['Problem'])}"), True),
+            (_statement_bilingual(f"One action or advice is: {hint['Action']}", f"행동 또는 조언은 {ko_hint.get('Action', hint['Action'])}"), True),
+            (_statement_bilingual(f"One lesson is: {hint['Result']}", f"교훈은 {ko_hint.get('Result', hint['Result'])}"), True),
+        ]
+        false_statements = [
+            (_statement_bilingual("The text says the best answer is to give up and stop trying.", "이 글은 포기하고 노력을 멈추는 것이 가장 좋다고 말한다."), False),
+            (_statement_bilingual("The text says practice, learning, or effort is not important at all.", "이 글은 연습, 배움, 노력이 전혀 중요하지 않다고 말한다."), False),
+        ]
 
     statements = true_statements + false_statements
     option_key = f"{prefix}options"
@@ -2941,25 +2983,24 @@ def show_lie_finding_activity(category, topic_name, data):
 
 
 def show_key_expression_word_test(category, topic_name, data, max_words=10):
-    """Key Expressions 단어 테스트: 10개 중 8개 이상을 첫 확인에서 맞혀야 통과합니다."""
+    """Key Expressions 학습: 테스트가 아니라 듣고 뜻을 확인하는 학습용 카드입니다."""
     key_words = get_key_words(topic_name, data)[:max_words]
-    prefix = f"{category}_{topic_name}_activity1_"
 
-    st.markdown('<div class="section-box"><h3>⭐ Key Expressions 단어 테스트</h3></div>', unsafe_allow_html=True)
-    st.caption("영어 핵심 단어를 보고 한국어 뜻을 적으세요. 답을 본 뒤 고친 것은 같은 라운드 점수에 반영되지 않습니다. 10개 중 8개 이상을 한 번에 맞히면 통과입니다.")
+    st.markdown('<div class="section-box"><h3>⭐ Key Expressions 듣기 & 뜻 학습</h3></div>', unsafe_allow_html=True)
+    st.caption("시험처럼 뜻을 적는 활동이 아니라, 영어 표현을 듣고 한국어 뜻을 확인하는 학습 활동입니다. 표현을 여러 번 듣고 따라 말해 보세요.")
 
-    status_keys = []
+    if not key_words:
+        st.info("이 주제에는 아직 핵심 표현이 없습니다.")
+        return
+
     for i, (word, meaning) in enumerate(key_words, start=1):
-        status_key = f"{prefix}status_{i}"
-        status_keys.append(status_key)
-
-        c1, c_audio, c2, c3 = st.columns([1.35, 1.15, 2.2, 1.5])
+        c1, c_audio, c2 = st.columns([2.2, 1.0, 2.4])
         with c1:
             st.markdown(
                 f"""
-                <div style="padding: 12px 14px; border-radius: 16px; background: #eff6ff;
-                            border: 1.5px solid #bfdbfe; font-size: 19px; font-weight: 900;
-                            color: #1d4ed8; margin-top: 4px;">
+                <div style="padding: 14px 16px; border-radius: 18px; background: #eff6ff;
+                            border: 1.5px solid #bfdbfe; font-size: 21px; font-weight: 950;
+                            color: #1d4ed8; margin-top: 4px; line-height: 1.55;">
                     {i}. {word}
                 </div>
                 """,
@@ -2968,38 +3009,24 @@ def show_key_expression_word_test(category, topic_name, data, max_words=10):
         with c_audio:
             direct_tts_player(word, lang="en")
         with c2:
-            user_meaning = st.text_input(
-                "한국어 뜻",
-                key=f"{prefix}vocab_{i}",
-                placeholder="예: 습관, 목표, 영양소",
-                label_visibility="collapsed"
+            st.markdown(
+                f"""
+                <div style="padding: 14px 16px; border-radius: 18px; background: #f0fdf4;
+                            border: 1.5px solid #bbf7d0; font-size: 20px; font-weight: 900;
+                            color: #166534; margin-top: 4px; line-height: 1.55;">
+                    뜻: {meaning}
+                </div>
+                """,
+                unsafe_allow_html=True
             )
-        with c3:
-            if st.button("답 확인", key=f"{prefix}check_{i}"):
-                # 첫 확인 결과만 저장합니다. 정답을 본 뒤 고쳐도 같은 라운드에서는 점수가 바뀌지 않습니다.
-                if status_key not in st.session_state:
-                    st.session_state[status_key] = is_correct_korean_answer(user_meaning, meaning)
-            if status_key in st.session_state:
-                if st.session_state[status_key]:
-                    st.success("정답")
-                else:
-                    st.error(f"정답: {meaning}")
 
-    score = sum(1 for key in status_keys if st.session_state.get(key) is True)
-    checked = sum(1 for key in status_keys if key in st.session_state)
-    st.markdown(f"### 단어 테스트 점수: {score}/{len(key_words)}")
-    st.caption(f"답 확인을 누른 단어: {checked}/{len(key_words)} · 통과 기준: 8/{len(key_words)} 이상")
-    if checked == len(key_words) and score >= 8:
-        st.success(f"통과했습니다! 답을 보지 않고 첫 시도에서 {score}/{len(key_words)}개를 맞혔습니다.")
-    elif checked == len(key_words):
-        st.warning(f"아직 통과 기준에 부족합니다. 첫 시도 점수는 {score}/{len(key_words)}개입니다. 다시 풀기를 눌러 새로 도전하세요.")
-    else:
-        st.info("모든 단어의 답 확인을 누르면 통과 여부가 표시됩니다.")
-
-    if checked > 0:
-        if st.button("🔄 단어 테스트 다시 풀기", key=f"{prefix}reset_in_reading", use_container_width=True):
-            reset_keys_by_prefix(prefix)
-            st.rerun()
+    all_words_text = " ... ".join([word for word, _ in key_words])
+    play_persistent_full_audio(
+        all_words_text,
+        key=f"{category}_{topic_name}_key_expression_all_audio",
+        button_label="🎧 핵심 표현 전체 듣기",
+        lang="en"
+    )
 
 
 def get_english_sentences(text):
@@ -3332,33 +3359,18 @@ with tab_reading:
     # 2. 본문 읽기
     st.markdown('<div class="section-box"><h3>📖 본문 읽기</h3></div>', unsafe_allow_html=True)
 
-    audio_col_top, korean_col_top = st.columns([1.1, 1.4])
-    with audio_col_top:
-        play_persistent_full_audio(
-            full_english,
-            key=f"{category}_{topic_name}_full_listening_long_mp3_v4",
-            button_label="🎧 전체 듣기",
-            lang="en"
-        )
-    with korean_col_top:
-        show_korean_reading = st.toggle(
-            "🇰🇷 한국어 해석 보기",
-            value=False,
-            key=f"{category}_{topic_name}_show_korean_reading"
-        )
+    play_persistent_full_audio(
+        full_english,
+        key=f"{category}_{topic_name}_full_listening_long_mp3_v4",
+        button_label="🎧 전체 듣기",
+        lang="en"
+    )
 
     for i, (speaker, eng, kor) in enumerate(dialogue, start=1):
         line_col, audio_col = st.columns([8.5, 1.5])
 
         with line_col:
             korean_html = ""
-            if show_korean_reading:
-                korean_html = (
-                    f'<div style="margin-top:7px; padding:7px 10px 7px 14px; '
-                    f'border-left:5px solid #fde68a; background:rgba(255,251,235,0.75); '
-                    f'border-radius:10px; font-size:19px; font-weight:700; '
-                    f'color:#374151; line-height:1.65;">🇰🇷 {kor}</div>'
-                )
 
             st.markdown(
                 f"""
@@ -3366,7 +3378,7 @@ with tab_reading:
                             border: 1.5px solid #dbeafe; background: rgba(255,255,255,0.88);
                             box-shadow: 0 4px 12px rgba(15,23,42,0.05);">
                     <div style="font-size: 22px; font-weight: 850; color: #1d4ed8; line-height: 1.6;">
-                        <b>{speaker}:</b> {eng}
+                        {f"<b>{speaker}:</b> " if speaker != "Text" else ""}{eng}
                     </div>
                     {korean_html}
                 </div>
