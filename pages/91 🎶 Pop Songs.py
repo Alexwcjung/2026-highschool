@@ -180,7 +180,7 @@ def show_key_expression_audio(text, lang="en"):
 
 
 def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
-    """가사 탭에서 Key Expression을 문제 없이 학습 자료로 보여주고 듣기를 제공합니다."""
+    """Key Expression을 문제 없이 학습 자료로 보여주고 듣기를 제공합니다."""
     expressions = list(data.get("key_expressions", []))[:max_words]
 
     if not expressions:
@@ -191,7 +191,7 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
     st.markdown(
         '<div class="game-card"><div class="big-guide">'
         '중요 표현의 뜻을 먼저 확인하고, 영어 표현을 들어 보세요.<br>'
-        '여기서는 문제를 풀지 않습니다. 3번 탭의 종합 퀴즈에서 다시 확인합니다.'
+        '여기서는 문제를 풀지 않고, 듣기와 뜻 확인만 합니다.'
         '</div></div>',
         unsafe_allow_html=True
     )
@@ -270,12 +270,12 @@ def build_integrated_quiz(song_choice, data, total_questions=15):
 
 
 def show_integrated_quiz_tab(song_choice, data):
-    """3번 탭: 내용 이해 + Key Expression을 합친 15문항 퀴즈입니다."""
-    st.subheader("✅ 종합 퀴즈")
+    """가사 뒤에 나오는 이해도 퀴즈입니다. 기존 종합 퀴즈 문항을 모두 사용합니다."""
+    st.subheader("✅ 이해도 퀴즈")
     st.markdown(
         '<div class="game-card"><div class="big-guide">'
-        '내용 이해 문제와 Key Expression 문제가 함께 나옵니다.<br>'
-        '총 15문제 중 12문제 이상 맞히면 통과입니다.'
+        '가사를 읽은 뒤 문제를 풀어 보세요.<br>'
+        '기존 종합 퀴즈 문항을 모두 넣었습니다. 총 15문제 중 12문제 이상 맞히면 통과입니다.'
         '</div></div>',
         unsafe_allow_html=True
     )
@@ -341,7 +341,7 @@ def show_integrated_quiz_tab(song_choice, data):
 
 
 def check_target_grammar_sentence(target, sentence):
-    """학생이 직접 쓴 문장이 오늘의 target grammar를 포함하는지 간단히 검사합니다.
+    """학생이 직접 쓴 문장이 오늘의 오늘 배운 표현을 포함하는지 간단히 검사합니다.
     너무 엄격한 문법 채점기가 아니라, 핵심 구조가 들어갔는지 확인하는 용도입니다.
     """
     raw = str(sentence).strip()
@@ -357,101 +357,101 @@ def check_target_grammar_sentence(target, sentence):
     if len(re.findall(r"[a-zA-Z']+", raw)) < 3:
         return False, "문장이 너무 짧습니다.", "주어, 동사, 내용을 넣어 조금 더 완전한 문장으로 써 보세요."
 
-    def ok(msg="좋아요. 오늘 배운 target grammar가 문장 안에 잘 들어갔습니다."):
+    def ok(msg="좋아요. 오늘 배운 표현 모양이 문장 안에 잘 들어갔습니다."):
         return True, msg, "철자와 대문자, 마침표만 한 번 더 확인해 보세요."
 
     def no(hint):
-        return False, "아직 target grammar가 분명하게 보이지 않습니다.", hint
+        return False, "오늘 배운 표현 모양이 아직 분명하게 보이지 않습니다.", hint
 
     target = str(target).strip()
 
-    if target == "Let + 목적어 + 동사원형":
+    if target == "Let + 사람/대상 + 기본 행동 단어":
         if re.search(r"^(do not|don't)\s+let\s+\w+\s+\w+", low) or re.search(r"^let\s+\w+\s+\w+", low):
             if re.search(r"\blet\s+\w+\s+to\s+", low):
-                return no("Let 뒤에는 'to 동사'가 아니라 동사원형을 씁니다. 예: Let me try.")
+                return no("Let 뒤에는 'to + 행동 단어'가 아니라 기본 행동 단어을 씁니다. 예: Let me try.")
             return ok()
-        return no("Let + 사람/대상 + 동사원형 구조를 써 보세요. 예: Let me try.")
+        return no("Let + 사람/대상 + 기본 행동 단어 구조를 써 보세요. 예: Let me try.")
 
-    if target == "I'm sorry for + 명사/동사-ing":
+    if target == "I'm sorry for + 대상 단어 또는 -ing 모양":
         if re.search(r"\b(i am|i'm)\s+sorry\s+for\s+", low):
             after = re.split(r"\bsorry\s+for\s+", low, maxsplit=1)[-1]
             if after and not re.match(r"(go|do|make|break|call|be|come|say|tell|play|study)\b", after):
                 return ok()
-            return no("for 뒤에는 명사나 동사-ing를 쓰는 것이 자연스럽습니다. 예: I'm sorry for being late.")
-        return no("I'm sorry for + 명사/동사-ing 구조를 써 보세요. 예: I'm sorry for making a mistake.")
+            return no("for 뒤에는 대상 단어나 -ing 모양를 쓰는 것이 자연스럽습니다. 예: I'm sorry for being late.")
+        return no("I'm sorry for + 대상 단어 또는 -ing 모양 구조를 써 보세요. 예: I'm sorry for making a mistake.")
 
-    if target == "can + 동사원형":
+    if target == "can + 기본 행동 단어":
         if re.search(r"\bcan\s+(?!to\b)\w+", low):
             return ok()
-        return no("can 뒤에는 동사원형을 씁니다. 예: I can help you.")
+        return no("can 뒤에는 기본 행동 단어을 씁니다. 예: I can help you.")
 
-    if target == "won't + 동사원형":
+    if target == "won't + 기본 행동 단어":
         if re.search(r"\bwon't\s+(?!to\b)\w+", low):
             return ok()
-        return no("won't + 동사원형 구조를 써 보세요. 예: I won't give up.")
+        return no("won't + 기본 행동 단어 구조를 써 보세요. 예: I won't give up.")
 
     if target == "I don't know why + 문장":
         if re.search(r"\bi\s+don't\s+know\s+why\s+\w+\s+\w+", low):
             return ok()
-        return no("I don't know why 뒤에는 주어+동사가 이어집니다. 예: I don't know why I feel sad.")
+        return no("I don't know why 뒤에는 사람/대상 + 행동/상태가 이어집니다. 예: I don't know why I feel sad.")
 
-    if target == "When + 주어 + 동사":
+    if target == "When + 사람/대상 + 행동/상태":
         if re.search(r"\bwhen\s+\w+\s+\w+", low):
             return ok()
-        return no("When + 주어 + 동사 구조를 써 보세요. 예: When I feel tired, I rest.")
+        return no("When + 사람/대상 + 행동/상태 구조를 써 보세요. 예: When I feel tired, I rest.")
 
     if target == "Tell + 사람 + 내용":
         if re.search(r"\btell\s+(me|you|him|her|us|them|[a-z]+)\s+\w+", low):
             return ok()
         return no("Tell + 사람 + 내용 구조를 써 보세요. 예: Tell me your dream.")
 
-    if target == "will + 동사원형":
+    if target == "will + 기본 행동 단어":
         if re.search(r"\bwill\s+(?!to\b)\w+", low):
             return ok()
-        return no("will + 동사원형 구조를 써 보세요. 예: I will remember you.")
+        return no("will + 기본 행동 단어 구조를 써 보세요. 예: I will remember you.")
 
-    if target == "It's hard to + 동사원형":
+    if target == "It's hard to + 기본 행동 단어":
         if re.search(r"\b(it is|it's)\s+hard\s+to\s+\w+", low):
             return ok()
-        return no("It's hard to + 동사원형 구조를 써 보세요. 예: It's hard to say goodbye.")
+        return no("It's hard to + 기본 행동 단어 구조를 써 보세요. 예: It's hard to say goodbye.")
 
-    if target == "used to + 동사원형":
+    if target == "used to + 기본 행동 단어":
         if re.search(r"\bused\s+to\s+\w+", low):
             return ok()
-        return no("used to + 동사원형 구조를 써 보세요. 예: I used to play outside.")
+        return no("used to + 기본 행동 단어 구조를 써 보세요. 예: I used to play outside.")
 
-    if target == "like + 명사":
+    if target == "like + 대상 단어":
         if re.search(r"\blike\s+\w+", low):
             if re.search(r"\b(i|you|we|they)\s+like\s+", low):
                 return no("여기서는 '좋아하다'가 아니라 '~처럼/~같은' 뜻의 like를 연습합니다. 예: It feels like home.")
             return ok()
-        return no("~처럼/~같은 의미의 like + 명사 구조를 써 보세요. 예: It feels like home.")
+        return no("~처럼/~같은 의미의 like + 대상 단어 구조를 써 보세요. 예: It feels like home.")
 
-    if target == "I'll + 동사원형":
+    if target == "I'll + 기본 행동 단어":
         if re.search(r"\b(i'll|i\s+will)\s+(?!to\b)\w+", low):
             return ok()
-        return no("I'll + 동사원형 구조를 써 보세요. 예: I'll try again.")
+        return no("I'll + 기본 행동 단어 구조를 써 보세요. 예: I'll try again.")
 
     if target == "I think + 문장 / I don't think so":
         if re.search(r"\bi\s+don't\s+think\s+so\b", low) or re.search(r"\bi\s+think\s+\w+\s+\w+", low):
             return ok()
         return no("I think + 문장 또는 I don't think so를 써 보세요. 예: I think English is fun.")
 
-    if target == "can't + 동사원형":
+    if target == "can't + 기본 행동 단어":
         if re.search(r"\b(can't|cannot)\s+(?!to\b)\w+", low):
             return ok()
-        return no("can't + 동사원형 구조를 써 보세요. 예: I can't sleep tonight.")
+        return no("can't + 기본 행동 단어 구조를 써 보세요. 예: I can't sleep tonight.")
 
-    if target == "I have been + 동사-ing":
+    if target == "I have been + -ing 모양":
         if re.search(r"\b(i\s+have|i've)\s+been\s+\w+ing\b", low):
             return ok()
-        return no("I have been + 동사-ing 구조를 써 보세요. 예: I have been studying English.")
+        return no("I have been + -ing 모양 구조를 써 보세요. 예: I have been studying English.")
 
     return True, "문장을 확인했습니다.", "오늘 배운 표현이 자연스럽게 들어갔는지 한 번 더 읽어 보세요."
 
 
 
-GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동사원형',
+GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/대상 + 기본 행동 단어',
                                'examples': ['Let it go.',
                                             'Let the storm rage on.',
                                             "Don't let them in.",
@@ -459,36 +459,36 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                             "Don't let them know."],
                                'frequent_options': ['will', 'can', 'let', 'have been'],
                                'frequent_answer': 'let',
-                               'form_options': ['Let + 목적어 + 과거형',
-                                                'Let + 목적어 + to 동사',
-                                                'Let + 목적어 + 동사-ing',
-                                                'Let + 목적어 + 동사원형'],
-                               'form_answer': 'Let + 목적어 + 동사원형',
+                               'form_options': ['Let + 사람/대상 + 과거 모양',
+                                                'Let + 사람/대상 + to + 행동 단어',
+                                                'Let + 사람/대상 + -ing 모양',
+                                                'Let + 사람/대상 + 기본 행동 단어'],
+                               'form_answer': 'Let + 사람/대상 + 기본 행동 단어',
                                'meaning_examples': [('Let it go.', '그것을 놓아버려.'),
                                                     ('Let them in.', '그들을 들어오게 해.'),
                                                     ('Let the storm rage on.', '폭풍이 계속 몰아치게 둬.')],
                                'meaning_options': ['어제 ...했다', '곧 ...할 것이다', '~가 ...하게 두다 / ...하게 하다', '...하고 있는 중이다'],
                                'meaning_answer': '~가 ...하게 두다 / ...하게 하다',
-                               'rule_answer': 'Let + 목적어 + 동사원형 = ~가 ...하게 두다 / ...하게 하다',
-                               'rule_options': ['Let + 목적어 + 과거형 = 어제 ~했다',
-                                                'Let + 목적어 + to 동사 = 반드시 ~해야 한다',
-                                                'Let + 목적어 + ing = ~하는 중이다',
-                                                'Let + 목적어 + 동사원형 = ~가 ...하게 두다 / ...하게 하다'],
+                               'rule_answer': 'Let + 사람/대상 + 기본 행동 단어 = ~가 ...하게 두다 / ...하게 하다',
+                               'rule_options': ['Let + 사람/대상 + 과거 모양 = 어제 ~했다',
+                                                'Let + 사람/대상 + to + 행동 단어 = 반드시 ~해야 한다',
+                                                'Let + 사람/대상 + ing = ~하는 중이다',
+                                                'Let + 사람/대상 + 기본 행동 단어 = ~가 ...하게 두다 / ...하게 하다'],
                                'practice': [('빈칸에 알맞은 것은? Let it _____.',
                                              ['goes', 'went', 'go', 'going'],
                                              'go',
-                                             'Let 뒤에는 동사원형이 옵니다.'),
+                                             'Let 뒤에는 기본 행동 단어이 옵니다.'),
                                             ('맞는 문장은?',
                                              ['Let the storm rages on.',
                                               'Let the storm to rage on.',
                                               'Let the storm raging on.',
                                               'Let the storm rage on.'],
                                              'Let the storm rage on.',
-                                             'Let + 목적어 + 동사원형'),
+                                             'Let + 사람/대상 + 기본 행동 단어'),
                                             ("Don't let them _____.",
                                              ['sees', 'saw', 'see', 'seeing'],
                                              'see',
-                                             "Don't let + 목적어 + 동사원형"),
+                                             "Don't let + 사람/대상 + 기본 행동 단어"),
                                             ('Let it go.의 뜻은?',
                                              ['그것은 갔다.', '그것이 가고 있다.', '그것은 갈 것이다.', '그것을 놓아버려.'],
                                              '그것을 놓아버려.',
@@ -496,11 +496,11 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                             ('문장 완성: Let me _____.',
                                              ['tries', 'try', 'tried', 'trying'],
                                              'try',
-                                             'Let me + 동사원형')],
+                                             'Let me + 기본 행동 단어')],
                                'sentence_prefix': 'Let me',
                                'sentence_choices': ['try', 'speak', 'think', 'go', 'help you'],
                                'sentence_suffix': ''},
- '2. Hello - Adele': {'target': "I'm sorry for + 명사/동사-ing",
+ '2. Hello - Adele': {'target': "I'm sorry for + 대상 단어 또는 -ing 모양",
                       'examples': ["I'm sorry for everything that I've done.",
                                    "I'm sorry for breaking your heart.",
                                    "I'm sorry for being late.",
@@ -508,25 +508,25 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                    "I'm sorry for calling you late."],
                       'frequent_options': ['I can', 'I will', "I'm sorry for", 'Let it'],
                       'frequent_answer': "I'm sorry for",
-                      'form_options': ["I'm sorry for + 동사원형",
+                      'form_options': ["I'm sorry for + 기본 행동 단어",
                                        "I'm sorry for + will",
                                        "I'm sorry for + can",
-                                       "I'm sorry for + 명사/동사-ing"],
-                      'form_answer': "I'm sorry for + 명사/동사-ing",
+                                       "I'm sorry for + 대상 단어 또는 -ing 모양"],
+                      'form_answer': "I'm sorry for + 대상 단어 또는 -ing 모양",
                       'meaning_examples': [("I'm sorry for breaking your heart.", '네 마음을 아프게 해서 미안해.'),
                                            ("I'm sorry for being late.", '늦어서 미안해.'),
                                            ("I'm sorry for everything.", '모든 것에 대해 미안해.')],
                       'meaning_options': ['미래 계획을 말한다', '능력을 말한다', '미안한 이유를 말한다', '명령을 말한다'],
                       'meaning_answer': '미안한 이유를 말한다',
-                      'rule_answer': "I'm sorry for + 명사/동사-ing = ~해서 미안해",
-                      'rule_options': ["I'm sorry for + 동사원형 = 나는 곧 ~할 거야",
+                      'rule_answer': "I'm sorry for + 대상 단어 또는 -ing 모양 = ~해서 미안해",
+                      'rule_options': ["I'm sorry for + 기본 행동 단어 = 나는 곧 ~할 거야",
                                        "I'm sorry for + can = 나는 ~할 수 있어",
                                        "I'm sorry for + will = 나는 ~해야 해",
-                                       "I'm sorry for + 명사/동사-ing = ~해서 미안해"],
+                                       "I'm sorry for + 대상 단어 또는 -ing 모양 = ~해서 미안해"],
                       'practice': [("빈칸에 알맞은 것은? I'm sorry for _____ your heart.",
                                     ['break', 'broke', 'breaking', 'breaks'],
                                     'breaking',
-                                    'for 뒤에 행동을 넣을 때 동사-ing를 씁니다.'),
+                                    'for 뒤에 행동을 넣을 때 -ing 모양를 씁니다.'),
                                    ('맞는 문장은?',
                                     ["I'm sorry for be late.",
                                      "I'm sorry for was late.",
@@ -541,14 +541,14 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                    ("빈칸: I'm sorry for _____ you late.",
                                     ['call', 'called', 'calls', 'calling'],
                                     'calling',
-                                    'for + 동사-ing'),
+                                    'for + -ing 모양'),
                                    ('가장 알맞은 구조는?',
-                                    ["I'm sorry for + 동사원형",
-                                     "I'm sorry for + 동사-ing",
+                                    ["I'm sorry for + 기본 행동 단어",
+                                     "I'm sorry for + -ing 모양",
                                      "I'm sorry for + will",
-                                     "I'm sorry for + 과거형만"],
-                                    "I'm sorry for + 동사-ing",
-                                    '미안한 행동은 동사-ing로 표현할 수 있습니다.')],
+                                     "I'm sorry for + 과거 모양만"],
+                                    "I'm sorry for + -ing 모양",
+                                    '미안한 행동은 -ing 모양로 표현할 수 있습니다.')],
                       'sentence_prefix': "I'm sorry for",
                       'sentence_choices': ['being late',
                                            'making a mistake',
@@ -556,7 +556,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                            'breaking the rule',
                                            'not listening'],
                       'sentence_suffix': ''},
- '3. A Whole New World - Aladdin OST': {'target': 'can + 동사원형',
+ '3. A Whole New World - Aladdin OST': {'target': 'can + 기본 행동 단어',
                                         'examples': ['I can show you the world.',
                                                      'I can open your eyes.',
                                                      'I can take you there.',
@@ -564,29 +564,29 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                      'I can see a whole new world.'],
                                         'frequent_options': ['I was', 'I have', 'I can', 'I used to'],
                                         'frequent_answer': 'I can',
-                                        'form_options': ['can + 과거형', 'can + to 동사', 'can + 동사-ing', 'can + 동사원형'],
-                                        'form_answer': 'can + 동사원형',
+                                        'form_options': ['can + 과거 모양', 'can + to + 행동 단어', 'can + -ing 모양', 'can + 기본 행동 단어'],
+                                        'form_answer': 'can + 기본 행동 단어',
                                         'meaning_examples': [('I can show you the world.', '나는 너에게 세상을 보여 줄 수 있어.'),
                                                              ('I can open your eyes.', '나는 너의 눈을 뜨게 해 줄 수 있어.'),
                                                              ('I can help you.', '나는 너를 도울 수 있어.')],
                                         'meaning_options': ['~했었다', '~하고 있는 중이다', '~할 수 있다', '~하지 마라'],
                                         'meaning_answer': '~할 수 있다',
-                                        'rule_answer': 'can + 동사원형 = ~할 수 있다',
-                                        'rule_options': ['can + 과거형 = 어제 ~했다',
-                                                         'can + to 동사 = ~해야 한다',
+                                        'rule_answer': 'can + 기본 행동 단어 = ~할 수 있다',
+                                        'rule_options': ['can + 과거 모양 = 어제 ~했다',
+                                                         'can + to + 행동 단어 = ~해야 한다',
                                                          'can + ing = ~하고 있다',
-                                                         'can + 동사원형 = ~할 수 있다'],
+                                                         'can + 기본 행동 단어 = ~할 수 있다'],
                                         'practice': [('빈칸: I can _____ you the world.',
                                                       ['shows', 'showed', 'show', 'showing'],
                                                       'show',
-                                                      'can 뒤에는 동사원형이 옵니다.'),
+                                                      'can 뒤에는 기본 행동 단어이 옵니다.'),
                                                      ('맞는 문장은?',
                                                       ['I can opens your eyes.',
                                                        'I can to open your eyes.',
                                                        'I can opening your eyes.',
                                                        'I can open your eyes.'],
                                                       'I can open your eyes.',
-                                                      'can + 동사원형'),
+                                                      'can + 기본 행동 단어'),
                                                      ('I can help you.의 뜻은?',
                                                       ['나는 너를 도왔다.',
                                                        '나는 너를 돕고 있다.',
@@ -597,11 +597,11 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                      ('빈칸: We can _____ together.',
                                                       ['goes', 'went', 'going', 'go'],
                                                       'go',
-                                                      'can + 동사원형'),
+                                                      'can + 기본 행동 단어'),
                                                      ('알맞은 구조는?',
-                                                      ['can + to 동사', 'can + 동사원형', 'can + 과거형', 'can + ing'],
-                                                      'can + 동사원형',
-                                                      'can 뒤에는 동사원형입니다.')],
+                                                      ['can + to + 행동 단어', 'can + 기본 행동 단어', 'can + 과거 모양', 'can + ing'],
+                                                      'can + 기본 행동 단어',
+                                                      'can 뒤에는 기본 행동 단어입니다.')],
                                         'sentence_prefix': 'I can',
                                         'sentence_choices': ['show you the world',
                                                              'help you',
@@ -609,7 +609,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                              'speak English',
                                                              'try again'],
                                         'sentence_suffix': ''},
- '4. Stand By Me - Ben E. King': {'target': "won't + 동사원형",
+ '4. Stand By Me - Ben E. King': {'target': "won't + 기본 행동 단어",
                                   'examples': ["I won't be afraid.",
                                                "I won't cry.",
                                                "I won't shed a tear.",
@@ -617,29 +617,29 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                "I won't run away."],
                                   'frequent_options': ['I was', 'I have', "I won't", 'I used to'],
                                   'frequent_answer': "I won't",
-                                  'form_options': ["won't + 과거형", "won't + to 동사", "won't + 동사-ing", "won't + 동사원형"],
-                                  'form_answer': "won't + 동사원형",
+                                  'form_options': ["won't + 과거 모양", "won't + to + 행동 단어", "won't + -ing 모양", "won't + 기본 행동 단어"],
+                                  'form_answer': "won't + 기본 행동 단어",
                                   'meaning_examples': [("I won't be afraid.", '나는 두려워하지 않을 거야.'),
                                                        ("I won't cry.", '나는 울지 않을 거야.'),
                                                        ("I won't give up.", '나는 포기하지 않을 거야.')],
                                   'meaning_options': ['~할 수 있다', '~했었다', '~하지 않을 것이다', '~하는 중이다'],
                                   'meaning_answer': '~하지 않을 것이다',
-                                  'rule_answer': "won't + 동사원형 = ~하지 않을 것이다",
-                                  'rule_options': ["won't + 과거형 = 어제 ~하지 않았다",
+                                  'rule_answer': "won't + 기본 행동 단어 = ~하지 않을 것이다",
+                                  'rule_options': ["won't + 과거 모양 = 어제 ~하지 않았다",
                                                    "won't + ing = ~하지 않는 중이다",
-                                                   "won't + to 동사 = ~할 수 있다",
-                                                   "won't + 동사원형 = ~하지 않을 것이다"],
+                                                   "won't + to + 행동 단어 = ~할 수 있다",
+                                                   "won't + 기본 행동 단어 = ~하지 않을 것이다"],
                                   'practice': [("빈칸: I won't _____ afraid.",
                                                 ['am', 'was', 'be', 'being'],
                                                 'be',
-                                                "won't 뒤에는 동사원형 be가 옵니다."),
+                                                "won't 뒤에는 기본 행동 단어 be가 옵니다."),
                                                ('맞는 문장은?',
                                                 ["I won't cried.",
                                                  "I won't crying.",
                                                  "I won't to cry.",
                                                  "I won't cry."],
                                                 "I won't cry.",
-                                                "won't + 동사원형"),
+                                                "won't + 기본 행동 단어"),
                                                ("I won't shed a tear.의 뜻은?",
                                                 ['나는 지금 울고 있다.', '나는 어제 울었다.', '나는 눈물 한 방울도 흘리지 않을 거야.', '나는 울 수 있다.'],
                                                 '나는 눈물 한 방울도 흘리지 않을 거야.',
@@ -647,10 +647,10 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                ("빈칸: I won't _____ up.",
                                                 ['gave', 'gives', 'giving', 'give'],
                                                 'give',
-                                                "won't + 동사원형"),
+                                                "won't + 기본 행동 단어"),
                                                ('알맞은 구조는?',
-                                                ["won't + 과거형", "won't + 동사원형", "won't + ing", "won't + to 동사"],
-                                                "won't + 동사원형",
+                                                ["won't + 과거 모양", "won't + 기본 행동 단어", "won't + ing", "won't + to + 행동 단어"],
+                                                "won't + 기본 행동 단어",
                                                 '미래에 하지 않을 일을 말합니다.')],
                                   'sentence_prefix': "I won't",
                                   'sentence_choices': ['be afraid', 'cry', 'give up', 'run away', 'forget you'],
@@ -663,21 +663,21 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                   "I don't know why she left."],
                                      'frequent_options': ['I can', 'I will', "I don't know why", 'Let me'],
                                      'frequent_answer': "I don't know why",
-                                     'form_options': ["I don't know why + 동사원형만",
+                                     'form_options': ["I don't know why + 기본 행동 단어만",
                                                       "I don't know why + can만",
-                                                      "I don't know why + 명사만",
-                                                      "I don't know why + 주어 + 동사"],
-                                     'form_answer': "I don't know why + 주어 + 동사",
+                                                      "I don't know why + 대상 단어만",
+                                                      "I don't know why + 사람/대상 + 행동/상태"],
+                                     'form_answer': "I don't know why + 사람/대상 + 행동/상태",
                                      'meaning_examples': [("I don't know why I didn't come.", '나는 왜 내가 가지 않았는지 모르겠어.'),
                                                           ("I don't know why I feel this way.", '나는 왜 이렇게 느끼는지 모르겠어.'),
                                                           ("I don't know why she left.", '나는 왜 그녀가 떠났는지 모르겠어.')],
                                      'meaning_options': ['능력을 말한다', '명령한다', '이유를 모른다고 말한다', '미래 계획을 말한다'],
                                      'meaning_answer': '이유를 모른다고 말한다',
-                                     'rule_answer': "I don't know why + 주어 + 동사 = 왜 ~인지 모르겠다",
-                                     'rule_options': ["I don't know why + 동사원형 = ~할 수 있다",
+                                     'rule_answer': "I don't know why + 사람/대상 + 행동/상태 = 왜 ~인지 모르겠다",
+                                     'rule_options': ["I don't know why + 기본 행동 단어 = ~할 수 있다",
                                                       "I don't know why + will = ~할 것이다",
                                                       "I don't know why + ing = ~하는 중이다",
-                                                      "I don't know why + 주어 + 동사 = 왜 ~인지 모르겠다"],
+                                                      "I don't know why + 사람/대상 + 행동/상태 = 왜 ~인지 모르겠다"],
                                      'practice': [("빈칸: I don't know why I _____ come.",
                                                    ["don't", 'can', "didn't", 'will'],
                                                    "didn't",
@@ -688,7 +688,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                     "I don't know why feeling sad.",
                                                     "I don't know why I feel sad."],
                                                    "I don't know why I feel sad.",
-                                                   'why 뒤에 주어+동사를 넣습니다.'),
+                                                   'why 뒤에 사람/대상 + 행동/상태를 넣습니다.'),
                                                   ("I don't know why she left.의 뜻은?",
                                                    ['나는 그녀가 떠날 수 있어.',
                                                     '나는 그녀를 떠나게 했다.',
@@ -701,11 +701,11 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                    'is',
                                                    'why 뒤에는 문장 형태가 옵니다.'),
                                                   ('알맞은 구조는?',
-                                                   ["I don't know why + 동사원형만",
-                                                    "I don't know why + 주어 + 동사",
-                                                    "I don't know why + to 동사",
-                                                    "I don't know why + 명사만"],
-                                                   "I don't know why + 주어 + 동사",
+                                                   ["I don't know why + 기본 행동 단어만",
+                                                    "I don't know why + 사람/대상 + 행동/상태",
+                                                    "I don't know why + to + 행동 단어",
+                                                    "I don't know why + 대상 단어만"],
+                                                   "I don't know why + 사람/대상 + 행동/상태",
                                                    '왜 ~인지 모르겠다고 말합니다.')],
                                      'sentence_prefix': "I don't know why",
                                      'sentence_choices': ['I feel this way',
@@ -714,7 +714,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                           'I am tired',
                                                           'he is angry'],
                                      'sentence_suffix': ''},
- '6. Fix You - Coldplay': {'target': 'When + 주어 + 동사',
+ '6. Fix You - Coldplay': {'target': 'When + 사람/대상 + 행동/상태',
                            'examples': ['When you try your best.',
                                         'When you get what you want.',
                                         'When you feel so tired.',
@@ -722,18 +722,18 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                         'When you love someone.'],
                            'frequent_options': ['I can', 'I will', 'When you', 'Let it'],
                            'frequent_answer': 'When you',
-                           'form_options': ['When + 동사원형만', 'When + will만', 'When + 명사만', 'When + 주어 + 동사'],
-                           'form_answer': 'When + 주어 + 동사',
+                           'form_options': ['When + 기본 행동 단어만', 'When + will만', 'When + 대상 단어만', 'When + 사람/대상 + 행동/상태'],
+                           'form_answer': 'When + 사람/대상 + 행동/상태',
                            'meaning_examples': [('When you try your best.', '네가 최선을 다할 때.'),
                                                 ('When you feel tired.', '네가 피곤함을 느낄 때.'),
                                                 ('When you lose something.', '네가 무언가를 잃을 때.')],
                            'meaning_options': ['~할 수 있다', '~하지 않을 것이다', '~할 때', '~해야 한다'],
                            'meaning_answer': '~할 때',
-                           'rule_answer': 'When + 주어 + 동사 = ~할 때',
-                           'rule_options': ['When + 동사원형 = ~할 수 있다',
+                           'rule_answer': 'When + 사람/대상 + 행동/상태 = ~할 때',
+                           'rule_options': ['When + 기본 행동 단어 = ~할 수 있다',
                                             'When + will = ~하지 않을 것이다',
                                             'When + ing = ~하고 있다',
-                                            'When + 주어 + 동사 = ~할 때'],
+                                            'When + 사람/대상 + 행동/상태 = ~할 때'],
                            'practice': [('빈칸: When you _____ your best.',
                                          ['tries', 'tried', 'try', 'trying'],
                                          'try',
@@ -744,7 +744,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                           'When you feeling tired.',
                                           'When you feel tired.'],
                                          'When you feel tired.',
-                                         'When + 주어 + 동사'),
+                                         'When + 사람/대상 + 행동/상태'),
                                         ('When you lose something.의 뜻은?',
                                          ['너는 무언가를 잃을 수 있다', '너는 무언가를 잃지 않을 것이다', '네가 무언가를 잃을 때', '너는 무언가를 잃었다'],
                                          '네가 무언가를 잃을 때',
@@ -754,8 +754,8 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                          'love',
                                          'When you + 동사'),
                                         ('알맞은 구조는?',
-                                         ['When + 동사원형만', 'When + 주어 + 동사', 'When + to 동사', 'When + 과거분사'],
-                                         'When + 주어 + 동사',
+                                         ['When + 기본 행동 단어만', 'When + 사람/대상 + 행동/상태', 'When + to + 행동 단어', 'When + 어려운 문법 모양'],
+                                         'When + 사람/대상 + 행동/상태',
                                          '상황을 말할 때 씁니다.')],
                            'sentence_prefix': 'When I',
                            'sentence_choices': ['try my best',
@@ -772,7 +772,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                               'Tell me you love me.'],
                                  'frequent_options': ['I will', 'I can', 'Tell me / Tell you', 'I used to'],
                                  'frequent_answer': 'Tell me / Tell you',
-                                 'form_options': ['Tell + 사람 + to be만', 'Tell + 과거형만', 'Tell + ing만', 'Tell + 사람 + 내용'],
+                                 'form_options': ['Tell + 사람 + to be만', 'Tell + 과거 모양만', 'Tell + ing만', 'Tell + 사람 + 내용'],
                                  'form_answer': 'Tell + 사람 + 내용',
                                  'meaning_examples': [("Tell you I'm sorry.", '너에게 미안하다고 말하다.'),
                                                       ('Tell you I need you.', '너에게 네가 필요하다고 말하다.'),
@@ -804,7 +804,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                'love',
                                                'Tell me + 문장'),
                                               ('알맞은 구조는?',
-                                               ['Tell + 사람 + ing만', 'Tell + 사람 + 내용', 'Tell + 과거형만', 'Tell + will만'],
+                                               ['Tell + 사람 + ing만', 'Tell + 사람 + 내용', 'Tell + 과거 모양만', 'Tell + will만'],
                                                'Tell + 사람 + 내용',
                                                '말하는 상대와 내용을 함께 씁니다.')],
                                  'sentence_prefix': 'Tell me',
@@ -814,7 +814,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                       'you are okay',
                                                       'the truth'],
                                  'sentence_suffix': ''},
- '8. My Heart Will Go On - Celine Dion': {'target': 'will + 동사원형',
+ '8. My Heart Will Go On - Celine Dion': {'target': 'will + 기본 행동 단어',
                                           'examples': ['My heart will go on.',
                                                        'We will stay forever.',
                                                        'I will remember you.',
@@ -822,32 +822,32 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                        'I will see you in my dreams.'],
                                           'frequent_options': ['can', 'used to', 'will', 'let'],
                                           'frequent_answer': 'will',
-                                          'form_options': ['will + 과거형',
-                                                           'will + to 동사',
-                                                           'will + 동사-ing',
-                                                           'will + 동사원형'],
-                                          'form_answer': 'will + 동사원형',
+                                          'form_options': ['will + 과거 모양',
+                                                           'will + to + 행동 단어',
+                                                           'will + -ing 모양',
+                                                           'will + 기본 행동 단어'],
+                                          'form_answer': 'will + 기본 행동 단어',
                                           'meaning_examples': [('My heart will go on.', '내 마음은 계속될 거야.'),
                                                                ('We will stay forever.', '우리는 영원히 머물 거야.'),
                                                                ('I will remember you.', '나는 너를 기억할 거야.')],
                                           'meaning_options': ['~할 수 있다', '예전에 ~하곤 했다', '앞으로 ~할 것이다', '~하지 마라'],
                                           'meaning_answer': '앞으로 ~할 것이다',
-                                          'rule_answer': 'will + 동사원형 = 앞으로 ~할 것이다',
-                                          'rule_options': ['will + 과거형 = 어제 ~했다',
+                                          'rule_answer': 'will + 기본 행동 단어 = 앞으로 ~할 것이다',
+                                          'rule_options': ['will + 과거 모양 = 어제 ~했다',
                                                            'will + ing = ~하고 있다',
-                                                           'will + to 동사 = ~할 수 있다',
-                                                           'will + 동사원형 = 앞으로 ~할 것이다'],
+                                                           'will + to + 행동 단어 = ~할 수 있다',
+                                                           'will + 기본 행동 단어 = 앞으로 ~할 것이다'],
                                           'practice': [('빈칸: My heart will _____ on.',
                                                         ['goes', 'went', 'go', 'going'],
                                                         'go',
-                                                        'will 뒤에는 동사원형입니다.'),
+                                                        'will 뒤에는 기본 행동 단어입니다.'),
                                                        ('맞는 문장은?',
                                                         ['We will stays forever.',
                                                          'We will stayed forever.',
                                                          'We will to stay forever.',
                                                          'We will stay forever.'],
                                                         'We will stay forever.',
-                                                        'will + 동사원형'),
+                                                        'will + 기본 행동 단어'),
                                                        ('I will remember you.의 뜻은?',
                                                         ['나는 너를 기억했다.',
                                                          '나는 너를 기억하고 있다.',
@@ -858,10 +858,10 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                        ('빈칸: Love will _____.',
                                                         ['lasts', 'lasted', 'lasting', 'last'],
                                                         'last',
-                                                        'will + 동사원형'),
+                                                        'will + 기본 행동 단어'),
                                                        ('알맞은 구조는?',
-                                                        ['will + 과거형', 'will + 동사원형', 'will + ing', 'will + to 동사'],
-                                                        'will + 동사원형',
+                                                        ['will + 과거 모양', 'will + 기본 행동 단어', 'will + ing', 'will + to + 행동 단어'],
+                                                        'will + 기본 행동 단어',
                                                         '미래 표현입니다.')],
                                           'sentence_prefix': 'I will',
                                           'sentence_choices': ['remember you',
@@ -870,7 +870,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                                'help my friend',
                                                                'go on'],
                                           'sentence_suffix': ''},
- '9. Alex Sampson - Play Pretend': {'target': "It's hard to + 동사원형",
+ '9. Alex Sampson - Play Pretend': {'target': "It's hard to + 기본 행동 단어",
                                     'examples': ["It's hard to watch you fall again.",
                                                  "It's hard to play pretend.",
                                                  "It's hard to say goodbye.",
@@ -878,33 +878,33 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                  "It's hard to tell the truth."],
                                     'frequent_options': ['I can', 'I will', "It's hard to", 'Let me'],
                                     'frequent_answer': "It's hard to",
-                                    'form_options': ["It's hard to + 과거형",
+                                    'form_options': ["It's hard to + 과거 모양",
                                                      "It's hard to + ing",
                                                      "It's hard to + can",
-                                                     "It's hard to + 동사원형"],
-                                    'form_answer': "It's hard to + 동사원형",
+                                                     "It's hard to + 기본 행동 단어"],
+                                    'form_answer': "It's hard to + 기본 행동 단어",
                                     'meaning_examples': [("It's hard to watch you fall again.",
                                                           '네가 다시 상처받는 걸 보는 것은 힘들어.'),
                                                          ("It's hard to say goodbye.", '작별 인사를 하는 것은 힘들어.'),
                                                          ("It's hard to wait.", '기다리는 것은 힘들어.')],
                                     'meaning_options': ['~할 수 있다', '~하지 않을 것이다', '~하는 것은 힘들다', '~하곤 했다'],
                                     'meaning_answer': '~하는 것은 힘들다',
-                                    'rule_answer': "It's hard to + 동사원형 = ~하는 것은 힘들다",
+                                    'rule_answer': "It's hard to + 기본 행동 단어 = ~하는 것은 힘들다",
                                     'rule_options': ["It's hard to + ing = ~하고 있다",
-                                                     "It's hard to + 과거형 = 어제 ~했다",
+                                                     "It's hard to + 과거 모양 = 어제 ~했다",
                                                      "It's hard to + will = ~할 것이다",
-                                                     "It's hard to + 동사원형 = ~하는 것은 힘들다"],
+                                                     "It's hard to + 기본 행동 단어 = ~하는 것은 힘들다"],
                                     'practice': [("빈칸: It's hard to _____ you fall again.",
                                                   ['watches', 'watched', 'watch', 'watching'],
                                                   'watch',
-                                                  'to 뒤에는 동사원형이 옵니다.'),
+                                                  'to 뒤에는 기본 행동 단어이 옵니다.'),
                                                  ('맞는 문장은?',
                                                   ["It's hard to saying goodbye.",
                                                    "It's hard to said goodbye.",
                                                    "It's hard to says goodbye.",
                                                    "It's hard to say goodbye."],
                                                   "It's hard to say goodbye.",
-                                                  'hard to + 동사원형'),
+                                                  'hard to + 기본 행동 단어'),
                                                  ("It's hard to wait.의 뜻은?",
                                                   ['기다릴 수 있다.', '기다리지 않을 것이다.', '기다리는 것은 힘들다.', '기다리곤 했다.'],
                                                   '기다리는 것은 힘들다.',
@@ -912,13 +912,13 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                  ("빈칸: It's hard to _____ the truth.",
                                                   ['tells', 'told', 'telling', 'tell'],
                                                   'tell',
-                                                  'to + 동사원형'),
+                                                  'to + 기본 행동 단어'),
                                                  ('알맞은 구조는?',
                                                   ["It's hard to + ing",
-                                                   "It's hard to + 동사원형",
-                                                   "It's hard to + 과거형",
+                                                   "It's hard to + 기본 행동 단어",
+                                                   "It's hard to + 과거 모양",
                                                    "It's hard to + can"],
-                                                  "It's hard to + 동사원형",
+                                                  "It's hard to + 기본 행동 단어",
                                                   '어려운 행동을 말할 때 씁니다.')],
                                     'sentence_prefix': "It's hard to",
                                     'sentence_choices': ['say goodbye',
@@ -927,7 +927,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                          'tell the truth',
                                                          'play pretend'],
                                     'sentence_suffix': ''},
- '10. Older - Sasha Alex Sloan': {'target': 'used to + 동사원형',
+ '10. Older - Sasha Alex Sloan': {'target': 'used to + 기본 행동 단어',
                                   'examples': ['I used to shut my door.',
                                                'I used to listen to music.',
                                                'I used to be a kid.',
@@ -935,32 +935,32 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                'I used to cry sometimes.'],
                                   'frequent_options': ['will', 'can', 'used to', 'let'],
                                   'frequent_answer': 'used to',
-                                  'form_options': ['used to + 과거형',
+                                  'form_options': ['used to + 과거 모양',
                                                    'used to + ing',
                                                    'used to + will',
-                                                   'used to + 동사원형'],
-                                  'form_answer': 'used to + 동사원형',
+                                                   'used to + 기본 행동 단어'],
+                                  'form_answer': 'used to + 기본 행동 단어',
                                   'meaning_examples': [('I used to shut my door.', '나는 예전에 방문을 닫곤 했다.'),
                                                        ('I used to play outside.', '나는 예전에 밖에서 놀곤 했다.'),
                                                        ('I used to be a kid.', '나는 예전에는 아이였다.')],
                                   'meaning_options': ['지금 ~하고 있다', '앞으로 ~할 것이다', '예전에 ~하곤 했다', '~할 수 있다'],
                                   'meaning_answer': '예전에 ~하곤 했다',
-                                  'rule_answer': 'used to + 동사원형 = 예전에 ~하곤 했다',
+                                  'rule_answer': 'used to + 기본 행동 단어 = 예전에 ~하곤 했다',
                                   'rule_options': ['used to + ing = 지금 ~하고 있다',
-                                                   'used to + 과거형 = 내일 ~할 것이다',
+                                                   'used to + 과거 모양 = 내일 ~할 것이다',
                                                    'used to + can = ~할 수 있다',
-                                                   'used to + 동사원형 = 예전에 ~하곤 했다'],
+                                                   'used to + 기본 행동 단어 = 예전에 ~하곤 했다'],
                                   'practice': [('빈칸: I used to _____ my door.',
                                                 ['shuts', 'shutting', 'shut', 'shutted'],
                                                 'shut',
-                                                'used to 뒤에는 동사원형이 옵니다.'),
+                                                'used to 뒤에는 기본 행동 단어이 옵니다.'),
                                                ('맞는 문장은?',
                                                 ['I used to played outside.',
                                                  'I used to playing outside.',
                                                  'I used to plays outside.',
                                                  'I used to play outside.'],
                                                 'I used to play outside.',
-                                                'used to + 동사원형'),
+                                                'used to + 기본 행동 단어'),
                                                ('I used to be a kid.의 뜻은?',
                                                 ['나는 지금 아이가 되고 있다.', '나는 아이가 될 것이다.', '나는 예전에는 아이였다.', '나는 아이일 수 있다.'],
                                                 '나는 예전에는 아이였다.',
@@ -968,10 +968,10 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                ('빈칸: I used to _____ music.',
                                                 ['listened to', 'listening to', 'listens to', 'listen to'],
                                                 'listen to',
-                                                'used to + 동사원형'),
+                                                'used to + 기본 행동 단어'),
                                                ('알맞은 구조는?',
-                                                ['used to + 과거형', 'used to + 동사원형', 'used to + ing', 'used to + will'],
-                                                'used to + 동사원형',
+                                                ['used to + 과거 모양', 'used to + 기본 행동 단어', 'used to + ing', 'used to + will'],
+                                                'used to + 기본 행동 단어',
                                                 '예전 습관을 말합니다.')],
                                   'sentence_prefix': 'I used to',
                                   'sentence_choices': ['play outside',
@@ -980,7 +980,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                        'watch cartoons',
                                                        'cry sometimes'],
                                   'sentence_suffix': ''},
- '11. No One Else Like You - Adam Levine': {'target': 'like + 명사',
+ '11. No One Else Like You - Adam Levine': {'target': 'like + 대상 단어',
                                             'examples': ['Looks like you.',
                                                          'Feels like you.',
                                                          'Smiles like you.',
@@ -988,18 +988,18 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                          'No one else like you.'],
                                             'frequent_options': ['will be', 'have been', 'like you', 'used to'],
                                             'frequent_answer': 'like you',
-                                            'form_options': ['like + 과거형', 'like + to 동사', 'like + will', 'like + 명사'],
-                                            'form_answer': 'like + 명사',
+                                            'form_options': ['like + 과거 모양', 'like + to + 행동 단어', 'like + will', 'like + 대상 단어'],
+                                            'form_answer': 'like + 대상 단어',
                                             'meaning_examples': [('Looks like you.', '너처럼 보여.'),
                                                                  ('Feels like you.', '너 같은 느낌이야.'),
                                                                  ('Someone just like you.', '너와 꼭 같은 사람.')],
                                             'meaning_options': ['~할 것이다', '~하지 않을 것이다', '~처럼 / ~같은', '예전에 ~했다'],
                                             'meaning_answer': '~처럼 / ~같은',
-                                            'rule_answer': 'like + 명사 = ~처럼 / ~같은',
-                                            'rule_options': ['like + 동사원형 = ~해야 한다',
+                                            'rule_answer': 'like + 대상 단어 = ~처럼 / ~같은',
+                                            'rule_options': ['like + 기본 행동 단어 = ~해야 한다',
                                                              'like + will = ~할 것이다',
-                                                             'like + 과거형 = ~했다',
-                                                             'like + 명사 = ~처럼 / ~같은'],
+                                                             'like + 과거 모양 = ~했다',
+                                                             'like + 대상 단어 = ~처럼 / ~같은'],
                                             'practice': [('빈칸: Someone just _____ you.',
                                                           ['likes', 'liked', 'like', 'liking'],
                                                           'like',
@@ -1010,7 +1010,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                            'Looks liking you.',
                                                            'Looks like you.'],
                                                           'Looks like you.',
-                                                          'like + 명사'),
+                                                          'like + 대상 단어'),
                                                          ('No one else like you.의 뜻은?',
                                                           ['너는 다른 사람을 좋아해.',
                                                            '너는 곧 올 거야.',
@@ -1021,15 +1021,15 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                          ('빈칸: It feels _____ home.',
                                                           ['likes', 'liked', 'liking', 'like'],
                                                           'like',
-                                                          'like + 명사'),
+                                                          'like + 대상 단어'),
                                                          ('알맞은 구조는?',
-                                                          ['like + will', 'like + 명사', 'like + 과거형', 'like + to 동사'],
-                                                          'like + 명사',
+                                                          ['like + will', 'like + 대상 단어', 'like + 과거 모양', 'like + to + 행동 단어'],
+                                                          'like + 대상 단어',
                                                           '비슷함을 말할 때 씁니다.')],
                                             'sentence_prefix': 'It feels like',
                                             'sentence_choices': ['home', 'a dream', 'a movie', 'summer', 'a new start'],
                                             'sentence_suffix': ''},
- '12. Out of Time - The Weeknd': {'target': "I'll + 동사원형",
+ '12. Out of Time - The Weeknd': {'target': "I'll + 기본 행동 단어",
                                   'examples': ["I'll treat you right.",
                                                "I'll love you.",
                                                "I'll care for you.",
@@ -1037,29 +1037,29 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                "I'll try again."],
                                   'frequent_options': ['I used to', 'Let me', "I'll", "I don't know why"],
                                   'frequent_answer': "I'll",
-                                  'form_options': ["I'll + 과거형", "I'll + to 동사", "I'll + 동사-ing", "I'll + 동사원형"],
-                                  'form_answer': "I'll + 동사원형",
+                                  'form_options': ["I'll + 과거 모양", "I'll + to + 행동 단어", "I'll + -ing 모양", "I'll + 기본 행동 단어"],
+                                  'form_answer': "I'll + 기본 행동 단어",
                                   'meaning_examples': [("I'll treat you right.", '나는 너를 잘 대해 줄 거야.'),
                                                        ("I'll love you.", '나는 너를 사랑할 거야.'),
                                                        ("I'll care for you.", '나는 너를 아껴 줄 거야.')],
                                   'meaning_options': ['예전에 ~하곤 했다', '~할 수 있다', '앞으로 ~할 것이다', '~하지 마라'],
                                   'meaning_answer': '앞으로 ~할 것이다',
-                                  'rule_answer': "I'll + 동사원형 = 나는 ~할 것이다",
-                                  'rule_options': ["I'll + 과거형 = 나는 어제 ~했다",
+                                  'rule_answer': "I'll + 기본 행동 단어 = 나는 ~할 것이다",
+                                  'rule_options': ["I'll + 과거 모양 = 나는 어제 ~했다",
                                                    "I'll + ing = 나는 ~하고 있다",
-                                                   "I'll + to 동사 = 나는 ~할 수 있다",
-                                                   "I'll + 동사원형 = 나는 ~할 것이다"],
+                                                   "I'll + to + 행동 단어 = 나는 ~할 수 있다",
+                                                   "I'll + 기본 행동 단어 = 나는 ~할 것이다"],
                                   'practice': [("빈칸: I'll _____ you right.",
                                                 ['treats', 'treated', 'treat', 'treating'],
                                                 'treat',
-                                                "I'll 뒤에는 동사원형입니다."),
+                                                "I'll 뒤에는 기본 행동 단어입니다."),
                                                ('맞는 문장은?',
                                                 ["I'll loves you.",
                                                  "I'll loved you.",
                                                  "I'll loving you.",
                                                  "I'll love you."],
                                                 "I'll love you.",
-                                                "I'll + 동사원형"),
+                                                "I'll + 기본 행동 단어"),
                                                ("I'll care for you.의 뜻은?",
                                                 ['나는 너를 아꼈어.', '나는 너를 아끼고 있어.', '나는 너를 아껴 줄 거야.', '나는 너를 아낄 수 없어.'],
                                                 '나는 너를 아껴 줄 거야.',
@@ -1067,10 +1067,10 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                ("빈칸: I'll _____ again.",
                                                 ['tries', 'tried', 'trying', 'try'],
                                                 'try',
-                                                "I'll + 동사원형"),
+                                                "I'll + 기본 행동 단어"),
                                                ('알맞은 구조는?',
-                                                ["I'll + 과거형", "I'll + 동사원형", "I'll + ing", "I'll + to 동사"],
-                                                "I'll + 동사원형",
+                                                ["I'll + 과거 모양", "I'll + 기본 행동 단어", "I'll + ing", "I'll + to + 행동 단어"],
+                                                "I'll + 기본 행동 단어",
                                                 '미래의 약속/의지를 말합니다.')],
                                   'sentence_prefix': "I'll",
                                   'sentence_choices': ['try again',
@@ -1087,8 +1087,8 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                        'I think this is wrong.'],
                                           'frequent_options': ['I will', 'Let it', 'I think', 'used to'],
                                           'frequent_answer': 'I think',
-                                          'form_options': ['I think + 동사원형만',
-                                                           'I think + to 동사',
+                                          'form_options': ['I think + 기본 행동 단어만',
+                                                           'I think + to + 행동 단어',
                                                            'I think + ing만',
                                                            'I think + 문장'],
                                           'form_answer': 'I think + 문장',
@@ -1098,7 +1098,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                           'meaning_options': ['능력을 말한다', '과거 습관을 말한다', '내 생각을 말한다', '명령한다'],
                                           'meaning_answer': '내 생각을 말한다',
                                           'rule_answer': 'I think + 문장 = 나는 ~라고 생각한다',
-                                          'rule_options': ['I think + 동사원형 = ~할 수 있다',
+                                          'rule_options': ['I think + 기본 행동 단어 = ~할 수 있다',
                                                            'I think + ing = ~하는 중이다',
                                                            'I think + will만 = ~하지 마라',
                                                            'I think + 문장 = 나는 ~라고 생각한다'],
@@ -1125,9 +1125,9 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                         'can',
                                                         'I think 뒤에는 문장을 씁니다.'),
                                                        ('알맞은 구조는?',
-                                                        ['I think + 동사원형만',
+                                                        ['I think + 기본 행동 단어만',
                                                          'I think + 문장',
-                                                         'I think + to 동사',
+                                                         'I think + to + 행동 단어',
                                                          'I think + ing만'],
                                                         'I think + 문장',
                                                         '생각/의견을 말합니다.')],
@@ -1138,7 +1138,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                                'I can do it',
                                                                'we need time'],
                                           'sentence_suffix': ''},
- '14. New York City - Norah Jones': {'target': "can't + 동사원형",
+ '14. New York City - Norah Jones': {'target': "can't + 기본 행동 단어",
                                      'examples': ["I can't remember what I planned.",
                                                   "I can't remember when it's time to go.",
                                                   "I can't sleep tonight.",
@@ -1146,29 +1146,29 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                   "I can't find my way."],
                                      'frequent_options': ['I used to', 'I will', "I can't", 'Let me'],
                                      'frequent_answer': "I can't",
-                                     'form_options': ["can't + 과거형", "can't + to 동사", "can't + 동사-ing", "can't + 동사원형"],
-                                     'form_answer': "can't + 동사원형",
+                                     'form_options': ["can't + 과거 모양", "can't + to + 행동 단어", "can't + -ing 모양", "can't + 기본 행동 단어"],
+                                     'form_answer': "can't + 기본 행동 단어",
                                      'meaning_examples': [("I can't remember.", '나는 기억할 수 없어.'),
                                                           ("I can't sleep.", '나는 잠을 잘 수 없어.'),
                                                           ("I can't forget the city.", '나는 그 도시를 잊을 수 없어.')],
                                      'meaning_options': ['~할 것이다', '~하곤 했다', '~할 수 없다', '~하게 두다'],
                                      'meaning_answer': '~할 수 없다',
-                                     'rule_answer': "can't + 동사원형 = ~할 수 없다",
-                                     'rule_options': ["can't + 과거형 = 어제 ~하지 않았다",
+                                     'rule_answer': "can't + 기본 행동 단어 = ~할 수 없다",
+                                     'rule_options': ["can't + 과거 모양 = 어제 ~하지 않았다",
                                                       "can't + ing = ~하는 중이 아니다",
-                                                      "can't + to 동사 = ~해야 한다",
-                                                      "can't + 동사원형 = ~할 수 없다"],
+                                                      "can't + to + 행동 단어 = ~해야 한다",
+                                                      "can't + 기본 행동 단어 = ~할 수 없다"],
                                      'practice': [("빈칸: I can't _____ what I planned.",
                                                    ['remembers', 'remembered', 'remember', 'remembering'],
                                                    'remember',
-                                                   "can't 뒤에는 동사원형입니다."),
+                                                   "can't 뒤에는 기본 행동 단어입니다."),
                                                   ('맞는 문장은?',
                                                    ["I can't sleeps tonight.",
                                                     "I can't slept tonight.",
                                                     "I can't sleeping tonight.",
                                                     "I can't sleep tonight."],
                                                    "I can't sleep tonight.",
-                                                   "can't + 동사원형"),
+                                                   "can't + 기본 행동 단어"),
                                                   ("I can't forget the city.의 뜻은?",
                                                    ['나는 그 도시를 잊었어.',
                                                     '나는 그 도시를 잊을 거야.',
@@ -1179,10 +1179,10 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                   ("빈칸: I can't _____ my way.",
                                                    ['finds', 'found', 'finding', 'find'],
                                                    'find',
-                                                   "can't + 동사원형"),
+                                                   "can't + 기본 행동 단어"),
                                                   ('알맞은 구조는?',
-                                                   ["can't + 과거형", "can't + 동사원형", "can't + ing", "can't + to 동사"],
-                                                   "can't + 동사원형",
+                                                   ["can't + 과거 모양", "can't + 기본 행동 단어", "can't + ing", "can't + to + 행동 단어"],
+                                                   "can't + 기본 행동 단어",
                                                    '불가능을 말합니다.')],
                                      'sentence_prefix': "I can't",
                                      'sentence_choices': ['remember',
@@ -1191,7 +1191,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                           'find my way',
                                                           'stop thinking'],
                                      'sentence_suffix': ''},
- '15. Counting Stars - OneRepublic': {'target': 'I have been + 동사-ing',
+ '15. Counting Stars - OneRepublic': {'target': 'I have been + -ing 모양',
                                       'examples': ["Lately, I've been losing sleep.",
                                                    "Baby, I've been praying hard.",
                                                    "I've been dreaming about the things that we could be.",
@@ -1199,11 +1199,11 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                    "Lately, I've been practicing English."],
                                       'frequent_options': ['I can', 'I will', "I've been", 'I used to'],
                                       'frequent_answer': "I've been",
-                                      'form_options': ['I have been + 동사원형',
-                                                       'I have been + 과거형',
-                                                       'I have been + 명사',
-                                                       'I have been + 동사-ing'],
-                                      'form_answer': 'I have been + 동사-ing',
+                                      'form_options': ['I have been + 기본 행동 단어',
+                                                       'I have been + 과거 모양',
+                                                       'I have been + 대상 단어',
+                                                       'I have been + -ing 모양'],
+                                      'form_answer': 'I have been + -ing 모양',
                                       'meaning_examples': [('Lately, I have been losing sleep.', '요즘 잠을 잘 못 자고 있다.'),
                                                            ('Lately, I have been thinking about my dream.',
                                                             '요즘 내 꿈에 대해 계속 생각하고 있다.'),
@@ -1214,11 +1214,11 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                           '최근부터 지금까지 이어지는 행동이나 상태',
                                                           '항상 변하지 않는 일반 사실'],
                                       'meaning_answer': '최근부터 지금까지 이어지는 행동이나 상태',
-                                      'rule_answer': 'I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다',
-                                      'rule_options': ['I have been + 동사원형 = 내일 ~할 것이다',
-                                                       'I am + 동사-ing = 어제 ~했다',
-                                                       'I will + 동사원형 = 지금까지 계속 ~하고 있다',
-                                                       'I have been + 동사-ing = 최근부터 지금까지 계속 ~하고 있다'],
+                                      'rule_answer': 'I have been + -ing 모양 = 최근부터 지금까지 계속 ~하고 있다',
+                                      'rule_options': ['I have been + 기본 행동 단어 = 내일 ~할 것이다',
+                                                       'I am + -ing 모양 = 어제 ~했다',
+                                                       'I will + 기본 행동 단어 = 지금까지 계속 ~하고 있다',
+                                                       'I have been + -ing 모양 = 최근부터 지금까지 계속 ~하고 있다'],
                                       'practice': [('I’ve been의 긴 형태로 알맞은 것은?',
                                                     ['I am been', 'I will been', 'I have been', 'I did been'],
                                                     'I have been',
@@ -1229,7 +1229,7 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동
                                                      'I been studying English.',
                                                      'I have been studying English.'],
                                                     'I have been studying English.',
-                                                    'have been + 동사-ing'),
+                                                    'have been + -ing 모양'),
                                                    ('빈칸: Lately, I have been _____ soccer.',
                                                     ['play', 'played', 'playing', 'plays'],
                                                     'playing',
@@ -1288,10 +1288,10 @@ def show_song_grammar_tab(song_choice, data):
             st.error("다시 보세요. 여러 문장에 반복되는 표현이 있습니다.")
 
     st.markdown("---")
-    st.markdown("### 2. 공통점 찾기")
+    st.markdown("### 2. 표현 모양 찾기")
 
     form = st.radio(
-        "위 표현들의 공통 구조는 무엇인가요?",
+        "위 표현들의 공통 모양은 무엇인가요?",
         g["form_options"],
         key=f"{prefix}form",
         horizontal=False
@@ -1335,7 +1335,7 @@ def show_song_grammar_tab(song_choice, data):
     st.markdown("### 4. 규칙 정리")
 
     rule = st.radio(
-        "지금까지 발견한 규칙을 가장 잘 정리한 것은 무엇인가요?",
+        "지금까지 발견한 말의 규칙을 가장 잘 정리한 것은 무엇인가요?",
         g["rule_options"],
         key=f"{prefix}rule",
         horizontal=False
@@ -3319,7 +3319,7 @@ if "current_tab" not in st.session_state:
 
 def sync_song():
     for k in list(st.session_state.keys()):
-        if k.startswith(("quiz_", "keygame_", "match_", "reflect_")):
+        if k.startswith(("quiz_", "keygame_", "match_", "reflect_", "integrated_quiz_", "song_grammar_")):
             del st.session_state[k]
 
 st.markdown('<div class="main-title"><h1>🎵 Pop Song English Learning</h1></div>', unsafe_allow_html=True)
@@ -3328,7 +3328,7 @@ song_choice = st.selectbox("👉 학습할 노래를 선택하세요", song_opti
 st.session_state.selected_song = song_choice
 data = SONGS[song_choice]
 
-tabs_list = ["🎬 배경 학습", "📖 가사 & Key Expression", "✅ 종합 퀴즈", "🎯 Grammar", "🧩 문장 매칭 게임", "✍️ 생각 적기"]
+tabs_list = ["🎬 배경 학습", "📖 가사 & 이해도 퀴즈", "🎯 Grammar", "🧩 문장 매칭 게임", "✍️ 생각 적기", "⭐ Key Expression 학습"]
 selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
 
 if selected_tab == "🎬 배경 학습":
@@ -3346,7 +3346,7 @@ if selected_tab == "🎬 배경 학습":
     )
 
 
-elif selected_tab == "📖 가사 & Key Expression":
+elif selected_tab == "📖 가사 & 이해도 퀴즈":
     st.subheader("🎬 노래 영상")
     st.video(data["video_url"])
     st.markdown("---")
@@ -3359,9 +3359,7 @@ elif selected_tab == "📖 가사 & Key Expression":
         </div>
         """, unsafe_allow_html=True)
 
-    show_key_expression_learning_in_lyrics(song_choice, data, max_words=10)
-
-elif selected_tab == "✅ 종합 퀴즈":
+    st.markdown("---")
     show_integrated_quiz_tab(song_choice, data)
 
 
@@ -3820,3 +3818,7 @@ elif selected_tab == "✍️ 생각 적기":
             st.markdown(f'<div class="feedback-en">{clean_text_for_display(en_feedback)}</div>', unsafe_allow_html=True)
             st.markdown("### ✨ 쓰기 조언")
             st.markdown(f'<div class="advice-box">{clean_text_for_display(advice)}</div>', unsafe_allow_html=True)
+
+
+elif selected_tab == "⭐ Key Expression 학습":
+    show_key_expression_learning_in_lyrics(song_choice, data, max_words=10)
