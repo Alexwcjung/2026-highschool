@@ -224,6 +224,117 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
 
 
 
+def check_target_grammar_sentence(target, sentence):
+    """학생이 직접 쓴 문장이 오늘의 target grammar를 포함하는지 간단히 검사합니다.
+    너무 엄격한 문법 채점기가 아니라, 핵심 구조가 들어갔는지 확인하는 용도입니다.
+    """
+    raw = str(sentence).strip()
+    s = re.sub(r"\s+", " ", raw)
+    low = s.lower().strip()
+
+    if not raw:
+        return False, "먼저 영어 문장을 써 보세요.", "오늘 배운 문법 표현을 넣어 한 문장으로 써 보세요."
+
+    if re.search(r"[가-힣]", raw):
+        return False, "영어 문장으로 써 보세요.", "한국어가 섞여 있습니다. 오늘 배운 영어 표현을 사용해 보세요."
+
+    if len(re.findall(r"[a-zA-Z']+", raw)) < 3:
+        return False, "문장이 너무 짧습니다.", "주어, 동사, 내용을 넣어 조금 더 완전한 문장으로 써 보세요."
+
+    def ok(msg="좋아요. 오늘 배운 target grammar가 문장 안에 잘 들어갔습니다."):
+        return True, msg, "철자와 대문자, 마침표만 한 번 더 확인해 보세요."
+
+    def no(hint):
+        return False, "아직 target grammar가 분명하게 보이지 않습니다.", hint
+
+    target = str(target).strip()
+
+    if target == "Let + 목적어 + 동사원형":
+        if re.search(r"^(do not|don't)\s+let\s+\w+\s+\w+", low) or re.search(r"^let\s+\w+\s+\w+", low):
+            if re.search(r"\blet\s+\w+\s+to\s+", low):
+                return no("Let 뒤에는 'to 동사'가 아니라 동사원형을 씁니다. 예: Let me try.")
+            return ok()
+        return no("Let + 사람/대상 + 동사원형 구조를 써 보세요. 예: Let me try.")
+
+    if target == "I'm sorry for + 명사/동사-ing":
+        if re.search(r"\b(i am|i'm)\s+sorry\s+for\s+", low):
+            after = re.split(r"\bsorry\s+for\s+", low, maxsplit=1)[-1]
+            if after and not re.match(r"(go|do|make|break|call|be|come|say|tell|play|study)\b", after):
+                return ok()
+            return no("for 뒤에는 명사나 동사-ing를 쓰는 것이 자연스럽습니다. 예: I'm sorry for being late.")
+        return no("I'm sorry for + 명사/동사-ing 구조를 써 보세요. 예: I'm sorry for making a mistake.")
+
+    if target == "can + 동사원형":
+        if re.search(r"\bcan\s+(?!to\b)\w+", low):
+            return ok()
+        return no("can 뒤에는 동사원형을 씁니다. 예: I can help you.")
+
+    if target == "won't + 동사원형":
+        if re.search(r"\bwon't\s+(?!to\b)\w+", low):
+            return ok()
+        return no("won't + 동사원형 구조를 써 보세요. 예: I won't give up.")
+
+    if target == "I don't know why + 문장":
+        if re.search(r"\bi\s+don't\s+know\s+why\s+\w+\s+\w+", low):
+            return ok()
+        return no("I don't know why 뒤에는 주어+동사가 이어집니다. 예: I don't know why I feel sad.")
+
+    if target == "When + 주어 + 동사":
+        if re.search(r"\bwhen\s+\w+\s+\w+", low):
+            return ok()
+        return no("When + 주어 + 동사 구조를 써 보세요. 예: When I feel tired, I rest.")
+
+    if target == "Tell + 사람 + 내용":
+        if re.search(r"\btell\s+(me|you|him|her|us|them|[a-z]+)\s+\w+", low):
+            return ok()
+        return no("Tell + 사람 + 내용 구조를 써 보세요. 예: Tell me your dream.")
+
+    if target == "will + 동사원형":
+        if re.search(r"\bwill\s+(?!to\b)\w+", low):
+            return ok()
+        return no("will + 동사원형 구조를 써 보세요. 예: I will remember you.")
+
+    if target == "It's hard to + 동사원형":
+        if re.search(r"\b(it is|it's)\s+hard\s+to\s+\w+", low):
+            return ok()
+        return no("It's hard to + 동사원형 구조를 써 보세요. 예: It's hard to say goodbye.")
+
+    if target == "used to + 동사원형":
+        if re.search(r"\bused\s+to\s+\w+", low):
+            return ok()
+        return no("used to + 동사원형 구조를 써 보세요. 예: I used to play outside.")
+
+    if target == "like + 명사":
+        if re.search(r"\blike\s+\w+", low):
+            if re.search(r"\b(i|you|we|they)\s+like\s+", low):
+                return no("여기서는 '좋아하다'가 아니라 '~처럼/~같은' 뜻의 like를 연습합니다. 예: It feels like home.")
+            return ok()
+        return no("~처럼/~같은 의미의 like + 명사 구조를 써 보세요. 예: It feels like home.")
+
+    if target == "I'll + 동사원형":
+        if re.search(r"\b(i'll|i\s+will)\s+(?!to\b)\w+", low):
+            return ok()
+        return no("I'll + 동사원형 구조를 써 보세요. 예: I'll try again.")
+
+    if target == "I think + 문장 / I don't think so":
+        if re.search(r"\bi\s+don't\s+think\s+so\b", low) or re.search(r"\bi\s+think\s+\w+\s+\w+", low):
+            return ok()
+        return no("I think + 문장 또는 I don't think so를 써 보세요. 예: I think English is fun.")
+
+    if target == "can't + 동사원형":
+        if re.search(r"\b(can't|cannot)\s+(?!to\b)\w+", low):
+            return ok()
+        return no("can't + 동사원형 구조를 써 보세요. 예: I can't sleep tonight.")
+
+    if target == "I have been + 동사-ing":
+        if re.search(r"\b(i\s+have|i've)\s+been\s+\w+ing\b", low):
+            return ok()
+        return no("I have been + 동사-ing 구조를 써 보세요. 예: I have been studying English.")
+
+    return True, "문장을 확인했습니다.", "오늘 배운 표현이 자연스럽게 들어갔는지 한 번 더 읽어 보세요."
+
+
+
 GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 목적어 + 동사원형',
                                'examples': ['Let it go.',
                                             'Let the storm rage on.',
@@ -1192,35 +1303,53 @@ def show_song_grammar_tab(song_choice, data):
     st.markdown("---")
     st.markdown("### ✍️ My Sentence")
 
-    sentence_choice = st.selectbox(
-        "표현을 골라 문장을 완성하세요.",
-        g["sentence_choices"],
-        key=f"{prefix}sentence_choice"
-    )
-
-    final_sentence = f"{g['sentence_prefix']} {sentence_choice}{g.get('sentence_suffix', '')}."
     st.markdown(
         f"""
-        <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff); padding:22px; border-radius:20px; border:1px solid #bfdbfe;">
-            <div style="font-size:1.35rem; font-weight:900; color:#1e3a8a;">
-                {clean_text_for_display(final_sentence)}
+        <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff); padding:22px; border-radius:20px; border:1px solid #bfdbfe; margin-bottom:16px;">
+            <div style="font-size:1.1rem; font-weight:850; color:#475569; margin-bottom:8px;">
+                오늘의 target grammar를 사용해서 영어 문장을 직접 써 보세요.
+            </div>
+            <div style="font-size:1.35rem; font-weight:950; color:#1e3a8a;">
+                {clean_text_for_display(g['target'])}
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
 
-    user_sentence = st.text_input(
-        "직접 문장을 써 보세요.",
-        placeholder=final_sentence,
-        key=f"{prefix}user_sentence"
+    user_sentence = st.text_area(
+        "학생이 직접 쓴 문장",
+        placeholder="예: I can help my friend. / I'm sorry for being late.",
+        key=f"{prefix}user_sentence",
+        height=110
     )
 
-    if st.button("내 문장 확인", key=f"{prefix}my_sentence_check", use_container_width=True):
-        if not user_sentence.strip():
-            st.warning("먼저 문장을 써 보세요.")
+    c_check, c_clear = st.columns([2, 1])
+    with c_check:
+        if st.button("문법성 검사", key=f"{prefix}my_sentence_check", use_container_width=True):
+            is_ok, feedback, advice = check_target_grammar_sentence(g["target"], user_sentence)
+            st.session_state[f"{prefix}my_sentence_result"] = {
+                "is_ok": is_ok,
+                "feedback": feedback,
+                "advice": advice,
+                "sentence": user_sentence,
+            }
+    with c_clear:
+        if st.button("다시 쓰기", key=f"{prefix}my_sentence_clear", use_container_width=True):
+            for k in [f"{prefix}my_sentence_result", f"{prefix}user_sentence"]:
+                if k in st.session_state:
+                    del st.session_state[k]
+            st.rerun()
+
+    result_key = f"{prefix}my_sentence_result"
+    if result_key in st.session_state:
+        result = st.session_state[result_key]
+        if result["is_ok"]:
+            st.success(result["feedback"])
+            st.balloons()
         else:
-            st.success("좋아요. 오늘 발견한 표현을 활용해 문장을 만들었습니다.")
+            st.error(result["feedback"])
+        st.info(result["advice"])
 
 def try_translate_ko_to_en(korean_text):
     korean_text = str(korean_text).strip()
