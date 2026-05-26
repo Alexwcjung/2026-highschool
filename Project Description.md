@@ -28,11 +28,7 @@ This app is designed based on several language learning principles that are clos
 
 ### 1. The Natural Approach
 
-This app is more closely related to **the Natural Approach** than to Comprehensible Input alone. Krashen and Terrell (1983) emphasize that language acquisition is supported when learners are exposed to meaningful and understandable input in a low-anxiety environment. In the Natural Approach, learners are not forced to produce language before they are ready. Instead, they first build comprehension through listening, meaning-focused input, and familiar contexts.
-
-This principle fits the design of this app because students first listen to English words, expressions, song lyrics, and simple sentences before being asked to speak or write. The app provides Korean meanings, captions, repeated audio, and simple tasks so that low-proficiency learners can understand the input without excessive pressure.
-
-The Natural Approach is especially appropriate for Korean vocational high school students who may feel anxious about English speaking. By beginning with familiar songs, short expressions, and repeated listening, the app lowers the affective burden and helps students experience English as something understandable and usable. Speaking practice is introduced gradually through word-level and sentence-level activities after students have had enough exposure to the target language.
+This app is more closely aligned with the Natural Approach than with Comprehensible Input alone. While comprehensible input is an important part of the design, the app also emphasizes low-anxiety listening, meaning-focused understanding, and gradual movement toward speaking practice. Students first encounter English through songs, captions, key expressions, and simple comprehension tasks. After they understand the meaning, they move on to speaking practice, matching games, and sentence-level production. This sequence reflects the Natural Approach because learners are not forced to produce language before they are ready; instead, they receive meaningful input and are gradually guided toward oral use.
 
 ### 2. Reading While Listening (RWL)
 
