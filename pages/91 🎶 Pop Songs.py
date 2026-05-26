@@ -5,6 +5,7 @@ import html
 import re
 import json
 import uuid
+from urllib.parse import quote
 
 st.set_page_config(page_title="Pop Song Master Class", page_icon="🎵", layout="wide")
 
@@ -146,10 +147,21 @@ def reset_keys_by_prefix(prefixes):
             del st.session_state[key]
 
 
+def tts_audio_html(text, lang="en"):
+    """외부 패키지 없이 Google Translate TTS URL로 짧은 표현을 들려줍니다."""
+    safe_text = str(text).strip()
+    if not safe_text:
+        return ""
+    url = "https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=" + lang + "&q=" + quote(safe_text)
+    return f"""
+    <audio controls style="width:100%; height:38px; margin-top:6px;">
+        <source src="{url}" type="audio/mpeg">
+    </audio>
+    """
+
+
 def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
-    """가사 & 퀴즈 탭 맨 아래에 넣는 Key Expression 학습 활동입니다."""
-    key_key = safe_key(song_choice)
-    prefix = f"lyrics_key_expression_learning_{key_key}_"
+    """가사 탭에서 Key Expression을 문제 없이 학습 자료로 보여주고 듣기를 제공합니다."""
     expressions = list(data.get("key_expressions", []))[:max_words]
 
     if not expressions:
@@ -159,69 +171,154 @@ def show_key_expression_learning_in_lyrics(song_choice, data, max_words=10):
     st.subheader("⭐ Key Expression 학습")
     st.markdown(
         '<div class="game-card"><div class="big-guide">'
-        '노래에서 중요한 영어 표현을 보고 한국어 뜻을 직접 적어 보세요.<br>'
-        '답을 본 뒤 고친 것은 같은 라운드 점수에 반영되지 않습니다. '
-        '10개 중 8개 이상을 한 번에 맞히면 통과입니다.'
+        '중요 표현의 뜻을 먼저 확인하고, 영어 표현을 들어 보세요.<br>'
+        '여기서는 문제를 풀지 않습니다. 3번 탭의 종합 퀴즈에서 다시 확인합니다.'
         '</div></div>',
         unsafe_allow_html=True
     )
 
-    status_keys = []
-    for i, (en, ko) in enumerate(expressions, start=1):
-        status_key = f"{prefix}status_{i}"
-        status_keys.append(status_key)
+    all_text = " . ".join(en for en, _ in expressions)
+    st.markdown("#### 🎧 전체 표현 듣기")
+    components.html(tts_audio_html(all_text, lang="en"), height=60)
 
-        c1, c2, c3 = st.columns([2.2, 2.4, 1.25])
-        with c1:
-            st.markdown(
-                f"""
-                <div style="padding: 12px 14px; border-radius: 16px; background: #eff6ff;
-                            border: 1.5px solid #bfdbfe; font-size: 18px; font-weight: 900;
-                            color: #1d4ed8; margin-top: 4px;">
+    for i, (en, ko) in enumerate(expressions, start=1):
+        st.markdown(
+            f"""
+            <div style="background:linear-gradient(135deg,#f8fafc,#eff6ff); padding:18px 20px; border-radius:18px; border:1px solid #bfdbfe; margin-bottom:14px;">
+                <div style="font-size:1.18rem; font-weight:950; color:#1e3a8a; margin-bottom:6px;">
                     {i}. {clean_text_for_display(en)}
                 </div>
-                """,
-                unsafe_allow_html=True
-            )
-        with c2:
-            user_meaning = st.text_input(
-                "한국어 뜻",
-                key=f"{prefix}answer_{i}",
-                placeholder="한국어 뜻을 적어 보세요.",
-                label_visibility="collapsed"
-            )
-        with c3:
-            if st.button("답 확인", key=f"{prefix}check_{i}"):
-                if status_key not in st.session_state:
-                    st.session_state[status_key] = is_correct_korean_answer(user_meaning, ko)
+                <div style="font-size:1.02rem; font-weight:850; color:#475569; margin-bottom:8px;">
+                    {clean_text_for_display(ko)}
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        components.html(tts_audio_html(en, lang="en"), height=58)
 
-            if status_key in st.session_state:
-                if st.session_state[status_key]:
-                    st.success("정답")
-                else:
-                    st.error(f"정답: {ko}")
 
-    score = sum(1 for key in status_keys if st.session_state.get(key) is True)
-    checked = sum(1 for key in status_keys if key in st.session_state)
-    total = len(expressions)
-    pass_count = min(8, total)
+def build_integrated_quiz(song_choice, data, total_questions=15):
+    """내용 이해 문제 8개 + Key Expression 문제 7개를 합쳐 15문항 종합 퀴즈를 만듭니다."""
+    quiz_key = safe_key(song_choice)
+    combined = []
 
-    st.markdown(f"### Key Expression 점수: {score}/{total}")
-    st.caption(f"답 확인을 누른 표현: {checked}/{total} · 통과 기준: {pass_count}/{total} 이상")
+    for i, item in enumerate(data.get("quiz", []), start=1):
+        q = item["q"]
+        q_text = q if str(q).strip().startswith(str(i)) else f"{i}. {q}"
+        combined.append({
+            "kind": "내용 이해",
+            "q": q_text,
+            "options": item["options"],
+            "answer": item["answer"],
+            "explain": "가사와 배경 내용을 다시 확인해 보세요."
+        })
 
-    if checked == total and score >= pass_count:
-        st.success(f"통과했습니다! 답을 보지 않고 첫 시도에서 {score}/{total}개를 맞혔습니다.")
-    elif checked == total:
-        st.warning(f"아직 통과 기준에 부족합니다. 첫 시도 점수는 {score}/{total}개입니다. 다시 풀기를 눌러 새로 도전하세요.")
-    else:
-        st.info("모든 표현의 답 확인을 누르면 통과 여부가 표시됩니다.")
+    expressions = list(data.get("key_expressions", []))
+    all_english_options = [en for en, _ in expressions]
+    all_korean_options = [ko for _, ko in expressions]
+    need_key_count = max(0, total_questions - len(combined))
 
-    if checked > 0:
-        if st.button("🔄 Key Expression 다시 풀기", key=f"{prefix}reset", use_container_width=True):
-            reset_keys_by_prefix(prefix)
+    for i, (en, ko) in enumerate(expressions[:need_key_count], start=1):
+        direction_rng = random.Random(f"{quiz_key}_integrated_direction_{i}")
+        direction = direction_rng.choice(["en_to_ko", "ko_to_en"])
+        rng = random.Random(f"{quiz_key}_integrated_key_{i}")
+
+        if direction == "en_to_ko":
+            distractors = [x for x in all_korean_options if x != ko]
+            wrongs = rng.sample(distractors, k=min(3, len(distractors)))
+            options = wrongs + [ko]
+            combined.append({
+                "kind": "Key Expression",
+                "q": f"'{en}'의 뜻으로 알맞은 것은?",
+                "options": options,
+                "answer": ko,
+                "explain": f"{en} = {ko}"
+            })
+        else:
+            distractors = [x for x in all_english_options if x != en]
+            wrongs = rng.sample(distractors, k=min(3, len(distractors)))
+            options = wrongs + [en]
+            combined.append({
+                "kind": "Key Expression",
+                "q": f"'{ko}'에 맞는 영어 표현은?",
+                "options": options,
+                "answer": en,
+                "explain": f"{en} = {ko}"
+            })
+
+    return combined[:total_questions]
+
+
+def show_integrated_quiz_tab(song_choice, data):
+    """3번 탭: 내용 이해 + Key Expression을 합친 15문항 퀴즈입니다."""
+    st.subheader("✅ 종합 퀴즈")
+    st.markdown(
+        '<div class="game-card"><div class="big-guide">'
+        '내용 이해 문제와 Key Expression 문제가 함께 나옵니다.<br>'
+        '총 15문제 중 12문제 이상 맞히면 통과입니다.'
+        '</div></div>',
+        unsafe_allow_html=True
+    )
+
+    key_key = safe_key(song_choice)
+    pass_score = 12
+    questions = build_integrated_quiz(song_choice, data, total_questions=15)
+    user_answers = []
+
+    for i, item in enumerate(questions, start=1):
+        st.markdown(
+            f"""
+            <div style="background:#ffffff; padding:16px 18px; border-radius:18px; border:1px solid #e2e8f0; margin-top:18px;">
+                <div style="font-size:0.95rem; font-weight:900; color:#6366f1; margin-bottom:6px;">{clean_text_for_display(item['kind'])}</div>
+                <div style="font-size:1.12rem; font-weight:950; color:#1e293b; line-height:1.6;">{i}. {clean_text_for_display(item['q'])}</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        options = shuffle_options(item["options"], seed=f"{key_key}_integrated_options_{i}")
+        picked = st.radio(
+            "정답을 고르세요.",
+            options,
+            key=f"integrated_quiz_{key_key}_{i}",
+            index=None,
+            label_visibility="collapsed"
+        )
+        user_answers.append((item, picked))
+
+    c1, c2 = st.columns(2)
+    with c1:
+        submit_quiz = st.button("종합 퀴즈 정답 확인", key=f"integrated_quiz_submit_{key_key}", use_container_width=True)
+    with c2:
+        if st.button("종합 퀴즈 다시 풀기", key=f"integrated_quiz_reset_{key_key}", use_container_width=True):
+            for k in list(st.session_state.keys()):
+                if k.startswith(f"integrated_quiz_{key_key}_"):
+                    del st.session_state[k]
             st.rerun()
 
+    if submit_quiz:
+        score = sum(1 for item, picked in user_answers if picked == item["answer"])
+        st.markdown(f'<div class="score-box">점수: {score} / {len(questions)}</div>', unsafe_allow_html=True)
 
+        if score >= pass_score:
+            st.success(f"통과했습니다! {len(questions)}문제 중 {score}문제를 맞혔습니다.")
+            st.balloons()
+        else:
+            st.warning(f"아직 통과 기준에 부족합니다. 통과 기준은 {pass_score}/{len(questions)} 이상입니다.")
+
+        for idx, (item, picked) in enumerate(user_answers, start=1):
+            answer = item["answer"]
+            explain = item.get("explain", "")
+            if picked == answer:
+                st.success(f"{idx}번 정답입니다. ✅")
+            else:
+                st.markdown(
+                    f'<div class="wrong-box"><b>{idx}번</b> 다시 확인해 보세요.<br>'
+                    f'내가 고른 답: {clean_text_for_display(picked) if picked else "선택 안 함"}<br>'
+                    f'정답: <b>{clean_text_for_display(answer)}</b><br>'
+                    f'{clean_text_for_display(explain)}</div>',
+                    unsafe_allow_html=True
+                )
 
 
 def check_target_grammar_sentence(target, sentence):
@@ -3212,7 +3309,7 @@ song_choice = st.selectbox("👉 학습할 노래를 선택하세요", song_opti
 st.session_state.selected_song = song_choice
 data = SONGS[song_choice]
 
-tabs_list = ["🎬 배경 학습", "📖 가사 & 퀴즈", "📝 Key Expression 뜻 맞추기", "🎯 Grammar", "🧩 문장 매칭 게임", "✍️ 생각 적기"]
+tabs_list = ["🎬 배경 학습", "📖 가사 & Key Expression", "✅ 종합 퀴즈", "🎯 Grammar", "🧩 문장 매칭 게임", "✍️ 생각 적기"]
 selected_tab = st.radio("학습 단계", tabs_list, horizontal=True, key="current_tab")
 
 if selected_tab == "🎬 배경 학습":
@@ -3230,7 +3327,7 @@ if selected_tab == "🎬 배경 학습":
     )
 
 
-elif selected_tab == "📖 가사 & 퀴즈":
+elif selected_tab == "📖 가사 & Key Expression":
     st.subheader("🎬 노래 영상")
     st.video(data["video_url"])
     st.markdown("---")
@@ -3242,150 +3339,11 @@ elif selected_tab == "📖 가사 & 퀴즈":
             <div class="kor-sub">{clean_text_for_display(ko)}</div>
         </div>
         """, unsafe_allow_html=True)
-    st.markdown("---")
-    st.subheader("✅ 내용 이해 문제 8문항")
-    st.markdown('<div class="quiz-box"><b>전체 가사를 읽은 뒤 문제를 풀어 봅시다.</b><br>화자의 상황, 감정, 반복되는 표현을 중심으로 생각하면 됩니다.</div>', unsafe_allow_html=True)
-    quiz_key = safe_key(song_choice)
-    user_answers = []
-    for i, item in enumerate(data["quiz"], start=1):
-        q = item["q"]
-        q_text = q if str(q).strip().startswith(str(i)) else f"{i}. {q}"
-        options = shuffle_options(item["options"], seed=f"{quiz_key}_quiz_{i}")
-        picked = st.radio(q_text, options, key=f"quiz_{quiz_key}_{i}", index=None)
-        user_answers.append((q_text, picked, item["answer"]))
-    c1, c2 = st.columns(2)
-    with c1:
-        submit_quiz = st.button("정답 확인", key=f"quiz_submit_{quiz_key}", use_container_width=True)
-    with c2:
-        if st.button("다시 풀기", key=f"quiz_reset_{quiz_key}", use_container_width=True):
-            for k in list(st.session_state.keys()):
-                if k.startswith(f"quiz_{quiz_key}_"):
-                    del st.session_state[k]
-            st.rerun()
-    if submit_quiz:
-        score = sum(1 for _, picked, answer in user_answers if picked == answer)
-        st.markdown(f'<div class="score-box">점수: {score} / {len(user_answers)}</div>', unsafe_allow_html=True)
-        for idx, (_, picked, answer) in enumerate(user_answers, start=1):
-            if picked == answer:
-                st.success(f"{idx}번 정답입니다. ✅")
-            else:
-                st.markdown(f'<div class="wrong-box"><b>{idx}번</b> 다시 확인해 보세요.<br>내가 고른 답: {clean_text_for_display(picked) if picked else "선택 안 함"}<br>정답: <b>{clean_text_for_display(answer)}</b></div>', unsafe_allow_html=True)
 
     show_key_expression_learning_in_lyrics(song_choice, data, max_words=10)
 
-elif selected_tab == "📝 Key Expression 뜻 맞추기":
-    st.subheader("📝 Key Expression 뜻 맞추기")
-    st.markdown(
-        '<div class="game-card"><div class="big-guide">'
-        '영어 표현을 보고 한국어 뜻을 고르는 문제와, 한국어 뜻을 보고 영어 표현을 고르는 문제가 섞여 나옵니다.<br>'
-        '각 노래마다 중요한 표현 10개를 양방향으로 연습합니다.'
-        '</div></div>',
-        unsafe_allow_html=True
-    )
-
-    key_key = safe_key(song_choice)
-    expressions = data["key_expressions"]
-
-    all_english_options = [en for en, _ in expressions]
-    all_korean_options = [ko for _, ko in expressions]
-
-    user_answers = []
-
-    for i, (en, ko) in enumerate(expressions, start=1):
-        # 곡명과 번호를 seed로 사용해 문제 방향을 섞습니다.
-        # 새로고침해도 같은 곡에서는 문제 방향이 안정적으로 유지됩니다.
-        direction_rng = random.Random(f"{key_key}_direction_{i}")
-        direction = direction_rng.choice(["en_to_ko", "ko_to_en"])
-
-        rng = random.Random(f"{key_key}_keygame_{i}")
-
-        if direction == "en_to_ko":
-            # 영어 표현 → 한국어 뜻 고르기
-            distractors = [x for x in all_korean_options if x != ko]
-            wrongs = rng.sample(distractors, k=min(3, len(distractors)))
-            options = shuffle_options(wrongs + [ko], seed=f"{key_key}_keygame_options_{i}")
-
-            st.markdown(f"### {i}. {en}")
-            picked = st.radio(
-                "알맞은 한국어 뜻을 고르세요.",
-                options,
-                key=f"keygame_{key_key}_{i}",
-                index=None
-            )
-
-            user_answers.append({
-                "direction": "en_to_ko",
-                "question": en,
-                "picked": picked,
-                "answer": ko,
-                "en": en,
-                "ko": ko,
-            })
-
-        else:
-            # 한국어 뜻 → 영어 표현 고르기
-            distractors = [x for x in all_english_options if x != en]
-            wrongs = rng.sample(distractors, k=min(3, len(distractors)))
-            options = shuffle_options(wrongs + [en], seed=f"{key_key}_keygame_options_{i}")
-
-            st.markdown(f"### {i}. {ko}")
-            picked = st.radio(
-                "알맞은 영어 표현을 고르세요.",
-                options,
-                key=f"keygame_{key_key}_{i}",
-                index=None
-            )
-
-            user_answers.append({
-                "direction": "ko_to_en",
-                "question": ko,
-                "picked": picked,
-                "answer": en,
-                "en": en,
-                "ko": ko,
-            })
-
-    c1, c2 = st.columns(2)
-
-    with c1:
-        submit_key = st.button(
-            "Key Expression 정답 확인",
-            key=f"keygame_submit_{key_key}",
-            use_container_width=True
-        )
-
-    with c2:
-        if st.button(
-            "Key Expression 다시 풀기",
-            key=f"keygame_reset_{key_key}",
-            use_container_width=True
-        ):
-            for k in list(st.session_state.keys()):
-                if k.startswith(f"keygame_{key_key}_"):
-                    del st.session_state[k]
-            st.rerun()
-
-    if submit_key:
-        score = sum(1 for item in user_answers if item["picked"] == item["answer"])
-        st.markdown(
-            f'<div class="score-box">점수: {score} / {len(user_answers)}</div>',
-            unsafe_allow_html=True
-        )
-
-        for idx, item in enumerate(user_answers, start=1):
-            en = item["en"]
-            ko = item["ko"]
-            picked = item["picked"]
-            answer = item["answer"]
-
-            if picked == answer:
-                st.success(f"{idx}번 정답 ✅  {en} = {ko}")
-            else:
-                st.error(
-                    f"{idx}번 오답 ❌  정답: {answer}\n\n"
-                    f"전체 표현: {en} = {ko}"
-                )
-
+elif selected_tab == "✅ 종합 퀴즈":
+    show_integrated_quiz_tab(song_choice, data)
 
 
 elif selected_tab == "🎯 Grammar":
