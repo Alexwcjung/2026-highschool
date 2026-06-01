@@ -286,11 +286,15 @@ def show_integrated_quiz_tab(song_choice, data):
     user_answers = []
 
     for i, item in enumerate(questions, start=1):
+        # item['q'] 안에 이미 1. / 2. 같은 번호가 들어 있어도
+        # 화면에는 번호가 한 번만 보이도록 기존 번호를 제거한 뒤 다시 붙입니다.
+        question_text = re.sub(r"^\s*\d+\s*[\.\)]\s*", "", str(item["q"]).strip())
+
         st.markdown(
             f"""
             <div style="background:#ffffff; padding:16px 18px; border-radius:18px; border:1px solid #e2e8f0; margin-top:18px;">
                 <div style="font-size:0.95rem; font-weight:900; color:#6366f1; margin-bottom:6px;">{clean_text_for_display(item['kind'])}</div>
-                <div style="font-size:1.12rem; font-weight:950; color:#1e293b; line-height:1.6;">{i}. {clean_text_for_display(item['q'])}</div>
+                <div style="font-size:1.12rem; font-weight:950; color:#1e293b; line-height:1.6;">{i}. {clean_text_for_display(question_text)}</div>
             </div>
             """,
             unsafe_allow_html=True
