@@ -2422,6 +2422,10 @@ def show_mission_quiz(category, topic_name, data):
     pass_need = len(questions)
     st.caption(f"방금 읽은 지문을 떠올리며 {len(questions)}문제를 모두 푼 뒤 한 번에 제출하세요. 정답은 바로 공개하지 않고 정답 개수만 보여줍니다. {pass_need}문제를 모두 맞히면 통과입니다.")
 
+    # 제출 후에는 개별 문항만 바꿔서 다시 제출하지 못하게 잠급니다.
+    # 다시 풀 때는 아래의 'Mission 1 전체 다시 풀기' 버튼으로 모든 문항을 한꺼번에 초기화합니다.
+    submitted = st.session_state.get(f"{prefix}submitted", False)
+
     answers = []
     for i, (question, options, answer) in enumerate(questions, start=1):
         answer_key = f"{prefix}answer_{i}"
@@ -2447,11 +2451,16 @@ def show_mission_quiz(category, topic_name, data):
             st.session_state[option_key],
             index=None,
             key=answer_key,
-            label_visibility="collapsed"
+            label_visibility="collapsed",
+            disabled=submitted
         )
         answers.append((choice, answer))
 
-    if st.button("✅ Mission 1 제출하기", key=f"{prefix}submit", use_container_width=True):
+    if submitted:
+        st.info("이미 제출했습니다. 한 문제씩 고쳐서 다시 제출할 수는 없습니다. 다시 도전하려면 아래 버튼으로 Mission 1 전체를 다시 풀어 주세요.")
+
+    submit_disabled = submitted
+    if st.button("✅ Mission 1 제출하기", key=f"{prefix}submit", use_container_width=True, disabled=submit_disabled):
         unanswered = sum(1 for choice, _ in answers if choice is None)
         if unanswered > 0:
             st.session_state[f"{prefix}submitted"] = False
@@ -2461,6 +2470,7 @@ def show_mission_quiz(category, topic_name, data):
             st.session_state[f"{prefix}submitted"] = True
             st.session_state[f"{prefix}score"] = score
             st.session_state[f"{prefix}message"] = ""
+            st.rerun()
 
     if st.session_state.get(f"{prefix}message"):
         st.warning(st.session_state[f"{prefix}message"])
@@ -2474,8 +2484,15 @@ def show_mission_quiz(category, topic_name, data):
             st.warning("아직 통과하지 못했습니다. 정답은 공개하지 않습니다. 다시 풀기를 눌러 새로 도전하세요.")
 
     if st.session_state.get(f"{prefix}submitted") or st.session_state.get(f"{prefix}message"):
-        if st.button("🔄 Mission 1 다시 풀기", key=f"{prefix}reset", use_container_width=True):
-            reset_keys_by_prefix(prefix)
+        if st.button("🔄 Mission 1 전체 다시 풀기", key=f"{prefix}reset", use_container_width=True):
+            # 버튼 자체의 key는 건드리지 않고, Mission 1 답안/결과/보기만 초기화합니다.
+            keys_to_delete = [
+                key for key in list(st.session_state.keys())
+                if key.startswith(prefix)
+                and key not in {f"{prefix}reset", f"{prefix}submit"}
+            ]
+            for key in keys_to_delete:
+                del st.session_state[key]
             st.rerun()
 
 def get_sequence_events(topic_name, data):
