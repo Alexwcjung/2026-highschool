@@ -3547,32 +3547,41 @@ def show_letter_to_character_activity(category, topic_name, data):
 # 단순 Reading 활동 함수 덮어쓰기
 # =========================================================
 def build_mission_questions(topic_name, data):
-    """Mission 1: 모든 지문 12문제, 10문제 이상 통과."""
+    """Mission 1: 중복 filler 문제를 만들지 않고, 준비된 문제만 사용합니다."""
     if data.get("mission_questions"):
-        return data["mission_questions"][:12]
+        source_questions = list(data["mission_questions"])
+    else:
+        source_questions = list(data.get("questions", []))
 
-    base = list(data.get("questions", []))
     questions = []
-    for i, item in enumerate(base, start=1):
+    seen = set()
+    for item in source_questions:
         q, options, answer = item
-        q = re.sub(r"^\d+\.\s*", f"{i}. ", str(q))
-        questions.append((q, options, answer))
-    while len(questions) < 12:
+        clean_q = re.sub(r"^\d+\.\s*", "", str(q)).strip()
+        if not clean_q:
+            continue
+        if clean_q in seen:
+            continue
+        seen.add(clean_q)
         n = len(questions) + 1
-        questions.append((f"{n}. 지문 내용과 가장 관련 있는 보기는 무엇인가요?", ["Key information", "Wrong information", "No information", "Different topic"], "Key information"))
-    return questions[:12]
+        questions.append((f"{n}. {clean_q}", options, answer))
+
+    return questions
 
 
 def show_mission_quiz(category, topic_name, data):
     questions = build_mission_questions(topic_name, data)
-    total = 12
-    pass_need = 10
-    prefix = f"{category}_{topic_name}_mission12_"
+    total = len(questions)
+    pass_need = max(1, int(total * 0.8 + 0.9999)) if total else 0
+    prefix = f"{category}_{topic_name}_mission_"
     attempts = st.session_state.get(f"{prefix}attempts", 0)
     locked = st.session_state.get(f"{prefix}locked", False)
 
     st.markdown('<div class="section-box"><h3>🧭 Mission 1. 지문 읽고 문제 풀기</h3></div>', unsafe_allow_html=True)
-    st.caption("총 12문제입니다. 10문제 이상 맞히면 통과하셨습니다. 풀 수 있는 기회는 총 2번입니다.")
+    if total == 0:
+        st.info("아직 준비된 문제가 없습니다. 지문을 읽고 다음 활동으로 넘어가 주세요.")
+        return
+    st.caption(f"총 {total}문제입니다. {pass_need}문제 이상 맞히면 통과하셨습니다. 풀 수 있는 기회는 총 2번입니다.")
 
     answers = []
     for i, (question, options, answer) in enumerate(questions, start=1):
