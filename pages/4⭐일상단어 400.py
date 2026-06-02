@@ -408,19 +408,24 @@ def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
 
 
 def direct_audio_player(text, show_link=True):
-    """단어 카드용: 버튼을 누른 뒤 오디오 플레이어를 보여줍니다."""
+    """
+    단어 카드용: 오디오 플레이어를 처음부터 보여줍니다.
+    서버가 mp3를 미리 다운로드하지 않고 Google TTS URL만 st.audio에 연결합니다.
+    이렇게 하면 여러 탭의 오디오가 한꺼번에 생성되어 오류가 나는 문제를 줄일 수 있습니다.
+    """
     text = str(text).strip()
     if not text:
         return
 
+    audio_url = make_google_tts_url(text, lang="en")
+
     try:
-        audio_bytes = get_tts_mp3_bytes(text, lang="en")
-        st.audio(audio_bytes, format="audio/mp3")
+        st.audio(audio_url, format="audio/mp3")
     except Exception as e:
         st.warning("음성 재생이 불안정합니다. 아래 버튼으로 새 창에서 들어 보세요.")
         st.caption(f"오류 내용: {e}")
         if show_link:
-            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+            st.link_button("🔊 새 창에서 듣기", audio_url, use_container_width=True)
 
 
 def get_word_emoji(word):
@@ -603,19 +608,11 @@ def clear_review_checkbox_keys():
 # 단어·대화 오디오
 # =========================
 def audio_button(label, text, key=None):
-    """버튼을 눌렀을 때만 TTS를 요청합니다.
-    여러 탭의 단어 오디오가 한꺼번에 생성되면 Google TTS 요청이 많아져
-    일부 탭에서 오류가 날 수 있으므로, 클릭한 단어만 재생하도록 합니다.
     """
-    text = str(text).strip()
-    if not text:
-        return
-
-    if key is None:
-        key = "audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
-
-    if st.button(label, key=key, use_container_width=True):
-        direct_audio_player(text)
+    오디오 플레이어를 처음부터 보여줍니다.
+    학생은 별도 듣기 버튼을 누르지 않고, 화면에 보이는 플레이어의 재생 버튼만 누르면 됩니다.
+    """
+    direct_audio_player(text)
 
 
 def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height=105):
