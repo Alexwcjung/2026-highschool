@@ -388,39 +388,57 @@ def make_dialogue_tts_text(dialogue):
     return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
 
 
-def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
+def browser_tts_player(text, label="🔊 듣기", height=72):
+    """
+    Google TTS mp3를 만들지 않고, 브라우저 내장 TTS로 바로 재생합니다.
+    여러 탭에 플레이어가 처음부터 떠 있어도 서버 요청이 폭주하지 않습니다.
+    """
     text = str(text).strip()
     if not text:
         return
 
-    if key is None:
-        key = "audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
+    safe_text = json.dumps(text, ensure_ascii=False)
+    safe_label = html.escape(str(label))
+    unique_id = "tts_" + uuid.uuid4().hex
 
-    if st.button(label, key=key, use_container_width=True):
-        try:
-            audio_bytes = get_tts_mp3_bytes(text, lang="en")
-            st.audio(audio_bytes, format="audio/mp3")
-        except Exception as e:
-            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
-            st.caption(f"오류 내용: {e}")
-            if show_link:
-                st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+    components.html(
+        f"""
+        <div style="width:100%; margin: 4px 0 8px 0;">
+          <button id="{unique_id}"
+            style="
+              width:100%;
+              min-height:50px;
+              border-radius:999px;
+              border:1px solid #bbf7d0;
+              background:white;
+              font-size:22px;
+              font-weight:900;
+              cursor:pointer;
+              box-shadow:0 4px 12px rgba(34,197,94,0.12);
+            "
+            onclick='
+              window.speechSynthesis.cancel();
+              const u = new SpeechSynthesisUtterance({safe_text});
+              u.lang = "en-US";
+              u.rate = 0.82;
+              u.pitch = 1.0;
+              u.volume = 1.0;
+              window.speechSynthesis.speak(u);
+            '>
+            {safe_label}
+          </button>
+        </div>
+        """,
+        height=height,
+    )
+
+
+def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
+    browser_tts_player(text, label=label, height=74)
 
 
 def direct_audio_player(text, show_link=True):
-    """단어 카드용: 오디오 플레이어를 바로 보여줍니다."""
-    text = str(text).strip()
-    if not text:
-        return
-
-    try:
-        audio_bytes = get_tts_mp3_bytes(text, lang="en")
-        st.audio(audio_bytes, format="audio/mp3")
-    except Exception as e:
-        st.error("음성 파일을 만들지 못했습니다.")
-        st.caption(f"오류 내용: {e}")
-        if show_link:
-            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+    browser_tts_player(text, label="🔊 듣기", height=74)
 
 
 def get_word_emoji(word):
@@ -603,7 +621,10 @@ def clear_review_checkbox_keys():
 # 단어·대화 오디오
 # =========================
 def audio_button(label, text, key=None):
-    # 버튼을 한 번 더 거치지 않고 오디오 플레이어를 바로 보여줍니다.
+    """
+    오디오 플레이어를 처음부터 보여줍니다.
+    학생은 별도 듣기 버튼을 누르지 않고, 화면에 보이는 플레이어의 재생 버튼만 누르면 됩니다.
+    """
     direct_audio_player(text)
 
 
