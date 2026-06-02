@@ -1023,9 +1023,10 @@ data_bank = {
                 "I'm looking forward to trying spicy tteokbokki tomorrow."
             ],
             "questions": [
-                ("1. 학교에 막 도착한 것은 무엇인가요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
-                ("2. 학생은 오늘 무엇을 선택했나요?", ["A hamburger made from lab-grown beef", "Spicy tteokbokki", "Pizza", "Fried chicken"], "A hamburger made from lab-grown beef"),
-                ("3. 학생을 더 놀라게 한 것은 무엇인가요?", ["The speed of service", "The size of the classroom", "The weather", "The color of the button"], "The speed of service")
+                ("1. 새로 도착한 기계는 무엇이었나요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
+                ("2. 글쓴이가 오늘 선택한 음식은 무엇인가요?", ["hamburger", "tteokbokki", "ice cream", "pizza"], "hamburger"),
+                ("3. 글쓴이가 선택한 음식에 포함된 영양소 2가지는 무엇인가요?", ["protein and minerals", "sugar and fat", "rice and salt", "water and oil"], "protein and minerals"),
+                ("4. 글쓴이는 왜 기분이 들떴나요?", ["다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에", "점심시간이 평소보다 늦게 시작되었기 때문에", "친구가 대신 음식을 골라 주었기 때문에", "내일 시험이 없어졌기 때문에"], "다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에")
             ],
             "reflection_prompt": "교과서 지문을 통해 내가 배울 점은 무엇인가요?"
         }
@@ -1365,14 +1366,10 @@ pre_reading_questions_bank = {
         ("8. 이 글의 중심 교훈으로 가장 알맞은 것은 무엇일까요?", ["Understanding the past can help us build a better future", "History is not useful", "Palaces have no meaning", "Culture should be forgotten"], "Understanding the past can help us build a better future"),
     ],
     "📘 교과서": [
-        ("1. 이 글의 날짜는 언제인가요?", ["November 25th, 2075", "November 25th, 2025", "December 25th, 2075", "January 1st, 2075"], "November 25th, 2075"),
-        ("2. 학교에 막 도착한 것은 무엇인가요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
-        ("3. 학생은 그 기계를 사용해 본 몇 번째 학생이었나요?", ["The first student", "The last student", "The second teacher", "The third cook"], "The first student"),
-        ("4. 메뉴 선택지를 고르자 무엇이 나왔나요?", ["A healthy meal", "A new book", "A soccer ball", "A movie ticket"], "A healthy meal"),
-        ("5. 학생이 어떤 식사를 고르든 그 안에는 무엇이 들어 있었나요?", ["All the nutrients needed", "Only sugar", "No nutrients", "Only water"], "All the nutrients needed"),
-        ("6. 오늘 학생이 선택한 음식은 무엇인가요?", ["A hamburger made from lab-grown beef", "Spicy tteokbokki", "Fried chicken", "Pizza"], "A hamburger made from lab-grown beef"),
-        ("7. 학생을 더 놀라게 한 것은 무엇인가요?", ["The speed of service", "The size of the classroom", "The weather", "The color of the button"], "The speed of service"),
-        ("8. 학생은 내일 무엇을 먹어 보는 것을 기대하나요?", ["Spicy tteokbokki", "Low-fat ice cream", "Pizza", "Fried chicken"], "Spicy tteokbokki"),
+        ("1. 새로 도착한 기계는 무엇이었나요?", ["A new food machine", "A new robot teacher", "A new school bus", "A new library"], "A new food machine"),
+        ("2. 글쓴이가 오늘 선택한 음식은 무엇인가요?", ["hamburger", "tteokbokki", "ice cream", "pizza"], "hamburger"),
+        ("3. 글쓴이가 선택한 음식에 포함된 영양소 2가지는 무엇인가요?", ["protein and minerals", "sugar and fat", "rice and salt", "water and oil"], "protein and minerals"),
+        ("4. 글쓴이는 왜 기분이 들떴나요?", ["다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에", "점심시간이 평소보다 늦게 시작되었기 때문에", "친구가 대신 음식을 골라 주었기 때문에", "내일 시험이 없어졌기 때문에"], "다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에"),
     ],
 }
 
@@ -2389,11 +2386,10 @@ mission1_questions_bank = {
         ("5. 이 글의 마지막 교훈은 무엇인가요?", ["과거를 이해하면 더 나은 미래를 만들 수 있다", "역사는 필요 없다", "궁궐은 재미없다", "문화는 배울 필요가 없다"], "과거를 이해하면 더 나은 미래를 만들 수 있다"),
     ],
     "📘 교과서": [
-        ("1. 이 글의 날짜는 언제인가요?", ["2075년 11월 25일", "2025년 5월 1일", "1995년 3월 2일", "오늘 아침"], "2075년 11월 25일"),
-        ("2. 학교에 막 도착한 것은 무엇인가요?", ["새로운 음식 기계", "새로운 로봇 선생님", "새로운 버스", "새로운 도서관"], "새로운 음식 기계"),
-        ("3. 학생은 오늘 무엇을 선택했나요?", ["실험실 배양 소고기로 만든 햄버거", "매운 떡볶이", "피자", "치킨"], "실험실 배양 소고기로 만든 햄버거"),
-        ("4. 학생을 더 놀라게 한 것은 무엇인가요?", ["서비스의 속도", "교실의 크기", "날씨", "버튼의 색깔"], "서비스의 속도"),
-        ("5. 학생은 내일 무엇을 먹어 보기를 기대하나요?", ["매운 떡볶이", "저지방 아이스크림", "피자", "과일 샐러드"], "매운 떡볶이"),
+        ("1. 새로 도착한 기계는 무엇이었나요?", ["새로운 음식 기계", "새로운 로봇 선생님", "새로운 버스", "새로운 도서관"], "새로운 음식 기계"),
+        ("2. 글쓴이가 오늘 선택한 음식은 무엇인가요?", ["햄버거", "떡볶이", "아이스크림", "피자"], "햄버거"),
+        ("3. 글쓴이가 선택한 음식에 포함된 영양소 2가지는 무엇인가요?", ["단백질과 미네랄", "설탕과 지방", "쌀과 소금", "물과 기름"], "단백질과 미네랄"),
+        ("4. 글쓴이는 왜 기분이 들떴나요?", ["다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에", "점심시간이 평소보다 늦게 시작되었기 때문에", "친구가 대신 음식을 골라 주었기 때문에", "내일 시험이 없어졌기 때문에"], "다양한 선택지를 위한 버튼을 처음으로 누르게 되었기 때문에"),
     ],
 }
 
