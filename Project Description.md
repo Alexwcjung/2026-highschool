@@ -2,12 +2,15 @@
 
 ## 🎯 Teaching Context
 
-This project was designed for Korean vocational high school students. Although the learners are high school students, many of them have English proficiency around the elementary to early middle school level. They often struggle with listening, reading, basic vocabulary, writing, and confidence in speaking English.
+This project was designed for Korean vocational high school students. Although the learners are high school students, many of them have English proficiency around the elementary to early middle school level. Many students have experienced significant learning gaps in English, especially in listening, reading, basic vocabulary, writing, and speaking.
 
-The classroom is a regular vocational high school English class where students use smartphones, tablets, or computers. Since students have different levels of vocabulary knowledge, reading ability, and speaking confidence, the lesson needs to provide simple input, repeated practice, and individualized support.
+In this context, many students do not plan to enter university after graduation. They therefore often do not feel a strong need to study English through traditional school lessons. For many students, English is seen as difficult, distant, and not directly connected to their future lives or careers.
 
-One major challenge is that many students are not highly motivated by traditional grammar-based English lessons. Some students feel anxious when they are asked to speak English in front of others. Therefore, this project uses familiar and accessible content such as pop songs, short reading passages, daily vocabulary, word cards, guided writing, and speech recognition-based speaking activities to make English learning more interactive, meaningful, and less stressful.
+Another important issue is affective difficulty. Most students have low confidence in English and feel anxious when they are asked to speak, read, or write in English. They may avoid participation because they are afraid of making mistakes or being compared with others.
 
+Therefore, this project aims to make English learning more accessible, enjoyable, and voluntary. Instead of relying only on textbook-based grammar instruction, the project uses familiar and accessible content such as pop songs, short reading passages, daily vocabulary, word cards, guided writing, and speech recognition-based speaking activities. Through these app-supported activities, students can participate more actively, choose and retry tasks at their own pace, and experience English as something they can understand, practice, and use.
+
+The classroom is a regular vocational high school English class where students use smartphones, tablets, or computers. Since students have different levels of vocabulary knowledge, reading ability, and speaking confidence, the lesson provides simple input, repeated practice, and individualized support.
 ---
 
 ## 🎵 Lesson Purpose
