@@ -10,7 +10,6 @@ Another important issue is affective difficulty. Most students have low confiden
 
 Therefore, this project aims to make English learning more accessible, enjoyable, and voluntary. Instead of relying only on textbook-based grammar instruction, the project uses familiar and accessible content such as pop songs, short reading passages, daily vocabulary, word cards, guided writing, and speech recognition-based speaking activities. Through these app-supported activities, students can participate more actively, choose and retry tasks at their own pace, and experience English as something they can understand, practice, and use.
 
-The classroom is a regular vocational high school English class where students use smartphones, tablets, or computers. Since students have different levels of vocabulary knowledge, reading ability, and speaking confidence, the lesson provides simple input, repeated practice, and individualized support.
 ---
 
 ## 🎵 Lesson Purpose
