@@ -48,8 +48,8 @@ By the end of the lesson, students will be able to:
 - **🔍 Simple grammar patterns from lyrics**  
   Examples: *I’m + adjective*, *I want to + verb*, *I’ve been + -ing*
 
-- **📖 Reading-related expressions**  
-  Examples: *He worked very hard.*, *He never gave up.*, *I want to be like him.*
+- **📖 Reading expressions from the Ronaldo passage**  
+  Examples: *was born in*, *grew up on*, *first played for*, *moved to*, *won*, *good habits are more important*
 
 - **📚 Daily vocabulary and speaking frames**  
   Examples: *school, teacher, homework, question, answer* / *I need a pencil.*, *I have a question.*
