@@ -87,7 +87,7 @@ Speech recognition is not always perfectly accurate. Results may be affected by 
 
 Students may also rely too much on translation support during writing. The teacher needs to guide students to check and revise translated sentences instead of simply copying them.
 
-The app still requires teacher guidance for pronunciation modeling, meaning explanation, reading support, writing support, technical support, and classroom management.
+The app still requires teacher guidance for meaning explanation, reading support, writing support, technical support, and classroom management.
 
 ---
 
@@ -98,7 +98,6 @@ In the future, the app could be improved by:
 - making speech recognition more learner-friendly;
 - saving each student’s difficult words, expressions, and speaking attempts;
 - adding more sentence-level speaking activities;
-- adding more vocational high school-related reading topics;
 - improving writing support with sentence starters and revision feedback;
 - adding progress tracking for students and the teacher.
 
