@@ -90,20 +90,19 @@ The app allows students to learn at their own pace and practice difficult words 
 
 ## 🧾 8. Feedback and Assessment
 
-Assessment is formative and focuses on participation, completion of app-based tasks, and repeated practice.
+Assessment is formative and process-oriented. Rather than evaluating students only by final scores, the lesson focuses on students’ participation, task completion, repeated attempts, and gradual improvement across listening, reading, writing, vocabulary, and speaking activities.
 
-Feedback is provided through:
+Feedback is provided through multiple channels:
 
-- 🌍 world map quiz results;
-- 🎵 pop song comprehension quiz results;
-- 🔍 grammar discovery activities;
-- 🧩 sentence matching activity feedback;
-- 📖 reading comprehension results;
-- ✍️ guided writing feedback with translation support;
-- 💬 key expression review activities;
-- 🎤 speech recognition-based speaking practice results.
+- 🔍 **Language-awareness feedback:** In the grammar discovery activity, students notice useful patterns from lyrics and receive teacher guidance to understand how the patterns work in context.
+- 🧩 **Matching-task feedback:** Sentence matching activities help students check whether they understand the connection between English expressions and Korean meanings.
+- 📖 **Reading-task feedback:** Reading comprehension, sentence matching, and key expression review help students monitor their understanding of the passage.
+- ✍️ **Writing feedback:** In guided writing activities, students may use Google Translation support to draft or revise sentences, while the teacher helps them check meaning, clarity, and simple sentence accuracy.
+- 📚 **Vocabulary feedback:** Word cards help students check meanings, listen repeatedly, and notice which daily vocabulary items need more review.
+- 🎤 **Speaking feedback:** Speech recognition-based speaking activities give students immediate feedback on whether their spoken words are recognized, encouraging repeated speaking attempts.
+- 👨‍🏫 **Teacher feedback:** The teacher observes students’ difficulties and provides short, targeted feedback on common problems in comprehension, vocabulary use, writing, and speaking.
 
-The focus is not perfect accuracy. The lesson emphasizes active participation, repeated exposure, vocabulary learning, guided writing, speaking practice, and confidence building.
+The main goal of assessment is not perfect accuracy. The lesson emphasizes active participation, repeated exposure, self-checking, revision, retrying, and confidence building.
 
 ---
 
@@ -117,23 +116,3 @@ By the end of the lesson, students are expected to:
 - 📚 build daily vocabulary through listening, word cards, and meaning checking;
 - 🎤 gain confidence by saying selected words aloud and retrying them;
 - 🔁 recognize which words or expressions they need to review.
-
----
-
-## 🚀 10. How the App Supports Adaptive Learning
-
-The app supports adaptive learning by allowing students to work at their own pace. Students can listen again, review key expressions, check word meanings, retry speaking tasks, and use translation support when writing.
-
-The pop song, reading, vocabulary, writing, and speaking sections provide different types of support for low-proficiency learners. The teacher can also use students’ quiz results, writing responses, and speaking attempts to give targeted feedback.
-
-In this way, the app supports self-paced, individualized, and teacher-guided English learning.
-
----
-
-## 🧩 11. Overall Lesson Flow Summary
-
-The lesson begins with a short world map quiz to activate students’ interest. Students then move through familiar pop song activities, including lyrics, comprehension questions, grammar discovery, sentence matching, reflection writing, and key expression learning.
-
-After that, students complete a short reading activity, such as the Ronaldo passage, with comprehension questions, sentence matching, letter writing with translation support, and key expression review. Finally, they practice daily vocabulary and speaking through word cards and speech recognition-based speaking activities.
-
-This sequence connects listening, reading, writing, vocabulary learning, and speaking practice in one 50-minute app-supported lesson.
