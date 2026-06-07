@@ -110,9 +110,9 @@ The main goal of assessment is not perfect accuracy. The lesson emphasizes activ
 
 By the end of the lesson, students are expected to:
 
-- 🎵 practice useful expressions and simple grammar patterns from familiar pop songs;
-- 📖 complete short reading tasks based on accessible passages;
-- ✍️ write short guided responses with support;
-- 📚 build daily vocabulary through listening, word cards, and meaning checking;
-- 🎤 gain confidence by saying selected words aloud and retrying them;
-- 🔁 recognize which words or expressions they need to review.
+- 🌱 develop greater learner autonomy by working with the app and retrying activities at their own pace;
+- 🎧 improve listening skills through familiar pop songs, lyrics, vocabulary audio, and comprehension quizzes;
+- 📖 build reading skills by reading short, accessible passages, finding key information, and completing comprehension tasks;
+- ✍️ practice writing skills through short guided responses or letters with teacher and translation support;
+- 🎤 gain speaking confidence through word-card practice and speech recognition-based speaking activities;
+- 📚 expand daily vocabulary by connecting words with sounds, meanings, and simple use.
