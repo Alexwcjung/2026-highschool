@@ -36,7 +36,7 @@ By the end of the lesson, students will be able to:
 2. 📖 Read short, accessible passages and complete comprehension tasks such as quizzes, sentence ordering, and lie-finding.
 3. ✍️ Write short responses or reflections based on the reading passage with guided support.
 4. 🎤 Build daily vocabulary and speaking confidence by listening to words, checking meanings, and saying selected words aloud through word cards and speaking activities.
-```
+
 
 
 ---
