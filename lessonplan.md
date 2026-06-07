@@ -32,11 +32,11 @@ Students begin with a simple world map quiz as a warm-up. Then, they learn Engli
 
 By the end of the lesson, students will be able to:
 
-1. 🎧 Explore familiar pop songs by answering simple questions, practicing key expressions, and noticing useful grammar patterns from the lyrics.
-2. 📖 Read short, accessible passages and complete comprehension tasks such as quizzes, sentence ordering, and lie-finding.
-3. ✍️ Write short guided responses based on pop song and reading activities.
-4. 🎤 Build daily vocabulary and speaking confidence by listening to words, checking meanings, and saying selected words aloud through word cards and speaking activities.
-
+1. 🌱 use the app more independently by choosing, reviewing, and retrying activities at their own pace.
+2. 🎧 follow familiar pop song lyrics and answer simple comprehension questions.
+3. 📖 read short, accessible passages and find key information in the text.
+4. ✍️ write short guided responses or letters with teacher and translation support.
+5. 🎤 practice saying daily vocabulary aloud through word cards and speech recognition-based speaking activities.
 
 ---
 
