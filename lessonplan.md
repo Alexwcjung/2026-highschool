@@ -72,110 +72,68 @@ By the end of the lesson, students will be able to:
 | 📖 Reading Learning | Reading Key Expressions | 1 min | Review useful expressions from the reading passage. | Models expressions and connects them to real use. | Reading key expression learning |
 | 🎤 Vocabulary and Speaking | Speaking Cards Game | 10 min | Listen to daily vocabulary, check meanings, say selected words aloud, and retry difficult words through speaking cards. | Monitors students, models difficult words, and supports repeated speaking practice. | Daily English 400 word cards and speaking quiz |
 | 🔁 Wrap-up | Self-Check | 3 min | Check what they practiced and choose words or expressions to review later. | Summarizes the lesson and gives brief final feedback. | Self-check or review function |
-## 🙋 7. Student Activities
 
-Students will:
-
-- 🌍 answer world map quiz questions;
-- 🎵 choose and listen to a pop song;
-- 👀 read lyrics or captions while listening;
-- ❓ answer pop song comprehension questions;
-- 💬 learn key expressions from the song;
-- 🧩 match English expressions with Korean meanings;
-- 📖 read a short reading passage;
-- ✅ answer reading comprehension questions;
-- 🔢 put sentences in the correct order;
-- 🕵️ find false information in the reading activity;
-- 📚 listen to school-life vocabulary cards;
-- 🔤 check word meanings;
-- ✅ identify unknown or difficult words;
-- 🎤 say selected words aloud in the speaking quiz;
-- 🔁 retry words that need more practice;
-- 📝 complete a short self-check.
-
----
-
-## 👨‍🏫 8. Teacher Role
-
-The teacher guides the lesson and makes the app activities meaningful. The teacher introduces the topic, explains the song background, models key expressions, supports students during reading activities, monitors students during vocabulary and speaking practice, and gives feedback on difficult words or expressions.
-
-The app provides repeated practice and immediate feedback, but the teacher controls the lesson flow and connects the activities to communication. The teacher also helps students understand that making mistakes and retrying are natural parts of language learning.
-
----
-
-## 📱 9. App Integration
+## 📱 7. App Integration
 
 The customized app supports the lesson through:
 
-- 🌍 world map quiz for warm-up;
-- 🎵 pop song listening with lyrics and captions;
-- ❓ pop song comprehension quiz;
-- 💬 key expression learning;
-- 🧩 sentence matching game;
-- 📖 short reading passages such as Ronaldo, Son Heung-min, Jordan, and school-life topics;
-- ✅ reading comprehension questions;
-- 🔢 sentence ordering activities;
-- 🕵️ lie-finding reading activities;
-- ✉️ short writing or reflection activities based on the reading passage;
-- 📚 Daily English 400 vocabulary listening;
-- 🔤 word-card-based vocabulary learning;
-- 🎤 speech recognition-based speaking practice;
-- 🔁 self-check or review activities.
+- 🌍 a world map quiz for warm-up and engagement;
+- 🎵 familiar pop song activities, including lyrics, comprehension quizzes, grammar discovery, sentence matching, reflection writing, and key expression learning;
+- 📖 short reading activities, including passages, comprehension questions, sentence matching, letter writing, and key expression review;
+- 📚 Daily English 400 vocabulary cards for listening, meaning checking, and word review;
+- 🎤 speaking-based vocabulary practice using speech recognition;
+- 🔁 self-check and review activities for repeated practice.
 
 The app allows students to learn at their own pace and practice difficult words repeatedly. It also gives students multiple ways to learn English through listening, reading, matching, vocabulary learning, speaking, and reviewing.
 
 ---
 
-## 🧾 10. Feedback and Assessment
+## 🧾 8. Feedback and Assessment
 
-Assessment is formative. Students are assessed through participation, quiz answers, reading activity results, vocabulary self-check, speaking practice attempts, and willingness to retry difficult words or expressions.
+Assessment is formative and focuses on participation, completion of app-based tasks, and repeated practice.
 
 Feedback is provided through:
 
-- ✅ automatic quiz results;
-- 🧩 matching activity feedback;
+- 🌍 world map quiz results;
+- 🎵 pop song comprehension quiz results;
+- 🔍 grammar discovery activities;
+- 🧩 sentence matching activity feedback;
 - 📖 reading comprehension results;
-- 🔢 sentence ordering results;
-- 🕵️ lie-finding activity feedback;
-- 📚 vocabulary self-check results;
-- 🎤 speech recognition-based speaking practice results;
-- 👨‍🏫 teacher feedback on common reading, vocabulary, and speaking difficulties;
-- 🔁 final self-check.
+- ✍️ guided writing feedback with translation support;
+- 💬 key expression review activities;
+- 🎤 speech recognition-based speaking practice results.
 
-The focus is not perfect pronunciation or perfect reading comprehension. The focus is active participation, repeated exposure, vocabulary learning, speaking practice, checking, retrying, and building confidence.
+The focus is not perfect accuracy. The lesson emphasizes active participation, repeated exposure, vocabulary learning, guided writing, speaking practice, and confidence building.
 
 ---
 
-## 🌱 11. Expected Learning Outcomes
+## 🌱 9. Expected Learning Outcomes
 
 By the end of the lesson, students are expected to:
 
-- 🌍 become more engaged through a simple map quiz;
-- 🎧 feel more comfortable listening to English;
-- 💬 understand some useful expressions from a pop song;
-- 📖 understand the main idea of a short reading passage;
-- 🧩 complete simple reading-based tasks with support;
-- 📚 learn several school-life words through listening and word cards;
-- 🎤 say selected words more confidently;
-- 🔁 notice which words or expressions they need to practice more;
-- ✨ experience English learning as interactive, personalized, and less stressful.
+- 🎵 practice useful expressions and simple grammar patterns from familiar pop songs;
+- 📖 complete short reading tasks based on accessible passages;
+- ✍️ write short guided responses with support;
+- 📚 build daily vocabulary through listening, word cards, and meaning checking;
+- 🎤 gain confidence by saying selected words aloud and retrying them;
+- 🔁 recognize which words or expressions they need to review.
 
 ---
 
-## 🚀 12. How the App Supports Adaptive Learning
+## 🚀 10. How the App Supports Adaptive Learning
 
-The app supports adaptive learning because students can focus on different activities and words depending on their needs. Students who are more comfortable with English can move quickly through listening, reading, vocabulary, and speaking tasks. Students who need more support can listen again, check meanings, review key expressions, and retry difficult words.
+The app supports adaptive learning by allowing students to work at their own pace. Students can listen again, review key expressions, check word meanings, retry speaking tasks, and use translation support when writing.
 
-In the reading section, students can work with short and familiar passages. This makes reading less burdensome for low-proficiency learners. Activities such as comprehension questions, sentence ordering, lie-finding, and short writing help students understand the passage step by step.
+The pop song, reading, vocabulary, writing, and speaking sections provide different types of support for low-proficiency learners. The teacher can also use students’ quiz results, writing responses, and speaking attempts to give targeted feedback.
 
-In the Daily English 400 section, students learn vocabulary through listening, word cards, meaning checking, and speaking practice. The speech recognition-based speaking quiz supports active word practice by encouraging students to say the words aloud and retry them when necessary.
-
-In this way, the app supports self-paced, individualized, and teacher-guided learning. It also connects listening, reading, vocabulary learning, and speaking practice in one lesson.
+In this way, the app supports self-paced, individualized, and teacher-guided English learning.
 
 ---
 
-## 🧩 13. Overall Lesson Flow Summary
+## 🧩 11. Overall Lesson Flow Summary
 
-The lesson begins with a short world map quiz to activate students’ interest. Then, students listen to a pop song and learn useful expressions from the lyrics. After that, they move to a short reading activity, such as a passage about Ronaldo or another familiar topic. Students check their understanding through simple reading tasks. Finally, they learn and practice school-life vocabulary using word cards, listening support, and speech recognition-based speaking practice.
+The lesson begins with a short world map quiz to activate students’ interest. Students then move through familiar pop song activities, including lyrics, comprehension questions, grammar discovery, sentence matching, reflection writing, and key expression learning.
 
-This sequence helps students move from interest-based input to supported reading and then to vocabulary learning and active speaking practice.
+After that, students complete a short reading activity, such as the Ronaldo passage, with comprehension questions, sentence matching, letter writing with translation support, and key expression review. Finally, they practice daily vocabulary and speaking through word cards and speech recognition-based speaking activities.
+
+This sequence connects listening, reading, writing, vocabulary learning, and speaking practice in one 50-minute app-supported lesson.
