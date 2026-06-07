@@ -22,9 +22,9 @@ The app is used to support repeated listening, short reading practice, comprehen
 
 ## 🎯 3. Lesson Topic
 
-**Pop Song Listening, Short Reading, and Speaking-Based Vocabulary Learning**
+**Integrated English Learning through Familiar Pop Songs, Short Reading, Vocabulary Cards, and Speaking Practice**
 
-Students first begin with a simple world map quiz as a warm-up. Then, they learn English through a pop song. After that, they read a short and familiar reading passage, such as a passage about Ronaldo, Son Heung-min, Jordan, or school-life topics. Finally, they learn and practice school-life vocabulary in the **Daily English 400** section through word cards, repeated listening, and speech recognition-based speaking practice.
+Students begin with a simple world map quiz as a warm-up. Then, they learn English through familiar pop songs that can lower their anxiety and increase interest. After that, they read a short and familiar passage, such as a story about Ronaldo, Son Heung-min, Jordan, or school life. Finally, they learn and practice school-life vocabulary through word cards, repeated listening, and speaking-based vocabulary practice.
 
 ---
 
