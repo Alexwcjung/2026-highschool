@@ -58,9 +58,6 @@ By the end of the lesson, students will be able to:
 
 ## 🧭 6. Teaching Procedure
 
-## 🧭 6. Teaching Procedure
-
-| Section | Stage | Time | Procedure | Teacher Role | App Integration |
 |---|---|---:|---|---|---|
 | 🌍 Warm-up | World Map Quiz | 3 min | Students answer a few simple world map quiz questions to activate interest. | Leads the warm-up and encourages quick participation. | World map quiz section |
 | 🎵 Pop Song Learning | Lyrics and Comprehension Quiz | 6 min | Students listen to a familiar pop song, follow the lyrics, and answer simple comprehension questions. | Helps students follow the lyrics and understand key meanings. | Lyrics and comprehension quiz |
