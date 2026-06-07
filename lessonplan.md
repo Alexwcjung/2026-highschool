@@ -24,7 +24,7 @@ The app is used to support repeated listening, short reading practice, comprehen
 
 **Integrated English Learning through Familiar Pop Songs, Short Reading, Vocabulary Cards, and Speaking Practice**
 
-Students begin with a simple world map quiz as a warm-up. Then, they learn English through familiar pop songs that can lower their anxiety and increase interest. After that, they read a short and familiar passage, such as a story about Ronaldo, Son Heung-min, Jordan, or school life. Finally, they learn and practice school-life vocabulary through word cards, repeated listening, and speaking-based vocabulary practice.
+Students begin with a simple world map quiz as a warm-up. Then, they learn English through familiar pop songs that can reduce anxiety and increase interest. After that, they read a short, accessible passage, such as a story about Ronaldo, Son Heung-min, or Jordan. Finally, they learn and practice daily vocabulary through word cards, repeated listening, and speaking-based activities.
 
 ---
 
