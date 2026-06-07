@@ -20,6 +20,42 @@ The lesson is meaningful because it helps students experience English as somethi
 
 ---
 
+## 🧠 Theoretical Background
+
+This project is based on five main learning principles.
+
+### 1. Task-Based and Skill-Integrated Learning
+
+The lesson is organized around app-based tasks rather than isolated grammar explanation. Students listen to songs, answer questions, notice grammar patterns, match sentences, read short passages, write guided responses, and practice speaking through word cards.
+
+The lesson also integrates listening, reading, writing, vocabulary learning, and speaking. This helps students experience English as connected practice rather than separate textbook exercises.
+
+### 2. Technology-Enhanced Language Learning
+
+The app uses digital tools to support repeated practice, interaction, and immediate feedback. Students use smartphones, tablets, or computers to listen, read, answer quizzes, match sentences, write responses, and speak into the microphone.
+
+This gives students more individual practice opportunities than a traditional classroom can usually provide.
+
+### 3. Inductive Grammar Learning
+
+In the pop song section, students notice grammar patterns from lyrics instead of receiving grammar rules first. They look at examples, compare patterns, and infer how the structure works.
+
+This makes grammar learning more meaningful and less abstract for low-proficiency learners.
+
+### 4. ASR-Based Speaking Practice
+
+The speaking activities use automatic speech recognition. Students say words aloud, check whether the app recognizes them, and retry when needed.
+
+The purpose is not only pronunciation checking. It is speaking-based vocabulary practice that helps students connect sounds, meanings, and spoken production.
+
+### 5. Learner Autonomy and Self-Paced Learning
+
+The app supports learner autonomy because students can choose, review, and retry activities at their own pace. They can listen again, check meanings, use translation support, and retry speaking tasks.
+
+This helps students take a more active role in their own learning while still receiving teacher guidance.
+
+---
+
 ## 📱 App Purpose
 
 I built this app to give students more individual chances to practice English. In a regular classroom, one teacher cannot check every student’s listening, reading, writing, vocabulary, and speaking practice at the same time.
