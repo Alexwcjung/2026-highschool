@@ -42,55 +42,17 @@ By the end of the lesson, students will be able to:
 
 ## 🗣️ 5. Target Language
 
-### 🎵 Pop Song Expressions
+- **🎵 Key expressions from familiar pop songs**  
+  Examples: *Let it go.*, *Stand by me.*, *I need you.*, *I’m sorry.*
 
-Examples:
+- **🔍 Simple grammar patterns from lyrics**  
+  Examples: *I’m + adjective*, *I want to + verb*, *I’ve been + -ing*
 
-- I need you.
-- I’m sorry.
-- I love you.
-- Let it go.
-- Stand by me.
-- Don’t know why.
-- Fix you.
+- **📖 Reading-related expressions**  
+  Examples: *He worked very hard.*, *He never gave up.*, *I want to be like him.*
 
-### 📖 Reading Expressions
-
-Examples:
-
-- He is a famous soccer player.
-- He worked very hard.
-- He never gave up.
-- I want to be like him.
-- This story is about courage and effort.
-
-### 🏫 School-Life Vocabulary
-
-Examples:
-
-- school
-- teacher
-- student
-- classroom
-- homework
-- subject
-- book
-- pencil
-- test
-- question
-- answer
-- friend
-
-### 💬 Simple Speaking Frames
-
-Examples:
-
-- I am a student.
-- I have homework.
-- I need a pencil.
-- I have a question.
-- I like this story.
-- He is my favorite player.
+- **📚 Daily vocabulary and speaking frames**  
+  Examples: *school, teacher, homework, question, answer* / *I need a pencil.*, *I have a question.*
 
 ---
 
