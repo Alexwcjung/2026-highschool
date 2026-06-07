@@ -32,14 +32,12 @@ Students begin with a simple world map quiz as a warm-up. Then, they learn Engli
 
 By the end of the lesson, students will be able to:
 
-1. 🌍 Answer simple world map quiz questions as a warm-up activity.
-2. 🎧 Understand the main idea or mood of a pop song with support from lyrics and captions.
-3. 💬 Learn several key expressions from the song.
-4. 📖 Understand the main idea and details of a short reading passage.
-5. 🧩 Complete simple reading-based activities such as comprehension questions, sentence ordering, and lie-finding activities.
-6. 📚 Learn school-life vocabulary through listening, meanings, and word-card practice.
-7. 🎤 Say selected vocabulary items aloud through speaking-based vocabulary practice.
-8. 🔁 Reflect on which words or expressions they need to practice more.
+1. 🎧 Work with familiar pop songs by answering simple questions and practicing useful expressions from the lyrics.
+2. 📖 Read short, accessible passages and complete comprehension tasks such as quizzes, sentence ordering, and lie-finding.
+3. ✍️ Write short responses or reflections based on the reading passage with guided support.
+4. 🎤 Build daily vocabulary and speaking confidence by listening to words, checking meanings, and saying selected words aloud through word cards and speaking activities.
+```
+
 
 ---
 
