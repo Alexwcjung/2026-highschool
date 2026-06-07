@@ -61,18 +61,17 @@ By the end of the lesson, students will be able to:
 | Section | Stage | Time | Procedure | Teacher Role | App Integration |
 |---|---|---:|---|---|---|
 | 🌍 Warm-up | World Map Quiz | 3 min | Students answer a few simple world map quiz questions to activate interest. | Leads the warm-up and encourages quick participation. | World map quiz section |
-| 🎵 Pop Song Learning | Lyrics and Comprehension Quiz | 6 min | Students listen to a familiar pop song, follow the lyrics, and answer simple comprehension questions. | Helps students follow the lyrics and understand key meanings. | Lyrics & comprehension quiz |
+| 🎵 Pop Song Learning | Lyrics and Comprehension Quiz | 5 min | Students listen to a familiar pop song, follow the lyrics, and answer simple comprehension questions. | Helps students follow the lyrics and understand key meanings. | Lyrics & comprehension quiz |
 | 🎵 Pop Song Learning | Grammar Discovery | 3 min | Students notice a useful grammar pattern from the lyrics through guided examples. | Guides students to discover the pattern without heavy grammar explanation. | Grammar tab |
 | 🎵 Pop Song Learning | Sentence Matching | 3 min | Students match English sentences or expressions from the song with Korean meanings. | Gives feedback and helps students connect form and meaning. | Sentence matching tab |
 | 🎵 Pop Song Learning | Short Reflection Writing | 3 min | Students write a short guided response about the song, lyrics, or message. | Provides simple sentence starters and brief feedback. | Thinking/writing tab |
-| 🎵 Pop Song Learning | Key Expression Learning | 4 min | Students review and practice useful expressions from the song. | Models expressions and connects them to simple communication. | Key expression learning tab |
-| 📖 Reading Learning | Reading Passage and Comprehension Quiz | 7 min | Students read a short passage, such as the Ronaldo passage, and answer simple comprehension questions. | Guides reading, explains difficult words, and checks basic understanding. | Reading passage and quiz |
+| 🎵 Pop Song Learning | Key Expression Learning | 3 min | Students review and practice useful expressions from the song. | Models expressions and connects them to simple communication. | Key expression learning tab |
+| 📖 Reading Learning | Reading Passage and Comprehension Quiz | 6 min | Students read a short passage, such as the Ronaldo passage, and answer simple comprehension questions. | Guides reading, explains difficult words, and checks basic understanding. | Reading passage and quiz |
 | 📖 Reading Learning | Reading Sentence Matching | 3 min | Students match English sentences or expressions from the passage with their meanings. | Helps students connect sentence forms with meaning. | Reading sentence matching activity |
 | 📖 Reading Learning | Letter Writing | 4 min | Students write a short guided letter or response based on the reading passage. | Provides writing support and simple feedback. | Letter writing activity |
-| 📖 Reading Learning | Reading Key Expressions | 3 min | Students review useful expressions from the reading passage. | Models expressions and connects them to real use. | Reading key expression learning |
-| 📚 Vocabulary and Speaking | Daily Vocabulary Cards | 5 min | Students listen to daily vocabulary, check meanings, and review difficult words through word cards. | Guides students to notice words they know and words they need to practice more. | Daily English 400 word cards |
-| 🎤 Vocabulary and Speaking | Speaking-Based Vocabulary Practice | 6 min | Students say selected words aloud and retry them through speaking activities. | Monitors students, models difficult words, and supports repeated speaking practice. | Speaking Quiz 400 |
-| 🔁 Wrap-up | Self-Check | 1 min | Students check what they practiced and choose words or expressions to review later. | Summarizes the lesson and gives brief final feedback. | Self-check or review function |
+| 📖 Reading Learning | Reading Key Expressions | 4 min | Students review useful expressions from the reading passage. | Models expressions and connects them to real use. | Reading key expression learning |
+| 🎤 Vocabulary and Speaking | Speaking Cards Game | 10 min | Students listen to daily vocabulary, check meanings, say selected words aloud, and retry difficult words through speaking cards. | Monitors students, models difficult words, and supports repeated speaking practice. | Daily English 400 word cards and speaking quiz |
+| 🔁 Wrap-up | Self-Check | 3 min | Students check what they practiced and choose words or expressions to review later. | Summarizes the lesson and gives brief final feedback. | Self-check or review function |
 
 ## 🙋 7. Student Activities
 
