@@ -536,10 +536,6 @@ def show_review_tab():
 
 st.markdown("<div class='main-title'>🌱 Daily English 400</div>", unsafe_allow_html=True)
 st.markdown("<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고 읽어 봅시다.</div>", unsafe_allow_html=True)
-st.markdown("""
-<div class='hero-box'>
-</div>
-""", unsafe_allow_html=True)
 
 tabs = st.tabs(["🎧 전체 단어", "📚 테마별 학습", "⭐ 복습 희망"])
 
