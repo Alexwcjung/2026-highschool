@@ -8,39 +8,26 @@
 
 ## 🎯 Teaching Context
 
-This project was designed for Korean vocational high school students. Although they are high school students, many have English proficiency around the elementary to early middle school level. Many students have significant learning gaps in listening, reading, vocabulary, writing, and speaking.
+This project was designed for Korean vocational high school students with low English proficiency, often around the elementary to early middle school level. Many students have learning gaps in listening, reading, vocabulary, writing, and speaking. Since many do not plan to enter university after graduation, they often feel that English is difficult, distant, and not directly connected to their future lives or careers.
 
-Many students do not plan to enter university after graduation, so they often do not feel a strong need to study English. For many students, English feels difficult, distant, and not directly connected to their future lives or careers.
-
-Most students also have low confidence in English and feel anxious when asked to speak, read, or write in English. They may avoid participation because they are afraid of making mistakes or being compared with others.
-
-Therefore, this project aims to make English learning more accessible, enjoyable, and voluntary. It uses familiar content such as pop songs, short reading passages, daily vocabulary, word cards, guided writing, and speech recognition-based speaking activities. Through the app, students can participate, review, and retry tasks at their own pace.
+Because many students have low confidence and feel anxious about making mistakes, this project aims to make English learning more accessible, enjoyable, and voluntary. The app uses familiar content such as pop songs, short reading passages, daily vocabulary, guided writing, and speaking activities, allowing students to practice, review, and retry tasks at their own pace.
 
 ---
 
 ## 🎵 Lesson Purpose
 
-This lesson helps low-proficiency vocational high school students practice English through familiar, app-supported activities.
+### What does this lesson teach?
+This lesson teaches basic English through listening, speaking, reading, vocabulary, and short writing activities using familiar topics, pop songs, and simple tasks.
 
-Students begin with a short world map quiz, work with familiar pop songs, complete a short reading activity, and practice daily vocabulary through speaking cards. The lesson connects listening, reading, writing, vocabulary learning, and speaking practice in one 50-minute class.
+### Why is this lesson meaningful?
+It gives low-proficiency students more chances to practice English at their own pace, lowers speaking anxiety, and helps them build motivation, autonomy, and confidence.### Why is this lesson meaningful?
 
-The lesson is meaningful because it helps students experience English as something they can understand, practice, and use. The focus is not perfect accuracy, but active participation, repeated practice, confidence building, and learner autonomy.
+This lesson is meaningful because it gives low-proficiency students more individual and self-paced opportunities to practice English while lowering speaking anxiety. It is based on **task-supported learning**, not fully task-based learning, because the activities are designed to support basic language practice rather than complete real-world communication tasks only through English.
 
----
+The lesson also reflects **skill-integrated learning**, as students practice listening, reading, vocabulary, writing, and speaking through connected activities such as pop songs, short reading passages, quizzes, sentence matching, guided writing, and speech recognition-based speaking tasks.
 
-## 🧠 Design Rationale
+In addition, the app supports **technology-enhanced language learning**, **noticing**, **inductive grammar learning**, **learner autonomy**, and **self-paced learning**. Students can listen again, retry difficult items, notice useful patterns from songs and examples, review independently, and build motivation, confidence, and autonomy in learning English.
 
-This app was designed to support **task-supported** and **skill-integrated** English learning. Students do not simply memorize words or grammar rules. Instead, they complete connected learning tasks such as listening to songs, answering questions, **noticing grammar patterns**, matching sentences, reading short passages, writing guided responses, and speaking through word cards.
-
-The app also reflects **technology-enhanced language learning**. Students use smartphones, tablets, or computers to listen, read, answer quizzes, match expressions, write responses, and speak into the microphone. This gives students more individual practice opportunities than a traditional classroom usually provides.
-
-The pop song section includes **inductive grammar learning.** Students notice useful grammar patterns from lyrics before receiving direct explanations. This helps grammar feel more meaningful and less abstract.
-
-The speaking activities use **automatic speech recognition.** Students say words aloud, check whether the app recognizes them, and retry difficult items. The purpose is not only pronunciation checking, but speaking-based vocabulary practice.
-
-The app also supports **learner autonomy and self-paced learning**. Students can listen again, review difficult items, use translation support, and retry speaking tasks at their own pace.
-
----
 
 ## 📱 App Purpose
 
