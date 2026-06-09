@@ -2,9 +2,9 @@
 
 ## 👩‍🎓 1. Learner Profile
 
-The learners are Korean vocational high school students. Although they are high school students, their English proficiency is around the elementary to early middle school level. Many students have low confidence in English, especially in listening, reading, vocabulary learning, and speaking.
+This lesson is designed for first-year Korean vocational high school students. Many students have limited English vocabulary, low confidence in speaking, and anxiety about using English in front of others. Therefore, the lesson uses a customized English learning app to provide simple, meaningful, and repeated English input.
 
-Therefore, this lesson provides short, familiar, and highly supported English activities. The lesson uses pop songs, short reading passages, vocabulary cards, listening support, and speech recognition-based speaking practice to help students experience English in an interactive and less stressful way.
+The app includes a world map quiz, pop song learning, reading passages, comprehension quizzes, key expression practice, short writing tasks, and speech-recognition-based speaking practice. Through these activities, students can learn English in a more interesting and less stressful way. Since students use their own phones or computers, they can participate actively and practice at their own pace.
 
 ---
 
