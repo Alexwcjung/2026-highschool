@@ -27,9 +27,9 @@ They also have low confidence and feel anxious about making mistakes. Therefore,
 This lesson teaches basic English through listening, speaking, reading, vocabulary, and short writing activities using familiar topics, pop songs, and simple tasks.
 
 ### Why is this lesson meaningful?
-It gives low-proficiency students more chances to practice English at their own pace, lowers speaking anxiety, and helps them build motivation, autonomy, and confidence.
+This lesson is meaningful because it gives low-proficiency students more individual and self-paced opportunities to practice English while lowering speaking anxiety. It helps students build motivation, autonomy, and confidence through repeated practice, review, and small successes.
 
-This lesson is meaningful because it gives low-proficiency students more individual and self-paced opportunities to practice English while lowering speaking anxiety. It is based on **task-supported learning**, not fully task-based learning, because the activities are designed to support basic language practice rather than complete real-world communication tasks only through English.
+The lesson is based on **task-supported learning**, not fully task-based learning, because these students still need structured support with basic English skills. Instead of completing complex real-world tasks only in English, they practice through small and manageable tasks such as listening, matching, choosing answers, short writing, and speaking words aloud.
 
 The lesson also reflects **skill-integrated learning**, as students practice listening, reading, vocabulary, writing, and speaking through connected activities such as pop songs, short reading passages, quizzes, sentence matching, guided writing, and speech recognition-based speaking tasks.
 
