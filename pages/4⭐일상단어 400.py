@@ -609,7 +609,7 @@ def add_unknown_word(word, display_meaning, theme_name):
 
     st.session_state.unknown_word_info[review_id] = {
         "word": word,
-        "meaning": meaning,
+        "meaning": display_meaning,
         "theme": theme_name,
     }
 
@@ -1661,7 +1661,7 @@ def show_word_cards(theme_words, theme_name):
         display_meaning = get_display_meaning(word, meaning)
         review_id = make_review_id(theme_name, word)
         checked = review_id in st.session_state.unknown_words
-        checkbox_key = f"{theme_name}_unknown_{idx}_{word}"
+        checkbox_key = "review_unknown_" + hashlib.md5(f"{theme_name}||{idx}||{word}".encode("utf-8")).hexdigest()
 
         st.markdown('<div class="word-card">', unsafe_allow_html=True)
 
@@ -1804,12 +1804,15 @@ def show_unknown_words_tab():
             if st.button("삭제", key=f"delete_unknown_{idx}_{review_id}", use_container_width=True):
                 remove_unknown_word(review_id)
 
-                keys_to_delete = [
-                    key for key in list(st.session_state.keys())
-                    if "_unknown_" in str(key) and str(key).endswith(f"_{word}")
-                ]
-                for key in keys_to_delete:
-                    del st.session_state[key]
+                # 화면의 체크박스 상태도 함께 지워야 다시 렌더링될 때 체크가 해제됩니다.
+                for theme_key, theme_words in word_themes.items():
+                    for w_idx, w_item in enumerate(theme_words):
+                        if make_review_id(theme_key, w_item["word"]) == review_id:
+                            checkbox_key = "review_unknown_" + hashlib.md5(
+                                f"{theme_key}||{w_idx}||{w_item['word']}".encode("utf-8")
+                            ).hexdigest()
+                            if checkbox_key in st.session_state:
+                                del st.session_state[checkbox_key]
 
                 st.rerun()
 
