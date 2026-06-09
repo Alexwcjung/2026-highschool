@@ -24,15 +24,15 @@ The lesson is meaningful because it helps students experience English as somethi
 
 ## 🧠 Design Rationale
 
-This app was designed to support task-based and skill-integrated English learning. Students do not simply memorize words or grammar rules. Instead, they complete connected learning tasks such as listening to songs, answering questions, noticing grammar patterns, matching sentences, reading short passages, writing guided responses, and speaking through word cards.
+This app was designed to support **task-based** and **skill-integrated** English learning. Students do not simply memorize words or grammar rules. Instead, they complete connected learning tasks such as listening to songs, answering questions, **noticing grammar patterns**, matching sentences, reading short passages, writing guided responses, and speaking through word cards.
 
-The app also reflects technology-enhanced language learning. Students use smartphones, tablets, or computers to listen, read, answer quizzes, match expressions, write responses, and speak into the microphone. This gives students more individual practice opportunities than a traditional classroom usually provides.
+The app also reflects **technology-enhanced language learning**. Students use smartphones, tablets, or computers to listen, read, answer quizzes, match expressions, write responses, and speak into the microphone. This gives students more individual practice opportunities than a traditional classroom usually provides.
 
-The pop song section includes inductive grammar learning. Students notice useful grammar patterns from lyrics before receiving direct explanations. This helps grammar feel more meaningful and less abstract.
+The pop song section includes **inductive grammar learning.** Students notice useful grammar patterns from lyrics before receiving direct explanations. This helps grammar feel more meaningful and less abstract.
 
-The speaking activities use automatic speech recognition. Students say words aloud, check whether the app recognizes them, and retry difficult items. The purpose is not only pronunciation checking, but speaking-based vocabulary practice.
+The speaking activities use **automatic speech recognition.** Students say words aloud, check whether the app recognizes them, and retry difficult items. The purpose is not only pronunciation checking, but speaking-based vocabulary practice.
 
-The app also supports learner autonomy and self-paced learning. Students can listen again, review difficult items, use translation support, and retry speaking tasks at their own pace.
+The app also supports **learner autonomy and self-paced learning**. Students can listen again, review difficult items, use translation support, and retry speaking tasks at their own pace.
 
 ---
 
