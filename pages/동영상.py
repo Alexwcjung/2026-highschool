@@ -34,13 +34,13 @@ def show_video(title, path):
         st.info("GitHub의 videos 폴더 안 파일명과 코드의 파일명이 정확히 같은지 확인하세요.")
 
 with tab1:
-    show_video("영상 1", videos["영상 1"])
+    show_video("1", videos["영상 1"])
 
 with tab2:
-    show_video("영상 2", videos["영상 2"])
+    show_video("2", videos["영상 2"])
 
 with tab3:
-    show_video("영상 3", videos["영상 3"])
+    show_video("3", videos["영상 3"])
 
 with tab4:
-    show_video("영상 4", videos["영상 4"])
+    show_video("4", videos["영상 4"])
