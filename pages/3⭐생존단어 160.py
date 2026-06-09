@@ -1220,27 +1220,32 @@ def show_cassette_audio(items, title):
         key=f"repeat_{title}"
     )
 
-    button_label = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 테마별 전체 단어 듣기"
+    # 버튼을 누른 뒤 카세트를 생성하는 방식이 아니라,
+    # 테마 화면에 들어오면 바로 카세트가 보이도록 합니다.
+    cassette_title = "🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 테마별 전체 단어 듣기"
+    st.markdown(
+        f"<div style='font-size:20px; font-weight:1000; color:#0f172a; margin:8px 0 10px 0;'>{cassette_title}</div>",
+        unsafe_allow_html=True
+    )
 
-    if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
-        try:
-            with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
-                audio_payloads = []
-                for item in items:
-                    word = str(item["word"]).strip()
-                    tts_text = ". ".join([word] * repeat_word) + "."
-                    audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
-                    audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
+    try:
+        with st.spinner("단어별 카세트 음성을 준비하는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+            audio_payloads = []
+            for item in items:
+                word = str(item["word"]).strip()
+                tts_text = ". ".join([word] * repeat_word) + "."
+                audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
+                audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
 
-            js_cassette_visual_player(
-                items=items,
-                audio_payloads=audio_payloads,
-                title="🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기",
-                height=560
-            )
-        except Exception as e:
-            st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
-            st.caption(f"오류 내용: {e}")
+        js_cassette_visual_player(
+            items=items,
+            audio_payloads=audio_payloads,
+            title=cassette_title,
+            height=560
+        )
+    except Exception as e:
+        st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
+        st.caption(f"오류 내용: {e}")
 
 
 def show_all_cassette_tab():
