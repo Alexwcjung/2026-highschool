@@ -1,7 +1,10 @@
 # Project Description
 
-## 🎬 App Demo Video 
-[![재미있는 영어 놀이터 앱 소개 영상](https://img.youtube.com/vi/mkiQJoR8sVQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=mkiQJoR8sVQ)
+## 🎬 App Demo Video
+
+<a href="https://www.youtube.com/watch?v=mkiQJoR8sVQ">
+  <img src="https://img.youtube.com/vi/mkiQJoR8sVQ/maxresdefault.jpg" alt="재미있는 영어 놀이터 앱 소개 영상" width="500">
+</a>
 
 ## 🎯 Teaching Context
 
