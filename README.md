@@ -24,7 +24,7 @@ The lesson is meaningful because it helps students experience English as somethi
 
 ## 🧠 Design Rationale
 
-This app was designed to support **task-based** and **skill-integrated** English learning. Students do not simply memorize words or grammar rules. Instead, they complete connected learning tasks such as listening to songs, answering questions, **noticing grammar patterns**, matching sentences, reading short passages, writing guided responses, and speaking through word cards.
+This app was designed to support **task-supported** and **skill-integrated** English learning. Students do not simply memorize words or grammar rules. Instead, they complete connected learning tasks such as listening to songs, answering questions, **noticing grammar patterns**, matching sentences, reading short passages, writing guided responses, and speaking through word cards.
 
 The app also reflects **technology-enhanced language learning**. Students use smartphones, tablets, or computers to listen, read, answer quizzes, match expressions, write responses, and speak into the microphone. This gives students more individual practice opportunities than a traditional classroom usually provides.
 
