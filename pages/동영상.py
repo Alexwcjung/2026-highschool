@@ -16,7 +16,7 @@ st.title("🎬 영상 보기")
 videos = {
     "영상 1": "videos/Streamlit_앱_활용_영어_수업 (1).mp4",
     "영상 2": "videos/스트레스_제로_영어_수업.mp4",
-    "영상 3": "videos/video3.mp4",
+    "영상 3": "videos/스트레스_제로_스마트폰_앱_아지트.mp4",
     "영상 4": "videos/video4.mp4",
 }
 
