@@ -326,7 +326,7 @@ st.markdown(
 
 
 # =========================
-# TTS 함수 - requests로 mp3를 받아 st.audio로 재생하는 안정형 방식
+# TTS 함수 - 일상 400과 같은 requests 방식
 # =========================
 def make_google_tts_url(text, lang="en"):
     clean_text = str(text).strip()
@@ -345,7 +345,7 @@ def get_tts_mp3_bytes(text, lang="en"):
 
     url = make_google_tts_url(clean_text, lang=lang)
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "User-Agent": "Mozilla/5.0",
         "Referer": "https://translate.google.com/",
     }
     response = requests.get(url, headers=headers, timeout=12)
@@ -370,54 +370,74 @@ def make_dialogue_tts_text(dialogue):
     return " ".join([remove_speaker_label(item["en"]) for item in dialogue])
 
 
-def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
-    """버튼을 누르면 현재 위치에 st.audio 플레이어를 고정해서 보여줍니다."""
+def instant_audio_button(label, text, key=None, height=46):
+    """
+    화면에 st.audio 플레이어를 띄우지 않고, 버튼을 누르면 바로 소리만 재생합니다.
+    Google TTS mp3는 requests로 받아와 base64로 넣기 때문에 gTTS 파일 생성보다 오류가 적고,
+    브라우저 자동재생 제한도 사용자 클릭 안에서 처리됩니다.
+    """
     text = str(text).strip()
     if not text:
         return
 
     if key is None:
-        key = "audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
+        key = "instant_audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
 
-    state_key = f"play_now_{key}"
-    if st.button(label, key=key, use_container_width=True):
-        st.session_state[state_key] = True
-
-    if st.session_state.get(state_key, False):
-        try:
-            audio_bytes = get_tts_mp3_bytes(text, lang="en")
-            st.audio(audio_bytes, format="audio/mp3")
-        except Exception as e:
-            st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
-            st.caption(f"오류 내용: {e}")
-            if show_link:
-                st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
-
-
-def direct_audio_player(text, show_link=True):
-    """단어 카드용: 오디오 플레이어를 바로 보여줍니다."""
-    text = str(text).strip()
-    if not text:
-        return
+    safe_id = re.sub(r"[^a-zA-Z0-9_]", "_", str(key))
 
     try:
         audio_bytes = get_tts_mp3_bytes(text, lang="en")
-        st.audio(audio_bytes, format="audio/mp3")
+        audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
+        button_html = f"""
+        <button id="btn_{safe_id}" style="
+            width:100%;
+            min-height:38px;
+            border-radius:999px;
+            border:1px solid #d1d5db;
+            background:#ffffff;
+            color:#111827;
+            font-size:15px;
+            font-weight:900;
+            cursor:pointer;
+            box-shadow:0 2px 6px rgba(15,23,42,0.06);
+        ">{html.escape(label)}</button>
+
+        <script>
+        const btn_{safe_id} = document.getElementById("btn_{safe_id}");
+        const audio_{safe_id} = new Audio("data:audio/mp3;base64,{audio_b64}");
+        audio_{safe_id}.preload = "auto";
+
+        btn_{safe_id}.addEventListener("click", function() {{
+            audio_{safe_id}.pause();
+            audio_{safe_id}.currentTime = 0;
+            audio_{safe_id}.play().then(function() {{
+                btn_{safe_id}.innerText = "🔊 재생 중";
+            }}).catch(function() {{
+                btn_{safe_id}.innerText = "다시 누르기";
+            }});
+        }});
+
+        audio_{safe_id}.addEventListener("ended", function() {{
+            btn_{safe_id}.innerText = "{html.escape(label)}";
+        }});
+        </script>
+        """
+        components.html(button_html, height=height, scrolling=False)
+
     except Exception as e:
-        st.error("음성 파일을 만들지 못했습니다.")
+        st.error("음성 파일을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
         st.caption(f"오류 내용: {e}")
-        if show_link:
-            st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
+        st.link_button("🔊 새 창에서 듣기", make_google_tts_url(text, lang="en"), use_container_width=True)
 
 
-def audio_button_stable(label, text, key=None):
-    """개별 단어 듣기: 버튼 클릭 후 같은 카드 안에 st.audio를 표시합니다."""
-    text = str(text).strip()
-    if not text:
-        return
-    if key is None:
-        key = "word_audio_" + hashlib.md5((label + "::" + text).encode("utf-8")).hexdigest()
-    play_audio_block(text, label=label, key=key, show_link=True)
+def play_audio_block(text, label="🔊 듣기", show_link=True, key=None):
+    # st.audio 플레이어를 띄우지 않고, 클릭 즉시 재생합니다.
+    instant_audio_button(label, text, key=key, height=48)
+
+
+def direct_audio_player(text, show_link=True):
+    # 단어 카드용: 오디오 플레이어 없이 바로 재생 버튼만 보여줍니다.
+    instant_audio_button("🔊 듣기", text, height=48)
 
 
 # =========================
@@ -774,18 +794,21 @@ def get_word_emoji(word):
 
 
 # =========================
-# 단어·대화 오디오 - st.audio 안정형 방식
+# 단어·대화 오디오 - 일상 400과 같은 안전한 st.audio 방식
 # =========================
 def audio_button(label, text, key=None):
-    audio_button_stable(label, text, key=key)
+    # 단어별 듣기: 화면에 플레이어가 뜨지 않고 버튼 클릭 즉시 재생됩니다.
+    instant_audio_button(label, text, key=key, height=48)
 
 
 def html_dialogue_audio_player(label, dialogue_lines, line_pause_ms=1400, height=105):
+    # 대화 듣기도 같은 방식으로, 플레이어 없이 버튼 클릭 즉시 재생합니다.
     dialogue_text = make_dialogue_tts_text(dialogue_lines)
-    play_audio_block(
+    instant_audio_button(
+        label,
         dialogue_text,
-        label=label,
-        key="dialogue_" + hashlib.md5(dialogue_text.encode("utf-8")).hexdigest()
+        key="dialogue_" + hashlib.md5(dialogue_text.encode("utf-8")).hexdigest(),
+        height=50
     )
 
 
@@ -962,7 +985,7 @@ def make_cassette_text(items, repeat_word=2):
     return " ".join(parts)
 
 
-def js_cassette_visual_player(items, audio_sources, title="📼 단어 카세트", height=560):
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=560):
     """
     일상 400과 같은 형태의 카세트입니다.
     남기는 기능:
@@ -975,14 +998,14 @@ def js_cassette_visual_player(items, audio_sources, title="📼 단어 카세트
     player_id = "survival_cassette_" + uuid.uuid4().hex
 
     visual_items = []
-    for idx, (item, audio_src) in enumerate(zip(items, audio_sources), start=1):
+    for idx, (item, audio_b64) in enumerate(zip(items, audio_payloads), start=1):
         visual_items.append({
             "number": item.get("number", idx),
             "theme": str(item.get("theme", "")),
             "word": str(item.get("word", "")),
             "meaning": str(item.get("meaning", "")),
             "emoji": get_word_emoji(item.get("word", "")),
-            "src": audio_src,
+            "src": "data:audio/mp3;base64," + audio_b64,
         })
 
     items_json = json.dumps(visual_items, ensure_ascii=False)
@@ -1202,17 +1225,16 @@ def show_cassette_audio(items, title):
     if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
         try:
             with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
-                audio_sources = []
+                audio_payloads = []
                 for item in items:
                     word = str(item["word"]).strip()
                     tts_text = ". ".join([word] * repeat_word) + "."
                     audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
-                    audio_b64 = base64.b64encode(audio_bytes).decode("utf-8")
-                    audio_sources.append("data:audio/mp3;base64," + audio_b64)
+                    audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
 
             js_cassette_visual_player(
                 items=items,
-                audio_sources=audio_sources,
+                audio_payloads=audio_payloads,
                 title="🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기",
                 height=560
             )
