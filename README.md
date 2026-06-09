@@ -6,11 +6,18 @@
   <img src="https://img.youtube.com/vi/mkiQJoR8sVQ/maxresdefault.jpg" alt="재미있는 영어 놀이터 앱 소개 영상" width="500">
 </a>
 
-## 🎯 Teaching Context
+## 🏫 Teaching Context
 
-This project was designed for Korean vocational high school students with low English proficiency, often around the elementary to early middle school level. Many students have learning gaps in listening, reading, vocabulary, writing, and speaking. Since many do not plan to enter university after graduation, they often feel that English is difficult, distant, and not directly connected to their future lives or careers.
+### Who are your learners?
+The learners are Korean vocational high school students with low English proficiency, often around the elementary to early middle school level.
 
-Because many students have low confidence and feel anxious about making mistakes, this project aims to make English learning more accessible, enjoyable, and voluntary. The app uses familiar content such as pop songs, short reading passages, daily vocabulary, guided writing, and speaking activities, allowing students to practice, review, and retry tasks at their own pace.
+### What is your classroom environment?
+The lesson is designed for a regular English classroom where students use smartphones, tablets, or computers to complete app-based learning tasks.
+
+### What challenges do learners have?
+Many students have learning gaps in listening, reading, vocabulary, writing, and speaking. Since many do not plan to enter university after graduation, they often feel that English is difficult, distant, and not directly connected to their future lives or careers.
+
+They also have low confidence and feel anxious about making mistakes. Therefore, the app uses familiar content such as pop songs, short reading passages, daily vocabulary, guided writing, and speaking activities so that students can practice, review, and retry tasks at their own pace.
 
 ---
 
