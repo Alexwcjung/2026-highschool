@@ -345,7 +345,7 @@ with right:
 # =========================
 st.markdown('<div class="section-title">🎬 앱 소개 영상</div>', unsafe_allow_html=True) 
 
-video_path = "videos/스마트폰_영어_아지트.mp44"
+video_path = "videos/스마트폰_영어_아지트.mp4"
 
 st.markdown("<div class='video-wrap'>", unsafe_allow_html=True)
 st.markdown("<div class='video-title'>🎬 스트레스 제로 스마트폰 앱 아지트</div>", unsafe_allow_html=True)
