@@ -1687,112 +1687,167 @@ def make_polished_feedback(song_title, question, student_answer):
 
 def polish_student_english_text(student_answer, song_title="", question=""):
     """
-    학생 영어를 그대로 반복하지 않고, 의미를 최대한 살려서
-    더 자연스럽고 매끄러운 영어 반성문으로 다시 써 줍니다.
+    학생이 쓴 내용을 최대한 유지하면서 문법 오류와 어색한 표현을 고쳐 줍니다.
+    새 글을 임의로 만들어 버리는 것이 아니라, 학생 원문을 바탕으로 더 자연스럽게 다듬는 함수입니다.
     외부 API 없이 작동하도록 규칙 기반으로 구성했습니다.
     """
-    original = str(student_answer).strip()
-    song_title = str(song_title)
-    question = str(question)
+    text = str(student_answer).strip()
 
-    if not original:
+    if not text:
         return ""
 
-    text = re.sub(r"\s+", " ", original).strip()
-    lower = text.lower()
+    # 기본 공백 정리
+    text = re.sub(r"\s+", " ", text).strip()
 
-    # 1) 학생 글에서 핵심 감정 추출
-    emotion_map = [
-        (["sad", "cry", "lonely", "hurt", "miss", "sorry"], "sad"),
-        (["happy", "joy", "smile", "fun", "excited"], "happy"),
-        (["comfort", "warm", "relax", "calm", "peace"], "comforted"),
-        (["hope", "dream", "future", "try", "again"], "hopeful"),
-        (["love", "friend", "family", "together"], "warm"),
-        (["angry", "upset", "stress", "nervous", "worried"], "confused and emotional"),
+    # 많이 나오는 철자/대소문자/축약형 오류
+    basic_replacements = [
+        (r"\bi\b", "I"),
+        (r"\bim\b", "I'm"),
+        (r"\bi'm\b", "I'm"),
+        (r"\biam\b", "I am"),
+        (r"\bdont\b", "don't"),
+        (r"\bdidnt\b", "didn't"),
+        (r"\bcant\b", "can't"),
+        (r"\bwont\b", "won't"),
+        (r"\bthats\b", "that's"),
+        (r"\bits\b", "it's"),
+        (r"\benglish\b", "English"),
+        (r"\bkorean\b", "Korean"),
+        (r"\bkorea\b", "Korea"),
+        (r"\bamerica\b", "America"),
+        (r"\bamerican\b", "American"),
+        (r"\byoutube\b", "YouTube"),
     ]
-    feeling = "thoughtful"
-    for words, label in emotion_map:
-        if any(w in lower for w in words):
-            feeling = label
-            break
 
-    # 2) 핵심 주제 추출
-    if any(w in lower for w in ["friend", "friends", "friendship"]):
-        topic = "my friends"
-    elif any(w in lower for w in ["family", "mother", "father", "parent", "parents", "sister", "brother"]):
-        topic = "my family"
-    elif any(w in lower for w in ["love", "relationship", "girlfriend", "boyfriend"]):
-        topic = "a relationship"
-    elif any(w in lower for w in ["school", "class", "teacher", "student"]):
-        topic = "my school life"
-    elif any(w in lower for w in ["dream", "future", "goal"]):
-        topic = "my dream and future"
-    elif any(w in lower for w in ["memory", "memories", "past", "old"]):
-        topic = "an old memory"
-    elif any(w in lower for w in ["english", "study", "learn"]):
-        topic = "learning English"
-    else:
-        topic = "my own life"
+    for pattern, repl in basic_replacements:
+        text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
 
-    # 3) 곡/질문 맥락 반영
-    if "Scientist" in song_title:
-        context_sentence = "The song made me look back on a past moment and think about what I could not say before."
-    elif "Let It Go" in song_title:
-        context_sentence = "The song made me think about being honest with myself and letting go of fear."
-    elif "Hello" in song_title:
-        context_sentence = "The song made me think about regret, apology, and feelings that are difficult to express."
-    elif "Fix You" in song_title:
-        context_sentence = "The song made me think about comfort, support, and people who help me when I am tired."
-    elif "Counting Stars" in song_title:
-        context_sentence = "The song made me think about dreams, worries, and the future I want to build."
-    elif "Fly to the Moon" in song_title:
-        context_sentence = "The song made me think that I can move forward with courage and hope."
-    else:
-        context_sentence = "The song made me think more deeply about my feelings and experiences."
+    # 학생들이 자주 쓰는 어색한 표현 수정
+    grammar_replacements = [
+        # listen 관련
+        (r"\blisten this song\b", "listen to this song"),
+        (r"\blistened this song\b", "listened to this song"),
+        (r"\blistening this song\b", "listening to this song"),
+        (r"\blisten music\b", "listen to music"),
+        (r"\blistened music\b", "listened to music"),
 
-    q_lower = question.lower()
-    if "message" in q_lower:
-        focus_sentence = "The message of the song felt meaningful to me."
-    elif "favorite" in q_lower or "line" in q_lower or "lyrics" in q_lower:
-        focus_sentence = "One part of the lyrics stayed in my mind because it connected with my feelings."
-    elif "memory" in q_lower or "relationship" in q_lower:
-        focus_sentence = "It reminded me of a personal memory and helped me understand it in a new way."
-    else:
-        focus_sentence = "It helped me connect the song with my own thoughts."
+        # remind / make 관련
+        (r"\bthis song remind me\b", "this song reminds me"),
+        (r"\bthis song reminded me about\b", "this song reminded me of"),
+        (r"\bthis song reminds me about\b", "this song reminds me of"),
+        (r"\bthis song make me\b", "this song makes me"),
+        (r"\bthis song makes me felt\b", "this song made me feel"),
+        (r"\bthis song made me felt\b", "this song made me feel"),
+        (r"\bit make me\b", "it makes me"),
+        (r"\bit makes me felt\b", "it made me feel"),
 
-    # 4) 학생 원문에서 일부 핵심 단어를 살리되, 문장은 새로 구성
-    # 너무 긴 원문은 직접 삽입하지 않고 의미만 살림.
-    word_count = len(re.findall(r"[A-Za-z']+", text))
+        # feel 관련
+        (r"\bI feel sad when listen to this song\b", "I feel sad when I listen to this song"),
+        (r"\bI felt sad when listened to this song\b", "I felt sad when I listened to this song"),
+        (r"\bI feel good when listen to this song\b", "I feel good when I listen to this song"),
+        (r"\bI feel like sad\b", "I feel sad"),
+        (r"\bI felt like sad\b", "I felt sad"),
+        (r"\bI am feel\b", "I feel"),
+        (r"\bI was feel\b", "I felt"),
 
-    if word_count < 5:
-        revised = (
-            f"While listening to this song, I felt {feeling}. "
-            f"{context_sentence} "
-            f"It reminded me of {topic}. "
-            "Next time, I want to express my thoughts in more detail."
-        )
-    elif word_count < 18:
-        revised = (
-            f"While listening to this song, I felt {feeling} and thought about {topic}. "
-            f"{context_sentence} "
-            f"{focus_sentence} "
-            "Through this song, I realized that even a short memory or feeling can become an important part of my reflection."
-        )
-    else:
-        revised = (
-            f"While listening to this song, I thought about {topic} and felt {feeling}. "
-            f"{context_sentence} "
-            f"{focus_sentence} "
-            "This reflection helped me look back on my experience more clearly. "
-            "I realized that music can help me understand my emotions and express ideas that are not always easy to say."
-        )
+        # think / remember 관련
+        (r"\bI think this song good\b", "I think this song is good"),
+        (r"\bI think this song sad\b", "I think this song is sad"),
+        (r"\bI think this song meaningful\b", "I think this song is meaningful"),
+        (r"\bI think it good\b", "I think it is good"),
+        (r"\bI think it sad\b", "I think it is sad"),
+        (r"\bremember my old memory\b", "remember an old memory"),
+        (r"\bremember old memory\b", "remember an old memory"),
+        (r"\blook back my memory\b", "look back on my memory"),
+        (r"\bthink about my old memory\b", "think about an old memory"),
 
-    # 5) 마지막 기본 오류 정리
-    revised = re.sub(r"\s+", " ", revised).strip()
-    revised = re.sub(r"\bi\b", "I", revised)
-    revised = re.sub(r"\s+([.!?])", r"\1", revised)
+        # because 뒤 문장 보완
+        (r"\bbecause sad\b", "because it is sad"),
+        (r"\bbecause good\b", "because it is good"),
+        (r"\bbecause meaningful\b", "because it is meaningful"),
+        (r"\bbecause beautiful\b", "because it is beautiful"),
+        (r"\bbecause emotional\b", "because it is emotional"),
 
-    return revised
+        # article / 자연스러운 표현
+        (r"\bvery good song\b", "a very good song"),
+        (r"\bgood song\b", "a good song"),
+        (r"\bsad song\b", "a sad song"),
+        (r"\bmeaningful song\b", "a meaningful song"),
+        (r"\bold memory\b", "an old memory"),
+        (r"\bmy memory\b", "a memory from my life"),
+    ]
+
+    for pattern, repl in grammar_replacements:
+        text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    # 짧은 단편 표현을 자연스러운 문장으로 보완
+    text = re.sub(r"^sad[.!]?$", "I felt sad while listening to this song.", text, flags=re.IGNORECASE)
+    text = re.sub(r"^good[.!]?$", "I thought this song was good.", text, flags=re.IGNORECASE)
+    text = re.sub(r"^happy[.!]?$", "I felt happy while listening to this song.", text, flags=re.IGNORECASE)
+    text = re.sub(r"^my friend[.!]?$", "This song reminded me of my friend.", text, flags=re.IGNORECASE)
+    text = re.sub(r"^my family[.!]?$", "This song reminded me of my family.", text, flags=re.IGNORECASE)
+
+    # 문장 나누기
+    sentences = re.split(r"(?<=[.!?])\s+", text)
+    polished_sentences = []
+
+    for s in sentences:
+        s = s.strip()
+        if not s:
+            continue
+
+        # 문장 부호 없으면 마침표
+        if not re.search(r"[.!?]$", s):
+            s += "."
+
+        # 첫 글자 대문자
+        s = s[0].upper() + s[1:] if s else s
+
+        # I 재정리
+        s = re.sub(r"\bi\b", "I", s)
+        s = re.sub(r"\s+([.!?])", r"\1", s)
+
+        # 자주 나오는 주어-동사 오류 추가 보정
+        s = re.sub(r"\bThis song remind(s)? me\b", "This song reminds me", s, flags=re.IGNORECASE)
+        s = re.sub(r"\bThis song make(s)? me\b", "This song makes me", s, flags=re.IGNORECASE)
+        s = re.sub(r"\bIt make(s)? me\b", "It makes me", s, flags=re.IGNORECASE)
+
+        polished_sentences.append(s)
+
+    polished = " ".join(polished_sentences).strip()
+
+    # 너무 짧은 경우에도 학생 내용에서 출발한 보완 문장만 최소 추가
+    word_count = len(re.findall(r"[A-Za-z']+", polished))
+    lower = polished.lower()
+
+    if word_count < 8:
+        if "friend" in lower:
+            polished = polished.rstrip(".!?") + ". This song reminded me of my friend and the time we spent together."
+        elif "family" in lower:
+            polished = polished.rstrip(".!?") + ". This song reminded me of my family and made me feel warm."
+        elif "sad" in lower:
+            polished = polished.rstrip(".!?") + ". This song made me think about a sad memory from my life."
+        elif "happy" in lower:
+            polished = polished.rstrip(".!?") + ". This song made me feel happy and comfortable."
+        elif "dream" in lower or "future" in lower:
+            polished = polished.rstrip(".!?") + ". This song made me think about my dream and my future."
+        else:
+            polished = polished.rstrip(".!?") + ". This song made me think about my own feelings."
+
+    # 곡 맥락을 아주 짧게만 덧붙임. 학생 원문이 중심이 되도록 한 문장만 추가.
+    if len(re.findall(r"[A-Za-z']+", polished)) < 35:
+        if "Let It Go" in song_title and "let go" not in polished.lower():
+            polished += " It also helped me think about letting go of fear."
+        elif "Hello" in song_title and "sorry" not in polished.lower():
+            polished += " It also made me think about feelings that are difficult to say."
+        elif "Scientist" in song_title and "look back" not in polished.lower():
+            polished += " It also made me look back on the past."
+        elif "Fix You" in song_title and "comfort" not in polished.lower():
+            polished += " It also gave me a feeling of comfort."
+        elif "Counting Stars" in song_title and "future" not in polished.lower():
+            polished += " It also made me think about my future."
+
+    return polished
 
 def make_english_only_feedback(song_title, question, student_answer):
     """
@@ -1833,7 +1888,7 @@ def make_english_only_feedback(song_title, question, student_answer):
                 revised_en += " This song helped me express my feelings."
 
     advice_en = (
-        "Good effort. I rewrote your ideas in smoother and more natural English. "
+        "Good effort. I corrected your grammar and made your own ideas sound smoother and more natural in English. "
         "Next time, try to add three parts: "
         "1) what the song reminded you of, 2) how you felt, and 3) what you learned. "
         "Useful patterns: This song reminds me of ~. / I felt ~ because ~. / Looking back now, I realize that ~."
