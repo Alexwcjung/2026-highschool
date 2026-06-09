@@ -3,7 +3,7 @@ import os
 
 # =====================================================
 # 재미있는 영어 놀이터 / 앱 소개 첫 페이지
-# 앱 소개 + 영상 4개 탭
+# 앱 소개 + 소개 영상 1개
 # =====================================================
 
 st.set_page_config(
@@ -187,23 +187,6 @@ st.markdown(
         line-height: 1.7;
     }
 
-    div[data-testid="stTabs"] button[role="tab"] {
-        min-height: 56px !important;
-        padding: 10px 18px !important;
-        border-radius: 18px 18px 0 0 !important;
-    }
-
-    div[data-testid="stTabs"] button[role="tab"] p {
-        font-size: 20px !important;
-        font-weight: 1000 !important;
-        color: #111827 !important;
-    }
-
-    div[data-testid="stTabs"] button[aria-selected="true"] {
-        background: linear-gradient(135deg, #fce7f3, #dbeafe, #dcfce7) !important;
-        border-radius: 18px 18px 0 0 !important;
-    }
-
     @media (max-width: 768px) {
         .hero-box {
             padding: 32px 22px;
@@ -224,10 +207,6 @@ st.markdown(
 
         .intro-box {
             padding: 22px 20px;
-        }
-
-        div[data-testid="stTabs"] button[role="tab"] p {
-            font-size: 16px !important;
         }
     }
     </style>
@@ -366,48 +345,26 @@ with right:
 # =========================
 st.markdown('<div class="section-title">🎬 앱 소개 영상</div>', unsafe_allow_html=True)
 
-videos = {
-    "영상 1": "videos/Streamlit_앱_활용_영어_수업 (1).mp4",
-    "영상 2": "videos/스트레스_제로_영어_수업.mp4",
-    "영상 3": "videos/스트레스_제로_스마트폰_앱_아지트.mp4",
-    "영상 4": "videos/video4.mp4",
-}
+video_path = "videos/스트레스_제로_스마트폰_앱_아지트.mp4"
 
-tab1, tab2, tab3, tab4 = st.tabs(["🎬 1", "🎬 2", "🎬 3", "🎬 4"])
+st.markdown("<div class='video-wrap'>", unsafe_allow_html=True)
+st.markdown("<div class='video-title'>🎬 스트레스 제로 스마트폰 앱 아지트</div>", unsafe_allow_html=True)
 
+if os.path.exists(video_path):
+    st.video(video_path)
+else:
+    st.markdown(
+        f"""
+        <div class="missing-box">
+            영상 파일을 찾을 수 없습니다.<br>
+            현재 찾고 있는 경로:<br>
+            <code>{video_path}</code><br><br>
+            GitHub의 <b>videos</b> 폴더 안 파일명과 코드의 파일명이 정확히 같은지 확인하세요.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-def show_video(title, path):
-    st.markdown("<div class='video-wrap'>", unsafe_allow_html=True)
-    st.markdown(f"<div class='video-title'>{title}</div>", unsafe_allow_html=True)
-
-    if os.path.exists(path):
-        st.video(path)
-    else:
-        st.markdown(
-            f"""
-            <div class="missing-box">
-                영상 파일을 찾을 수 없습니다.<br>
-                현재 찾고 있는 경로:<br>
-                <code>{path}</code><br><br>
-                GitHub의 <b>videos</b> 폴더 안 파일명과 코드의 파일명이 정확히 같은지 확인하세요.
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-
-with tab1:
-    show_video("영상 1", videos["영상 1"])
-
-with tab2:
-    show_video("영상 2", videos["영상 2"])
-
-with tab3:
-    show_video("영상 3", videos["영상 3"])
-
-with tab4:
-    show_video("영상 4", videos["영상 4"])
+st.markdown("</div>", unsafe_allow_html=True)
 
 st.caption("🌸 재미있는 영어 놀이터 · Listening and Speaking First")
