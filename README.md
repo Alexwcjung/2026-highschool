@@ -38,11 +38,11 @@ The app also supports **learner autonomy and self-paced learning**. Students can
 
 ## 📱 App Purpose
 
-I built this app to give low-proficiency vocational high school students more individual chances to practice English.
+I built this app to help low-proficiency vocational high school students practice English in a more motivating, autonomous, and supportive way.
 
-In a regular classroom, one teacher cannot check every student’s listening, reading, writing, vocabulary, and speaking practice at the same time. Some students need more listening support, some need reading or writing support, and others need repeated speaking practice.
+This app provides simple input, repeated practice, immediate feedback, and self-paced review so that students can practice according to their own needs and confidence levels.
 
-The app addresses these needs by providing simple input, repeated practice, immediate feedback, and self-paced review. It does not replace the teacher. Instead, it supports teacher-guided instruction by giving students more opportunities to practice English individually and confidently.
+By using familiar topics, pop songs, and interactive tasks, the app also increases motivation, lowers anxiety, and helps students feel more autonomy in learning English. It does not replace the teacher, but supports teacher-guided instruction by giving students more chances to practice actively and confidently.
 
 ---
 
