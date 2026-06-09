@@ -1289,7 +1289,7 @@ def make_cassette_text(items, repeat_word=2):
     return " ".join(parts)
 
 
-def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=470):
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=560):
     """
     단어별 mp3를 순서대로 재생합니다.
     각 mp3가 끝나면 다음 단어로 넘어가므로 화면의 단어·뜻·이모지가 발음과 잘 맞습니다.
@@ -1355,6 +1355,26 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                     <button id="next_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">다음 ⏭</button>
                 </div>
 
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                    <div style="background:rgba(255,255,255,0.88); border:1px solid #dcfce7; border-radius:16px; padding:9px 11px;">
+                        <div style="font-size:12px; font-weight:900; color:#64748b; margin-bottom:4px;">속도</div>
+                        <select id="speed_{player_id}" style="width:100%; border:0; background:transparent; font-size:14px; font-weight:900; color:#0f172a; outline:none;">
+                            <option value="0.75">천천히</option>
+                            <option value="1" selected>보통</option>
+                            <option value="1.15">조금 빠르게</option>
+                            <option value="1.3">빠르게</option>
+                        </select>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.88); border:1px solid #dcfce7; border-radius:16px; padding:9px 11px;">
+                        <div style="font-size:12px; font-weight:900; color:#64748b; margin-bottom:4px;">전체 반복</div>
+                        <select id="loop_{player_id}" style="width:100%; border:0; background:transparent; font-size:14px; font-weight:900; color:#0f172a; outline:none;">
+                            <option value="1" selected>1번</option>
+                            <option value="2">2번</option>
+                            <option value="3">3번</option>
+                        </select>
+                    </div>
+                </div>
+
                 <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
 
             </div>
@@ -1373,9 +1393,12 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         const playBtn_{player_id} = document.getElementById("play_{player_id}");
         const prevBtn_{player_id} = document.getElementById("prev_{player_id}");
         const nextBtn_{player_id} = document.getElementById("next_{player_id}");
+        const speedSelect_{player_id} = document.getElementById("speed_{player_id}");
+        const loopSelect_{player_id} = document.getElementById("loop_{player_id}");
         const playerId_{player_id} = {safe_player_id};
 
         let currentIndex_{player_id} = 0;
+        let currentLoop_{player_id} = 1;
         let isPlayingList_{player_id} = false;
         let isFinished_{player_id} = false;
 
@@ -1390,7 +1413,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
             meaningEl_{player_id}.textContent = it.meaning;
             emojiEl_{player_id}.textContent = it.emoji;
             themeEl_{player_id}.textContent = it.theme || "Daily English";
-            countEl_{player_id}.textContent = (idx + 1) + " / " + items_{player_id}.length;
+            countEl_{player_id}.textContent = (idx + 1) + " / " + items_{player_id}.length + " · " + currentLoop_{player_id} + "회차";
 
             const percent = items_{player_id}.length <= 1 ? 100 : (idx / (items_{player_id}.length - 1)) * 100;
             barEl_{player_id}.style.width = percent + "%";
@@ -1403,6 +1426,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
                 audio_{player_id}.src = it.src;
                 audio_{player_id}.load();
             }}
+            audio_{player_id}.playbackRate = parseFloat(speedSelect_{player_id}.value || "1");
         }}
 
         function playCurrent_{player_id}() {{
@@ -1441,12 +1465,17 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
         loadCurrent_{player_id}();
 
+        speedSelect_{player_id}.addEventListener("change", function() {{
+            audio_{player_id}.playbackRate = parseFloat(speedSelect_{player_id}.value || "1");
+        }});
+
         playBtn_{player_id}.addEventListener("click", function() {{
             if (isPlayingList_{player_id}) {{
                 pauseCurrent_{player_id}();
             }} else {{
                 if (isFinished_{player_id}) {{
                     currentIndex_{player_id} = 0;
+                    currentLoop_{player_id} = 1;
                     isFinished_{player_id} = false;
                 }}
                 playCurrent_{player_id}();
@@ -1463,8 +1492,13 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
 
         audio_{player_id}.addEventListener("ended", function() {{
             if (!isPlayingList_{player_id}) return;
+            const maxLoop = parseInt(loopSelect_{player_id}.value || "1");
             if (currentIndex_{player_id} < items_{player_id}.length - 1) {{
                 currentIndex_{player_id} += 1;
+                playCurrent_{player_id}();
+            }} else if (currentLoop_{player_id} < maxLoop) {{
+                currentLoop_{player_id} += 1;
+                currentIndex_{player_id} = 0;
                 playCurrent_{player_id}();
             }} else {{
                 isPlayingList_{player_id} = false;
@@ -1477,7 +1511,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세�
         </script>
         """,
         height=height,
-        scrolling=False
+        scrolling=True
     )
 
 
@@ -1526,7 +1560,7 @@ def show_cassette_audio(items, title, auto_render=False):
                 items=items,
                 audio_payloads=audio_payloads,
                 title="🎧 전체 단어 듣기" if title == "전체 단어" else "🎧 단어 듣기",
-                height=470
+                height=560
             )
         except Exception as e:
             st.error("카세트 음성을 만들지 못했습니다. requirements.txt에 requests가 있는지 확인해 주세요.")
@@ -1536,8 +1570,35 @@ def show_cassette_audio(items, title, auto_render=False):
 
 
 def show_all_cassette_tab():
+    """
+    Daily English 400은 전체 400개 mp3를 한 컴포넌트에 모두 넣으면
+    base64 용량이 너무 커져 화면이 깨질 수 있습니다.
+    그래서 전체 단어 탭은 20개씩 나누어 안정적으로 재생합니다.
+    """
     all_items = flatten_all_words()
-    show_cassette_audio(all_items, "전체 단어")
+    chunk_size = 20
+    chunks = [all_items[i:i + chunk_size] for i in range(0, len(all_items), chunk_size)]
+
+    st.markdown("### 🎧 전체 단어 듣기")
+    st.caption("전체 400개를 한 번에 넣으면 화면이 무거워질 수 있어 20개씩 나누어 재생합니다.")
+
+    labels = []
+    for idx, chunk in enumerate(chunks):
+        start_no = chunk[0]["number"]
+        end_no = chunk[-1]["number"]
+        theme_label = chunk[0].get("theme", "")
+        labels.append(f"{start_no}~{end_no}번 · {theme_label}")
+
+    selected_label = st.selectbox(
+        "들을 단어 범위 선택",
+        labels,
+        index=0,
+        key="all_words_chunk_select"
+    )
+    selected_idx = labels.index(selected_label)
+    selected_items = chunks[selected_idx]
+
+    show_cassette_audio(selected_items, f"전체 단어 {selected_idx + 1}", auto_render=True)
 
 
 def show_cassette_player(theme_words, theme_name):
