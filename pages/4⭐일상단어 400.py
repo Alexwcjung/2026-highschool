@@ -459,7 +459,7 @@ def direct_audio_player(text, show_link=True):
 def get_word_emoji(word):
     """단어별로 최대한 어울리는 이모지를 붙입니다."""
     emoji_map = {
-        # 학교Đời sống
+        # 학교생활
         "subject": "📚", "math": "➗", "science": "🔬", "history": "🏛️", "music": "🎵",
         "art": "🎨", "P.E.": "🏃", "club": "👥", "schedule": "🗓️", "semester": "🏫",
         "assignment": "📝", "project": "📁", "presentation": "🗣️", "report": "📄", "textbook": "📘",
@@ -471,7 +471,7 @@ def get_word_emoji(word):
         "pronounce": "🗣️", "review": "🔎", "explain": "💬", "describe": "🖼️", "compare": "⚖️",
         "discuss": "🗨️", "present": "📢", "take notes": "📝", "turn in": "📥", "hand out": "📤",
 
-        # 집과 Đời sống
+        # 집과 생활
         "living room": "🛋️", "bedroom": "🛏️", "kitchen": "🍳", "balcony": "🌇", "floor": "🧱",
         "wall": "🧱", "roof": "🏠", "garden": "🌷", "yard": "🌳", "sofa": "🛋️",
         "television": "📺", "refrigerator": "🧊", "microwave": "♨️", "blanket": "🛌", "pillow": "🛏️",
@@ -543,7 +543,7 @@ def get_word_emoji(word):
         "hang out": "🎉", "laugh": "😂", "share": "🤲", "trust": "🤝", "promise": "🤞",
         "secret": "🤫", "joke": "😄", "together": "👥", "alone": "🚶", "forgive": "🫶",
 
-        # Cảm xúc 표현 확장
+        # 감정 표현 확장
         "excited": "🤩", "nervous": "😬", "bored": "🥱", "surprised": "😲", "confused": "😕",
         "embarrassed": "😳", "proud": "😊", "disappointed": "😞", "lonely": "🥲", "relaxed": "😌",
         "calm": "🧘", "upset": "😟", "interested": "🧐", "satisfied": "😌", "thankful": "🙏",
@@ -561,7 +561,7 @@ def get_word_emoji(word):
         "join": "🙋", "prepare": "🎒", "decide": "✅", "cancel": "❌", "on time": "⏰",
         "available": "🟢", "reminder": "🔔",
 
-        # 건강한 Đời sống
+        # 건강한 생활
         "health": "🩺", "body": "🧍", "eye": "👁️", "ear": "👂", "nose": "👃",
         "mouth": "👄", "tooth": "🦷", "hand": "✋", "arm": "💪", "leg": "🦵",
         "foot": "🦶", "stomach": "🤰", "back": "🔙", "heart": "❤️", "clinic": "🏥",
@@ -573,7 +573,7 @@ def get_word_emoji(word):
         "news": "📰", "channel": "📺", "post": "📝", "comment": "💬", "upload": "⬆️",
         "download": "⬇️", "search": "🔎", "click": "🖱️", "battery": "🔋", "notification": "🔔",
 
-        # 직업과 Tương lai
+        # 직업과 미래
         "job": "💼", "work": "💼", "company": "🏢", "office": "🏢", "factory": "🏭",
         "engineer": "🛠️", "mechanic": "🔧", "chef": "👨‍🍳", "firefighter": "🚒", "farmer": "🚜",
         "designer": "🎨", "singer": "🎤", "actor": "🎭", "athlete": "🏃", "dream": "🌈",
@@ -1289,7 +1289,7 @@ def make_cassette_text(items, repeat_word=2):
     return " ".join(parts)
 
 
-def js_cassette_visual_player(items, audio_payloads, title="📼 Cassette từ vựng", height=470):
+def js_cassette_visual_player(items, audio_payloads, title="📼 단어 카세트", height=470):
     """
     단어별 mp3를 순서대로 재생합니다.
     각 mp3가 끝나면 다음 단어로 넘어가므로 화면의 단어·뜻·이모지가 발음과 잘 맞습니다.
@@ -1351,11 +1351,11 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 Cassette từ v
                     <button id="play_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #86efac; background:linear-gradient(135deg,#dcfce7,#dbeafe); font-size:13px; font-weight:900; cursor:pointer; box-shadow:0 3px 9px rgba(15,23,42,0.08);">▶️ 재생</button>
                 </div>
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                    <button id="prev_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">⏮ Trước</button>
+                    <button id="prev_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">⏮ 이전</button>
                     <button id="next_{player_id}" style="min-height:38px; border-radius:13px; border:1px solid #cbd5e1; background:#f8fafc; color:#334155; font-size:13px; font-weight:900; cursor:pointer;">다음 ⏭</button>
                 </div>
 
-                <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">Sẵn sàng</div>
+                <div id="status_{player_id}" style="font-size:14px; font-weight:900; color:#075985; min-height:22px;">준비 완료</div>
 
             </div>
         </div>
@@ -1422,7 +1422,7 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 Cassette từ v
             isPlayingList_{player_id} = false;
             audio_{player_id}.pause();
             playBtn_{player_id}.textContent = "▶️ 이어 듣기";
-            statusEl_{player_id}.textContent = "Tạm dừng";
+            statusEl_{player_id}.textContent = "일시정지";
         }}
 
         function moveTo_{player_id}(idx, autoPlay=false) {{
@@ -1481,7 +1481,19 @@ def js_cassette_visual_player(items, audio_payloads, title="📼 Cassette từ v
     )
 
 
-def show_cassette_audio(items, title):
+@st.cache_data(show_spinner=False)
+def get_cassette_audio_payloads(words_tuple, repeat_word=2):
+    """카세트용 단어 mp3를 base64로 캐시합니다."""
+    audio_payloads = []
+    for word in words_tuple:
+        clean_word = str(word).strip()
+        tts_text = ". ".join([clean_word] * repeat_word) + "."
+        audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
+        audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
+    return audio_payloads
+
+
+def show_cassette_audio(items, title, auto_render=False):
     repeat_word = st.selectbox(
         "단어 반복 횟수",
         [1, 2, 3],
@@ -1496,15 +1508,19 @@ def show_cassette_audio(items, title):
     else:
         button_label = "🎧 테마별 전체 단어 듣기"
 
-    if st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True):
+    should_render = auto_render
+
+    if auto_render:
+        st.markdown("### 🎧 테마별 전체 단어 듣기")
+        st.caption("아래 카세트가 미리 준비되어 있습니다. 재생 버튼만 누르면 바로 들을 수 있습니다.")
+    else:
+        should_render = st.button(button_label, key=f"visual_cassette_{title}", use_container_width=True)
+
+    if should_render:
         try:
-            with st.spinner("단어별 카세트 음성을 만드는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
-                audio_payloads = []
-                for item in items:
-                    word = str(item["word"]).strip()
-                    tts_text = ". ".join([word] * repeat_word) + "."
-                    audio_bytes = get_tts_mp3_bytes(tts_text, lang="en")
-                    audio_payloads.append(base64.b64encode(audio_bytes).decode("utf-8"))
+            words_tuple = tuple(str(item["word"]).strip() for item in items)
+            with st.spinner("단어별 카세트 음성을 준비하는 중입니다. 처음 한 번은 조금 걸릴 수 있습니다."):
+                audio_payloads = get_cassette_audio_payloads(words_tuple, repeat_word)
 
             js_cassette_visual_player(
                 items=items,
@@ -1526,7 +1542,7 @@ def show_all_cassette_tab():
 
 def show_cassette_player(theme_words, theme_name):
     theme_items = make_theme_cassette_items(theme_words, theme_name)
-    show_cassette_audio(theme_items, theme_name)
+    show_cassette_audio(theme_items, theme_name, auto_render=True)
 
 
 # =========================
@@ -1740,7 +1756,7 @@ def show_unknown_words_tab():
 
         st.markdown('</div>', unsafe_allow_html=True)
 
-    if st.button("🗑️ 삭제 tất cả từ muốn ôn tập", key="clear_all_unknown_words", use_container_width=True):
+    if st.button("🗑️ 복습 희망 단어 전체 삭제", key="clear_all_unknown_words", use_container_width=True):
         st.session_state.unknown_words = []
         st.session_state.unknown_word_info = {}
         clear_review_checkbox_keys()
