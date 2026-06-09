@@ -1,5 +1,7 @@
 # Project Description
 
+## 🎬 App Demo Video 👉 [Click here to watch the app demo video](videos/재미있는_영어_아지트.mp4)
+
 ## 🎯 Teaching Context
 
 This project was designed for Korean vocational high school students. Although they are high school students, many have English proficiency around the elementary to early middle school level. Many students have significant learning gaps in listening, reading, vocabulary, writing, and speaking.
