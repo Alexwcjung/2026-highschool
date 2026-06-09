@@ -28,71 +28,62 @@ The lesson also reflects **skill-integrated learning**, as students practice lis
 
 In addition, the app supports **technology-enhanced language learning**, **noticing**, **inductive grammar learning**, **learner autonomy**, and **self-paced learning**. Students can listen again, retry difficult items, notice useful patterns from songs and examples, review independently, and build motivation, confidence, and autonomy in learning English.
 
+---
 
 ## 📱 App Purpose
 
-I built this app to help low-proficiency vocational high school students practice English in a more motivating, autonomous, and supportive way.
+### How does it work?
+The app gives students step-by-step English tasks. Students listen, read, answer quizzes, match sentences, write short responses, speak words, and review difficult items.
 
-This app provides simple input, repeated practice, immediate feedback, and self-paced review so that students can practice according to their own needs and confidence levels.
+### What data or content does it use?
+It uses teacher-made content for low-proficiency vocational high school students, including daily vocabulary, survival English, pop songs, short reading passages, quizzes, writing prompts, and speaking word cards.
 
-By using familiar topics, pop songs, and interactive tasks, the app also increases motivation, lowers anxiety, and helps students feel more autonomy in learning English. It does not replace the teacher, but supports teacher-guided instruction by giving students more chances to practice actively and confidently.
+### How do learners interact with it?
+Students interact by clicking, listening, choosing answers, matching cards, typing short responses, marking difficult words, and speaking into the microphone. They can retry and review at their own pace.
 
 ---
 
-## 🛠️ App Design
+## 🧩 App Design
 
-The app is a customized Streamlit-based English learning app. It includes:
+### How does it work?
 
-- 🌍 world map quiz;
-- 🎵 familiar pop song activities;
-- 📖 short reading activities;
-- 📚 Daily English 400 vocabulary cards;
-- 🎤 speech recognition-based speaking practice;
-- 🧩 sentence matching games;
-- ✍️ guided writing and reflection activities;
-- 🔁 self-check and review activities.
+The app is a customized Streamlit-based English learning app. It provides step-by-step activities such as world map quizzes, pop song learning, short reading tasks, vocabulary cards, speaking practice, sentence matching, guided writing, and review activities.
 
-The pop song section includes lyrics, comprehension quizzes, grammar discovery, sentence matching, reflection writing, and key expression learning.
+### What data or content does it use?
 
-The reading section includes short passages, comprehension questions, sentence matching, letter writing with Google Translation support, and key expression review.
+The app uses teacher-made content for low-proficiency vocational high school students. It includes Daily English 400 vocabulary cards, survival English expressions, familiar pop songs, short reading passages, comprehension quizzes, key expressions, sentence matching items, and guided writing prompts.
 
-The vocabulary and speaking section uses Daily English 400 word cards. Students listen to words, check meanings, say words aloud, and retry difficult items through speech recognition.
+### How do learners interact with it?
 
-Learners interact with the app by clicking buttons, listening to audio, answering quizzes, matching expressions, writing responses, checking meanings, and speaking into the microphone.
+Learners interact with the app by clicking buttons, listening to audio, watching videos, answering quizzes, matching expressions, writing short responses, checking meanings, marking difficult items, and speaking into the microphone. They can retry tasks and review difficult items at their own pace.
+
 
 ---
 
 ## 🏫 Classroom Use
 
-In the 50-minute lesson, the app is used as a teacher-guided learning tool.
+### How is it used?
+The app is used as a teacher-guided tool in a 50-minute lesson. Students complete a world map quiz, pop song activities, short reading tasks, vocabulary practice, speaking tasks, and review activities.
 
-Students first answer a short world map quiz as a warm-up. Then, they complete pop song activities, including listening with lyrics, comprehension questions, grammar discovery, sentence matching, reflection writing, and key expression learning.
-
-Next, students read a short passage, such as the Ronaldo passage, and complete comprehension, matching, guided writing, and key expression activities. Finally, they practice daily vocabulary through word cards and speech recognition-based speaking activities.
-
-The app improves the lesson by giving students more opportunities to listen, read, write, speak, review, and retry individually. It also helps the teacher notice common difficulties and provide focused feedback.
+### What does it improve?
+It gives students more chances to listen, read, write, speak, retry, and review at their own pace. It can also lower speaking anxiety, increase participation, and support learner autonomy.
 
 ---
 
 ## ⚠️ Limitations
 
-Speech recognition is not always perfectly accurate. Results may be affected by pronunciation, background noise, microphone quality, device settings, or browser permissions. Therefore, speech recognition results should be used as practice feedback, not as a perfect pronunciation score.
+### What are the limitations?
+Speech recognition is not always accurate, especially for sentence-level speaking. Students may also rely too much on translation support during writing.
 
-Students may also rely too much on translation support during writing. The teacher needs to guide students to check and revise translated sentences instead of simply copying them.
-
+### What support is needed?
 The app still requires teacher guidance for meaning explanation, reading support, writing support, technical support, and classroom management.
 
 ---
 
 ## 🚀 Future Development
 
-In the future, the app could be improved by:
-
-- making speech recognition more learner-friendly;
-- saving each student’s difficult words, expressions, and speaking attempts;
-- adding more sentence-level speaking activities;
-- improving writing support with sentence starters and revision feedback;
-- adding progress tracking for students and the teacher.
+### What can be improved?
+Future improvements include more learner-friendly speech recognition, more sentence-level speaking tasks, better writing support, student progress tracking, and saving difficult words or expressions for review.
 
 ---
 
