@@ -536,6 +536,12 @@ def show_review_tab():
 
 st.markdown("<div class='main-title'>🌱 Daily English 400</div>", unsafe_allow_html=True)
 st.markdown("<div class='sub-title'>기초 일상대화에 필요한 단어와 문장을 듣고 읽어 봅시다.</div>", unsafe_allow_html=True)
+st.markdown("""
+<div class='hero-box'>
+    <div class='hero-title'>🎧 듣기 버튼을 따로 누르지 않아도 카세트가 처음부터 보입니다.</div>
+    <div class='hero-text'>테마를 선택하면 바로 큰 단어 카드형 플레이어가 나타납니다. 학생은 플레이어 안의 ▶️ 재생 버튼만 누르면 됩니다.</div>
+</div>
+""", unsafe_allow_html=True)
 
 tabs = st.tabs(["🎧 전체 단어", "📚 테마별 학습", "⭐ 복습 희망"])
 
