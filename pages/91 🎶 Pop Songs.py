@@ -1684,6 +1684,55 @@ def make_polished_feedback(song_title, question, student_answer):
     )
     return polished_ko, english_translation, advice
 
+
+def make_english_only_feedback(song_title, question, student_answer):
+    """
+    영어로 적은 학생에게는 한국어 번역 없이 영어 피드백만 제공합니다.
+    너무 어려운 문법 설명보다, 학생 문장을 자연스럽게 확장해 주는 용도입니다.
+    """
+    answer = str(student_answer).strip()
+    question = str(question).strip()
+
+    if re.search(r"[가-힣]", answer):
+        polished_en = (
+            "Please try to write your reflection in English. "
+            "You can start with a simple sentence such as: While listening to this song, I thought about my memories. "
+            "It is okay if your English is short. The important thing is to express your own idea in English."
+        )
+        advice_en = (
+            "Writing tip: Use easy sentence patterns first. "
+            "For example: I felt ~. / This song reminds me of ~. / I think ~ because ~."
+        )
+        return polished_en, advice_en
+
+    if len(answer) < 10:
+        polished_en = (
+            "While listening to this song, I began to think about my feelings. "
+            "My reflection is still short, but it shows that the song helped me connect music with my own thoughts. "
+            "Next time, I can add one memory, one feeling, and one reason to make my writing clearer."
+        )
+    else:
+        polished_en = (
+            f"While listening to this song, I thought about my own feelings and experiences. {answer} "
+            "This reflection is meaningful because it connects the message of the song with my personal life. "
+            "The song helped me look back on a memory, understand my emotions more clearly, and think about how I can grow from that experience."
+        )
+
+    if ("Scientist" in song_title or "relationship" in question.lower() or "memory" in question.lower()) and len(answer) >= 10:
+        polished_en = (
+            f"While listening to this song, I looked back on a past memory and the feelings I had at that time. {answer} "
+            "This memory is not just about the past. It also helps me think about relationships, communication, and the words I could not say before. "
+            "Like the speaker in the song, I realized that looking back can help me understand myself and other people more deeply."
+        )
+
+    advice_en = (
+        "Writing tip: To make your English reflection stronger, try to include three parts: "
+        "1) what the song reminded you of, 2) how you felt, and 3) what you realized. "
+        "Useful patterns: This song reminds me of ~. / I felt ~ because ~. / Looking back now, I realize that ~."
+    )
+
+    return polished_en, advice_en
+
 SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/watch?v=RgGRyssdJvw',
                                'bg': '\n'
                                      '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#be185d;">\n'
@@ -4629,22 +4678,58 @@ elif selected_tab == "🧩 문장 매칭 게임":
     
 elif selected_tab == "✍️ 생각 적기":
     st.subheader("✍️ 생각 적기: Reflective Writing")
-    st.markdown('<div class="game-card"><div class="big-guide">질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요.<br>학생이 쓴 내용을 바탕으로 한국어 글을 조금 더 풍부하게 다듬고, 그 글을 자연스러운 영어로 번역해 줍니다.<br>맨 밑에는 글을 더 발전시키기 위한 쓰기 조언만 제시합니다.</div></div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="game-card"><div class="big-guide">'
+        '질문을 하나 고르고, 노래를 들으며 떠오른 생각을 자유롭게 적어 보세요.<br>'
+        '한국어로 쓰고 싶은 학생과 영어로 쓰고 싶은 학생을 나누어 작성할 수 있습니다.<br>'
+        '한국어로 쓴 학생에게는 한국어 다듬기와 영어 표현을 함께 제공하고, 영어로 쓴 학생에게는 영어 피드백만 제공합니다.'
+        '</div></div>',
+        unsafe_allow_html=True
+    )
+
     reflect_key = safe_key(song_choice)
     questions = data["reflect_questions"][:3]
     selected_question = st.radio("질문을 선택하세요.", questions, key=f"reflect_question_{reflect_key}", index=0)
-    answer = st.text_area("내 생각을 적어 보세요.", placeholder="예: 이 노래를 들으며 예전에 좋아했던 사람이 떠올랐다. 그때는 내 마음을 잘 표현하지 못했고, 지금 생각하면 조금 아쉽다...", height=180, key=f"reflect_answer_{reflect_key}")
-    if st.button("쓰기 결과 제출", key=f"reflect_submit_{reflect_key}", use_container_width=True):
-        if not answer.strip():
-            st.warning("먼저 자신의 생각을 한두 문장이라도 적어 보세요.")
-        else:
-            ko_feedback, en_feedback, advice = make_polished_feedback(song_choice, selected_question, answer)
-            st.markdown("### 🇰🇷 다듬은 한국어 글")
-            st.markdown(f'<div class="feedback-ko">{clean_text_for_display(ko_feedback)}</div>', unsafe_allow_html=True)
-            st.markdown("### 🇺🇸 English Translation")
-            st.markdown(f'<div class="feedback-en">{clean_text_for_display(en_feedback)}</div>', unsafe_allow_html=True)
-            st.markdown("### ✨ 쓰기 조언")
-            st.markdown(f'<div class="advice-box">{clean_text_for_display(advice)}</div>', unsafe_allow_html=True)
+
+    write_ko_tab, write_en_tab = st.tabs(["🇰🇷 한국어로 적고 싶은 사람", "🇺🇸 영어로 적고 싶은 사람"])
+
+    with write_ko_tab:
+        answer_ko = st.text_area(
+            "내 생각을 한국어로 적어 보세요.",
+            placeholder="예: 이 노래를 들으며 예전에 좋아했던 사람이 떠올랐다. 그때는 내 마음을 잘 표현하지 못했고, 지금 생각하면 조금 아쉽다...",
+            height=180,
+            key=f"reflect_answer_ko_{reflect_key}"
+        )
+
+        if st.button("쓰기 결과 제출", key=f"reflect_submit_ko_{reflect_key}", use_container_width=True):
+            if not answer_ko.strip():
+                st.warning("먼저 자신의 생각을 한두 문장이라도 적어 보세요.")
+            else:
+                ko_feedback, en_feedback, advice = make_polished_feedback(song_choice, selected_question, answer_ko)
+                st.markdown("### 🇰🇷 다듬은 한국어 글")
+                st.markdown(f'<div class="feedback-ko">{clean_text_for_display(ko_feedback)}</div>', unsafe_allow_html=True)
+                st.markdown("### 🇺🇸 English Feedback")
+                st.markdown(f'<div class="feedback-en">{clean_text_for_display(en_feedback)}</div>', unsafe_allow_html=True)
+                st.markdown("### ✨ 쓰기 조언")
+                st.markdown(f'<div class="advice-box">{clean_text_for_display(advice)}</div>', unsafe_allow_html=True)
+
+    with write_en_tab:
+        answer_en = st.text_area(
+            "Write your reflection in English.",
+            placeholder="Example: While listening to this song, I thought about my old memory. I felt a little sad, but I also learned something from it.",
+            height=180,
+            key=f"reflect_answer_en_{reflect_key}"
+        )
+
+        if st.button("쓰기 결과 제출", key=f"reflect_submit_en_{reflect_key}", use_container_width=True):
+            if not answer_en.strip():
+                st.warning("Please write at least one or two sentences first.")
+            else:
+                polished_en, advice_en = make_english_only_feedback(song_choice, selected_question, answer_en)
+                st.markdown("### 🇺🇸 English Feedback")
+                st.markdown(f'<div class="feedback-en">{clean_text_for_display(polished_en)}</div>', unsafe_allow_html=True)
+                st.markdown("### ✨ Writing Tip")
+                st.markdown(f'<div class="advice-box">{clean_text_for_display(advice_en)}</div>', unsafe_allow_html=True)
 
 
 elif selected_tab == "⭐ Key Expression 학습":
