@@ -1573,14 +1573,14 @@ def show_all_cassette_tab():
     """
     Daily English 400은 전체 400개 mp3를 한 컴포넌트에 모두 넣으면
     base64 용량이 너무 커져 화면이 깨질 수 있습니다.
-    그래서 전체 단어 탭은 20개씩 나누어 안정적으로 재생합니다.
+    그래서 전체 단어 탭은 100개씩 나누어 안정적으로 재생합니다.
     """
     all_items = flatten_all_words()
-    chunk_size = 20
+    chunk_size = 100
     chunks = [all_items[i:i + chunk_size] for i in range(0, len(all_items), chunk_size)]
 
     st.markdown("### 🎧 전체 단어 듣기")
-    st.caption("전체 400개를 한 번에 넣으면 화면이 무거워질 수 있어 20개씩 나누어 재생합니다.")
+    st.caption("전체 400개를 한 번에 넣으면 화면이 무거워질 수 있어 100개씩 나누어 재생합니다.")
 
     labels = []
     for idx, chunk in enumerate(chunks):
