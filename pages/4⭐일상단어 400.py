@@ -1586,8 +1586,7 @@ def show_all_cassette_tab():
     for idx, chunk in enumerate(chunks):
         start_no = chunk[0]["number"]
         end_no = chunk[-1]["number"]
-        theme_label = chunk[0].get("theme", "")
-        labels.append(f"{start_no}~{end_no}번 · {theme_label}")
+        labels.append(f"{start_no}~{end_no}번")
 
     selected_label = st.selectbox(
         "들을 단어 범위 선택",
