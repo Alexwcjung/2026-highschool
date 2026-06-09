@@ -1356,7 +1356,63 @@ GRAMMAR_POINTS = {'1. Let It Go - Frozen OST': {'target': 'Let + 사람/대상 +
                                                             'stop dreaming',
                                                             'forget our dream',
                                                             'stop trying'],
-                                       'sentence_suffix': ''}}
+                                       'sentence_suffix': ''},
+ '17. My Universe - Coldplay X BTS': {'target': 'When + 사람/대상 + 행동/상태',
+                                      'examples': ['When the morning comes.',
+                                                   "When I'm without you.",
+                                                   'When I lie and look up at you.',
+                                                   'When I watch you rise.',
+                                                   'When we are together.'],
+                                      'frequent_options': ['I can', 'You are', 'When', 'Let it'],
+                                      'frequent_answer': 'When',
+                                      'form_options': ['When + 기본 행동 단어만',
+                                                       'When + will만',
+                                                       'When + 대상 단어만',
+                                                       'When + 사람/대상 + 행동/상태'],
+                                      'form_answer': 'When + 사람/대상 + 행동/상태',
+                                      'meaning_examples': [('When the morning comes.', '아침이 올 때.'),
+                                                           ("When I'm without you.", '내가 너 없이 있을 때.'),
+                                                           ('When we are together.', '우리가 함께 있을 때.')],
+                                      'meaning_options': ['~할 수 있다', '~하지 않을 것이다', '~할 때', '~해야 한다'],
+                                      'meaning_answer': '~할 때',
+                                      'rule_answer': 'When + 사람/대상 + 행동/상태 = ~할 때',
+                                      'rule_options': ['When + 기본 행동 단어 = ~할 수 있다',
+                                                       'When + will = ~하지 않을 것이다',
+                                                       'When + ing = ~하고 있다',
+                                                       'When + 사람/대상 + 행동/상태 = ~할 때'],
+                                      'practice': [('빈칸: When the morning _____.',
+                                                    ['come', 'coming', 'comes', 'came'],
+                                                    'comes',
+                                                    '아침이 올 때라는 뜻입니다.'),
+                                                   ('맞는 문장은?',
+                                                    ['When without you.',
+                                                     "When I'm without you.",
+                                                     "When I'm without.",
+                                                     'When I without you.'],
+                                                    "When I'm without you.",
+                                                    'When 뒤에는 사람/대상 + 행동/상태가 옵니다.'),
+                                                   ("When I'm without you.의 뜻은?",
+                                                    ['내가 너와 함께 있을 때', '내가 너 없이 있을 때', '내가 너를 처음 만났을 때', '내가 너를 잊었을 때'],
+                                                    '내가 너 없이 있을 때',
+                                                    'When은 ~할 때입니다.'),
+                                                   ('빈칸: When we _____ together.',
+                                                    ['are', 'is', 'am', 'be'],
+                                                    'are',
+                                                    'we에는 are가 자연스럽습니다.'),
+                                                   ('알맞은 구조는?',
+                                                    ['When + 기본 행동 단어만',
+                                                     'When + 사람/대상 + 행동/상태',
+                                                     'When + to + 행동 단어',
+                                                     'When + 어려운 문법 모양'],
+                                                    'When + 사람/대상 + 행동/상태',
+                                                    '상황을 말할 때 씁니다.')],
+                                      'sentence_prefix': 'When I',
+                                      'sentence_choices': ['look up at the sky',
+                                                           'feel lonely',
+                                                           'miss my friend',
+                                                           'need help',
+                                                           'am without you'],
+                                      'sentence_suffix': ''}}
 
 
 
@@ -3689,7 +3745,148 @@ SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/wat
                                                     ("There is nothing we can't do", '우리가 할 수 없는 것은 없다')],
                                        'reflect_questions': ['어릴 때는 외롭거나 작게 느껴졌지만 지금은 성장했다고 느끼는 경험이 있나요?',
                                                              '남들이 정해 준 길이 아니라 내가 선택하고 싶은 길은 무엇인가요?',
-                                                             '앞으로 내가 날개를 펴고 도전하고 싶은 일은 무엇인가요?']}}
+                                                             '앞으로 내가 날개를 펴고 도전하고 싶은 일은 무엇인가요?']},
+ '17. My Universe - Coldplay X BTS': {'video_url': 'https://www.youtube.com/watch?v=MjHD7jTgV9s&list=RDMjHD7jTgV9s&start_radio=1',
+                                      'bg': '\n'
+                                            '    <h3 style="font-size:2.2rem; margin-bottom:20px; color:#2563eb;">\n'
+                                            '        🌌 My Universe: 서로 다른 세계가 만나 하나의 우주가 되는 노래\n'
+                                            '    </h3>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        <b>My Universe</b>는 Coldplay와 BTS가 함께 부른 노래로, 서로 다른 배경과 세계를 가진 '
+                                            '사람들이 사랑과 믿음으로 연결되는 마음을 담고 있습니다.\n'
+                                            '    </p>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        노래 속 화자는 상대를 자신의 우주라고 부릅니다. 밤에는 상대를 올려다보고, 아침에는 상대가 떠오르는 모습을 '
+                                            '바라보며, 상대가 자신의 세상을 밝게 만들어 준다고 말합니다.\n'
+                                            '    </p>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        특히 <b>we come from different sides</b>라는 표현은 서로 다른 편, 다른 배경, 다른 '
+                                            '세계에서 왔지만 함께하고 싶은 마음을 보여 줍니다. 그래서 이 노래는 차이와 장벽을 넘어 서로를 소중히 여기는 메시지를 '
+                                            '전달합니다.\n'
+                                            '    </p>\n'
+                                            '\n'
+                                            '    <p style="font-size:1.35rem; line-height:2.0; color:#1e293b;">\n'
+                                            '        수업에서는 <b>my universe</b>, <b>put you first</b>, <b>light up '
+                                            'inside</b>, <b>different sides</b>, <b>made of each other</b> 같은 표현을 중심으로 '
+                                            '배울 수 있습니다. 학생들에게 나의 세상을 밝혀 주는 사람이나 서로 다른 사람과 함께하는 경험을 생각하게 할 수 있습니다.\n'
+                                            '    </p>\n'
+                                            '    ',
+                                      'lyrics': [('You (you), you are (you are) my universe', '너는, 너는 나의 우주야'),
+                                                 ('And I (I) just want (just want) to put you first',
+                                                  '그리고 나는 너를 가장 먼저 생각하고 싶어'),
+                                                 ('And you (you), you are (you are) my universe, and I',
+                                                  '그리고 너는 나의 우주야, 그리고 나는'),
+                                                 ('In the night, I lie and look up at you', '밤이 되면 나는 누워서 너를 올려다봐'),
+                                                 ('When the morning comes, I watch you rise',
+                                                  '아침이 오면 나는 네가 떠오르는 모습을 바라봐'),
+                                                 ("There's a paradise they couldn't capture", '그들이 담아낼 수 없는 낙원이 있어'),
+                                                 ('That bright infinity inside your eyes', '너의 눈 안에 있는 밝은 무한함'),
+                                                 ('매일 밤 네게 날아가 (가)', '매일 밤 너에게 날아가'),
+                                                 ('꿈이란 것도 잊은 채', '꿈이라는 것도 잊은 채'),
+                                                 ('나 웃으며 너를 만나 (나)', '나는 웃으며 너를 만나'),
+                                                 ('Never ending forever, baby', '끝없이 영원히, baby'),
+                                                 ('You (you), you are (you are) my universe', '너는, 너는 나의 우주야'),
+                                                 ('And I (I) just want (just want) to put you first',
+                                                  '그리고 나는 너를 가장 먼저 생각하고 싶어'),
+                                                 ('And you (you), you are (you are) my universe', '그리고 너는 나의 우주야'),
+                                                 ('And you make my world light up inside', '그리고 너는 내 세상을 안에서부터 밝혀 줘'),
+                                                 ('어둠이 내겐 더 편했었지', '어둠이 내게는 더 편했었지'),
+                                                 ('길어진 그림자 속에서 (eyes)', '길어진 그림자 속에서'),
+                                                 ("And they said that we can't be together",
+                                                  '그리고 그들은 우리가 함께할 수 없다고 말했어'),
+                                                 ('Because, because we come from different sides',
+                                                  '왜냐하면 우리는 서로 다른 편에서 왔기 때문이야'),
+                                                 ('You (you), you are (you are) my universe', '너는, 너는 나의 우주야'),
+                                                 ('And I (I) just want (just want) to put you first',
+                                                  '그리고 나는 너를 가장 먼저 생각하고 싶어'),
+                                                 ('And you (you), you are (you are) my universe', '그리고 너는 나의 우주야'),
+                                                 ('And you make my world light up inside', '그리고 너는 내 세상을 안에서부터 밝혀 줘'),
+                                                 ('My universe (doo-doo, doo-doo)', '나의 우주'),
+                                                 ('My universe (doo-doo, doo-doo)', '나의 우주'),
+                                                 ('My universe (doo-doo, doo-doo)', '나의 우주'),
+                                                 ('(You make my world)', '너는 내 세상을'),
+                                                 ('You make my world light up inside', '너는 내 세상을 안에서부터 밝혀 줘'),
+                                                 ('Make my world light up inside', '내 세상을 안에서부터 밝혀 줘'),
+                                                 ('나를 밝혀주는 건', '나를 밝혀 주는 것은'),
+                                                 ('너란 사랑으로 수 놓아진 별', '너라는 사랑으로 수놓아진 별'),
+                                                 ('내 우주의 넌', '내 우주 속의 너는'),
+                                                 ('또 다른 세상을 만들어 주는 걸', '또 다른 세상을 만들어 줘'),
+                                                 ('너는 내 별이자 나의 우주니까', '너는 내 별이자 나의 우주니까'),
+                                                 ('지금 이 시련도 결국엔 잠시니까', '지금 이 시련도 결국에는 잠시니까'),
+                                                 ('너는 언제까지나 지금처럼 밝게만 빛나줘', '너는 언제까지나 지금처럼 밝게만 빛나 줘'),
+                                                 ('우리는 너를 따라 이 긴 밤을 수놓을 거야', '우리는 너를 따라 이 긴 밤을 수놓을 거야'),
+                                                 ('너와 함께 날아가 (가)', '너와 함께 날아가'),
+                                                 ("When I'm without you, I'm crazy", '내가 너 없이 있으면 나는 미칠 것 같아'),
+                                                 ('자 어서 내 손을 잡아 (아)', '자, 어서 내 손을 잡아'),
+                                                 ('We are made of each other, baby', '우리는 서로로 이루어져 있어, baby'),
+                                                 ('You (you), you are (you are) my universe', '너는, 너는 나의 우주야'),
+                                                 ('And I (I) just want (just want) to put you first',
+                                                  '그리고 나는 너를 가장 먼저 생각하고 싶어'),
+                                                 ('And you (you), you are (you are) my universe', '그리고 너는 나의 우주야'),
+                                                 ('And you make my world light up inside', '그리고 너는 내 세상을 안에서부터 밝혀 줘'),
+                                                 ('My universe (you, you are)', '나의 우주, 너는'),
+                                                 ('My universe (I just want)', '나의 우주, 나는 원해'),
+                                                 ('My universe (you, you are my universe, and I)',
+                                                  '나의 우주, 너는 나의 우주야, 그리고 나는'),
+                                                 ('My universe', '나의 우주')],
+                                      'quiz': [{'q': '1. 이 노래에서 상대는 무엇으로 표현되나요?',
+                                                'options': ['나의 우주', '나의 바다', '나의 길', '나의 학교'],
+                                                'answer': '나의 우주'},
+                                               {'q': '2. 화자는 밤에 무엇을 한다고 하나요?',
+                                                'options': ['누워서 상대를 올려다본다', '바다를 건넌다', '학교에 간다', '편지를 쓴다'],
+                                                'answer': '누워서 상대를 올려다본다'},
+                                               {'q': '3. When the morning comes의 의미로 알맞은 것은?',
+                                                'options': ['아침이 오면', '밤이 깊어지면', '비가 내리면', '노래가 끝나면'],
+                                                'answer': '아침이 오면'},
+                                               {'q': '4. And I just want to put you first의 뜻으로 알맞은 것은?',
+                                                'options': ['나는 너를 가장 먼저 생각하고 싶어',
+                                                            '나는 너를 잊고 싶어',
+                                                            '나는 먼저 집에 가고 싶어',
+                                                            '나는 혼자 있고 싶어'],
+                                                'answer': '나는 너를 가장 먼저 생각하고 싶어'},
+                                               {'q': '5. 상대는 화자의 세상을 어떻게 만든다고 하나요?',
+                                                'options': ['안에서부터 밝게 만든다', '조용하게 만든다', '멀어지게 만든다', '어둡게 만든다'],
+                                                'answer': '안에서부터 밝게 만든다'},
+                                               {'q': '6. 사람들이 두 사람이 함께할 수 없다고 말한 이유는 무엇인가요?',
+                                                'options': ['서로 다른 편에서 왔기 때문에',
+                                                            '서로 말을 하지 않기 때문에',
+                                                            '서로 노래를 모르게 때문에',
+                                                            '서로 같은 학교가 아니기 때문에'],
+                                                'answer': '서로 다른 편에서 왔기 때문에'},
+                                               {'q': '7. We are made of each other의 의미로 가장 알맞은 것은?',
+                                                'options': ['우리는 서로로 이루어져 있다',
+                                                            '우리는 서로를 모른다',
+                                                            '우리는 서로 멀리 있다',
+                                                            '우리는 서로 경쟁한다'],
+                                                'answer': '우리는 서로로 이루어져 있다'},
+                                               {'q': '8. 이 노래의 중심 메시지로 가장 알맞은 것은?',
+                                                'options': ['서로 다른 세계의 사람도 사랑과 믿음으로 연결될 수 있다',
+                                                            '혼자 있는 것이 가장 편하다',
+                                                            '아침에는 항상 운동을 해야 한다',
+                                                            '다른 사람과 함께할 수 없다'],
+                                                'answer': '서로 다른 세계의 사람도 사랑과 믿음으로 연결될 수 있다'}],
+                                      'key_expressions': [('My universe', '나의 우주'),
+                                                          ('Put you first', '너를 가장 먼저 생각하다'),
+                                                          ('In the night', '밤에'),
+                                                          ('When the morning comes', '아침이 오면'),
+                                                          ("There's a paradise", '낙원이 있다'),
+                                                          ('Light up inside', '안에서부터 밝히다'),
+                                                          ('Different sides', '서로 다른 편'),
+                                                          ('Without you', '너 없이'),
+                                                          ('Take my hand', '내 손을 잡아'),
+                                                          ('Made of each other', '서로로 이루어진')],
+                                      'matching': [('My universe', '나의 우주'),
+                                                   ('Put you first', '너를 가장 먼저 생각하다'),
+                                                   ('When the morning comes', '아침이 오면'),
+                                                   ('Light up inside', '안에서부터 밝히다'),
+                                                   ('Different sides', '서로 다른 편'),
+                                                   ('Made of each other', '서로로 이루어진')],
+                                      'reflect_questions': ['나의 세상을 밝게 만들어 주는 사람이나 존재가 있나요?',
+                                                            '서로 다른 배경을 가진 사람과 가까워진 경험이 있나요?',
+                                                            '내가 가장 먼저 소중히 여기고 싶은 사람이나 가치는 무엇인가요?']}}
 
 BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 숨겨 왔던 자신을 받아들이는 순간',
                                'paragraphs': ['Let It Go는 영화 Frozen의 대표곡으로, 엘사가 더 이상 자신의 능력과 감정을 숨기지 않고 스스로를 받아들이는 '
@@ -3901,7 +4098,21 @@ BACKGROUND_CONTENT = {'1. Let It Go - Frozen OST': {'title': '❄️ Let It Go: 
                                                       'For every little caterpillar, there is a butterfly라는 표현은 이 노래의 '
                                                       '핵심 이미지입니다. 작고 눈에 띄지 않는 애벌레도 언젠가 나비가 되듯이, 학생들도 지금은 부족해 보여도 성장하고 '
                                                       '변화할 수 있다는 메시지를 전달합니다. 수업에서는 자신감, 성장, 우정, 도전, 자기만의 길을 주제로 생각을 적게 '
-                                                      '할 수 있습니다.']}}
+                                                      '할 수 있습니다.']},
+ '17. My Universe - Coldplay X BTS': {'title': '🌌 My Universe: 서로 다른 세계가 만나 하나의 우주가 되는 노래',
+                                      'paragraphs': ['My Universe는 Coldplay와 BTS가 함께 부른 노래로, 서로 다른 배경과 세계를 가진 사람들이 사랑과 '
+                                                     '믿음으로 연결되는 마음을 담고 있습니다. 제목의 my universe는 상대가 단순히 좋아하는 사람이 아니라, 내 '
+                                                     '삶과 세상을 밝혀 주는 아주 소중한 존재라는 뜻으로 이해할 수 있습니다.',
+                                                     '노래 속 화자는 밤에는 상대를 올려다보고, 아침에는 상대가 떠오르는 모습을 바라봅니다. 이 이미지는 상대가 별이나 '
+                                                     '태양처럼 화자의 세계를 비추는 존재임을 보여 줍니다. You make my world light up '
+                                                     'inside라는 표현도 상대가 마음속 세상을 밝게 만들어 준다는 의미입니다.',
+                                                     'And they said that we can’t be together, because we come from '
+                                                     'different sides라는 부분은 두 사람이 서로 다른 편, 다른 배경, 다른 세계에서 왔기 때문에 주변의 '
+                                                     '장벽을 마주한다는 뜻입니다. 하지만 노래는 그 차이보다 서로를 향한 믿음과 연결이 더 크다고 말합니다.',
+                                                     '수업에서는 my universe, put you first, light up inside, different '
+                                                     'sides, without you, made of each other 같은 표현을 중심으로 배울 수 있습니다. '
+                                                     '학생들은 나의 세상을 밝혀 주는 사람, 서로 다른 사람과 함께하는 경험, 그리고 내가 가장 먼저 소중히 여기고 싶은 '
+                                                     '가치를 생각해 볼 수 있습니다.']}}
 
 
 def show_background(song_choice, data):
