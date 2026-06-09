@@ -4,7 +4,7 @@
 
 This project was designed for Korean vocational high school students. Although they are high school students, many have English proficiency around the elementary to early middle school level. Many students have significant learning gaps in listening, reading, vocabulary, writing, and speaking.
 
-Many students do not plan to enter university after graduation, so they often do not feel a strong need to study English through traditional lessons. For many students, English feels difficult, distant, and not directly connected to their future lives or careers.
+Many students do not plan to enter university after graduation, so they often do not feel a strong need to study English. For many students, English feels difficult, distant, and not directly connected to their future lives or careers.
 
 Most students also have low confidence in English and feel anxious when asked to speak, read, or write in English. They may avoid participation because they are afraid of making mistakes or being compared with others.
 
