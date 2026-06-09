@@ -1685,16 +1685,121 @@ def make_polished_feedback(song_title, question, student_answer):
     return polished_ko, english_translation, advice
 
 
+def polish_student_english_text(student_answer):
+    """
+    학생이 쓴 영어를 너무 어렵게 바꾸지 않고,
+    기초 수준에서 자연스럽게 다듬어 주는 간단한 규칙 기반 함수입니다.
+    외부 API 없이 작동하므로 Streamlit Cloud에서도 안정적으로 사용할 수 있습니다.
+    """
+    text = str(student_answer).strip()
+
+    if not text:
+        return ""
+
+    # 줄바꿈과 공백 정리
+    text = re.sub(r"\s+", " ", text)
+
+    # 자주 나오는 기초 오류 수정
+    replacements = [
+        (r"\bi\b", "I"),
+        (r"\bi am\b", "I am"),
+        (r"\bi'm\b", "I'm"),
+        (r"\bi was\b", "I was"),
+        (r"\bi can\b", "I can"),
+        (r"\bi will\b", "I will"),
+        (r"\bi think\b", "I think"),
+        (r"\bi feel\b", "I feel"),
+        (r"\bi felt\b", "I felt"),
+        (r"\bi like\b", "I like"),
+        (r"\bi liked\b", "I liked"),
+        (r"\bi listened\b", "I listened"),
+        (r"\bi listen\b", "I listen"),
+        (r"\bi remember\b", "I remember"),
+        (r"\bi remembered\b", "I remembered"),
+        (r"\bi learned\b", "I learned"),
+        (r"\bi learn\b", "I learn"),
+        (r"\bi want\b", "I want"),
+        (r"\bi wanted\b", "I wanted"),
+        (r"\bi don't\b", "I don't"),
+        (r"\bdont\b", "don't"),
+        (r"\bdidnt\b", "didn't"),
+        (r"\bcan't\b", "can't"),
+        (r"\bcant\b", "can't"),
+        (r"\bim\b", "I'm"),
+        (r"\bIam\b", "I am"),
+        (r"\benglish\b", "English"),
+        (r"\bkorea\b", "Korea"),
+        (r"\bkorean\b", "Korean"),
+        (r"\bamerica\b", "America"),
+        (r"\bamerican\b", "American"),
+        (r"\byoutube\b", "YouTube"),
+        (r"\bthis song make me\b", "this song makes me"),
+        (r"\bthis song makes me felt\b", "this song made me feel"),
+        (r"\bthis song made me felt\b", "this song made me feel"),
+        (r"\bI felt sad because of this song\b", "I felt sad because this song reminded me of something"),
+        (r"\bI think this song is good because it is good\b", "I think this song is good because its message is meaningful"),
+        (r"\bI like this song because good\b", "I like this song because it is good"),
+        (r"\bI like this song because sad\b", "I like this song because it is sad and emotional"),
+        (r"\bI feel sad when I listen this song\b", "I feel sad when I listen to this song"),
+        (r"\blisten this song\b", "listen to this song"),
+        (r"\blistened this song\b", "listened to this song"),
+        (r"\blook back my memory\b", "look back on my memory"),
+        (r"\bremember my old memory\b", "remember an old memory"),
+        (r"\bmy old memory\b", "an old memory"),
+        (r"\bvery good song\b", "a very good song"),
+        (r"\ba sad memory\b", "a sad memory"),
+        (r"\bold memory\b", "old memory"),
+    ]
+
+    for pattern, repl in replacements:
+        text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    # 문장 단위로 나누기
+    raw_sentences = re.split(r"(?<=[.!?])\s+|(?<!\w)\n+", text)
+    sentences = []
+
+    for s in raw_sentences:
+        s = s.strip()
+        if not s:
+            continue
+
+        # 끝 문장부호 정리
+        if not re.search(r"[.!?]$", s):
+            s += "."
+
+        # 첫 글자 대문자
+        s = s[0].upper() + s[1:] if s else s
+
+        # I 대문자 재정리
+        s = re.sub(r"\bi\b", "I", s)
+        s = re.sub(r"\s+([.!?])", r"\1", s)
+
+        sentences.append(s)
+
+    polished = " ".join(sentences)
+
+    # 너무 짧은 경우 자연스러운 기본 반성문으로 확장
+    word_count = len(re.findall(r"[A-Za-z']+", polished))
+    if word_count < 6:
+        polished = (
+            "While listening to this song, I thought about my feelings. "
+            "This song made me think about my own life. "
+            "I want to express my ideas more clearly next time."
+        )
+
+    return polished
+
+
 def make_english_only_feedback(song_title, question, student_answer):
     """
     영어로 적은 학생에게는 한국어 번역 없이 영어 피드백만 제공합니다.
-    너무 어려운 문법 설명보다, 학생 문장을 자연스럽게 확장해 주는 용도입니다.
+    학생이 쓴 영어를 그대로 반복하지 않고, 먼저 자연스럽게 수정한 영어 글을 보여줍니다.
     """
     answer = str(student_answer).strip()
     question = str(question).strip()
 
     if re.search(r"[가-힣]", answer):
-        polished_en = (
+        revised_en = (
             "Please try to write your reflection in English. "
             "You can start with a simple sentence such as: While listening to this song, I thought about my memories. "
             "It is okay if your English is short. The important thing is to express your own idea in English."
@@ -1703,35 +1808,34 @@ def make_english_only_feedback(song_title, question, student_answer):
             "Writing tip: Use easy sentence patterns first. "
             "For example: I felt ~. / This song reminds me of ~. / I think ~ because ~."
         )
-        return polished_en, advice_en
+        return revised_en, advice_en
 
-    if len(answer) < 10:
-        polished_en = (
-            "While listening to this song, I began to think about my feelings. "
-            "My reflection is still short, but it shows that the song helped me connect music with my own thoughts. "
-            "Next time, I can add one memory, one feeling, and one reason to make my writing clearer."
-        )
-    else:
-        polished_en = (
-            f"While listening to this song, I thought about my own feelings and experiences. {answer} "
-            "This reflection is meaningful because it connects the message of the song with my personal life. "
-            "The song helped me look back on a memory, understand my emotions more clearly, and think about how I can grow from that experience."
-        )
+    revised_en = polish_student_english_text(answer)
 
-    if ("Scientist" in song_title or "relationship" in question.lower() or "memory" in question.lower()) and len(answer) >= 10:
-        polished_en = (
-            f"While listening to this song, I looked back on a past memory and the feelings I had at that time. {answer} "
-            "This memory is not just about the past. It also helps me think about relationships, communication, and the words I could not say before. "
-            "Like the speaker in the song, I realized that looking back can help me understand myself and other people more deeply."
-        )
+    # 노래/질문 맥락에 맞게 한 문장 정도 자연스럽게 보강
+    lower_question = question.lower()
+    if len(re.findall(r"[A-Za-z']+", revised_en)) >= 6:
+        if "Scientist" in song_title or "relationship" in lower_question or "memory" in lower_question:
+            if "Looking back" not in revised_en:
+                revised_en += " Looking back now, I can understand my feelings more clearly."
+        elif "dream" in lower_question or "future" in lower_question:
+            if "future" not in revised_en.lower():
+                revised_en += " This song also made me think about my future."
+        elif "friend" in lower_question or "together" in lower_question:
+            if "friend" not in revised_en.lower():
+                revised_en += " It also reminded me that friends can give us strength."
+        else:
+            if "This song" not in revised_en:
+                revised_en += " This song helped me express my feelings."
 
     advice_en = (
-        "Writing tip: To make your English reflection stronger, try to include three parts: "
-        "1) what the song reminded you of, 2) how you felt, and 3) what you realized. "
+        "Good effort. I corrected your sentences to make them more natural. "
+        "Next time, try to add three parts: "
+        "1) what the song reminded you of, 2) how you felt, and 3) what you learned. "
         "Useful patterns: This song reminds me of ~. / I felt ~ because ~. / Looking back now, I realize that ~."
     )
 
-    return polished_en, advice_en
+    return revised_en, advice_en
 
 SONGS = {'1. Let It Go - Frozen OST': {'video_url': 'https://www.youtube.com/watch?v=RgGRyssdJvw',
                                'bg': '\n'
@@ -4726,9 +4830,9 @@ elif selected_tab == "✍️ 생각 적기":
                 st.warning("Please write at least one or two sentences first.")
             else:
                 polished_en, advice_en = make_english_only_feedback(song_choice, selected_question, answer_en)
-                st.markdown("### 🇺🇸 English Feedback")
+                st.markdown("### 🇺🇸 Revised English Writing")
                 st.markdown(f'<div class="feedback-en">{clean_text_for_display(polished_en)}</div>', unsafe_allow_html=True)
-                st.markdown("### ✨ Writing Tip")
+                st.markdown("### ✨ English Feedback")
                 st.markdown(f'<div class="advice-box">{clean_text_for_display(advice_en)}</div>', unsafe_allow_html=True)
 
 
